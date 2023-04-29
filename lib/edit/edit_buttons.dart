@@ -10,6 +10,7 @@ import 'package:otraku/filter/filter_providers.dart';
 import 'package:otraku/home/home_provider.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/widgets/layouts/bottom_bar.dart';
+import 'package:otraku/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/widgets/overlays/dialogs.dart';
 
 class EditButtons extends StatefulWidget {
@@ -29,9 +30,9 @@ class _EditButtonsState extends State<EditButtons> {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, __) => BottomBarDualButtonRow(
-        primary: _loading
-            ? null
+      builder: (context, ref, __) => BottomBar([
+        _loading
+            ? const Expanded(child: Center(child: Loader()))
             : BottomBarButton(
                 text: 'Save',
                 icon: Ionicons.save_outline,
@@ -86,8 +87,8 @@ class _EditButtonsState extends State<EditButtons> {
                   }
                 },
               ),
-        secondary: widget.oldEdit.entryId == null
-            ? null
+        widget.oldEdit.entryId == null
+            ? const Spacer()
             : BottomBarButton(
                 text: 'Remove',
                 icon: Ionicons.trash_bin_outline,
@@ -138,7 +139,7 @@ class _EditButtonsState extends State<EditButtons> {
                   ),
                 ),
               ),
-      ),
+      ]),
     );
   }
 }

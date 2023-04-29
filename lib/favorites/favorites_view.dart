@@ -44,7 +44,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
     final onRefresh = () => ref.invalidate(favoritesProvider(widget.id));
 
     return PageScaffold(
-      bottomBar: BottomBarIconTabs(
+      bottomBar: BottomNavBar(
         current: _tab.index,
         onChanged: (page) {
           setState(() => _tab = FavoritesTab.values.elementAt(page));

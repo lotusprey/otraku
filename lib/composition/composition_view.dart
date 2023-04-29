@@ -55,30 +55,28 @@ class _CompositionViewState extends State<CompositionView> {
         textCtrl: _ctrl,
         scrollCtrl: scrollCtrl,
       ),
-      buttons: BottomBar(
-        child: _ButtonRow(
-          tab: _tab,
-          textCtrl: _ctrl,
-          composition: widget.composition,
-          onSave: () async {
-            try {
-              widget.onDone(
-                await saveComposition(widget.composition),
-              );
-              if (mounted) Navigator.pop(context);
-            } catch (e) {
-              if (!mounted) return;
-              Navigator.pop(context);
-              showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not post',
-                  content: e.toString(),
-                ),
-              );
-            }
-          },
-        ),
+      buttons: _BottomBar(
+        tab: _tab,
+        textCtrl: _ctrl,
+        composition: widget.composition,
+        onSave: () async {
+          try {
+            widget.onDone(
+              await saveComposition(widget.composition),
+            );
+            if (mounted) Navigator.pop(context);
+          } catch (e) {
+            if (!mounted) return;
+            Navigator.pop(context);
+            showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Could not post',
+                content: e.toString(),
+              ),
+            );
+          }
+        },
       ),
     );
   }
@@ -154,8 +152,8 @@ class _CompositionView extends StatelessWidget {
 
 /// A button menu. Some of the buttons are hidden,
 /// when the user isn't on the editing tab.
-class _ButtonRow extends StatefulWidget {
-  const _ButtonRow({
+class _BottomBar extends StatefulWidget {
+  const _BottomBar({
     required this.tab,
     required this.composition,
     required this.textCtrl,
@@ -168,80 +166,76 @@ class _ButtonRow extends StatefulWidget {
   final void Function() onSave;
 
   @override
-  State<_ButtonRow> createState() => _ButtonRowState();
+  State<_BottomBar> createState() => _BottomBarState();
 }
 
-class _ButtonRowState extends State<_ButtonRow> {
+class _BottomBarState extends State<_BottomBar> {
   bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
     if (_loading) return const Center(child: Loader());
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ValueListenableBuilder(
-          valueListenable: widget.tab,
-          builder: (context, i, child) => i == 0 ? child! : const SizedBox(),
-          child: Expanded(
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _FormatButton(
-                  tag: 'b',
-                  name: 'Bold',
-                  icon: Icons.format_bold_outlined,
-                  textCtrl: widget.textCtrl,
-                ),
-                _FormatButton(
-                  tag: 'i',
-                  name: 'Italic',
-                  icon: Icons.format_italic_outlined,
-                  textCtrl: widget.textCtrl,
-                ),
-                _FormatButton(
-                  tag: 'del',
-                  name: 'Strikethrough',
-                  icon: Icons.format_strikethrough_outlined,
-                  textCtrl: widget.textCtrl,
-                ),
-                _FormatButton(
-                  tag: 'center',
-                  name: 'Center',
-                  icon: Icons.align_horizontal_center_outlined,
-                  textCtrl: widget.textCtrl,
-                ),
-                _FormatButton(
-                  tag: 'code',
-                  name: 'Code',
-                  icon: Icons.code_outlined,
-                  textCtrl: widget.textCtrl,
-                ),
-              ],
-            ),
+    return BottomBar([
+      ValueListenableBuilder(
+        valueListenable: widget.tab,
+        builder: (context, i, child) => i == 0 ? child! : const SizedBox(),
+        child: Expanded(
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: [
+              _FormatButton(
+                tag: 'b',
+                name: 'Bold',
+                icon: Icons.format_bold_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'i',
+                name: 'Italic',
+                icon: Icons.format_italic_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'del',
+                name: 'Strikethrough',
+                icon: Icons.format_strikethrough_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'center',
+                name: 'Center',
+                icon: Icons.align_horizontal_center_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                tag: 'code',
+                name: 'Code',
+                icon: Icons.code_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+            ],
           ),
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (widget.composition.isPrivate != null)
-              _PrivateButton(
-                widget.composition.isPrivate!,
-                (v) => widget.composition.isPrivate = v,
-              ),
-            TopBarIcon(
-              tooltip: 'Post',
-              icon: Ionicons.send_outline,
-              onTap: () async {
-                setState(() => _loading = true);
-                widget.onSave();
-              },
+      ),
+      Row(
+        children: [
+          if (widget.composition.isPrivate != null)
+            _PrivateButton(
+              widget.composition.isPrivate!,
+              (v) => widget.composition.isPrivate = v,
             ),
-          ],
-        ),
-      ],
-    );
+          TopBarIcon(
+            tooltip: 'Post',
+            icon: Ionicons.send_outline,
+            onTap: () async {
+              setState(() => _loading = true);
+              widget.onSave();
+            },
+          ),
+        ],
+      ),
+    ]);
   }
 }
 

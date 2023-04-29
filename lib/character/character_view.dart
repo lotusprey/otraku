@@ -64,7 +64,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
     final onRefresh = () => ref.invalidate(characterMediaProvider(widget.id));
 
     return PageScaffold(
-      bottomBar: BottomBarIconTabs(
+      bottomBar: BottomNavBar(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         onSame: (_) => _ctrl.scrollToTop(),

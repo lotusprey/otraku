@@ -40,8 +40,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         color: scheme.onSurfaceVariant,
         size: Consts.iconBig,
       ),
-      bottomAppBarTheme: BottomAppBarTheme(
-        color: scheme.background.withAlpha(190),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: scheme.background.withAlpha(190),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(

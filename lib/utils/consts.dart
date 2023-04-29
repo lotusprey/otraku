@@ -14,7 +14,7 @@ abstract class Consts {
   static const physics = AlwaysScrollableScrollPhysics(
     parent: BouncingScrollPhysics(),
   );
-  static final filter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
+  static final blurFilter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
 
   // Optimal height to width ratio for a media cover.
   static const coverHtoWRatio = 1.53;

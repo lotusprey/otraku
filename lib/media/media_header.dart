@@ -331,7 +331,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ? body
         : ClipRect(
             child: BackdropFilter(
-              filter: Consts.filter,
+              filter: Consts.blurFilter,
               child: DecoratedBox(
                 decoration: BoxDecoration(color: theme.bottomAppBarTheme.color),
                 child: body,

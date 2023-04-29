@@ -21,10 +21,10 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
-        filter: Consts.filter,
+        filter: Consts.blurFilter,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Theme.of(context).bottomAppBarTheme.color,
+            color: Theme.of(context).navigationBarTheme.backgroundColor,
           ),
           child: Padding(
             padding: EdgeInsets.only(

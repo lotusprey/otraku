@@ -138,7 +138,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: PageScaffold(
-        bottomBar: BottomBarIconTabs(
+        bottomBar: BottomNavBar(
           current: notifier.homeTab,
           onChanged: (i) => ref.read(homeProvider).homeTab = i,
           items: const {

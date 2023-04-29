@@ -42,7 +42,7 @@ class _SocialViewState extends ConsumerState<SocialView> {
     final onRefresh = () => ref.invalidate(socialProvider(widget.id));
 
     return PageScaffold(
-      bottomBar: BottomBarIconTabs(
+      bottomBar: BottomNavBar(
         current: _tab.index,
         onChanged: (page) {
           setState(() => _tab = SocialTab.values.elementAt(page));

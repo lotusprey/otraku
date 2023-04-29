@@ -37,8 +37,8 @@ class __FilterViewState<T extends ApplicableMediaFilter<T>>
   @override
   Widget build(BuildContext context) {
     return OpaqueSheetView(
-      buttons: BottomBarDualButtonRow(
-        primary: BottomBarButton(
+      buttons: BottomBar([
+        BottomBarButton(
           text: 'Apply',
           icon: Icons.done_rounded,
           onTap: () {
@@ -46,7 +46,7 @@ class __FilterViewState<T extends ApplicableMediaFilter<T>>
             Navigator.pop(context);
           },
         ),
-        secondary: BottomBarButton(
+        BottomBarButton(
           text: 'Clear',
           icon: Icons.close,
           warning: true,
@@ -55,7 +55,7 @@ class __FilterViewState<T extends ApplicableMediaFilter<T>>
             Navigator.pop(context);
           },
         ),
-      ),
+      ]),
       builder: (context, scrollCtrl) =>
           widget.builder(context, scrollCtrl, _filter),
     );
@@ -413,10 +413,10 @@ class TagSheetBodyState extends ConsumerState<TagSheetBody> {
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           child: BackdropFilter(
-            filter: Consts.filter,
+            filter: Consts.blurFilter,
             child: Container(
               height: 95,
-              color: Theme.of(context).bottomAppBarTheme.color,
+              color: Theme.of(context).navigationBarTheme.backgroundColor,
               padding: const EdgeInsets.only(top: 10, bottom: 5),
               child: Column(
                 children: [

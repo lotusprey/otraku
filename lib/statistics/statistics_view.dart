@@ -92,7 +92,7 @@ class _StatisticsViewState extends State<StatisticsView> {
     );
 
     return PageScaffold(
-      bottomBar: BottomBarIconTabs(
+      bottomBar: BottomNavBar(
         current: _onAnime ? 0 : 1,
         onChanged: (page) =>
             setState(() => _onAnime = page == 0 ? true : false),

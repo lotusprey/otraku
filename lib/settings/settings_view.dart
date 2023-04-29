@@ -98,7 +98,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         return Future.value(true);
       },
       child: PageScaffold(
-        bottomBar: BottomBarIconTabs(
+        bottomBar: BottomNavBar(
           current: _tabIndex,
           onSame: (_) => _ctrl.scrollToTop(),
           onChanged: (i) => setState(() => _tabIndex = i),

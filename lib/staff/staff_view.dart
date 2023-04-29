@@ -64,7 +64,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
     final onRefresh = () => ref.invalidate(staffRelationsProvider(widget.id));
 
     return PageScaffold(
-      bottomBar: BottomBarIconTabs(
+      bottomBar: BottomNavBar(
         current: _tab,
         onChanged: (i) => setState(() => _tab = i),
         onSame: (_) => _ctrl.scrollToTop(),

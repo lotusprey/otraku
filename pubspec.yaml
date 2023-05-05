@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.3.4
+  flutter_riverpod: ^2.3.6
 
   # Data fetching.
-  http: ^0.13.5
+  http: ^0.13.6
 
   # Settings storage.
   hive: ^2.2.3
@@ -46,7 +46,7 @@ dependencies:
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^13.0.0
+  flutter_local_notifications: ^14.0.0+1
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.10.0
@@ -58,7 +58,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.13.0
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.1
 
 flutter_icons:

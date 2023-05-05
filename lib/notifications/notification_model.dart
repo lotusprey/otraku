@@ -357,21 +357,25 @@ class SiteNotification {
 }
 
 enum NotificationType {
-  FOLLOWING,
-  ACTIVITY_MESSAGE,
-  ACTIVITY_REPLY,
-  ACTIVITY_REPLY_SUBSCRIBED,
-  ACTIVITY_MENTION,
-  ACTIVITY_LIKE,
-  ACTIVITY_REPLY_LIKE,
-  THREAD_COMMENT_REPLY,
-  THREAD_COMMENT_MENTION,
-  THREAD_SUBSCRIBED,
-  THREAD_LIKE,
-  THREAD_COMMENT_LIKE,
-  RELATED_MEDIA_ADDITION,
-  MEDIA_DATA_CHANGE,
-  MEDIA_MERGE,
-  MEDIA_DELETION,
-  AIRING,
+  FOLLOWING('Follows'),
+  ACTIVITY_MESSAGE('Messages'),
+  ACTIVITY_REPLY('Activity replies'),
+  ACTIVITY_REPLY_SUBSCRIBED('Subscribed activity replies'),
+  ACTIVITY_MENTION('Activity mentions'),
+  ACTIVITY_LIKE('Activity likes'),
+  ACTIVITY_REPLY_LIKE('Activity reply likes'),
+  THREAD_COMMENT_REPLY('Thread comments'),
+  THREAD_COMMENT_MENTION('Thread mentions'),
+  THREAD_SUBSCRIBED('Subscribed thread replies'),
+  THREAD_LIKE('Thread likes'),
+  THREAD_COMMENT_LIKE('Thread comment likes'),
+  RELATED_MEDIA_ADDITION('Related media additions'),
+  MEDIA_DATA_CHANGE('Media changes'),
+  MEDIA_MERGE('Media merges'),
+  MEDIA_DELETION('Media deletions'),
+  AIRING('Episode releases');
+
+  const NotificationType(this.text);
+
+  final String text;
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/notifications/notification_model.dart';
 import 'package:otraku/utils/api.dart';
-import 'package:otraku/utils/convert.dart';
 import 'package:otraku/utils/graphql.dart';
 import 'package:otraku/utils/options.dart';
 import 'package:otraku/utils/route_arg.dart';
@@ -259,18 +258,15 @@ void _fetch() => Workmanager().executeTask((_, __) async {
     });
 
 void _show(SiteNotification notification, String title, String payload) {
-  final id = notification.type.name;
-  final name = Convert.clarifyEnum(id)!;
-
   _notificationPlugin.show(
     notification.id,
     title,
     notification.texts.join(),
     NotificationDetails(
       android: AndroidNotificationDetails(
-        id,
-        name,
-        channelDescription: name,
+        notification.type.name,
+        notification.type.text,
+        channelDescription: notification.type.text,
         color: const Color(0xFF45A0F2),
       ),
     ),

@@ -27,6 +27,7 @@ enum _OptionKey {
   leftHanded,
   analogueClock,
   feedOnFollowing,
+  viewerActivitiesInFeed,
   discoverItemView,
   collectionItemView,
   collectionPreviewItemView,
@@ -77,6 +78,7 @@ class Options extends ChangeNotifier {
     this._leftHanded,
     this._analogueClock,
     this._feedOnFollowing,
+    this._viewerActivitiesInFeed,
     this._discoverItemView,
     this._collectionItemView,
     this._collectionPreviewItemView,
@@ -156,6 +158,7 @@ class Options extends ChangeNotifier {
       _optionBox.get(_OptionKey.leftHanded.name) ?? false,
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
       _optionBox.get(_OptionKey.feedOnFollowing.name) ?? false,
+      _optionBox.get(_OptionKey.viewerActivitiesInFeed.name) ?? false,
       discoverItemView,
       collectionItemView,
       collectionPreviewItemView,
@@ -227,6 +230,7 @@ class Options extends ChangeNotifier {
   bool _leftHanded;
   bool _analogueClock;
   bool _feedOnFollowing;
+  bool _viewerActivitiesInFeed;
   int _discoverItemView;
   int _collectionItemView;
   int _collectionPreviewItemView;
@@ -253,6 +257,7 @@ class Options extends ChangeNotifier {
   bool get leftHanded => _leftHanded;
   bool get analogueClock => _analogueClock;
   bool get feedOnFollowing => _feedOnFollowing;
+  bool get viewerActivitiesInFeed => _viewerActivitiesInFeed;
   int get discoverItemView => _discoverItemView;
   int get collectionItemView => _collectionItemView;
   int get collectionPreviewItemView => _collectionPreviewItemView;
@@ -395,6 +400,11 @@ class Options extends ChangeNotifier {
   set feedOnFollowing(bool v) {
     _feedOnFollowing = v;
     _optionBox.put(_OptionKey.feedOnFollowing.name, v);
+  }
+
+  set viewerActivitiesInFeed(bool v) {
+    _viewerActivitiesInFeed = v;
+    _optionBox.put(_OptionKey.viewerActivitiesInFeed.name, v);
   }
 
   set discoverItemView(int v) {

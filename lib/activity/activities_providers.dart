@@ -21,17 +21,20 @@ final activityFilterProvider = StateNotifierProvider.autoDispose
     .family<ActivityFilterNotifier, ActivityFilter, int?>(
   (ref, userId) {
     var typeIn = ActivityType.values;
-    bool? onFollowing;
+    FeedFilter? feedFilter;
 
     if (userId == null) {
-      onFollowing = Options().feedOnFollowing;
+      feedFilter = FeedFilter(
+        Options().feedOnFollowing,
+        Options().viewerActivitiesInFeed,
+      );
       typeIn = Options()
           .feedActivityFilters
           .map((e) => ActivityType.values.elementAt(e))
           .toList();
     }
 
-    return ActivityFilterNotifier(typeIn, onFollowing);
+    return ActivityFilterNotifier(typeIn, feedFilter);
   },
 );
 
@@ -61,14 +64,11 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
 
       final data = await Api.get(GqlQuery.activities, {
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
-        if (userId != null) ...{
-          'userId': userId,
-        } else ...{
-          'isFollowing': filter.onFollowing,
-          if ((filter.onFollowing ?? false))
-            'userIdNot': viewerId
-          else
-            'hasRepliesOrText': true,
+        if (userId != null) 'userId': userId,
+        if (filter.feedFilter != null) ...{
+          'isFollowing': filter.feedFilter!.onFollowing,
+          if (!filter.feedFilter!.withViewerActivities) 'userIdNot': viewerId,
+          if (!filter.feedFilter!.onFollowing) 'hasRepliesOrText': true,
         },
         if (_lastCreatedAt != null) 'createdBefore': _lastCreatedAt!
       });
@@ -187,16 +187,27 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
 }
 
 class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
-  ActivityFilterNotifier(List<ActivityType> typeIn, bool? onFollowing)
-      : super(ActivityFilter(typeIn, onFollowing));
+  ActivityFilterNotifier(List<ActivityType> typeIn, FeedFilter? feedFilter)
+      : super(ActivityFilter(typeIn, feedFilter));
 
-  void update(List<ActivityType> typeIn, bool? onFollowing) {
-    state = state.onFollowing == null
+  void update(
+    List<ActivityType> typeIn,
+    bool? onFollowing,
+    bool? withViewerActivities,
+  ) {
+    state = state.feedFilter == null
         ? ActivityFilter(typeIn, null)
-        : ActivityFilter(typeIn, onFollowing ?? state.onFollowing);
+        : ActivityFilter(
+            typeIn,
+            FeedFilter(
+              onFollowing ?? state.feedFilter!.onFollowing,
+              withViewerActivities ?? state.feedFilter!.withViewerActivities,
+            ),
+          );
 
-    if (onFollowing == null) return;
+    if (state.feedFilter == null) return;
     Options().feedActivityFilters = typeIn.map((e) => e.index).toList();
-    Options().feedOnFollowing = onFollowing;
+    Options().feedOnFollowing = state.feedFilter!.onFollowing;
+    Options().viewerActivitiesInFeed = state.feedFilter!.withViewerActivities;
   }
 }

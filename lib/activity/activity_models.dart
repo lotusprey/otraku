@@ -205,10 +205,17 @@ enum ActivityType {
 }
 
 class ActivityFilter {
-  const ActivityFilter(this.typeIn, this.onFollowing);
+  const ActivityFilter(this.typeIn, this.feedFilter);
 
   final List<ActivityType> typeIn;
 
-  /// Not `null` only for the main feed. Switches between following/global.
-  final bool? onFollowing;
+  /// Not `null` only for the main feed.
+  final FeedFilter? feedFilter;
+}
+
+class FeedFilter {
+  const FeedFilter(this.onFollowing, this.withViewerActivities);
+
+  final bool onFollowing;
+  final bool withViewerActivities;
 }

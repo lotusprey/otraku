@@ -22,11 +22,19 @@ import 'package:otraku/widgets/paged_view.dart';
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
   final filter = ref.read(activityFilterProvider(id));
   final typeIn = [...filter.typeIn];
-  bool? onFollowing = filter.onFollowing;
   bool changed = false;
 
-  double initialHeight = Consts.tapTargetSize * ActivityType.values.length + 20;
-  if (onFollowing != null) initialHeight += Consts.tapTargetSize;
+  bool? onFollowing;
+  bool? withViewerActivities;
+  if (filter.feedFilter != null) {
+    onFollowing = filter.feedFilter!.onFollowing;
+    withViewerActivities = filter.feedFilter!.withViewerActivities;
+  }
+
+  double initialHeight = MediaQuery.of(context).padding.bottom +
+      Consts.tapTargetSize * ActivityType.values.length +
+      20;
+  if (onFollowing != null) initialHeight += Consts.tapTargetSize * 1.5;
 
   showSheet(
     context,
@@ -37,22 +45,25 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
         physics: Consts.physics,
         padding: Consts.padding,
         children: [
-          ListView(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              for (final a in ActivityType.values)
-                CheckBoxField(
-                  title: a.text,
-                  initial: typeIn.contains(a),
-                  onChanged: (val) {
-                    val ? typeIn.add(a) : typeIn.remove(a);
-                    changed = true;
-                  },
-                )
-            ],
-          ),
-          if (onFollowing != null)
+          for (final a in ActivityType.values)
+            CheckBoxField(
+              title: a.text,
+              initial: typeIn.contains(a),
+              onChanged: (val) {
+                val ? typeIn.add(a) : typeIn.remove(a);
+                changed = true;
+              },
+            ),
+          if (onFollowing != null) ...[
+            const Divider(),
+            CheckBoxField(
+              title: 'Your Activities',
+              initial: withViewerActivities!,
+              onChanged: (val) {
+                withViewerActivities = val;
+                changed = true;
+              },
+            ),
             SegmentSwitcher(
               items: const ['Following', 'Global'],
               current: onFollowing! ? 0 : 1,
@@ -61,12 +72,17 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
                 changed = true;
               },
             ),
+          ],
         ],
       ),
     ),
   ).then((_) {
     if (changed) {
-      ref.read(activityFilterProvider(id).notifier).update(typeIn, onFollowing);
+      ref.read(activityFilterProvider(id).notifier).update(
+            typeIn,
+            onFollowing,
+            withViewerActivities,
+          );
     }
   });
 }

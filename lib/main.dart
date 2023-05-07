@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/home/home_provider.dart';
-import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/options.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/common/utils/background_handler.dart';
+import 'package:otraku/common/utils/route_arg.dart';
+import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/theming.dart';
 
 Future<void> main() async {
   await Options.init();

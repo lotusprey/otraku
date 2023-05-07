@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -24,18 +23,31 @@ class ReviewHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverPersistentHeader(
       pinned: true,
-      delegate: _HeaderDelegate(id, bannerUrl, mediaTitle, siteUrl),
+      delegate: _Delegate(
+        id,
+        bannerUrl,
+        mediaTitle,
+        siteUrl,
+        MediaQuery.of(context).padding.top,
+      ),
     );
   }
 }
 
-class _HeaderDelegate extends SliverPersistentHeaderDelegate {
-  _HeaderDelegate(this.id, this.bannerUrl, this.title, this.siteUrl);
+class _Delegate extends SliverPersistentHeaderDelegate {
+  _Delegate(
+    this.id,
+    this.bannerUrl,
+    this.title,
+    this.siteUrl,
+    this.topOffset,
+  );
 
   final int id;
   final String? bannerUrl;
   final String? title;
   final String? siteUrl;
+  final double topOffset;
 
   @override
   Widget build(
@@ -43,164 +55,145 @@ class _HeaderDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final extent = maxExtent - shrinkOffset;
-    final opacity = shrinkOffset < (maxExtent - minExtent)
-        ? shrinkOffset / (maxExtent - minExtent)
-        : 1.0;
+    final theme = Theme.of(context);
+    var transition = shrinkOffset / _bannerBaseHeight;
+    if (transition > 1) transition = 1;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
-      ),
-      child: FlexibleSpaceBar.createSettings(
-        minExtent: minExtent,
-        maxExtent: maxExtent,
-        currentExtent: extent > minExtent ? extent : minExtent,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            FlexibleSpaceBar(
-              collapseMode: CollapseMode.pin,
-              stretchModes: const [StretchMode.zoomBackground],
-              background: Column(
-                children: [
-                  if (bannerUrl != null)
-                    Expanded(
-                      child: GestureDetector(
-                        child: Hero(tag: id, child: CachedImage(bannerUrl!)),
-                        onTap: () =>
-                            showPopUp(context, ImageDialog(bannerUrl!)),
-                      ),
+    final body = Stack(
+      fit: StackFit.expand,
+      children: [
+        if (transition < 1) ...[
+          Positioned.fill(
+            child: bannerUrl != null
+                ? GestureDetector(
+                    child: Hero(tag: id, child: CachedImage(bannerUrl!)),
+                    onTap: () => showPopUp(context, ImageDialog(bannerUrl!)),
+                  )
+                : DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceVariant,
                     ),
-
-                  /// An annoying workaround for a bug in the
-                  /// anti-aliasing of the overlaying [DecoratedBox].
-                  Container(
-                    color: Theme.of(context).colorScheme.background,
-                    height: 1,
                   ),
-                ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: 15,
+            child: Container(
+              alignment: Alignment.topCenter,
+              color: theme.colorScheme.background,
+              child: Container(
+                height: 0,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      blurRadius: 15,
+                      spreadRadius: 25,
+                      color: theme.colorScheme.background,
+                    ),
+                  ],
+                ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: maxExtent * 0.4,
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: topOffset + Consts.tapTargetSize,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    theme.colorScheme.background,
+                    theme.colorScheme.background.withAlpha(200),
+                    theme.colorScheme.background.withAlpha(0),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: topOffset + Consts.tapTargetSize,
+            child: Opacity(
+              opacity: transition,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Theme.of(context).colorScheme.background,
-                      Theme.of(context).colorScheme.background.withAlpha(0),
-                    ],
-                  ),
+                  color: theme.colorScheme.background,
                 ),
               ),
             ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Theme.of(context).colorScheme.background,
-                      Theme.of(context).colorScheme.background.withAlpha(0),
-                    ],
-                  ),
-                ),
+          ),
+        ],
+        Positioned(
+          left: 0,
+          right: 0,
+          top: topOffset,
+          height: Consts.tapTargetSize,
+          child: Row(
+            children: [
+              TopBarIcon(
+                tooltip: 'Close',
+                icon: Ionicons.chevron_back_outline,
+                onTap: Navigator.of(context).pop,
               ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
-              child: Opacity(
-                opacity: opacity,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.background,
-                    boxShadow: [
-                      BoxShadow(
-                        blurRadius: 10,
-                        spreadRadius: 10,
-                        color: Theme.of(context).colorScheme.background,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: minExtent,
-              child: Row(
-                children: [
-                  TopBarIcon(
-                    tooltip: 'Close',
-                    icon: Ionicons.chevron_back_outline,
-                    onTap: Navigator.of(context).pop,
-                  ),
-                  if (title != null)
-                    Expanded(
-                      child: Opacity(
-                        opacity: opacity,
+              Expanded(
+                child: title != null
+                    ? Opacity(
+                        opacity: transition,
                         child: Text(
                           title!,
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: theme.textTheme.titleMedium,
                           overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                    ),
-                  if (siteUrl != null)
-                    TopBarIcon(
-                      tooltip: 'More',
-                      icon: Ionicons.ellipsis_horizontal,
-                      onTap: () => showSheet(
-                        context,
-                        GradientSheet.link(context, siteUrl!),
-                      ),
-                    ),
-                ],
+                      )
+                    : const SizedBox(),
+              ),
+              if (siteUrl != null)
+                TopBarIcon(
+                  tooltip: 'More',
+                  icon: Ionicons.ellipsis_horizontal,
+                  onTap: () => showSheet(
+                    context,
+                    GradientSheet.link(context, siteUrl!),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    return transition < 1
+        ? body
+        : ClipRect(
+            child: BackdropFilter(
+              filter: Consts.blurFilter,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: theme.bottomAppBarTheme.color,
+                ),
+                child: body,
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          );
   }
 
-  @override
-  double get maxExtent => 150;
+  static const _bannerBaseHeight = 80.0;
 
   @override
-  double get minExtent => Consts.tapTargetSize;
+  double get minExtent => topOffset + Consts.tapTargetSize;
 
   @override
-  OverScrollHeaderStretchConfiguration? get stretchConfiguration =>
-      OverScrollHeaderStretchConfiguration(stretchTriggerOffset: 100);
+  double get maxExtent => topOffset + Consts.tapTargetSize + _bannerBaseHeight;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      true;
-
-  @override
-  PersistentHeaderShowOnScreenConfiguration? get showOnScreenConfiguration =>
-      null;
-
-  @override
-  FloatingHeaderSnapConfiguration? get snapConfiguration => null;
-
-  @override
-  TickerProvider? get vsync => null;
+  bool shouldRebuild(covariant _Delegate oldDelegate) =>
+      title != oldDelegate.title;
 }

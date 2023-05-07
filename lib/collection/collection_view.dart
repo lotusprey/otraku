@@ -189,11 +189,16 @@ class _ActionButton extends StatelessWidget {
 
             showSheet(
               context,
-              DynamicGradientDragSheet(
-                onTap: (i) => notifier.index = i,
-                children: [
-                  for (int i = 0; i < notifier.lists.length; i++)
-                    Row(
+              GradientSheet([
+                for (int i = 0; i < notifier.lists.length; i++)
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.pop(context);
+                      notifier.index = i;
+                    },
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Flexible(
                           child: Text(
@@ -213,8 +218,8 @@ class _ActionButton extends StatelessWidget {
                         ),
                       ],
                     ),
-                ],
-              ),
+                  ),
+              ]),
             );
           },
           onSwipe: (goRight) {

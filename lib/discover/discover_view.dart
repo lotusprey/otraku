@@ -107,29 +107,21 @@ class _TopBarContent extends StatelessWidget {
                   tooltip: 'Sort',
                   icon: Ionicons.funnel_outline,
                   onTap: () {
-                    final notifier =
-                        ref.read(reviewSortProvider(null).notifier);
-                    final theme = Theme.of(context);
+                    final index =
+                        ref.read(reviewSortProvider(null).notifier).state.index;
 
                     showSheet(
                       context,
-                      DynamicGradientDragSheet(
-                        onTap: (i) =>
-                            notifier.state = ReviewSort.values.elementAt(i),
-                        children: [
-                          for (int i = 0; i < ReviewSort.values.length; i++)
-                            Text(
-                              ReviewSort.values.elementAt(i).text,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: i != notifier.state.index
-                                  ? theme.textTheme.titleLarge
-                                  : theme.textTheme.titleLarge?.copyWith(
-                                      color: theme.colorScheme.primary,
-                                    ),
-                            ),
-                        ],
-                      ),
+                      GradientSheet([
+                        for (int i = 0; i < ReviewSort.values.length; i++)
+                          GradientSheetButton(
+                            text: ReviewSort.values.elementAt(i).text,
+                            selected: index == i,
+                            onTap: () => ref
+                                .read(reviewSortProvider(null).notifier)
+                                .state = ReviewSort.values.elementAt(i),
+                          ),
+                      ]),
                     );
                   },
                 )
@@ -156,39 +148,18 @@ class _ActionButton extends StatelessWidget {
           tooltip: 'Types',
           icon: type.icon,
           onTap: () {
-            final theme = Theme.of(context);
-
             showSheet(
               context,
-              DynamicGradientDragSheet(
-                onTap: (i) {
-                  ref.read(discoverFilterProvider).type =
-                      DiscoverType.values[i];
-                },
-                children: [
-                  for (int i = 0; i < DiscoverType.values.length; i++)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          DiscoverType.values[i].icon,
-                          color: i != type.index
-                              ? Theme.of(context).colorScheme.onBackground
-                              : Theme.of(context).colorScheme.primary,
-                        ),
-                        const SizedBox(width: 5),
-                        Text(
-                          Convert.clarifyEnum(DiscoverType.values[i].name)!,
-                          style: i != type.index
-                              ? theme.textTheme.titleLarge
-                              : theme.textTheme.titleLarge?.copyWith(
-                                  color: theme.colorScheme.primary,
-                                ),
-                        ),
-                      ],
-                    ),
-                ],
-              ),
+              GradientSheet([
+                for (int i = 0; i < DiscoverType.values.length; i++)
+                  GradientSheetButton(
+                    text: Convert.clarifyEnum(DiscoverType.values[i].name)!,
+                    icon: DiscoverType.values[i].icon,
+                    selected: type.index == i,
+                    onTap: () => ref.read(discoverFilterProvider).type =
+                        DiscoverType.values[i],
+                  ),
+              ]),
             );
           },
           onSwipe: (goRight) {

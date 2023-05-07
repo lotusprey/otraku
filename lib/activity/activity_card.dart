@@ -329,12 +329,12 @@ class _ActivityFooterState extends State<ActivityFooter> {
       context,
       Consumer(
         builder: (context, ref, __) =>
-            FixedGradientDragSheet.link(context, activity.siteUrl!, [
+            GradientSheet.link(context, activity.siteUrl!, [
           if (activity.isOwned) ...[
             if (activity.type == ActivityType.TEXT ||
                 activity.type == ActivityType.MESSAGE &&
                     activity.agent.id == Options().id)
-              FixedGradientSheetTile(
+              GradientSheetButton(
                 text: 'Edit',
                 icon: Icons.edit_outlined,
                 onTap: () => showSheet(
@@ -351,7 +351,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   ),
                 ),
               ),
-            FixedGradientSheetTile(
+            GradientSheetButton(
               text: 'Delete',
               icon: Ionicons.trash_outline,
               onTap: () => showPopUp(
@@ -380,7 +380,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (widget.onPinned != null &&
               activity.isOwned &&
               activity.type != ActivityType.MESSAGE)
-            FixedGradientSheetTile(
+            GradientSheetButton(
               text: activity.isPinned ? 'Unpin' : 'Pin',
               icon:
                   activity.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
@@ -405,7 +405,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 });
               },
             ),
-          FixedGradientSheetTile(
+          GradientSheetButton(
             text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
             icon: !activity.isSubscribed
                 ? Ionicons.notifications_outline

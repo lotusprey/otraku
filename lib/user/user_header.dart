@@ -185,7 +185,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
               context,
-              FixedGradientDragSheet.link(context, user!.siteUrl!),
+              GradientSheet.link(context, user!.siteUrl!),
             ),
           ),
         if (isViewer)

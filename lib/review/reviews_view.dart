@@ -59,28 +59,23 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
               tooltip: 'Sort',
               icon: Ionicons.funnel_outline,
               onTap: () {
-                final theme = Theme.of(context);
-                final notifier =
-                    ref.read(reviewSortProvider(widget.id).notifier);
+                final index = ref
+                    .read(reviewSortProvider(widget.id).notifier)
+                    .state
+                    .index;
 
                 showSheet(
                   context,
-                  DynamicGradientDragSheet(
-                    onTap: (i) =>
-                        notifier.state = ReviewSort.values.elementAt(i),
-                    children: [
-                      for (int i = 0; i < ReviewSort.values.length; i++)
-                        Text(
-                          ReviewSort.values.elementAt(i).text,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: i != notifier.state.index
-                              ? theme.textTheme.titleLarge
-                              : theme.textTheme.titleLarge
-                                  ?.copyWith(color: theme.colorScheme.primary),
-                        ),
-                    ],
-                  ),
+                  GradientSheet([
+                    for (int i = 0; i < ReviewSort.values.length; i++)
+                      GradientSheetButton(
+                        text: ReviewSort.values.elementAt(i).text,
+                        selected: index == i,
+                        onTap: () => ref
+                            .read(reviewSortProvider(widget.id).notifier)
+                            .state = ReviewSort.values.elementAt(i),
+                      ),
+                  ]),
                 );
               },
             ),

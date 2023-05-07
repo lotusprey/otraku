@@ -376,11 +376,11 @@ class TagSheetBodyState extends ConsumerState<TagSheetBody> {
       children: [
         if (_itemIndices.isNotEmpty)
           ListView.builder(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
+              top: 90,
               left: 20,
               right: 20,
-              bottom: 10,
-              top: 90,
+              bottom: MediaQuery.of(context).padding.bottom,
             ),
             controller: widget.scrollCtrl,
             itemExtent: Consts.tapTargetSize,

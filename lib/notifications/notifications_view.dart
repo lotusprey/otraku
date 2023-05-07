@@ -95,29 +95,19 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       context,
       Consumer(
         builder: (context, ref, _) {
-          final theme = Theme.of(context);
           final index =
               ref.read(notificationFilterProvider.notifier).state.index;
 
-          final tiles = <Widget>[];
-          for (int i = 0; i < NotificationFilterType.values.length; i++) {
-            tiles.add(Text(
-              NotificationFilterType.values.elementAt(i).text,
-              style: i != index
-                  ? theme.textTheme.titleLarge
-                  : theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                    ),
-            ));
-          }
-
-          return DynamicGradientDragSheet(
-            children: tiles,
-            onTap: (i) {
-              final notifier = ref.read(notificationFilterProvider.notifier);
-              notifier.state = NotificationFilterType.values.elementAt(i);
-            },
-          );
+          return GradientSheet([
+            for (int i = 0; i < NotificationFilterType.values.length; i++)
+              GradientSheetButton(
+                text: NotificationFilterType.values.elementAt(i).text,
+                selected: index == i,
+                onTap: () => ref
+                    .read(notificationFilterProvider.notifier)
+                    .state = NotificationFilterType.values.elementAt(i),
+              ),
+          ]);
         },
       ),
     );

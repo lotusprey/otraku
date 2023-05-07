@@ -131,22 +131,17 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
 
             showSheet(
               context,
-              DynamicGradientDragSheet(
-                onTap: (i) => ref
-                    .read(characterMediaProvider(id).notifier)
-                    .changeLanguage(languages.elementAt(i)),
-                children: [
-                  for (int i = 0; i < languages.length; i++)
-                    Text(
-                      languages.elementAt(i),
-                      style: languages.elementAt(i) != language
-                          ? Theme.of(context).textTheme.titleLarge
-                          : Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                    ),
-                ],
-              ),
+              GradientSheet([
+                for (int i = 0; i < languages.length; i++) ...[
+                  GradientSheetButton(
+                    text: languages.elementAt(i),
+                    selected: languages.elementAt(i) == language,
+                    onTap: () => ref
+                        .read(characterMediaProvider(id).notifier)
+                        .changeLanguage(languages.elementAt(i)),
+                  ),
+                ]
+              ]),
             );
           },
         );

@@ -98,53 +98,50 @@ class ReplyCard extends StatelessWidget {
   void _showMoreSheet(BuildContext context, WidgetRef ref) {
     showSheet(
       context,
-      FixedGradientDragSheet(
-        children: [
-          FixedGradientSheetTile(
-            text: 'Edit',
-            icon: Icons.edit_outlined,
-            onTap: () => showSheet(
-              context,
-              CompositionView(
-                composition:
-                    Composition.reply(reply.id, reply.text, activityId),
-                onDone: (map) => ref
-                    .read(activityProvider(activityId).notifier)
-                    .replaceReply(map),
-              ),
+      GradientSheet([
+        GradientSheetButton(
+          text: 'Edit',
+          icon: Icons.edit_outlined,
+          onTap: () => showSheet(
+            context,
+            CompositionView(
+              composition: Composition.reply(reply.id, reply.text, activityId),
+              onDone: (map) => ref
+                  .read(activityProvider(activityId).notifier)
+                  .replaceReply(map),
             ),
           ),
-          FixedGradientSheetTile(
-            text: 'Delete',
-            icon: Ionicons.trash_outline,
-            onTap: () => showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Delete?',
-                mainAction: 'Yes',
-                secondaryAction: 'No',
-                onConfirm: () {
-                  deleteActivityReply(reply.id).then((err) {
-                    if (err == null) {
-                      ref
-                          .read(activityProvider(activityId).notifier)
-                          .removeReply(reply.id);
-                    } else {
-                      showPopUp(
-                        context,
-                        ConfirmationDialog(
-                          title: 'Could not delete reply',
-                          content: err.toString(),
-                        ),
-                      );
-                    }
-                  });
-                },
-              ),
+        ),
+        GradientSheetButton(
+          text: 'Delete',
+          icon: Ionicons.trash_outline,
+          onTap: () => showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Delete?',
+              mainAction: 'Yes',
+              secondaryAction: 'No',
+              onConfirm: () {
+                deleteActivityReply(reply.id).then((err) {
+                  if (err == null) {
+                    ref
+                        .read(activityProvider(activityId).notifier)
+                        .removeReply(reply.id);
+                  } else {
+                    showPopUp(
+                      context,
+                      ConfirmationDialog(
+                        title: 'Could not delete reply',
+                        content: err.toString(),
+                      ),
+                    );
+                  }
+                });
+              },
             ),
           ),
-        ],
-      ),
+        ),
+      ]),
     );
   }
 }

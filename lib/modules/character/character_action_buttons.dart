@@ -132,7 +132,7 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
             showSheet(
               context,
               GradientSheet([
-                for (int i = 0; i < languages.length; i++) ...[
+                for (int i = 0; i < languages.length; i++)
                   GradientSheetButton(
                     text: languages.elementAt(i),
                     selected: languages.elementAt(i) == language,
@@ -140,7 +140,6 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
                         .read(characterMediaProvider(id).notifier)
                         .changeLanguage(languages.elementAt(i)),
                   ),
-                ]
               ]),
             );
           },

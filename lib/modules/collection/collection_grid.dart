@@ -121,7 +121,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
       onPressed: () async {
         if (item.progressMax != null &&
             item.progress >= item.progressMax! - 1) {
-          showSheet(context, EditView(EditTag(item.mediaId, true)));
+          showSheet(context, EditView((id: item.mediaId, setComplete: true)));
           return;
         }
 

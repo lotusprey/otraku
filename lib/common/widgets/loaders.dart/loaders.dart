@@ -51,18 +51,13 @@ class SliverRefreshControl extends StatelessWidget {
             if (visibility > 1) visibility = 1;
           }
 
-          switch (refreshState) {
-            case RefreshIndicatorMode.drag:
-            case RefreshIndicatorMode.done:
-            case RefreshIndicatorMode.armed:
-            case RefreshIndicatorMode.refresh:
-              return Opacity(
+          return switch (refreshState) {
+            RefreshIndicatorMode.inactive => const SizedBox(),
+            _ => Opacity(
                 opacity: visibility,
                 child: const Center(child: Loader()),
-              );
-            case RefreshIndicatorMode.inactive:
-              return const SizedBox();
-          }
+              ),
+          };
         },
       ),
     );

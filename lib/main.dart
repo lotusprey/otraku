@@ -1,6 +1,5 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/home/home_provider.dart';
@@ -81,9 +80,11 @@ class AppState extends State<App> {
           }
 
           final mode = Options().themeMode;
-          final platform = SchedulerBinding.instance.window.platformBrightness;
+          final platformBrightness =
+              View.of(context).platformDispatcher.platformBrightness;
+
           final isDark = mode == ThemeMode.system
-              ? platform == Brightness.dark
+              ? platformBrightness == Brightness.dark
               : mode == ThemeMode.dark;
 
           final ColorScheme scheme;

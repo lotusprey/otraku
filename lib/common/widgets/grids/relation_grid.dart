@@ -6,43 +6,59 @@ import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 
 class RelationGrid extends StatelessWidget {
-  RelationGrid({
-    required this.items,
-    this.connections = const [],
-  }) : assert(connections.isEmpty || items.length == connections.length);
+  const RelationGrid(this.items);
 
-  final List<Relation> items;
-  final List<Relation?> connections;
+  final List<(Relation, Relation?)> items;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
     return SliverGrid(
-      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: connections.isEmpty ? 240 : 300,
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 300,
         height: 115,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        connections.isNotEmpty
-            ? (context, i) => _RelationTile(items[i], connections[i])
-            : (context, i) => _RelationTile(items[i], null),
+        (context, i) => _RelationTile(items[i].$1, items[i].$2),
+      ),
+    );
+  }
+}
+
+class SingleRelationGrid extends StatelessWidget {
+  const SingleRelationGrid(this.items);
+
+  final List<Relation> items;
+
+  @override
+  Widget build(BuildContext context) {
+    if (items.isEmpty) return const SliverToBoxAdapter();
+
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 240,
+        height: 115,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => _RelationTile(items[i], null),
       ),
     );
   }
 }
 
 class _RelationTile extends StatelessWidget {
-  const _RelationTile(this.item, this.connection);
+  const _RelationTile(this.item, this.secondary);
 
   final Relation item;
-  final Relation? connection;
+  final Relation? secondary;
 
   @override
   Widget build(BuildContext context) {
     late final Widget centerContent;
-    if (connection != null) {
+    if (secondary != null) {
       centerContent = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,24 +92,24 @@ class _RelationTile extends StatelessWidget {
           ),
           const SizedBox(height: 3),
           LinkTile(
-            id: connection!.id,
-            discoverType: connection!.type,
-            info: connection!.imageUrl,
+            id: secondary!.id,
+            discoverType: secondary!.type,
+            info: secondary!.imageUrl,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Flexible(
                   child: Text(
-                    connection!.title,
+                    secondary!.title,
                     maxLines: 2,
                     textAlign: TextAlign.end,
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (connection!.subtitle != null)
+                if (secondary!.subtitle != null)
                   Text(
-                    connection!.subtitle!,
+                    secondary!.subtitle!,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.labelSmall,
@@ -140,15 +156,15 @@ class _RelationTile extends StatelessWidget {
           Expanded(
             child: Padding(padding: Consts.padding, child: centerContent),
           ),
-          if (connection != null)
+          if (secondary != null)
             LinkTile(
-              key: ValueKey(connection!.id),
-              id: connection!.id,
-              discoverType: connection!.type,
-              info: connection!.imageUrl,
+              key: ValueKey(secondary!.id),
+              id: secondary!.id,
+              discoverType: secondary!.type,
+              info: secondary!.imageUrl,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
-                child: CachedImage(connection!.imageUrl, width: 80),
+                child: CachedImage(secondary!.imageUrl, width: 80),
               ),
             ),
         ],

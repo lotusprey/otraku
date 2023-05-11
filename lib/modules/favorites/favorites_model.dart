@@ -18,20 +18,13 @@ class Favorites {
   final AsyncValue<PagedWithTotal<TileItem>> staff;
   final AsyncValue<PagedWithTotal<StudioItem>> studios;
 
-  int getCount(FavoritesTab tab) {
-    switch (tab) {
-      case FavoritesTab.anime:
-        return anime.valueOrNull?.total ?? 0;
-      case FavoritesTab.manga:
-        return manga.valueOrNull?.total ?? 0;
-      case FavoritesTab.characters:
-        return characters.valueOrNull?.total ?? 0;
-      case FavoritesTab.staff:
-        return staff.valueOrNull?.total ?? 0;
-      case FavoritesTab.studios:
-        return studios.valueOrNull?.total ?? 0;
-    }
-  }
+  int getCount(FavoritesTab tab) => switch (tab) {
+        FavoritesTab.anime => anime.valueOrNull?.total ?? 0,
+        FavoritesTab.manga => manga.valueOrNull?.total ?? 0,
+        FavoritesTab.characters => characters.valueOrNull?.total ?? 0,
+        FavoritesTab.staff => staff.valueOrNull?.total ?? 0,
+        FavoritesTab.studios => studios.valueOrNull?.total ?? 0,
+      };
 }
 
 enum FavoritesTab {
@@ -41,18 +34,11 @@ enum FavoritesTab {
   staff,
   studios;
 
-  String get title {
-    switch (this) {
-      case FavoritesTab.anime:
-        return 'Favourite Anime';
-      case FavoritesTab.manga:
-        return 'Favourite Manga';
-      case FavoritesTab.characters:
-        return 'Favourite Characters';
-      case FavoritesTab.staff:
-        return 'Favourite Staff';
-      case FavoritesTab.studios:
-        return 'Favourite Studios';
-    }
-  }
+  String get title => switch (this) {
+        FavoritesTab.anime => 'Favourite Anime',
+        FavoritesTab.manga => 'Favourite Manga',
+        FavoritesTab.characters => 'Favourite Characters',
+        FavoritesTab.staff => 'Favourite Staff',
+        FavoritesTab.studios => 'Favourite Studios',
+      };
 }

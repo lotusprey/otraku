@@ -42,7 +42,7 @@ class _CollectionViewState extends State<CollectionView> {
 
   @override
   Widget build(BuildContext context) {
-    final tag = CollectionTag(widget.userId, widget.ofAnime);
+    final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
 
     return PageScaffold(
       child: Consumer(

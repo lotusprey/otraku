@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/media/media_providers.dart';
@@ -28,7 +27,7 @@ class _MediaEditButtonState extends State<MediaEditButton> {
       onTap: () => showSheet(
         context,
         EditView(
-          EditTag(media.info.id),
+          (id: media.info.id, setComplete: false),
           callback: (edit) => setState(() => media.edit = edit),
         ),
       ),

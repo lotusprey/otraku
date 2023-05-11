@@ -11,26 +11,18 @@ class Social {
   final AsyncValue<PagedWithTotal<UserItem>> following;
   final AsyncValue<PagedWithTotal<UserItem>> followers;
 
-  int getCount(SocialTab tab) {
-    switch (tab) {
-      case SocialTab.following:
-        return following.valueOrNull?.total ?? 0;
-      case SocialTab.followers:
-        return followers.valueOrNull?.total ?? 0;
-    }
-  }
+  int getCount(SocialTab tab) => switch (tab) {
+        SocialTab.following => following.valueOrNull?.total ?? 0,
+        SocialTab.followers => followers.valueOrNull?.total ?? 0,
+      };
 }
 
 enum SocialTab {
   following,
   followers;
 
-  String get title {
-    switch (this) {
-      case SocialTab.following:
-        return 'Following';
-      case SocialTab.followers:
-        return 'Followers';
-    }
-  }
+  String get title => switch (this) {
+        SocialTab.following => 'Following',
+        SocialTab.followers => 'Followers',
+      };
 }

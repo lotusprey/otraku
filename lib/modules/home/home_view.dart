@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
-import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_view.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
@@ -42,8 +41,8 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView> {
   late final _ctrl = PagedController(loadMore: _scrollListener);
-  late final animeCollectionTag = CollectionTag(widget.id, true);
-  late final mangaCollectionTag = CollectionTag(widget.id, false);
+  late final animeCollectionTag = (userId: widget.id, ofAnime: true);
+  late final mangaCollectionTag = (userId: widget.id, ofAnime: false);
 
   @override
   void dispose() {
@@ -90,29 +89,21 @@ class _HomeViewState extends ConsumerState<HomeView> {
     ref.watch(userProvider(widget.id).select((_) => null));
     final discoverType =
         ref.watch(discoverFilterProvider.select((s) => s.type));
-    switch (discoverType) {
-      case DiscoverType.anime:
-        ref.watch(discoverAnimeProvider.select((_) => null));
-        break;
-      case DiscoverType.manga:
-        ref.watch(discoverMangaProvider.select((_) => null));
-        break;
-      case DiscoverType.character:
-        ref.watch(discoverCharacterProvider.select((_) => null));
-        break;
-      case DiscoverType.staff:
-        ref.watch(discoverStaffProvider.select((_) => null));
-        break;
-      case DiscoverType.studio:
-        ref.watch(discoverStudioProvider.select((_) => null));
-        break;
-      case DiscoverType.user:
-        ref.watch(discoverUserProvider.select((_) => null));
-        break;
-      case DiscoverType.review:
-        ref.watch(discoverReviewProvider.select((_) => null));
-        break;
-    }
+    (switch (discoverType) {
+      DiscoverType.anime =>
+        ref.watch(discoverAnimeProvider.select((_) => null)),
+      DiscoverType.manga =>
+        ref.watch(discoverMangaProvider.select((_) => null)),
+      DiscoverType.character =>
+        ref.watch(discoverCharacterProvider.select((_) => null)),
+      DiscoverType.staff =>
+        ref.watch(discoverStaffProvider.select((_) => null)),
+      DiscoverType.studio =>
+        ref.watch(discoverStudioProvider.select((_) => null)),
+      DiscoverType.user => ref.watch(discoverUserProvider.select((_) => null)),
+      DiscoverType.review =>
+        ref.watch(discoverReviewProvider.select((_) => null)),
+    });
 
     final notifier = ref.watch(homeProvider);
 

@@ -59,9 +59,9 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
       variables['withCharacters'] = true;
       variables['withRoles'] = true;
     } else if (onCharacters) {
-      if (!(state.characters.valueOrNull?.hasNext ?? true)) return;
+      if (!(state.charactersAndMedia.valueOrNull?.hasNext ?? true)) return;
       variables['withCharacters'] = true;
-      variables['page'] = state.characters.valueOrNull?.next ?? 1;
+      variables['page'] = state.charactersAndMedia.valueOrNull?.next ?? 1;
     } else {
       if (!(state.roles.valueOrNull?.hasNext ?? true)) return;
       variables['withRoles'] = true;
@@ -73,17 +73,16 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
       return data['Staff'];
     });
 
-    var characters = state.characters;
+    var charactersAndMedia = state.charactersAndMedia;
     var roles = state.roles;
-    var characterMedia = [...state.characterMedia];
 
     if (onCharacters == null || onCharacters) {
-      characters = await AsyncValue.guard(() {
+      charactersAndMedia = await AsyncValue.guard(() {
         if (data.hasError) throw data.error!;
         final map = data.value!['characterMedia'];
-        final value = characters.valueOrNull ?? const Paged();
+        final value = charactersAndMedia.valueOrNull ?? const Paged();
 
-        final items = <Relation>[];
+        final items = <(Relation, Relation)>[];
         for (final m in map['edges']) {
           final media = Relation(
             id: m['node']['id'],
@@ -98,14 +97,15 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
           for (final c in m['characters']) {
             if (c == null) continue;
 
-            characterMedia.add(media);
-
-            items.add(Relation(
-              id: c['id'],
-              title: c['name']['userPreferred'],
-              imageUrl: c['image']['large'],
-              type: DiscoverType.character,
-              subtitle: Convert.clarifyEnum(m['characterRole']),
+            items.add((
+              Relation(
+                id: c['id'],
+                title: c['name']['userPreferred'],
+                imageUrl: c['image']['large'],
+                type: DiscoverType.character,
+                subtitle: Convert.clarifyEnum(m['characterRole']),
+              ),
+              media,
             ));
           }
         }
@@ -144,9 +144,8 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
     }
 
     state = StaffRelations(
-      characters: characters,
+      charactersAndMedia: charactersAndMedia,
       roles: roles,
-      characterMedia: characterMedia,
     );
   }
 }

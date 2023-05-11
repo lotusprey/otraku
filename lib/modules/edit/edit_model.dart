@@ -2,6 +2,8 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/convert.dart';
 
+typedef EditTag = ({int id, bool setComplete});
+
 class Edit {
   Edit._({
     required this.mediaId,

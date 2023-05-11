@@ -196,24 +196,19 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
               );
 
               if (mediaRelations.languages.isEmpty) {
-                return RelationGrid(items: data.items);
+                return SingleRelationGrid(data.items);
               }
 
-              final characters = <Relation>[];
-              final voiceActors = <Relation?>[];
-              mediaRelations.getCharactersAndVoiceActors(
-                characters,
-                voiceActors,
+              return RelationGrid(
+                mediaRelations.getCharactersAndVoiceActors(),
               );
-
-              return RelationGrid(items: characters, connections: voiceActors);
             },
           ),
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
             provider: mediaRelationsProvider(widget.id).select((s) => s.staff),
-            onData: (data) => RelationGrid(items: data.items),
+            onData: (data) => SingleRelationGrid(data.items),
             scrollCtrl: _scrollCtrl,
             onRefresh: () => _refresh(ref),
           ),

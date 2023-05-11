@@ -15,31 +15,17 @@ import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 
 /// Fetches another page on the discover tab, depending on the selected type.
-void discoverLoadMore(WidgetRef ref) {
-  switch (ref.read(discoverFilterProvider).type) {
-    case DiscoverType.anime:
-      ref.read(discoverAnimeProvider.notifier).fetch();
-      return;
-    case DiscoverType.manga:
-      ref.read(discoverMangaProvider.notifier).fetch();
-      return;
-    case DiscoverType.character:
-      ref.read(discoverCharacterProvider.notifier).fetch();
-      return;
-    case DiscoverType.staff:
-      ref.read(discoverStaffProvider.notifier).fetch();
-      return;
-    case DiscoverType.studio:
-      ref.read(discoverStudioProvider.notifier).fetch();
-      return;
-    case DiscoverType.user:
-      ref.read(discoverUserProvider.notifier).fetch();
-      return;
-    case DiscoverType.review:
-      ref.read(discoverReviewProvider.notifier).fetch();
-      return;
-  }
-}
+void discoverLoadMore(WidgetRef ref) =>
+    switch (ref.read(discoverFilterProvider).type) {
+      DiscoverType.anime => ref.read(discoverAnimeProvider.notifier).fetch(),
+      DiscoverType.manga => ref.read(discoverMangaProvider.notifier).fetch(),
+      DiscoverType.character =>
+        ref.read(discoverCharacterProvider.notifier).fetch(),
+      DiscoverType.staff => ref.read(discoverStaffProvider.notifier).fetch(),
+      DiscoverType.studio => ref.read(discoverStudioProvider.notifier).fetch(),
+      DiscoverType.user => ref.read(discoverUserProvider.notifier).fetch(),
+      DiscoverType.review => ref.read(discoverReviewProvider.notifier).fetch(),
+    };
 
 final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
 

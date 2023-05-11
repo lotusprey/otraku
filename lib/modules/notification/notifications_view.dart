@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/notification/notification_model.dart';
@@ -142,7 +141,10 @@ class _NotificationItem extends StatelessWidget {
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(EditTag(item.headId!)));
+                        showSheet(
+                          context,
+                          EditView((id: item.headId!, setComplete: false)),
+                        );
                       }
                     },
                     child: ClipRRect(
@@ -155,79 +157,65 @@ class _NotificationItem extends StatelessWidget {
                 Flexible(
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      switch (item.type) {
-                        case NotificationType.ACTIVITY_LIKE:
-                        case NotificationType.ACTIVITY_MENTION:
-                        case NotificationType.ACTIVITY_MESSAGE:
-                        case NotificationType.ACTIVITY_REPLY:
-                        case NotificationType.ACTIVITY_REPLY_LIKE:
-                        case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-                          Navigator.pushNamed(
-                            context,
-                            RouteArg.activity,
-                            arguments: RouteArg(id: item.bodyId),
-                          );
-                          return;
-                        case NotificationType.FOLLOWING:
-                          LinkTile.openView(
-                            context: context,
-                            id: item.headId!,
-                            imageUrl: item.imageUrl,
-                            discoverType: DiscoverType.user,
-                          );
-                          return;
-                        case NotificationType.AIRING:
-                        case NotificationType.RELATED_MEDIA_ADDITION:
-                          LinkTile.openView(
-                            context: context,
-                            id: item.bodyId!,
-                            imageUrl: item.imageUrl,
-                            discoverType: item.discoverType!,
-                          );
-                          return;
-                        case NotificationType.MEDIA_DATA_CHANGE:
-                        case NotificationType.MEDIA_MERGE:
-                        case NotificationType.MEDIA_DELETION:
-                          showPopUp(context, _NotificationDialog(item));
-                          return;
-                        case NotificationType.THREAD_LIKE:
-                        case NotificationType.THREAD_SUBSCRIBED:
-                        case NotificationType.THREAD_COMMENT_LIKE:
-                        case NotificationType.THREAD_COMMENT_REPLY:
-                        case NotificationType.THREAD_COMMENT_MENTION:
-                          showPopUp(
-                            context,
-                            ConfirmationDialog(
-                              title: 'Forum is not yet supported',
-                              content: 'Open in browser?',
-                              mainAction: 'Open',
-                              secondaryAction: 'Cancel',
-                              onConfirm: () {
-                                if (item.details == null) {
-                                  Toast.show(context, 'Invalid Link');
-                                  return;
-                                }
-                                Toast.launch(context, item.details!);
-                              },
-                            ),
-                          );
-                          return;
-                        default:
-                          showPopUp(
-                            context,
-                            ConfirmationDialog(
-                              title: 'Unknown action',
-                              content: item.type.name,
-                            ),
-                          );
-                          return;
-                      }
+                    onTap: () => switch (item.type) {
+                      NotificationType.ACTIVITY_LIKE ||
+                      NotificationType.ACTIVITY_MENTION ||
+                      NotificationType.ACTIVITY_MESSAGE ||
+                      NotificationType.ACTIVITY_REPLY ||
+                      NotificationType.ACTIVITY_REPLY_LIKE ||
+                      NotificationType.ACTIVITY_REPLY_SUBSCRIBED =>
+                        Navigator.pushNamed(
+                          context,
+                          RouteArg.activity,
+                          arguments: RouteArg(id: item.bodyId),
+                        ),
+                      NotificationType.FOLLOWING => LinkTile.openView(
+                          context: context,
+                          id: item.headId!,
+                          imageUrl: item.imageUrl,
+                          discoverType: DiscoverType.user,
+                        ),
+                      NotificationType.AIRING ||
+                      NotificationType.RELATED_MEDIA_ADDITION =>
+                        LinkTile.openView(
+                          context: context,
+                          id: item.bodyId!,
+                          imageUrl: item.imageUrl,
+                          discoverType: item.discoverType!,
+                        ),
+                      NotificationType.MEDIA_DATA_CHANGE ||
+                      NotificationType.MEDIA_MERGE ||
+                      NotificationType.MEDIA_DELETION =>
+                        showPopUp(context, _NotificationDialog(item)),
+                      NotificationType.THREAD_LIKE ||
+                      NotificationType.THREAD_SUBSCRIBED ||
+                      NotificationType.THREAD_COMMENT_LIKE ||
+                      NotificationType.THREAD_COMMENT_REPLY ||
+                      NotificationType.THREAD_COMMENT_MENTION =>
+                        showPopUp(
+                          context,
+                          ConfirmationDialog(
+                            title: 'Forum is not yet supported',
+                            content: 'Open in browser?',
+                            mainAction: 'Open',
+                            secondaryAction: 'Cancel',
+                            onConfirm: () {
+                              if (item.details == null) {
+                                Toast.show(context, 'Invalid Link');
+                                return;
+                              }
+                              Toast.launch(context, item.details!);
+                            },
+                          ),
+                        ),
                     },
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.anime ||
                           item.discoverType == DiscoverType.manga) {
-                        showSheet(context, EditView(EditTag(item.headId!)));
+                        showSheet(
+                          context,
+                          EditView((id: item.headId!, setComplete: false)),
+                        );
                       }
                     },
                     child: Padding(

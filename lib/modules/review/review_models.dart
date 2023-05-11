@@ -118,16 +118,10 @@ enum ReviewSort {
   RATING_DESC,
   RATING;
 
-  String get text {
-    switch (this) {
-      case ReviewSort.CREATED_AT:
-        return 'Oldest';
-      case ReviewSort.CREATED_AT_DESC:
-        return 'Newest';
-      case ReviewSort.RATING:
-        return 'Lowest Rated';
-      case ReviewSort.RATING_DESC:
-        return 'Highest Rated';
-    }
-  }
+  String get text => switch (this) {
+        ReviewSort.CREATED_AT => 'Oldest',
+        ReviewSort.CREATED_AT_DESC => 'Newest',
+        ReviewSort.RATING => 'Lowest Rated',
+        ReviewSort.RATING_DESC => 'Highest Rated',
+      };
 }

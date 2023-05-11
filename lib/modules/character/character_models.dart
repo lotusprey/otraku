@@ -103,37 +103,29 @@ class CharacterMedia {
 
   Iterable<String> get languages => languageToVoiceActors.keys;
 
-  /// Fill [resultingMedia] and [resultingVoiceActors] lists, based on the
-  /// currently selected [language]. The lists must end up with equal length
-  /// or if an incorrect [language] is selected, [resultingVoiceActors] should
-  /// be empty. If there are multiple VAs for a media, add the corresponding
-  /// media item in [resultingMedia] enough times to compensate. If there are no
-  /// VAs to a media, compensate with one `null` item in [resultingVoiceActors].
-  void getAnimeAndVoiceActors(
-    List<Relation> resultingMedia,
-    List<Relation?> resultingVoiceActors,
-  ) {
+  /// Returns the media, in which the character has participated,
+  /// along with the voice actors, corresponding to the current [language].
+  /// If there are multiple actors, the given media is repeated for each actor.
+  List<(Relation, Relation?)> getAnimeAndVoiceActors() {
     final anime = this.anime.valueOrNull?.items;
-    if (anime == null || anime.isEmpty) return;
+    if (anime == null || anime.isEmpty) return [];
 
     final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) {
-      resultingMedia.addAll(anime);
-      return;
-    }
+    if (actorsPerMedia == null) return [for (final a in anime) (a, null)];
 
+    final animeAndVoiceActors = <(Relation, Relation?)>[];
     for (final a in anime) {
       final actors = actorsPerMedia[a.id];
       if (actors == null || actors.isEmpty) {
-        resultingMedia.add(a);
-        resultingVoiceActors.add(null);
+        animeAndVoiceActors.add((a, null));
         continue;
       }
 
       for (final va in actors) {
-        resultingMedia.add(a);
-        resultingVoiceActors.add(va);
+        animeAndVoiceActors.add((a, va));
       }
     }
+
+    return animeAndVoiceActors;
   }
 }

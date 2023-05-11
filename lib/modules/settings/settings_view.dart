@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
@@ -50,12 +49,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
         if (prev?.scoreFormat != next.scoreFormat ||
             prev?.titleLanguage != next.titleLanguage) {
-          ref.invalidate(collectionProvider(CollectionTag(id, true)));
-          ref.invalidate(collectionProvider(CollectionTag(id, false)));
+          ref.invalidate(collectionProvider((userId: id, ofAnime: true)));
+          ref.invalidate(collectionProvider((userId: id, ofAnime: false)));
         } else if (prev?.splitCompletedAnime != next.splitCompletedAnime) {
-          ref.invalidate(collectionProvider(CollectionTag(id, true)));
+          ref.invalidate(collectionProvider((userId: id, ofAnime: true)));
         } else if (prev?.splitCompletedManga != next.splitCompletedManga) {
-          ref.invalidate(collectionProvider(CollectionTag(id, false)));
+          ref.invalidate(collectionProvider((userId: id, ofAnime: false)));
         }
       },
     );

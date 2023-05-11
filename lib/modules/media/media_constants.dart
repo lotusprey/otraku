@@ -123,34 +123,20 @@ enum EntrySort {
   ];
 
   /// Format as an API row order.
-  String toRowOrder() {
-    switch (this) {
-      case EntrySort.SCORE_DESC:
-        return 'score';
-      case EntrySort.UPDATED_DESC:
-        return 'updatedAt';
-      case EntrySort.ADDED_DESC:
-        return 'id';
-      case EntrySort.TITLE:
-        return 'title';
-      default:
-        return 'title';
-    }
-  }
+  String toRowOrder() => switch (this) {
+        EntrySort.SCORE_DESC => 'score',
+        EntrySort.UPDATED_DESC => 'updatedAt',
+        EntrySort.ADDED_DESC => 'id',
+        EntrySort.TITLE => 'title',
+        _ => 'title',
+      };
 
   /// Translate API row order to general sorting.
-  static EntrySort fromRowOrder(String key) {
-    switch (key) {
-      case 'score':
-        return EntrySort.SCORE_DESC;
-      case 'updatedAt':
-        return EntrySort.UPDATED_DESC;
-      case 'id':
-        return EntrySort.ADDED_DESC;
-      case 'title':
-        return EntrySort.TITLE;
-      default:
-        return EntrySort.TITLE;
-    }
-  }
+  static EntrySort fromRowOrder(String key) => switch (key) {
+        'score' => EntrySort.SCORE_DESC,
+        'updatedAt' => EntrySort.UPDATED_DESC,
+        'id' => EntrySort.ADDED_DESC,
+        'title' => EntrySort.TITLE,
+        _ => EntrySort.TITLE,
+      };
 }

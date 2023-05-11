@@ -56,19 +56,6 @@ Future<Object?> removeEntry(int entryId) async {
   }
 }
 
-class EditTag {
-  const EditTag(this.id, [this.setComplete = false]);
-
-  final int id;
-  final bool setComplete;
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  bool operator ==(Object other) => hashCode == other.hashCode;
-}
-
 final oldEditProvider = FutureProvider.autoDispose.family(
   (ref, EditTag tag) async {
     if (ref.exists(mediaProvider(tag.id))) {

@@ -15,50 +15,41 @@ enum NotificationFilterType {
 
   final String text;
 
-  List<String>? get vars {
-    switch (this) {
-      case NotificationFilterType.all:
-        return null;
-      case NotificationFilterType.replies:
-        return const [
-          'ACTIVITY_MESSAGE',
-          'ACTIVITY_REPLY',
-          'ACTIVITY_REPLY_SUBSCRIBED',
-          'ACTIVITY_MENTION',
-          'THREAD_COMMENT_REPLY',
-          'THREAD_COMMENT_MENTION',
-          'THREAD_SUBSCRIBED',
-        ];
-      case NotificationFilterType.activity:
-        return const [
-          'ACTIVITY_MESSAGE',
-          'ACTIVITY_REPLY',
-          'ACTIVITY_REPLY_SUBSCRIBED',
-          'ACTIVITY_MENTION',
-          'ACTIVITY_LIKE',
-          'ACTIVITY_REPLY_LIKE',
-        ];
-      case NotificationFilterType.forum:
-        return const [
-          'THREAD_COMMENT_REPLY',
-          'THREAD_COMMENT_MENTION',
-          'THREAD_SUBSCRIBED',
-          'THREAD_LIKE',
-          'THREAD_COMMENT_LIKE',
-        ];
-      case NotificationFilterType.airing:
-        return const ['AIRING'];
-      case NotificationFilterType.follows:
-        return const ['FOLLOWING'];
-      case NotificationFilterType.media:
-        return const [
-          'RELATED_MEDIA_ADDITION',
-          'MEDIA_DATA_CHANGE',
-          'MEDIA_MERGE',
-          'MEDIA_DELETION',
-        ];
-    }
-  }
+  List<String>? get vars => switch (this) {
+        NotificationFilterType.all => null,
+        NotificationFilterType.replies => const [
+            'ACTIVITY_MESSAGE',
+            'ACTIVITY_REPLY',
+            'ACTIVITY_REPLY_SUBSCRIBED',
+            'ACTIVITY_MENTION',
+            'THREAD_COMMENT_REPLY',
+            'THREAD_COMMENT_MENTION',
+            'THREAD_SUBSCRIBED',
+          ],
+        NotificationFilterType.activity => const [
+            'ACTIVITY_MESSAGE',
+            'ACTIVITY_REPLY',
+            'ACTIVITY_REPLY_SUBSCRIBED',
+            'ACTIVITY_MENTION',
+            'ACTIVITY_LIKE',
+            'ACTIVITY_REPLY_LIKE',
+          ],
+        NotificationFilterType.forum => const [
+            'THREAD_COMMENT_REPLY',
+            'THREAD_COMMENT_MENTION',
+            'THREAD_SUBSCRIBED',
+            'THREAD_LIKE',
+            'THREAD_COMMENT_LIKE',
+          ],
+        NotificationFilterType.airing => const ['AIRING'],
+        NotificationFilterType.follows => const ['FOLLOWING'],
+        NotificationFilterType.media => const [
+            'RELATED_MEDIA_ADDITION',
+            'MEDIA_DATA_CHANGE',
+            'MEDIA_MERGE',
+            'MEDIA_DELETION',
+          ],
+      };
 }
 
 class SiteNotification {

@@ -105,12 +105,10 @@ class StaffFilter {
 
 class StaffRelations {
   const StaffRelations({
-    this.characters = const AsyncValue.loading(),
+    this.charactersAndMedia = const AsyncValue.loading(),
     this.roles = const AsyncValue.loading(),
-    this.characterMedia = const [],
   });
 
-  final AsyncValue<Paged<Relation>> characters;
+  final AsyncValue<Paged<(Relation, Relation)>> charactersAndMedia;
   final AsyncValue<Paged<Relation>> roles;
-  final List<Relation> characterMedia;
 }

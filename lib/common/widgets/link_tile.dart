@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
@@ -19,36 +18,22 @@ class LinkTile extends StatelessWidget {
   final String? info;
   final Widget child;
 
-  static void openView({
+  static Future<Object?> openView({
     required BuildContext context,
     required DiscoverType discoverType,
     required int id,
     required String? imageUrl,
   }) {
-    String route = '';
-    switch (discoverType) {
-      case DiscoverType.anime:
-      case DiscoverType.manga:
-        route = RouteArg.media;
-        break;
-      case DiscoverType.character:
-        route = RouteArg.character;
-        break;
-      case DiscoverType.staff:
-        route = RouteArg.staff;
-        break;
-      case DiscoverType.studio:
-        route = RouteArg.studio;
-        break;
-      case DiscoverType.user:
-        route = RouteArg.user;
-        break;
-      case DiscoverType.review:
-        route = RouteArg.review;
-        break;
-    }
+    final route = switch (discoverType) {
+      DiscoverType.anime || DiscoverType.manga => RouteArg.media,
+      DiscoverType.character => RouteArg.character,
+      DiscoverType.staff => RouteArg.staff,
+      DiscoverType.studio => RouteArg.studio,
+      DiscoverType.user => RouteArg.user,
+      DiscoverType.review => RouteArg.review,
+    };
 
-    Navigator.pushNamed(
+    return Navigator.pushNamed(
       context,
       route,
       arguments: RouteArg(id: id, info: imageUrl),
@@ -68,7 +53,7 @@ class LinkTile extends StatelessWidget {
       onLongPress: () {
         if (discoverType == DiscoverType.anime ||
             discoverType == DiscoverType.manga) {
-          showSheet(context, EditView(EditTag(id)));
+          showSheet(context, EditView((id: id, setComplete: false)));
         }
       },
       child: child,

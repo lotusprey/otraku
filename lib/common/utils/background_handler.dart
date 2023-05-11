@@ -139,125 +139,96 @@ void _fetch() => Workmanager().executeTask((_, __) async {
         final notification = SiteNotification.maybe(ns[i]);
         if (notification == null) continue;
 
-        switch (notification.type) {
-          case NotificationType.FOLLOWING:
-            _show(
+        (switch (notification.type) {
+          NotificationType.FOLLOWING => _show(
               notification,
               'New Follow',
               '${RouteArg.user}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.ACTIVITY_MESSAGE:
-            _show(
+            ),
+          NotificationType.ACTIVITY_MESSAGE => _show(
               notification,
               'New Message',
               '${RouteArg.activity}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.ACTIVITY_REPLY:
-          case NotificationType.ACTIVITY_REPLY_SUBSCRIBED:
-            _show(
+            ),
+          NotificationType.ACTIVITY_REPLY => _show(
               notification,
               'New Reply',
               '${RouteArg.activity}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.ACTIVITY_MENTION:
-            _show(
+            ),
+          NotificationType.ACTIVITY_REPLY_SUBSCRIBED => _show(
+              notification,
+              'New Reply To Subscription',
+              '${RouteArg.activity}/${notification.bodyId}',
+            ),
+          NotificationType.ACTIVITY_MENTION => _show(
               notification,
               'New Mention',
               '${RouteArg.activity}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.ACTIVITY_LIKE:
-            _show(
+            ),
+          NotificationType.ACTIVITY_LIKE => _show(
               notification,
               'New Activity Like',
               '${RouteArg.activity}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.ACTIVITY_REPLY_LIKE:
-            _show(
+            ),
+          NotificationType.ACTIVITY_REPLY_LIKE => _show(
               notification,
               'New Reply Like',
               '${RouteArg.activity}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.THREAD_COMMENT_REPLY:
-            _show(
+            ),
+          NotificationType.THREAD_COMMENT_REPLY => _show(
               notification,
               'New Forum Reply',
               '${RouteArg.thread}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.THREAD_COMMENT_MENTION:
-            _show(
+            ),
+          NotificationType.THREAD_COMMENT_MENTION => _show(
               notification,
               'New Forum Mention',
               '${RouteArg.thread}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.THREAD_SUBSCRIBED:
-            _show(
+            ),
+          NotificationType.THREAD_SUBSCRIBED => _show(
               notification,
               'New Forum Comment',
               '${RouteArg.thread}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.THREAD_LIKE:
-            _show(
+            ),
+          NotificationType.THREAD_LIKE => _show(
               notification,
               'New Forum Like',
               '${RouteArg.thread}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.THREAD_COMMENT_LIKE:
-            _show(
+            ),
+          NotificationType.THREAD_COMMENT_LIKE => _show(
               notification,
               'New Forum Comment Like',
               '${RouteArg.thread}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.AIRING:
-            _show(
+            ),
+          NotificationType.AIRING => _show(
               notification,
               'New Episode',
               '${RouteArg.media}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.RELATED_MEDIA_ADDITION:
-            _show(
+            ),
+          NotificationType.RELATED_MEDIA_ADDITION => _show(
               notification,
               'New Addition',
               '${RouteArg.media}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.MEDIA_DATA_CHANGE:
-            _show(
+            ),
+          NotificationType.MEDIA_DATA_CHANGE => _show(
               notification,
               'Modified Media',
               '${RouteArg.media}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.MEDIA_MERGE:
-            _show(
+            ),
+          NotificationType.MEDIA_MERGE => _show(
               notification,
               'Merged Media',
               '${RouteArg.media}/${notification.bodyId}',
-            );
-            break;
-          case NotificationType.MEDIA_DELETION:
-            _show(notification, 'Deleted Media', '');
-            break;
-          default:
-            break;
-        }
+            ),
+          NotificationType.MEDIA_DELETION =>
+            _show(notification, 'Deleted Media', ''),
+        });
       }
 
       return true;
     });
 
-void _show(SiteNotification notification, String title, String payload) {
+() _show(SiteNotification notification, String title, String payload) {
   _notificationPlugin.show(
     notification.id,
     title,
@@ -272,4 +243,5 @@ void _show(SiteNotification notification, String title, String payload) {
     ),
     payload: payload,
   );
+  return ();
 }

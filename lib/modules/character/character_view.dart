@@ -96,13 +96,11 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
               provider:
                   characterMediaProvider(widget.id).select((s) => s.anime),
               onData: (data) {
-                final anime = <Relation>[];
-                final voiceActors = <Relation?>[];
-                ref
-                    .watch(characterMediaProvider(widget.id))
-                    .getAnimeAndVoiceActors(anime, voiceActors);
-
-                return RelationGrid(items: anime, connections: voiceActors);
+                return RelationGrid(
+                  ref
+                      .watch(characterMediaProvider(widget.id))
+                      .getAnimeAndVoiceActors(),
+                );
               },
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
@@ -110,7 +108,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
             PagedView<Relation>(
               provider:
                   characterMediaProvider(widget.id).select((s) => s.manga),
-              onData: (data) => RelationGrid(items: data.items),
+              onData: (data) => SingleRelationGrid(data.items),
               scrollCtrl: _ctrl,
               onRefresh: onRefresh,
             ),

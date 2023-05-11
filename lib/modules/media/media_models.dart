@@ -59,32 +59,30 @@ class MediaRelations {
 
   Iterable<String> get languages => languageToVoiceActors.keys;
 
-  void getCharactersAndVoiceActors(
-    List<Relation> resultingCharacters,
-    List<Relation?> resultingVoiceActors,
-  ) {
+  /// Returns the characters, along with their voice actors,
+  /// corresponding to the current [language]. If there are
+  /// multiple actors, the given character is repeated for each actor.
+  List<(Relation, Relation?)> getCharactersAndVoiceActors() {
     final chars = characters.valueOrNull?.items;
-    if (chars == null) return;
+    if (chars == null) return [];
 
     final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) {
-      resultingCharacters.addAll(chars);
-      return;
-    }
+    if (actorsPerMedia == null) return [for (final c in chars) (c, null)];
 
+    final charactersAndVoiceActors = <(Relation, Relation?)>[];
     for (final c in chars) {
       final actors = actorsPerMedia[c.id];
       if (actors == null || actors.isEmpty) {
-        resultingCharacters.add(c);
-        resultingVoiceActors.add(null);
+        charactersAndVoiceActors.add((c, null));
         continue;
       }
 
       for (final va in actors) {
-        resultingCharacters.add(c);
-        resultingVoiceActors.add(va);
+        charactersAndVoiceActors.add((c, va));
       }
     }
+
+    return charactersAndVoiceActors;
   }
 }
 

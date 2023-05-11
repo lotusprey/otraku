@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
@@ -20,18 +21,14 @@ class ScoreField extends StatelessWidget {
             .read(newEditProvider(tag).notifier)
             .update((s) => s.copyWith(score: v));
 
-        switch (ref.watch(settingsProvider.notifier).value.scoreFormat) {
-          case ScoreFormat.POINT_3:
-            return _SmileyScorePicker(score, onChanged);
-          case ScoreFormat.POINT_5:
-            return _StarScorePicker(score, onChanged);
-          case ScoreFormat.POINT_10:
-            return _TenScorePicker(score, onChanged);
-          case ScoreFormat.POINT_10_DECIMAL:
-            return _TenDecimalScorePicker(score, onChanged);
-          default:
-            return _HundredScorePicker(score, onChanged);
-        }
+        return switch (ref.watch(settingsProvider.notifier).value.scoreFormat) {
+          ScoreFormat.POINT_3 => _SmileyScorePicker(score, onChanged),
+          ScoreFormat.POINT_5 => _StarScorePicker(score, onChanged),
+          ScoreFormat.POINT_10 => _TenScorePicker(score, onChanged),
+          ScoreFormat.POINT_10_DECIMAL =>
+            _TenDecimalScorePicker(score, onChanged),
+          ScoreFormat.POINT_100 => _HundredScorePicker(score, onChanged),
+        };
       },
     );
   }

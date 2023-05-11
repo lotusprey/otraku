@@ -57,7 +57,7 @@ class _EditButtonsState extends State<EditButtons> {
                   }
 
                   final ofAnime = newEdit.type == 'ANIME';
-                  final tag = CollectionTag(Options().id!, ofAnime);
+                  final tag = (userId: Options().id!, ofAnime: ofAnime);
 
                   if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
                     await ref.read(collectionProvider(tag)).updateEntry(
@@ -123,7 +123,7 @@ class _EditButtonsState extends State<EditButtons> {
                       }
 
                       final ofAnime = oldEdit.type == 'ANIME';
-                      final tag = CollectionTag(Options().id!, ofAnime);
+                      final tag = (userId: Options().id!, ofAnime: ofAnime);
 
                       if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
                         ref.read(collectionProvider(tag)).removeEntry(oldEdit);

@@ -33,8 +33,7 @@ class DiscoverView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final onRefresh = () {
-      final type = ref.read(discoverFilterProvider).type;
-      switch (type) {
+      switch (ref.read(discoverFilterProvider).type) {
         case DiscoverType.anime:
           ref.invalidate(discoverAnimeProvider);
           return;

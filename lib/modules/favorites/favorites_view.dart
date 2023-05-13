@@ -10,7 +10,6 @@ import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
@@ -23,34 +22,46 @@ class FavoritesView extends ConsumerStatefulWidget {
   ConsumerState<FavoritesView> createState() => _FavoritesViewState();
 }
 
-class _FavoritesViewState extends ConsumerState<FavoritesView> {
-  FavoritesTab _tab = FavoritesTab.anime;
-  late final _ctrl = PagedController(
-    loadMore: () => ref.read(favoritesProvider(widget.id).notifier).fetch(_tab),
+class _FavoritesViewState extends ConsumerState<FavoritesView>
+    with SingleTickerProviderStateMixin {
+  late final _tabCtrl = TabController(
+    length: FavoritesTab.values.length,
+    vsync: this,
+  );
+  late final _scrollCtrl = PagedController(
+    loadMore: () => ref
+        .read(favoritesProvider(widget.id).notifier)
+        .fetch(FavoritesTab.values[_tabCtrl.index]),
   );
 
   @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final tab = FavoritesTab.values[_tabCtrl.index];
+
     final count = ref.watch(
-      favoritesProvider(widget.id).select((s) => s.getCount(_tab)),
+      favoritesProvider(widget.id).select((s) => s.getCount(tab)),
     );
 
     final onRefresh = () => ref.invalidate(favoritesProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomNavBar(
-        current: _tab.index,
-        onChanged: (page) {
-          setState(() => _tab = FavoritesTab.values.elementAt(page));
-          _ctrl.scrollToTop();
-        },
-        onSame: (_) => _ctrl.scrollToTop(),
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
           'Manga': Ionicons.bookmark_outline,
@@ -61,7 +72,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
       ),
       child: TabScaffold(
         topBar: TopBar(
-          title: _tab.title,
+          title: tab.title,
           trailing: [
             if (count > 0)
               Padding(
@@ -73,22 +84,19 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
               ),
           ],
         ),
-        child: DirectPageView(
-          current: _tab.index,
-          onChanged: (page) => setState(
-            () => _tab = FavoritesTab.values.elementAt(page),
-          ),
+        child: TabBarView(
+          controller: _tabCtrl,
           children: [
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.anime),
               onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.manga),
               onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<TileItem>(
@@ -96,19 +104,19 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> {
                 (s) => s.characters,
               ),
               onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select((s) => s.staff),
               onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<StudioItem>(
               provider: favoritesProvider(widget.id).select((s) => s.studios),
               onData: (data) => StudioGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
           ],

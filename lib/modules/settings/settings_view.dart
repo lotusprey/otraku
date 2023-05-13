@@ -12,7 +12,6 @@ import 'package:otraku/modules/settings/settings_about_tab.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 
@@ -23,15 +22,23 @@ class SettingsView extends ConsumerStatefulWidget {
   ConsumerState<SettingsView> createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends ConsumerState<SettingsView> {
+class _SettingsViewState extends ConsumerState<SettingsView>
+    with SingleTickerProviderStateMixin {
   late var _settings = ref.read(settingsProvider).whenData((v) => v.copy());
-  final _ctrl = ScrollController();
+  late final _tabCtrl = TabController(length: 4, vsync: this);
+  final _scrollCtrl = ScrollController();
   bool _shouldUpdate = false;
-  int _tabIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -63,21 +70,21 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     const errorWidget = Center(child: Text('Failed to load settings'));
 
     final tabs = [
-      ConstrainedView(child: SettingsAppTab(_ctrl)),
+      ConstrainedView(child: SettingsAppTab(_scrollCtrl)),
       if (_settings.hasError) ...[
         errorWidget,
         errorWidget,
       ] else if (_settings.hasValue) ...[
         ConstrainedView(
           child: SettingsContentTab(
-            _ctrl,
+            _scrollCtrl,
             _settings.value!,
             () => _shouldUpdate = true,
           ),
         ),
         ConstrainedView(
           child: SettingsNotificationsTab(
-            _ctrl,
+            _scrollCtrl,
             _settings.value!,
             () => _shouldUpdate = true,
           ),
@@ -86,7 +93,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         loadWidget,
         loadWidget,
       ],
-      ConstrainedView(child: SettingsAboutTab(_ctrl)),
+      ConstrainedView(child: SettingsAboutTab(_scrollCtrl)),
     ];
 
     return WillPopScope(
@@ -98,9 +105,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       },
       child: PageScaffold(
         bottomBar: BottomNavBar(
-          current: _tabIndex,
-          onSame: (_) => _ctrl.scrollToTop(),
-          onChanged: (i) => setState(() => _tabIndex = i),
+          current: _tabCtrl.index,
+          onSame: (_) => _scrollCtrl.scrollToTop(),
+          onChanged: (i) => _tabCtrl.index = i,
           items: const {
             'App': Ionicons.color_palette_outline,
             'Content': Ionicons.tv_outline,
@@ -109,12 +116,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           },
         ),
         child: TabScaffold(
-          topBar: TopBar(title: pageNames[_tabIndex]),
-          child: DirectPageView(
-            current: _tabIndex,
-            onChanged: (i) => setState(() => _tabIndex = i),
-            children: tabs,
-          ),
+          topBar: TopBar(title: pageNames[_tabCtrl.index]),
+          child: TabBarView(controller: _tabCtrl, children: tabs),
         ),
       ),
     );

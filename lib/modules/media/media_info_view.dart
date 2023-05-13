@@ -5,7 +5,6 @@ import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
-import 'package:otraku/modules/home/home_view.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
@@ -138,7 +137,7 @@ class MediaInfoView extends StatelessWidget {
                 filter.genreIn.add(info.genres[i]);
                 notifier.filter = filter;
 
-                ref.read(homeProvider).homeTab = HomeView.DISCOVER;
+                ref.read(homeProvider).homeTab = HomeTab.discover;
                 Navigator.popUntil(context, (r) => r.isFirst);
               },
             ),
@@ -311,7 +310,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         filter.tagIn.add(tags[i].name);
         notifier.filter = filter;
 
-        widget.ref.read(homeProvider).homeTab = HomeView.DISCOVER;
+        widget.ref.read(homeProvider).homeTab = HomeTab.discover;
         Navigator.popUntil(context, (r) => r.isFirst);
       },
       onLongPress: (i) => showPopUp(

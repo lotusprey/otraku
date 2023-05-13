@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/home/home_view.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
@@ -69,15 +69,12 @@ class SettingsAppTab extends StatelessWidget {
             delegate: SliverChildListDelegate.fixed([
               DropDownField<int>(
                 title: 'Startup Page',
-                value: Options().defaultHomeTab,
-                items: const {
-                  'Feed': HomeView.INBOX,
-                  'Anime': HomeView.ANIME_LIST,
-                  'Manga': HomeView.MANGA_LIST,
-                  'Discover': HomeView.DISCOVER,
-                  'Profile': HomeView.USER,
+                value: Options().defaultHomeTab.index,
+                items: {
+                  for (final t in HomeTab.values) t.title: t.index,
                 },
-                onChanged: (val) => Options().defaultHomeTab = val,
+                onChanged: (val) =>
+                    Options().defaultHomeTab = HomeTab.values[val],
               ),
               DropDownField<EntrySort>(
                 title: 'Default Anime Sort',

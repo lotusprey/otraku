@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
@@ -98,7 +99,7 @@ class Options extends ChangeNotifier {
     if (themeMode < 0 || themeMode >= ThemeMode.values.length) themeMode = 0;
 
     int homeTab = _optionBox.get(_OptionKey.defaultHomeTab.name) ?? 0;
-    if (homeTab < 0 || homeTab >= 5) homeTab = 0;
+    if (homeTab < 0 || homeTab >= HomeTab.values.length) homeTab = 0;
 
     int discoverType = _optionBox.get(_OptionKey.defaultDiscoverType.name) ?? 0;
     if (discoverType < 0 || discoverType >= DiscoverType.values.length) {
@@ -145,7 +146,7 @@ class Options extends ChangeNotifier {
       ThemeMode.values[themeMode],
       _optionBox.get(_OptionKey.themeIndex.name),
       _optionBox.get(_OptionKey.pureBlackDarkTheme.name) ?? false,
-      homeTab,
+      HomeTab.values[homeTab],
       DiscoverType.values[discoverType],
       EntrySort.values[animeSort],
       EntrySort.values[mangaSort],
@@ -217,7 +218,7 @@ class Options extends ChangeNotifier {
   ThemeMode _themeMode;
   int? _theme;
   bool _pureBlackDarkTheme;
-  int _defaultHomeTab;
+  HomeTab _defaultHomeTab;
   DiscoverType _defaultDiscoverType;
   EntrySort _defaultAnimeSort;
   EntrySort _defaultMangaSort;
@@ -244,7 +245,7 @@ class Options extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
   int? get theme => _theme;
   bool get pureBlackDarkTheme => _pureBlackDarkTheme;
-  int get defaultHomeTab => _defaultHomeTab;
+  HomeTab get defaultHomeTab => _defaultHomeTab;
   DiscoverType get defaultDiscoverType => _defaultDiscoverType;
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
   EntrySort get defaultMangaSort => _defaultMangaSort;
@@ -336,10 +337,9 @@ class Options extends ChangeNotifier {
     notifyListeners();
   }
 
-  set defaultHomeTab(int v) {
-    if (v < 0 || v > 4) return;
+  set defaultHomeTab(HomeTab v) {
     _defaultHomeTab = v;
-    _optionBox.put(_OptionKey.defaultHomeTab.name, v);
+    _optionBox.put(_OptionKey.defaultHomeTab.name, v.index);
   }
 
   set defaultDiscoverType(DiscoverType v) {

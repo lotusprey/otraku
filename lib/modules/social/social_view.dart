@@ -8,7 +8,6 @@ import 'package:otraku/modules/user/user_grid.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
@@ -21,34 +20,43 @@ class SocialView extends ConsumerStatefulWidget {
   ConsumerState<SocialView> createState() => _SocialViewState();
 }
 
-class _SocialViewState extends ConsumerState<SocialView> {
-  late SocialTab _tab = SocialTab.following;
-  late final _ctrl = PagedController(
-    loadMore: () => ref.read(socialProvider(widget.id).notifier).fetch(_tab),
+class _SocialViewState extends ConsumerState<SocialView>
+    with SingleTickerProviderStateMixin {
+  late final _tabCtrl = TabController(length: 2, vsync: this);
+  late final _scrollCtrl = PagedController(
+    loadMore: () => ref
+        .read(socialProvider(widget.id).notifier)
+        .fetch(SocialTab.values[_tabCtrl.index]),
   );
 
   @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final tab = SocialTab.values[_tabCtrl.index];
+
     final count = ref.watch(
-      socialProvider(widget.id).select((s) => s.getCount(_tab)),
+      socialProvider(widget.id).select((s) => s.getCount(tab)),
     );
 
     final onRefresh = () => ref.invalidate(socialProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomNavBar(
-        current: _tab.index,
-        onChanged: (page) {
-          setState(() => _tab = SocialTab.values.elementAt(page));
-          _ctrl.scrollToTop();
-        },
-        onSame: (_) => _ctrl.scrollToTop(),
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Following': Ionicons.people_circle,
           'Followers': Ionicons.person_circle,
@@ -56,7 +64,7 @@ class _SocialViewState extends ConsumerState<SocialView> {
       ),
       child: TabScaffold(
         topBar: TopBar(
-          title: _tab.title,
+          title: tab.title,
           trailing: [
             if (count > 0)
               Padding(
@@ -68,23 +76,19 @@ class _SocialViewState extends ConsumerState<SocialView> {
               ),
           ],
         ),
-        child: DirectPageView(
-          current: _tab.index,
-          onChanged: (page) {
-            setState(() => _tab = SocialTab.values.elementAt(page));
-            _ctrl.scrollToTop();
-          },
+        child: TabBarView(
+          controller: _tabCtrl,
           children: [
             PagedView<UserItem>(
               provider: socialProvider(widget.id).select((s) => s.following),
               onData: (data) => UserGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<UserItem>(
               provider: socialProvider(widget.id).select((s) => s.followers),
               onData: (data) => UserGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
           ],

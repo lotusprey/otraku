@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_view.dart';
@@ -21,7 +20,6 @@ import 'package:otraku/modules/user/user_view.dart';
 import 'package:otraku/common/utils/background_handler.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -29,25 +27,34 @@ class HomeView extends ConsumerStatefulWidget {
 
   final int id;
 
-  static const INBOX = 0;
-  static const ANIME_LIST = 1;
-  static const MANGA_LIST = 2;
-  static const DISCOVER = 3;
-  static const USER = 4;
-
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView> {
-  late final _ctrl = PagedController(loadMore: _scrollListener);
-  late final animeCollectionTag = (userId: widget.id, ofAnime: true);
-  late final mangaCollectionTag = (userId: widget.id, ofAnime: false);
+class _HomeViewState extends ConsumerState<HomeView>
+    with SingleTickerProviderStateMixin {
+  late final _animeCollectionTag = (userId: widget.id, ofAnime: true);
+  late final _mangaCollectionTag = (userId: widget.id, ofAnime: false);
+  late final _scrollCtrl = PagedController(loadMore: _scrollListener);
+  late final _tabCtrl = TabController(
+    length: HomeTab.values.length,
+    vsync: this,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtrl.index = ref.read(homeProvider.notifier).homeTab.index;
+    _tabCtrl.addListener(
+      () => ref.read(homeProvider).homeTab = HomeTab.values[_tabCtrl.index],
+    );
+  }
 
   @override
   void dispose() {
     BackgroundHandler.clearNotifications();
-    _ctrl.dispose();
+    _scrollCtrl.dispose();
+    _tabCtrl.dispose();
     super.dispose();
   }
 
@@ -105,63 +112,60 @@ class _HomeViewState extends ConsumerState<HomeView> {
         ref.watch(discoverReviewProvider.select((_) => null)),
     });
 
-    final notifier = ref.watch(homeProvider);
+    ref.listen(
+      homeProvider.select((s) => s.homeTab),
+      (_, tab) => _tabCtrl.index = tab.index,
+    );
 
-    // Lazy-load current tab if necessary.
-    if (notifier.homeTab == HomeView.INBOX) {
-      notifier.lazyLoadFeed(ref);
-    } else if (notifier.homeTab == HomeView.DISCOVER) {
-      notifier.lazyLoadDiscover(ref);
-    }
+    final notifier = ref.watch(homeProvider);
+    notifier.lazyLoadTabs(ref);
 
     notifier.didExpandCollection(true)
-        ? ref.watch(entriesProvider(animeCollectionTag).select((_) => null))
+        ? ref.watch(entriesProvider(_animeCollectionTag).select((_) => null))
         : ref.watch(
-            collectionPreviewProvider(animeCollectionTag).select((_) => null),
+            collectionPreviewProvider(_animeCollectionTag).select((_) => null),
           );
 
     notifier.didExpandCollection(false)
-        ? ref.watch(entriesProvider(mangaCollectionTag).select((_) => null))
+        ? ref.watch(entriesProvider(_mangaCollectionTag).select((_) => null))
         : ref.watch(
-            collectionPreviewProvider(mangaCollectionTag).select((_) => null),
+            collectionPreviewProvider(_mangaCollectionTag).select((_) => null),
           );
 
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: PageScaffold(
         bottomBar: BottomNavBar(
-          current: notifier.homeTab,
-          onChanged: (i) => ref.read(homeProvider).homeTab = i,
-          items: const {
-            'Feed': Ionicons.file_tray_outline,
-            'Anime': Ionicons.film_outline,
-            'Manga': Ionicons.bookmark_outline,
-            'Discover': Ionicons.compass_outline,
-            'Profile': Ionicons.person_outline,
+          current: notifier.homeTab.index,
+          onChanged: (i) => ref.read(homeProvider).homeTab = HomeTab.values[i],
+          items: {
+            for (final t in HomeTab.values) t.title: t.iconData,
           },
           onSame: (i) {
-            switch (i) {
-              case HomeView.ANIME_LIST:
-                if (_ctrl.position.pixels > 0) {
-                  _ctrl.scrollToTop();
+            final tab = HomeTab.values[i];
+
+            switch (tab) {
+              case HomeTab.anime:
+                if (_scrollCtrl.position.pixels > 0) {
+                  _scrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(true)) {
                   ref
-                      .read(searchProvider(animeCollectionTag).notifier)
+                      .read(searchProvider(_animeCollectionTag).notifier)
                       .update((s) => s == null ? '' : null);
                 }
                 return;
-              case HomeView.MANGA_LIST:
-                if (_ctrl.position.pixels > 0) {
-                  _ctrl.scrollToTop();
+              case HomeTab.manga:
+                if (_scrollCtrl.position.pixels > 0) {
+                  _scrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(false)) {
                   ref
-                      .read(searchProvider(mangaCollectionTag).notifier)
+                      .read(searchProvider(_mangaCollectionTag).notifier)
                       .update((s) => s == null ? '' : null);
                 }
                 return;
-              case HomeView.DISCOVER:
-                if (_ctrl.position.pixels > 0) {
-                  _ctrl.scrollToTop();
+              case HomeTab.discover:
+                if (_scrollCtrl.position.pixels > 0) {
+                  _scrollCtrl.scrollToTop();
                 } else {
                   ref
                       .read(searchProvider(null).notifier)
@@ -169,42 +173,41 @@ class _HomeViewState extends ConsumerState<HomeView> {
                 }
                 return;
               default:
-                _ctrl.scrollToTop();
+                _scrollCtrl.scrollToTop();
                 return;
             }
           },
         ),
-        child: DirectPageView(
-          current: notifier.homeTab,
-          onChanged: (i) => ref.read(homeProvider).homeTab = i,
+        child: TabBarView(
+          controller: _tabCtrl,
           children: [
-            FeedView(_ctrl),
+            FeedView(_scrollCtrl),
             if (notifier.didExpandCollection(true))
               CollectionSubView(
-                scrollCtrl: _ctrl,
-                tag: animeCollectionTag,
+                scrollCtrl: _scrollCtrl,
+                tag: _animeCollectionTag,
                 key: Key(true.toString()),
               )
             else
               CollectionPreviewView(
-                scrollCtrl: _ctrl,
-                tag: animeCollectionTag,
+                scrollCtrl: _scrollCtrl,
+                tag: _animeCollectionTag,
                 key: Key(true.toString()),
               ),
             if (notifier.didExpandCollection(false))
               CollectionSubView(
-                scrollCtrl: _ctrl,
-                tag: mangaCollectionTag,
+                scrollCtrl: _scrollCtrl,
+                tag: _mangaCollectionTag,
                 key: Key(false.toString()),
               )
             else
               CollectionPreviewView(
-                scrollCtrl: _ctrl,
-                tag: mangaCollectionTag,
+                scrollCtrl: _scrollCtrl,
+                tag: _mangaCollectionTag,
                 key: Key(false.toString()),
               ),
-            DiscoverView(_ctrl),
-            UserSubView(widget.id, null, _ctrl),
+            DiscoverView(_scrollCtrl),
+            UserSubView(widget.id, null, _scrollCtrl),
           ],
         ),
       ),
@@ -213,16 +216,16 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   void _scrollListener() {
     final notifier = ref.read(homeProvider);
-    if (notifier.homeTab == HomeView.INBOX) {
+    if (notifier.homeTab == HomeTab.feed) {
       ref.read(activitiesProvider(null).notifier).fetch();
-    } else if (notifier.homeTab == HomeView.DISCOVER) {
+    } else if (notifier.homeTab == HomeTab.discover) {
       discoverLoadMore(ref);
     }
   }
 
   Future<bool> _onWillPop(BuildContext context) async {
     final notifier = ref.read(homeProvider);
-    if (notifier.homeTab == HomeView.DISCOVER) {
+    if (notifier.homeTab == HomeTab.discover) {
       final notifier = ref.read(searchProvider(null).notifier);
       if (notifier.state != null) {
         notifier.state = null;
@@ -230,18 +233,18 @@ class _HomeViewState extends ConsumerState<HomeView> {
       }
     }
 
-    if (notifier.homeTab == HomeView.ANIME_LIST &&
+    if (notifier.homeTab == HomeTab.anime &&
         notifier.didExpandCollection(true)) {
-      final notifier = ref.read(searchProvider(animeCollectionTag).notifier);
+      final notifier = ref.read(searchProvider(_animeCollectionTag).notifier);
       if (notifier.state != null) {
         notifier.state = null;
         return Future.value(false);
       }
     }
 
-    if (notifier.homeTab == HomeView.MANGA_LIST &&
+    if (notifier.homeTab == HomeTab.manga &&
         notifier.didExpandCollection(false)) {
-      final notifier = ref.read(searchProvider(mangaCollectionTag).notifier);
+      final notifier = ref.read(searchProvider(_mangaCollectionTag).notifier);
       if (notifier.state != null) {
         notifier.state = null;
         return Future.value(false);

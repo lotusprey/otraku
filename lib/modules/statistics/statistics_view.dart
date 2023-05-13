@@ -10,7 +10,6 @@ import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
@@ -25,16 +24,24 @@ class StatisticsView extends StatefulWidget {
   State<StatisticsView> createState() => _StatisticsViewState();
 }
 
-class _StatisticsViewState extends State<StatisticsView> {
-  final _ctrl = ScrollController();
-  bool _onAnime = true;
+class _StatisticsViewState extends State<StatisticsView>
+    with SingleTickerProviderStateMixin {
+  late final _tabCtrl = TabController(length: 2, vsync: this);
+  final _scrollCtrl = ScrollController();
 
   int _primaryBarChartTab = 0; // 0-1
   int _secondaryBarChartTab = 0; // 0-2
 
   @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -61,15 +68,13 @@ class _StatisticsViewState extends State<StatisticsView> {
                 child: Text('Failed to load statistics'),
               ),
               data: (data) {
-                return DirectPageView(
-                  current: _onAnime ? 0 : 1,
-                  onChanged: (i) =>
-                      setState(() => _onAnime = i > 0 ? false : true),
+                return TabBarView(
+                  controller: _tabCtrl,
                   children: [
                     _StatisticsView(
                       statistics: data.animeStats,
                       ofAnime: true,
-                      scrollCtrl: _ctrl,
+                      scrollCtrl: _scrollCtrl,
                       primaryBarChartTab: () => _primaryBarChartTab,
                       secondaryBarChartTab: () => _secondaryBarChartTab,
                       onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
@@ -78,7 +83,7 @@ class _StatisticsViewState extends State<StatisticsView> {
                     _StatisticsView(
                       statistics: data.mangaStats,
                       ofAnime: false,
-                      scrollCtrl: _ctrl,
+                      scrollCtrl: _scrollCtrl,
                       primaryBarChartTab: () => _primaryBarChartTab,
                       secondaryBarChartTab: () => _secondaryBarChartTab,
                       onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
@@ -93,10 +98,9 @@ class _StatisticsViewState extends State<StatisticsView> {
 
     return PageScaffold(
       bottomBar: BottomNavBar(
-        current: _onAnime ? 0 : 1,
-        onChanged: (page) =>
-            setState(() => _onAnime = page == 0 ? true : false),
-        onSame: (_) => _ctrl.scrollToTop(),
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
           'Manga': Ionicons.bookmark_outline,
@@ -104,7 +108,7 @@ class _StatisticsViewState extends State<StatisticsView> {
       ),
       child: TabScaffold(
         topBar: TopBar(
-          title: _onAnime ? 'Anime Statistics' : 'Manga Statistics',
+          title: _tabCtrl.index == 0 ? 'Anime Statistics' : 'Manga Statistics',
         ),
         child: ConstrainedView(child: content),
       ),

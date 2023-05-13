@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -8,11 +9,11 @@ final homeProvider =
     ChangeNotifierProvider.autoDispose((ref) => HomeNotifier());
 
 class HomeNotifier extends ChangeNotifier {
-  int _homeTab = Options().defaultHomeTab;
+  HomeTab _homeTab = Options().defaultHomeTab;
 
-  int get homeTab => _homeTab;
+  HomeTab get homeTab => _homeTab;
 
-  set homeTab(int val) {
+  set homeTab(HomeTab val) {
     if (_homeTab == val) return;
     _homeTab = val;
     notifyListeners();
@@ -31,23 +32,23 @@ class HomeNotifier extends ChangeNotifier {
     _systemDarkScheme = d;
   }
 
-  /// The discover and feed tab are loaded lazily, when they are first opened.
-  var _didLoadDiscover = false;
+  /// The discover and feed tab are loaded lazily, when first opened.
   var _didLoadFeed = false;
+  var _didLoadDiscover = false;
 
-  bool get didLoadDiscover => _didLoadDiscover;
   bool get didLoadFeed => _didLoadFeed;
+  bool get didLoadDiscover => _didLoadDiscover;
 
-  void lazyLoadDiscover(WidgetRef ref) {
-    if (_didLoadDiscover) return;
-    _didLoadDiscover = true;
-    discoverLoadMore(ref);
-  }
+  void lazyLoadTabs(WidgetRef ref) {
+    if (_homeTab == HomeTab.feed && !_didLoadFeed) {
+      _didLoadFeed = true;
+      ref.read(activitiesProvider(null).notifier).fetch();
+    }
 
-  void lazyLoadFeed(WidgetRef ref) {
-    if (_didLoadFeed) return;
-    _didLoadFeed = true;
-    ref.read(activitiesProvider(null).notifier).fetch();
+    if (_homeTab == HomeTab.discover && !_didLoadDiscover) {
+      _didLoadDiscover = true;
+      discoverLoadMore(ref);
+    }
   }
 
   /// In preview mode, user's collections first load only current media.
@@ -72,4 +73,28 @@ class HomeNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+}
+
+enum HomeTab {
+  feed,
+  anime,
+  manga,
+  discover,
+  profile;
+
+  String get title => switch (this) {
+        feed => 'Feed',
+        anime => 'Anime',
+        manga => 'Manga',
+        discover => 'Discover',
+        profile => 'Profile',
+      };
+
+  IconData get iconData => switch (this) {
+        feed => Ionicons.file_tray_outline,
+        anime => Ionicons.film_outline,
+        manga => Ionicons.bookmark_outline,
+        discover => Ionicons.compass_outline,
+        profile => Ionicons.person_outline,
+      };
 }

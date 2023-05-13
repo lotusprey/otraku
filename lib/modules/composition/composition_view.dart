@@ -3,7 +3,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
@@ -24,24 +23,28 @@ class CompositionView extends StatefulWidget {
   State<CompositionView> createState() => _CompositionViewState();
 }
 
-class _CompositionViewState extends State<CompositionView> {
-  late final _ctrl = TextEditingController(text: widget.composition.text);
-  final _tab = ValueNotifier(0);
+class _CompositionViewState extends State<CompositionView>
+    with SingleTickerProviderStateMixin {
+  late final _textCtrl = TextEditingController(text: widget.composition.text);
+  late final _tabCtrl = TabController(length: 2, vsync: this);
   final _focus = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    _ctrl.addListener(() => widget.composition.text = _ctrl.text);
-    _tab.addListener(
-      () => _tab.value == 0 ? _focus.requestFocus() : _focus.unfocus(),
+    _textCtrl.addListener(() => widget.composition.text = _textCtrl.text);
+    _tabCtrl.addListener(
+      () {
+        setState(() {});
+        _tabCtrl.index == 0 ? _focus.requestFocus() : _focus.unfocus();
+      },
     );
   }
 
   @override
   void dispose() {
-    _tab.dispose();
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _textCtrl.dispose();
     _focus.dispose();
     super.dispose();
   }
@@ -50,14 +53,14 @@ class _CompositionViewState extends State<CompositionView> {
   Widget build(BuildContext context) {
     return OpaqueSheetView(
       builder: (context, scrollCtrl) => _CompositionView(
-        tab: _tab,
         focus: _focus,
-        textCtrl: _ctrl,
+        tabCtrl: _tabCtrl,
+        textCtrl: _textCtrl,
         scrollCtrl: scrollCtrl,
       ),
       buttons: _BottomBar(
-        tab: _tab,
-        textCtrl: _ctrl,
+        textCtrl: _textCtrl,
+        isEditing: _tabCtrl.index == 0,
         composition: widget.composition,
         onSave: () async {
           try {
@@ -82,17 +85,16 @@ class _CompositionViewState extends State<CompositionView> {
   }
 }
 
-/// A view with 2 tabs - one for editing and one for an html preview.
 class _CompositionView extends StatelessWidget {
   const _CompositionView({
-    required this.tab,
     required this.focus,
+    required this.tabCtrl,
     required this.textCtrl,
     required this.scrollCtrl,
   });
 
-  final ValueNotifier<int> tab;
   final FocusNode focus;
+  final TabController tabCtrl;
   final TextEditingController textCtrl;
   final ScrollController scrollCtrl;
 
@@ -103,49 +105,45 @@ class _CompositionView extends StatelessWidget {
       vertical: 60,
     );
 
-    return ValueListenableBuilder(
-      valueListenable: tab,
-      builder: (context, int i, _) => Stack(
-        children: [
-          DirectPageView(
-            current: i,
-            onChanged: (val) => tab.value = val,
-            children: [
-              SingleChildScrollView(
-                controller: scrollCtrl,
-                child: TextField(
-                  autofocus: true,
-                  focusNode: focus,
-                  controller: textCtrl,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    fillColor: Theme.of(context).colorScheme.background,
-                    contentPadding: padding,
-                  ),
+    return Stack(
+      children: [
+        TabBarView(
+          controller: tabCtrl,
+          children: [
+            SingleChildScrollView(
+              controller: scrollCtrl,
+              child: TextField(
+                autofocus: true,
+                focusNode: focus,
+                controller: textCtrl,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: null,
+                decoration: InputDecoration(
+                  fillColor: Theme.of(context).colorScheme.background,
+                  contentPadding: padding,
                 ),
               ),
-              SingleChildScrollView(
-                controller: scrollCtrl,
-                child: Padding(
-                  padding: padding,
-                  child: HtmlContent('<p>${textCtrl.text}</p>'),
-                ),
-              ),
-            ],
-          ),
-          Positioned(
-            top: 10,
-            left: 10,
-            right: 10,
-            child: SegmentSwitcher(
-              current: i,
-              items: const ['Compose', 'Preview'],
-              onChanged: (val) => tab.value = val,
             ),
+            SingleChildScrollView(
+              controller: scrollCtrl,
+              child: Padding(
+                padding: padding,
+                child: HtmlContent('<p>${textCtrl.text}</p>'),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          top: 10,
+          left: 10,
+          right: 10,
+          child: SegmentSwitcher(
+            current: tabCtrl.index,
+            items: const ['Compose', 'Preview'],
+            onChanged: (i) => tabCtrl.index = i,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -154,13 +152,13 @@ class _CompositionView extends StatelessWidget {
 /// when the user isn't on the editing tab.
 class _BottomBar extends StatefulWidget {
   const _BottomBar({
-    required this.tab,
+    required this.isEditing,
     required this.composition,
     required this.textCtrl,
     required this.onSave,
   });
 
-  final ValueNotifier<int> tab;
+  final bool isEditing;
   final Composition composition;
   final TextEditingController textCtrl;
   final void Function() onSave;
@@ -177,45 +175,43 @@ class _BottomBarState extends State<_BottomBar> {
     if (_loading) return const Center(child: Loader());
 
     return BottomBar([
-      ValueListenableBuilder(
-        valueListenable: widget.tab,
-        builder: (context, i, child) => i == 0 ? child! : const SizedBox(),
-        child: Expanded(
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _FormatButton(
-                tag: 'b',
-                name: 'Bold',
-                icon: Icons.format_bold_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'i',
-                name: 'Italic',
-                icon: Icons.format_italic_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'del',
-                name: 'Strikethrough',
-                icon: Icons.format_strikethrough_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'center',
-                name: 'Center',
-                icon: Icons.align_horizontal_center_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-              _FormatButton(
-                tag: 'code',
-                name: 'Code',
-                icon: Icons.code_outlined,
-                textCtrl: widget.textCtrl,
-              ),
-            ],
-          ),
+      Expanded(
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: widget.isEditing
+              ? [
+                  _FormatButton(
+                    tag: 'b',
+                    name: 'Bold',
+                    icon: Icons.format_bold_outlined,
+                    textCtrl: widget.textCtrl,
+                  ),
+                  _FormatButton(
+                    tag: 'i',
+                    name: 'Italic',
+                    icon: Icons.format_italic_outlined,
+                    textCtrl: widget.textCtrl,
+                  ),
+                  _FormatButton(
+                    tag: 'del',
+                    name: 'Strikethrough',
+                    icon: Icons.format_strikethrough_outlined,
+                    textCtrl: widget.textCtrl,
+                  ),
+                  _FormatButton(
+                    tag: 'center',
+                    name: 'Center',
+                    icon: Icons.align_horizontal_center_outlined,
+                    textCtrl: widget.textCtrl,
+                  ),
+                  _FormatButton(
+                    tag: 'code',
+                    name: 'Code',
+                    icon: Icons.code_outlined,
+                    textCtrl: widget.textCtrl,
+                  ),
+                ]
+              : const [],
         ),
       ),
       Row(

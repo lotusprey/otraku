@@ -42,7 +42,7 @@ class FeedView extends StatelessWidget {
         if (count > 0) {
           result = Badge.count(
             count: count,
-            alignment: AlignmentDirectional.bottomEnd,
+            alignment: AlignmentDirectional.centerStart,
             child: result,
           );
         }

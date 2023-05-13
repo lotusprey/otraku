@@ -10,7 +10,6 @@ import 'package:otraku/common/widgets/grids/relation_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
@@ -25,18 +24,26 @@ class CharacterView extends ConsumerStatefulWidget {
   ConsumerState<CharacterView> createState() => _CharacterViewState();
 }
 
-class _CharacterViewState extends ConsumerState<CharacterView> {
-  int _tab = 0;
-  late final _ctrl = PagedController(loadMore: () {
-    if (_tab == 0) return;
-    _tab == 1
+class _CharacterViewState extends ConsumerState<CharacterView>
+    with SingleTickerProviderStateMixin {
+  late final _tabCtrl = TabController(length: 3, vsync: this);
+  late final _scrollCtrl = PagedController(loadMore: () {
+    if (_tabCtrl.index == 0) return;
+    _tabCtrl.index == 1
         ? ref.read(characterMediaProvider(widget.id).notifier).fetch(true)
         : ref.read(characterMediaProvider(widget.id).notifier).fetch(false);
   });
 
   @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -65,9 +72,9 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
 
     return PageScaffold(
       bottomBar: BottomNavBar(
-        current: _tab,
-        onChanged: (i) => setState(() => _tab = i),
-        onSame: (_) => _ctrl.scrollToTop(),
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Bio': Ionicons.book_outline,
           'Anime': Ionicons.film_outline,
@@ -79,19 +86,19 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           title: character.valueOrNull?.name,
         ),
         floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
+          scrollCtrl: _scrollCtrl,
           children: [
-            if (_tab == 0 && character.hasValue)
+            if (_tabCtrl.index == 0 && character.hasValue)
               CharacterFavoriteButton(character.valueOrNull!),
-            if (_tab > 0) CharacterMediaFilterButton(widget.id),
-            if (_tab == 1) CharacterLanguageSelectionButton(widget.id),
+            if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id),
+            if (_tabCtrl.index == 1)
+              CharacterLanguageSelectionButton(widget.id),
           ],
         ),
-        child: DirectPageView(
-          current: _tab,
-          onChanged: (i) => setState(() => _tab = i),
+        child: TabBarView(
+          controller: _tabCtrl,
           children: [
-            CharacterInfoTab(widget.id, widget.imageUrl, _ctrl),
+            CharacterInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
             PagedView<Relation>(
               provider:
                   characterMediaProvider(widget.id).select((s) => s.anime),
@@ -102,14 +109,14 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
                       .getAnimeAndVoiceActors(),
                 );
               },
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<Relation>(
               provider:
                   characterMediaProvider(widget.id).select((s) => s.manga),
               onData: (data) => SingleRelationGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
           ],

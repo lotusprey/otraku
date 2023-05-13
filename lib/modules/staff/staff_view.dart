@@ -10,7 +10,6 @@ import 'package:otraku/common/widgets/grids/relation_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/direct_page_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
@@ -25,18 +24,26 @@ class StaffView extends ConsumerStatefulWidget {
   ConsumerState<StaffView> createState() => _StaffViewState();
 }
 
-class _StaffViewState extends ConsumerState<StaffView> {
-  int _tab = 0;
-  late final _ctrl = PagedController(loadMore: () {
-    if (_tab == 0) return;
-    _tab == 1
+class _StaffViewState extends ConsumerState<StaffView>
+    with SingleTickerProviderStateMixin {
+  late final _tabCtrl = TabController(length: 3, vsync: this);
+  late final _scrollCtrl = PagedController(loadMore: () {
+    if (_tabCtrl.index == 0) return;
+    _tabCtrl.index == 1
         ? ref.read(staffRelationsProvider(widget.id).notifier).fetch(true)
         : ref.read(staffRelationsProvider(widget.id).notifier).fetch(false);
   });
 
   @override
+  void initState() {
+    super.initState();
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
   void dispose() {
-    _ctrl.dispose();
+    _tabCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -65,9 +72,9 @@ class _StaffViewState extends ConsumerState<StaffView> {
 
     return PageScaffold(
       bottomBar: BottomNavBar(
-        current: _tab,
-        onChanged: (i) => setState(() => _tab = i),
-        onSame: (_) => _ctrl.scrollToTop(),
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Bio': Ionicons.book_outline,
           'Characters': Ionicons.mic_outline,
@@ -79,30 +86,29 @@ class _StaffViewState extends ConsumerState<StaffView> {
           title: staff.valueOrNull?.name,
         ),
         floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
+          scrollCtrl: _scrollCtrl,
           children: [
-            if (_tab == 0 && staff.hasValue)
+            if (_tabCtrl.index == 0 && staff.hasValue)
               StaffFavoriteButton(staff.valueOrNull!),
-            if (_tab > 0) StaffFilterButton(widget.id, true),
+            if (_tabCtrl.index > 0) StaffFilterButton(widget.id, true),
           ],
         ),
-        child: DirectPageView(
-          current: _tab,
-          onChanged: (i) => setState(() => _tab = i),
+        child: TabBarView(
+          controller: _tabCtrl,
           children: [
-            StaffInfoTab(widget.id, widget.imageUrl, _ctrl),
+            StaffInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
             PagedView<(Relation, Relation)>(
               provider: staffRelationsProvider(widget.id)
                   .select((s) => s.charactersAndMedia),
               onData: (data) => RelationGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<Relation>(
               provider:
                   staffRelationsProvider(widget.id).select((s) => s.roles),
               onData: (data) => SingleRelationGrid(data.items),
-              scrollCtrl: _ctrl,
+              scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
           ],

@@ -36,8 +36,6 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
     return Consumer(
       builder: (context, ref, _) => DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
@@ -97,11 +95,13 @@ class AppState extends State<App> {
             overlayBrightness = Brightness.dark;
           }
 
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
           SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
             statusBarColor: Colors.transparent,
             statusBarBrightness: scheme.brightness,
             statusBarIconBrightness: overlayBrightness,
             systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
             systemNavigationBarIconBrightness: overlayBrightness,
           ));
           final data = themeDataFrom(scheme);

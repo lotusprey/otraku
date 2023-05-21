@@ -48,8 +48,7 @@ class AppState extends State<App> {
           final notifier = ref.watch(homeProvider.notifier);
           final hasDynamic = lightDynamic != null && darkDynamic != null;
 
-          final darkBackground =
-              Options().pureBlackDarkTheme ? Colors.black : null;
+          final darkBackground = Options().pureBlackDarkTheme ? Colors.black : null;
 
           if (hasDynamic) {
             lightDynamic = lightDynamic.harmonized();
@@ -72,18 +71,13 @@ class AppState extends State<App> {
 
             final seed = colorSeeds.values.elementAt(theme);
             lightScheme = seed.scheme(Brightness.light);
-            darkScheme = seed
-                .scheme(Brightness.dark)
-                .copyWith(background: darkBackground);
+            darkScheme = seed.scheme(Brightness.dark).copyWith(background: darkBackground);
           }
 
           final mode = Options().themeMode;
-          final platformBrightness =
-              View.of(context).platformDispatcher.platformBrightness;
+          final platformBrightness = View.of(context).platformDispatcher.platformBrightness;
 
-          final isDark = mode == ThemeMode.system
-              ? platformBrightness == Brightness.dark
-              : mode == ThemeMode.dark;
+          final isDark = mode == ThemeMode.system ? platformBrightness == Brightness.dark : mode == ThemeMode.dark;
 
           final ColorScheme scheme;
           final Brightness overlayBrightness;

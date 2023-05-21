@@ -36,8 +36,6 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-
     return Consumer(
       builder: (context, ref, _) => DynamicColorBuilder(
         builder: (lightDynamic, darkDynamic) {
@@ -72,39 +70,64 @@ class AppState extends State<App> {
               theme = colorSeeds.length - 1;
             }
 
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-            SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-              statusBarColor: Colors.transparent,
-              statusBarBrightness: scheme.brightness,
-              statusBarIconBrightness: overlayBrightness,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarContrastEnforced: false,
-              systemNavigationBarIconBrightness: overlayBrightness,
-            ));
-            final data = themeDataFrom(scheme);
+            final seed = colorSeeds.values.elementAt(theme);
+            lightScheme = seed.scheme(Brightness.light);
+            darkScheme = seed
+                .scheme(Brightness.dark)
+                .copyWith(background: darkBackground);
+          }
 
-            return MaterialApp(
-              debugShowCheckedModeBanner: false,
-              title: 'Otraku',
-              theme: data,
-              darkTheme: data,
-              navigatorKey: RouteArg.navKey,
-              onGenerateRoute: RouteArg.generateRoute,
-              builder: (context, child) {
-                /// Override the [textScaleFactor], because some devices apply
-                /// too high of a factor and it breaks the app visually.
-                /// [child] can't be null, because [onGenerateRoute] is provided.
-                final mediaQuery = MediaQuery.of(context);
-                final scale =
-                    mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+          final mode = Options().themeMode;
+          final platformBrightness =
+              View.of(context).platformDispatcher.platformBrightness;
 
-                return MediaQuery(
-                  data: mediaQuery.copyWith(textScaleFactor: scale),
-                  child: child!,
-                );
-              },
-            );
-          },
-        ),
-      );
+          final isDark = mode == ThemeMode.system
+              ? platformBrightness == Brightness.dark
+              : mode == ThemeMode.dark;
+
+          final ColorScheme scheme;
+          final Brightness overlayBrightness;
+          if (isDark) {
+            scheme = darkScheme;
+            overlayBrightness = Brightness.light;
+          } else {
+            scheme = lightScheme;
+            overlayBrightness = Brightness.dark;
+          }
+
+          SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+          SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: scheme.brightness,
+            statusBarIconBrightness: overlayBrightness,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            systemNavigationBarIconBrightness: overlayBrightness,
+          ));
+          final data = themeDataFrom(scheme);
+
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Otraku',
+            theme: data,
+            darkTheme: data,
+            navigatorKey: RouteArg.navKey,
+            onGenerateRoute: RouteArg.generateRoute,
+            builder: (context, child) {
+              /// Override the [textScaleFactor], because some devices apply
+              /// too high of a factor and it breaks the app visually.
+              /// [child] can't be null, because [onGenerateRoute] is provided.
+              final mediaQuery = MediaQuery.of(context);
+              final scale = mediaQuery.textScaleFactor.clamp(0.8, 1).toDouble();
+
+              return MediaQuery(
+                data: mediaQuery.copyWith(textScaleFactor: scale),
+                child: child!,
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
 }

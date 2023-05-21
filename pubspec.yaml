@@ -6,23 +6,23 @@ publish_to: 'none'
 version: 1.2.3+55
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.3.1
+  flutter_riverpod: ^2.3.6
 
   # Data fetching.
-  http: ^0.13.5
+  http: ^0.13.6
 
   # Settings storage.
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.0.13
+  path_provider: ^2.0.14
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^8.0.0
@@ -40,13 +40,13 @@ dependencies:
   app_links: ^3.4.2
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.6.2
+  dynamic_color: ^1.6.3
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^13.0.0
+  flutter_local_notifications: ^14.0.0+2
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.10.0
@@ -58,7 +58,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.12.0
+  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.1
 
 flutter_icons:
@@ -72,7 +72,7 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/icons/about_icon.png
+    - assets/icons/about.png
 
   fonts:
     - family: Rubik

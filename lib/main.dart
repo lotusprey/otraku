@@ -1,13 +1,12 @@
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/home/home_provider.dart';
-import 'package:otraku/utils/background_handler.dart';
-import 'package:otraku/utils/route_arg.dart';
-import 'package:otraku/utils/options.dart';
-import 'package:otraku/utils/theming.dart';
+import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/common/utils/background_handler.dart';
+import 'package:otraku/common/utils/route_arg.dart';
+import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/theming.dart';
 
 Future<void> main() async {
   await Options.init();
@@ -36,62 +35,41 @@ class AppState extends State<App> {
   }
 
   @override
-  Widget build(BuildContext context) => Consumer(
-        builder: (context, ref, _) => DynamicColorBuilder(
-          builder: (lightDynamic, darkDynamic) {
-            ColorScheme lightScheme;
-            ColorScheme darkScheme;
-            var theme = Options().theme;
+  Widget build(BuildContext context) {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-            /// The system schemes must be cached, so
-            /// they can later be used in the settings.
-            final notifier = ref.watch(homeProvider.notifier);
-            final hasDynamic = lightDynamic != null && darkDynamic != null;
+    return Consumer(
+      builder: (context, ref, _) => DynamicColorBuilder(
+        builder: (lightDynamic, darkDynamic) {
+          ColorScheme lightScheme;
+          ColorScheme darkScheme;
+          var theme = Options().theme;
 
-            final darkBackground =
-                Options().pureBlackDarkTheme ? Colors.black : null;
+          /// The system schemes must be cached, so
+          /// they can later be used in the settings.
+          final notifier = ref.watch(homeProvider.notifier);
+          final hasDynamic = lightDynamic != null && darkDynamic != null;
 
-            if (hasDynamic) {
-              lightDynamic = lightDynamic.harmonized();
-              darkDynamic = darkDynamic.harmonized().copyWith(
-                    background: darkBackground,
-                  );
-              notifier.setSystemSchemes(lightDynamic, darkDynamic);
-            } else {
-              notifier.setSystemSchemes(null, null);
-            }
+          final darkBackground =
+              Options().pureBlackDarkTheme ? Colors.black : null;
 
-            if (theme == null && hasDynamic) {
-              lightScheme = lightDynamic!;
-              darkScheme = darkDynamic!;
-            } else {
-              theme ??= 0;
-              if (theme >= colorSeeds.length) {
-                theme = colorSeeds.length - 1;
-              }
+          if (hasDynamic) {
+            lightDynamic = lightDynamic.harmonized();
+            darkDynamic = darkDynamic.harmonized().copyWith(
+                  background: darkBackground,
+                );
+            notifier.setSystemSchemes(lightDynamic, darkDynamic);
+          } else {
+            notifier.setSystemSchemes(null, null);
+          }
 
-              final seed = colorSeeds.values.elementAt(theme);
-              lightScheme = seed.scheme(Brightness.light);
-              darkScheme = seed
-                  .scheme(Brightness.dark)
-                  .copyWith(background: darkBackground);
-            }
-
-            final mode = Options().themeMode;
-            final platform =
-                SchedulerBinding.instance.window.platformBrightness;
-            final isDark = mode == ThemeMode.system
-                ? platform == Brightness.dark
-                : mode == ThemeMode.dark;
-
-            final ColorScheme scheme;
-            final Brightness overlayBrightness;
-            if (isDark) {
-              scheme = darkScheme;
-              overlayBrightness = Brightness.light;
-            } else {
-              scheme = lightScheme;
-              overlayBrightness = Brightness.dark;
+          if (theme == null && hasDynamic) {
+            lightScheme = lightDynamic!;
+            darkScheme = darkDynamic!;
+          } else {
+            theme ??= 0;
+            if (theme >= colorSeeds.length) {
+              theme = colorSeeds.length - 1;
             }
 
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);

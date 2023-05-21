@@ -94,11 +94,13 @@ class AppState extends State<App> {
               overlayBrightness = Brightness.dark;
             }
 
+            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
             SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarBrightness: scheme.brightness,
               statusBarIconBrightness: overlayBrightness,
-              systemNavigationBarColor: scheme.background,
+              systemNavigationBarColor: Colors.transparent,
+              systemNavigationBarContrastEnforced: false,
               systemNavigationBarIconBrightness: overlayBrightness,
             ));
             final data = themeDataFrom(scheme);

@@ -20,14 +20,21 @@ class SearchField extends StatefulWidget {
 }
 
 class _SearchFieldState extends State<SearchField> {
-  late final TextEditingController _ctrl;
-  late bool _empty;
+  late final TextEditingController _ctrl = TextEditingController(
+    text: widget.value,
+  );
+  late bool _empty = _ctrl.text.isEmpty;
+  FocusNode? _focus;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = TextEditingController(text: widget.value);
-    _empty = _ctrl.text.isEmpty;
+    if (widget.onHide != null && _empty) {
+      _focus = FocusNode();
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _focus!.requestFocus(),
+      );
+    }
   }
 
   @override
@@ -46,7 +53,7 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _ctrl,
-      autofocus: widget.onHide != null,
+      focusNode: _focus,
       style: Theme.of(context).textTheme.bodyMedium,
       decoration: InputDecoration(
         isDense: false,

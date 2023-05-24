@@ -18,11 +18,11 @@ class PagedController extends ScrollController {
 
   /// When the user reaches the bottom, try loading more data.
   void _listener() {
-    final pos = positions.last;
-    if (pos.pixels < pos.maxScrollExtent - 100) return;
-    if (_lastMaxExtent == pos.maxScrollExtent) return;
+    if (!hasClients) return;
+    if (positions.last.pixels < positions.last.maxScrollExtent - 100) return;
+    if (_lastMaxExtent == positions.last.maxScrollExtent) return;
 
-    _lastMaxExtent = pos.maxScrollExtent;
+    _lastMaxExtent = positions.last.maxScrollExtent;
     loadMore();
   }
 

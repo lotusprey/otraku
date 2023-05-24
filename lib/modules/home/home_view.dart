@@ -35,7 +35,14 @@ class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
   late final _animeCollectionTag = (userId: widget.id, ofAnime: true);
   late final _mangaCollectionTag = (userId: widget.id, ofAnime: false);
-  late final _scrollCtrl = PagedController(loadMore: _scrollListener);
+  final _animeScrollCtrl = ScrollController();
+  final _mangaScrollCtrl = ScrollController();
+  late final _feedScrollCtrl = PagedController(
+    loadMore: () => ref.read(activitiesProvider(null).notifier).fetch(),
+  );
+  late final _discoverScrollCtrl = PagedController(
+    loadMore: () => discoverLoadMore(ref),
+  );
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,
     vsync: this,
@@ -53,7 +60,10 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   void dispose() {
     BackgroundHandler.clearNotifications();
-    _scrollCtrl.dispose();
+    _animeScrollCtrl.dispose();
+    _mangaScrollCtrl.dispose();
+    _feedScrollCtrl.dispose();
+    _discoverScrollCtrl.dispose();
     _tabCtrl.dispose();
     super.dispose();
   }
@@ -132,6 +142,8 @@ class _HomeViewState extends ConsumerState<HomeView>
             collectionPreviewProvider(_mangaCollectionTag).select((_) => null),
           );
 
+    final primaryScrollCtrl = PrimaryScrollController.of(context);
+
     return WillPopScope(
       onWillPop: () => _onWillPop(context),
       child: PageScaffold(
@@ -146,8 +158,8 @@ class _HomeViewState extends ConsumerState<HomeView>
 
             switch (tab) {
               case HomeTab.anime:
-                if (_scrollCtrl.position.pixels > 0) {
-                  _scrollCtrl.scrollToTop();
+                if (_animeScrollCtrl.position.pixels > 0) {
+                  _animeScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(true)) {
                   ref
                       .read(searchProvider(_animeCollectionTag).notifier)
@@ -155,8 +167,8 @@ class _HomeViewState extends ConsumerState<HomeView>
                 }
                 return;
               case HomeTab.manga:
-                if (_scrollCtrl.position.pixels > 0) {
-                  _scrollCtrl.scrollToTop();
+                if (_mangaScrollCtrl.position.pixels > 0) {
+                  _mangaScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(false)) {
                   ref
                       .read(searchProvider(_mangaCollectionTag).notifier)
@@ -164,16 +176,18 @@ class _HomeViewState extends ConsumerState<HomeView>
                 }
                 return;
               case HomeTab.discover:
-                if (_scrollCtrl.position.pixels > 0) {
-                  _scrollCtrl.scrollToTop();
+                if (_discoverScrollCtrl.position.pixels > 0) {
+                  _discoverScrollCtrl.scrollToTop();
                 } else {
                   ref
                       .read(searchProvider(null).notifier)
                       .update((s) => s == null ? '' : null);
                 }
                 return;
-              default:
-                _scrollCtrl.scrollToTop();
+              case HomeTab.feed:
+                _feedScrollCtrl.scrollToTop();
+              case HomeTab.profile:
+                primaryScrollCtrl.scrollToTop();
                 return;
             }
           },
@@ -181,46 +195,37 @@ class _HomeViewState extends ConsumerState<HomeView>
         child: TabBarView(
           controller: _tabCtrl,
           children: [
-            FeedView(_scrollCtrl),
+            FeedView(_feedScrollCtrl),
             if (notifier.didExpandCollection(true))
               CollectionSubView(
-                scrollCtrl: _scrollCtrl,
+                scrollCtrl: _animeScrollCtrl,
                 tag: _animeCollectionTag,
                 key: Key(true.toString()),
               )
             else
               CollectionPreviewView(
-                scrollCtrl: _scrollCtrl,
+                scrollCtrl: _animeScrollCtrl,
                 tag: _animeCollectionTag,
                 key: Key(true.toString()),
               ),
             if (notifier.didExpandCollection(false))
               CollectionSubView(
-                scrollCtrl: _scrollCtrl,
+                scrollCtrl: _mangaScrollCtrl,
                 tag: _mangaCollectionTag,
                 key: Key(false.toString()),
               )
             else
               CollectionPreviewView(
-                scrollCtrl: _scrollCtrl,
+                scrollCtrl: _mangaScrollCtrl,
                 tag: _mangaCollectionTag,
                 key: Key(false.toString()),
               ),
-            DiscoverView(_scrollCtrl),
-            UserSubView(widget.id, null, _scrollCtrl),
+            DiscoverView(_discoverScrollCtrl),
+            UserSubView(widget.id, null, primaryScrollCtrl),
           ],
         ),
       ),
     );
-  }
-
-  void _scrollListener() {
-    final notifier = ref.read(homeProvider);
-    if (notifier.homeTab == HomeTab.feed) {
-      ref.read(activitiesProvider(null).notifier).fetch();
-    } else if (notifier.homeTab == HomeTab.discover) {
-      discoverLoadMore(ref);
-    }
   }
 
   Future<bool> _onWillPop(BuildContext context) async {

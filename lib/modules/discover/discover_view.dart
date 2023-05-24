@@ -15,7 +15,6 @@ import 'package:otraku/modules/user/user_grid.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/modules/review/review_grid.dart';
-import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
@@ -28,7 +27,7 @@ import 'package:otraku/common/widgets/paged_view.dart';
 class DiscoverView extends ConsumerWidget {
   const DiscoverView(this.scrollCtrl);
 
-  final PagedController scrollCtrl;
+  final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

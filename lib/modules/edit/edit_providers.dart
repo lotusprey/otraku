@@ -8,7 +8,7 @@ import 'package:otraku/common/utils/graphql.dart';
 
 /// Updates an entry with an edit and returns the entry, or an error
 /// if unsuccessful. There is an api bug in entry updating, which prevents
-/// certain data from being returned. This is why 2 requests are needed.
+/// tag data from being returned. This is why 2 requests are needed.
 Future<Object> updateEntry(Edit edit, int userId) async {
   try {
     await Api.get(GqlMutation.updateEntry, edit.toMap());

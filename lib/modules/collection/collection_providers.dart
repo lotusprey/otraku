@@ -186,7 +186,6 @@ class CollectionNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Update an existing entry, taking into account status and custom lists.
   Future<Entry?> updateEntry(
     Entry entry,
     Edit oldEdit,
@@ -217,69 +216,67 @@ class CollectionNotifier extends ChangeNotifier {
           break;
         }
       }
+
       if (!added) {
         _fetch();
         return entry;
       }
     }
 
-    // Find from which custom lists to remove.
+    // Remove from old custom lists.
     final oldCustomLists = oldEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
-    // Remove from old custom lists.
     if (oldCustomLists.isNotEmpty) {
       for (final list in lists) {
+        if (list.status != null) continue;
+
         for (int i = 0; i < oldCustomLists.length; i++) {
           if (oldCustomLists[i] == list.name.toLowerCase()) {
             list.removeByMediaId(entry.mediaId);
-            oldCustomLists.removeAt(i);
+            oldCustomLists[i] = oldCustomLists.last;
+            oldCustomLists.removeLast();
             break;
           }
         }
       }
     }
 
-    // Find in which custom lists to add.
+    // Add to new custom lists.
     final newCustomLists = newEdit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
         .toList();
 
-    // Add to new custom lists.
     if (newCustomLists.isNotEmpty) {
       for (final list in lists) {
+        if (list.status != null) continue;
+
         for (int i = 0; i < newCustomLists.length; i++) {
           if (newCustomLists[i] == list.name.toLowerCase()) {
             list.insertSorted(entry, sort);
-            newCustomLists.removeAt(i);
+            newCustomLists[i] = newCustomLists.last;
+            newCustomLists.removeLast();
             break;
           }
         }
       }
+
       if (newCustomLists.isNotEmpty) {
         _fetch();
         return entry;
       }
     }
 
-    // Remove empty lists.
-    for (int i = 0; i < lists.length; i++) {
-      if (lists[i].entries.isEmpty) {
-        if (i <= _index && _index != 0) _index--;
-        lists.removeAt(i--);
-      }
-    }
-
+    _removeEmptyLists();
     notifyListeners();
     return entry;
   }
 
-  /// Faster alternative to [updateEntry]. Should be used only when
-  /// the progress was incremented. When reaching the last episode,
-  /// [updateEntry] should be called instead.
+  /// An alternative to [updateEntry], that only updates the progress.
+  /// When incrementing to last episode, [updateEntry] should be called instead.
   Future<void> updateProgress({
     required int mediaId,
     required int progress,
@@ -288,11 +285,6 @@ class CollectionNotifier extends ChangeNotifier {
     required String? format,
     required EntrySort sort,
   }) async {
-    final mustSort = sort == EntrySort.PROGRESS ||
-        sort == EntrySort.PROGRESS_DESC ||
-        sort == EntrySort.UPDATED ||
-        sort == EntrySort.UPDATED_DESC;
-
     // Update status list.
     for (final list in lists) {
       if (list.status == null ||
@@ -307,16 +299,16 @@ class CollectionNotifier extends ChangeNotifier {
         }
       }
 
-      if (mustSort) list.sort(sort);
       break;
     }
 
     // Update custom lists.
     if (customLists.isNotEmpty) {
       for (final list in lists) {
+        if (list.status != null) continue;
+
         for (int i = 0; i < customLists.length; i++) {
-          if (list.status == null &&
-              customLists[i] == list.name.toLowerCase()) {
+          if (customLists[i] == list.name.toLowerCase()) {
             for (final entry in list.entries) {
               if (entry.mediaId == mediaId) {
                 entry.progress = progress;
@@ -324,8 +316,8 @@ class CollectionNotifier extends ChangeNotifier {
               }
             }
 
-            if (mustSort) list.sort(sort);
-            customLists.removeAt(i);
+            customLists[i] = customLists.last;
+            customLists.removeLast();
             break;
           }
         }
@@ -334,7 +326,6 @@ class CollectionNotifier extends ChangeNotifier {
   }
 
   Future<void> removeEntry(Edit edit) async {
-    final lists = this.lists;
     final customLists = edit.customLists.entries
         .where((e) => e.value)
         .map((e) => e.key.toLowerCase())
@@ -355,21 +346,24 @@ class CollectionNotifier extends ChangeNotifier {
         for (int i = 0; i < customLists.length; i++) {
           if (customLists[i] == list.name.toLowerCase()) {
             list.removeByMediaId(edit.mediaId);
-            customLists.removeAt(i);
+            customLists[i] = customLists.last;
+            customLists.removeLast();
             break;
           }
         }
       }
     }
 
-    // Remove empty lists.
+    _removeEmptyLists();
+    notifyListeners();
+  }
+
+  void _removeEmptyLists() {
     for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.isEmpty) {
         if (i <= _index && _index != 0) _index--;
         lists.removeAt(i--);
       }
     }
-
-    notifyListeners();
   }
 }

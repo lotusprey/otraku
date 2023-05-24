@@ -37,19 +37,19 @@ dependencies:
   url_launcher: ^6.1.10
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
-  app_links: ^3.4.2
+  app_links: ^3.4.3
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.6.3
+  dynamic_color: ^1.6.5
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^14.0.0+2
+  flutter_local_notifications: ^14.1.0
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.10.0
+  flutter_widget_from_html_core: ^0.10.1
 
   # An addition to the material icons.
   ionicons: ^0.2.1
@@ -58,7 +58,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_launcher_icons: ^0.13.1
   flutter_lints: ^2.0.1
 
 flutter_icons:

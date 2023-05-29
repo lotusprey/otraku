@@ -1,21 +1,18 @@
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
 
-abstract class ApplicableMediaFilter<T extends ApplicableMediaFilter<T>> {
-  ApplicableMediaFilter(this._ofAnime);
+sealed class MediaFilter<T extends MediaFilter<T>> {
+  MediaFilter(this._ofAnime);
 
   bool _ofAnime;
   bool get ofAnime => _ofAnime;
 
-  /// Creates a copy.
-  T copy();
-
-  /// Creates an unconfigured instance.
   T clear();
+  T copy();
 }
 
-class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
-  CollectionFilter(super.ofAnime);
+class CollectionMediaFilter extends MediaFilter<CollectionMediaFilter> {
+  CollectionMediaFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -32,7 +29,10 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
   OriginCountry? country;
 
   @override
-  CollectionFilter copy() => CollectionFilter(_ofAnime)
+  CollectionMediaFilter clear() => CollectionMediaFilter(_ofAnime);
+
+  @override
+  CollectionMediaFilter copy() => CollectionMediaFilter(_ofAnime)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
@@ -45,13 +45,10 @@ class CollectionFilter extends ApplicableMediaFilter<CollectionFilter> {
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
     ..country = country;
-
-  @override
-  CollectionFilter clear() => CollectionFilter(_ofAnime);
 }
 
-class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
-  DiscoverFilter(super.ofAnime);
+class DiscoverMediaFilter extends MediaFilter<DiscoverMediaFilter> {
+  DiscoverMediaFilter(super.ofAnime);
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -74,7 +71,10 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
   }
 
   @override
-  DiscoverFilter copy() => DiscoverFilter(_ofAnime)
+  DiscoverMediaFilter clear() => DiscoverMediaFilter(_ofAnime);
+
+  @override
+  DiscoverMediaFilter copy() => DiscoverMediaFilter(_ofAnime)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
@@ -89,9 +89,6 @@ class DiscoverFilter extends ApplicableMediaFilter<DiscoverFilter> {
     ..country = country
     ..onList = onList
     ..isAdult = isAdult;
-
-  @override
-  DiscoverFilter clear() => DiscoverFilter(_ofAnime);
 
   Map<String, dynamic> toMap() => {
         'sort': sort.name,

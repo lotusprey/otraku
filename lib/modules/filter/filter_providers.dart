@@ -6,7 +6,7 @@ import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/common/utils/options.dart';
 
 final collectionFilterProvider = StateProvider.autoDispose.family(
-  (ref, CollectionTag tag) => CollectionFilter(tag.ofAnime),
+  (ref, CollectionTag tag) => CollectionMediaFilter(tag.ofAnime),
 );
 
 /// If the [CollectionTag] is `null`, this is related to the discover tab.
@@ -22,25 +22,25 @@ class DiscoverFilterNotifier extends ChangeNotifier {
   DiscoverFilterNotifier(this._type);
 
   DiscoverType _type;
-  late var _filter = DiscoverFilter(_type == DiscoverType.anime);
+  late var _filter = DiscoverMediaFilter(_type == DiscoverType.anime);
   bool _birthday = false;
 
   DiscoverType get type => _type;
-  DiscoverFilter get filter => _filter;
+  DiscoverMediaFilter get filter => _filter;
   bool get birthday => _birthday;
 
   set type(DiscoverType val) {
     if (_type == val) return;
     if (val == DiscoverType.anime) {
-      _filter = DiscoverFilter(true);
+      _filter = DiscoverMediaFilter(true);
     } else {
-      _filter = DiscoverFilter(false);
+      _filter = DiscoverMediaFilter(false);
     }
     _type = val;
     notifyListeners();
   }
 
-  set filter(DiscoverFilter val) {
+  set filter(DiscoverMediaFilter val) {
     _filter = val;
     notifyListeners();
   }

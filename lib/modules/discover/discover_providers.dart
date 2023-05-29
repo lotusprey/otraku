@@ -104,7 +104,7 @@ class DiscoverMediaNotifier
     if (shouldLoad) fetch();
   }
 
-  final DiscoverFilter filter;
+  final DiscoverMediaFilter filter;
   final String? search;
 
   Future<void> fetch() async {

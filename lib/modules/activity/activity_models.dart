@@ -219,3 +219,26 @@ class FeedFilter {
   final bool onFollowing;
   final bool withViewerActivities;
 }
+
+sealed class ActivitiesFilter {
+  const ActivitiesFilter(this.typeIn);
+
+  final List<ActivityType> typeIn;
+}
+
+class UserActivitiesFilter extends ActivitiesFilter {
+  const UserActivitiesFilter(super.typeIn, this.userId);
+
+  final int userId;
+}
+
+class HomeActivitiesFilter extends ActivitiesFilter {
+  const HomeActivitiesFilter(
+    super.typeIn,
+    this.onFollowing,
+    this.withViewerActivities,
+  );
+
+  final bool onFollowing;
+  final bool withViewerActivities;
+}

@@ -24,17 +24,19 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
   final typeIn = [...filter.typeIn];
   bool changed = false;
 
-  bool? onFollowing;
-  bool? withViewerActivities;
-  if (filter.feedFilter != null) {
-    onFollowing = filter.feedFilter!.onFollowing;
-    withViewerActivities = filter.feedFilter!.withViewerActivities;
-  }
-
+  bool onFollowing = false;
+  bool withViewerActivities = false;
   double initialHeight = MediaQuery.of(context).padding.bottom +
       Consts.tapTargetSize * ActivityType.values.length +
       20;
-  if (onFollowing != null) initialHeight += Consts.tapTargetSize * 1.5;
+
+  switch (filter) {
+    case HomeActivitiesFilter filter:
+      onFollowing = filter.onFollowing;
+      withViewerActivities = filter.withViewerActivities;
+      initialHeight += Consts.tapTargetSize * 1.5;
+    default:
+  }
 
   showSheet(
     context,
@@ -54,11 +56,11 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
                 changed = true;
               },
             ),
-          if (onFollowing != null) ...[
+          if (filter is HomeActivitiesFilter) ...[
             const Divider(),
             CheckBoxField(
               title: 'Your Activities',
-              initial: withViewerActivities!,
+              initial: withViewerActivities,
               onChanged: (val) {
                 withViewerActivities = val;
                 changed = true;
@@ -66,7 +68,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
             ),
             SegmentSwitcher(
               items: const ['Following', 'Global'],
-              current: onFollowing! ? 0 : 1,
+              current: onFollowing ? 0 : 1,
               onChanged: (val) {
                 onFollowing = val == 0;
                 changed = true;
@@ -79,9 +81,14 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
   ).then((_) {
     if (changed) {
       ref.read(activityFilterProvider(id).notifier).update(
-            typeIn,
-            onFollowing,
-            withViewerActivities,
+            (s) => switch (s) {
+              UserActivitiesFilter _ => UserActivitiesFilter(typeIn, s.userId),
+              HomeActivitiesFilter _ => HomeActivitiesFilter(
+                  typeIn,
+                  onFollowing,
+                  withViewerActivities,
+                ),
+            },
           );
     }
   });

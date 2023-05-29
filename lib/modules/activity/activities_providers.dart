@@ -9,7 +9,6 @@ import 'package:otraku/common/utils/options.dart';
 final activitiesProvider = StateNotifierProvider.autoDispose
     .family<ActivitiesNotifier, AsyncValue<Paged<Activity>>, int?>(
   (ref, userId) => ActivitiesNotifier(
-    userId: userId,
     viewerId: Options().id!,
     filter: ref.watch(activityFilterProvider(userId)),
     shouldLoad:
@@ -17,30 +16,19 @@ final activitiesProvider = StateNotifierProvider.autoDispose
   ),
 );
 
-final activityFilterProvider = StateNotifierProvider.autoDispose
-    .family<ActivityFilterNotifier, ActivityFilter, int?>(
-  (ref, userId) {
-    var typeIn = ActivityType.values;
-    FeedFilter? feedFilter;
-
-    if (userId == null) {
-      feedFilter = FeedFilter(
-        Options().feedOnFollowing,
-        Options().viewerActivitiesInFeed,
-      );
-      typeIn = Options()
-          .feedActivityFilters
-          .map((e) => ActivityType.values.elementAt(e))
-          .toList();
-    }
-
-    return ActivityFilterNotifier(typeIn, feedFilter);
-  },
+final activityFilterProvider =
+    StateProvider.autoDispose.family<ActivitiesFilter, int?>(
+  (ref, userId) => userId == null
+      ? HomeActivitiesFilter(
+          ActivityType.values,
+          Options().feedOnFollowing,
+          Options().viewerActivitiesInFeed,
+        )
+      : UserActivitiesFilter(ActivityType.values, userId),
 );
 
 class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
   ActivitiesNotifier({
-    required this.userId,
     required this.viewerId,
     required this.filter,
     required bool shouldLoad,
@@ -48,15 +36,9 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
     if (shouldLoad) fetch();
   }
 
-  /// [userId] being `null` means that this notifier handles the home feed.
-  final int? userId;
   final int viewerId;
-  final ActivityFilter filter;
-
-  /// [_lastCreatedAt] is used to track pages, instead of the next page value
-  /// of the state. This prevents duplicates when more pages are loaded,
-  /// as new activities are created often.
-  int? _lastCreatedAt;
+  final ActivitiesFilter filter;
+  int _lastCreatedAt = DateTime.now().millisecondsSinceEpoch;
 
   Future<void> fetch() async {
     state = await AsyncValue.guard(() async {
@@ -64,13 +46,18 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
 
       final data = await Api.get(GqlQuery.activities, {
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
-        if (userId != null) 'userId': userId,
-        if (filter.feedFilter != null) ...{
-          'isFollowing': filter.feedFilter!.onFollowing,
-          if (!filter.feedFilter!.withViewerActivities) 'userIdNot': viewerId,
-          if (!filter.feedFilter!.onFollowing) 'hasRepliesOrText': true,
+        ...switch (filter) {
+          HomeActivitiesFilter filter => {
+              'isFollowing': filter.onFollowing,
+              if (!filter.withViewerActivities) 'userIdNot': viewerId,
+              if (!filter.onFollowing) 'hasRepliesOrText': true,
+              if (value.items.isNotEmpty) 'createdBefore': _lastCreatedAt,
+            },
+          UserActivitiesFilter filter => {
+              'userId': filter.userId,
+              'page': value.next,
+            },
         },
-        if (_lastCreatedAt != null) 'createdBefore': _lastCreatedAt!
       });
 
       final items = <Activity>[];
@@ -79,7 +66,7 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
         if (item != null) items.add(item);
       }
 
-      if (data['Page']['activities']?.isNotEmpty ?? false) {
+      if (data['Page']['activities'].isNotEmpty) {
         _lastCreatedAt = data['Page']['activities'].last['createdAt'];
       }
 
@@ -183,31 +170,5 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
         return;
       }
     }
-  }
-}
-
-class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
-  ActivityFilterNotifier(List<ActivityType> typeIn, FeedFilter? feedFilter)
-      : super(ActivityFilter(typeIn, feedFilter));
-
-  void update(
-    List<ActivityType> typeIn,
-    bool? onFollowing,
-    bool? withViewerActivities,
-  ) {
-    state = state.feedFilter == null
-        ? ActivityFilter(typeIn, null)
-        : ActivityFilter(
-            typeIn,
-            FeedFilter(
-              onFollowing ?? state.feedFilter!.onFollowing,
-              withViewerActivities ?? state.feedFilter!.withViewerActivities,
-            ),
-          );
-
-    if (state.feedFilter == null) return;
-    Options().feedActivityFilters = typeIn.map((e) => e.index).toList();
-    Options().feedOnFollowing = state.feedFilter!.onFollowing;
-    Options().viewerActivitiesInFeed = state.feedFilter!.withViewerActivities;
   }
 }

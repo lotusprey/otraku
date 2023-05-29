@@ -15,7 +15,7 @@ import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
-class _FilterView<T extends ApplicableMediaFilter<T>> extends StatefulWidget {
+class _FilterView<T extends MediaFilter<T>> extends StatefulWidget {
   const _FilterView({
     required this.filter,
     required this.onChanged,
@@ -30,7 +30,7 @@ class _FilterView<T extends ApplicableMediaFilter<T>> extends StatefulWidget {
   State<_FilterView<T>> createState() => __FilterViewState<T>();
 }
 
-class __FilterViewState<T extends ApplicableMediaFilter<T>>
+class __FilterViewState<T extends MediaFilter<T>>
     extends State<_FilterView<T>> {
   late final T _filter = widget.filter.copy();
 
@@ -65,12 +65,12 @@ class __FilterViewState<T extends ApplicableMediaFilter<T>>
 class CollectionFilterView extends StatelessWidget {
   const CollectionFilterView({required this.filter, required this.onChanged});
 
-  final CollectionFilter filter;
-  final void Function(CollectionFilter) onChanged;
+  final CollectionMediaFilter filter;
+  final void Function(CollectionMediaFilter) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _FilterView<CollectionFilter>(
+    return _FilterView<CollectionMediaFilter>(
       filter: filter,
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
@@ -135,12 +135,12 @@ class CollectionFilterView extends StatelessWidget {
 class DiscoverFilterView extends StatelessWidget {
   const DiscoverFilterView({required this.filter, required this.onChanged});
 
-  final DiscoverFilter filter;
-  final void Function(DiscoverFilter) onChanged;
+  final DiscoverMediaFilter filter;
+  final void Function(DiscoverMediaFilter) onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _FilterView<DiscoverFilter>(
+    return _FilterView<DiscoverMediaFilter>(
       filter: filter,
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(

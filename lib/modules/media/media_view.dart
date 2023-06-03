@@ -48,7 +48,12 @@ class _MediaViewState extends State<MediaView>
       child: NestedScrollView(
         controller: _scrollCtrl,
         headerSliverBuilder: (context, _) => [
-          MediaHeader(widget.id, widget.coverUrl, _tabCtrl),
+          MediaHeader(
+            id: widget.id,
+            coverUrl: widget.coverUrl,
+            tabCtrl: _tabCtrl,
+            scrollToTop: _scrollCtrl.scrollToTop,
+          ),
         ],
         body: Consumer(
           builder: (context, ref, _) {

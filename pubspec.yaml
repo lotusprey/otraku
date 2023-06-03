@@ -46,7 +46,7 @@ dependencies:
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^14.1.0
+  flutter_local_notifications: ^14.1.1
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.10.1

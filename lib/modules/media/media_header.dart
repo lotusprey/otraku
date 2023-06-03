@@ -14,11 +14,17 @@ import 'package:otraku/common/widgets/overlays/toast.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
-  const MediaHeader(this.id, this.coverUrl, this.tabCtrl);
+  const MediaHeader({
+    required this.id,
+    required this.coverUrl,
+    required this.tabCtrl,
+    required this.scrollToTop,
+  });
 
   final int id;
   final String? coverUrl;
   final TabController tabCtrl;
+  final void Function() scrollToTop;
 
   @override
   Widget build(BuildContext context) {
@@ -67,6 +73,7 @@ class MediaHeader extends StatelessWidget {
             info: media?.info,
             coverUrl: coverUrl,
             topOffset: topOffset,
+            scrollToTop: scrollToTop,
             textRailItems: textRailItems,
             imageWidth: MediaQuery.of(context).size.width < 430.0
                 ? MediaQuery.of(context).size.width * 0.30
@@ -86,6 +93,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.coverUrl,
     required this.topOffset,
     required this.textRailItems,
+    required this.scrollToTop,
     required this.tabCtrl,
   });
 
@@ -96,6 +104,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final double topOffset;
   final Map<String, bool> textRailItems;
   final TabController tabCtrl;
+  final void Function() scrollToTop;
 
   @override
   Widget build(
@@ -321,6 +330,11 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                 Tab(text: 'Recommendations'),
                 Tab(text: 'Statistics'),
               ],
+              onTap: (i) {
+                if (i == tabCtrl.index) {
+                  scrollToTop();
+                }
+              },
             ),
           ),
         ],

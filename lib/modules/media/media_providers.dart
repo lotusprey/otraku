@@ -107,29 +107,12 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
       return data['Media'];
     });
 
-    var recommended = state.recommendations;
     var characters = state.characters;
     var staff = state.staff;
     var reviews = state.reviews;
+    var recommended = state.recommendations;
     var languageToVoiceActors = state.languageToVoiceActors;
     var language = state.language;
-
-    if (tab == null || tab == MediaTab.recommendations) {
-      recommended = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['recommendations'];
-        final value = recommended.valueOrNull ?? const Paged();
-
-        final items = <Recommendation>[];
-        for (final r in map['nodes']) {
-          if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
-        }
-
-        return Future.value(
-          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-        );
-      });
-    }
 
     if (tab == null || tab == MediaTab.characters) {
       characters = await AsyncValue.guard(() {
@@ -219,6 +202,23 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
         for (final r in map['nodes']) {
           final item = RelatedReview.maybe(r);
           if (item != null) items.add(item);
+        }
+
+        return Future.value(
+          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
+        );
+      });
+    }
+
+    if (tab == null || tab == MediaTab.recommendations) {
+      recommended = await AsyncValue.guard(() {
+        if (data.hasError) throw data.error!;
+        final map = data.value!['recommendations'];
+        final value = recommended.valueOrNull ?? const Paged();
+
+        final items = <Recommendation>[];
+        for (final r in map['nodes']) {
+          if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
         }
 
         return Future.value(

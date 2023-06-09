@@ -327,6 +327,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                 Tab(text: 'Characters'),
                 Tab(text: 'Staff'),
                 Tab(text: 'Reviews'),
+                Tab(text: 'Following'),
                 Tab(text: 'Recommendations'),
                 Tab(text: 'Statistics'),
               ],

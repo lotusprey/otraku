@@ -4,7 +4,6 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
@@ -15,12 +14,10 @@ import 'package:otraku/common/widgets/overlays/sheets.dart';
 class CollectionGrid extends StatelessWidget {
   const CollectionGrid({
     required this.items,
-    required this.scoreFormat,
     required this.onProgressUpdate,
   });
 
   final List<Entry> items;
-  final ScoreFormat scoreFormat;
 
   /// Called when a tile's progress gets incremented.
   /// If `null` the increment button won't appear, so this

@@ -72,7 +72,6 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
                   )
                 : CollectionGrid(
                     items: entries,
-                    scoreFormat: notifier.scoreFormat,
                     onProgressUpdate: (_, __) {},
                   );
           }

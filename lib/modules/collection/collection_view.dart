@@ -308,7 +308,6 @@ class _ContentState extends State<_Content> {
               )
             : CollectionGrid(
                 items: entries,
-                scoreFormat: notifier.scoreFormat,
                 onProgressUpdate: update,
               );
       },

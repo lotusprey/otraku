@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/entry_labels.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
@@ -166,7 +167,7 @@ class __TileContentState extends State<_TileContent> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Tooltip(message: 'Score', child: _buildScore(context)),
+            ScoreLabel(widget.item.score, widget.scoreFormat),
             if (widget.item.repeat > 0)
               Tooltip(
                 message: 'Repeats',
@@ -184,92 +185,12 @@ class __TileContentState extends State<_TileContent> {
               )
             else
               const SizedBox(),
-            if (widget.item.notes != null)
-              SizedBox(
-                height: 40,
-                child: Tooltip(
-                  message: 'Comment',
-                  child: InkResponse(
-                    radius: 10,
-                    child: const Icon(Ionicons.chatbox, size: Consts.iconSmall),
-                    onTap: () => showPopUp(
-                      context,
-                      TextDialog(
-                        title: 'Comment',
-                        text: widget.item.notes!,
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            else
-              const SizedBox(),
+            NotesLabel(item.notes),
             _buildProgressButton(),
           ],
         ),
       ],
     );
-  }
-
-  Widget _buildScore(BuildContext context) {
-    if (widget.item.score == 0) return const SizedBox();
-
-    switch (widget.scoreFormat) {
-      case ScoreFormat.POINT_3:
-        if (widget.item.score == 3) {
-          return const Icon(
-            Icons.sentiment_very_satisfied,
-            size: Consts.iconSmall,
-          );
-        }
-
-        if (widget.item.score == 2) {
-          return const Icon(Icons.sentiment_neutral, size: Consts.iconSmall);
-        }
-
-        return const Icon(
-          Icons.sentiment_very_dissatisfied,
-          size: Consts.iconSmall,
-        );
-      case ScoreFormat.POINT_5:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-          ],
-        );
-      case ScoreFormat.POINT_10_DECIMAL:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(
-                widget.item.score.truncate() == widget.item.score ? 0 : 1,
-              ),
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-          ],
-        );
-      default:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              widget.item.score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-          ],
-        );
-    }
   }
 
   Widget _buildProgressButton() {

@@ -139,6 +139,10 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void _tabListener() {
     _lastMaxExtent = 0;
 
+    ref
+        .read(mediaRelationsProvider(widget.id).notifier)
+        .lazyLoad(MediaTab.values[widget.tabCtrl.index]);
+
     // This is a workaround for an issue with [NestedScrollView].
     // If you switch to a tab with pagination, where the content
     // doesn't fill the view, the scroll controller has it's maximum
@@ -227,6 +231,16 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
               data.items,
               widget.media.info.banner,
             ),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: () => _refresh(ref),
+          ),
+        ),
+        Consumer(
+          builder: (context, ref, _) => PagedView<MediaFollowing>(
+            provider: mediaRelationsProvider(widget.id).select(
+              (s) => s.following,
+            ),
+            onData: (data) => MediaFollowingGrid(data.items),
             scrollCtrl: _scrollCtrl,
             onRefresh: () => _refresh(ref),
           ),

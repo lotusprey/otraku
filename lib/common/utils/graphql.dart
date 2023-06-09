@@ -77,7 +77,7 @@ abstract class GqlQuery {
       popularity
       studios {edges {isMain node {id name}}}
       tags {name description rank isMediaSpoiler isGeneralSpoiler}
-      source
+      source(version: 3)
       hashtag
       siteUrl
       rankings {rank type year season allTime}
@@ -113,6 +113,39 @@ abstract class GqlQuery {
       updatedAt
       createdAt
     }
+    fragment characters on Media {
+      characters(page: $page, sort: [ROLE, RELEVANCE]) {
+        pageInfo {hasNextPage}
+        edges {
+          role
+          node {id name {userPreferred} image {large}}
+          voiceActors(sort: RELEVANCE) {
+            id
+            name {userPreferred}
+            image {large}
+            languageV2
+          }
+        }
+      }
+    }
+    fragment staff on Media {
+      staff(page: $page, sort: RELEVANCE) {
+        pageInfo {hasNextPage}
+        edges {role node {id name {userPreferred} image {large}}}
+      }
+    }
+    fragment reviews on Media {
+      reviews(sort: RATING_DESC, page: $page) {
+        pageInfo {hasNextPage}
+        nodes {
+          id
+          summary
+          rating
+          ratingAmount
+          user {id name avatar {large}}
+        }
+      }
+    }
     fragment recommendations on Media {
       recommendations(page: $page, sort: [RATING_DESC]) {
         pageInfo {hasNextPage}
@@ -128,31 +161,22 @@ abstract class GqlQuery {
         }
       }
     }
-    fragment characters on Media {
-      characters(page: $page, sort: [ROLE, ID]) {
+  ''';
+
+  static const mediaFollowing = r'''
+    query MediaFollowing($mediaId: Int, $page: Int) {
+      Page(page: $page) {
         pageInfo {hasNextPage}
-        edges {
-          role
-          voiceActors {id name {userPreferred} languageV2 image {large}}
-          node {id name {userPreferred} image {large}}
-        }
-      }
-    }
-    fragment staff on Media {
-      staff(page: $page) {
-        pageInfo {hasNextPage}
-        edges {role node {id name {userPreferred} image {large}}}
-      }
-    }
-    fragment reviews on Media {
-      reviews(sort: RATING_DESC, page: $page) {
-        pageInfo {hasNextPage}
-        nodes {
-          id
-          summary
-          rating
-          ratingAmount
-          user {id name avatar {large}}
+        mediaList(mediaId: $mediaId, isFollowing: true, sort: UPDATED_TIME_DESC) {
+          status
+          score
+          notes
+          user {
+            id
+            name
+            avatar {large}
+            mediaListOptions {scoreFormat}
+          }
         }
       }
     }

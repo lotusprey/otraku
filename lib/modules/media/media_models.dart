@@ -5,6 +5,7 @@ import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
+import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_models.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -31,6 +32,7 @@ enum MediaTab {
   characters,
   staff,
   reviews,
+  following,
   recommendations,
   statistics,
 }
@@ -40,6 +42,7 @@ class MediaRelations {
     this.characters = const AsyncValue.loading(),
     this.staff = const AsyncValue.loading(),
     this.reviews = const AsyncValue.loading(),
+    this.following = const AsyncValue.loading(),
     this.recommendations = const AsyncValue.loading(),
     this.languageToVoiceActors = const {},
     this.language = '',
@@ -48,6 +51,7 @@ class MediaRelations {
   final AsyncValue<Paged<Relation>> characters;
   final AsyncValue<Paged<Relation>> staff;
   final AsyncValue<Paged<RelatedReview>> reviews;
+  final AsyncValue<Paged<MediaFollowing>> following;
   final AsyncValue<Paged<Recommendation>> recommendations;
 
   /// For each language, a list of voice actors
@@ -84,6 +88,26 @@ class MediaRelations {
 
     return charactersAndVoiceActors;
   }
+
+  MediaRelations copyWith({
+    AsyncValue<Paged<Relation>>? characters,
+    AsyncValue<Paged<Relation>>? staff,
+    AsyncValue<Paged<RelatedReview>>? reviews,
+    AsyncValue<Paged<MediaFollowing>>? following,
+    AsyncValue<Paged<Recommendation>>? recommendations,
+    Map<String, Map<int, List<Relation>>>? languageToVoiceActors,
+    String? language,
+  }) =>
+      MediaRelations(
+        characters: characters ?? this.characters,
+        staff: staff ?? this.staff,
+        reviews: reviews ?? this.reviews,
+        following: following ?? this.following,
+        recommendations: recommendations ?? this.recommendations,
+        languageToVoiceActors:
+            languageToVoiceActors ?? this.languageToVoiceActors,
+        language: language ?? this.language,
+      );
 }
 
 class RelatedMedia {
@@ -118,6 +142,69 @@ class RelatedMedia {
   final String? status;
 }
 
+class RelatedReview {
+  RelatedReview._({
+    required this.reviewId,
+    required this.userId,
+    required this.avatar,
+    required this.username,
+    required this.summary,
+    required this.rating,
+  });
+
+  static RelatedReview? maybe(Map<String, dynamic> map) {
+    if (map['user'] == null) return null;
+
+    return RelatedReview._(
+      reviewId: map['id'],
+      userId: map['user']['id'],
+      username: map['user']['name'] ?? '',
+      summary: map['summary'] ?? '',
+      avatar: map['user']['avatar']['large'],
+      rating: '${map['rating']}/${map['ratingAmount']}',
+    );
+  }
+
+  final int reviewId;
+  final int userId;
+  final String username;
+  final String avatar;
+  final String summary;
+  final String rating;
+}
+
+class MediaFollowing {
+  MediaFollowing._({
+    required this.status,
+    required this.score,
+    required this.notes,
+    required this.userId,
+    required this.userName,
+    required this.userAvatar,
+    required this.scoreFormat,
+  });
+
+  factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
+        status: Convert.clarifyEnum(map['status'])!,
+        score: (map['score'] ?? 0).toDouble(),
+        notes: map['notes'],
+        userId: map['user']['id'],
+        userName: map['user']['name'],
+        userAvatar: map['user']['avatar']['large'],
+        scoreFormat: ScoreFormat.values.byName(
+          map['user']['mediaListOptions']['scoreFormat'] ?? 'POINT_10_DECIMAL',
+        ),
+      );
+
+  final String status;
+  final double score;
+  final String? notes;
+  final int userId;
+  final String userName;
+  final String userAvatar;
+  final ScoreFormat scoreFormat;
+}
+
 class Recommendation {
   Recommendation._({
     required this.id,
@@ -150,37 +237,6 @@ class Recommendation {
   final String title;
   final String? imageUrl;
   final DiscoverType type;
-}
-
-class RelatedReview {
-  RelatedReview._({
-    required this.reviewId,
-    required this.userId,
-    required this.avatar,
-    required this.username,
-    required this.summary,
-    required this.rating,
-  });
-
-  static RelatedReview? maybe(Map<String, dynamic> map) {
-    if (map['user'] == null) return null;
-
-    return RelatedReview._(
-      reviewId: map['id'],
-      userId: map['user']['id'],
-      username: map['user']['name'] ?? '',
-      summary: map['summary'] ?? '',
-      avatar: map['user']['avatar']['large'],
-      rating: '${map['rating']}/${map['ratingAmount']}',
-    );
-  }
-
-  final int reviewId;
-  final int userId;
-  final String username;
-  final String avatar;
-  final String summary;
-  final String rating;
 }
 
 class MediaInfo {

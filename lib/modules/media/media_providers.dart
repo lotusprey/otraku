@@ -64,20 +64,33 @@ final mediaRelationsProvider = StateNotifierProvider.autoDispose
 
 class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
   MediaRelationsNotifier(this.mediaId) : super(const MediaRelations()) {
-    _fetch(null);
+    _fetchGroups(null);
   }
 
   final int mediaId;
+  bool _didLazyLoadFollowing = false;
 
-  Future<void> fetch(MediaTab tab) => _fetch(tab);
+  Future<void> fetch(MediaTab tab) => switch (tab) {
+        MediaTab.info ||
+        MediaTab.relations ||
+        MediaTab.statistics =>
+          Future.value(),
+        MediaTab.following => _fetchFollowing(),
+        _ => _fetchGroups(tab),
+      };
 
-  Future<void> _fetch(MediaTab? tab) async {
-    if (tab == MediaTab.info ||
-        tab == MediaTab.relations ||
-        tab == MediaTab.statistics) {
-      return;
+  void lazyLoad(MediaTab tab) {
+    switch (tab) {
+      case MediaTab.following:
+        if (_didLazyLoadFollowing) return;
+        _didLazyLoadFollowing = true;
+        _fetchFollowing();
+      default:
+        return;
     }
+  }
 
+  Future<void> _fetchGroups(MediaTab? tab) async {
     final variables = <String, dynamic>{'id': mediaId};
     if (tab == null) {
       variables['withRecommendations'] = true;
@@ -227,7 +240,7 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
       });
     }
 
-    state = MediaRelations(
+    state = state.copyWith(
       recommendations: recommended,
       characters: characters,
       staff: staff,
@@ -235,6 +248,36 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
       languageToVoiceActors: languageToVoiceActors,
       language: language,
     );
+  }
+
+  Future<void> _fetchFollowing() async {
+    if (!(state.following.valueOrNull?.hasNext ?? true)) return;
+
+    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
+      final data = await Api.get(GqlQuery.mediaFollowing, {
+        'mediaId': mediaId,
+        'page': state.following.valueOrNull?.next ?? 1,
+      });
+      return data['Page'];
+    });
+
+    var following = state.following;
+    following = await AsyncValue.guard(() {
+      if (data.hasError) throw data.error!;
+      final map = data.value!;
+      final value = following.valueOrNull ?? const Paged();
+
+      final items = <MediaFollowing>[];
+      for (final f in map['mediaList']) {
+        items.add(MediaFollowing(f));
+      }
+
+      return Future.value(
+        value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
+      );
+    });
+
+    state = state.copyWith(following: following);
   }
 
   void changeLanguage(String language) => state = MediaRelations(

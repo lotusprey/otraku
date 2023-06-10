@@ -82,7 +82,12 @@ class UserSubView extends StatelessWidget {
               if (data.description.isNotEmpty)
                 SliverToBoxAdapter(
                   child: ConstrainedView(
-                    child: Card(child: HtmlContent(data.description)),
+                    child: Card(
+                      child: Padding(
+                        padding: Consts.padding,
+                        child: HtmlContent(data.description),
+                      ),
+                    ),
                   ),
                 ),
               const SliverFooter(),

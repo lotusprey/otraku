@@ -348,7 +348,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: BackdropFilter(
               filter: Consts.blurFilter,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: theme.bottomAppBarTheme.color),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).navigationBarTheme.backgroundColor,
+                ),
                 child: body,
               ),
             ),

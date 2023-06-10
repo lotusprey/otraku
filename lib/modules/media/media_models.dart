@@ -42,7 +42,6 @@ class MediaRelations {
     this.characters = const AsyncValue.loading(),
     this.staff = const AsyncValue.loading(),
     this.reviews = const AsyncValue.loading(),
-    this.following = const AsyncValue.loading(),
     this.recommendations = const AsyncValue.loading(),
     this.languageToVoiceActors = const {},
     this.language = '',
@@ -51,7 +50,6 @@ class MediaRelations {
   final AsyncValue<Paged<Relation>> characters;
   final AsyncValue<Paged<Relation>> staff;
   final AsyncValue<Paged<RelatedReview>> reviews;
-  final AsyncValue<Paged<MediaFollowing>> following;
   final AsyncValue<Paged<Recommendation>> recommendations;
 
   /// For each language, a list of voice actors
@@ -93,7 +91,6 @@ class MediaRelations {
     AsyncValue<Paged<Relation>>? characters,
     AsyncValue<Paged<Relation>>? staff,
     AsyncValue<Paged<RelatedReview>>? reviews,
-    AsyncValue<Paged<MediaFollowing>>? following,
     AsyncValue<Paged<Recommendation>>? recommendations,
     Map<String, Map<int, List<Relation>>>? languageToVoiceActors,
     String? language,
@@ -102,7 +99,6 @@ class MediaRelations {
         characters: characters ?? this.characters,
         staff: staff ?? this.staff,
         reviews: reviews ?? this.reviews,
-        following: following ?? this.following,
         recommendations: recommendations ?? this.recommendations,
         languageToVoiceActors:
             languageToVoiceActors ?? this.languageToVoiceActors,

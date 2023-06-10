@@ -62,35 +62,23 @@ final mediaRelationsProvider = StateNotifierProvider.autoDispose
   (ref, int mediaId) => MediaRelationsNotifier(mediaId),
 );
 
+final mediaFollowingProvider = StateNotifierProvider.autoDispose
+    .family<MediaFollowingNotifier, AsyncValue<Paged<MediaFollowing>>, int>(
+  (ref, int mediaId) => MediaFollowingNotifier(mediaId),
+);
+
 class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
   MediaRelationsNotifier(this.mediaId) : super(const MediaRelations()) {
-    _fetchGroups(null);
+    _fetch(null);
   }
 
   final int mediaId;
-  bool _didLazyLoadFollowing = false;
 
-  Future<void> fetch(MediaTab tab) => switch (tab) {
-        MediaTab.info ||
-        MediaTab.relations ||
-        MediaTab.statistics =>
-          Future.value(),
-        MediaTab.following => _fetchFollowing(),
-        _ => _fetchGroups(tab),
-      };
+  Future<void> fetch(MediaTab tab) => _fetch(tab);
 
-  void lazyLoad(MediaTab tab) {
-    switch (tab) {
-      case MediaTab.following:
-        if (_didLazyLoadFollowing) return;
-        _didLazyLoadFollowing = true;
-        _fetchFollowing();
-      default:
-        return;
-    }
-  }
+  Future<void> _fetch(MediaTab? tab) async {
+    if (tab == MediaTab.following) return;
 
-  Future<void> _fetchGroups(MediaTab? tab) async {
     final variables = <String, dynamic>{'id': mediaId};
     if (tab == null) {
       variables['withRecommendations'] = true;
@@ -250,36 +238,6 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
     );
   }
 
-  Future<void> _fetchFollowing() async {
-    if (!(state.following.valueOrNull?.hasNext ?? true)) return;
-
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.mediaFollowing, {
-        'mediaId': mediaId,
-        'page': state.following.valueOrNull?.next ?? 1,
-      });
-      return data['Page'];
-    });
-
-    var following = state.following;
-    following = await AsyncValue.guard(() {
-      if (data.hasError) throw data.error!;
-      final map = data.value!;
-      final value = following.valueOrNull ?? const Paged();
-
-      final items = <MediaFollowing>[];
-      for (final f in map['mediaList']) {
-        items.add(MediaFollowing(f));
-      }
-
-      return Future.value(
-        value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-      );
-    });
-
-    state = state.copyWith(following: following);
-  }
-
   void changeLanguage(String language) => state = MediaRelations(
         recommendations: state.recommendations,
         characters: state.characters,
@@ -288,4 +246,41 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
         languageToVoiceActors: state.languageToVoiceActors,
         language: language,
       );
+}
+
+class MediaFollowingNotifier
+    extends StateNotifier<AsyncValue<Paged<MediaFollowing>>> {
+  MediaFollowingNotifier(this.mediaId) : super(const AsyncValue.loading());
+
+  final int mediaId;
+  bool _didLazyLoad = false;
+
+  void lazyLoad() {
+    if (_didLazyLoad) return;
+    _didLazyLoad = true;
+    fetch();
+  }
+
+  Future<void> fetch() async {
+    if (!(state.valueOrNull?.hasNext ?? true)) return;
+
+    state = await AsyncValue.guard(() async {
+      final value = state.valueOrNull ?? const Paged();
+
+      final data = await Api.get(
+        GqlQuery.mediaFollowing,
+        {'mediaId': mediaId, 'page': value.next},
+      );
+
+      final items = <MediaFollowing>[];
+      for (final f in data['Page']['mediaList']) {
+        items.add(MediaFollowing(f));
+      }
+
+      return value.withNext(
+        items,
+        data['Page']['pageInfo']['hasNextPage'] ?? false,
+      );
+    });
+  }
 }

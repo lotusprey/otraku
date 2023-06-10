@@ -139,9 +139,9 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void _tabListener() {
     _lastMaxExtent = 0;
 
-    ref
-        .read(mediaRelationsProvider(widget.id).notifier)
-        .lazyLoad(MediaTab.values[widget.tabCtrl.index]);
+    if (widget.tabCtrl.index == MediaTab.following.index) {
+      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
+    }
 
     // This is a workaround for an issue with [NestedScrollView].
     // If you switch to a tab with pagination, where the content
@@ -163,18 +163,29 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     _loadNextPage();
   }
 
-  void _loadNextPage() => ref
-      .read(mediaRelationsProvider(widget.id).notifier)
-      .fetch(MediaTab.values.elementAt(widget.tabCtrl.index));
+  void _loadNextPage() {
+    if (widget.tabCtrl.index == MediaTab.following.index) {
+      ref.read(mediaFollowingProvider(widget.id).notifier).fetch();
+    } else {
+      ref
+          .read(mediaRelationsProvider(widget.id).notifier)
+          .fetch(MediaTab.values.elementAt(widget.tabCtrl.index));
+    }
+  }
 
   void _refresh(WidgetRef ref) {
-    ref.invalidate(mediaRelationsProvider(widget.id));
+    if (widget.tabCtrl.index == MediaTab.following.index) {
+      ref.invalidate(mediaFollowingProvider(widget.id));
+    } else {
+      ref.invalidate(mediaRelationsProvider(widget.id));
+    }
     _lastMaxExtent = 0;
   }
 
   @override
   Widget build(BuildContext context) {
     ref.watch(mediaRelationsProvider(widget.id).select((_) => null));
+    ref.watch(mediaFollowingProvider(widget.id).select((_) => null));
 
     final stats = widget.media.stats;
 
@@ -237,9 +248,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<MediaFollowing>(
-            provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.following,
-            ),
+            provider: mediaFollowingProvider(widget.id),
             onData: (data) => MediaFollowingGrid(data.items),
             scrollCtrl: _scrollCtrl,
             onRefresh: () => _refresh(ref),

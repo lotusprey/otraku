@@ -66,7 +66,9 @@ class _Tile extends StatelessWidget {
             Hero(
               tag: entry.mediaId,
               child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: const BorderRadius.horizontal(
+                  left: Consts.radiusMin,
+                ),
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,

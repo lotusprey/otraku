@@ -107,7 +107,25 @@ class AuthViewState extends State<AuthView> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Scaffold(body: Center(child: Loader()));
+    if (_loading) {
+      return Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Center(child: Loader()),
+            const SizedBox(height: 10),
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                _sub?.cancel();
+                setState(() => _loading = false);
+              },
+            ),
+          ],
+        ),
+      );
+    }
 
     final available0 = Options().isAvailableAccount(0);
     final available1 = Options().isAvailableAccount(1);
@@ -229,8 +247,7 @@ class AuthViewState extends State<AuthView> {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Text(
                   'Before connecting another account, you should log out from the first one in the browser.',
                   style: Theme.of(context).textTheme.labelMedium,

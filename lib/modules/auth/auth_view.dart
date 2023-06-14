@@ -24,7 +24,7 @@ class AuthViewState extends State<AuthView> {
   bool _loading = false;
 
   void _verify(int account) {
-    if (!_loading) setState(() => _loading = true);
+    setState(() => _loading = true);
 
     Api.logIn(account).then((loggedIn) {
       if (!loggedIn) {
@@ -45,7 +45,7 @@ class AuthViewState extends State<AuthView> {
     setState(() => _loading = true);
 
     // Prepare to receive an authentication token.
-    _sub?.cancel();
+    _clearStreamSubscription();
     _sub = AppLinks().stringLinkStream.listen((link) async {
       final start = link.indexOf('=') + 1;
       final middle = link.indexOf('&');
@@ -79,6 +79,7 @@ class AuthViewState extends State<AuthView> {
       }
 
       await Api.register(account, token, expiration);
+      _clearStreamSubscription();
       _verify(account);
     });
 
@@ -91,12 +92,19 @@ class AuthViewState extends State<AuthView> {
     if (!ok) setState(() => _loading = false);
   }
 
+  void _clearStreamSubscription() {
+    _sub?.cancel();
+    _sub = null;
+  }
+
   @override
   void initState() {
     super.initState();
-    if (Options().account == null) return;
-    _loading = true;
-    _verify(Options().account!);
+    if (Options().account != null) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => _verify(Options().account!),
+      );
+    }
   }
 
   @override
@@ -114,14 +122,16 @@ class AuthViewState extends State<AuthView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Center(child: Loader()),
-            const SizedBox(height: 10),
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                _sub?.cancel();
-                setState(() => _loading = false);
-              },
-            ),
+            if (_sub != null) ...[
+              const SizedBox(height: 10),
+              TextButton(
+                child: const Text('Cancel'),
+                onPressed: () {
+                  _clearStreamSubscription();
+                  setState(() => _loading = false);
+                },
+              ),
+            ],
           ],
         ),
       );

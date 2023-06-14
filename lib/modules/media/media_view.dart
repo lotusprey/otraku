@@ -148,7 +148,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     // doesn't fill the view, the scroll controller has it's maximum
     // extent set to 0 and the loading of a next page of items is not triggered.
     // This is why we need to manually load the second page.
-    if (!widget.tabCtrl.indexIsChanging) {
+    if (!widget.tabCtrl.indexIsChanging && _scrollCtrl.hasClients) {
       final pos = _scrollCtrl.positions.last;
       if (pos.minScrollExtent == pos.maxScrollExtent) _loadNextPage();
     }
@@ -176,6 +176,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void _refresh(WidgetRef ref) {
     if (widget.tabCtrl.index == MediaTab.following.index) {
       ref.invalidate(mediaFollowingProvider(widget.id));
+      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
     } else {
       ref.invalidate(mediaRelationsProvider(widget.id));
     }

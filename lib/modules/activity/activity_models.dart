@@ -204,36 +204,20 @@ enum ActivityType {
   final String text;
 }
 
-class ActivityFilter {
-  const ActivityFilter(this.typeIn, this.feedFilter);
-
-  final List<ActivityType> typeIn;
-
-  /// Not `null` only for the main feed.
-  final FeedFilter? feedFilter;
-}
-
-class FeedFilter {
-  const FeedFilter(this.onFollowing, this.withViewerActivities);
-
-  final bool onFollowing;
-  final bool withViewerActivities;
-}
-
-sealed class ActivitiesFilter {
-  const ActivitiesFilter(this.typeIn);
+sealed class ActivityFilter {
+  const ActivityFilter(this.typeIn);
 
   final List<ActivityType> typeIn;
 }
 
-class UserActivitiesFilter extends ActivitiesFilter {
-  const UserActivitiesFilter(super.typeIn, this.userId);
+class UserActivityFilter extends ActivityFilter {
+  const UserActivityFilter(super.typeIn, this.userId);
 
   final int userId;
 }
 
-class HomeActivitiesFilter extends ActivitiesFilter {
-  const HomeActivitiesFilter(
+class HomeActivityFilter extends ActivityFilter {
+  const HomeActivityFilter(
     super.typeIn,
     this.onFollowing,
     this.withViewerActivities,

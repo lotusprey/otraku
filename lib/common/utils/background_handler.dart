@@ -157,7 +157,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
             ),
           NotificationType.ACTIVITY_REPLY_SUBSCRIBED => _show(
               notification,
-              'New Reply To Subscription',
+              'New Reply To Subscribed Activity',
               '${RouteArg.activity}/${notification.bodyId}',
             ),
           NotificationType.ACTIVITY_MENTION => _show(

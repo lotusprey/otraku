@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/filter/year_range_picker.dart';
@@ -36,26 +37,31 @@ class __FilterViewState<T extends MediaFilter<T>>
 
   @override
   Widget build(BuildContext context) {
+    final applyButton = BottomBarButton(
+      text: 'Apply',
+      icon: Icons.done_rounded,
+      onTap: () {
+        widget.onChanged(_filter);
+        Navigator.pop(context);
+      },
+    );
+
+    final clearButton = BottomBarButton(
+      text: 'Clear',
+      icon: Icons.close,
+      warning: true,
+      onTap: () {
+        widget.onChanged(_filter.clear());
+        Navigator.pop(context);
+      },
+    );
+
     return OpaqueSheetView(
-      buttons: BottomBar([
-        BottomBarButton(
-          text: 'Apply',
-          icon: Icons.done_rounded,
-          onTap: () {
-            widget.onChanged(_filter);
-            Navigator.pop(context);
-          },
-        ),
-        BottomBarButton(
-          text: 'Clear',
-          icon: Icons.close,
-          warning: true,
-          onTap: () {
-            widget.onChanged(_filter.clear());
-            Navigator.pop(context);
-          },
-        ),
-      ]),
+      buttons: BottomBar(
+        Options().leftHanded
+            ? [applyButton, clearButton]
+            : [clearButton, applyButton],
+      ),
       builder: (context, scrollCtrl) =>
           widget.builder(context, scrollCtrl, _filter),
     );

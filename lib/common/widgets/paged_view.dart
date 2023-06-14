@@ -40,38 +40,33 @@ class PagedView<T> extends StatelessWidget {
           ),
         );
 
-        bool? hasNext;
-        final child = ref.watch(provider).unwrapPrevious().when(
-              loading: () => const SliverFillRemaining(
-                child: Center(child: Loader()),
+        return ref.watch(provider).unwrapPrevious().when(
+              loading: () => const Center(child: Loader()),
+              error: (_, __) => CustomScrollView(
+                physics: Consts.physics,
+                slivers: [
+                  SliverRefreshControl(onRefresh: onRefresh),
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load')),
+                  ),
+                ],
               ),
-              error: (_, __) => const SliverFillRemaining(
-                child: Center(child: Text('Failed to load')),
+              data: (data) => ConstrainedView(
+                child: CustomScrollView(
+                  physics: Consts.physics,
+                  controller: scrollCtrl,
+                  slivers: [
+                    SliverRefreshControl(onRefresh: onRefresh),
+                    data.items.isEmpty
+                        ? const SliverFillRemaining(
+                            child: Center(child: Text('No results')),
+                          )
+                        : onData(data),
+                    SliverFooter(loading: data.hasNext),
+                  ],
+                ),
               ),
-              data: (data) {
-                hasNext = data.hasNext;
-
-                if (data.items.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: Text('No results')),
-                  );
-                }
-
-                return onData(data);
-              },
             );
-
-        return ConstrainedView(
-          child: CustomScrollView(
-            physics: Consts.physics,
-            controller: hasNext != null ? scrollCtrl : null,
-            slivers: [
-              SliverRefreshControl(onRefresh: onRefresh),
-              child,
-              SliverFooter(loading: hasNext ?? false),
-            ],
-          ),
-        );
       },
     );
   }

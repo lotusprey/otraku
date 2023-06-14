@@ -16,15 +16,20 @@ final activitiesProvider = StateNotifierProvider.autoDispose
   ),
 );
 
-final activityFilterProvider =
-    StateProvider.autoDispose.family<ActivitiesFilter, int?>(
-  (ref, userId) => userId == null
-      ? HomeActivitiesFilter(
-          ActivityType.values,
-          Options().feedOnFollowing,
-          Options().viewerActivitiesInFeed,
-        )
-      : UserActivitiesFilter(ActivityType.values, userId),
+final activityFilterProvider = StateNotifierProvider.autoDispose
+    .family<ActivityFilterNotifier, ActivityFilter, int?>(
+  (ref, userId) => ActivityFilterNotifier(
+    userId == null
+        ? HomeActivityFilter(
+            Options()
+                .feedActivityFilters
+                .map((f) => ActivityType.values[f])
+                .toList(),
+            Options().feedOnFollowing,
+            Options().viewerActivitiesInFeed,
+          )
+        : UserActivityFilter(ActivityType.values, userId),
+  ),
 );
 
 class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
@@ -37,7 +42,7 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
   }
 
   final int viewerId;
-  final ActivitiesFilter filter;
+  final ActivityFilter filter;
   int _lastCreatedAt = DateTime.now().millisecondsSinceEpoch;
 
   Future<void> fetch() async {
@@ -47,13 +52,13 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
       final data = await Api.get(GqlQuery.activities, {
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
         ...switch (filter) {
-          HomeActivitiesFilter filter => {
+          HomeActivityFilter filter => {
               'isFollowing': filter.onFollowing,
               if (!filter.withViewerActivities) 'userIdNot': viewerId,
               if (!filter.onFollowing) 'hasRepliesOrText': true,
               if (value.items.isNotEmpty) 'createdBefore': _lastCreatedAt,
             },
-          UserActivitiesFilter filter => {
+          UserActivityFilter filter => {
               'userId': filter.userId,
               'page': value.next,
             },
@@ -171,4 +176,22 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
       }
     }
   }
+}
+
+class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
+  ActivityFilterNotifier(super.state) {
+    addListener((s) {
+      switch (state) {
+        case HomeActivityFilter f:
+          Options().feedActivityFilters = f.typeIn.map((t) => t.index).toList();
+          Options().feedOnFollowing = f.onFollowing;
+          Options().viewerActivitiesInFeed = f.withViewerActivities;
+        case _:
+          return;
+      }
+    });
+  }
+
+  void update(ActivityFilter Function(ActivityFilter) callback) =>
+      state = callback(state);
 }

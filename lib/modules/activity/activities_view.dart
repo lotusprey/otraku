@@ -31,7 +31,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
       20;
 
   switch (filter) {
-    case HomeActivitiesFilter filter:
+    case HomeActivityFilter filter:
       onFollowing = filter.onFollowing;
       withViewerActivities = filter.withViewerActivities;
       initialHeight += Consts.tapTargetSize * 1.5;
@@ -56,7 +56,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
                 changed = true;
               },
             ),
-          if (filter is HomeActivitiesFilter) ...[
+          if (filter is HomeActivityFilter) ...[
             const Divider(),
             CheckBoxField(
               title: 'Your Activities',
@@ -79,18 +79,17 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
       ),
     ),
   ).then((_) {
-    if (changed) {
-      ref.read(activityFilterProvider(id).notifier).update(
-            (s) => switch (s) {
-              UserActivitiesFilter _ => UserActivitiesFilter(typeIn, s.userId),
-              HomeActivitiesFilter _ => HomeActivitiesFilter(
-                  typeIn,
-                  onFollowing,
-                  withViewerActivities,
-                ),
-            },
-          );
-    }
+    if (!changed) return;
+    ref.read(activityFilterProvider(id).notifier).update(
+          (s) => switch (s) {
+            UserActivityFilter _ => UserActivityFilter(typeIn, s.userId),
+            HomeActivityFilter _ => HomeActivityFilter(
+                typeIn,
+                onFollowing,
+                withViewerActivities,
+              ),
+          },
+        );
   });
 }
 

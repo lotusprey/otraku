@@ -68,12 +68,12 @@ android {
         }
     }
 
-    // flavorDimensions "default"
-    // productFlavors {
-    //     dev {
-    //         applicationIdSuffix ".dev"
-    //     }
-    // }
+    flavorDimensions "default"
+    productFlavors {
+        dev {
+            applicationIdSuffix ".dev"
+        }
+    }
 }
 
 flutter {

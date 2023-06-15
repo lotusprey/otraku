@@ -109,6 +109,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     ref.watch(tagsProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));
     ref.watch(userProvider(widget.id).select((_) => null));
+    ref.watch(scheduleAnimeProvider.select((_) => null));
     final discoverType = ref.watch(discoverFilterProvider.select((s) => s.type));
     (switch (discoverType) {
       DiscoverType.anime => ref.watch(discoverAnimeProvider.select((_) => null)),

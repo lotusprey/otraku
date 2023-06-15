@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/schedule/schedule_provider.dart';
 
 final homeProvider = ChangeNotifierProvider.autoDispose((ref) => HomeNotifier());
 
@@ -33,9 +34,11 @@ class HomeNotifier extends ChangeNotifier {
   /// The discover and feed tab are loaded lazily, when first opened.
   var _didLoadFeed = false;
   var _didLoadDiscover = false;
+  var _didLoadSchedule = false;
 
   bool get didLoadFeed => _didLoadFeed;
   bool get didLoadDiscover => _didLoadDiscover;
+  bool get didLoadSchedule => _didLoadSchedule;
 
   void lazyLoadTabs(WidgetRef ref) {
     if (_homeTab == HomeTab.feed && !_didLoadFeed) {
@@ -46,6 +49,11 @@ class HomeNotifier extends ChangeNotifier {
     if (_homeTab == HomeTab.discover && !_didLoadDiscover) {
       _didLoadDiscover = true;
       discoverLoadMore(ref);
+    }
+
+    if (_homeTab == HomeTab.schedule && !_didLoadSchedule) {
+      _didLoadSchedule = true;
+      scheduleLoadMore(ref);
     }
   }
 

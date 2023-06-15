@@ -96,7 +96,6 @@ class _Tile extends StatelessWidget {
                     const SizedBox(height: 5),
                     Row(
                       children: [
-                        const SizedBox(width: 15),
                         Icon(
                           Icons.person_outline_rounded,
                           size: 15,

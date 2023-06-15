@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/schedule/schedule_models.dart';
 import 'package:otraku/common/utils/api.dart';

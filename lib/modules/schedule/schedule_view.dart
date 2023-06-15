@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/modules/discover/discover_media_grid.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/discover/discover_providers.dart';
-import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/paged_view.dart';

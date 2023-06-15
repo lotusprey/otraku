@@ -8,6 +8,8 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/schedule/schedule_provider.dart';
+import 'package:otraku/modules/schedule/schedule_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
 import 'package:otraku/modules/user/user_providers.dart';
@@ -31,8 +33,7 @@ class HomeView extends ConsumerStatefulWidget {
   ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView>
-    with SingleTickerProviderStateMixin {
+class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderStateMixin {
   late final _animeCollectionTag = (userId: widget.id, ofAnime: true);
   late final _mangaCollectionTag = (userId: widget.id, ofAnime: false);
   final _animeScrollCtrl = ScrollController();
@@ -42,6 +43,9 @@ class _HomeViewState extends ConsumerState<HomeView>
   );
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => discoverLoadMore(ref),
+  );
+  late final _scheduleScrollCtrl = PagedController(
+    loadMore: () => scheduleLoadMore(ref),
   );
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,
@@ -64,6 +68,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     _mangaScrollCtrl.dispose();
     _feedScrollCtrl.dispose();
     _discoverScrollCtrl.dispose();
+    _scheduleScrollCtrl.dispose();
     _tabCtrl.dispose();
     super.dispose();
   }
@@ -104,22 +109,15 @@ class _HomeViewState extends ConsumerState<HomeView>
     ref.watch(tagsProvider.select((_) => null));
     ref.watch(activitiesProvider(null).select((_) => null));
     ref.watch(userProvider(widget.id).select((_) => null));
-    final discoverType =
-        ref.watch(discoverFilterProvider.select((s) => s.type));
+    final discoverType = ref.watch(discoverFilterProvider.select((s) => s.type));
     (switch (discoverType) {
-      DiscoverType.anime =>
-        ref.watch(discoverAnimeProvider.select((_) => null)),
-      DiscoverType.manga =>
-        ref.watch(discoverMangaProvider.select((_) => null)),
-      DiscoverType.character =>
-        ref.watch(discoverCharacterProvider.select((_) => null)),
-      DiscoverType.staff =>
-        ref.watch(discoverStaffProvider.select((_) => null)),
-      DiscoverType.studio =>
-        ref.watch(discoverStudioProvider.select((_) => null)),
+      DiscoverType.anime => ref.watch(discoverAnimeProvider.select((_) => null)),
+      DiscoverType.manga => ref.watch(discoverMangaProvider.select((_) => null)),
+      DiscoverType.character => ref.watch(discoverCharacterProvider.select((_) => null)),
+      DiscoverType.staff => ref.watch(discoverStaffProvider.select((_) => null)),
+      DiscoverType.studio => ref.watch(discoverStudioProvider.select((_) => null)),
       DiscoverType.user => ref.watch(discoverUserProvider.select((_) => null)),
-      DiscoverType.review =>
-        ref.watch(discoverReviewProvider.select((_) => null)),
+      DiscoverType.review => ref.watch(discoverReviewProvider.select((_) => null)),
     });
 
     ref.listen(
@@ -161,29 +159,25 @@ class _HomeViewState extends ConsumerState<HomeView>
                 if (_animeScrollCtrl.position.pixels > 0) {
                   _animeScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(true)) {
-                  ref
-                      .read(searchProvider(_animeCollectionTag).notifier)
-                      .update((s) => s == null ? '' : null);
+                  ref.read(searchProvider(_animeCollectionTag).notifier).update((s) => s == null ? '' : null);
                 }
                 return;
               case HomeTab.manga:
                 if (_mangaScrollCtrl.position.pixels > 0) {
                   _mangaScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(false)) {
-                  ref
-                      .read(searchProvider(_mangaCollectionTag).notifier)
-                      .update((s) => s == null ? '' : null);
+                  ref.read(searchProvider(_mangaCollectionTag).notifier).update((s) => s == null ? '' : null);
                 }
                 return;
               case HomeTab.discover:
                 if (_discoverScrollCtrl.position.pixels > 0) {
                   _discoverScrollCtrl.scrollToTop();
                 } else {
-                  ref
-                      .read(searchProvider(null).notifier)
-                      .update((s) => s == null ? '' : null);
+                  ref.read(searchProvider(null).notifier).update((s) => s == null ? '' : null);
                 }
                 return;
+              case HomeTab.schedule:
+                _scheduleScrollCtrl.scrollToTop();
               case HomeTab.feed:
                 _feedScrollCtrl.scrollToTop();
               case HomeTab.profile:
@@ -221,6 +215,7 @@ class _HomeViewState extends ConsumerState<HomeView>
                 key: Key(false.toString()),
               ),
             DiscoverView(_discoverScrollCtrl),
+            ScheduleView(_scheduleScrollCtrl),
             UserSubView(widget.id, null, primaryScrollCtrl),
           ],
         ),
@@ -238,8 +233,7 @@ class _HomeViewState extends ConsumerState<HomeView>
       }
     }
 
-    if (notifier.homeTab == HomeTab.anime &&
-        notifier.didExpandCollection(true)) {
+    if (notifier.homeTab == HomeTab.anime && notifier.didExpandCollection(true)) {
       final notifier = ref.read(searchProvider(_animeCollectionTag).notifier);
       if (notifier.state != null) {
         notifier.state = null;
@@ -247,8 +241,7 @@ class _HomeViewState extends ConsumerState<HomeView>
       }
     }
 
-    if (notifier.homeTab == HomeTab.manga &&
-        notifier.didExpandCollection(false)) {
+    if (notifier.homeTab == HomeTab.manga && notifier.didExpandCollection(false)) {
       final notifier = ref.read(searchProvider(_mangaCollectionTag).notifier);
       if (notifier.state != null) {
         notifier.state = null;

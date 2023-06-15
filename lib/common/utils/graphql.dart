@@ -237,6 +237,48 @@ abstract class GqlQuery {
     }
   ''';
 
+  static const schedule = r'''
+    query Schedule($weekStart: Int, $weekEnd: Int, $page: Int) {
+      Page(page: $page) {
+        pageInfo {
+          hasNextPage
+        }
+        airingSchedules(airingAt_greater: $weekStart, airingAt_lesser: $weekEnd) {
+          id
+          episode
+          airingAt
+          timeUntilAiring
+          media {
+            id
+            title {
+              userPreferred
+            }
+            season
+            format
+            genres
+            duration
+            episodes
+            mediaListEntry {
+              status
+            }
+            popularity
+            coverImage {
+              extraLarge
+              large
+              medium
+            }
+            nextAiringEpisode {
+              airingAt
+              episode
+              timeUntilAiring
+            }
+            isAdult
+          }
+        }
+      }
+    }
+  ''';
+
   static const character = r'''
     query Character($id: Int, $sort: [MediaSort], $page: Int = 1, $onList: Boolean,
         $withInfo: Boolean = false, $withAnime: Boolean = false, $withManga: Boolean = false) {
@@ -728,8 +770,7 @@ abstract class GqlMutation {
     }
   ''';
 
-  static const toggleFollow =
-      r'''mutation ToggleFollow($userId: Int) {ToggleFollow(userId: $userId) {isFollowing}}''';
+  static const toggleFollow = r'''mutation ToggleFollow($userId: Int) {ToggleFollow(userId: $userId) {isFollowing}}''';
 
   static const rateReview = r'''
     mutation RateReview($id: Int, $rating: ReviewRating) {

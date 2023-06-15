@@ -2,31 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
-import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 import 'package:otraku/modules/schedule/schedule_models.dart';
+import 'package:intl/intl.dart';
 
 class ScheduleMediaGrid extends StatelessWidget {
   const ScheduleMediaGrid(this.items);
 
   final List<ScheduleAiringScheduleItem> items;
 
+  List<List<ScheduleAiringScheduleItem>> sortItems(items) {
+    final List<List<ScheduleAiringScheduleItem>> sortedItems = [];
+
+    for (var item in items) {
+      final DateTime currentTime = DateTime.now();
+      final DateTime airingTime = DateTime.fromMillisecondsSinceEpoch(item.airingAt * 1000);
+      final Duration difference = airingTime.difference(currentTime);
+
+      final List<ScheduleAiringScheduleItem>? scheduleItems = sortedItems.elementAtOrNull(difference.inDays);
+
+      if (scheduleItems == null) {
+        sortedItems.insert(difference.inDays, [item]);
+      } else {
+        scheduleItems.add(item);
+      }
+    }
+
+    return sortedItems;
+  }
+
   @override
   Widget build(BuildContext context) {
+    debugPrint('Items.length ${items.length}');
     if (items.isEmpty) {
       return const SliverFillRemaining(child: Center(child: Text('No Media')));
     }
 
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 290,
-        height: 110,
-      ),
+    final List<List<ScheduleAiringScheduleItem>> sortedItems = sortItems(items);
+    debugPrint('SortedItems.length ${sortedItems.length}');
+
+    return SliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount: items.length,
-        (context, index) => _Tile(items[index]),
+        childCount: sortedItems.length,
+        (context, index) => _DayGroup(sortedItems[index], DateFormat('EEEE').format(DateTime.now().add(Duration(days: index)))),
       ),
+    );
+
+    // return SliverGrid(
+    //   gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+    //     minWidth: 290,
+    //     height: 110,
+    //   ),
+    //   delegate: SliverChildBuilderDelegate(
+    //     childCount: items.length,
+    //     (context, index) => _Tile(items[index]),
+    //   ),
+    // );
+  }
+}
+
+class _DayGroup extends StatelessWidget {
+  const _DayGroup(this.items, this.day);
+
+  final List<ScheduleAiringScheduleItem> items;
+  final String day;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: (120 * items.length + 72).toDouble(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text.rich(
+          TextSpan(text: day),
+          textScaleFactor: 2,
+        ),
+        for (var item in items) Padding(padding: EdgeInsets.only(top: Consts.padding.top), child: SizedBox(height: 110, child: _Tile(item)))
+      ]),
     );
   }
 }

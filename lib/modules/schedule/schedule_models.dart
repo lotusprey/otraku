@@ -19,7 +19,7 @@ class ScheduleMediaItem {
         id: map['id'],
         format: Convert.clarifyEnum(map['format']),
         title: map['title']['userPreferred'],
-        season: Convert.clarifyEnum(map['season'])!,
+        season: Convert.clarifyEnum(map['season']),
         genres: List.from(map['genres'] ?? [], growable: false),
         episodes: map['episodes'],
         listStatus: Convert.clarifyEnum(map['mediaListEntry']?['status']),
@@ -32,7 +32,7 @@ class ScheduleMediaItem {
   final int id;
   final String? format;
   final String title;
-  final String season;
+  final String? season;
   final List<String> genres;
   final int? episodes;
   final String? listStatus;
@@ -46,7 +46,7 @@ class ScheduleAiringScheduleItem {
   ScheduleAiringScheduleItem._({required this.episode, required this.airingAt, required this.timeUntilAiring, required this.media});
 
   factory ScheduleAiringScheduleItem(Map<String, dynamic> map) =>
-      ScheduleAiringScheduleItem._(episode: map['episode'], airingAt: map['airingAt'], timeUntilAiring: map['timeUntilAiring'], media: ScheduleMediaItem(map));
+      ScheduleAiringScheduleItem._(episode: map['episode'], airingAt: map['airingAt'], timeUntilAiring: map['timeUntilAiring'], media: ScheduleMediaItem(map['media']));
 
   final int episode;
   final int airingAt;

@@ -25,8 +25,11 @@ class ScheduleMediaNotifier extends StateNotifier<AsyncValue<Paged<ScheduleAirin
       final value = state.valueOrNull ?? const Paged();
 
       final currentTime = DateTime.now();
-      final data = await Api.get(GqlQuery.schedule,
-          {'page': value.next, 'weekStart': currentTime.millisecondsSinceEpoch, 'weekEnd': DateTime(currentTime.year, currentTime.month, currentTime.day + 6, 23, 59)});
+      final data = await Api.get(GqlQuery.schedule, {
+        'page': value.next,
+        'weekStart': (currentTime.millisecondsSinceEpoch / 1000).floor(),
+        'weekEnd': (DateTime(currentTime.year, currentTime.month, currentTime.day + 6, 23, 59).millisecondsSinceEpoch / 1000).floor()
+      });
 
       final items = <ScheduleAiringScheduleItem>[];
       for (final m in data['Page']['airingSchedules']) {

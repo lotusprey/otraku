@@ -15,7 +15,7 @@ final scheduleAnimeProvider = StateNotifierProvider.autoDispose<ScheduleMediaNot
   },
 );
 
-class ScheduleMediaNotifier extends StateNotifier<AsyncValue<Paged<ScheduleMediaItem>>> {
+class ScheduleMediaNotifier extends StateNotifier<AsyncValue<Paged<ScheduleAiringScheduleItem>>> {
   ScheduleMediaNotifier(bool shouldLoad) : super(const AsyncValue.loading()) {
     if (shouldLoad) fetch();
   }
@@ -28,9 +28,9 @@ class ScheduleMediaNotifier extends StateNotifier<AsyncValue<Paged<ScheduleMedia
       final data = await Api.get(GqlQuery.schedule,
           {'page': value.next, 'weekStart': currentTime.millisecondsSinceEpoch, 'weekEnd': DateTime(currentTime.year, currentTime.month, currentTime.day + 6, 23, 59)});
 
-      final items = <ScheduleMediaItem>[];
+      final items = <ScheduleAiringScheduleItem>[];
       for (final m in data['Page']['airingSchedules']) {
-        items.add(ScheduleMediaItem(m));
+        items.add(ScheduleAiringScheduleItem(m));
       }
 
       return value.withNext(

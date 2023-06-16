@@ -244,7 +244,6 @@ abstract class GqlQuery {
           hasNextPage
         }
         airingSchedules(airingAt_greater: $weekStart, airingAt_lesser: $weekEnd) {
-          id
           episode
           airingAt
           timeUntilAiring
@@ -253,13 +252,11 @@ abstract class GqlQuery {
             title {
               userPreferred
             }
-            season
             format
-            genres
-            duration
             episodes
             mediaListEntry {
               status
+              progress
             }
             popularity
             coverImage {
@@ -267,12 +264,6 @@ abstract class GqlQuery {
               large
               medium
             }
-            nextAiringEpisode {
-              airingAt
-              episode
-              timeUntilAiring
-            }
-            isAdult
           }
         }
       }
@@ -770,7 +761,8 @@ abstract class GqlMutation {
     }
   ''';
 
-  static const toggleFollow = r'''mutation ToggleFollow($userId: Int) {ToggleFollow(userId: $userId) {isFollowing}}''';
+  static const toggleFollow =
+      r'''mutation ToggleFollow($userId: Int) {ToggleFollow(userId: $userId) {isFollowing}}''';
 
   static const rateReview = r'''
     mutation RateReview($id: Int, $rating: ReviewRating) {

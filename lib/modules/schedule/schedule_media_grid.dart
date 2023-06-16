@@ -106,7 +106,6 @@ class _Tile extends StatelessWidget {
     if (item.listStatus != null) {
       textRailItems[item.listStatus!] = true;
     }
-    if (item.isAdult) textRailItems['Adult'] = true;
 
     final detailTextStyle = Theme.of(context).textTheme.labelSmall;
 

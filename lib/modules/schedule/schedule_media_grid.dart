@@ -56,7 +56,7 @@ class _DayGroup extends StatelessWidget {
         children: [
           Text.rich(
             TextSpan(text: day),
-            textScaleFactor: 2,
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
           for (var item in items)
             Padding(

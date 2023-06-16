@@ -55,7 +55,7 @@ class HomeNotifier extends ChangeNotifier {
 
     if (_homeTab == HomeTab.schedule && !_didLoadSchedule) {
       _didLoadSchedule = true;
-      scheduleLoadMore(ref);
+      ref.read(scheduleAnimeProvider.notifier).fetch();
     }
   }
 

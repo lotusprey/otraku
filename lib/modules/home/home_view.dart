@@ -46,7 +46,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     loadMore: () => discoverLoadMore(ref),
   );
   late final _scheduleScrollCtrl = PagedController(
-    loadMore: () => scheduleLoadMore(ref),
+    loadMore: () => ref.read(scheduleAnimeProvider.notifier).fetch(),
   );
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,

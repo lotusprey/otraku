@@ -100,24 +100,24 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textRailItems = <String, bool>{};
 
-    if (item.media.format != null) textRailItems[item.media.format!] = false;
+    if (item.format != null) textRailItems[item.format!] = false;
     textRailItems['Episode ${item.episode}'] = false;
-    if (item.media.listStatus != null) {
-      textRailItems[item.media.listStatus!] = true;
+    if (item.listStatus != null) {
+      textRailItems[item.listStatus!] = true;
     }
-    if (item.media.isAdult) textRailItems['Adult'] = true;
+    if (item.isAdult) textRailItems['Adult'] = true;
 
     final detailTextStyle = Theme.of(context).textTheme.labelSmall;
 
     return Card(
       child: LinkTile(
-        id: item.media.id,
+        id: item.id,
         discoverType: DiscoverType.anime,
-        info: item.media.imageUrl,
+        info: item.imageUrl,
         child: Row(
           children: [
             Hero(
-              tag: item.media.id,
+              tag: item.id,
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(
                   left: Consts.radiusMin,
@@ -125,7 +125,7 @@ class _Tile extends StatelessWidget {
                 child: Container(
                   width: 120 / Consts.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceVariant,
-                  child: CachedImage(item.media.imageUrl),
+                  child: CachedImage(item.imageUrl),
                 ),
               ),
             ),
@@ -143,7 +143,7 @@ class _Tile extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              item.media.title,
+                              item.title,
                               overflow: TextOverflow.fade,
                             ),
                           ),
@@ -165,7 +165,7 @@ class _Tile extends StatelessWidget {
                         ),
                         const SizedBox(width: 5),
                         Text(
-                          item.media.popularity.toString(),
+                          item.popularity.toString(),
                           style: detailTextStyle,
                         ),
                       ],

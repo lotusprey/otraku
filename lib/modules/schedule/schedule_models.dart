@@ -1,9 +1,12 @@
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 
-class ScheduleMediaItem {
-  ScheduleMediaItem._(
-      {required this.id,
+class ScheduleAiringScheduleItem {
+  ScheduleAiringScheduleItem._(
+      {required this.episode,
+      required this.airingAt,
+      required this.timeUntilAiring,
+      required this.id,
       required this.format,
       required this.title,
       required this.season,
@@ -15,20 +18,27 @@ class ScheduleMediaItem {
       required this.releaseYear,
       required this.isAdult});
 
-  factory ScheduleMediaItem(Map<String, dynamic> map) => ScheduleMediaItem._(
-        id: map['id'],
-        format: Convert.clarifyEnum(map['format']),
-        title: map['title']['userPreferred'],
-        season: Convert.clarifyEnum(map['season']),
-        genres: List.from(map['genres'] ?? [], growable: false),
-        episodes: map['episodes'],
-        listStatus: Convert.clarifyEnum(map['mediaListEntry']?['status']),
-        popularity: map['popularity'] ?? 0,
-        imageUrl: map['coverImage'][Options().imageQuality.value],
-        releaseYear: map['startDate']?['year'],
-        isAdult: map['isAdult'] ?? false,
-      );
+  factory ScheduleAiringScheduleItem(Map<String, dynamic> map) =>
+      ScheduleAiringScheduleItem._(
+          episode: map['episode'],
+          airingAt: map['airingAt'],
+          timeUntilAiring: map['timeUntilAiring'],
+          id: map['media']['id'],
+          format: Convert.clarifyEnum(map['media']['format']),
+          title: map['media']['title']['userPreferred'],
+          season: Convert.clarifyEnum(map['media']['season']),
+          genres: List.from(map['media']['genres'] ?? [], growable: false),
+          episodes: map['media']['episodes'],
+          listStatus:
+              Convert.clarifyEnum(map['media']['mediaListEntry']?['status']),
+          popularity: map['media']['popularity'] ?? 0,
+          imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+          releaseYear: map['media']['startDate']?['year'],
+          isAdult: map['media']['isAdult'] ?? false);
 
+  final int episode;
+  final int airingAt;
+  final int timeUntilAiring;
   final int id;
   final String? format;
   final String title;
@@ -40,24 +50,4 @@ class ScheduleMediaItem {
   final String imageUrl;
   final int? releaseYear;
   final bool isAdult;
-}
-
-class ScheduleAiringScheduleItem {
-  ScheduleAiringScheduleItem._(
-      {required this.episode,
-      required this.airingAt,
-      required this.timeUntilAiring,
-      required this.media});
-
-  factory ScheduleAiringScheduleItem(Map<String, dynamic> map) =>
-      ScheduleAiringScheduleItem._(
-          episode: map['episode'],
-          airingAt: map['airingAt'],
-          timeUntilAiring: map['timeUntilAiring'],
-          media: ScheduleMediaItem(map['media']));
-
-  final int episode;
-  final int airingAt;
-  final int timeUntilAiring;
-  final ScheduleMediaItem media;
 }

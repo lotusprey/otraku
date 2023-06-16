@@ -5,7 +5,6 @@ import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 import 'package:otraku/modules/schedule/schedule_models.dart';
-import 'package:intl/intl.dart';
 
 class ScheduleMediaGrid extends StatelessWidget {
   const ScheduleMediaGrid(
@@ -13,6 +12,27 @@ class ScheduleMediaGrid extends StatelessWidget {
   );
 
   final List<List<ScheduleAiringScheduleItem>> items;
+
+  String getWeekdayFromDate(DateTime date) {
+    switch (date.weekday) {
+      case (1):
+        return 'Monday';
+      case (2):
+        return 'Tuesday';
+      case (3):
+        return 'Wednesday';
+      case (4):
+        return 'Thursday';
+      case (5):
+        return 'Friday';
+      case (6):
+        return 'Saturday';
+      case (7):
+        return 'Sunday';
+      default:
+        throw RangeError('${date.weekday} is not a valid weekday');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +50,7 @@ class ScheduleMediaGrid extends StatelessWidget {
         childCount: items.length,
         (context, index) => _DayGroup(
           items[index],
-          DateFormat('EEEE').format(
+          getWeekdayFromDate(
             DateTime.now().add(
               Duration(days: index),
             ),

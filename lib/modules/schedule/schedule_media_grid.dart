@@ -8,7 +8,9 @@ import 'package:otraku/modules/schedule/schedule_models.dart';
 import 'package:intl/intl.dart';
 
 class ScheduleMediaGrid extends StatelessWidget {
-  const ScheduleMediaGrid(this.items);
+  const ScheduleMediaGrid(
+    this.items,
+  );
 
   final List<ScheduleAiringScheduleItem> items;
 
@@ -38,7 +40,11 @@ class ScheduleMediaGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     debugPrint('Items.length ${items.length}');
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No Media')));
+      return const SliverFillRemaining(
+        child: Center(
+          child: Text('No Media'),
+        ),
+      );
     }
 
     final List<List<ScheduleAiringScheduleItem>> sortedItems = sortItems(items);
@@ -48,22 +54,15 @@ class ScheduleMediaGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         childCount: sortedItems.length,
         (context, index) => _DayGroup(
-            sortedItems[index],
-            DateFormat('EEEE')
-                .format(DateTime.now().add(Duration(days: index)))),
+          sortedItems[index],
+          DateFormat('EEEE').format(
+            DateTime.now().add(
+              Duration(days: index),
+            ),
+          ),
+        ),
       ),
     );
-
-    // return SliverGrid(
-    //   gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-    //     minWidth: 290,
-    //     height: 110,
-    //   ),
-    //   delegate: SliverChildBuilderDelegate(
-    //     childCount: items.length,
-    //     (context, index) => _Tile(items[index]),
-    //   ),
-    // );
   }
 }
 
@@ -77,16 +76,23 @@ class _DayGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: (120 * items.length + 72).toDouble(),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text.rich(
-          TextSpan(text: day),
-          textScaleFactor: 2,
-        ),
-        for (var item in items)
-          Padding(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text.rich(
+            TextSpan(text: day),
+            textScaleFactor: 2,
+          ),
+          for (var item in items)
+            Padding(
               padding: EdgeInsets.only(top: Consts.padding.top),
-              child: SizedBox(height: 110, child: _Tile(item)))
-      ]),
+              child: SizedBox(
+                height: 110,
+                child: _Tile(item),
+              ),
+            )
+        ],
+      ),
     );
   }
 }

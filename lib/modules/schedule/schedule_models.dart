@@ -20,21 +20,22 @@ class ScheduleAiringScheduleItem {
 
   factory ScheduleAiringScheduleItem(Map<String, dynamic> map) =>
       ScheduleAiringScheduleItem._(
-          episode: map['episode'],
-          airingAt: map['airingAt'],
-          timeUntilAiring: map['timeUntilAiring'],
-          id: map['media']['id'],
-          format: Convert.clarifyEnum(map['media']['format']),
-          title: map['media']['title']['userPreferred'],
-          season: Convert.clarifyEnum(map['media']['season']),
-          genres: List.from(map['media']['genres'] ?? [], growable: false),
-          episodes: map['media']['episodes'],
-          listStatus:
-              Convert.clarifyEnum(map['media']['mediaListEntry']?['status']),
-          popularity: map['media']['popularity'] ?? 0,
-          imageUrl: map['media']['coverImage'][Options().imageQuality.value],
-          releaseYear: map['media']['startDate']?['year'],
-          isAdult: map['media']['isAdult'] ?? false);
+        episode: map['episode'],
+        airingAt: map['airingAt'],
+        timeUntilAiring: map['timeUntilAiring'],
+        id: map['media']['id'],
+        format: Convert.clarifyEnum(map['media']['format']),
+        title: map['media']['title']['userPreferred'],
+        season: Convert.clarifyEnum(map['media']['season']),
+        genres: List.from(map['media']['genres'] ?? [], growable: false),
+        episodes: map['media']['episodes'],
+        listStatus:
+            Convert.clarifyEnum(map['media']['mediaListEntry']?['status']),
+        popularity: map['media']['popularity'] ?? 0,
+        imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+        releaseYear: map['media']['startDate']?['year'],
+        isAdult: map['media']['isAdult'] ?? false,
+      );
 
   final int episode;
   final int airingAt;

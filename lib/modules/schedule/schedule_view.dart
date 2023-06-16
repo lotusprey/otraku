@@ -22,7 +22,7 @@ class ScheduleView extends ConsumerWidget {
       topBar: const TopBar(canPop: false, title: "Schedule"),
       child: Consumer(
         builder: (context, ref, _) {
-          return PagedView<ScheduleAiringScheduleItem>(
+          return PagedView<List<ScheduleAiringScheduleItem>>(
             provider: scheduleAnimeProvider,
             scrollCtrl: scrollCtrl,
             onRefresh: onRefresh,

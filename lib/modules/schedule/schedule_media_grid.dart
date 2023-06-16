@@ -12,29 +12,7 @@ class ScheduleMediaGrid extends StatelessWidget {
     this.items,
   );
 
-  final List<ScheduleAiringScheduleItem> items;
-
-  List<List<ScheduleAiringScheduleItem>> sortItems(items) {
-    final List<List<ScheduleAiringScheduleItem>> sortedItems = [];
-
-    for (var item in items) {
-      final DateTime currentTime = DateTime.now();
-      final DateTime airingTime =
-          DateTime.fromMillisecondsSinceEpoch(item.airingAt * 1000);
-      final Duration difference = airingTime.difference(currentTime);
-
-      final List<ScheduleAiringScheduleItem>? scheduleItems =
-          sortedItems.elementAtOrNull(difference.inDays);
-
-      if (scheduleItems == null) {
-        sortedItems.insert(difference.inDays, [item]);
-      } else {
-        scheduleItems.add(item);
-      }
-    }
-
-    return sortedItems;
-  }
+  final List<List<ScheduleAiringScheduleItem>> items;
 
   @override
   Widget build(BuildContext context) {
@@ -47,14 +25,11 @@ class ScheduleMediaGrid extends StatelessWidget {
       );
     }
 
-    final List<List<ScheduleAiringScheduleItem>> sortedItems = sortItems(items);
-    debugPrint('SortedItems.length ${sortedItems.length}');
-
     return SliverList(
       delegate: SliverChildBuilderDelegate(
-        childCount: sortedItems.length,
+        childCount: items.length,
         (context, index) => _DayGroup(
-          sortedItems[index],
+          items[index],
           DateFormat('EEEE').format(
             DateTime.now().add(
               Duration(days: index),

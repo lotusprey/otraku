@@ -17,10 +17,12 @@ class ScheduleMediaGrid extends StatelessWidget {
 
     for (var item in items) {
       final DateTime currentTime = DateTime.now();
-      final DateTime airingTime = DateTime.fromMillisecondsSinceEpoch(item.airingAt * 1000);
+      final DateTime airingTime =
+          DateTime.fromMillisecondsSinceEpoch(item.airingAt * 1000);
       final Duration difference = airingTime.difference(currentTime);
 
-      final List<ScheduleAiringScheduleItem>? scheduleItems = sortedItems.elementAtOrNull(difference.inDays);
+      final List<ScheduleAiringScheduleItem>? scheduleItems =
+          sortedItems.elementAtOrNull(difference.inDays);
 
       if (scheduleItems == null) {
         sortedItems.insert(difference.inDays, [item]);
@@ -45,7 +47,10 @@ class ScheduleMediaGrid extends StatelessWidget {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         childCount: sortedItems.length,
-        (context, index) => _DayGroup(sortedItems[index], DateFormat('EEEE').format(DateTime.now().add(Duration(days: index)))),
+        (context, index) => _DayGroup(
+            sortedItems[index],
+            DateFormat('EEEE')
+                .format(DateTime.now().add(Duration(days: index)))),
       ),
     );
 
@@ -77,7 +82,10 @@ class _DayGroup extends StatelessWidget {
           TextSpan(text: day),
           textScaleFactor: 2,
         ),
-        for (var item in items) Padding(padding: EdgeInsets.only(top: Consts.padding.top), child: SizedBox(height: 110, child: _Tile(item)))
+        for (var item in items)
+          Padding(
+              padding: EdgeInsets.only(top: Consts.padding.top),
+              child: SizedBox(height: 110, child: _Tile(item)))
       ]),
     );
   }
@@ -94,7 +102,9 @@ class _Tile extends StatelessWidget {
 
     if (item.media.format != null) textRailItems[item.media.format!] = false;
     textRailItems['Episode ${item.episode}'] = false;
-    if (item.media.listStatus != null) textRailItems[item.media.listStatus!] = true;
+    if (item.media.listStatus != null) {
+      textRailItems[item.media.listStatus!] = true;
+    }
     if (item.media.isAdult) textRailItems['Adult'] = true;
 
     final detailTextStyle = Theme.of(context).textTheme.labelSmall;

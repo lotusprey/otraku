@@ -35,7 +35,10 @@ class _Grid extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, _) {
       return PagedView<ScheduleAiringScheduleItem>(
-          provider: scheduleAnimeProvider, scrollCtrl: scrollCtrl, onRefresh: onRefresh, onData: (data) => ScheduleMediaGrid(data.items));
+          provider: scheduleAnimeProvider,
+          scrollCtrl: scrollCtrl,
+          onRefresh: onRefresh,
+          onData: (data) => ScheduleMediaGrid(data.items));
     });
   }
 }

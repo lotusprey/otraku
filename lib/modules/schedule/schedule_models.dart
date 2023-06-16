@@ -43,10 +43,18 @@ class ScheduleMediaItem {
 }
 
 class ScheduleAiringScheduleItem {
-  ScheduleAiringScheduleItem._({required this.episode, required this.airingAt, required this.timeUntilAiring, required this.media});
+  ScheduleAiringScheduleItem._(
+      {required this.episode,
+      required this.airingAt,
+      required this.timeUntilAiring,
+      required this.media});
 
   factory ScheduleAiringScheduleItem(Map<String, dynamic> map) =>
-      ScheduleAiringScheduleItem._(episode: map['episode'], airingAt: map['airingAt'], timeUntilAiring: map['timeUntilAiring'], media: ScheduleMediaItem(map['media']));
+      ScheduleAiringScheduleItem._(
+          episode: map['episode'],
+          airingAt: map['airingAt'],
+          timeUntilAiring: map['timeUntilAiring'],
+          media: ScheduleMediaItem(map['media']));
 
   final int episode;
   final int airingAt;

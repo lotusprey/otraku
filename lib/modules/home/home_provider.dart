@@ -6,7 +6,8 @@ import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/schedule/schedule_provider.dart';
 
-final homeProvider = ChangeNotifierProvider.autoDispose((ref) => HomeNotifier());
+final homeProvider =
+    ChangeNotifierProvider.autoDispose((ref) => HomeNotifier());
 
 class HomeNotifier extends ChangeNotifier {
   HomeTab _homeTab = Options().defaultHomeTab;
@@ -24,7 +25,8 @@ class HomeNotifier extends ChangeNotifier {
   ColorScheme? _systemLightScheme;
   ColorScheme? _systemDarkScheme;
 
-  ColorScheme? getSystemScheme(bool isDark) => isDark ? _systemDarkScheme : _systemLightScheme;
+  ColorScheme? getSystemScheme(bool isDark) =>
+      isDark ? _systemDarkScheme : _systemLightScheme;
 
   void setSystemSchemes(ColorScheme? l, ColorScheme? d) {
     _systemLightScheme = l;
@@ -65,7 +67,8 @@ class HomeNotifier extends ChangeNotifier {
   var _didExpandAnimeCollection = !Options().animeCollectionPreview;
   var _didExpandMangaCollection = !Options().mangaCollectionPreview;
 
-  bool didExpandCollection(bool ofAnime) => ofAnime ? _didExpandAnimeCollection : _didExpandMangaCollection;
+  bool didExpandCollection(bool ofAnime) =>
+      ofAnime ? _didExpandAnimeCollection : _didExpandMangaCollection;
 
   void expandCollection(bool ofAnime) {
     if (ofAnime) {

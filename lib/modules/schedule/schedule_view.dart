@@ -20,26 +20,16 @@ class ScheduleView extends ConsumerWidget {
 
     return TabScaffold(
       topBar: const TopBar(canPop: false, title: "Schedule"),
-      child: _Grid(scrollCtrl, onRefresh),
+      child: Consumer(
+        builder: (context, ref, _) {
+          return PagedView<ScheduleAiringScheduleItem>(
+            provider: scheduleAnimeProvider,
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            onData: (data) => ScheduleMediaGrid(data.items),
+          );
+        },
+      ),
     );
-  }
-}
-
-class _Grid extends StatelessWidget {
-  const _Grid(this.scrollCtrl, this.onRefresh);
-
-  final ScrollController scrollCtrl;
-  final void Function() onRefresh;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(builder: (context, ref, _) {
-      return PagedView<ScheduleAiringScheduleItem>(
-        provider: scheduleAnimeProvider,
-        scrollCtrl: scrollCtrl,
-        onRefresh: onRefresh,
-        onData: (data) => ScheduleMediaGrid(data.items),
-      );
-    });
   }
 }

@@ -308,6 +308,7 @@ class MediaInfo {
   final String? siteUrl;
   final String? countryOfOrigin;
   final bool isAdult;
+  final externalLinks = <ExternalLink>[];
 
   factory MediaInfo(Map<String, dynamic> map) {
     String? duration;
@@ -380,8 +381,32 @@ class MediaInfo {
       }
     }
 
+    if (map['externalLinks'] != null) {
+      for (final link in map['externalLinks']) {
+        model.externalLinks.add(ExternalLink(link));
+      }
+    }
+
     return model;
   }
+}
+
+class ExternalLink {
+  final String url;
+  final String site;
+  final String? color;
+
+  ExternalLink._({
+    required this.url,
+    required this.site,
+    required this.color
+  });
+
+  factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
+        url: map['url'],
+        site: map['site'],
+        color: map['color']
+      );
 }
 
 class MediaStats {

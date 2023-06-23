@@ -82,6 +82,7 @@ abstract class GqlQuery {
       siteUrl
       rankings {rank type year season allTime}
       stats {scoreDistribution {score amount} statusDistribution {status amount}}
+      externalLinks {url site color}
       relations {
         edges {
           relationType(version: 2)

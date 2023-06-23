@@ -164,6 +164,8 @@ class MediaInfoView extends StatelessWidget {
                 discoverType: DiscoverType.studio,
               ),
             ),
+          if (info.externalLinks.isNotEmpty)
+            _ExternalLinkScrollCards(items: info.externalLinks),
           if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
           if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
           if (info.englishTitle != null) _Title('English', info.englishTitle!),
@@ -185,6 +187,7 @@ class _ScrollCards extends StatelessWidget {
     required this.onTap,
     required this.onLongPress,
     this.trailingAction,
+    this.color,
   });
 
   final String title;
@@ -193,6 +196,7 @@ class _ScrollCards extends StatelessWidget {
   final void Function(int) onTap;
   final void Function(int) onLongPress;
   final Widget? trailingAction;
+  final Color? Function(int)? color;
 
   @override
   Widget build(BuildContext context) {
@@ -225,10 +229,20 @@ class _ScrollCards extends StatelessWidget {
                 onLongPress: () => onLongPress(i),
                 child: Card(
                   margin: const EdgeInsets.only(right: 10),
-                  child: Padding(
-                    padding: Consts.padding,
-                    child: builder(context, i),
-                  ),
+                  child: color != null ? 
+                    Container(
+                      padding: Consts.padding,
+                      decoration: BoxDecoration(
+                        borderRadius: Consts.borderRadiusMin,
+                        border: Border.all(color: Colors.transparent),
+                        color: color!(i),
+                      ),
+                      child: builder(context, i),
+                    ) : 
+                    Padding(
+                      padding: Consts.padding,
+                      child: builder(context, i),
+                    ),
                 ),
               ),
             ),
@@ -259,6 +273,29 @@ class _PlainScrollCards extends StatelessWidget {
       onTap: onTap,
       onLongPress: (i) => Toast.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
+    );
+  }
+}
+
+class _ExternalLinkScrollCards extends StatelessWidget {
+  const _ExternalLinkScrollCards({
+    required this.items,
+  });
+
+  final List<ExternalLink> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final sites = items.map((e) => e.site).toList();
+    final colors = items.map((e) => e.color != null ? Color(int.parse(e.color!.substring(1, 7), radix: 16) + 0x8C000000) : null).toList();
+
+    return _ScrollCards(
+      title: "External Links",
+      itemCount: items.length,
+      onTap: (i) => Toast.launch(context, items[i].url),
+      onLongPress: (i) => Toast.copy(context, items[i].url),
+      builder: (context, i) => Text(sites[i]),
+      color: (i) => colors[i],
     );
   }
 }

@@ -229,20 +229,14 @@ class _ScrollCards extends StatelessWidget {
                 onLongPress: () => onLongPress(i),
                 child: Card(
                   margin: const EdgeInsets.only(right: 10),
-                  child: color != null ? 
-                    Container(
-                      padding: Consts.padding,
-                      decoration: BoxDecoration(
-                        borderRadius: Consts.borderRadiusMin,
-                        border: Border.all(color: Colors.transparent),
-                        color: color!(i),
-                      ),
-                      child: builder(context, i),
-                    ) : 
-                    Padding(
-                      padding: Consts.padding,
-                      child: builder(context, i),
+                  child: Container(
+                    padding: Consts.padding,
+                    decoration: BoxDecoration(
+                      borderRadius: Consts.borderRadiusMin,
+                      color: color != null ? color!(i) : null,
                     ),
+                    child: builder(context, i),
+                  ),
                 ),
               ),
             ),
@@ -287,7 +281,11 @@ class _ExternalLinkScrollCards extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sites = items.map((e) => e.site).toList();
-    final colors = items.map((e) => e.color != null ? Color(int.parse(e.color!.substring(1, 7), radix: 16) + 0x8C000000) : null).toList();
+    final colors = items
+        .map((e) => e.color != null
+            ? Color(int.parse(e.color!.substring(1, 7), radix: 16) + 0x8C000000)
+            : null)
+        .toList();
 
     return _ScrollCards(
       title: "External Links",

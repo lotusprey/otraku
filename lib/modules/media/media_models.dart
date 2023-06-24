@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
@@ -308,6 +309,7 @@ class MediaInfo {
   final String? siteUrl;
   final String? countryOfOrigin;
   final bool isAdult;
+  final externalLinks = <ExternalLink>[];
 
   factory MediaInfo(Map<String, dynamic> map) {
     String? duration;
@@ -380,8 +382,31 @@ class MediaInfo {
       }
     }
 
+    if (map['externalLinks'] != null) {
+      for (final link in map['externalLinks']) {
+        model.externalLinks.add(ExternalLink(link));
+      }
+    }
+
     return model;
   }
+}
+
+class ExternalLink {
+  ExternalLink._({required this.url, required this.site, required this.color});
+
+  factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
+        url: map['url'],
+        site: map['site'],
+        color: map['color'] != null
+            ? Color(
+                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000)
+            : null,
+      );
+
+  final String url;
+  final String site;
+  final Color? color;
 }
 
 class MediaStats {

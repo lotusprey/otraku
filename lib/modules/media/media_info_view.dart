@@ -164,6 +164,8 @@ class MediaInfoView extends StatelessWidget {
                 discoverType: DiscoverType.studio,
               ),
             ),
+          if (info.externalLinks.isNotEmpty)
+            _ExternalLinkScrollCards(info.externalLinks),
           if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
           if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
           if (info.englishTitle != null) _Title('English', info.englishTitle!),
@@ -259,6 +261,36 @@ class _PlainScrollCards extends StatelessWidget {
       onTap: onTap,
       onLongPress: (i) => Toast.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
+    );
+  }
+}
+
+class _ExternalLinkScrollCards extends StatelessWidget {
+  const _ExternalLinkScrollCards(this.items);
+
+  final List<ExternalLink> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ScrollCards(
+      title: "External Links",
+      itemCount: items.length,
+      onTap: (i) => Toast.launch(context, items[i].url),
+      onLongPress: (i) => Toast.copy(context, items[i].url),
+      builder: (context, i) => Row(
+        children: [
+          if (items[i].color != null)
+            Container(
+              padding: Consts.padding,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: Consts.borderRadiusMin,
+                color: items[i].color,
+              ),
+            ),
+          Text(items[i].site)
+        ],
+      ),
     );
   }
 }

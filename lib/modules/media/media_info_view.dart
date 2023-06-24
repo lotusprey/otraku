@@ -187,7 +187,6 @@ class _ScrollCards extends StatelessWidget {
     required this.onTap,
     required this.onLongPress,
     this.trailingAction,
-    this.color,
   });
 
   final String title;
@@ -196,7 +195,6 @@ class _ScrollCards extends StatelessWidget {
   final void Function(int) onTap;
   final void Function(int) onLongPress;
   final Widget? trailingAction;
-  final Color? Function(int)? color;
 
   @override
   Widget build(BuildContext context) {
@@ -229,12 +227,8 @@ class _ScrollCards extends StatelessWidget {
                 onLongPress: () => onLongPress(i),
                 child: Card(
                   margin: const EdgeInsets.only(right: 10),
-                  child: Container(
+                  child: Padding(
                     padding: Consts.padding,
-                    decoration: BoxDecoration(
-                      borderRadius: Consts.borderRadiusMin,
-                      color: color != null ? color!(i) : null,
-                    ),
                     child: builder(context, i),
                   ),
                 ),
@@ -283,8 +277,20 @@ class _ExternalLinkScrollCards extends StatelessWidget {
       itemCount: items.length,
       onTap: (i) => Toast.launch(context, items[i].url),
       onLongPress: (i) => Toast.copy(context, items[i].url),
-      builder: (context, i) => Text(items[i].site),
-      color: (i) => items[i].color,
+      builder: (context, i) => Row(
+        children: [
+          if (items[i].color != null)
+            Container(
+              padding: Consts.padding,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: Consts.borderRadiusMin,
+                color: items[i].color,
+              ),
+            ),
+          Text(items[i].site)
+        ],
+      ),
     );
   }
 }

@@ -404,7 +404,7 @@ class ExternalLink {
         site: map['site'],
         color: map['color'] != null
             ? Color(
-                int.parse(map['color'].substring(1, 7), radix: 16) + 0x8C000000)
+                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000)
             : null,
       );
 }

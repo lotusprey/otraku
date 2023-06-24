@@ -393,11 +393,11 @@ class MediaInfo {
 }
 
 class ExternalLink {
+  ExternalLink._({required this.url, required this.site, required this.color});
+
   final String url;
   final String site;
   final Color? color;
-
-  ExternalLink._({required this.url, required this.site, required this.color});
 
   factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
         url: map['url'],

@@ -395,10 +395,6 @@ class MediaInfo {
 class ExternalLink {
   ExternalLink._({required this.url, required this.site, required this.color});
 
-  final String url;
-  final String site;
-  final Color? color;
-
   factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
         url: map['url'],
         site: map['site'],
@@ -407,6 +403,10 @@ class ExternalLink {
                 int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000)
             : null,
       );
+
+  final String url;
+  final String site;
+  final Color? color;
 }
 
 class MediaStats {

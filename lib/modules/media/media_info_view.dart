@@ -280,20 +280,13 @@ class _ExternalLinkScrollCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sites = items.map((e) => e.site).toList();
-    final colors = items
-        .map((e) => e.color != null
-            ? Color(int.parse(e.color!.substring(1, 7), radix: 16) + 0x8C000000)
-            : null)
-        .toList();
-
     return _ScrollCards(
       title: "External Links",
       itemCount: items.length,
       onTap: (i) => Toast.launch(context, items[i].url),
       onLongPress: (i) => Toast.copy(context, items[i].url),
-      builder: (context, i) => Text(sites[i]),
-      color: (i) => colors[i],
+      builder: (context, i) => Text(items[i].site),
+      color: (i) => items[i].color,
     );
   }
 }

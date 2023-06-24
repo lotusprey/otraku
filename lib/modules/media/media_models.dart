@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
@@ -394,12 +395,18 @@ class MediaInfo {
 class ExternalLink {
   final String url;
   final String site;
-  final String? color;
+  final Color? color;
 
   ExternalLink._({required this.url, required this.site, required this.color});
 
-  factory ExternalLink(Map<String, dynamic> map) =>
-      ExternalLink._(url: map['url'], site: map['site'], color: map['color']);
+  factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
+        url: map['url'],
+        site: map['site'],
+        color: map['color'] != null
+            ? Color(
+                int.parse(map['color'].substring(1, 7), radix: 16) + 0x8C000000)
+            : null,
+      );
 }
 
 class MediaStats {

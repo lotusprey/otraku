@@ -165,7 +165,7 @@ class MediaInfoView extends StatelessWidget {
               ),
             ),
           if (info.externalLinks.isNotEmpty)
-            _ExternalLinkScrollCards(items: info.externalLinks),
+            _ExternalLinkScrollCards(info.externalLinks),
           if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
           if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
           if (info.englishTitle != null) _Title('English', info.englishTitle!),
@@ -272,9 +272,7 @@ class _PlainScrollCards extends StatelessWidget {
 }
 
 class _ExternalLinkScrollCards extends StatelessWidget {
-  const _ExternalLinkScrollCards({
-    required this.items,
-  });
+  const _ExternalLinkScrollCards(this.items);
 
   final List<ExternalLink> items;
 

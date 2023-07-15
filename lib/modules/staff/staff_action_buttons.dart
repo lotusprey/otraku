@@ -74,7 +74,7 @@ class StaffFilterButton extends StatelessWidget {
                     ChipSelector(
                       title: 'Sort',
                       options: MediaSort.values.map((s) => s.label).toList(),
-                      selected: filter.sort.index,
+                      current: filter.sort.index,
                       mustHaveSelected: true,
                       onChanged: (i) => filter = filter.copyWith(
                         sort: MediaSort.values.elementAt(i!),
@@ -84,7 +84,7 @@ class StaffFilterButton extends StatelessWidget {
                       ChipSelector(
                         title: 'Type',
                         options: const ['Anime', 'Manga'],
-                        selected: filter.ofAnime == null
+                        current: filter.ofAnime == null
                             ? null
                             : filter.ofAnime!
                                 ? 0
@@ -100,7 +100,7 @@ class StaffFilterButton extends StatelessWidget {
                     ChipSelector(
                       title: 'List Presence',
                       options: const ['On List', 'Not on List'],
-                      selected: filter.onList == null
+                      current: filter.onList == null
                           ? null
                           : filter.onList!
                               ? 0

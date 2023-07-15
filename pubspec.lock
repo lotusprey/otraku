@@ -109,10 +109,10 @@ packages:
     dependency: "direct main"
     description:
       name: dynamic_color
-      sha256: "74dff1435a695887ca64899b8990004f8d1232b0e84bfc4faa1fdda7c6f57cc1"
+      sha256: de4798a7069121aee12d5895315680258415de9b00e717723a1bd73d58f0126d
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.5"
+    version: "1.6.6"
   fake_async:
     dependency: transitive
     description:
@@ -154,26 +154,26 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_cache_manager
-      sha256: "32cd900555219333326a2d0653aaaf8671264c29befa65bbd9856d204a4c9fb3"
+      sha256: "8207f27539deb83732fdda03e259349046a39a4c767269285f449ade355d54ba"
       url: "https://pub.dev"
     source: hosted
-    version: "3.3.0"
+    version: "3.3.1"
   flutter_lints:
     dependency: "direct dev"
     description:
       name: flutter_lints
-      sha256: aeb0b80a8b3709709c9cc496cdc027c5b3216796bc0af0ce1007eaf24464fd4c
+      sha256: "2118df84ef0c3ca93f96123a616ae8540879991b8b57af2f81b76a7ada49b2a4"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   flutter_local_notifications:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: "812791d43ccfc1b443a0d39fa02a206fc228c597e28ff9337e09e3ca8d370391"
+      sha256: "3cc40fe8c50ab8383f3e053a499f00f975636622ecdc8e20a77418ece3b1e975"
       url: "https://pub.dev"
     source: hosted
-    version: "14.1.1"
+    version: "15.1.0+1"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -260,10 +260,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_widget_from_html_core
-      sha256: "77f05cd7a738078dcdbe07741140d58b2fe7509197f3855a91269fb5a90f4bee"
+      sha256: b733a240388736fcf40692920033dc3a749155dc49c840f6c0e4a732f553908b
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.1"
+    version: "0.10.3"
   fwfh_text_style:
     dependency: transitive
     description:
@@ -292,10 +292,10 @@ packages:
     dependency: "direct main"
     description:
       name: http
-      sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
+      sha256: "759d1a329847dd0f39226c688d3e06a6b8679668e350e2891a6474f8b4bb8525"
       url: "https://pub.dev"
     source: hosted
-    version: "0.13.6"
+    version: "1.1.0"
   http_parser:
     dependency: transitive
     description:
@@ -424,14 +424,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.7"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      sha256: "67fc27ed9639506c856c840ccce7594d0bdcd91bc8d53d6e52359449a1d50602"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.11.1"
   petitparser:
     dependency: transitive
     description:
@@ -585,10 +577,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: eb1e00ab44303d50dd487aab67ebc575456c146c6af44422f9c13889984c00f3
+      sha256: "781bd58a1eb16069412365c98597726cd8810ae27435f04b3b4d3a470bacd61e"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.11"
+    version: "6.1.12"
   url_launcher_android:
     dependency: transitive
     description:
@@ -695,4 +687,4 @@ packages:
     version: "6.3.0"
 sdks:
   dart: ">=3.0.0 <4.0.0"
-  flutter: ">=3.7.0-0"
+  flutter: ">=3.10.0"

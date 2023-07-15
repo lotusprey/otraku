@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/shadowed_list.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
@@ -71,7 +72,7 @@ class MediaInfoView extends StatelessWidget {
           if (info.description.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
-                padding: Consts.padding,
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: GestureDetector(
                   child: Card(
                     child: Padding(
@@ -92,38 +93,36 @@ class MediaInfoView extends StatelessWidget {
             )
           else
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverPadding(
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                height: Consts.tapTargetSize,
-                minWidth: 130,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          infoTitles[i],
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        Text(infoData[i].toString(), maxLines: 1),
-                      ],
-                    ),
+          SliverGrid(
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              height: Consts.tapTargetSize,
+              minWidth: 130,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, i) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        infoTitles[i],
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      Text(infoData[i].toString(), maxLines: 1),
+                    ],
                   ),
                 ),
-                childCount: infoData.length,
               ),
+              childCount: infoData.length,
             ),
           ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
           if (info.genres.isNotEmpty)
             _PlainScrollCards(
               title: 'Genres',
@@ -204,12 +203,9 @@ class _ScrollCards extends StatelessWidget {
         children: [
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
               const Spacer(),
               if (trailingAction != null) trailingAction!,
@@ -218,15 +214,13 @@ class _ScrollCards extends StatelessWidget {
           if (trailingAction == null) const SizedBox(height: 10),
           SizedBox(
             height: 42,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 10, bottom: 2),
+            child: ShadowedOverflowList(
               itemCount: itemCount,
               itemBuilder: (context, i) => GestureDetector(
                 onTap: () => onTap(i),
                 onLongPress: () => onLongPress(i),
                 child: Card(
-                  margin: const EdgeInsets.only(right: 10),
+                  margin: const EdgeInsets.only(right: 5, bottom: 2),
                   child: Padding(
                     padding: Consts.padding,
                     child: builder(context, i),
@@ -386,7 +380,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

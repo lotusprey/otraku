@@ -6,10 +6,12 @@ class ShadowedOverflowList extends StatelessWidget {
   const ShadowedOverflowList({
     required this.itemCount,
     required this.itemBuilder,
+    this.shrinkWrap = false,
   });
 
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
+  final bool shrinkWrap;
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class ShadowedOverflowList extends StatelessWidget {
           padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2),
           itemCount: itemCount,
           itemBuilder: itemBuilder,
+          shrinkWrap: shrinkWrap,
         ),
         Positioned(
           top: 0,

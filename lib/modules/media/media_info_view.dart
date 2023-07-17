@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/widgets/shadowed_list.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';

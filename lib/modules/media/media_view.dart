@@ -133,15 +133,12 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void dispose() {
     _scrollCtrl.removeListener(_scrollListener);
     widget.tabCtrl.removeListener(_tabListener);
+    ref.invalidate(mediaFollowingProvider(widget.id));
     super.dispose();
   }
 
   void _tabListener() {
     _lastMaxExtent = 0;
-
-    if (widget.tabCtrl.index == MediaTab.following.index) {
-      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
-    }
 
     // This is a workaround for an issue with [NestedScrollView].
     // If you switch to a tab with pagination, where the content
@@ -176,7 +173,6 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void _refresh(WidgetRef ref) {
     if (widget.tabCtrl.index == MediaTab.following.index) {
       ref.invalidate(mediaFollowingProvider(widget.id));
-      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
     } else {
       ref.invalidate(mediaRelationsProvider(widget.id));
     }

@@ -12,7 +12,6 @@ import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class StatisticsView extends StatefulWidget {
@@ -297,16 +296,36 @@ class _BarChartState extends State<_BarChart> {
       title: widget.title,
       action: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: SegmentSwitcher(
-          items: [
-            'Titles',
-            widget.ofAnime ? 'Hours' : 'Chapters',
-            if (widget.full) 'Mean Score',
+        child: SegmentedButton(
+          segments: [
+            const ButtonSegment(
+              value: 0,
+              label: Text('Titles'),
+              icon: Icon(Icons.numbers_outlined),
+            ),
+            if (widget.ofAnime)
+              const ButtonSegment(
+                value: 1,
+                label: Text('Hours'),
+                icon: Icon(Icons.hourglass_bottom_outlined),
+              )
+            else
+              const ButtonSegment(
+                value: 1,
+                label: Text('Chapters'),
+                icon: Icon(Icons.hourglass_bottom_outlined),
+              ),
+            if (widget.full)
+              const ButtonSegment(
+                value: 2,
+                label: Text('Score'),
+                icon: Icon(Icons.star_half_outlined),
+              ),
           ],
-          current: _tab,
-          onChanged: (val) {
-            setState(() => _tab = val);
-            widget.onTabChanged(val);
+          selected: {_tab},
+          onSelectionChanged: (v) {
+            setState(() => _tab = v.first);
+            widget.onTabChanged(v.first);
           },
         ),
       ),

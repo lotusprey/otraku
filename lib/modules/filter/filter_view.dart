@@ -81,7 +81,7 @@ class CollectionFilterView extends StatelessWidget {
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20),
         children: [
           EntrySortChipSelector(
             title: 'Sorting',
@@ -136,6 +136,7 @@ class CollectionFilterView extends StatelessWidget {
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
+          SizedBox(height: BottomBar.offset(context)),
         ],
       ),
     );
@@ -155,7 +156,7 @@ class DiscoverFilterView extends StatelessWidget {
       onChanged: onChanged,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20),
         children: [
           ChipSelector(
             title: 'Sorting',
@@ -253,6 +254,7 @@ class DiscoverFilterView extends StatelessWidget {
                     ? true
                     : false,
           ),
+          SizedBox(height: BottomBar.offset(context)),
         ],
       ),
     );

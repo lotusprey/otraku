@@ -1,97 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/modules/activity/activity_filter_sheet.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
-
-void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
-  final filter = ref.read(activityFilterProvider(id));
-  final typeIn = [...filter.typeIn];
-  bool changed = false;
-
-  bool onFollowing = false;
-  bool withViewerActivities = false;
-  double initialHeight = MediaQuery.of(context).padding.bottom +
-      Consts.tapTargetSize * ActivityType.values.length +
-      20;
-
-  switch (filter) {
-    case HomeActivityFilter filter:
-      onFollowing = filter.onFollowing;
-      withViewerActivities = filter.withViewerActivities;
-      initialHeight += Consts.tapTargetSize * 1.5;
-    default:
-  }
-
-  showSheet(
-    context,
-    OpaqueSheet(
-      initialHeight: initialHeight,
-      builder: (context, scrollCtrl) => ListView(
-        controller: scrollCtrl,
-        physics: Consts.physics,
-        padding: Consts.padding,
-        children: [
-          for (final a in ActivityType.values)
-            CheckBoxField(
-              title: a.text,
-              initial: typeIn.contains(a),
-              onChanged: (val) {
-                val ? typeIn.add(a) : typeIn.remove(a);
-                changed = true;
-              },
-            ),
-          if (filter is HomeActivityFilter) ...[
-            const Divider(),
-            CheckBoxField(
-              title: 'Your Activities',
-              initial: withViewerActivities,
-              onChanged: (val) {
-                withViewerActivities = val;
-                changed = true;
-              },
-            ),
-            SegmentSwitcher(
-              items: const ['Following', 'Global'],
-              current: onFollowing ? 0 : 1,
-              onChanged: (val) {
-                onFollowing = val == 0;
-                changed = true;
-              },
-            ),
-          ],
-        ],
-      ),
-    ),
-  ).then((_) {
-    if (!changed) return;
-    ref.read(activityFilterProvider(id).notifier).update(
-          (s) => switch (s) {
-            UserActivityFilter _ => UserActivityFilter(typeIn, s.userId),
-            HomeActivityFilter _ => HomeActivityFilter(
-                typeIn,
-                onFollowing,
-                withViewerActivities,
-              ),
-          },
-        );
-  });
-}
 
 class ActivitiesView extends ConsumerStatefulWidget {
   const ActivitiesView(this.id);

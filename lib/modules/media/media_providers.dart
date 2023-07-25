@@ -62,8 +62,8 @@ final mediaRelationsProvider = StateNotifierProvider.autoDispose
   (ref, int mediaId) => MediaRelationsNotifier(mediaId),
 );
 
-final mediaFollowingProvider = StateNotifierProvider.autoDispose
-    .family<MediaFollowingNotifier, AsyncValue<Paged<MediaFollowing>>, int>(
+final mediaFollowingProvider = StateNotifierProvider.family<
+    MediaFollowingNotifier, AsyncValue<Paged<MediaFollowing>>, int>(
   (ref, int mediaId) => MediaFollowingNotifier(mediaId),
 );
 
@@ -250,16 +250,11 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
 
 class MediaFollowingNotifier
     extends StateNotifier<AsyncValue<Paged<MediaFollowing>>> {
-  MediaFollowingNotifier(this.mediaId) : super(const AsyncValue.loading());
-
-  final int mediaId;
-  bool _didLazyLoad = false;
-
-  void lazyLoad() {
-    if (_didLazyLoad) return;
-    _didLazyLoad = true;
+  MediaFollowingNotifier(this.mediaId) : super(const AsyncValue.loading()) {
     fetch();
   }
+
+  final int mediaId;
 
   Future<void> fetch() async {
     if (!(state.valueOrNull?.hasNext ?? true)) return;

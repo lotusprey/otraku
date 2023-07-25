@@ -10,7 +10,6 @@ import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
@@ -40,11 +39,26 @@ class SettingsAppTab extends StatelessWidget {
         SliverToBoxAdapter(
           child: Padding(
             padding: const EdgeInsets.only(top: 5, bottom: 10),
-            child: SegmentSwitcher(
-              current: Options().themeMode.index,
-              items: const ['System', 'Light', 'Dark'],
-              onChanged: (i) =>
-                  Options().themeMode = ThemeMode.values.elementAt(i),
+            child: SegmentedButton(
+              segments: const [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  label: Text('System'),
+                  icon: Icon(Icons.sync_outlined),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  label: Text('Light'),
+                  icon: Icon(Icons.wb_sunny_outlined),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  label: Text('Dark'),
+                  icon: Icon(Icons.mode_night_outlined),
+                ),
+              ],
+              selected: {Options().themeMode},
+              onSelectionChanged: (v) => Options().themeMode = v.first,
             ),
           ),
         ),

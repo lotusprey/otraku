@@ -57,6 +57,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
           fontWeight: FontWeight.normal,
         ),
       ),
+      segmentedButtonTheme: const SegmentedButtonThemeData(
+        style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+      ),
       typography: Typography.material2014(),
       textTheme: TextTheme(
         titleLarge: TextStyle(

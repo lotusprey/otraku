@@ -192,6 +192,6 @@ class ActivityFilterNotifier extends StateNotifier<ActivityFilter> {
     });
   }
 
-  void update(ActivityFilter Function(ActivityFilter) callback) =>
-      state = callback(state);
+  @override
+  set state(ActivityFilter s) => super.state = s;
 }

@@ -28,12 +28,9 @@ class SettingsAppTab extends StatelessWidget {
           child: SizedBox(height: scaffoldOffsets(context).top),
         ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: Text(
-              'Theme',
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
+          child: Text(
+            'Theme',
+            style: Theme.of(context).textTheme.titleSmall,
           ),
         ),
         SliverToBoxAdapter(
@@ -103,7 +100,7 @@ class SettingsAppTab extends StatelessWidget {
           initialSheetHeight: Consts.tapTargetSize * 3 + 150,
           sheetContentBuilder: (context, scrollCtrl) => ListView(
             controller: scrollCtrl,
-            padding: Consts.padding,
+            padding: const EdgeInsets.symmetric(vertical: 10),
             children: [
               CheckBoxField(
                 title: 'Anime Collection Preview',

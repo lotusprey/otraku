@@ -47,56 +47,49 @@ class _YearRangePickerState extends State<YearRangePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Text(widget.title,
-                  style: Theme.of(context).textTheme.labelMedium),
-              const Spacer(),
-              SizedBox(
-                width: 50,
-                child: Text(
-                  _from.truncate().toString(),
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Text(widget.title, style: Theme.of(context).textTheme.labelMedium),
+            const Spacer(),
+            SizedBox(
+              width: 50,
+              child: Text(
+                _from.truncate().toString(),
+                textAlign: TextAlign.left,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-              const Text(' - '),
-              SizedBox(
-                width: 50,
-                child: Text(
-                  _to.truncate().toString(),
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: RangeSlider(
-              values: RangeValues(_from, _to),
-              min: _minYear,
-              max: _maxYear,
-              divisions: (_maxYear - _minYear + 1).truncate(),
-              onChanged: (range) {
-                setState(() {
-                  _from = range.start;
-                  _to = range.end;
-                });
-
-                _from > _minYear || _to < _maxYear
-                    ? widget.onChanged(_from.truncate(), _to.truncate())
-                    : widget.onChanged(null, null);
-              },
             ),
-          ),
-        ],
-      ),
+            const Text(' - '),
+            SizedBox(
+              width: 50,
+              child: Text(
+                _to.truncate().toString(),
+                textAlign: TextAlign.right,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            ),
+          ],
+        ),
+        RangeSlider(
+          values: RangeValues(_from, _to),
+          min: _minYear,
+          max: _maxYear,
+          divisions: (_maxYear - _minYear + 1).truncate(),
+          onChanged: (range) {
+            setState(() {
+              _from = range.start;
+              _to = range.end;
+            });
+
+            _from > _minYear || _to < _maxYear
+                ? widget.onChanged(_from.truncate(), _to.truncate())
+                : widget.onChanged(null, null);
+          },
+        ),
+      ],
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 
 /// A horizontal list of chips, where only one can be selected at a time.
@@ -39,7 +40,7 @@ class _ChipSelectorState extends State<ChipSelector> {
       title: widget.title,
       options: widget.options,
       itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(right: 10),
+        padding: const EdgeInsets.only(right: 5),
         child: FilterChip(
           label: Text(widget.options[index]),
           selected: index == _current,
@@ -51,6 +52,39 @@ class _ChipSelectorState extends State<ChipSelector> {
           },
         ),
       ),
+    );
+  }
+}
+
+class _ChipSelectorLayout extends StatelessWidget {
+  const _ChipSelectorLayout({
+    required this.title,
+    required this.options,
+    required this.itemBuilder,
+  });
+
+  final String title;
+  final List<String> options;
+  final Widget Function(BuildContext, int) itemBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10),
+          child: Text(title, style: Theme.of(context).textTheme.labelMedium),
+        ),
+        SizedBox(
+          height: 40,
+          child: ShadowedOverflowList(
+            itemCount: options.length,
+            itemBuilder: itemBuilder,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -104,41 +138,6 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
           },
         ),
       ),
-    );
-  }
-}
-
-class _ChipSelectorLayout extends StatelessWidget {
-  const _ChipSelectorLayout({
-    required this.title,
-    required this.options,
-    required this.itemBuilder,
-  });
-
-  final String title;
-  final List<String> options;
-  final Widget Function(BuildContext, int) itemBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.labelMedium),
-        ),
-        SizedBox(
-          height: 40,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.only(left: 10),
-            itemCount: options.length,
-            itemBuilder: itemBuilder,
-          ),
-        ),
-      ],
     );
   }
 }

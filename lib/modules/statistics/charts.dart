@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 
 class BarChart extends StatelessWidget {
   const BarChart({
@@ -9,13 +10,13 @@ class BarChart extends StatelessWidget {
     required this.names,
     required this.values,
     this.barWidth = 60,
-    this.action,
+    this.toolbar,
   }) : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
   final List<num> values;
-  final Widget? action;
+  final Widget? toolbar;
   final double barWidth;
 
   @override
@@ -32,17 +33,15 @@ class BarChart extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(
-          padding: Consts.padding,
+          padding: const EdgeInsets.symmetric(vertical: 5),
           child: Text(title, style: Theme.of(context).textTheme.titleSmall),
         ),
-        if (action != null) action!,
+        if (toolbar != null) toolbar!,
         SizedBox(
           height: 280,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.all(10),
+          child: ShadowedOverflowList(
             itemCount: names.length,
-            itemExtent: barWidth + 10,
+            itemExtent: barWidth + 5,
             itemBuilder: (_, i) => Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -53,7 +52,7 @@ class BarChart extends StatelessWidget {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: values[i] * maxHeight + 10,
-                  margin: const EdgeInsets.all(5),
+                  margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(

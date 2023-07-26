@@ -70,23 +70,27 @@ class _StatisticsViewState extends State<StatisticsView>
                 return TabBarView(
                   controller: _tabCtrl,
                   children: [
-                    _StatisticsView(
-                      statistics: data.animeStats,
-                      ofAnime: true,
-                      scrollCtrl: _scrollCtrl,
-                      primaryBarChartTab: () => _primaryBarChartTab,
-                      secondaryBarChartTab: () => _secondaryBarChartTab,
-                      onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
-                      onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                    ConstrainedView(
+                      child: _StatisticsView(
+                        statistics: data.animeStats,
+                        ofAnime: true,
+                        scrollCtrl: _scrollCtrl,
+                        primaryBarChartTab: () => _primaryBarChartTab,
+                        secondaryBarChartTab: () => _secondaryBarChartTab,
+                        onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
+                        onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                      ),
                     ),
-                    _StatisticsView(
-                      statistics: data.mangaStats,
-                      ofAnime: false,
-                      scrollCtrl: _scrollCtrl,
-                      primaryBarChartTab: () => _primaryBarChartTab,
-                      secondaryBarChartTab: () => _secondaryBarChartTab,
-                      onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
-                      onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                    ConstrainedView(
+                      child: _StatisticsView(
+                        statistics: data.mangaStats,
+                        ofAnime: false,
+                        scrollCtrl: _scrollCtrl,
+                        primaryBarChartTab: () => _primaryBarChartTab,
+                        secondaryBarChartTab: () => _secondaryBarChartTab,
+                        onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
+                        onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                      ),
                     ),
                   ],
                 );
@@ -109,7 +113,7 @@ class _StatisticsViewState extends State<StatisticsView>
         topBar: TopBar(
           title: _tabCtrl.index == 0 ? 'Anime Statistics' : 'Manga Statistics',
         ),
-        child: ConstrainedView(child: content),
+        child: content,
       ),
     );
   }
@@ -137,16 +141,15 @@ class _StatisticsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final offsets = scaffoldOffsets(context);
+    const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));
 
-    return ListView(
+    return CustomScrollView(
       controller: scrollCtrl,
-      padding: EdgeInsets.only(
-        top: offsets.top + 10,
-        bottom: offsets.bottom,
-      ),
-      children: [
+      slivers: [
+        SliverToBoxAdapter(child: SizedBox(height: offsets.top + 10)),
         _Details(statistics, ofAnime),
-        if (statistics.scores.isNotEmpty)
+        if (statistics.scores.isNotEmpty) ...[
+          spacing,
           _BarChart(
             title: 'Score',
             statistics: statistics.scores,
@@ -156,7 +159,9 @@ class _StatisticsView extends StatelessWidget {
             onTabChanged: onPrimaryTabChanged,
             barWidth: 40,
           ),
-        if (statistics.lengths.isNotEmpty)
+        ],
+        if (statistics.lengths.isNotEmpty) ...[
+          spacing,
           _BarChart(
             title: ofAnime ? 'Episodes' : 'Chapters',
             statistics: statistics.lengths,
@@ -164,23 +169,24 @@ class _StatisticsView extends StatelessWidget {
             full: true,
             initialTab: secondaryBarChartTab(),
             onTabChanged: onSecondaryTabChanged,
-            barWidth: 50,
+            barWidth: 65,
           ),
-        if (statistics.count > 0)
-          GridView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            physics: const NeverScrollableScrollPhysics(),
+        ],
+        if (statistics.count > 0) ...[
+          spacing,
+          SliverGrid(
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 340,
               height: 250,
             ),
-            children: [
+            delegate: SliverChildListDelegate([
               _PieChart('Format Distribution', statistics.formats),
               _PieChart('Status Distribution', statistics.statuses),
               _PieChart('Country Distribution', statistics.countries),
-            ],
+            ]),
           ),
+        ],
+        SliverToBoxAdapter(child: SizedBox(height: offsets.bottom + 10)),
       ],
     );
   }
@@ -221,33 +227,36 @@ class _Details extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: titles.length,
+    return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 190,
         height: 50,
       ),
-      itemBuilder: (context, i) => Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: Row(
-            children: [
-              Icon(icons[i],
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-              const SizedBox(width: 10),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(titles[i],
-                      style: Theme.of(context).textTheme.labelMedium),
-                  Text(subtitles[i].toString()),
-                ],
-              ),
-            ],
+      delegate: SliverChildBuilderDelegate(
+        childCount: titles.length,
+        (context, i) => Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Icon(
+                  icons[i],
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 10),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      titles[i],
+                      style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    Text(subtitles[i].toString()),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -292,11 +301,10 @@ class _BarChartState extends State<_BarChart> {
       values = widget.statistics.map((s) => s.meanScore).toList();
     }
 
-    return BarChart(
-      title: widget.title,
-      action: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: SegmentedButton(
+    return SliverToBoxAdapter(
+      child: BarChart(
+        title: widget.title,
+        toolbar: SegmentedButton(
           segments: [
             const ButtonSegment(
               value: 0,
@@ -328,10 +336,10 @@ class _BarChartState extends State<_BarChart> {
             widget.onTabChanged(v.first);
           },
         ),
+        names: widget.statistics.map((s) => s.type).toList(),
+        values: values,
+        barWidth: widget.barWidth,
       ),
-      names: widget.statistics.map((s) => s.type).toList(),
-      values: values,
-      barWidth: widget.barWidth,
     );
   }
 }

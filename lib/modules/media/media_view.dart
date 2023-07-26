@@ -278,7 +278,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
               if (stats.statusNames.isNotEmpty)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: PieChart(
                       title: 'Status Distribution',
                       names: stats.statusNames,

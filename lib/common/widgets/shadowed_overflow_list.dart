@@ -7,10 +7,12 @@ class ShadowedOverflowList extends StatelessWidget {
     required this.itemCount,
     required this.itemBuilder,
     this.shrinkWrap = false,
+    this.itemExtent,
   });
 
   final int itemCount;
   final Widget Function(BuildContext, int) itemBuilder;
+  final double? itemExtent;
   final bool shrinkWrap;
 
   @override
@@ -20,6 +22,7 @@ class ShadowedOverflowList extends StatelessWidget {
         ListView.builder(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2),
+          itemExtent: itemExtent,
           itemCount: itemCount,
           itemBuilder: itemBuilder,
           shrinkWrap: shrinkWrap,

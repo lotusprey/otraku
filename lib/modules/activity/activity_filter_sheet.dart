@@ -8,13 +8,12 @@ import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
-  ActivityFilter oldFilter = ref.read(activityFilterProvider(id));
-  ActivityFilter? newFilter;
-
+  ActivityFilter filter = ref.read(activityFilterProvider(id));
   double initialHeight = MediaQuery.of(context).padding.bottom +
       Consts.tapTargetSize * ActivityType.values.length +
       20;
-  if (oldFilter is HomeActivityFilter) {
+
+  if (filter is HomeActivityFilter) {
     initialHeight += Consts.tapTargetSize * 1.5;
   }
 
@@ -23,14 +22,13 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? id) {
     OpaqueSheet(
       initialHeight: initialHeight,
       builder: (context, scrollCtrl) => _FilterList(
-        filter: oldFilter,
-        onChanged: (f) => newFilter = f,
+        filter: filter,
+        onChanged: (v) => filter = v,
         scrollCtrl: scrollCtrl,
       ),
     ),
   ).then((_) {
-    if (newFilter == null) return;
-    ref.read(activityFilterProvider(id).notifier).update((_) => newFilter!);
+    ref.read(activityFilterProvider(id).notifier).state = filter;
   });
 }
 
@@ -57,7 +55,7 @@ class _FilterListState extends State<_FilterList> {
     return ListView(
       controller: widget.scrollCtrl,
       physics: Consts.physics,
-      padding: Consts.padding,
+      padding: const EdgeInsets.symmetric(vertical: 10),
       children: [
         for (final a in ActivityType.values)
           CheckBoxField(

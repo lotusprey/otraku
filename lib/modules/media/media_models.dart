@@ -386,6 +386,7 @@ class MediaInfo {
       for (final link in map['externalLinks']) {
         model.externalLinks.add(ExternalLink(link));
       }
+      model.externalLinks.sort((a, b) => a.type.index.compareTo(b.type.index));
     }
 
     return model;
@@ -393,20 +394,40 @@ class MediaInfo {
 }
 
 class ExternalLink {
-  ExternalLink._({required this.url, required this.site, required this.color});
+  ExternalLink._({
+    required this.url,
+    required this.site,
+    required this.type,
+    required this.color,
+  });
 
   factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
         url: map['url'],
         site: map['site'],
+        type: ExternalLinkType.fromString(map['type']),
         color: map['color'] != null
             ? Color(
-                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000)
+                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000,
+              )
             : null,
       );
 
   final String url;
   final String site;
+  final ExternalLinkType type;
   final Color? color;
+}
+
+enum ExternalLinkType {
+  info,
+  social,
+  streaming;
+
+  static ExternalLinkType fromString(String? str) => switch (str) {
+        'SOCIAL' => ExternalLinkType.social,
+        'STREAMING' => ExternalLinkType.streaming,
+        _ => ExternalLinkType.info,
+      };
 }
 
 class MediaStats {

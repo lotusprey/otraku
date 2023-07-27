@@ -21,7 +21,7 @@ class BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double maxHeight = 190.0;
+    double maxHeight = 210.0;
     num maxValue = 0;
     for (final v in values) {
       if (maxValue < v) maxValue = v;

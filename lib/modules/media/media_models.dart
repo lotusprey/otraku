@@ -386,7 +386,11 @@ class MediaInfo {
       for (final link in map['externalLinks']) {
         model.externalLinks.add(ExternalLink(link));
       }
-      model.externalLinks.sort((a, b) => a.type.index.compareTo(b.type.index));
+      model.externalLinks.sort(
+        (a, b) => a.type == b.type
+            ? a.site.compareTo(b.site)
+            : a.type.index.compareTo(b.type.index),
+      );
     }
 
     return model;

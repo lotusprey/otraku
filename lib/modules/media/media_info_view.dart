@@ -282,7 +282,14 @@ class _ExternalLinkScrollCards extends StatelessWidget {
                 color: items[i].color,
               ),
             ),
-          Text(items[i].site)
+          Text(items[i].site),
+          if (items[i].countryCode != null) ...[
+            const SizedBox(width: 5),
+            Text(
+              items[i].countryCode!,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ],
         ],
       ),
     );

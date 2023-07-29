@@ -399,6 +399,7 @@ class ExternalLink {
     required this.site,
     required this.type,
     required this.color,
+    required this.countryCode,
   });
 
   factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
@@ -410,12 +411,19 @@ class ExternalLink {
                 int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000,
               )
             : null,
+        countryCode: switch (map['language']) {
+          'Japanese' => 'JP',
+          'Chinese' => 'CN',
+          'Korean' => 'KR',
+          _ => null,
+        },
       );
 
   final String url;
   final String site;
   final ExternalLinkType type;
   final Color? color;
+  final String? countryCode;
 }
 
 enum ExternalLinkType {

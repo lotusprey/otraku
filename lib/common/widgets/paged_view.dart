@@ -4,12 +4,9 @@ import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
-/// Subscribes to a paginated, asynchronous provider.
-/// Shows a pop up, if there is an error.
-/// [onData] should return a sliver widget!
-/// If [scrollCtrl] is [PagedController], pagination will automatically work.
+/// A wrapper around [PagedSelectionView] to reduce boilerplate,
+/// for the cases where [PagedSelectionView.select] is redundant.
 class PagedView<T> extends StatelessWidget {
   const PagedView({
     required this.provider,
@@ -24,50 +21,69 @@ class PagedView<T> extends StatelessWidget {
   final Widget Function(Paged<T>) onData;
 
   @override
+  Widget build(BuildContext context) => PagedSelectionView(
+        provider: provider,
+        onRefresh: onRefresh,
+        scrollCtrl: scrollCtrl,
+        onData: onData,
+        select: (data) => data,
+      );
+}
+
+class PagedSelectionView<T, U> extends StatelessWidget {
+  const PagedSelectionView({
+    required this.provider,
+    required this.scrollCtrl,
+    required this.onRefresh,
+    required this.onData,
+    required this.select,
+  });
+
+  final ProviderListenable<AsyncValue<T>> provider;
+  final void Function() onRefresh;
+
+  /// When data is available, [select] extracts a paginated list.
+  final Paged<U> Function(T) select;
+
+  /// [onData] should return a sliver widget!
+  final Widget Function(Paged<U>) onData;
+
+  /// If [scrollCtrl] is [PagedController], pagination will automatically work.
+  final ScrollController scrollCtrl;
+
+  @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, _) {
-        ref.listen<AsyncValue>(
-          provider,
-          (_, s) => s.whenOrNull(
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Failed to load',
-                content: error.toString(),
-              ),
+      builder: (context, ref, _) => ref.watch(provider).unwrapPrevious().when(
+            loading: () => const Center(child: Loader()),
+            error: (err, __) => CustomScrollView(
+              physics: Consts.physics,
+              slivers: [
+                SliverRefreshControl(onRefresh: onRefresh),
+                SliverFillRemaining(
+                  child: Center(child: Text('Failed to load\n$err')),
+                ),
+              ],
             ),
-          ),
-        );
-
-        return ref.watch(provider).unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(
-                physics: Consts.physics,
-                slivers: [
-                  SliverRefreshControl(onRefresh: onRefresh),
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load')),
-                  ),
-                ],
-              ),
-              data: (data) => ConstrainedView(
+            data: (data) {
+              final selection = select(data);
+              return ConstrainedView(
                 child: CustomScrollView(
                   physics: Consts.physics,
                   controller: scrollCtrl,
                   slivers: [
                     SliverRefreshControl(onRefresh: onRefresh),
-                    data.items.isEmpty
+                    selection.items.isEmpty
                         ? const SliverFillRemaining(
                             child: Center(child: Text('No results')),
                           )
-                        : onData(data),
-                    SliverFooter(loading: data.hasNext),
+                        : onData(selection),
+                    SliverFooter(loading: selection.hasNext),
                   ],
                 ),
-              ),
-            );
-      },
+              );
+            },
+          ),
     );
   }
 }

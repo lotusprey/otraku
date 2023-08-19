@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -11,8 +10,6 @@ final activitiesProvider = StateNotifierProvider.autoDispose
   (ref, userId) => ActivitiesNotifier(
     viewerId: Options().id!,
     filter: ref.watch(activityFilterProvider(userId)),
-    shouldLoad:
-        userId != null || ref.watch(homeProvider.select((s) => s.didLoadFeed)),
   ),
 );
 
@@ -36,9 +33,8 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
   ActivitiesNotifier({
     required this.viewerId,
     required this.filter,
-    required bool shouldLoad,
   }) : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
+    fetch();
   }
 
   final int viewerId;

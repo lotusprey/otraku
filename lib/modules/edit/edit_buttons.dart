@@ -6,7 +6,6 @@ import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
@@ -78,7 +77,7 @@ class _EditButtonsState extends State<EditButtons> {
                   entry,
                   oldEdit,
                   newEdit,
-                  ref.read(collectionFilterProvider(tag)).sort,
+                  ref.read(collectionFilterProvider(tag)).mediaFilter.sort,
                 );
           } else if (newEdit.status == EntryStatus.CURRENT ||
               newEdit.status == EntryStatus.REPEATING) {

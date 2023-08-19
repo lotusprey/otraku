@@ -4,7 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
+import 'package:otraku/modules/discover/discover_providers.dart';
+import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
@@ -128,13 +129,13 @@ class MediaInfoView extends StatelessWidget {
               title: 'Genres',
               items: info.genres,
               onTap: (i) {
-                ref.read(searchProvider(null).notifier).state = null;
-                final notifier = ref.read(discoverFilterProvider);
-                notifier.type = info.type;
-
-                final filter = notifier.filter.clear();
-                filter.genreIn.add(info.genres[i]);
-                notifier.filter = filter;
+                final notifier = ref.read(discoverFilterProvider.notifier);
+                final filter = notifier.state.copyWith(
+                  type: info.type,
+                  search: () => null,
+                  mediaFilter: DiscoverMediaFilter(),
+                )..mediaFilter.genreIn.add(info.genres[i]);
+                notifier.state = filter;
 
                 ref.read(homeProvider).homeTab = HomeTab.discover;
                 Navigator.popUntil(context, (r) => r.isFirst);
@@ -335,13 +336,13 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
       title: 'Tags',
       itemCount: tags.length,
       onTap: (i) {
-        widget.ref.read(searchProvider(null).notifier).state = null;
-        final notifier = widget.ref.read(discoverFilterProvider);
-        notifier.type = widget.info.type;
-
-        final filter = notifier.filter.clear();
-        filter.tagIn.add(tags[i].name);
-        notifier.filter = filter;
+        final notifier = widget.ref.read(discoverFilterProvider.notifier);
+        final filter = notifier.state.copyWith(
+          type: widget.info.type,
+          search: () => null,
+          mediaFilter: DiscoverMediaFilter(),
+        )..mediaFilter.tagIn.add(tags[i].name);
+        notifier.state = filter;
 
         widget.ref.read(homeProvider).homeTab = HomeTab.discover;
         Navigator.popUntil(context, (r) => r.isFirst);

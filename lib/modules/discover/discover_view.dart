@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/discover/discover_media_grid.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
 import 'package:otraku/modules/review/review_models.dart';
-import 'package:otraku/modules/review/review_providers.dart';
 import 'package:otraku/modules/studio/studio_grid.dart';
-import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_grid.dart';
-import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/modules/review/review_grid.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -24,46 +19,20 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
-class DiscoverView extends ConsumerWidget {
+class DiscoverView extends StatelessWidget {
   const DiscoverView(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final onRefresh = () {
-      switch (ref.read(discoverFilterProvider).type) {
-        case DiscoverType.anime:
-          ref.invalidate(discoverAnimeProvider);
-          return;
-        case DiscoverType.manga:
-          ref.invalidate(discoverMangaProvider);
-          return;
-        case DiscoverType.character:
-          ref.invalidate(discoverCharacterProvider);
-          return;
-        case DiscoverType.staff:
-          ref.invalidate(discoverStaffProvider);
-          return;
-        case DiscoverType.studio:
-          ref.invalidate(discoverStudioProvider);
-          return;
-        case DiscoverType.user:
-          ref.invalidate(discoverUserProvider);
-          return;
-        case DiscoverType.review:
-          ref.invalidate(discoverReviewProvider);
-          return;
-      }
-    };
-
+  Widget build(BuildContext context) {
     return TabScaffold(
       topBar: const TopBar(canPop: false, trailing: [_TopBarContent()]),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: const [_ActionButton()],
       ),
-      child: _Grid(scrollCtrl, onRefresh),
+      child: _Grid(scrollCtrl),
     );
   }
 }
@@ -80,8 +49,14 @@ class _TopBarContent extends StatelessWidget {
         return Expanded(
           child: Row(
             children: [
-              SearchFilterField(
+              CloseableSearchField(
                 title: Convert.clarifyEnum(type.name)!,
+                value: ref.watch(
+                  discoverFilterProvider.select((s) => s.search),
+                ),
+                onChanged: (search) => ref
+                    .read(discoverFilterProvider.notifier)
+                    .update((s) => s.copyWith(search: () => search)),
                 enabled: type != DiscoverType.review,
               ),
               if (type == DiscoverType.anime || type == DiscoverType.manga)
@@ -91,9 +66,11 @@ class _TopBarContent extends StatelessWidget {
                   onTap: () => showSheet(
                     context,
                     DiscoverFilterView(
-                      filter: ref.read(discoverFilterProvider).filter,
-                      onChanged: (filter) =>
-                          ref.read(discoverFilterProvider).filter = filter,
+                      ofAnime: type == DiscoverType.anime,
+                      filter: ref.read(discoverFilterProvider).mediaFilter,
+                      onChanged: (mediaFilter) => ref
+                          .read(discoverFilterProvider.notifier)
+                          .update((s) => s.copyWith(mediaFilter: mediaFilter)),
                     ),
                   ),
                 )
@@ -106,21 +83,23 @@ class _TopBarContent extends StatelessWidget {
                   icon: Ionicons.funnel_outline,
                   onTap: () {
                     final index =
-                        ref.read(reviewSortProvider(null).notifier).state.index;
+                        ref.read(discoverFilterProvider).reviewSort.index;
 
-                    showSheet(
-                      context,
-                      GradientSheet([
-                        for (int i = 0; i < ReviewSort.values.length; i++)
-                          GradientSheetButton(
+                    final sheetButtons = [
+                      for (int i = 0; i < ReviewSort.values.length; i++)
+                        GradientSheetButton(
                             text: ReviewSort.values.elementAt(i).text,
                             selected: index == i,
                             onTap: () => ref
-                                .read(reviewSortProvider(null).notifier)
-                                .state = ReviewSort.values.elementAt(i),
-                          ),
-                      ]),
-                    );
+                                .read(discoverFilterProvider.notifier)
+                                .update(
+                                  (s) => s.copyWith(
+                                    reviewSort: ReviewSort.values.elementAt(i),
+                                  ),
+                                )),
+                    ];
+
+                    showSheet(context, GradientSheet(sheetButtons));
                   },
                 )
               else
@@ -144,7 +123,7 @@ class _ActionButton extends StatelessWidget {
 
         return ActionButton(
           tooltip: 'Types',
-          icon: type.icon,
+          icon: _typeIcon(type),
           onTap: () {
             showSheet(
               context,
@@ -152,10 +131,12 @@ class _ActionButton extends StatelessWidget {
                 for (int i = 0; i < DiscoverType.values.length; i++)
                   GradientSheetButton(
                     text: Convert.clarifyEnum(DiscoverType.values[i].name)!,
-                    icon: DiscoverType.values[i].icon,
+                    icon: _typeIcon(DiscoverType.values[i]),
                     selected: type.index == i,
-                    onTap: () => ref.read(discoverFilterProvider).type =
-                        DiscoverType.values[i],
+                    onTap: () =>
+                        ref.read(discoverFilterProvider.notifier).update(
+                              (s) => s.copyWith(type: DiscoverType.values[i]),
+                            ),
                   ),
               ]),
             );
@@ -177,13 +158,25 @@ class _ActionButton extends StatelessWidget {
               }
             }
 
-            ref.read(discoverFilterProvider).type = type;
-            return type.icon;
+            ref
+                .read(discoverFilterProvider.notifier)
+                .update((s) => s.copyWith(type: type));
+            return _typeIcon(type);
           },
         );
       },
     );
   }
+
+  static IconData _typeIcon(DiscoverType type) => switch (type) {
+        DiscoverType.anime => Ionicons.film_outline,
+        DiscoverType.manga => Ionicons.bookmark_outline,
+        DiscoverType.character => Ionicons.man_outline,
+        DiscoverType.staff => Ionicons.mic_outline,
+        DiscoverType.studio => Ionicons.business_outline,
+        DiscoverType.user => Ionicons.person_outline,
+        DiscoverType.review => Icons.rate_review_outlined,
+      };
 }
 
 class _BirthdayFilter extends StatelessWidget {
@@ -193,81 +186,91 @@ class _BirthdayFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final value = ref.watch(discoverFilterProvider.select((s) => s.birthday));
+    final hasBirthday =
+        ref.watch(discoverFilterProvider.select((s) => s.hasBirthday));
 
     return TopBarIcon(
       icon: Icons.cake_outlined,
       tooltip: 'Birthday Filter',
-      onTap: () => ref.read(discoverFilterProvider).birthday = !value,
-      accented: value,
+      accented: hasBirthday,
+      onTap: () => ref
+          .read(discoverFilterProvider.notifier)
+          .update((s) => s.copyWith(hasBirthday: !hasBirthday)),
     );
   }
 }
 
 class _Grid extends StatelessWidget {
-  const _Grid(this.scrollCtrl, this.onRefresh);
+  const _Grid(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
-  final void Function() onRefresh;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
+        final onRefresh = () => ref.invalidate(discoverProvider);
 
         switch (type) {
           case DiscoverType.anime:
-            return PagedView<DiscoverMediaItem>(
-              provider: discoverAnimeProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverAnimeItems).pages,
               onData: (data) => Options().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
             );
           case DiscoverType.manga:
-            return PagedView<DiscoverMediaItem>(
-              provider: discoverMangaProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverMangaItems).pages,
               onData: (data) => Options().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
             );
           case DiscoverType.character:
-            return PagedView<TileItem>(
-              provider: discoverCharacterProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverCharacterItems).pages,
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.staff:
-            return PagedView<TileItem>(
-              provider: discoverStaffProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverStaffItems).pages,
               onData: (data) => TileItemGrid(data.items),
             );
           case DiscoverType.studio:
-            return PagedView<StudioItem>(
-              provider: discoverStudioProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverStudioItems).pages,
               onData: (data) => StudioGrid(data.items),
             );
           case DiscoverType.user:
-            return PagedView<UserItem>(
-              provider: discoverUserProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverUserItems).pages,
               onData: (data) => UserGrid(data.items),
             );
           case DiscoverType.review:
-            return PagedView<ReviewItem>(
-              provider: discoverReviewProvider,
+            return PagedSelectionView(
+              provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
+              select: (data) => (data as DiscoverReviewItems).pages,
               onData: (data) => ReviewGrid(data.items),
             );
         }

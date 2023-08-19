@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
+import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_view.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
@@ -41,7 +40,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     loadMore: () => ref.read(activitiesProvider(null).notifier).fetch(),
   );
   late final _discoverScrollCtrl = PagedController(
-    loadMore: () => discoverLoadMore(ref),
+    loadMore: () => ref.read(discoverProvider.notifier).fetch(),
   );
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,
@@ -74,61 +73,41 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     if (Options().lastVersionCode != versionCode) {
       BackgroundHandler.checkPermission().then((hasPermission) {
-        if (!hasPermission && mounted) {
-          showPopUp(
-            context,
-            ConfirmationDialog(
-              title: 'Allow notifications?',
-              secondaryAction: 'No',
-              onConfirm: () => BackgroundHandler.requestPermission().then(
-                (success) {
-                  if (!success && mounted) {
-                    showPopUp(
-                      context,
-                      const ConfirmationDialog(
-                        title: 'Could not acquire permission',
-                      ),
-                    );
-                  }
-                },
-              ),
-            ),
-          );
+        if (!hasPermission) {
+          BackgroundHandler.requestPermission().then((success) {
+            if (!success && mounted) {
+              showPopUp(
+                context,
+                const ConfirmationDialog(
+                  title: 'No permission to send notifications',
+                ),
+              );
+            }
+          });
         }
         Options().updateVersionCode();
       });
     }
-
-    // Keep important providers alive.
-    ref.watch(settingsProvider.select((_) => null));
-    ref.watch(tagsProvider.select((_) => null));
-    ref.watch(activitiesProvider(null).select((_) => null));
-    ref.watch(userProvider(widget.id).select((_) => null));
-    final discoverType =
-        ref.watch(discoverFilterProvider.select((s) => s.type));
-    (switch (discoverType) {
-      DiscoverType.anime =>
-        ref.watch(discoverAnimeProvider.select((_) => null)),
-      DiscoverType.manga =>
-        ref.watch(discoverMangaProvider.select((_) => null)),
-      DiscoverType.character =>
-        ref.watch(discoverCharacterProvider.select((_) => null)),
-      DiscoverType.staff =>
-        ref.watch(discoverStaffProvider.select((_) => null)),
-      DiscoverType.studio =>
-        ref.watch(discoverStudioProvider.select((_) => null)),
-      DiscoverType.user => ref.watch(discoverUserProvider.select((_) => null)),
-      DiscoverType.review =>
-        ref.watch(discoverReviewProvider.select((_) => null)),
-    });
 
     ref.listen(
       homeProvider.select((s) => s.homeTab),
       (_, tab) => _tabCtrl.index = tab.index,
     );
 
+    ref.watch(settingsProvider.select((_) => null));
+    ref.watch(tagsProvider.select((_) => null));
+    ref.watch(userProvider(widget.id).select((_) => null));
+
     final notifier = ref.watch(homeProvider);
-    notifier.lazyLoadTabs(ref);
+    notifier.checkLazyTabs();
+
+    if (notifier.didOpenFeed) {
+      ref.watch(activitiesProvider(null).select((_) => null));
+    }
+
+    if (notifier.didOpenDiscover) {
+      ref.watch(discoverProvider.select((_) => null));
+    }
 
     notifier.didExpandCollection(true)
         ? ref.watch(entriesProvider(_animeCollectionTag).select((_) => null))
@@ -145,7 +124,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
     return WillPopScope(
-      onWillPop: () => _onWillPop(context),
+      onWillPop: () => _onWillPopHome(context),
       child: PageScaffold(
         bottomBar: BottomNavBar(
           current: notifier.homeTab.index,
@@ -161,27 +140,31 @@ class _HomeViewState extends ConsumerState<HomeView>
                 if (_animeScrollCtrl.position.pixels > 0) {
                   _animeScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(true)) {
-                  ref
-                      .read(searchProvider(_animeCollectionTag).notifier)
-                      .update((s) => s == null ? '' : null);
+                  _updateCollectionSearch(
+                    _animeCollectionTag,
+                    (search) => search == null ? '' : null,
+                  );
                 }
                 return;
               case HomeTab.manga:
                 if (_mangaScrollCtrl.position.pixels > 0) {
                   _mangaScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(false)) {
-                  ref
-                      .read(searchProvider(_mangaCollectionTag).notifier)
-                      .update((s) => s == null ? '' : null);
+                  _updateCollectionSearch(
+                    _mangaCollectionTag,
+                    (search) => search == null ? '' : null,
+                  );
                 }
                 return;
               case HomeTab.discover:
                 if (_discoverScrollCtrl.position.pixels > 0) {
                   _discoverScrollCtrl.scrollToTop();
                 } else {
-                  ref
-                      .read(searchProvider(null).notifier)
-                      .update((s) => s == null ? '' : null);
+                  ref.read(discoverFilterProvider.notifier).update(
+                        (s) => s.copyWith(
+                          search: () => s.search == null ? '' : null,
+                        ),
+                      );
                 }
                 return;
               case HomeTab.feed:
@@ -228,30 +211,34 @@ class _HomeViewState extends ConsumerState<HomeView>
     );
   }
 
-  Future<bool> _onWillPop(BuildContext context) async {
+  Future<bool> _onWillPopHome(BuildContext context) async {
     final notifier = ref.read(homeProvider);
     if (notifier.homeTab == HomeTab.discover) {
-      final notifier = ref.read(searchProvider(null).notifier);
-      if (notifier.state != null) {
-        notifier.state = null;
+      final notifier = ref.read(discoverFilterProvider.notifier);
+      if (notifier.state.search != null) {
+        notifier.state = notifier.state.copyWith(search: () => null);
         return Future.value(false);
       }
     }
 
     if (notifier.homeTab == HomeTab.anime &&
         notifier.didExpandCollection(true)) {
-      final notifier = ref.read(searchProvider(_animeCollectionTag).notifier);
-      if (notifier.state != null) {
-        notifier.state = null;
+      final notifier = ref.read(
+        collectionFilterProvider(_animeCollectionTag).notifier,
+      );
+      if (notifier.state.search != null) {
+        notifier.state = notifier.state.copyWith(search: () => null);
         return Future.value(false);
       }
     }
 
     if (notifier.homeTab == HomeTab.manga &&
         notifier.didExpandCollection(false)) {
-      final notifier = ref.read(searchProvider(_mangaCollectionTag).notifier);
-      if (notifier.state != null) {
-        notifier.state = null;
+      final notifier = ref.read(
+        collectionFilterProvider(_mangaCollectionTag).notifier,
+      );
+      if (notifier.state.search != null) {
+        notifier.state = notifier.state.copyWith(search: () => null);
         return Future.value(false);
       }
     }
@@ -271,4 +258,12 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     return Future.value(ok);
   }
+
+  void _updateCollectionSearch(
+    CollectionTag tag,
+    String? Function(String?) callback,
+  ) =>
+      ref
+          .read(collectionFilterProvider(tag).notifier)
+          .update((s) => s.copyWith(search: () => callback(s.search)));
 }

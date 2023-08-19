@@ -7,7 +7,6 @@ import 'package:otraku/modules/collection/collection_grid.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
 import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -50,9 +49,9 @@ class _CollectionViewState extends State<CollectionView> {
         builder: (context, ref, child) => WillPopScope(
           child: child!,
           onWillPop: () {
-            final notifier = ref.read(searchProvider(tag).notifier);
-            if (notifier.state == null) return Future.value(true);
-            notifier.state = null;
+            final notifier = ref.read(collectionFilterProvider(tag).notifier);
+            if (notifier.state.search == null) return Future.value(true);
+            notifier.state = notifier.state.copyWith(search: () => null);
             return Future.value(false);
           },
         ),
@@ -123,9 +122,14 @@ class _TopBarContent extends StatelessWidget {
         return Expanded(
           child: Row(
             children: [
-              SearchFilterField(
+              CloseableSearchField(
                 title: notifier.lists[notifier.index].name,
-                tag: tag,
+                value: ref.watch(
+                  collectionFilterProvider(tag).select((s) => s.search),
+                ),
+                onChanged: (search) => ref
+                    .read(collectionFilterProvider(tag).notifier)
+                    .update((s) => s.copyWith(search: () => search)),
               ),
               if (noResults)
                 const SizedBox(width: 45)
@@ -150,10 +154,11 @@ class _TopBarContent extends StatelessWidget {
                 onTap: () => showSheet(
                   context,
                   CollectionFilterView(
-                    filter: ref.read(collectionFilterProvider(tag)),
-                    onChanged: (filter) => ref
+                    ofAnime: tag.ofAnime,
+                    filter: ref.read(collectionFilterProvider(tag)).mediaFilter,
+                    onChanged: (mediaFilter) => ref
                         .read(collectionFilterProvider(tag).notifier)
-                        .update((_) => filter),
+                        .update((s) => s.copyWith(mediaFilter: mediaFilter)),
                   ),
                 ),
               ),
@@ -295,7 +300,10 @@ class _ContentState extends State<_Content> {
                   customLists: customLists,
                   listStatus: entry.entryStatus,
                   format: entry.format,
-                  sort: ref.read(collectionFilterProvider(widget.tag)).sort,
+                  sort: ref
+                      .read(collectionFilterProvider(widget.tag))
+                      .mediaFilter
+                      .sort,
                 );
           };
         }

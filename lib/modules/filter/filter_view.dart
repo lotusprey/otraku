@@ -12,24 +12,18 @@ import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
-class _FilterView<T extends MediaFilter<T>> extends StatefulWidget {
+class _FilterView<T> extends StatelessWidget {
   const _FilterView({
     required this.filter,
+    required this.onCleared,
     required this.onChanged,
     required this.builder,
   });
 
   final T filter;
+  final void Function() onCleared;
   final void Function(T) onChanged;
   final Widget Function(BuildContext, ScrollController, T) builder;
-
-  @override
-  State<_FilterView<T>> createState() => __FilterViewState<T>();
-}
-
-class __FilterViewState<T extends MediaFilter<T>>
-    extends State<_FilterView<T>> {
-  late final T _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +31,7 @@ class __FilterViewState<T extends MediaFilter<T>>
       text: 'Apply',
       icon: Icons.done_rounded,
       onTap: () {
-        widget.onChanged(_filter);
+        onChanged(filter);
         Navigator.pop(context);
       },
     );
@@ -47,7 +41,7 @@ class __FilterViewState<T extends MediaFilter<T>>
       icon: Icons.close,
       warning: true,
       onTap: () {
-        widget.onChanged(_filter.clear());
+        onCleared();
         Navigator.pop(context);
       },
     );
@@ -60,23 +54,36 @@ class __FilterViewState<T extends MediaFilter<T>>
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: widget.builder(context, scrollCtrl, _filter),
+        child: builder(context, scrollCtrl, filter),
       ),
     );
   }
 }
 
-class CollectionFilterView extends StatelessWidget {
-  const CollectionFilterView({required this.filter, required this.onChanged});
+class CollectionFilterView extends StatefulWidget {
+  const CollectionFilterView({
+    required this.ofAnime,
+    required this.filter,
+    required this.onChanged,
+  });
 
+  final bool ofAnime;
   final CollectionMediaFilter filter;
   final void Function(CollectionMediaFilter) onChanged;
 
   @override
+  State<CollectionFilterView> createState() => _CollectionFilterViewState();
+}
+
+class _CollectionFilterViewState extends State<CollectionFilterView> {
+  late final _filter = widget.filter.copy();
+
+  @override
   Widget build(BuildContext context) {
-    return _FilterView<CollectionMediaFilter>(
-      filter: filter,
-      onChanged: onChanged,
+    return _FilterView(
+      filter: _filter,
+      onChanged: widget.onChanged,
+      onCleared: () => widget.onChanged(CollectionMediaFilter(widget.ofAnime)),
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),
@@ -93,7 +100,7 @@ class CollectionFilterView extends StatelessWidget {
           ),
           ChipEnumMultiSelector(
             title: 'Formats',
-            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            options: widget.ofAnime ? AnimeFormat.values : MangaFormat.values,
             current: filter.formats,
           ),
           const Divider(indent: 10, endIndent: 10),
@@ -139,17 +146,30 @@ class CollectionFilterView extends StatelessWidget {
   }
 }
 
-class DiscoverFilterView extends StatelessWidget {
-  const DiscoverFilterView({required this.filter, required this.onChanged});
+class DiscoverFilterView extends StatefulWidget {
+  const DiscoverFilterView({
+    required this.ofAnime,
+    required this.filter,
+    required this.onChanged,
+  });
 
+  final bool ofAnime;
   final DiscoverMediaFilter filter;
   final void Function(DiscoverMediaFilter) onChanged;
 
   @override
+  State<DiscoverFilterView> createState() => _DiscoverFilterViewState();
+}
+
+class _DiscoverFilterViewState extends State<DiscoverFilterView> {
+  late final _filter = widget.filter.copy();
+
+  @override
   Widget build(BuildContext context) {
-    return _FilterView<DiscoverMediaFilter>(
-      filter: filter,
-      onChanged: onChanged,
+    return _FilterView(
+      filter: _filter,
+      onChanged: widget.onChanged,
+      onCleared: () => widget.onChanged(DiscoverMediaFilter()),
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),
@@ -166,12 +186,19 @@ class DiscoverFilterView extends StatelessWidget {
             options: MediaStatus.values,
             current: filter.statuses,
           ),
-          ChipEnumMultiSelector(
-            title: 'Formats',
-            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
-            current: filter.formats,
-          ),
-          if (filter.ofAnime)
+          if (widget.ofAnime)
+            ChipEnumMultiSelector(
+              title: 'Formats',
+              options: AnimeFormat.values,
+              current: filter.animeFormats,
+            )
+          else
+            ChipEnumMultiSelector(
+              title: 'Formats',
+              options: MangaFormat.values,
+              current: filter.mangaFormats,
+            ),
+          if (widget.ofAnime)
             ChipSelector(
               title: 'Season',
               options: MediaSeason.values

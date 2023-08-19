@@ -57,13 +57,12 @@ class Toast {
           .then((_) => show(context, 'Copied'));
 
   // Launch something in the browser or show a toast if unsuccessful.
-  static Future<bool> launch(BuildContext context, String link) async {
-    try {
-      await launchUrl(Uri.parse(link), mode: LaunchMode.externalApplication);
-    } catch (err) {
-      show(context, 'Could not open link: $err');
-      return false;
-    }
-    return true;
-  }
+  static Future<bool> launch(BuildContext context, String link) async =>
+      launchUrl(
+        Uri.parse(link),
+        mode: LaunchMode.externalApplication,
+      ).onError((err, _) {
+        show(context, 'Could not open link: $err');
+        return false;
+      });
 }

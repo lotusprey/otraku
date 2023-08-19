@@ -58,7 +58,7 @@ class SettingsAboutTab extends StatelessWidget {
               icon: const Icon(Ionicons.logo_github),
               label: const Text('Source Code'),
               onPressed: () =>
-                  Toast.launch(context, 'https://github.com/lotusgate/otraku'),
+                  Toast.launch(context, 'https://github.com/lotusprey/otraku'),
             ),
             ElevatedButton.icon(
               icon: const Icon(Ionicons.cash_outline),

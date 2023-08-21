@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/character/character_action_buttons.dart';
 import 'package:otraku/modules/character/character_providers.dart';
 import 'package:otraku/modules/character/character_info_tab.dart';
@@ -65,10 +66,24 @@ class _CharacterViewState extends ConsumerState<CharacterView>
     );
 
     final character = ref.watch(characterProvider(widget.id));
-
     ref.watch(characterMediaProvider(widget.id).select((_) => null));
-
     final onRefresh = () => ref.invalidate(characterMediaProvider(widget.id));
+
+    final topBar = character.valueOrNull != null
+        ? TopBar(
+            title: character.valueOrNull!.name,
+            trailing: [
+              TopBarIcon(
+                tooltip: 'More',
+                icon: Ionicons.ellipsis_horizontal,
+                onTap: () => showSheet(
+                  context,
+                  GradientSheet.link(context, character.valueOrNull!.siteUrl!),
+                ),
+              ),
+            ],
+          )
+        : const TopBar();
 
     return PageScaffold(
       bottomBar: BottomNavBar(
@@ -82,9 +97,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         },
       ),
       child: TabScaffold(
-        topBar: TopBar(
-          title: character.valueOrNull?.name,
-        ),
+        topBar: topBar,
         floatingBar: FloatingBar(
           scrollCtrl: _scrollCtrl,
           children: [

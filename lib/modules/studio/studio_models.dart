@@ -17,6 +17,7 @@ class StudioInfo {
   StudioInfo._({
     required this.id,
     required this.name,
+    required this.siteUrl,
     required this.favorites,
     required this.isFavorite,
   });
@@ -24,12 +25,14 @@ class StudioInfo {
   factory StudioInfo(Map<String, dynamic> map) => StudioInfo._(
         id: map['id'],
         name: map['name'],
+        siteUrl: map['siteUrl'],
         favorites: map['favourites'] ?? 0,
         isFavorite: map['isFavourite'] ?? false,
       );
 
   final int id;
   final String name;
+  final String? siteUrl;
   final int favorites;
   bool isFavorite;
 }

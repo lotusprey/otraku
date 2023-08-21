@@ -286,21 +286,21 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
           child: BackdropFilter(
             filter: Consts.blurFilter,
             child: Container(
-              height: 95,
+              height: 110,
               color: Theme.of(context).navigationBarTheme.backgroundColor,
-              padding: const EdgeInsets.only(top: 10, bottom: 5),
+              padding: const EdgeInsets.only(top: 10, bottom: 10),
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
                       left: 10,
                       right: 10,
-                      bottom: 5,
+                      bottom: 10,
                     ),
                     child: SearchField(
                       hint: 'Tag',
                       value: _filter,
-                      onChange: (val) {
+                      onChanged: (val) {
                         _filter = val.toLowerCase();
                         _categoryIndices.clear();
                         _itemIndices.clear();

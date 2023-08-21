@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
-import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_view.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
@@ -34,6 +33,8 @@ class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
   late final _animeCollectionTag = (userId: widget.id, ofAnime: true);
   late final _mangaCollectionTag = (userId: widget.id, ofAnime: false);
+
+  final _searchFocusNode = FocusNode();
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
@@ -59,6 +60,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   void dispose() {
     BackgroundHandler.clearNotifications();
+    _searchFocusNode.dispose();
     _animeScrollCtrl.dispose();
     _mangaScrollCtrl.dispose();
     _feedScrollCtrl.dispose();
@@ -140,31 +142,21 @@ class _HomeViewState extends ConsumerState<HomeView>
                 if (_animeScrollCtrl.position.pixels > 0) {
                   _animeScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(true)) {
-                  _updateCollectionSearch(
-                    _animeCollectionTag,
-                    (search) => search == null ? '' : null,
-                  );
+                  _toggleSearchFocus();
                 }
                 return;
               case HomeTab.manga:
                 if (_mangaScrollCtrl.position.pixels > 0) {
                   _mangaScrollCtrl.scrollToTop();
                 } else if (ref.read(homeProvider).didExpandCollection(false)) {
-                  _updateCollectionSearch(
-                    _mangaCollectionTag,
-                    (search) => search == null ? '' : null,
-                  );
+                  _toggleSearchFocus();
                 }
                 return;
               case HomeTab.discover:
                 if (_discoverScrollCtrl.position.pixels > 0) {
                   _discoverScrollCtrl.scrollToTop();
                 } else {
-                  ref.read(discoverFilterProvider.notifier).update(
-                        (s) => s.copyWith(
-                          search: () => s.search == null ? '' : null,
-                        ),
-                      );
+                  _toggleSearchFocus();
                 }
                 return;
               case HomeTab.feed:
@@ -183,6 +175,7 @@ class _HomeViewState extends ConsumerState<HomeView>
               CollectionSubView(
                 scrollCtrl: _animeScrollCtrl,
                 tag: _animeCollectionTag,
+                focusNode: _searchFocusNode,
                 key: Key(true.toString()),
               )
             else
@@ -195,6 +188,7 @@ class _HomeViewState extends ConsumerState<HomeView>
               CollectionSubView(
                 scrollCtrl: _mangaScrollCtrl,
                 tag: _mangaCollectionTag,
+                focusNode: _searchFocusNode,
                 key: Key(false.toString()),
               )
             else
@@ -203,7 +197,7 @@ class _HomeViewState extends ConsumerState<HomeView>
                 tag: _mangaCollectionTag,
                 key: Key(false.toString()),
               ),
-            DiscoverView(_discoverScrollCtrl),
+            DiscoverView(_searchFocusNode, _discoverScrollCtrl),
             UserSubView(widget.id, null, primaryScrollCtrl),
           ],
         ),
@@ -212,37 +206,6 @@ class _HomeViewState extends ConsumerState<HomeView>
   }
 
   Future<bool> _onWillPopHome(BuildContext context) async {
-    final notifier = ref.read(homeProvider);
-    if (notifier.homeTab == HomeTab.discover) {
-      final notifier = ref.read(discoverFilterProvider.notifier);
-      if (notifier.state.search != null) {
-        notifier.state = notifier.state.copyWith(search: () => null);
-        return Future.value(false);
-      }
-    }
-
-    if (notifier.homeTab == HomeTab.anime &&
-        notifier.didExpandCollection(true)) {
-      final notifier = ref.read(
-        collectionFilterProvider(_animeCollectionTag).notifier,
-      );
-      if (notifier.state.search != null) {
-        notifier.state = notifier.state.copyWith(search: () => null);
-        return Future.value(false);
-      }
-    }
-
-    if (notifier.homeTab == HomeTab.manga &&
-        notifier.didExpandCollection(false)) {
-      final notifier = ref.read(
-        collectionFilterProvider(_mangaCollectionTag).notifier,
-      );
-      if (notifier.state.search != null) {
-        notifier.state = notifier.state.copyWith(search: () => null);
-        return Future.value(false);
-      }
-    }
-
     if (!Options().confirmExit) return Future.value(true);
 
     bool ok = false;
@@ -259,11 +222,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     return Future.value(ok);
   }
 
-  void _updateCollectionSearch(
-    CollectionTag tag,
-    String? Function(String?) callback,
-  ) =>
-      ref
-          .read(collectionFilterProvider(tag).notifier)
-          .update((s) => s.copyWith(search: () => callback(s.search)));
+  void _toggleSearchFocus() => _searchFocusNode.hasFocus
+      ? _searchFocusNode.unfocus()
+      : _searchFocusNode.requestFocus();
 }

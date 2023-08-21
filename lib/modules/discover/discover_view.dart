@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/modules/discover/discover_media_grid.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
@@ -14,20 +15,20 @@ import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/modules/filter/filter_search_field.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
 class DiscoverView extends StatelessWidget {
-  const DiscoverView(this.scrollCtrl);
+  const DiscoverView(this.focusNode, this.scrollCtrl);
 
+  final FocusNode focusNode;
   final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return TabScaffold(
-      topBar: const TopBar(canPop: false, trailing: [_TopBarContent()]),
+      topBar: TopBar(canPop: false, trailing: [_TopBarContent(focusNode)]),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
         children: const [_ActionButton()],
@@ -38,7 +39,9 @@ class DiscoverView extends StatelessWidget {
 }
 
 class _TopBarContent extends StatelessWidget {
-  const _TopBarContent();
+  const _TopBarContent(this.focusNode);
+
+  final FocusNode focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -49,16 +52,29 @@ class _TopBarContent extends StatelessWidget {
         return Expanded(
           child: Row(
             children: [
-              CloseableSearchField(
-                title: Convert.clarifyEnum(type.name)!,
-                value: ref.watch(
-                  discoverFilterProvider.select((s) => s.search),
+              if (type != DiscoverType.review)
+                Expanded(
+                  child: SearchField(
+                    debounce: Debounce(),
+                    focusNode: focusNode,
+                    hint: Convert.clarifyEnum(type.name)!,
+                    value: ref.watch(
+                      discoverFilterProvider.select((s) => s.search),
+                    ),
+                    onChanged: (search) => ref
+                        .read(discoverFilterProvider.notifier)
+                        .update((s) => s.copyWith(search: search)),
+                  ),
+                )
+              else
+                Expanded(
+                  child: Text(
+                    'Reviews',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
-                onChanged: (search) => ref
-                    .read(discoverFilterProvider.notifier)
-                    .update((s) => s.copyWith(search: () => search)),
-                enabled: type != DiscoverType.review,
-              ),
               if (type == DiscoverType.anime || type == DiscoverType.manga)
                 TopBarIcon(
                   tooltip: 'Filter',

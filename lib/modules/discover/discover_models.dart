@@ -28,27 +28,27 @@ class DiscoverFilter {
 
   DiscoverFilter(DiscoverType discoverType)
       : type = discoverType,
-        search = null,
+        search = '',
         mediaFilter = DiscoverMediaFilter(),
         hasBirthday = false,
         reviewSort = ReviewSort.CREATED_AT_DESC;
 
   final DiscoverType type;
-  final String? search;
+  final String search;
   final DiscoverMediaFilter mediaFilter;
   final bool hasBirthday;
   final ReviewSort reviewSort;
 
   DiscoverFilter copyWith({
     DiscoverType? type,
-    String? Function()? search,
+    String? search,
     DiscoverMediaFilter? mediaFilter,
     bool? hasBirthday,
     ReviewSort? reviewSort,
   }) =>
       DiscoverFilter._(
         type: type ?? this.type,
-        search: search != null ? search() : this.search,
+        search: search ?? this.search,
         mediaFilter: mediaFilter ?? this.mediaFilter,
         hasBirthday: hasBirthday ?? this.hasBirthday,
         reviewSort: reviewSort ?? this.reviewSort,

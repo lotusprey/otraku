@@ -132,7 +132,7 @@ class MediaInfoView extends StatelessWidget {
                 final notifier = ref.read(discoverFilterProvider.notifier);
                 final filter = notifier.state.copyWith(
                   type: info.type,
-                  search: () => null,
+                  search: '',
                   mediaFilter: DiscoverMediaFilter(),
                 )..mediaFilter.genreIn.add(info.genres[i]);
                 notifier.state = filter;
@@ -339,7 +339,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         final notifier = widget.ref.read(discoverFilterProvider.notifier);
         final filter = notifier.state.copyWith(
           type: widget.info.type,
-          search: () => null,
+          search: '',
           mediaFilter: DiscoverMediaFilter(),
         )..mediaFilter.tagIn.add(tags[i].name);
         notifier.state = filter;

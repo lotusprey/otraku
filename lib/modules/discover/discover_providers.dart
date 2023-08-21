@@ -46,7 +46,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
     final data = await Api.get(GqlQuery.medias, {
       'page': value.next,
       'type': 'ANIME',
-      if (filter.search != null && filter.search!.isNotEmpty) ...{
+      if (filter.search.isNotEmpty) ...{
         'search': filter.search,
         ...filter.mediaFilter.toMap(true)..['sort'] = 'SEARCH_MATCH',
       } else
@@ -72,7 +72,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
     final data = await Api.get(GqlQuery.medias, {
       'page': value.next,
       'type': 'MANGA',
-      if (filter.search != null && filter.search!.isNotEmpty) ...{
+      if (filter.search.isNotEmpty) ...{
         'search': filter.search,
         ...filter.mediaFilter.toMap(false)..['sort'] = 'SEARCH_MATCH',
       } else
@@ -97,8 +97,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
 
     final data = await Api.get(GqlQuery.characters, {
       'page': value.next,
-      if (filter.search != null && filter.search!.isNotEmpty)
-        'search': filter.search,
+      if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
     });
 
@@ -120,8 +119,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
 
     final data = await Api.get(GqlQuery.staffs, {
       'page': value.next,
-      if (filter.search != null && filter.search!.isNotEmpty)
-        'search': filter.search,
+      if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
     });
 
@@ -143,8 +141,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
 
     final data = await Api.get(GqlQuery.studios, {
       'page': value.next,
-      if (filter.search != null && filter.search!.isNotEmpty)
-        'search': filter.search,
+      if (filter.search.isNotEmpty) 'search': filter.search,
     });
 
     final items = <StudioItem>[];
@@ -165,8 +162,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
 
     final data = await Api.get(GqlQuery.users, {
       'page': value.next,
-      if (filter.search != null && filter.search!.isNotEmpty)
-        'search': filter.search,
+      if (filter.search.isNotEmpty) 'search': filter.search,
     });
 
     final items = <UserItem>[];

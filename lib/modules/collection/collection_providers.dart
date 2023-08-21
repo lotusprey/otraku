@@ -23,7 +23,7 @@ final entriesProvider = Provider.autoDispose.family(
 
     final filter = ref.watch(collectionFilterProvider(tag));
     final mediaFilter = filter.mediaFilter;
-    final search = (filter.search ?? '').toLowerCase();
+    final search = filter.search.toLowerCase();
 
     collection.sort = mediaFilter.sort;
 

@@ -9,18 +9,18 @@ class CollectionFilter {
   const CollectionFilter._({required this.search, required this.mediaFilter});
 
   CollectionFilter(bool ofAnime)
-      : search = null,
+      : search = '',
         mediaFilter = CollectionMediaFilter(ofAnime);
 
-  final String? search;
+  final String search;
   final CollectionMediaFilter mediaFilter;
 
   CollectionFilter copyWith({
-    String? Function()? search,
+    String? search,
     CollectionMediaFilter? mediaFilter,
   }) =>
       CollectionFilter._(
-        search: search != null ? search() : this.search,
+        search: search ?? this.search,
         mediaFilter: mediaFilter ?? this.mediaFilter,
       );
 }

@@ -1,41 +1,44 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+
+/// After [_delay] time has passed, since the last [run] call, call [callback].
+/// E.g. do a search query after the user stops typing.
+class Debounce {
+  static const _delay = Duration(milliseconds: 600);
+
+  Timer? _timer;
+
+  void cancel() => _timer?.cancel();
+
+  void run(void Function() callback) {
+    _timer?.cancel();
+    _timer = Timer(_delay, callback);
+  }
+}
 
 class SearchField extends StatefulWidget {
   const SearchField({
-    required this.hint,
-    required this.onChange,
     required this.value,
-    this.onHide,
+    required this.hint,
+    required this.onChanged,
+    this.focusNode,
+    this.debounce,
   });
 
   final String value;
   final String hint;
-  final void Function(String) onChange;
-  final void Function()? onHide;
+  final void Function(String) onChanged;
+  final FocusNode? focusNode;
+  final Debounce? debounce;
 
   @override
   State<SearchField> createState() => _SearchFieldState();
 }
 
 class _SearchFieldState extends State<SearchField> {
-  late final TextEditingController _ctrl = TextEditingController(
-    text: widget.value,
-  );
-  late bool _empty = _ctrl.text.isEmpty;
-  FocusNode? _focus;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.onHide != null && _empty) {
-      _focus = FocusNode();
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _focus!.requestFocus(),
-      );
-    }
-  }
+  late final _ctrl = TextEditingController(text: widget.value);
 
   @override
   void didUpdateWidget(covariant SearchField oldWidget) {
@@ -53,16 +56,29 @@ class _SearchFieldState extends State<SearchField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _ctrl,
-      focusNode: _focus,
+      focusNode: widget.focusNode,
       style: Theme.of(context).textTheme.bodyMedium,
+      onChanged: (val) {
+        if (val.isEmpty) {
+          widget.debounce?.cancel();
+          widget.onChanged('');
+          return;
+        }
+
+        if (widget.debounce != null) {
+          widget.debounce!.run(() => widget.onChanged(val));
+        } else {
+          widget.onChanged(val);
+        }
+      },
       decoration: InputDecoration(
         isDense: false,
         hintText: widget.hint,
         filled: true,
         fillColor: Theme.of(context).colorScheme.surfaceVariant,
         contentPadding: const EdgeInsets.only(left: 15),
-        constraints: const BoxConstraints(minHeight: 35, maxHeight: 35),
-        suffixIcon: !_empty
+        constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
+        suffixIcon: _ctrl.text.isNotEmpty
             ? IconButton(
                 tooltip: 'Clear',
                 iconSize: Consts.iconSmall,
@@ -71,27 +87,12 @@ class _SearchFieldState extends State<SearchField> {
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   _ctrl.clear();
-                  widget.onChange('');
-                  setState(() => _empty = true);
+                  widget.debounce?.cancel();
+                  widget.onChanged('');
                 },
               )
-            : widget.onHide != null
-                ? IconButton(
-                    tooltip: 'Hide',
-                    iconSize: Consts.iconSmall,
-                    icon: const Icon(Ionicons.chevron_forward_outline),
-                    color: Theme.of(context).colorScheme.onBackground,
-                    padding: const EdgeInsets.all(0),
-                    onPressed: widget.onHide,
-                  )
-                : null,
+            : null,
       ),
-      onChanged: (val) {
-        widget.onChange(val);
-        if (_empty != _ctrl.text.isEmpty) {
-          setState(() => _empty = _ctrl.text.isEmpty);
-        }
-      },
     );
   }
 }

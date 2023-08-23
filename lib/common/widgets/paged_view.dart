@@ -13,18 +13,21 @@ class PagedView<T> extends StatelessWidget {
     required this.scrollCtrl,
     required this.onRefresh,
     required this.onData,
+    this.withTopOffset = true,
   });
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
   final void Function() onRefresh;
   final Widget Function(Paged<T>) onData;
+  final bool withTopOffset;
 
   @override
   Widget build(BuildContext context) => PagedSelectionView(
         provider: provider,
         onRefresh: onRefresh,
         scrollCtrl: scrollCtrl,
+        withTopOffset: withTopOffset,
         onData: onData,
         select: (data) => data,
       );
@@ -37,10 +40,12 @@ class PagedSelectionView<T, U> extends StatelessWidget {
     required this.onRefresh,
     required this.onData,
     required this.select,
+    this.withTopOffset = true,
   });
 
   final ProviderListenable<AsyncValue<T>> provider;
   final void Function() onRefresh;
+  final bool withTopOffset;
 
   /// When data is available, [select] extracts a paginated list.
   final Paged<U> Function(T) select;
@@ -59,7 +64,10 @@ class PagedSelectionView<T, U> extends StatelessWidget {
             error: (err, __) => CustomScrollView(
               physics: Consts.physics,
               slivers: [
-                SliverRefreshControl(onRefresh: onRefresh),
+                SliverRefreshControl(
+                  withTopOffset: withTopOffset,
+                  onRefresh: onRefresh,
+                ),
                 SliverFillRemaining(
                   child: Center(child: Text('Failed to load\n$err')),
                 ),
@@ -72,7 +80,10 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                   physics: Consts.physics,
                   controller: scrollCtrl,
                   slivers: [
-                    SliverRefreshControl(onRefresh: onRefresh),
+                    SliverRefreshControl(
+                      withTopOffset: withTopOffset,
+                      onRefresh: onRefresh,
+                    ),
                     selection.items.isEmpty
                         ? const SliverFillRemaining(
                             child: Center(child: Text('No results')),

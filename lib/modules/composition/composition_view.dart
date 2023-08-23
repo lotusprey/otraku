@@ -104,7 +104,7 @@ class _CompositionView extends StatelessWidget {
       left: 20,
       right: 20,
       top: 60,
-      bottom: BottomBar.offset(context),
+      bottom: MediaQuery.of(context).viewPadding.bottom + BottomBar.height + 10,
     );
 
     return Stack(

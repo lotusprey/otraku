@@ -58,10 +58,7 @@ class BottomBar extends StatelessWidget {
 
   final List<Widget> items;
 
-  /// Needed padding at the bottom of a scrollable view,
-  /// so that the end of the content won't touch given [BottomBar].
-  static double offset(BuildContext context) =>
-      MediaQuery.of(context).viewPadding.bottom + Consts.tapTargetSize + 10;
+  static const height = Consts.tapTargetSize;
 
   @override
   Widget build(BuildContext context) {

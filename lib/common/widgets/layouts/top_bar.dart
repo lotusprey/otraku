@@ -14,8 +14,10 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final List<Widget> trailing;
 
+  static const height = 55.0;
+
   @override
-  Size get preferredSize => const Size.fromHeight(55);
+  Size get preferredSize => const Size.fromHeight(height);
 
   @override
   Widget build(BuildContext context) {

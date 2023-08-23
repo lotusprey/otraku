@@ -202,6 +202,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.characters,
             ),
@@ -224,6 +225,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select((s) => s.staff),
             onData: (data) => SingleRelationGrid(data.items),
             scrollCtrl: _scrollCtrl,
@@ -232,6 +234,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<RelatedReview>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.reviews,
             ),
@@ -245,6 +248,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<MediaFollowing>(
+            withTopOffset: false,
             provider: mediaFollowingProvider(widget.id),
             onData: (data) => MediaFollowingGrid(data.items),
             scrollCtrl: _scrollCtrl,
@@ -253,6 +257,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Recommendation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.recommendations,
             ),

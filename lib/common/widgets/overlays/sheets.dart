@@ -70,7 +70,6 @@ class OpaqueSheetView extends StatelessWidget {
       padding: MediaQuery.of(context).viewInsets,
       child: DraggableScrollableSheet(
         expand: false,
-        maxChildSize: 0.9,
         builder: (context, scrollCtrl) {
           sheet ??= _sheetBody(context, scrollCtrl);
           return sheet!;

@@ -41,7 +41,7 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         size: Consts.iconBig,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: scheme.background.withAlpha(190),
+        backgroundColor: scheme.surface.withAlpha(190),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

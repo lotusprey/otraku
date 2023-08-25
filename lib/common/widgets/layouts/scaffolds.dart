@@ -38,7 +38,6 @@ class _PageScaffoldState extends State<PageScaffold> {
     return Scaffold(
       extendBody: true,
       bottomNavigationBar: widget.bottomBar,
-      resizeToAvoidBottomInset: false,
       body: widget.child,
     );
   }

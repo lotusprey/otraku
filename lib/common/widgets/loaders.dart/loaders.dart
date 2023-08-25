@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/shimmer.dart';
 
@@ -73,17 +72,6 @@ class SliverRefreshControl extends StatelessWidget {
   }
 }
 
-class Footer extends StatelessWidget {
-  const Footer();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).viewPadding.bottom + BottomBar.height + 10,
-    );
-  }
-}
-
 class SliverFooter extends StatelessWidget {
   const SliverFooter({this.loading = false});
 
@@ -96,9 +84,7 @@ class SliverFooter extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(
             top: 10,
-            bottom: MediaQuery.of(context).viewPadding.bottom +
-                BottomBar.height +
-                10,
+            bottom: MediaQuery.of(context).padding.bottom + 10,
           ),
           child: loading ? const Loader() : null,
         ),

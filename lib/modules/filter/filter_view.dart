@@ -139,7 +139,10 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
-          const Footer(),
+          SizedBox(
+            height:
+                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+          ),
         ],
       ),
     );
@@ -275,7 +278,10 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
                     ? true
                     : false,
           ),
-          const Footer(),
+          SizedBox(
+            height:
+                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+          ),
         ],
       ),
     );

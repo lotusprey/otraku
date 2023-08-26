@@ -140,13 +140,16 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final offsets = scaffoldOffsets(context);
     const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));
 
     return CustomScrollView(
       controller: scrollCtrl,
       slivers: [
-        SliverToBoxAdapter(child: SizedBox(height: offsets.top + 10)),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
+          ),
+        ),
         _Details(statistics, ofAnime),
         if (statistics.scores.isNotEmpty) ...[
           spacing,
@@ -186,7 +189,7 @@ class _StatisticsView extends StatelessWidget {
             ]),
           ),
         ],
-        SliverToBoxAdapter(child: SizedBox(height: offsets.bottom + 10)),
+        const SliverFooter(),
       ],
     );
   }

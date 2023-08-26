@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
-import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
@@ -18,34 +18,33 @@ class SettingsNotificationsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      child: CustomScrollView(
-        controller: scrollCtrl,
-        slivers: [
-          SliverToBoxAdapter(
-            child: SizedBox(height: scaffoldOffsets(context).top),
+    return CustomScrollView(
+      controller: scrollCtrl,
+      slivers: [
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
           ),
-          SliverList(
-            delegate: SliverChildBuilderDelegate(
-              childCount: settings.notificationOptions.length,
-              (context, i) {
-                final e = settings.notificationOptions.entries.elementAt(i);
+        ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            childCount: settings.notificationOptions.length,
+            (context, i) {
+              final e = settings.notificationOptions.entries.elementAt(i);
 
-                return CheckBoxField(
-                  title: Convert.clarifyEnum(e.key.name)!,
-                  initial: e.value,
-                  onChanged: (val) {
-                    settings.notificationOptions[e.key] = val;
-                    scheduleUpdate();
-                  },
-                );
-              },
-            ),
+              return CheckBoxField(
+                title: Convert.clarifyEnum(e.key.name)!,
+                initial: e.value,
+                onChanged: (val) {
+                  settings.notificationOptions[e.key] = val;
+                  scheduleUpdate();
+                },
+              );
+            },
           ),
-          const SliverFooter(),
-        ],
-      ),
+        ),
+        const SliverFooter(),
+      ],
     );
   }
 }

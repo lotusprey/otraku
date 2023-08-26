@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 
@@ -19,20 +18,6 @@ class PageScaffold extends StatefulWidget {
 }
 
 class _PageScaffoldState extends State<PageScaffold> {
-  double _topOffset = 0;
-  double _bottomOffset = 0;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final padding = MediaQuery.of(context).padding;
-    _topOffset = padding.top;
-    _bottomOffset = padding.bottom;
-    if (widget.bottomBar != null) {
-      _bottomOffset += Consts.tapTargetSize;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,32 +61,4 @@ class TabScaffold extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Calculates top and bottom offsets, using the device view padding and:
-/// - includes the top offset of a potential [TabScaffold] with a top bar.
-/// - includes the bottom offset of a potential [PageScaffold]
-///   with a bottom bar.
-VerticalOffsets scaffoldOffsets(BuildContext context) {
-  var top = 0.0;
-  var bottom = 0.0;
-
-  final inner = context.findAncestorWidgetOfExactType<TabScaffold>();
-  final outer = context.findAncestorStateOfType<_PageScaffoldState>();
-
-  if (inner?.topBar != null) {
-    top += inner!.topBar!.preferredSize.height;
-    top += outer?._topOffset ?? 0;
-  }
-
-  bottom += outer?._bottomOffset ?? 0;
-
-  return VerticalOffsets(top, bottom);
-}
-
-class VerticalOffsets {
-  const VerticalOffsets(this.top, this.bottom);
-
-  final double top;
-  final double bottom;
 }

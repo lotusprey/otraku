@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
@@ -9,7 +10,6 @@ import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
@@ -25,7 +25,9 @@ class SettingsAppTab extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(height: scaffoldOffsets(context).top),
+          child: SizedBox(
+            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
+          ),
         ),
         SliverToBoxAdapter(
           child: Text(

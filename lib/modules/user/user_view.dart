@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_header.dart';
@@ -106,82 +107,85 @@ class _ButtonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final buttons = [
+      if (id != Options().id) ...[
+        _Button(
+          label: 'Anime',
+          icon: Ionicons.film,
+          onTap: () => Navigator.pushNamed(
+            context,
+            RouteArg.collection,
+            arguments: RouteArg(id: id, variant: true),
+          ),
+        ),
+        _Button(
+          label: 'Manga',
+          icon: Ionicons.bookmark,
+          onTap: () => Navigator.pushNamed(
+            context,
+            RouteArg.collection,
+            arguments: RouteArg(id: id, variant: false),
+          ),
+        ),
+      ],
+      _Button(
+        label: 'Activities',
+        icon: Ionicons.chatbox,
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.activities,
+          arguments: RouteArg(id: id),
+        ),
+      ),
+      _Button(
+        label: 'Social',
+        icon: Ionicons.people_circle,
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.friends,
+          arguments: RouteArg(id: id),
+        ),
+      ),
+      _Button(
+        label: 'Favourites',
+        icon: Icons.favorite,
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.favourites,
+          arguments: RouteArg(id: id),
+        ),
+      ),
+      _Button(
+        label: 'Statistics',
+        icon: Ionicons.stats_chart,
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.statistics,
+          arguments: RouteArg(id: id),
+        ),
+      ),
+      _Button(
+        label: 'Reviews',
+        icon: Icons.rate_review,
+        onTap: () => Navigator.pushNamed(
+          context,
+          RouteArg.reviews,
+          arguments: RouteArg(id: id),
+        ),
+      ),
+    ];
+
     return SliverToBoxAdapter(
-      child: Container(
-        height: 70,
-        margin: const EdgeInsets.symmetric(vertical: 15),
-        alignment: Alignment.center,
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          scrollDirection: Axis.horizontal,
-          children: [
-            if (id != Options().id) ...[
-              _Button(
-                label: 'Anime',
-                icon: Ionicons.film,
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  RouteArg.collection,
-                  arguments: RouteArg(id: id, variant: true),
-                ),
-              ),
-              _Button(
-                label: 'Manga',
-                icon: Ionicons.bookmark,
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  RouteArg.collection,
-                  arguments: RouteArg(id: id, variant: false),
-                ),
-              ),
-            ],
-            _Button(
-              label: 'Activities',
-              icon: Ionicons.chatbox,
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteArg.activities,
-                arguments: RouteArg(id: id),
-              ),
-            ),
-            _Button(
-              label: 'Social',
-              icon: Ionicons.people_circle,
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteArg.friends,
-                arguments: RouteArg(id: id),
-              ),
-            ),
-            _Button(
-              label: 'Favourites',
-              icon: Icons.favorite,
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteArg.favourites,
-                arguments: RouteArg(id: id),
-              ),
-            ),
-            _Button(
-              label: 'Statistics',
-              icon: Ionicons.stats_chart,
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteArg.statistics,
-                arguments: RouteArg(id: id),
-              ),
-            ),
-            _Button(
-              label: 'Reviews',
-              icon: Icons.rate_review,
-              onTap: () => Navigator.pushNamed(
-                context,
-                RouteArg.reviews,
-                arguments: RouteArg(id: id),
-              ),
-            ),
-          ],
+      child: ConstrainedView(
+        child: Container(
+          height: 60,
+          margin: const EdgeInsets.symmetric(vertical: 10),
+          alignment: Alignment.center,
+          child: ShadowedOverflowList(
+            itemCount: buttons.length,
+            itemBuilder: (context, i) => buttons[i],
+            shrinkWrap: true,
+          ),
         ),
       ),
     );
@@ -197,17 +201,14 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: Consts.borderRadiusMax,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    return Padding(
+      padding: const EdgeInsets.only(right: 5),
+      child: OutlinedButton(
+        onPressed: onTap,
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Icon(icon, color: Theme.of(context).colorScheme.onBackground),
-            const SizedBox(height: 5),
             Text(label, style: Theme.of(context).textTheme.bodyMedium),
           ],
         ),

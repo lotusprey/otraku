@@ -208,12 +208,18 @@ sealed class ActivityFilter {
   const ActivityFilter(this.typeIn);
 
   final List<ActivityType> typeIn;
+
+  ActivityFilter copyWith({List<ActivityType>? typeIn});
 }
 
 class UserActivityFilter extends ActivityFilter {
   const UserActivityFilter(super.typeIn, this.userId);
 
   final int userId;
+
+  @override
+  ActivityFilter copyWith({List<ActivityType>? typeIn}) =>
+      UserActivityFilter(typeIn ?? this.typeIn, userId);
 }
 
 class HomeActivityFilter extends ActivityFilter {
@@ -225,4 +231,16 @@ class HomeActivityFilter extends ActivityFilter {
 
   final bool onFollowing;
   final bool withViewerActivities;
+
+  @override
+  ActivityFilter copyWith({
+    List<ActivityType>? typeIn,
+    bool? onFollowing,
+    bool? withViewerActivities,
+  }) =>
+      HomeActivityFilter(
+        typeIn ?? this.typeIn,
+        onFollowing ?? this.onFollowing,
+        withViewerActivities ?? this.withViewerActivities,
+      );
 }

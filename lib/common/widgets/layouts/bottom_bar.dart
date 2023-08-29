@@ -33,7 +33,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       child: BackdropFilter(
         filter: Consts.blurFilter,
         child: NavigationBar(
-          height: Consts.tapTargetSize,
+          height: BottomBar.height,
           selectedIndex: _selected,
           onDestinationSelected: (i) {
             if (_selected == i) {
@@ -58,15 +58,17 @@ class BottomBar extends StatelessWidget {
 
   final List<Widget> items;
 
+  static const height = 60.0;
+
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return ClipRect(
       child: BackdropFilter(
         filter: Consts.blurFilter,
         child: SizedBox(
-          height: Consts.tapTargetSize + bottomPadding,
+          height: height + bottomPadding,
           child: Material(
             elevation: 3,
             color: Theme.of(context).navigationBarTheme.backgroundColor,

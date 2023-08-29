@@ -1,8 +1,29 @@
+import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
+
+class CollectionFilter {
+  const CollectionFilter._({required this.search, required this.mediaFilter});
+
+  CollectionFilter(bool ofAnime)
+      : search = '',
+        mediaFilter = CollectionMediaFilter(ofAnime);
+
+  final String search;
+  final CollectionMediaFilter mediaFilter;
+
+  CollectionFilter copyWith({
+    String? search,
+    CollectionMediaFilter? mediaFilter,
+  }) =>
+      CollectionFilter._(
+        search: search ?? this.search,
+        mediaFilter: mediaFilter ?? this.mediaFilter,
+      );
+}
 
 class EntryList {
   EntryList._({

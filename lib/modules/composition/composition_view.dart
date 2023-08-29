@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/common/widgets/layouts/segment_switcher.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -100,9 +100,11 @@ class _CompositionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const padding = EdgeInsets.symmetric(
-      horizontal: 10,
-      vertical: 60,
+    final padding = EdgeInsets.only(
+      left: 20,
+      right: 20,
+      top: 60,
+      bottom: MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
     );
 
     return Stack(
@@ -117,11 +119,8 @@ class _CompositionView extends StatelessWidget {
                 focusNode: focus,
                 controller: textCtrl,
                 style: Theme.of(context).textTheme.bodyMedium,
+                decoration: InputDecoration(contentPadding: padding),
                 maxLines: null,
-                decoration: InputDecoration(
-                  fillColor: Theme.of(context).colorScheme.background,
-                  contentPadding: padding,
-                ),
               ),
             ),
             SingleChildScrollView(
@@ -134,13 +133,34 @@ class _CompositionView extends StatelessWidget {
           ],
         ),
         Positioned(
-          top: 10,
-          left: 10,
-          right: 10,
-          child: SegmentSwitcher(
-            current: tabCtrl.index,
-            items: const ['Compose', 'Preview'],
-            onChanged: (i) => tabCtrl.index = i,
+          top: 0,
+          left: 0,
+          right: 0,
+          child: ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
+            child: BackdropFilter(
+              filter: Consts.blurFilter,
+              child: Container(
+                padding: Consts.padding,
+                color: Theme.of(context).navigationBarTheme.backgroundColor,
+                child: SegmentedButton(
+                  segments: const [
+                    ButtonSegment(
+                      value: 0,
+                      label: Text('Compose'),
+                      icon: Icon(Icons.edit_outlined),
+                    ),
+                    ButtonSegment(
+                      value: 1,
+                      label: Text('Preview'),
+                      icon: Icon(Icons.preview_outlined),
+                    ),
+                  ],
+                  selected: {tabCtrl.index},
+                  onSelectionChanged: (i) => tabCtrl.index = i.first,
+                ),
+              ),
+            ),
           ),
         ),
       ],
@@ -172,64 +192,58 @@ class _BottomBarState extends State<_BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) return const Center(child: Loader());
+    if (_loading) {
+      return const BottomBar(
+        [Expanded(child: Center(child: Loader()))],
+      );
+    }
 
     return BottomBar([
-      Expanded(
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          children: widget.isEditing
-              ? [
-                  _FormatButton(
-                    tag: 'b',
-                    name: 'Bold',
-                    icon: Icons.format_bold_outlined,
-                    textCtrl: widget.textCtrl,
-                  ),
-                  _FormatButton(
-                    tag: 'i',
-                    name: 'Italic',
-                    icon: Icons.format_italic_outlined,
-                    textCtrl: widget.textCtrl,
-                  ),
-                  _FormatButton(
-                    tag: 'del',
-                    name: 'Strikethrough',
-                    icon: Icons.format_strikethrough_outlined,
-                    textCtrl: widget.textCtrl,
-                  ),
-                  _FormatButton(
-                    tag: 'center',
-                    name: 'Center',
-                    icon: Icons.align_horizontal_center_outlined,
-                    textCtrl: widget.textCtrl,
-                  ),
-                  _FormatButton(
-                    tag: 'code',
-                    name: 'Code',
-                    icon: Icons.code_outlined,
-                    textCtrl: widget.textCtrl,
-                  ),
-                ]
-              : const [],
+      if (widget.isEditing) ...[
+        _FormatButton(
+          tag: 'b',
+          name: 'Bold',
+          icon: Icons.format_bold_outlined,
+          textCtrl: widget.textCtrl,
         ),
-      ),
-      Row(
-        children: [
-          if (widget.composition.isPrivate != null)
-            _PrivateButton(
-              widget.composition.isPrivate!,
-              (v) => widget.composition.isPrivate = v,
-            ),
-          TopBarIcon(
-            tooltip: 'Post',
-            icon: Ionicons.send_outline,
-            onTap: () async {
-              setState(() => _loading = true);
-              widget.onSave();
-            },
-          ),
-        ],
+        _FormatButton(
+          tag: 'i',
+          name: 'Italic',
+          icon: Icons.format_italic_outlined,
+          textCtrl: widget.textCtrl,
+        ),
+        _FormatButton(
+          tag: 'del',
+          name: 'Strikethrough',
+          icon: Icons.format_strikethrough_outlined,
+          textCtrl: widget.textCtrl,
+        ),
+        _FormatButton(
+          tag: 'center',
+          name: 'Center',
+          icon: Icons.align_horizontal_center_outlined,
+          textCtrl: widget.textCtrl,
+        ),
+        _FormatButton(
+          tag: 'code',
+          name: 'Code',
+          icon: Icons.code_outlined,
+          textCtrl: widget.textCtrl,
+        ),
+      ],
+      const Spacer(),
+      if (widget.composition.isPrivate != null)
+        _PrivateButton(
+          widget.composition.isPrivate!,
+          (v) => widget.composition.isPrivate = v,
+        ),
+      TopBarIcon(
+        tooltip: 'Post',
+        icon: Ionicons.send_outline,
+        onTap: () async {
+          setState(() => _loading = true);
+          widget.onSave();
+        },
       ),
     ]);
   }

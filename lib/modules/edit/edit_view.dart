@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/edit/edit_buttons.dart';
@@ -405,7 +406,13 @@ class _EditView extends StatelessWidget {
                   (key, val) => notifier.state.customLists[key] = val,
                 ),
               ],
-              const SliverToBoxAdapter(child: SizedBox(height: 60)),
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  height: MediaQuery.of(context).padding.bottom +
+                      BottomBar.height +
+                      10,
+                ),
+              )
             ],
           );
         },

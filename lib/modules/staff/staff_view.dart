@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/models/relation.dart';
+import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/staff/staff_action_buttons.dart';
 import 'package:otraku/modules/staff/staff_info_tab.dart';
 import 'package:otraku/modules/staff/staff_providers.dart';
@@ -65,10 +66,24 @@ class _StaffViewState extends ConsumerState<StaffView>
     );
 
     final staff = ref.watch(staffProvider(widget.id));
-
     ref.watch(staffRelationsProvider(widget.id).select((_) => null));
-
     final onRefresh = () => ref.invalidate(staffRelationsProvider(widget.id));
+
+    final topBar = staff.valueOrNull != null
+        ? TopBar(
+            title: staff.valueOrNull!.name,
+            trailing: [
+              TopBarIcon(
+                tooltip: 'More',
+                icon: Ionicons.ellipsis_horizontal,
+                onTap: () => showSheet(
+                  context,
+                  GradientSheet.link(context, staff.valueOrNull!.siteUrl!),
+                ),
+              ),
+            ],
+          )
+        : const TopBar();
 
     return PageScaffold(
       bottomBar: BottomNavBar(
@@ -82,9 +97,7 @@ class _StaffViewState extends ConsumerState<StaffView>
         },
       ),
       child: TabScaffold(
-        topBar: TopBar(
-          title: staff.valueOrNull?.name,
-        ),
+        topBar: topBar,
         floatingBar: FloatingBar(
           scrollCtrl: _scrollCtrl,
           children: [

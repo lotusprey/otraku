@@ -2,13 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 final collectionProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, CollectionTag tag) => CollectionNotifier(tag),
+);
+
+final collectionFilterProvider = StateProvider.autoDispose.family(
+  (ref, CollectionTag tag) => CollectionFilter(tag.ofAnime),
 );
 
 final entriesProvider = Provider.autoDispose.family(
@@ -19,18 +22,19 @@ final entriesProvider = Provider.autoDispose.family(
     }
 
     final filter = ref.watch(collectionFilterProvider(tag));
-    final search = (ref.watch(searchProvider(tag)) ?? '').toLowerCase();
+    final mediaFilter = filter.mediaFilter;
+    final search = filter.search.toLowerCase();
 
-    collection.sort = filter.sort;
+    collection.sort = mediaFilter.sort;
 
     final entries = <Entry>[];
     final list = collection.lists[collection.index];
 
-    final releaseStartFrom = filter.startYearFrom != null
-        ? DateTime(filter.startYearFrom!).millisecondsSinceEpoch
+    final releaseStartFrom = mediaFilter.startYearFrom != null
+        ? DateTime(mediaFilter.startYearFrom!).millisecondsSinceEpoch
         : 0;
-    final releaseStartTo = filter.startYearTo != null
-        ? DateTime(filter.startYearTo! + 1).millisecondsSinceEpoch
+    final releaseStartTo = mediaFilter.startYearTo != null
+        ? DateTime(mediaFilter.startYearTo! + 1).millisecondsSinceEpoch
         : DateTime.now().add(const Duration(days: 900)).millisecondsSinceEpoch;
 
     for (final entry in list.entries) {
@@ -45,16 +49,18 @@ final entriesProvider = Provider.autoDispose.family(
         if (!contains) continue;
       }
 
-      if (filter.country != null && entry.country != filter.country!.code) {
+      if (mediaFilter.country != null &&
+          entry.country != mediaFilter.country!.code) {
         continue;
       }
 
-      if (filter.formats.isNotEmpty && !filter.formats.contains(entry.format)) {
+      if (mediaFilter.formats.isNotEmpty &&
+          !mediaFilter.formats.contains(entry.format)) {
         continue;
       }
 
-      if (filter.statuses.isNotEmpty &&
-          !filter.statuses.contains(entry.status)) {
+      if (mediaFilter.statuses.isNotEmpty &&
+          !mediaFilter.statuses.contains(entry.status)) {
         continue;
       }
 
@@ -63,9 +69,9 @@ final entriesProvider = Provider.autoDispose.family(
         if (releaseStartTo < entry.releaseStart!) continue;
       }
 
-      if (filter.genreIn.isNotEmpty) {
+      if (mediaFilter.genreIn.isNotEmpty) {
         bool isIn = true;
-        for (final genre in filter.genreIn) {
+        for (final genre in mediaFilter.genreIn) {
           if (!entry.genres.contains(genre)) {
             isIn = false;
             break;
@@ -74,9 +80,9 @@ final entriesProvider = Provider.autoDispose.family(
         if (!isIn) continue;
       }
 
-      if (filter.genreNotIn.isNotEmpty) {
+      if (mediaFilter.genreNotIn.isNotEmpty) {
         bool isIn = false;
-        for (final genre in filter.genreNotIn) {
+        for (final genre in mediaFilter.genreNotIn) {
           if (entry.genres.contains(genre)) {
             isIn = true;
             break;
@@ -85,9 +91,9 @@ final entriesProvider = Provider.autoDispose.family(
         if (isIn) continue;
       }
 
-      if (filter.tagIdIn.isNotEmpty) {
+      if (mediaFilter.tagIdIn.isNotEmpty) {
         bool isIn = true;
-        for (final tagId in filter.tagIdIn) {
+        for (final tagId in mediaFilter.tagIdIn) {
           if (!entry.tags.contains(tagId)) {
             isIn = false;
             break;
@@ -96,9 +102,9 @@ final entriesProvider = Provider.autoDispose.family(
         if (!isIn) continue;
       }
 
-      if (filter.tagIdNotIn.isNotEmpty) {
+      if (mediaFilter.tagIdNotIn.isNotEmpty) {
         bool isIn = false;
-        for (final tagId in filter.tagIdNotIn) {
+        for (final tagId in mediaFilter.tagIdNotIn) {
           if (entry.tags.contains(tagId)) {
             isIn = true;
             break;

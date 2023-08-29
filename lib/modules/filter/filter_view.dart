@@ -3,37 +3,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
+import 'package:otraku/modules/filter/tag_selector.dart';
 import 'package:otraku/modules/filter/year_range_picker.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/tag/tag_models.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/convert.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
-import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
-import 'package:otraku/common/widgets/grids/chip_grids.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
-class _FilterView<T extends MediaFilter<T>> extends StatefulWidget {
+class _FilterView<T> extends StatelessWidget {
   const _FilterView({
     required this.filter,
+    required this.onCleared,
     required this.onChanged,
     required this.builder,
   });
 
   final T filter;
+  final void Function() onCleared;
   final void Function(T) onChanged;
   final Widget Function(BuildContext, ScrollController, T) builder;
-
-  @override
-  State<_FilterView<T>> createState() => __FilterViewState<T>();
-}
-
-class __FilterViewState<T extends MediaFilter<T>>
-    extends State<_FilterView<T>> {
-  late final T _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +31,7 @@ class __FilterViewState<T extends MediaFilter<T>>
       text: 'Apply',
       icon: Icons.done_rounded,
       onTap: () {
-        widget.onChanged(_filter);
+        onChanged(filter);
         Navigator.pop(context);
       },
     );
@@ -51,7 +41,7 @@ class __FilterViewState<T extends MediaFilter<T>>
       icon: Icons.close,
       warning: true,
       onTap: () {
-        widget.onChanged(_filter.clear());
+        onCleared();
         Navigator.pop(context);
       },
     );
@@ -62,57 +52,74 @@ class __FilterViewState<T extends MediaFilter<T>>
             ? [applyButton, clearButton]
             : [clearButton, applyButton],
       ),
-      builder: (context, scrollCtrl) =>
-          widget.builder(context, scrollCtrl, _filter),
+      builder: (context, scrollCtrl) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: builder(context, scrollCtrl, filter),
+      ),
     );
   }
 }
 
-class CollectionFilterView extends StatelessWidget {
-  const CollectionFilterView({required this.filter, required this.onChanged});
+class CollectionFilterView extends StatefulWidget {
+  const CollectionFilterView({
+    required this.ofAnime,
+    required this.filter,
+    required this.onChanged,
+  });
 
+  final bool ofAnime;
   final CollectionMediaFilter filter;
   final void Function(CollectionMediaFilter) onChanged;
 
   @override
+  State<CollectionFilterView> createState() => _CollectionFilterViewState();
+}
+
+class _CollectionFilterViewState extends State<CollectionFilterView> {
+  late final _filter = widget.filter.copy();
+
+  @override
   Widget build(BuildContext context) {
-    return _FilterView<CollectionMediaFilter>(
-      filter: filter,
-      onChanged: onChanged,
+    return _FilterView(
+      filter: _filter,
+      onChanged: widget.onChanged,
+      onCleared: () => widget.onChanged(CollectionMediaFilter(widget.ofAnime)),
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20),
         children: [
-          _EntrySortChipSelector(filter.sort, (v) => filter.sort = v),
+          EntrySortChipSelector(
+            title: 'Sorting',
+            current: filter.sort,
+            onChanged: (v) => filter.sort = v,
+          ),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
-            selected: filter.statuses,
+            current: filter.statuses,
           ),
           ChipEnumMultiSelector(
             title: 'Formats',
-            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
-            selected: filter.formats,
+            options: widget.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            current: filter.formats,
           ),
-          const Divider(indent: 15, endIndent: 15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Consumer(
-              builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                    loading: () => const Loader(),
-                    error: (_, __) => const Text('Failed to load tags'),
-                    data: (tags) => ChipTagGrid(
-                      inclusiveGenres: filter.genreIn,
-                      exclusiveGenres: filter.genreNotIn,
-                      inclusiveTags: filter.tagIn,
-                      exclusiveTags: filter.tagNotIn,
-                      tags: tags,
-                      tagIdIn: filter.tagIdIn,
-                      tagIdNotIn: filter.tagIdNotIn,
-                    ),
+          const Divider(indent: 10, endIndent: 10),
+          Consumer(
+            builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                  loading: () => const Loader(),
+                  error: (_, __) => const Text('Failed to load tags'),
+                  data: (tags) => TagSelector(
+                    inclusiveGenres: filter.genreIn,
+                    exclusiveGenres: filter.genreNotIn,
+                    inclusiveTags: filter.tagIn,
+                    exclusiveTags: filter.tagNotIn,
+                    tags: tags,
+                    tagIdIn: filter.tagIdIn,
+                    tagIdNotIn: filter.tagIdNotIn,
                   ),
-            ),
+                ),
           ),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
             title: 'Start Year',
             from: filter.startYearFrom,
@@ -122,15 +129,19 @@ class CollectionFilterView extends StatelessWidget {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 15, endIndent: 15),
+          const Divider(indent: 10, endIndent: 10),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
                 .map((v) => Convert.clarifyEnum(v.name)!)
                 .toList(),
-            selected: filter.country?.index,
+            current: filter.country?.index,
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
+          ),
+          SizedBox(
+            height:
+                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
           ),
         ],
       ),
@@ -138,65 +149,83 @@ class CollectionFilterView extends StatelessWidget {
   }
 }
 
-class DiscoverFilterView extends StatelessWidget {
-  const DiscoverFilterView({required this.filter, required this.onChanged});
+class DiscoverFilterView extends StatefulWidget {
+  const DiscoverFilterView({
+    required this.ofAnime,
+    required this.filter,
+    required this.onChanged,
+  });
 
+  final bool ofAnime;
   final DiscoverMediaFilter filter;
   final void Function(DiscoverMediaFilter) onChanged;
 
   @override
+  State<DiscoverFilterView> createState() => _DiscoverFilterViewState();
+}
+
+class _DiscoverFilterViewState extends State<DiscoverFilterView> {
+  late final _filter = widget.filter.copy();
+
+  @override
   Widget build(BuildContext context) {
-    return _FilterView<DiscoverMediaFilter>(
-      filter: filter,
-      onChanged: onChanged,
+    return _FilterView(
+      filter: _filter,
+      onChanged: widget.onChanged,
+      onCleared: () => widget.onChanged(DiscoverMediaFilter()),
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(top: 20, bottom: 60),
+        padding: const EdgeInsets.only(top: 20),
         children: [
           ChipSelector(
-            title: 'Sort',
+            title: 'Sorting',
             options: MediaSort.values.map((s) => s.label).toList(),
-            selected: filter.sort.index,
+            current: filter.sort.index,
             mustHaveSelected: true,
             onChanged: (i) => filter.sort = MediaSort.values.elementAt(i!),
           ),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
-            selected: filter.statuses,
+            current: filter.statuses,
           ),
-          ChipEnumMultiSelector(
-            title: 'Formats',
-            options: filter.ofAnime ? AnimeFormat.values : MangaFormat.values,
-            selected: filter.formats,
-          ),
-          if (filter.ofAnime)
+          if (widget.ofAnime)
+            ChipEnumMultiSelector(
+              title: 'Formats',
+              options: AnimeFormat.values,
+              current: filter.animeFormats,
+            )
+          else
+            ChipEnumMultiSelector(
+              title: 'Formats',
+              options: MangaFormat.values,
+              current: filter.mangaFormats,
+            ),
+          if (widget.ofAnime)
             ChipSelector(
               title: 'Season',
               options: MediaSeason.values
                   .map((v) => Convert.clarifyEnum(v.name)!)
                   .toList(),
-              selected: filter.season?.index,
+              current: filter.season?.index,
               onChanged: (selected) => filter.season = selected != null
                   ? MediaSeason.values.elementAt(selected)
                   : null,
             ),
-          const Divider(indent: 15, endIndent: 15),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Consumer(
-              builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                    loading: () => const Loader(),
-                    error: (_, __) => const Text('Failed to load tags'),
-                    data: (tags) => ChipTagGrid(
-                      inclusiveGenres: filter.genreIn,
-                      exclusiveGenres: filter.genreNotIn,
-                      inclusiveTags: filter.tagIn,
-                      exclusiveTags: filter.tagNotIn,
-                    ),
+          const Divider(indent: 10, endIndent: 10),
+          Consumer(
+            builder: (context, ref, _) => ref.watch(tagsProvider).when(
+                  loading: () => const Loader(),
+                  error: (_, __) => const Text('Failed to load tags'),
+                  data: (tags) => TagSelector(
+                    inclusiveGenres: filter.genreIn,
+                    exclusiveGenres: filter.genreNotIn,
+                    inclusiveTags: filter.tagIn,
+                    exclusiveTags: filter.tagNotIn,
                   ),
-            ),
+                ),
           ),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
             title: 'Start Year',
             from: filter.startYearFrom,
@@ -206,25 +235,25 @@ class DiscoverFilterView extends StatelessWidget {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 15, endIndent: 15),
+          const Divider(indent: 10, endIndent: 10),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
                 .map((v) => Convert.clarifyEnum(v.name)!)
                 .toList(),
-            selected: filter.country?.index,
+            current: filter.country?.index,
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
           ChipEnumMultiSelector(
             title: 'Sources',
             options: MediaSource.values,
-            selected: filter.sources,
+            current: filter.sources,
           ),
           ChipSelector(
             title: 'List Presence',
             options: const ['On List', 'Not on List'],
-            selected: filter.onList == null
+            current: filter.onList == null
                 ? null
                 : filter.onList!
                     ? 0
@@ -238,7 +267,7 @@ class DiscoverFilterView extends StatelessWidget {
           ChipSelector(
             title: 'Age Restriction',
             options: const ['Adult', 'Non-Adult'],
-            selected: filter.isAdult == null
+            current: filter.isAdult == null
                 ? null
                 : filter.isAdult!
                     ? 0
@@ -249,266 +278,12 @@ class DiscoverFilterView extends StatelessWidget {
                     ? true
                     : false,
           ),
+          SizedBox(
+            height:
+                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _EntrySortChipSelector extends StatefulWidget {
-  const _EntrySortChipSelector(this.current, this.onChanged);
-
-  final EntrySort current;
-  final void Function(EntrySort) onChanged;
-
-  @override
-  State<_EntrySortChipSelector> createState() => _EntrySortChipSelectorState();
-}
-
-class _EntrySortChipSelectorState extends State<_EntrySortChipSelector> {
-  late var _current = widget.current;
-  final _options = <String>[];
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < EntrySort.values.length; i += 2) {
-      _options.add(Convert.clarifyEnum(EntrySort.values.elementAt(i).name)!);
-    }
-  }
-
-  @override
-  void didUpdateWidget(covariant _EntrySortChipSelector oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _current = widget.current;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final selected = _current.index ~/ 2;
-    final descending = _current.index % 2 != 0;
-
-    return ChipSelectorLayout(
-      title: 'Sort',
-      options: _options,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: FilterChip(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          labelStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
-          label: Text(_options[index]),
-          showCheckmark: false,
-          avatar: selected == index
-              ? Icon(
-                  descending
-                      ? Icons.arrow_downward_rounded
-                      : Icons.arrow_upward_rounded,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                )
-              : null,
-          selected: selected == index,
-          onSelected: (_) {
-            setState(
-              () {
-                int i = index * 2;
-                if (selected == index) {
-                  if (!descending) i++;
-                } else {
-                  if (descending) i++;
-                }
-                _current = EntrySort.values.elementAt(i);
-              },
-            );
-            widget.onChanged(_current);
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class TagSheetBody extends ConsumerStatefulWidget {
-  const TagSheetBody({
-    required this.inclusiveGenres,
-    required this.exclusiveGenres,
-    required this.inclusiveTags,
-    required this.exclusiveTags,
-    required this.scrollCtrl,
-  });
-
-  final List<String> inclusiveGenres;
-  final List<String> exclusiveGenres;
-  final List<String> inclusiveTags;
-  final List<String> exclusiveTags;
-  final ScrollController scrollCtrl;
-
-  @override
-  TagSheetBodyState createState() => TagSheetBodyState();
-}
-
-class TagSheetBodyState extends ConsumerState<TagSheetBody> {
-  late final TagGroup _tags;
-  late final List<int> _categoryIndices;
-  late final List<int> _itemIndices;
-  String _filter = '';
-  int _index = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _tags = ref.read(tagsProvider).valueOrNull!;
-    _itemIndices = [..._tags.categoryItems[_index]];
-    _categoryIndices = [];
-    for (int i = 0; i < _tags.categoryNames.length; i++) {
-      _categoryIndices.add(i);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    late final List<String> inclusive;
-    late final List<String> exclusive;
-    if (_categoryIndices.isNotEmpty && _categoryIndices[_index] == 0) {
-      inclusive = widget.inclusiveGenres;
-      exclusive = widget.exclusiveGenres;
-    } else {
-      inclusive = widget.inclusiveTags;
-      exclusive = widget.exclusiveTags;
-    }
-
-    return Stack(
-      children: [
-        if (_itemIndices.isNotEmpty)
-          ListView.builder(
-            padding: EdgeInsets.only(
-              top: 90,
-              left: 20,
-              right: 20,
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            controller: widget.scrollCtrl,
-            itemExtent: Consts.tapTargetSize,
-            itemCount: _itemIndices.length,
-            itemBuilder: (_, i) {
-              final name = _tags.names[_itemIndices[i]];
-              return CheckBoxTriField(
-                key: Key(name),
-                title: name,
-                initial: inclusive.contains(name)
-                    ? 1
-                    : exclusive.contains(name)
-                        ? -1
-                        : 0,
-                onChanged: (state) {
-                  if (state == 0) {
-                    exclusive.remove(name);
-                  } else if (state == 1) {
-                    inclusive.add(name);
-                  } else {
-                    inclusive.remove(name);
-                    exclusive.add(name);
-                  }
-                },
-              );
-            },
-          )
-        else
-          const Center(child: Text('No Results')),
-        ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
-          child: BackdropFilter(
-            filter: Consts.blurFilter,
-            child: Container(
-              height: 95,
-              color: Theme.of(context).navigationBarTheme.backgroundColor,
-              padding: const EdgeInsets.only(top: 10, bottom: 5),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 20,
-                      right: 20,
-                      bottom: 5,
-                    ),
-                    child: SearchField(
-                      hint: 'Tag',
-                      value: _filter,
-                      onChange: (val) {
-                        _filter = val.toLowerCase();
-                        _categoryIndices.clear();
-                        _itemIndices.clear();
-
-                        categoryLoop:
-                        for (int i = 0; i < _tags.categoryNames.length; i++) {
-                          for (final j in _tags.categoryItems[i]) {
-                            if (_tags.names[j]
-                                .toLowerCase()
-                                .contains(_filter)) {
-                              _categoryIndices.add(i);
-                              continue categoryLoop;
-                            }
-                          }
-                        }
-
-                        if (_categoryIndices.isEmpty) {
-                          _index = 0;
-                          setState(() {});
-                          return;
-                        }
-
-                        if (_index >= _categoryIndices.length) {
-                          _index = _categoryIndices.length - 1;
-                        }
-
-                        final itemsIndex = _categoryIndices[_index];
-                        for (final i in _tags.categoryItems[itemsIndex]) {
-                          if (_tags.names[i].toLowerCase().contains(_filter)) {
-                            _itemIndices.add(i);
-                          }
-                        }
-
-                        setState(() {});
-                      },
-                    ),
-                  ),
-                  SizedBox(
-                    height: 40,
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 15),
-                      scrollDirection: Axis.horizontal,
-                      itemCount: _categoryIndices.length,
-                      itemBuilder: (_, i) => Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: ChipOptionField(
-                          name: _tags.categoryNames[_categoryIndices[i]],
-                          selected: i == _index,
-                          onTap: () {
-                            if (_index == i) return;
-
-                            _index = i;
-                            _itemIndices.clear();
-
-                            final itemsIndex = _categoryIndices[_index];
-                            for (final i in _tags.categoryItems[itemsIndex]) {
-                              if (_tags.names[i]
-                                  .toLowerCase()
-                                  .contains(_filter)) _itemIndices.add(i);
-                            }
-
-                            setState(() {});
-                          },
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

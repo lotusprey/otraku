@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/theming.dart';
@@ -50,11 +51,10 @@ class _ThemePreviewState extends State<ThemePreview> {
 
         return SliverToBoxAdapter(
           child: SizedBox(
-            height: 190,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              children: children,
+            height: 195,
+            child: ShadowedOverflowList(
+              itemCount: children.length,
+              itemBuilder: (_, i) => children[i],
             ),
           ),
         );
@@ -84,7 +84,7 @@ class _ThemeCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const EdgeInsets.only(right: 5),
         child: Column(
           children: [
             Container(

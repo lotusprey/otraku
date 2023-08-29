@@ -38,6 +38,7 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background,
@@ -69,7 +70,6 @@ class OpaqueSheetView extends StatelessWidget {
       padding: MediaQuery.of(context).viewInsets,
       child: DraggableScrollableSheet(
         expand: false,
-        maxChildSize: 0.9,
         builder: (context, scrollCtrl) {
           sheet ??= _sheetBody(context, scrollCtrl);
           return sheet!;

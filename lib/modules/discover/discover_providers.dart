@@ -1,12 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/filter/filter_models.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
-import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/review/review_models.dart';
-import 'package:otraku/modules/review/review_providers.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
@@ -14,279 +11,189 @@ import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 
-/// Fetches another page on the discover tab, depending on the selected type.
-void discoverLoadMore(WidgetRef ref) =>
-    switch (ref.read(discoverFilterProvider).type) {
-      DiscoverType.anime => ref.read(discoverAnimeProvider.notifier).fetch(),
-      DiscoverType.manga => ref.read(discoverMangaProvider.notifier).fetch(),
-      DiscoverType.character =>
-        ref.read(discoverCharacterProvider.notifier).fetch(),
-      DiscoverType.staff => ref.read(discoverStaffProvider.notifier).fetch(),
-      DiscoverType.studio => ref.read(discoverStudioProvider.notifier).fetch(),
-      DiscoverType.user => ref.read(discoverUserProvider.notifier).fetch(),
-      DiscoverType.review => ref.read(discoverReviewProvider.notifier).fetch(),
-    };
-
-final _searchSelector = (String? s) => s == null || s.isEmpty ? null : s;
-
-final discoverAnimeProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Paged<DiscoverMediaItem>>>(
-  (ref) {
-    final discoverFilter = ref.watch(discoverFilterProvider);
-    return DiscoverMediaNotifier(
-      discoverFilter.filter,
-      ref.watch(searchProvider(null).select(_searchSelector)),
-      discoverFilter.type == DiscoverType.anime &&
-          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-    );
-  },
+final discoverFilterProvider = StateProvider.autoDispose(
+  (ref) => DiscoverFilter(Options().defaultDiscoverType),
 );
 
-final discoverMangaProvider = StateNotifierProvider.autoDispose<
-    DiscoverMediaNotifier, AsyncValue<Paged<DiscoverMediaItem>>>(
-  (ref) {
-    final discoverFilter = ref.watch(discoverFilterProvider);
-    return DiscoverMediaNotifier(
-      discoverFilter.filter,
-      ref.watch(searchProvider(null).select(_searchSelector)),
-      discoverFilter.type == DiscoverType.manga &&
-          ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-    );
-  },
+final discoverProvider = StateNotifierProvider.autoDispose<DiscoverNotifier,
+    AsyncValue<DiscoverItems>>(
+  (ref) => DiscoverNotifier(ref.watch(discoverFilterProvider)),
 );
 
-final discoverCharacterProvider = StateNotifierProvider.autoDispose<
-    DiscoverCharacterNotifier, AsyncValue<Paged<TileItem>>>(
-  (ref) => DiscoverCharacterNotifier(
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
-);
-
-final discoverStaffProvider = StateNotifierProvider.autoDispose<
-    DiscoverStaffNotifier, AsyncValue<Paged<TileItem>>>(
-  (ref) => DiscoverStaffNotifier(
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(discoverFilterProvider.select((s) => s.birthday)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
-);
-
-final discoverStudioProvider = StateNotifierProvider.autoDispose<
-    DiscoverStudioNotifier, AsyncValue<Paged<StudioItem>>>(
-  (ref) => DiscoverStudioNotifier(
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
-);
-
-final discoverUserProvider = StateNotifierProvider.autoDispose<
-    DiscoverUserNotifier, AsyncValue<Paged<UserItem>>>(
-  (ref) => DiscoverUserNotifier(
-    ref.watch(searchProvider(null).select(_searchSelector)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
-);
-
-final discoverReviewProvider = StateNotifierProvider.autoDispose<
-    DiscoverReviewNotifier, AsyncValue<Paged<ReviewItem>>>(
-  (ref) => DiscoverReviewNotifier(
-    ref.watch(reviewSortProvider(null)),
-    ref.watch(homeProvider.select((s) => s.didLoadDiscover)),
-  ),
-);
-
-class DiscoverMediaNotifier
-    extends StateNotifier<AsyncValue<Paged<DiscoverMediaItem>>> {
-  DiscoverMediaNotifier(this.filter, this.search, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
+class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
+  DiscoverNotifier(this.filter) : super(const AsyncValue.loading()) {
+    fetch();
   }
 
-  final DiscoverMediaFilter filter;
-  final String? search;
+  final DiscoverFilter filter;
 
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
+  Future<void> fetch() async =>
+      state = await AsyncValue.guard(() => switch (filter.type) {
+            DiscoverType.anime => _fetchAnime(),
+            DiscoverType.manga => _fetchManga(),
+            DiscoverType.character => _fetchCharacters(),
+            DiscoverType.staff => _fetchStaff(),
+            DiscoverType.studio => _fetchStudios(),
+            DiscoverType.user => _fetchUsers(),
+            DiscoverType.review => _fetchReviews(),
+          });
 
-      final data = await Api.get(GqlQuery.medias, {
-        'page': value.next,
-        'type': filter.ofAnime ? 'ANIME' : 'MANGA',
-        if (search != null && search!.isNotEmpty) ...{
-          'search': search,
-          ...filter.toMap()..['sort'] = 'SEARCH_MATCH',
-        } else
-          ...filter.toMap(),
-      });
+  Future<DiscoverItems> _fetchAnime() async {
+    final value = (state.valueOrNull is DiscoverAnimeItems)
+        ? (state.valueOrNull as DiscoverAnimeItems).pages
+        : const Paged<DiscoverMediaItem>();
 
-      final items = <DiscoverMediaItem>[];
-      for (final m in data['Page']['media']) {
-        items.add(DiscoverMediaItem(m));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.medias, {
+      'page': value.next,
+      'type': 'ANIME',
+      if (filter.search.isNotEmpty) ...{
+        'search': filter.search,
+        ...filter.mediaFilter.toMap(true)..['sort'] = 'SEARCH_MATCH',
+      } else
+        ...filter.mediaFilter.toMap(true),
     });
+
+    final items = <DiscoverMediaItem>[];
+    for (final m in data['Page']['media']) {
+      items.add(DiscoverMediaItem(m));
+    }
+
+    return DiscoverAnimeItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
-}
 
-class DiscoverCharacterNotifier
-    extends StateNotifier<AsyncValue<Paged<TileItem>>> {
-  DiscoverCharacterNotifier(this.search, this.isBirthday, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
-  }
+  Future<DiscoverItems> _fetchManga() async {
+    final value = (state.valueOrNull is DiscoverMangaItems)
+        ? (state.valueOrNull as DiscoverMangaItems).pages
+        : const Paged<DiscoverMediaItem>();
 
-  final String? search;
-  final bool isBirthday;
-
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.characters, {
-        'page': value.next,
-        if (search != null && search!.isNotEmpty) 'search': search,
-        if (isBirthday) 'isBirthday': true,
-      });
-
-      final items = <TileItem>[];
-      for (final c in data['Page']['characters']) {
-        items.add(characterItem(c));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.medias, {
+      'page': value.next,
+      'type': 'MANGA',
+      if (filter.search.isNotEmpty) ...{
+        'search': filter.search,
+        ...filter.mediaFilter.toMap(false)..['sort'] = 'SEARCH_MATCH',
+      } else
+        ...filter.mediaFilter.toMap(false),
     });
+
+    final items = <DiscoverMediaItem>[];
+    for (final m in data['Page']['media']) {
+      items.add(DiscoverMediaItem(m));
+    }
+
+    return DiscoverMangaItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
-}
 
-class DiscoverStaffNotifier extends StateNotifier<AsyncValue<Paged<TileItem>>> {
-  DiscoverStaffNotifier(this.search, this.isBirthday, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
-  }
+  Future<DiscoverItems> _fetchCharacters() async {
+    final value = (state.valueOrNull is DiscoverCharacterItems)
+        ? (state.valueOrNull as DiscoverCharacterItems).pages
+        : const Paged<TileItem>();
 
-  final String? search;
-  final bool isBirthday;
-
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.staffs, {
-        'page': value.next,
-        if (search != null && search!.isNotEmpty) 'search': search,
-        if (isBirthday) 'isBirthday': true,
-      });
-
-      final items = <TileItem>[];
-      for (final s in data['Page']['staff']) {
-        items.add(staffItem(s));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.characters, {
+      'page': value.next,
+      if (filter.search.isNotEmpty) 'search': filter.search,
+      if (filter.hasBirthday) 'isBirthday': true,
     });
+
+    final items = <TileItem>[];
+    for (final c in data['Page']['characters']) {
+      items.add(characterItem(c));
+    }
+
+    return DiscoverCharacterItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
-}
 
-class DiscoverStudioNotifier
-    extends StateNotifier<AsyncValue<Paged<StudioItem>>> {
-  DiscoverStudioNotifier(this.search, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
-  }
+  Future<DiscoverItems> _fetchStaff() async {
+    final value = (state.valueOrNull is DiscoverStaffItems)
+        ? (state.valueOrNull as DiscoverStaffItems).pages
+        : const Paged<TileItem>();
 
-  final String? search;
-
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.studios, {
-        'page': value.next,
-        if (search != null && search!.isNotEmpty) 'search': search,
-      });
-
-      final items = <StudioItem>[];
-      for (final s in data['Page']['studios']) {
-        items.add(StudioItem(s));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.staffs, {
+      'page': value.next,
+      if (filter.search.isNotEmpty) 'search': filter.search,
+      if (filter.hasBirthday) 'isBirthday': true,
     });
+
+    final items = <TileItem>[];
+    for (final s in data['Page']['staff']) {
+      items.add(staffItem(s));
+    }
+
+    return DiscoverStaffItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
-}
 
-class DiscoverUserNotifier extends StateNotifier<AsyncValue<Paged<UserItem>>> {
-  DiscoverUserNotifier(this.search, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
-  }
+  Future<DiscoverItems> _fetchStudios() async {
+    final value = (state.valueOrNull is DiscoverStudioItems)
+        ? (state.valueOrNull as DiscoverStudioItems).pages
+        : const Paged<StudioItem>();
 
-  final String? search;
-
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.users, {
-        'page': value.next,
-        if (search != null && search!.isNotEmpty) 'search': search,
-      });
-
-      final items = <UserItem>[];
-      for (final u in data['Page']['users']) {
-        items.add(UserItem(u));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.studios, {
+      'page': value.next,
+      if (filter.search.isNotEmpty) 'search': filter.search,
     });
+
+    final items = <StudioItem>[];
+    for (final s in data['Page']['studios']) {
+      items.add(StudioItem(s));
+    }
+
+    return DiscoverStudioItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
-}
 
-class DiscoverReviewNotifier
-    extends StateNotifier<AsyncValue<Paged<ReviewItem>>> {
-  DiscoverReviewNotifier(this.sort, bool shouldLoad)
-      : super(const AsyncValue.loading()) {
-    if (shouldLoad) fetch();
-  }
+  Future<DiscoverItems> _fetchUsers() async {
+    final value = (state.valueOrNull is DiscoverUserItems)
+        ? (state.valueOrNull as DiscoverUserItems).pages
+        : const Paged<UserItem>();
 
-  final ReviewSort sort;
-
-  Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
-
-      final data = await Api.get(GqlQuery.reviews, {
-        'page': value.next,
-        'sort': sort.name,
-      });
-
-      final items = <ReviewItem>[];
-      for (final r in data['Page']['reviews']) {
-        items.add(ReviewItem(r));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
+    final data = await Api.get(GqlQuery.users, {
+      'page': value.next,
+      if (filter.search.isNotEmpty) 'search': filter.search,
     });
+
+    final items = <UserItem>[];
+    for (final u in data['Page']['users']) {
+      items.add(UserItem(u));
+    }
+
+    return DiscoverUserItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
+  }
+
+  Future<DiscoverItems> _fetchReviews() async {
+    final value = (state.valueOrNull is DiscoverReviewItems)
+        ? (state.valueOrNull as DiscoverReviewItems).pages
+        : const Paged<ReviewItem>();
+
+    final data = await Api.get(GqlQuery.reviews, {
+      'page': value.next,
+      'sort': filter.reviewSort.name,
+    });
+
+    final items = <ReviewItem>[];
+    for (final r in data['Page']['reviews']) {
+      items.add(ReviewItem(r));
+    }
+
+    return DiscoverReviewItems(value.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
   }
 }

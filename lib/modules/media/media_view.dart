@@ -133,15 +133,12 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void dispose() {
     _scrollCtrl.removeListener(_scrollListener);
     widget.tabCtrl.removeListener(_tabListener);
+    ref.invalidate(mediaFollowingProvider(widget.id));
     super.dispose();
   }
 
   void _tabListener() {
     _lastMaxExtent = 0;
-
-    if (widget.tabCtrl.index == MediaTab.following.index) {
-      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
-    }
 
     // This is a workaround for an issue with [NestedScrollView].
     // If you switch to a tab with pagination, where the content
@@ -176,7 +173,6 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   void _refresh(WidgetRef ref) {
     if (widget.tabCtrl.index == MediaTab.following.index) {
       ref.invalidate(mediaFollowingProvider(widget.id));
-      ref.read(mediaFollowingProvider(widget.id).notifier).lazyLoad();
     } else {
       ref.invalidate(mediaRelationsProvider(widget.id));
     }
@@ -206,6 +202,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.characters,
             ),
@@ -228,6 +225,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select((s) => s.staff),
             onData: (data) => SingleRelationGrid(data.items),
             scrollCtrl: _scrollCtrl,
@@ -236,6 +234,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<RelatedReview>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.reviews,
             ),
@@ -249,6 +248,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<MediaFollowing>(
+            withTopOffset: false,
             provider: mediaFollowingProvider(widget.id),
             onData: (data) => MediaFollowingGrid(data.items),
             scrollCtrl: _scrollCtrl,
@@ -257,6 +257,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         ),
         Consumer(
           builder: (context, ref, _) => PagedView<Recommendation>(
+            withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
               (s) => s.recommendations,
             ),
@@ -282,7 +283,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
               if (stats.statusNames.isNotEmpty)
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.only(top: 10),
                     child: PieChart(
                       title: 'Status Distribution',
                       names: stats.statusNames,

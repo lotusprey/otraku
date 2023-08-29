@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
@@ -308,6 +309,7 @@ class MediaInfo {
   final String? siteUrl;
   final String? countryOfOrigin;
   final bool isAdult;
+  final externalLinks = <ExternalLink>[];
 
   factory MediaInfo(Map<String, dynamic> map) {
     String? duration;
@@ -380,8 +382,64 @@ class MediaInfo {
       }
     }
 
+    if (map['externalLinks'] != null) {
+      for (final link in map['externalLinks']) {
+        model.externalLinks.add(ExternalLink(link));
+      }
+      model.externalLinks.sort(
+        (a, b) => a.type == b.type
+            ? a.site.compareTo(b.site)
+            : a.type.index.compareTo(b.type.index),
+      );
+    }
+
     return model;
   }
+}
+
+class ExternalLink {
+  ExternalLink._({
+    required this.url,
+    required this.site,
+    required this.type,
+    required this.color,
+    required this.countryCode,
+  });
+
+  factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
+        url: map['url'],
+        site: map['site'],
+        type: ExternalLinkType.fromString(map['type']),
+        color: map['color'] != null
+            ? Color(
+                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000,
+              )
+            : null,
+        countryCode: switch (map['language']) {
+          'Japanese' => 'JP',
+          'Chinese' => 'CN',
+          'Korean' => 'KR',
+          _ => null,
+        },
+      );
+
+  final String url;
+  final String site;
+  final ExternalLinkType type;
+  final Color? color;
+  final String? countryCode;
+}
+
+enum ExternalLinkType {
+  info,
+  social,
+  streaming;
+
+  static ExternalLinkType fromString(String? str) => switch (str) {
+        'SOCIAL' => ExternalLinkType.social,
+        'STREAMING' => ExternalLinkType.streaming,
+        _ => ExternalLinkType.info,
+      };
 }
 
 class MediaStats {

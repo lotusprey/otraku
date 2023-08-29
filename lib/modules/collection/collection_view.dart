@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/modules/collection/collection_grid.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
 import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -17,7 +17,6 @@ import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
 import 'package:otraku/modules/collection/collection_list.dart';
-import 'package:otraku/modules/filter/filter_search_field.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
@@ -42,20 +41,11 @@ class _CollectionViewState extends State<CollectionView> {
 
   @override
   Widget build(BuildContext context) {
-    final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
-
     return PageScaffold(
-      child: Consumer(
-        child: CollectionSubView(scrollCtrl: _ctrl, tag: tag),
-        builder: (context, ref, child) => WillPopScope(
-          child: child!,
-          onWillPop: () {
-            final notifier = ref.read(searchProvider(tag).notifier);
-            if (notifier.state == null) return Future.value(true);
-            notifier.state = null;
-            return Future.value(false);
-          },
-        ),
+      child: CollectionSubView(
+        tag: (userId: widget.userId, ofAnime: widget.ofAnime),
+        scrollCtrl: _ctrl,
+        focusNode: null,
       ),
     );
   }
@@ -65,18 +55,20 @@ class CollectionSubView extends StatelessWidget {
   const CollectionSubView({
     required this.tag,
     required this.scrollCtrl,
+    required this.focusNode,
     super.key,
   });
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
     return TabScaffold(
       topBar: TopBar(
         canPop: tag.userId != Options().id,
-        trailing: [_TopBarContent(tag)],
+        trailing: [_TopBarContent(tag, focusNode)],
       ),
       floatingBar: FloatingBar(
         scrollCtrl: scrollCtrl,
@@ -104,9 +96,10 @@ class CollectionSubView extends StatelessWidget {
 }
 
 class _TopBarContent extends StatelessWidget {
-  const _TopBarContent(this.tag);
+  const _TopBarContent(this.tag, this.focusNode);
 
   final CollectionTag tag;
+  final FocusNode? focusNode;
 
   @override
   Widget build(BuildContext context) {
@@ -123,9 +116,18 @@ class _TopBarContent extends StatelessWidget {
         return Expanded(
           child: Row(
             children: [
-              SearchFilterField(
-                title: notifier.lists[notifier.index].name,
-                tag: tag,
+              Expanded(
+                child: SearchField(
+                  debounce: Debounce(),
+                  focusNode: focusNode,
+                  hint: notifier.lists[notifier.index].name,
+                  value: ref.watch(
+                    collectionFilterProvider(tag).select((s) => s.search),
+                  ),
+                  onChanged: (search) => ref
+                      .read(collectionFilterProvider(tag).notifier)
+                      .update((s) => s.copyWith(search: search)),
+                ),
               ),
               if (noResults)
                 const SizedBox(width: 45)
@@ -150,10 +152,11 @@ class _TopBarContent extends StatelessWidget {
                 onTap: () => showSheet(
                   context,
                   CollectionFilterView(
-                    filter: ref.read(collectionFilterProvider(tag)),
-                    onChanged: (filter) => ref
+                    ofAnime: tag.ofAnime,
+                    filter: ref.read(collectionFilterProvider(tag)).mediaFilter,
+                    onChanged: (mediaFilter) => ref
                         .read(collectionFilterProvider(tag).notifier)
-                        .update((_) => filter),
+                        .update((s) => s.copyWith(mediaFilter: mediaFilter)),
                   ),
                 ),
               ),
@@ -295,7 +298,10 @@ class _ContentState extends State<_Content> {
                   customLists: customLists,
                   listStatus: entry.entryStatus,
                   format: entry.format,
-                  sort: ref.read(collectionFilterProvider(widget.tag)).sort,
+                  sort: ref
+                      .read(collectionFilterProvider(widget.tag))
+                      .mediaFilter
+                      .sort,
                 );
           };
         }

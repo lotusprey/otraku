@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.2.4+57
+version: 1.2.5+58
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,43 +13,43 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.3.6
+  flutter_riverpod: ^2.3.7
 
   # Data fetching.
-  http: ^0.13.6
+  http: ^1.1.0
 
   # Settings storage.
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.0.14
+  path_provider: ^2.1.0
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^8.0.0
 
   # Used for configuring [cached_network_image], which already imports it.
-  flutter_cache_manager: ^3.3.0
+  flutter_cache_manager: ^3.3.1
 
   # Image caching.
   cached_network_image: ^3.2.3
 
   # Opening links in the browser.
-  url_launcher: ^6.1.10
+  url_launcher: ^6.1.12
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
   app_links: ^3.4.3
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.6.5
+  dynamic_color: ^1.6.6
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.1
 
   # Sending device notifications.
-  flutter_local_notifications: ^14.1.1
+  flutter_local_notifications: ^15.1.1
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.10.1
+  flutter_widget_from_html_core: ^0.10.3
 
   # An addition to the material icons.
   ionicons: ^0.2.1
@@ -58,7 +58,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^2.0.1
+  flutter_lints: ^2.0.2
 
 flutter_icons:
   ios: true

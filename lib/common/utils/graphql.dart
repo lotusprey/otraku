@@ -82,6 +82,7 @@ abstract class GqlQuery {
       siteUrl
       rankings {rank type year season allTime}
       stats {scoreDistribution {score amount} statusDistribution {status amount}}
+      externalLinks {url site type color language}
       relations {
         edges {
           relationType(version: 2)
@@ -259,6 +260,7 @@ abstract class GqlQuery {
       age
       favourites 
       isFavourite
+      siteUrl
     }
     fragment media on MediaConnection {
       pageInfo {hasNextPage}
@@ -332,6 +334,7 @@ abstract class GqlQuery {
       homeTown
       favourites 
       isFavourite
+      siteUrl
     }
   ''';
 
@@ -363,7 +366,7 @@ abstract class GqlQuery {
         }
       }
     }
-    fragment info on Studio {id name favourites isFavourite}
+    fragment info on Studio {id name favourites isFavourite siteUrl}
   ''';
 
   static const studios = r'''

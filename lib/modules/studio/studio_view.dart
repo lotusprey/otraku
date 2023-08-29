@@ -42,97 +42,112 @@ class _StudioViewState extends ConsumerState<StudioView> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      child: ConstrainedView(
-        child: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              studioProvider(widget.id).select((s) => s.info),
-              (_, s) {
-                if (s.hasError) {
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Failed to load studio',
-                      content: s.error.toString(),
-                    ),
-                  );
-                }
-              },
-            );
-
-            final studio = ref.watch(studioProvider(widget.id));
-            final info = studio.info.valueOrNull;
-            final name = info?.name ?? widget.name;
-            final items = <Widget>[];
-            bool? hasNext;
-
-            studio.media.unwrapPrevious().when(
-                  loading: () => items.add(
-                    const SliverFillRemaining(child: Center(child: Loader())),
+      child: Consumer(
+        builder: (context, ref, _) {
+          ref.listen<AsyncValue>(
+            studioProvider(widget.id).select((s) => s.info),
+            (_, s) {
+              if (s.hasError) {
+                showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Failed to load studio',
+                    content: s.error.toString(),
                   ),
-                  error: (_, __) => items.add(
-                    const SliverFillRemaining(
-                      child: Center(child: Text('Failed to load studio')),
-                    ),
-                  ),
-                  data: (data) {
-                    hasNext = data.hasNext;
-
-                    if (info != null) {
-                      items.add(SliverToBoxAdapter(
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            top: 10,
-                            bottom: 20,
-                          ),
-                          child: Text(
-                            '${info.favorites.toString()} favourites',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ),
-                      ));
-                    }
-
-                    final sort =
-                        ref.watch(studioFilterProvider(widget.id)).sort;
-
-                    if (sort != MediaSort.START_DATE &&
-                        sort != MediaSort.START_DATE_DESC) {
-                      items.add(TileItemGrid(data.items));
-                      return;
-                    }
-
-                    for (int i = 0; i < studio.categories.length; i++) {
-                      items.add(SliverToBoxAdapter(
-                        child: Text(
-                          studio.categories.keys.elementAt(i),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ));
-
-                      final beg = studio.categories.values.elementAt(i);
-                      final end = i < studio.categories.length - 1
-                          ? studio.categories.values.elementAt(i + 1)
-                          : data.items.length;
-
-                      items.add(
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          sliver: TileItemGrid(data.items.sublist(beg, end)),
-                        ),
-                      );
-                    }
-                  },
                 );
+              }
+            },
+          );
 
-            return TabScaffold(
-              topBar: const TopBar(),
-              floatingBar: FloatingBar(
-                scrollCtrl: _ctrl,
-                children: info != null
-                    ? [_FavoriteButton(info), _FilterButton(widget.id)]
-                    : const [],
-              ),
+          final studio = ref.watch(studioProvider(widget.id));
+          final info = studio.info.valueOrNull;
+          final name = info?.name ?? widget.name;
+          final items = <Widget>[];
+          bool? hasNext;
+
+          studio.media.unwrapPrevious().when(
+                loading: () => items.add(
+                  const SliverFillRemaining(child: Center(child: Loader())),
+                ),
+                error: (_, __) => items.add(
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load studio')),
+                  ),
+                ),
+                data: (data) {
+                  hasNext = data.hasNext;
+
+                  if (info != null) {
+                    items.add(SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 10,
+                          bottom: 20,
+                        ),
+                        child: Text(
+                          '${info.favorites.toString()} favourites',
+                          style: Theme.of(context).textTheme.labelMedium,
+                        ),
+                      ),
+                    ));
+                  }
+
+                  final sort = ref.watch(studioFilterProvider(widget.id)).sort;
+
+                  if (sort != MediaSort.START_DATE &&
+                      sort != MediaSort.START_DATE_DESC) {
+                    items.add(TileItemGrid(data.items));
+                    return;
+                  }
+
+                  for (int i = 0; i < studio.categories.length; i++) {
+                    items.add(SliverToBoxAdapter(
+                      child: Text(
+                        studio.categories.keys.elementAt(i),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ));
+
+                    final beg = studio.categories.values.elementAt(i);
+                    final end = i < studio.categories.length - 1
+                        ? studio.categories.values.elementAt(i + 1)
+                        : data.items.length;
+
+                    items.add(
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        sliver: TileItemGrid(data.items.sublist(beg, end)),
+                      ),
+                    );
+                  }
+                },
+              );
+
+          final topBar = info != null
+              ? TopBar(
+                  title: info.name,
+                  trailing: [
+                    TopBarIcon(
+                      tooltip: 'More',
+                      icon: Ionicons.ellipsis_horizontal,
+                      onTap: () => showSheet(
+                        context,
+                        GradientSheet.link(context, info.siteUrl!),
+                      ),
+                    ),
+                  ],
+                )
+              : const TopBar();
+
+          return TabScaffold(
+            topBar: topBar,
+            floatingBar: FloatingBar(
+              scrollCtrl: _ctrl,
+              children: info != null
+                  ? [_FavoriteButton(info), _FilterButton(widget.id)]
+                  : const [],
+            ),
+            child: ConstrainedView(
               child: CustomScrollView(
                 physics: Consts.physics,
                 controller: hasNext != null ? _ctrl : null,
@@ -157,9 +172,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   SliverFooter(loading: hasNext ?? false),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -235,7 +250,7 @@ class _FilterButton extends StatelessWidget {
                     ChipSelector(
                       title: 'Sort',
                       options: MediaSort.values.map((s) => s.label).toList(),
-                      selected: filter.sort.index,
+                      current: filter.sort.index,
                       mustHaveSelected: true,
                       onChanged: (i) => filter = filter.copyWith(
                         sort: MediaSort.values.elementAt(i!),
@@ -244,7 +259,7 @@ class _FilterButton extends StatelessWidget {
                     ChipSelector(
                       title: 'List Presence',
                       options: const ['On List', 'Not on List'],
-                      selected: filter.onList == null
+                      current: filter.onList == null
                           ? null
                           : filter.onList!
                               ? 0
@@ -257,7 +272,7 @@ class _FilterButton extends StatelessWidget {
                     ChipSelector(
                       title: 'Main Studio',
                       options: const ['Is Main', 'Is Not Main'],
-                      selected: filter.isMain == null
+                      current: filter.isMain == null
                           ? null
                           : filter.isMain!
                               ? 0

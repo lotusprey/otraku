@@ -25,6 +25,7 @@ class Character {
     required this.bloodType,
     required this.gender,
     required this.age,
+    required this.siteUrl,
     required this.favorites,
     required this.isFavorite,
   });
@@ -51,6 +52,7 @@ class Character {
       bloodType: map['bloodType'],
       gender: map['gender'],
       age: map['age'],
+      siteUrl: map['siteUrl'],
       favorites: map['favourites'] ?? 0,
       isFavorite: map['isFavourite'] ?? false,
     );
@@ -66,6 +68,7 @@ class Character {
   final String? bloodType;
   final String? gender;
   final String? age;
+  final String? siteUrl;
   final int favorites;
   bool isFavorite;
 }

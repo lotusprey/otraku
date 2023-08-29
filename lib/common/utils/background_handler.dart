@@ -238,7 +238,6 @@ void _fetch() => Workmanager().executeTask((_, __) async {
         notification.type.name,
         notification.type.text,
         channelDescription: notification.type.text,
-        color: const Color(0xFF45A0F2),
       ),
     ),
     payload: payload,

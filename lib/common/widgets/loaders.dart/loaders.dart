@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/widgets/layouts/scaffolds.dart';
+import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders.dart/shimmer.dart';
 
 class Loader extends StatelessWidget {
@@ -21,14 +21,22 @@ class Loader extends StatelessWidget {
 }
 
 class SliverRefreshControl extends StatelessWidget {
-  const SliverRefreshControl({required this.onRefresh});
+  const SliverRefreshControl({
+    required this.onRefresh,
+    this.withTopOffset = true,
+  });
 
   final void Function() onRefresh;
+  final bool withTopOffset;
 
   @override
   Widget build(BuildContext context) {
+    final topOffset = withTopOffset
+        ? MediaQuery.of(context).padding.top + TopBar.height
+        : 0.0;
+
     return SliverPadding(
-      padding: EdgeInsets.only(top: scaffoldOffsets(context).top + 10),
+      padding: EdgeInsets.only(top: topOffset + 10),
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,
@@ -70,15 +78,17 @@ class SliverFooter extends StatelessWidget {
   final bool loading;
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.only(
-              top: 10,
-              bottom: scaffoldOffsets(context).bottom + 10,
-            ),
-            child: loading ? const Loader() : null,
+  Widget build(BuildContext context) {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.only(
+            top: 10,
+            bottom: MediaQuery.of(context).padding.bottom + 10,
           ),
+          child: loading ? const Loader() : null,
         ),
-      );
+      ),
+    );
+  }
 }

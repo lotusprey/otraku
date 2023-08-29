@@ -41,7 +41,7 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         size: Consts.iconBig,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        backgroundColor: scheme.background.withAlpha(190),
+        backgroundColor: scheme.surface.withAlpha(190),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -56,6 +56,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
           color: scheme.onSecondaryContainer,
           fontWeight: FontWeight.normal,
         ),
+      ),
+      segmentedButtonTheme: const SegmentedButtonThemeData(
+        style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
       ),
       typography: Typography.material2014(),
       textTheme: TextTheme(

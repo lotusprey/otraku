@@ -28,6 +28,7 @@ class Staff {
     required this.age,
     required this.startYear,
     required this.endYear,
+    required this.siteUrl,
     required this.favorites,
     required this.isFavorite,
   });
@@ -58,6 +59,7 @@ class Staff {
       endYear: yearsActive != null && yearsActive.length > 1
           ? yearsActive[1].toString()
           : null,
+      siteUrl: map['siteUrl'],
       favorites: map['favourites'] ?? 0,
       isFavorite: map['isFavourite'] ?? false,
     );
@@ -76,6 +78,7 @@ class Staff {
   final String? age;
   final String? startYear;
   final String? endYear;
+  final String? siteUrl;
   final int favorites;
   bool isFavorite;
 }

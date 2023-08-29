@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/modules/activity/activities_providers.dart';
-import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/common/utils/options.dart';
 
 final homeProvider =
@@ -33,21 +31,17 @@ class HomeNotifier extends ChangeNotifier {
   }
 
   /// The discover and feed tab are loaded lazily, when first opened.
-  var _didLoadFeed = false;
-  var _didLoadDiscover = false;
+  var _didOpenFeed = false;
+  var _didOpenDiscover = false;
 
-  bool get didLoadFeed => _didLoadFeed;
-  bool get didLoadDiscover => _didLoadDiscover;
+  bool get didOpenFeed => _didOpenFeed;
+  bool get didOpenDiscover => _didOpenDiscover;
 
-  void lazyLoadTabs(WidgetRef ref) {
-    if (_homeTab == HomeTab.feed && !_didLoadFeed) {
-      _didLoadFeed = true;
-      ref.read(activitiesProvider(null).notifier).fetch();
-    }
-
-    if (_homeTab == HomeTab.discover && !_didLoadDiscover) {
-      _didLoadDiscover = true;
-      discoverLoadMore(ref);
+  void checkLazyTabs() {
+    if (_homeTab == HomeTab.feed) {
+      _didOpenFeed = true;
+    } else if (_homeTab == HomeTab.discover) {
+      _didOpenDiscover = true;
     }
   }
 

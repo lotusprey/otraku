@@ -13,9 +13,19 @@ The iOS .ipa and the android .apk are bundled with each Github release.
 </p>
 
 <details><p align='center'>
-<summary>Screenshots (Old. New ones coming soon)</summary>
+<summary>Screenshots</summary>
 
-<img width=16% src='https://user-images.githubusercontent.com/35681808/127747012-ed233f01-2cf7-4bcb-b812-e0f934359d13.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747055-063b5454-af1c-456b-a4e4-37a3cdb26dec.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747071-50aad5d5-19a6-4f47-8d10-84b45b1fded9.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747090-f9ba3c00-afd8-4e10-acb7-dc91fe2c5d62.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747103-c7d5793c-ac09-4ed7-8f33-8aaa5fd7b002.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747119-bf8930d7-1250-494d-beab-406d8333f9eb.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747125-99f966e7-c8fe-4b52-a6a0-05509f8b2087.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747126-95cad82e-b548-4445-b834-084265fe89d6.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747128-1fb62fee-82ae-417d-a46b-3aba685d0b59.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747130-94ad6117-2be4-4835-8a7d-dacb51a45d84.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747132-e11afe34-45de-4374-a21e-13f956aff658.png'><img width=16% src='https://user-images.githubusercontent.com/35681808/127747135-081490fc-7ba8-48d5-90ba-6af283d042c7.png'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/b6d04e69-e0ae-4b4d-b9bb-621b85b6f220'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/62cf5d01-43cd-4aba-a292-1bf08e7500b6'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/63e50f2e-30ca-4e36-8ed0-0d34048060b7'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/692c6bf8-a5c0-41bf-8bc4-4ce16909550a'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/a68aac0e-7f2a-4ae0-b0d5-d06d6f485f87'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/40d47bfc-a0eb-43fa-be70-21aa8ae59122'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/560d8261-a206-4403-87e3-2207bdbb1c23'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/7fcfd048-80c2-472f-a833-548ea6b7fafe'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/c8ab401e-1098-4e69-992b-1d6bc3513ddd'>
+<img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/5bcd8eff-2cd7-4f35-90a3-145156a83e2a'>
+
 </p></details>
 </br>
 <details><summary>Building for ios</summary>

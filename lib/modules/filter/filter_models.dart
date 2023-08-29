@@ -1,18 +1,10 @@
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
 
-sealed class MediaFilter<T extends MediaFilter<T>> {
-  MediaFilter(this._ofAnime);
-
-  bool _ofAnime;
-  bool get ofAnime => _ofAnime;
-
-  T clear();
-  T copy();
-}
-
-class CollectionMediaFilter extends MediaFilter<CollectionMediaFilter> {
-  CollectionMediaFilter(super.ofAnime);
+class CollectionMediaFilter {
+  CollectionMediaFilter(bool ofAnime)
+      : sort =
+            ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
 
   final statuses = <String>[];
   final formats = <String>[];
@@ -22,17 +14,12 @@ class CollectionMediaFilter extends MediaFilter<CollectionMediaFilter> {
   final tagNotIn = <String>[];
   final tagIdIn = <int>[];
   final tagIdNotIn = <int>[];
-  late EntrySort sort =
-      _ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
+  late EntrySort sort;
   int? startYearFrom;
   int? startYearTo;
   OriginCountry? country;
 
-  @override
-  CollectionMediaFilter clear() => CollectionMediaFilter(_ofAnime);
-
-  @override
-  CollectionMediaFilter copy() => CollectionMediaFilter(_ofAnime)
+  CollectionMediaFilter copy() => CollectionMediaFilter(true)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
@@ -47,11 +34,12 @@ class CollectionMediaFilter extends MediaFilter<CollectionMediaFilter> {
     ..country = country;
 }
 
-class DiscoverMediaFilter extends MediaFilter<DiscoverMediaFilter> {
-  DiscoverMediaFilter(super.ofAnime);
+class DiscoverMediaFilter {
+  DiscoverMediaFilter();
 
   final statuses = <String>[];
-  final formats = <String>[];
+  final animeFormats = <String>[];
+  final mangaFormats = <String>[];
   final genreIn = <String>[];
   final genreNotIn = <String>[];
   final tagIn = <String>[];
@@ -65,18 +53,10 @@ class DiscoverMediaFilter extends MediaFilter<DiscoverMediaFilter> {
   bool? onList;
   bool? isAdult;
 
-  set ofAnime(bool val) {
-    _ofAnime = val;
-    formats.clear();
-  }
-
-  @override
-  DiscoverMediaFilter clear() => DiscoverMediaFilter(_ofAnime);
-
-  @override
-  DiscoverMediaFilter copy() => DiscoverMediaFilter(_ofAnime)
+  DiscoverMediaFilter copy() => DiscoverMediaFilter()
     ..statuses.addAll(statuses)
-    ..formats.addAll(formats)
+    ..animeFormats.addAll(animeFormats)
+    ..mangaFormats.addAll(mangaFormats)
     ..genreIn.addAll(genreIn)
     ..genreNotIn.addAll(genreNotIn)
     ..tagIn.addAll(tagIn)
@@ -90,16 +70,17 @@ class DiscoverMediaFilter extends MediaFilter<DiscoverMediaFilter> {
     ..onList = onList
     ..isAdult = isAdult;
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap(bool ofAnime) => {
         'sort': sort.name,
+        if (ofAnime && animeFormats.isNotEmpty) 'format_in': animeFormats,
+        if (!ofAnime && mangaFormats.isNotEmpty) 'format_in': mangaFormats,
+        if (ofAnime && season != null) 'season': season!.name,
         if (statuses.isNotEmpty) 'status_in': statuses,
-        if (formats.isNotEmpty) 'format_in': formats,
         if (genreIn.isNotEmpty) 'genre_in': genreIn,
         if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
         if (tagIn.isNotEmpty) 'tag_in': tagIn,
         if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
         if (sources.isNotEmpty) 'sources': sources,
-        if (season != null) 'season': season!.name,
         if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
         if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
         if (country != null) 'countryOfOrigin': country!.code,

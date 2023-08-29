@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/filter/filter_providers.dart';
+import 'package:otraku/modules/discover/discover_providers.dart';
+import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
@@ -71,7 +73,7 @@ class MediaInfoView extends StatelessWidget {
           if (info.description.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
-                padding: Consts.padding,
+                padding: const EdgeInsets.symmetric(vertical: 10),
                 child: GestureDetector(
                   child: Card(
                     child: Padding(
@@ -92,50 +94,48 @@ class MediaInfoView extends StatelessWidget {
             )
           else
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverPadding(
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            sliver: SliverGrid(
-              gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-                height: Consts.tapTargetSize,
-                minWidth: 130,
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (context, i) => Card(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          infoTitles[i],
-                          maxLines: 1,
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        Text(infoData[i].toString(), maxLines: 1),
-                      ],
-                    ),
+          SliverGrid(
+            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+              height: Consts.tapTargetSize,
+              minWidth: 130,
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (context, i) => Card(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        infoTitles[i],
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
+                      Text(infoData[i].toString(), maxLines: 1),
+                    ],
                   ),
                 ),
-                childCount: infoData.length,
               ),
+              childCount: infoData.length,
             ),
           ),
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
           if (info.genres.isNotEmpty)
             _PlainScrollCards(
               title: 'Genres',
               items: info.genres,
               onTap: (i) {
-                ref.read(searchProvider(null).notifier).state = null;
-                final notifier = ref.read(discoverFilterProvider);
-                notifier.type = info.type;
-
-                final filter = notifier.filter.clear();
-                filter.genreIn.add(info.genres[i]);
-                notifier.filter = filter;
+                final notifier = ref.read(discoverFilterProvider.notifier);
+                final filter = notifier.state.copyWith(
+                  type: info.type,
+                  search: '',
+                  mediaFilter: DiscoverMediaFilter(),
+                )..mediaFilter.genreIn.add(info.genres[i]);
+                notifier.state = filter;
 
                 ref.read(homeProvider).homeTab = HomeTab.discover;
                 Navigator.popUntil(context, (r) => r.isFirst);
@@ -164,6 +164,8 @@ class MediaInfoView extends StatelessWidget {
                 discoverType: DiscoverType.studio,
               ),
             ),
+          if (info.externalLinks.isNotEmpty)
+            _ExternalLinkScrollCards(info.externalLinks),
           if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
           if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
           if (info.englishTitle != null) _Title('English', info.englishTitle!),
@@ -202,12 +204,9 @@ class _ScrollCards extends StatelessWidget {
         children: [
           Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  title,
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+              Text(
+                title,
+                style: Theme.of(context).textTheme.labelMedium,
               ),
               const Spacer(),
               if (trailingAction != null) trailingAction!,
@@ -216,15 +215,13 @@ class _ScrollCards extends StatelessWidget {
           if (trailingAction == null) const SizedBox(height: 10),
           SizedBox(
             height: 42,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(left: 10, bottom: 2),
+            child: ShadowedOverflowList(
               itemCount: itemCount,
               itemBuilder: (context, i) => GestureDetector(
                 onTap: () => onTap(i),
                 onLongPress: () => onLongPress(i),
                 child: Card(
-                  margin: const EdgeInsets.only(right: 10),
+                  margin: const EdgeInsets.only(right: 5, bottom: 2),
                   child: Padding(
                     padding: Consts.padding,
                     child: builder(context, i),
@@ -259,6 +256,43 @@ class _PlainScrollCards extends StatelessWidget {
       onTap: onTap,
       onLongPress: (i) => Toast.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
+    );
+  }
+}
+
+class _ExternalLinkScrollCards extends StatelessWidget {
+  const _ExternalLinkScrollCards(this.items);
+
+  final List<ExternalLink> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return _ScrollCards(
+      title: "External Links",
+      itemCount: items.length,
+      onTap: (i) => Toast.launch(context, items[i].url),
+      onLongPress: (i) => Toast.copy(context, items[i].url),
+      builder: (context, i) => Row(
+        children: [
+          if (items[i].color != null)
+            Container(
+              padding: Consts.padding,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: Consts.borderRadiusMin,
+                color: items[i].color,
+              ),
+            ),
+          Text(items[i].site),
+          if (items[i].countryCode != null) ...[
+            const SizedBox(width: 5),
+            Text(
+              items[i].countryCode!,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -302,13 +336,13 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
       title: 'Tags',
       itemCount: tags.length,
       onTap: (i) {
-        widget.ref.read(searchProvider(null).notifier).state = null;
-        final notifier = widget.ref.read(discoverFilterProvider);
-        notifier.type = widget.info.type;
-
-        final filter = notifier.filter.clear();
-        filter.tagIn.add(tags[i].name);
-        notifier.filter = filter;
+        final notifier = widget.ref.read(discoverFilterProvider.notifier);
+        final filter = notifier.state.copyWith(
+          type: widget.info.type,
+          search: '',
+          mediaFilter: DiscoverMediaFilter(),
+        )..mediaFilter.tagIn.add(tags[i].name);
+        notifier.state = filter;
 
         widget.ref.read(homeProvider).homeTab = HomeTab.discover;
         Navigator.popUntil(context, (r) => r.isFirst);
@@ -354,7 +388,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+        padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

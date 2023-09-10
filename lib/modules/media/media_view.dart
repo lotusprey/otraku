@@ -182,7 +182,6 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   @override
   Widget build(BuildContext context) {
     ref.watch(mediaRelationsProvider(widget.id).select((_) => null));
-    ref.watch(mediaFollowingProvider(widget.id).select((_) => null));
 
     final stats = widget.media.stats;
 

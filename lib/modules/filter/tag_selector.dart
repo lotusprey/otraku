@@ -248,7 +248,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
         if (_itemIndices.isNotEmpty)
           ListView.builder(
             padding: EdgeInsets.only(
-              top: 90,
+              top: 110,
               left: 10,
               right: 10,
               bottom: MediaQuery.of(context).padding.bottom,

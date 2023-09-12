@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/activity/activity_provider.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
@@ -92,8 +93,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                   error: (_, __) =>
                       const Center(child: Text('Failed to load activity')),
                   data: (data) {
-                    return Padding(
-                      padding: Consts.padding,
+                    return ConstrainedView(
                       child: CustomScrollView(
                         physics: Consts.physics,
                         controller: _ctrl,

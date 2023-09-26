@@ -10,7 +10,7 @@ import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 

@@ -3,7 +3,7 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
   const SettingsNotificationsTab(

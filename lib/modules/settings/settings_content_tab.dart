@@ -8,7 +8,7 @@ import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
   const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);

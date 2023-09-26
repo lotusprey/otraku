@@ -9,7 +9,7 @@ import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
 import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class _FilterView<T> extends StatelessWidget {

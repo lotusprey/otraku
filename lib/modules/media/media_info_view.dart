@@ -11,7 +11,7 @@ import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/toast.dart';
 
@@ -87,7 +87,7 @@ class MediaInfoView extends StatelessWidget {
                   ),
                   onTap: () => showPopUp(
                     context,
-                    TextDialog(title: 'Description', text: info.description),
+                    HtmlDialog(title: 'Description', text: info.description),
                   ),
                 ),
               ),

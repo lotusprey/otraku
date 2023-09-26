@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 
 /// A wrapper around [PagedSelectionView] to reduce boilerplate,
 /// for the cases where [PagedSelectionView.select] is redundant.

@@ -14,7 +14,7 @@ const versionCode = '1.2.5';
 enum _OptionKey {
   themeMode,
   themeIndex,
-  pureBlackDarkTheme,
+  pureWhiteOrBlackTheme,
   defaultHomeTab,
   defaultDiscoverType,
   defaultAnimeSort,
@@ -65,7 +65,7 @@ class Options extends ChangeNotifier {
   Options._(
     this._themeMode,
     this._theme,
-    this._pureBlackDarkTheme,
+    this._pureWhiteOrBlackTheme,
     this._defaultHomeTab,
     this._defaultDiscoverType,
     this._defaultAnimeSort,
@@ -145,7 +145,7 @@ class Options extends ChangeNotifier {
     return Options._(
       ThemeMode.values[themeMode],
       _optionBox.get(_OptionKey.themeIndex.name),
-      _optionBox.get(_OptionKey.pureBlackDarkTheme.name) ?? false,
+      _optionBox.get(_OptionKey.pureWhiteOrBlackTheme.name) ?? false,
       HomeTab.values[homeTab],
       DiscoverType.values[discoverType],
       EntrySort.values[animeSort],
@@ -217,7 +217,7 @@ class Options extends ChangeNotifier {
   /// General options.
   ThemeMode _themeMode;
   int? _theme;
-  bool _pureBlackDarkTheme;
+  bool _pureWhiteOrBlackTheme;
   HomeTab _defaultHomeTab;
   DiscoverType _defaultDiscoverType;
   EntrySort _defaultAnimeSort;
@@ -244,7 +244,7 @@ class Options extends ChangeNotifier {
 
   ThemeMode get themeMode => _themeMode;
   int? get theme => _theme;
-  bool get pureBlackDarkTheme => _pureBlackDarkTheme;
+  bool get pureWhiteOrBlackTheme => _pureWhiteOrBlackTheme;
   HomeTab get defaultHomeTab => _defaultHomeTab;
   DiscoverType get defaultDiscoverType => _defaultDiscoverType;
   EntrySort get defaultAnimeSort => _defaultAnimeSort;
@@ -330,10 +330,10 @@ class Options extends ChangeNotifier {
     notifyListeners();
   }
 
-  set pureBlackDarkTheme(bool v) {
-    if (_pureBlackDarkTheme == v) return;
-    _pureBlackDarkTheme = v;
-    _optionBox.put(_OptionKey.pureBlackDarkTheme.name, v);
+  set pureWhiteOrBlackTheme(bool v) {
+    if (_pureWhiteOrBlackTheme == v) return;
+    _pureWhiteOrBlackTheme = v;
+    _optionBox.put(_OptionKey.pureWhiteOrBlackTheme.name, v);
     notifyListeners();
   }
 

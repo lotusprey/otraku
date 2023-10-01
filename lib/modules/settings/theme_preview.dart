@@ -35,7 +35,7 @@ class _ThemePreviewState extends State<ThemePreview> {
         }
 
         final background =
-            brightness == Brightness.dark && Options().pureBlackDarkTheme
+            brightness == Brightness.dark && Options().pureWhiteOrBlackTheme
                 ? Colors.black
                 : null;
 

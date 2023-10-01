@@ -48,11 +48,17 @@ class AppState extends State<App> {
           final notifier = ref.watch(homeProvider.notifier);
           final hasDynamic = lightDynamic != null && darkDynamic != null;
 
-          final darkBackground =
-              Options().pureBlackDarkTheme ? Colors.black : null;
+          Color? lightBackground;
+          Color? darkBackground;
+          if (Options().pureWhiteOrBlackTheme) {
+            lightBackground = Colors.white;
+            darkBackground = Colors.black;
+          }
 
           if (hasDynamic) {
-            lightDynamic = lightDynamic.harmonized();
+            lightDynamic = lightDynamic.harmonized().copyWith(
+                  background: lightBackground,
+                );
             darkDynamic = darkDynamic.harmonized().copyWith(
                   background: darkBackground,
                 );
@@ -71,10 +77,12 @@ class AppState extends State<App> {
             }
 
             final seed = colorSeeds.values.elementAt(theme);
-            lightScheme = seed.scheme(Brightness.light);
-            darkScheme = seed
-                .scheme(Brightness.dark)
-                .copyWith(background: darkBackground);
+            lightScheme = seed.scheme(Brightness.light).copyWith(
+                  background: lightBackground,
+                );
+            darkScheme = seed.scheme(Brightness.dark).copyWith(
+                  background: darkBackground,
+                );
           }
 
           final mode = Options().themeMode;

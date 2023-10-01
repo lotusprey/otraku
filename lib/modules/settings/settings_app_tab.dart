@@ -63,9 +63,9 @@ class SettingsAppTab extends StatelessWidget {
         const ThemePreview(),
         SliverToBoxAdapter(
           child: CheckBoxField(
-            title: 'Pure Black Dark Theme',
-            initial: Options().pureBlackDarkTheme,
-            onChanged: (v) => Options().pureBlackDarkTheme = v,
+            title: 'Pure White/Black Theme',
+            initial: Options().pureWhiteOrBlackTheme,
+            onChanged: (v) => Options().pureWhiteOrBlackTheme = v,
           ),
         ),
         _SheetExpandButton(

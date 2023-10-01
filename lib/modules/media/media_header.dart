@@ -186,7 +186,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       children: [
         TopBarIcon(
           tooltip: 'Close',
-          icon: Ionicons.chevron_back_outline,
+          icon: Icons.arrow_back_ios_rounded,
           onTap: Navigator.of(context).pop,
         ),
         Expanded(

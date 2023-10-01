@@ -163,7 +163,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             ? const SizedBox(width: 10)
             : TopBarIcon(
                 tooltip: 'Close',
-                icon: Ionicons.chevron_back_outline,
+                icon: Icons.arrow_back_ios_new_rounded,
                 onTap: Navigator.of(context).pop,
               ),
         Expanded(

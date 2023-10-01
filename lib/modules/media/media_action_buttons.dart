@@ -54,7 +54,7 @@ class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
         setState(() => widget.info.isFavorite = !widget.info.isFavorite);
         toggleFavoriteMedia(
           widget.info.id,
-          widget.info.type == DiscoverType.anime,
+          widget.info.type == DiscoverType.Anime,
         ).then((ok) {
           if (!ok) {
             setState(() => widget.info.isFavorite = !widget.info.isFavorite);

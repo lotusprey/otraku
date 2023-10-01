@@ -1,5 +1,5 @@
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/statistics/user_statistics.dart';
-import 'package:otraku/common/utils/convert.dart';
 
 class UserItem {
   UserItem._({required this.id, required this.name, required this.imageUrl});
@@ -33,26 +33,31 @@ class User {
     required this.mangaStats,
   });
 
-  factory User(Map<String, dynamic> map) => User._(
-        id: map['id'],
-        name: map['name'],
-        description: map['about'] ?? '',
-        imageUrl: map['avatar']['large'],
-        bannerUrl: map['bannerImage'],
-        siteUrl: map['siteUrl'],
-        isFollowed: map['isFollowing'] ?? false,
-        isFollower: map['isFollower'] ?? false,
-        isBlocked: map['isBlocked'] ?? false,
-        donatorTier: map['donatorTier'] ?? 0,
-        donatorBadge: map['donatorBadge'] ?? '',
-        modRoles: List<String>.from(
-          map['moderatorRoles']?.map((r) => '${Convert.clarifyEnum(r)!} Mod') ??
-              [],
-          growable: false,
-        ),
-        animeStats: UserStatistics(map['statistics']['anime'], true),
-        mangaStats: UserStatistics(map['statistics']['manga'], false),
-      );
+  factory User(Map<String, dynamic> map) {
+    final modRoles = <String>[];
+    if (map['moderatorRoles'] != null) {
+      for (String r in map['moderatorRoles']) {
+        modRoles.add(r.noScreamingSnakeCase);
+      }
+    }
+
+    return User._(
+      id: map['id'],
+      name: map['name'],
+      description: map['about'] ?? '',
+      imageUrl: map['avatar']['large'],
+      bannerUrl: map['bannerImage'],
+      siteUrl: map['siteUrl'],
+      isFollowed: map['isFollowing'] ?? false,
+      isFollower: map['isFollower'] ?? false,
+      isBlocked: map['isBlocked'] ?? false,
+      donatorTier: map['donatorTier'] ?? 0,
+      donatorBadge: map['donatorBadge'] ?? '',
+      modRoles: modRoles,
+      animeStats: UserStatistics(map['statistics']['anime'], true),
+      mangaStats: UserStatistics(map['statistics']['manga'], false),
+    );
+  }
 
   final int id;
   final String name;

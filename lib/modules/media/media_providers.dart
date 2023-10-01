@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 
@@ -130,14 +130,14 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
             id: c['node']['id'],
             title: c['node']['name']['userPreferred'],
             imageUrl: c['node']['image']['large'],
-            subtitle: Convert.clarifyEnum(c['role']),
-            type: DiscoverType.character,
+            subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
+            type: DiscoverType.Character,
           ));
 
           if (c['voiceActors'] == null) continue;
 
           for (final va in c['voiceActors']) {
-            final l = Convert.clarifyEnum(va['languageV2']);
+            final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
             if (l == null) continue;
 
             final currentLanguage = languageToVoiceActors.putIfAbsent(
@@ -155,7 +155,7 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
               title: va['name']['userPreferred'],
               imageUrl: va['image']['large'],
               subtitle: l,
-              type: DiscoverType.staff,
+              type: DiscoverType.Staff,
             ));
           }
         }
@@ -183,7 +183,7 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
             title: s['node']['name']['userPreferred'],
             imageUrl: s['node']['image']['large'],
             subtitle: s['role'],
-            type: DiscoverType.staff,
+            type: DiscoverType.Staff,
           ));
         }
 

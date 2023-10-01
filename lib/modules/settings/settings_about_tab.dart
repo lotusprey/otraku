@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
@@ -87,7 +87,7 @@ class SettingsAboutTab extends StatelessWidget {
           if (lastNotificationFetch != null) ...[
             const SizedBox(height: 30),
             Text(
-              'Performed a notification check around ${Convert.millisToStr((lastNotificationFetch / 1000).truncate())}.',
+              'Performed a notification check around ${DateTimeUtil.tryFormattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),

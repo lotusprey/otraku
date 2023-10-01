@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -92,13 +92,13 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
             id: a['node']['id'],
             title: a['node']['title']['userPreferred'],
             imageUrl: a['node']['coverImage'][Options().imageQuality.value],
-            subtitle: Convert.clarifyEnum(a['characterRole']),
-            type: DiscoverType.anime,
+            subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
+            type: DiscoverType.Anime,
           ));
 
           if (a['voiceActors'] != null) {
             for (final va in a['voiceActors']) {
-              final l = Convert.clarifyEnum(va['languageV2']);
+              final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
               if (l == null) continue;
 
               final currentLanguage = languageToVoiceActors.putIfAbsent(
@@ -116,7 +116,7 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
                 title: va['name']['userPreferred'],
                 imageUrl: va['image']['large'],
                 subtitle: l,
-                type: DiscoverType.staff,
+                type: DiscoverType.Staff,
               ));
             }
           }
@@ -145,8 +145,8 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
             id: m['node']['id'],
             title: m['node']['title']['userPreferred'],
             imageUrl: m['node']['coverImage'][Options().imageQuality.value],
-            subtitle: Convert.clarifyEnum(m['characterRole']),
-            type: DiscoverType.manga,
+            subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
+            type: DiscoverType.Manga,
           ));
         }
 

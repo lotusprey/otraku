@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
@@ -42,7 +42,7 @@ class TagSelectorState extends State<TagSelector> {
       final name = widget.inclusiveGenres[i];
       children.add(_DualStateTagChip(
         key: Key(widget.inclusiveGenres[i]),
-        text: Convert.clarifyEnum(name)!,
+        text: name.noScreamingSnakeCase,
         positive: true,
         onChanged: (positive) => _toggleGenre(name, positive),
         onDeleted: () => setState(() => widget.inclusiveGenres.remove(name)),
@@ -53,7 +53,7 @@ class TagSelectorState extends State<TagSelector> {
       final name = widget.inclusiveTags[i];
       children.add(_DualStateTagChip(
         key: Key(widget.inclusiveTags[i]),
-        text: Convert.clarifyEnum(name)!,
+        text: name.noScreamingSnakeCase,
         positive: true,
         onChanged: (positive) => _toggleTag(name, positive),
         onDeleted: () => setState(() => widget.inclusiveTags.remove(name)),
@@ -64,7 +64,7 @@ class TagSelectorState extends State<TagSelector> {
       final name = widget.exclusiveGenres[i];
       children.add(_DualStateTagChip(
         key: Key(widget.exclusiveGenres[i]),
-        text: Convert.clarifyEnum(name)!,
+        text: name.noScreamingSnakeCase,
         positive: false,
         onChanged: (positive) => _toggleGenre(name, positive),
         onDeleted: () => setState(() => widget.exclusiveGenres.remove(name)),
@@ -75,7 +75,7 @@ class TagSelectorState extends State<TagSelector> {
       final name = widget.exclusiveTags[i];
       children.add(_DualStateTagChip(
         key: Key(widget.exclusiveTags[i]),
-        text: Convert.clarifyEnum(name)!,
+        text: name.noScreamingSnakeCase,
         positive: false,
         onChanged: (positive) => _toggleTag(name, positive),
         onDeleted: () => setState(() => widget.exclusiveTags.remove(name)),

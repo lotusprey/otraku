@@ -21,7 +21,7 @@ class StudioGrid extends StatelessWidget {
         (_, i) => LinkTile(
           id: items[i].id,
           info: items[i].name,
-          discoverType: DiscoverType.studio,
+          discoverType: DiscoverType.Studio,
           child: Hero(
             tag: items[i].id,
             child: Text(

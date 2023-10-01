@@ -413,15 +413,6 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const users = r'''
-    query Users($page: Int, $search: String) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        users(search: $search) {id name avatar {large}}
-      }
-    }
-  ''';
-
   static const user = r'''
       query User($userId: Int) {
         User(id: $userId) {
@@ -455,6 +446,35 @@ abstract class GqlQuery {
         countries {count meanScore minutesWatched chaptersRead country}
       }
     ''';
+
+  static const users = r'''
+    query Users($page: Int, $search: String) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        users(search: $search) {id name avatar {large}}
+      }
+    }
+  ''';
+
+  static const calendar = r'''
+    query Calendar($page: Int, $airingFrom: Int, $airingTo: Int) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        airingSchedules(airingAt_greater: $airingFrom, airingAt_lesser: $airingTo) {
+          airingAt
+          episode
+          mediaId
+          media {
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+            season
+            mediaListEntry {status}
+            externalLinks {url site type color language}
+          }
+        }
+      }
+    }
+  ''';
 
   static const favorites = r'''
     query Favorites($userId: Int, $page: Int = 1, $withAnime: Boolean = false,

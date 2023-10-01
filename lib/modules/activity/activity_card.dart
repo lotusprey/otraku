@@ -70,7 +70,7 @@ class ActivityCard extends StatelessWidget {
               child: LinkTile(
                 id: activity.agent.id,
                 info: activity.agent.imageUrl,
-                discoverType: DiscoverType.user,
+                discoverType: DiscoverType.User,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -107,7 +107,7 @@ class ActivityCard extends StatelessWidget {
               LinkTile(
                 id: activity.reciever!.id,
                 info: activity.reciever!.imageUrl,
-                discoverType: DiscoverType.user,
+                discoverType: DiscoverType.User,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
                   child: CachedImage(
@@ -143,7 +143,7 @@ class _ActivityMediaBox extends StatelessWidget {
       id: activityMedia.id,
       info: activityMedia.imageUrl,
       discoverType:
-          activityMedia.isAnime ? DiscoverType.anime : DiscoverType.manga,
+          activityMedia.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(

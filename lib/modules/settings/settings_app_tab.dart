@@ -5,7 +5,6 @@ import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
@@ -186,7 +185,7 @@ class SettingsAppTab extends StatelessWidget {
               value: Options().defaultDiscoverType,
               items: Map.fromIterable(
                 DiscoverType.values,
-                key: (v) => Convert.clarifyEnum((v as DiscoverType).name)!,
+                key: (v) => (v as DiscoverType).name,
               ),
               onChanged: (v) => Options().defaultDiscoverType = v,
             ),

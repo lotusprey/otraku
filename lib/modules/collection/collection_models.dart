@@ -1,6 +1,6 @@
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
@@ -353,7 +353,9 @@ class Entry {
       status: map['media']['status'],
       entryStatus: EntryStatus.values.byName(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
-      airingAt: map['media']['nextAiringEpisode']?['airingAt'],
+      airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
+        map['media']['nextAiringEpisode']?['airingAt'],
+      ),
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
       country: map['media']['countryOfOrigin'],
@@ -365,9 +367,15 @@ class Entry {
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'],
       avgScore: map['media']['averageScore'],
-      releaseStart: Convert.mapToMillis(map['media']['startDate']),
-      watchStart: Convert.mapToMillis(map['startedAt']),
-      watchEnd: Convert.mapToMillis(map['completedAt']),
+      releaseStart: DateTimeUtil.fromFuzzyDate(
+        map['media']['startDate'],
+      )?.millisecondsSinceEpoch,
+      watchStart: DateTimeUtil.fromFuzzyDate(
+        map['startedAt'],
+      )?.millisecondsSinceEpoch,
+      watchEnd: DateTimeUtil.fromFuzzyDate(
+        map['completedAt'],
+      )?.millisecondsSinceEpoch,
     );
   }
 
@@ -378,7 +386,7 @@ class Entry {
   final String? status;
   final EntryStatus? entryStatus;
   final int? nextEpisode;
-  final int? airingAt;
+  final DateTime? airingAt;
   final int? createdAt;
   final int? updatedAt;
   final String? country;
@@ -401,5 +409,17 @@ enum EntryStatus {
   COMPLETED,
   DROPPED,
   PAUSED,
-  REPEATING,
+  REPEATING;
+
+  String format(bool ofAnime) => formatText(name, ofAnime)!;
+
+  static String? formatText(String? text, bool ofAnime) => switch (text) {
+        'CURRENT' => ofAnime ? 'Watching' : 'Reading',
+        'REPEATING' => ofAnime ? 'Rewatching' : 'Rereading',
+        'COMPLETED' => 'Completed',
+        'PAUSED' => 'Paused',
+        'PLANNING' => 'Planning',
+        'DROPPED' => 'Dropped',
+        _ => null,
+      };
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/modules/activity/activities_view.dart';
 import 'package:otraku/modules/activity/activity_view.dart';
+import 'package:otraku/modules/calendar/calendar_view.dart';
 import 'package:otraku/modules/collection/collection_view.dart';
 import 'package:otraku/modules/favorites/favorites_view.dart';
 import 'package:otraku/modules/studio/studio_view.dart';
@@ -52,6 +53,8 @@ class RouteArg {
         return MaterialPageRoute(
           builder: (_) => CollectionView(arg!.id!, arg.variant!),
         );
+      case calendar:
+        return MaterialPageRoute(builder: (_) => const CalendarView());
       case media:
         if (arg?.id == null) return _unknown;
         return MaterialPageRoute(
@@ -109,6 +112,7 @@ class RouteArg {
   static const settings = '/settings';
   static const notifications = '/notifications';
   static const collection = '/collection';
+  static const calendar = '/calendar';
   static const media = '/media';
   static const character = '/character';
   static const staff = '/staff';

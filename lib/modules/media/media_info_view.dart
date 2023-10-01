@@ -150,7 +150,7 @@ class MediaInfoView extends StatelessWidget {
                 context: context,
                 id: info.studios[info.studios.keys.elementAt(index)]!,
                 imageUrl: info.studios.keys.elementAt(index),
-                discoverType: DiscoverType.studio,
+                discoverType: DiscoverType.Studio,
               ),
             ),
           if (info.producers.isNotEmpty)
@@ -161,7 +161,7 @@ class MediaInfoView extends StatelessWidget {
                 context: context,
                 id: info.producers[info.producers.keys.elementAt(i)]!,
                 imageUrl: info.producers.keys.elementAt(i),
-                discoverType: DiscoverType.studio,
+                discoverType: DiscoverType.Studio,
               ),
             ),
           if (info.externalLinks.isNotEmpty)

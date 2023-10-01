@@ -116,7 +116,7 @@ class MediaReviewGrid extends StatelessWidget {
             LinkTile(
               id: items[i].userId,
               info: items[i].avatar,
-              discoverType: DiscoverType.user,
+              discoverType: DiscoverType.User,
               child: Row(
                 children: [
                   Hero(
@@ -147,7 +147,7 @@ class MediaReviewGrid extends StatelessWidget {
               child: LinkTile(
                 id: items[i].reviewId,
                 info: bannerUrl,
-                discoverType: DiscoverType.review,
+                discoverType: DiscoverType.Review,
                 child: Card(
                   child: SizedBox(
                     width: double.infinity,
@@ -193,7 +193,7 @@ class MediaFollowingGrid extends StatelessWidget {
         (context, i) => LinkTile(
           id: items[i].userId,
           info: items[i].userAvatar,
-          discoverType: DiscoverType.user,
+          discoverType: DiscoverType.User,
           child: Card(
             child: Row(
               children: [

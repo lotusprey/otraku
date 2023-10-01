@@ -136,11 +136,11 @@ class _NotificationItem extends StatelessWidget {
                       context: context,
                       id: item.headId!,
                       imageUrl: item.imageUrl,
-                      discoverType: item.discoverType ?? DiscoverType.user,
+                      discoverType: item.discoverType ?? DiscoverType.User,
                     ),
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
+                      if (item.discoverType == DiscoverType.Anime ||
+                          item.discoverType == DiscoverType.Manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),
@@ -173,7 +173,7 @@ class _NotificationItem extends StatelessWidget {
                           context: context,
                           id: item.headId!,
                           imageUrl: item.imageUrl,
-                          discoverType: DiscoverType.user,
+                          discoverType: DiscoverType.User,
                         ),
                       NotificationType.AIRING ||
                       NotificationType.RELATED_MEDIA_ADDITION =>
@@ -210,8 +210,8 @@ class _NotificationItem extends StatelessWidget {
                         ),
                     },
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
+                      if (item.discoverType == DiscoverType.Anime ||
+                          item.discoverType == DiscoverType.Manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),
@@ -243,7 +243,7 @@ class _NotificationItem extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            item.timestamp,
+                            item.createdAt,
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],

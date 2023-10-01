@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
@@ -8,12 +9,11 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_models.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 
 TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.anime,
+      type: DiscoverType.Anime,
       title: map['title']['userPreferred'],
       imageUrl: map['coverImage'][Options().imageQuality.value],
     );
@@ -122,12 +122,12 @@ class RelatedMedia {
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
         imageUrl: map['node']['coverImage'][Options().imageQuality.value],
-        relationType: Convert.clarifyEnum(map['relationType']),
-        format: Convert.clarifyEnum(map['node']['format']),
-        status: Convert.clarifyEnum(map['node']['status']),
+        relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
+        format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
+        status: StringUtil.tryNoScreamingSnakeCase(map['node']['status']),
         type: map['node']['type'] == 'ANIME'
-            ? DiscoverType.anime
-            : DiscoverType.manga,
+            ? DiscoverType.Anime
+            : DiscoverType.Manga,
       );
 
   final int id;
@@ -182,7 +182,7 @@ class MediaFollowing {
   });
 
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
-        status: Convert.clarifyEnum(map['status'])!,
+        status: (map['status'] as String).noScreamingSnakeCase,
         score: (map['score'] ?? 0).toDouble(),
         notes: map['notes'],
         userId: map['user']['id'],
@@ -222,7 +222,7 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
       imageUrl: map['mediaRecommendation']['coverImage']
           [Options().imageQuality.value],
     );
@@ -289,7 +289,7 @@ class MediaInfo {
   final String? format;
   final String? status;
   final int? nextEpisode;
-  final int? airingAt;
+  final DateTime? airingAt;
   final int? episodes;
   final String? duration;
   final int? chapters;
@@ -330,7 +330,7 @@ class MediaInfo {
 
     final model = MediaInfo._(
       id: map['id'],
-      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
       isFavorite: map['isFavourite'] ?? false,
       favourites: map['favourites'] ?? 0,
       preferredTitle: map['title']['userPreferred'],
@@ -338,30 +338,32 @@ class MediaInfo {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      description: Convert.clearHtml(map['description']),
+      description: map['description'],
       cover: map['coverImage'][Options().imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
-      format: Convert.clarifyEnum(map['format']),
-      status: Convert.clarifyEnum(map['status']),
+      format: StringUtil.tryNoScreamingSnakeCase(map['format']),
+      status: StringUtil.tryNoScreamingSnakeCase(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      airingAt: map['nextAiringEpisode']?['airingAt'],
+      airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
+        map['nextAiringEpisode']?['airingAt'],
+      ),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: Convert.mapToDateStr(map['startDate']),
-      endDate: Convert.mapToDateStr(map['endDate']),
+      startDate: DateTimeUtil.fromFuzzyDate(map['startDate'])?.formattedDate,
+      endDate: DateTimeUtil.fromFuzzyDate(map['endDate'])?.formattedDate,
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,
       meanScore: map['meanScore'] != null ? '${map["meanScore"]}%' : null,
       popularity: map['popularity'],
       genres: List<String>.from(map['genres'] ?? [], growable: false),
-      source: Convert.clarifyEnum(map['source']),
+      source: StringUtil.tryNoScreamingSnakeCase(map['source']),
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
-      countryOfOrigin: Convert.countryCodes[map['countryOfOrigin']],
+      countryOfOrigin: StringUtil.codeToCountry(map['countryOfOrigin']),
       isAdult: map['isAdult'] ?? false,
     );
 
@@ -384,7 +386,20 @@ class MediaInfo {
 
     if (map['externalLinks'] != null) {
       for (final link in map['externalLinks']) {
-        model.externalLinks.add(ExternalLink(link));
+        model.externalLinks.add((
+          url: link['url'],
+          site: link['site'],
+          type: ExternalLinkType.fromString(link['type']),
+          color: link['color'] != null
+              ? ColorUtil.fromHexString(link['color'])
+              : null,
+          countryCode: switch (link['language']) {
+            'Japanese' => 'JP',
+            'Chinese' => 'CN',
+            'Korean' => 'KR',
+            _ => null,
+          },
+        ));
       }
       model.externalLinks.sort(
         (a, b) => a.type == b.type
@@ -397,38 +412,13 @@ class MediaInfo {
   }
 }
 
-class ExternalLink {
-  ExternalLink._({
-    required this.url,
-    required this.site,
-    required this.type,
-    required this.color,
-    required this.countryCode,
-  });
-
-  factory ExternalLink(Map<String, dynamic> map) => ExternalLink._(
-        url: map['url'],
-        site: map['site'],
-        type: ExternalLinkType.fromString(map['type']),
-        color: map['color'] != null
-            ? Color(
-                int.parse(map['color'].substring(1, 7), radix: 16) + 0xFF000000,
-              )
-            : null,
-        countryCode: switch (map['language']) {
-          'Japanese' => 'JP',
-          'Chinese' => 'CN',
-          'Korean' => 'KR',
-          _ => null,
-        },
-      );
-
-  final String url;
-  final String site;
-  final ExternalLinkType type;
-  final Color? color;
-  final String? countryCode;
-}
+typedef ExternalLink = ({
+  String url,
+  String site,
+  ExternalLinkType type,
+  Color? color,
+  String? countryCode,
+});
 
 enum ExternalLinkType {
   info,
@@ -464,7 +454,7 @@ class MediaStats {
         final String when = (rank['allTime'] ?? false)
             ? 'Ever'
             : rank['season'] != null
-                ? '${Convert.clarifyEnum(rank['season'])} ${rank['year'] ?? ''}'
+                ? '${(rank['season'] as String).noScreamingSnakeCase} ${rank['year'] ?? ''}'
                 : (rank['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
@@ -504,10 +494,7 @@ class MediaStats {
 
           model.statusNames.insert(
             index,
-            Convert.adaptListStatus(
-              EntryStatus.values.byName(s['status']),
-              map['type'] == 'ANIME',
-            ),
+            EntryStatus.formatText(s['status'], map['type'] == 'ANIME')!,
           );
         }
       }

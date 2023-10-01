@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.4.0
+  flutter_riverpod: ^2.4.1
 
   # Data fetching.
   http: ^1.1.0
@@ -31,19 +31,19 @@ dependencies:
   flutter_cache_manager: ^3.3.1
 
   # Image caching.
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.0
 
   # Opening links in the browser.
   url_launcher: ^6.1.14
 
   # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
-  app_links: ^3.4.3
+  app_links: ^3.4.5
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.6.7
 
   # Background tasks for notification fetching.
-  workmanager: ^0.5.1
+  workmanager: ^0.5.2
 
   # Sending device notifications.
   flutter_local_notifications: ^15.1.1

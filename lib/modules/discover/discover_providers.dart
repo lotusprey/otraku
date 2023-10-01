@@ -29,13 +29,13 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
 
   Future<void> fetch() async =>
       state = await AsyncValue.guard(() => switch (filter.type) {
-            DiscoverType.anime => _fetchAnime(),
-            DiscoverType.manga => _fetchManga(),
-            DiscoverType.character => _fetchCharacters(),
-            DiscoverType.staff => _fetchStaff(),
-            DiscoverType.studio => _fetchStudios(),
-            DiscoverType.user => _fetchUsers(),
-            DiscoverType.review => _fetchReviews(),
+            DiscoverType.Anime => _fetchAnime(),
+            DiscoverType.Manga => _fetchManga(),
+            DiscoverType.Character => _fetchCharacters(),
+            DiscoverType.Staff => _fetchStaff(),
+            DiscoverType.Studio => _fetchStudios(),
+            DiscoverType.User => _fetchUsers(),
+            DiscoverType.Review => _fetchReviews(),
           });
 
   Future<DiscoverItems> _fetchAnime() async {

@@ -1,5 +1,5 @@
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 
 enum NotificationFilterType {
@@ -58,7 +58,7 @@ class SiteNotification {
     required this.type,
     required this.texts,
     required this.markTextOnEvenIndex,
-    required this.timestamp,
+    required this.createdAt,
     this.headId,
     this.bodyId,
     this.details,
@@ -71,7 +71,7 @@ class SiteNotification {
   final NotificationType type;
   final List<String> texts;
   final bool markTextOnEvenIndex;
-  final String timestamp;
+  final String createdAt;
   final int? headId;
   final int? bodyId;
   final String? details;
@@ -90,8 +90,10 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' followed you.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
-            discoverType: DiscoverType.user,
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
+            discoverType: DiscoverType.User,
           );
         case 'ACTIVITY_MENTION':
           return SiteNotification._(
@@ -102,7 +104,9 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' mentioned you in an activity.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'ACTIVITY_MESSAGE':
           return SiteNotification._(
@@ -113,7 +117,9 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' sent you a message.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'ACTIVITY_REPLY':
           return SiteNotification._(
@@ -124,7 +130,9 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' replied to your activity.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'ACTIVITY_LIKE':
           return SiteNotification._(
@@ -135,7 +143,9 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your activity.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'ACTIVITY_REPLY_LIKE':
           return SiteNotification._(
@@ -146,7 +156,9 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your reply.'],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'ACTIVITY_REPLY_SUBSCRIBED':
           return SiteNotification._(
@@ -160,7 +172,9 @@ class SiteNotification {
               ' replied to activity you are subscribed to.',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'THREAD_LIKE':
           return SiteNotification._(
@@ -175,7 +189,9 @@ class SiteNotification {
               if (map['thread'] != null) map['thread']['title'],
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'THREAD_SUBSCRIBED':
           return SiteNotification._(
@@ -193,7 +209,9 @@ class SiteNotification {
                 ' commented in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'THREAD_COMMENT_LIKE':
           return SiteNotification._(
@@ -211,7 +229,9 @@ class SiteNotification {
                 ' liked your comment in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'THREAD_COMMENT_REPLY':
           return SiteNotification._(
@@ -229,7 +249,9 @@ class SiteNotification {
                 ' replied to your comment in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'THREAD_COMMENT_MENTION':
           return SiteNotification._(
@@ -247,7 +269,9 @@ class SiteNotification {
                 ' mentioned you in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         case 'AIRING':
           return SiteNotification._(
@@ -264,10 +288,12 @@ class SiteNotification {
               ' aired',
             ],
             markTextOnEvenIndex: false,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           );
         case 'RELATED_MEDIA_ADDITION':
           return SiteNotification._(
@@ -281,10 +307,12 @@ class SiteNotification {
               ' was added to the site',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           );
         case 'MEDIA_DATA_CHANGE':
           return SiteNotification._(
@@ -298,10 +326,12 @@ class SiteNotification {
               ' received site data changes',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           );
         case 'MEDIA_MERGE':
           final titles = List<String>.from(
@@ -321,10 +351,12 @@ class SiteNotification {
               map['media']['title']['userPreferred'],
             ],
             markTextOnEvenIndex: false,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           );
         case 'MEDIA_DELETION':
           return SiteNotification._(
@@ -336,7 +368,9 @@ class SiteNotification {
               ' was deleted from the site',
             ],
             markTextOnEvenIndex: true,
-            timestamp: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
           );
         default:
           return null;

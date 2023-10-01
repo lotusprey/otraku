@@ -42,7 +42,7 @@ class ReviewView extends StatelessWidget {
                         context: context,
                         id: data.mediaId,
                         imageUrl: data.mediaCover,
-                        discoverType: DiscoverType.anime,
+                        discoverType: DiscoverType.Anime,
                       ),
                       child: Text(
                         data.mediaTitle,
@@ -56,7 +56,7 @@ class ReviewView extends StatelessWidget {
                         context: context,
                         id: data.userId,
                         imageUrl: data.userAvatar,
-                        discoverType: DiscoverType.user,
+                        discoverType: DiscoverType.User,
                       ),
                       child: RichText(
                         textAlign: TextAlign.center,

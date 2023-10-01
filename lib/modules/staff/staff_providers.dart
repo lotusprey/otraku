@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -88,10 +88,10 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
             id: m['node']['id'],
             title: m['node']['title']['userPreferred'],
             imageUrl: m['node']['coverImage'][Options().imageQuality.value],
-            subtitle: Convert.clarifyEnum(m['node']['format']),
+            subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
             type: m['node']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           );
 
           for (final c in m['characters']) {
@@ -102,8 +102,10 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
                 id: c['id'],
                 title: c['name']['userPreferred'],
                 imageUrl: c['image']['large'],
-                type: DiscoverType.character,
-                subtitle: Convert.clarifyEnum(m['characterRole']),
+                type: DiscoverType.Character,
+                subtitle: StringUtil.tryNoScreamingSnakeCase(
+                  m['characterRole'],
+                ),
               ),
               media,
             ));
@@ -131,8 +133,8 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
             imageUrl: s['node']['coverImage'][Options().imageQuality.value],
             subtitle: s['staffRole'],
             type: s['node']['type'] == 'ANIME'
-                ? DiscoverType.anime
-                : DiscoverType.manga,
+                ? DiscoverType.Anime
+                : DiscoverType.Manga,
           ));
         }
 

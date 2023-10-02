@@ -393,12 +393,7 @@ class MediaInfo {
           color: link['color'] != null
               ? ColorUtil.fromHexString(link['color'])
               : null,
-          countryCode: switch (link['language']) {
-            'Japanese' => 'JP',
-            'Chinese' => 'CN',
-            'Korean' => 'KR',
-            _ => null,
-          },
+          countryCode: StringUtil.languageToCode(link['language']),
         ));
       }
       model.externalLinks.sort(

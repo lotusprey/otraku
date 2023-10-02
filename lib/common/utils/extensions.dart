@@ -10,6 +10,18 @@ extension StringUtil on String {
         _ => null,
       };
 
+  static String? languageToCode(String? language) => switch (language) {
+        'Japanese' => 'JP',
+        'Chinese' => 'CN',
+        'Korean' => 'KR',
+        'French' => 'FR',
+        'Spanish' => 'ES',
+        'Italian' => 'IT',
+        'Portuguese' => 'PT',
+        'German' => 'DE',
+        _ => null,
+      };
+
   static String? tryNoScreamingSnakeCase(dynamic str) =>
       str is String ? str.noScreamingSnakeCase : null;
 

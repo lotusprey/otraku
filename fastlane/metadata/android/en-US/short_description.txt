@@ -1,0 +1,1 @@
+An unofficial AniList client for Android and iOS

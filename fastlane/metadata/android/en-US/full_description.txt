@@ -1,0 +1,2 @@
+An unofficial AniList client for Android and iOS.
+You can view/track/explore anime/manga, interact with your feed and more.

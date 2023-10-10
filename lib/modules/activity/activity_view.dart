@@ -90,8 +90,9 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
 
             return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
                   loading: () => const Center(child: Loader()),
-                  error: (_, __) =>
-                      const Center(child: Text('Failed to load activity')),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load activity'),
+                  ),
                   data: (data) {
                     return ConstrainedView(
                       child: CustomScrollView(

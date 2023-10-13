@@ -43,7 +43,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverAnimeItems).pages
         : const Paged<DiscoverMediaItem>();
 
-    final data = await Api.get(GqlQuery.medias, {
+    final data = await Api.get(GqlQuery.mediaPage, {
       'page': value.next,
       'type': 'ANIME',
       if (filter.search.isNotEmpty) ...{
@@ -69,7 +69,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverMangaItems).pages
         : const Paged<DiscoverMediaItem>();
 
-    final data = await Api.get(GqlQuery.medias, {
+    final data = await Api.get(GqlQuery.mediaPage, {
       'page': value.next,
       'type': 'MANGA',
       if (filter.search.isNotEmpty) ...{
@@ -95,7 +95,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverCharacterItems).pages
         : const Paged<TileItem>();
 
-    final data = await Api.get(GqlQuery.characters, {
+    final data = await Api.get(GqlQuery.characterPage, {
       'page': value.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
@@ -117,7 +117,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverStaffItems).pages
         : const Paged<TileItem>();
 
-    final data = await Api.get(GqlQuery.staffs, {
+    final data = await Api.get(GqlQuery.staffPage, {
       'page': value.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
@@ -139,7 +139,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverStudioItems).pages
         : const Paged<StudioItem>();
 
-    final data = await Api.get(GqlQuery.studios, {
+    final data = await Api.get(GqlQuery.studioPage, {
       'page': value.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
     });
@@ -160,7 +160,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverUserItems).pages
         : const Paged<UserItem>();
 
-    final data = await Api.get(GqlQuery.users, {
+    final data = await Api.get(GqlQuery.userPage, {
       'page': value.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
     });
@@ -181,7 +181,7 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
         ? (state.valueOrNull as DiscoverReviewItems).pages
         : const Paged<ReviewItem>();
 
-    final data = await Api.get(GqlQuery.reviews, {
+    final data = await Api.get(GqlQuery.reviewPage, {
       'page': value.next,
       'sort': filter.reviewSort.name,
     });

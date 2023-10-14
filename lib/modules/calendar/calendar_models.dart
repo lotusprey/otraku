@@ -83,15 +83,15 @@ class CalendarFilter {
 }
 
 enum CalendarSeasonFilter {
+  All,
   Current,
   Previous,
   Other,
-  All,
 }
 
 enum CalendarStatusFilter {
+  All,
   WatchingAndPlanning,
   NotInLists,
   Other,
-  All,
 }

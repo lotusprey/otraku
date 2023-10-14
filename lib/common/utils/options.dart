@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
@@ -8,7 +9,7 @@ import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.6';
+const versionCode = '1.2.6+1';
 
 /// General options keys.
 enum _OptionKey {
@@ -29,6 +30,8 @@ enum _OptionKey {
   analogueClock,
   feedOnFollowing,
   viewerActivitiesInFeed,
+  calendarSeason,
+  calendarStatus,
   discoverItemView,
   collectionItemView,
   collectionPreviewItemView,
@@ -80,6 +83,8 @@ class Options extends ChangeNotifier {
     this._analogueClock,
     this._feedOnFollowing,
     this._viewerActivitiesInFeed,
+    this._calendarSeason,
+    this._calendarStatus,
     this._discoverItemView,
     this._collectionItemView,
     this._collectionPreviewItemView,
@@ -124,6 +129,18 @@ class Options extends ChangeNotifier {
       imageQualityIndex = 1;
     }
 
+    int calendarSeason = _optionBox.get(_OptionKey.calendarSeason.name) ?? 0;
+    if (calendarSeason < 0 ||
+        calendarSeason >= CalendarSeasonFilter.values.length) {
+      calendarSeason = 0;
+    }
+
+    int calendarStatus = _optionBox.get(_OptionKey.calendarStatus.name) ?? 0;
+    if (calendarStatus < 0 ||
+        calendarStatus >= CalendarStatusFilter.values.length) {
+      calendarStatus = 0;
+    }
+
     int discoverItemView =
         _optionBox.get(_OptionKey.discoverItemView.name) ?? 0;
     if (discoverItemView < 0 || discoverItemView > 1) {
@@ -160,6 +177,8 @@ class Options extends ChangeNotifier {
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
       _optionBox.get(_OptionKey.feedOnFollowing.name) ?? false,
       _optionBox.get(_OptionKey.viewerActivitiesInFeed.name) ?? false,
+      calendarSeason,
+      calendarStatus,
       discoverItemView,
       collectionItemView,
       collectionPreviewItemView,
@@ -232,6 +251,8 @@ class Options extends ChangeNotifier {
   bool _analogueClock;
   bool _feedOnFollowing;
   bool _viewerActivitiesInFeed;
+  int _calendarSeason;
+  int _calendarStatus;
   int _discoverItemView;
   int _collectionItemView;
   int _collectionPreviewItemView;
@@ -259,6 +280,8 @@ class Options extends ChangeNotifier {
   bool get analogueClock => _analogueClock;
   bool get feedOnFollowing => _feedOnFollowing;
   bool get viewerActivitiesInFeed => _viewerActivitiesInFeed;
+  int get calendarSeason => _calendarSeason;
+  int get calendarStatus => _calendarStatus;
   int get discoverItemView => _discoverItemView;
   int get collectionItemView => _collectionItemView;
   int get collectionPreviewItemView => _collectionPreviewItemView;
@@ -405,6 +428,16 @@ class Options extends ChangeNotifier {
   set viewerActivitiesInFeed(bool v) {
     _viewerActivitiesInFeed = v;
     _optionBox.put(_OptionKey.viewerActivitiesInFeed.name, v);
+  }
+
+  set calendarSeason(int v) {
+    _calendarSeason = v;
+    _optionBox.put(_OptionKey.calendarSeason.name, v);
+  }
+
+  set calendarStatus(int v) {
+    _calendarStatus = v;
+    _optionBox.put(_OptionKey.calendarStatus.name, v);
   }
 
   set discoverItemView(int v) {

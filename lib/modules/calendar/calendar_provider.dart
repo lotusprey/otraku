@@ -3,14 +3,15 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
+import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 
 final calendarFilterProvider = StateProvider.autoDispose(
   (ref) => CalendarFilter(
     date: DateTime.now(),
-    season: CalendarSeasonFilter.All,
-    status: CalendarStatusFilter.All,
+    season: CalendarSeasonFilter.values[Options().calendarSeason],
+    status: CalendarStatusFilter.values[Options().calendarStatus],
   ),
 );
 

@@ -31,7 +31,6 @@ class CalendarNotifier extends StateNotifier<AsyncValue<Paged<CalendarItem>>> {
     state = await AsyncValue.guard(() async {
       final value = state.valueOrNull ?? const Paged();
 
-      final now = DateTime.now().secondsSinceEpoch;
       final airingFrom =
           filter.date.copyWith(hour: 0, minute: 0, second: 0).secondsSinceEpoch;
       final airingTo = filter.date
@@ -40,7 +39,7 @@ class CalendarNotifier extends StateNotifier<AsyncValue<Paged<CalendarItem>>> {
 
       final data = await Api.get(GqlQuery.calendar, {
         'page': value.next,
-        'airingFrom': airingFrom > now ? airingFrom : now,
+        'airingFrom': airingFrom,
         'airingTo': airingTo,
       });
 

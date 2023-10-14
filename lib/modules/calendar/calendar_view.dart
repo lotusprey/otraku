@@ -38,17 +38,17 @@ class _CalendarViewState extends State<CalendarView> {
     return Consumer(
       builder: (context, ref, _) {
         final date = ref.watch(calendarFilterProvider.select((s) => s.date));
-        final now = DateTime.now();
-        final isToday = date.day == now.day &&
-            date.month == now.month &&
-            date.year == now.year;
+        final today = DateTime.now();
+        final isBeforeToday = date.day < today.day &&
+            date.month == today.month &&
+            date.year == today.year;
 
         return PageScaffold(
           bottomBar: BottomBar([
             const SizedBox(width: 10),
             SizedBox(
               width: 60,
-              child: isToday
+              child: isBeforeToday
                   ? null
                   : IconButton(
                       icon: const Icon(Icons.arrow_back_ios_rounded),
@@ -63,8 +63,8 @@ class _CalendarViewState extends State<CalendarView> {
                 onPressed: () => showDatePicker(
                   context: context,
                   initialDate: date,
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 150)),
+                  firstDate: today.add(const Duration(days: -1)),
+                  lastDate: today.add(const Duration(days: 150)),
                 ).then((newDate) {
                   if (newDate != null && newDate != date) {
                     _setDate(ref, newDate);
@@ -136,7 +136,10 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textRailItems = {
       item.airingAt.formattedTime: true,
-      'Ep ${item.episode} in ${item.airingAt.timeUntil}': false,
+      if (item.airingAt.isAfter(DateTime.now()))
+        'Ep ${item.episode} in ${item.airingAt.timeUntil}': false
+      else
+        'Ep ${item.episode}': false,
     };
     if (item.entryStatus != null) textRailItems[item.entryStatus!] = true;
 

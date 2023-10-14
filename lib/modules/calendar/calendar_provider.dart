@@ -47,6 +47,8 @@ class CalendarNotifier extends StateNotifier<AsyncValue<Paged<CalendarItem>>> {
       for (final c in data['Page']['airingSchedules']) {
         final season = c['media']['season'];
         final year = c['media']['seasonYear'];
+        if (season == null || year == null) continue;
+
         switch (filter.season) {
           case CalendarSeasonFilter.Current:
             final currSeason = _previousAndCurrentSeason().$2;

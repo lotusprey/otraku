@@ -338,7 +338,7 @@ class MediaInfo {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      description: map['description'],
+      description: map['description'] ?? '',
       cover: map['coverImage'][Options().imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],

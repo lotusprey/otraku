@@ -163,7 +163,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             ? const SizedBox(width: 10)
             : TopBarIcon(
                 tooltip: 'Close',
-                icon: Ionicons.chevron_back_outline,
+                icon: Icons.arrow_back_ios_new_rounded,
                 onTap: Navigator.of(context).pop,
               ),
         Expanded(
@@ -301,7 +301,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: BackdropFilter(
               filter: Consts.blurFilter,
               child: DecoratedBox(
-                decoration: BoxDecoration(color: theme.bottomAppBarTheme.color),
+                decoration: BoxDecoration(
+                  color: theme.navigationBarTheme.backgroundColor,
+                ),
                 child: body,
               ),
             ),

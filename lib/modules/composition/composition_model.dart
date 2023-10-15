@@ -1,12 +1,12 @@
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 /// Can throw. Creates/updates an activity/reply
 /// and returns it as a map for deserialization.
 /// A creation happens, when [id] is `null`.
 Future<Map<String, dynamic>> saveComposition(Composition composition) async {
-  final text = Convert.parseEmojis(composition.text);
+  final text = composition.text.withParsedEmojis;
 
   switch (composition.type) {
     case CompositionType.statusActivity:

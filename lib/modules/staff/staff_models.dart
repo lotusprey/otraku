@@ -2,13 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 
 TileItem staffItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.staff,
+      type: DiscoverType.Staff,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -47,8 +47,10 @@ class Staff {
       altNames: altNames,
       imageUrl: map['image']['large'],
       description: map['description'] ?? '',
-      dateOfBirth: Convert.mapToDateStr(map['dateOfBirth']),
-      dateOfDeath: Convert.mapToDateStr(map['dateOfDeath']),
+      dateOfBirth:
+          DateTimeUtil.fromFuzzyDate(map['dateOfBirth'])?.formattedDate,
+      dateOfDeath:
+          DateTimeUtil.fromFuzzyDate(map['dateOfDeath'])?.formattedDate,
       bloodType: map['bloodType'],
       homeTown: map['homeTown'],
       gender: map['gender'],

@@ -45,7 +45,7 @@ class ActivitiesNotifier extends StateNotifier<AsyncValue<Paged<Activity>>> {
     state = await AsyncValue.guard(() async {
       final value = state.valueOrNull ?? const Paged();
 
-      final data = await Api.get(GqlQuery.activities, {
+      final data = await Api.get(GqlQuery.activityPage, {
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
         ...switch (filter) {
           HomeActivityFilter filter => {

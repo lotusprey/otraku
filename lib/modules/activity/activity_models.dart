@@ -1,5 +1,5 @@
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/models/paged.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 
 class ActivityState {
@@ -28,7 +28,7 @@ class ActivityReply {
       isLiked: map['isLiked'] ?? false,
       user: ActivityUser(map['user']),
       text: map['text'] ?? '',
-      createdAt: Convert.millisToStr(map['createdAt']),
+      createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(map['createdAt']),
     );
   }
 
@@ -71,7 +71,9 @@ class Activity {
             agent: ActivityUser(map['user']),
             siteUrl: map['siteUrl'],
             text: map['text'] ?? '',
-            createdAt: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             isOwned: map['user']['id'] == viewerId,
             replyCount: map['replyCount'] ?? 0,
             likeCount: map['likeCount'] ?? 0,
@@ -98,7 +100,9 @@ class Activity {
             media: ActivityMedia(map),
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             isOwned: map['user']['id'] == viewerId,
             replyCount: map['replyCount'] ?? 0,
             likeCount: map['likeCount'] ?? 0,
@@ -116,7 +120,9 @@ class Activity {
             reciever: ActivityUser(map['recipient']),
             siteUrl: map['siteUrl'],
             text: map['message'] ?? '',
-            createdAt: Convert.millisToStr(map['createdAt']),
+            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
             isOwned: map['messenger']['id'] == viewerId ||
                 map['recipient']['id'] == viewerId,
             isPrivate: map['isPrivate'] ?? false,
@@ -182,7 +188,7 @@ class ActivityMedia {
         id: map['media']['id'],
         title: map['media']['title']['userPreferred'],
         imageUrl: map['media']['coverImage'][Options().imageQuality.value],
-        format: Convert.clarifyEnum(map['media']['format']),
+        format: StringUtil.tryNoScreamingSnakeCase(map['media']['format']),
         isAnime: map['type'] == 'ANIME_LIST',
       );
 

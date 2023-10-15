@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
+import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 /// A wrapper around [PagedSelectionView] to reduce boilerplate,
 /// for the cases where [PagedSelectionView.select] is redundant.
@@ -59,42 +60,57 @@ class PagedSelectionView<T, U> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Consumer(
-      builder: (context, ref, _) => ref.watch(provider).unwrapPrevious().when(
-            loading: () => const Center(child: Loader()),
-            error: (err, __) => CustomScrollView(
-              physics: Consts.physics,
-              slivers: [
-                SliverRefreshControl(
-                  withTopOffset: withTopOffset,
-                  onRefresh: onRefresh,
-                ),
-                SliverFillRemaining(
-                  child: Center(child: Text('Failed to load\n$err')),
-                ),
-              ],
+      builder: (context, ref, _) {
+        ref.listen<AsyncValue>(
+          provider,
+          (_, s) => s.whenOrNull(
+            error: (error, _) => showPopUp(
+              context,
+              ConfirmationDialog(
+                title: 'Failed to load',
+                content: error.toString(),
+              ),
             ),
-            data: (data) {
-              final selection = select(data);
-              return ConstrainedView(
-                child: CustomScrollView(
-                  physics: Consts.physics,
-                  controller: scrollCtrl,
-                  slivers: [
-                    SliverRefreshControl(
-                      withTopOffset: withTopOffset,
-                      onRefresh: onRefresh,
-                    ),
-                    selection.items.isEmpty
-                        ? const SliverFillRemaining(
-                            child: Center(child: Text('No results')),
-                          )
-                        : onData(selection),
-                    SliverFooter(loading: selection.hasNext),
-                  ],
-                ),
-              );
-            },
           ),
+        );
+
+        return ref.watch(provider).unwrapPrevious().when(
+              loading: () => const Center(child: Loader()),
+              error: (err, __) => CustomScrollView(
+                physics: Consts.physics,
+                slivers: [
+                  SliverRefreshControl(
+                    withTopOffset: withTopOffset,
+                    onRefresh: onRefresh,
+                  ),
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load')),
+                  ),
+                ],
+              ),
+              data: (data) {
+                final selection = select(data);
+                return ConstrainedView(
+                  child: CustomScrollView(
+                    physics: Consts.physics,
+                    controller: scrollCtrl,
+                    slivers: [
+                      SliverRefreshControl(
+                        withTopOffset: withTopOffset,
+                        onRefresh: onRefresh,
+                      ),
+                      selection.items.isEmpty
+                          ? const SliverFillRemaining(
+                              child: Center(child: Text('No results')),
+                            )
+                          : onData(selection),
+                      SliverFooter(loading: selection.hasNext),
+                    ],
+                  ),
+                );
+              },
+            );
+      },
     );
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/entry_labels.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -58,7 +58,7 @@ class _Tile extends StatelessWidget {
       child: LinkTile(
         key: ValueKey(entry.mediaId),
         id: entry.mediaId,
-        discoverType: DiscoverType.anime,
+        discoverType: DiscoverType.Anime,
         info: entry.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,16 +118,20 @@ class __TileContentState extends State<_TileContent> {
 
     final textRailItems = <String, bool>{};
     if (widget.item.format != null) {
-      textRailItems[Convert.clarifyEnum(widget.item.format)!] = false;
+      textRailItems[widget.item.format!.noScreamingSnakeCase] = false;
     }
+
     if (widget.item.airingAt != null) {
-      textRailItems['Ep ${widget.item.nextEpisode} in '
-          '${Convert.timeUntilTimestamp(widget.item.airingAt)}'] = false;
+      final key =
+          'Ep ${widget.item.nextEpisode} in ${widget.item.airingAt!.timeUntil}';
+      textRailItems[key] = false;
     }
+
     if (widget.item.nextEpisode != null &&
         widget.item.nextEpisode! - 1 > widget.item.progress) {
-      textRailItems['${widget.item.nextEpisode! - 1 - widget.item.progress}'
-          ' ep behind'] = true;
+      final key =
+          '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind';
+      textRailItems[key] = true;
     }
 
     return Column(

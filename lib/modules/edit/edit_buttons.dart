@@ -9,7 +9,7 @@ import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class EditButtons extends StatefulWidget {

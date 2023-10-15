@@ -5,12 +5,11 @@ import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
@@ -64,9 +63,9 @@ class SettingsAppTab extends StatelessWidget {
         const ThemePreview(),
         SliverToBoxAdapter(
           child: CheckBoxField(
-            title: 'Pure Black Dark Theme',
-            initial: Options().pureBlackDarkTheme,
-            onChanged: (v) => Options().pureBlackDarkTheme = v,
+            title: 'Pure White/Black Theme',
+            initial: Options().pureWhiteOrBlackTheme,
+            onChanged: (v) => Options().pureWhiteOrBlackTheme = v,
           ),
         ),
         _SheetExpandButton(
@@ -186,7 +185,7 @@ class SettingsAppTab extends StatelessWidget {
               value: Options().defaultDiscoverType,
               items: Map.fromIterable(
                 DiscoverType.values,
-                key: (v) => Convert.clarifyEnum((v as DiscoverType).name)!,
+                key: (v) => (v as DiscoverType).name,
               ),
               onChanged: (v) => Options().defaultDiscoverType = v,
             ),

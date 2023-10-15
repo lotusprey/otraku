@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
@@ -38,7 +37,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
               if (canPop)
                 TopBarIcon(
                   tooltip: 'Close',
-                  icon: Ionicons.chevron_back_outline,
+                  icon: Icons.arrow_back_ios_rounded,
                   onTap: () => Navigator.maybePop(context),
                 )
               else

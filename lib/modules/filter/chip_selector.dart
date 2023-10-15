@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 
@@ -114,7 +114,7 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
   void initState() {
     super.initState();
     for (final o in widget.options) {
-      _options.add(Convert.clarifyEnum(o.name)!);
+      _options.add(o.name.noScreamingSnakeCase);
       _values.add(o.name);
     }
   }
@@ -165,7 +165,9 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
   void initState() {
     super.initState();
     for (int i = 0; i < EntrySort.values.length; i += 2) {
-      _options.add(Convert.clarifyEnum(EntrySort.values.elementAt(i).name)!);
+      _options.add(
+        EntrySort.values.elementAt(i).name.noScreamingSnakeCase,
+      );
     }
   }
 

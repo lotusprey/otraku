@@ -8,13 +8,12 @@ import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/fields/growable_text_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/fields/labeled_field.dart';
 import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/score_field.dart';
@@ -91,7 +90,7 @@ class _EditView extends StatelessWidget {
               value: status,
               items: Map.fromIterable(
                 EntryStatus.values,
-                key: (v) => Convert.adaptListStatus(v, oldEdit.type == 'ANIME'),
+                key: (v) => v.format(oldEdit.type == 'ANIME'),
               ),
               onChanged: (status) => ref.read(provider.notifier).update(
                 (s) {

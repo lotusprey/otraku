@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/loaders.dart/shimmer.dart';
+import 'package:otraku/common/widgets/loaders/shimmer.dart';
 
 class Loader extends StatelessWidget {
   const Loader();

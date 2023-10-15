@@ -51,7 +51,7 @@ class _Tile extends StatelessWidget {
     return Card(
       child: LinkTile(
         id: item.id,
-        discoverType: DiscoverType.anime,
+        discoverType: DiscoverType.Anime,
         info: item.imageUrl,
         child: Row(
           children: [

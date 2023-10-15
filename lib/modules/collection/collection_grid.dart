@@ -37,7 +37,7 @@ class CollectionGrid extends StatelessWidget {
         (context, i) => Card(
           child: LinkTile(
             id: items[i].mediaId,
-            discoverType: DiscoverType.anime,
+            discoverType: DiscoverType.Anime,
             info: items[i].imageUrl,
             child: Column(
               children: [

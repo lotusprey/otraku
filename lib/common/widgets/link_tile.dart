@@ -25,12 +25,12 @@ class LinkTile extends StatelessWidget {
     required String? imageUrl,
   }) {
     final route = switch (discoverType) {
-      DiscoverType.anime || DiscoverType.manga => RouteArg.media,
-      DiscoverType.character => RouteArg.character,
-      DiscoverType.staff => RouteArg.staff,
-      DiscoverType.studio => RouteArg.studio,
-      DiscoverType.user => RouteArg.user,
-      DiscoverType.review => RouteArg.review,
+      DiscoverType.Anime || DiscoverType.Manga => RouteArg.media,
+      DiscoverType.Character => RouteArg.character,
+      DiscoverType.Staff => RouteArg.staff,
+      DiscoverType.Studio => RouteArg.studio,
+      DiscoverType.User => RouteArg.user,
+      DiscoverType.Review => RouteArg.review,
     };
 
     return Navigator.pushNamed(
@@ -51,8 +51,8 @@ class LinkTile extends StatelessWidget {
         imageUrl: info,
       ),
       onLongPress: () {
-        if (discoverType == DiscoverType.anime ||
-            discoverType == DiscoverType.manga) {
+        if (discoverType == DiscoverType.Anime ||
+            discoverType == DiscoverType.Manga) {
           showSheet(context, EditView((id: id, setComplete: false)));
         }
       },

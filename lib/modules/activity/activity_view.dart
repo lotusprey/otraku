@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/activity/activity_provider.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
@@ -16,7 +17,7 @@ import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
@@ -89,11 +90,11 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
 
             return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
                   loading: () => const Center(child: Loader()),
-                  error: (_, __) =>
-                      const Center(child: Text('Failed to load activity')),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load activity'),
+                  ),
                   data: (data) {
-                    return Padding(
-                      padding: Consts.padding,
+                    return ConstrainedView(
                       child: CustomScrollView(
                         physics: Consts.physics,
                         controller: _ctrl,
@@ -156,7 +157,7 @@ class _TopBarContent extends StatelessWidget {
             child: LinkTile(
               id: activity.agent.id,
               info: activity.agent.imageUrl,
-              discoverType: DiscoverType.user,
+              discoverType: DiscoverType.User,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -196,7 +197,7 @@ class _TopBarContent extends StatelessWidget {
             LinkTile(
               id: activity.reciever!.id,
               info: activity.reciever!.imageUrl,
-              discoverType: DiscoverType.user,
+              discoverType: DiscoverType.User,
               child: ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
                 child: CachedImage(

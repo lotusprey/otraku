@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
@@ -7,9 +8,8 @@ import 'package:otraku/modules/filter/tag_selector.dart';
 import 'package:otraku/modules/filter/year_range_picker.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class _FilterView<T> extends StatelessWidget {
@@ -133,7 +133,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
-                .map((v) => Convert.clarifyEnum(v.name)!)
+                .map((v) => v.name.noScreamingSnakeCase)
                 .toList(),
             current: filter.country?.index,
             onChanged: (val) => filter.country =
@@ -205,7 +205,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
             ChipSelector(
               title: 'Season',
               options: MediaSeason.values
-                  .map((v) => Convert.clarifyEnum(v.name)!)
+                  .map((v) => v.name.noScreamingSnakeCase)
                   .toList(),
               current: filter.season?.index,
               onChanged: (selected) => filter.season = selected != null
@@ -239,7 +239,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
-                .map((v) => Convert.clarifyEnum(v.name)!)
+                .map((v) => v.name.noScreamingSnakeCase)
                 .toList(),
             current: filter.country?.index,
             onChanged: (val) => filter.country =

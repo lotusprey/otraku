@@ -1,4 +1,4 @@
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 
 class UserStatistics {
   UserStatistics._({
@@ -34,7 +34,7 @@ class UserStatistics {
       statuses.add(TypeStatistics(s, 'status'));
     }
     for (final c in map['countries']) {
-      c['country'] = Convert.countryCodes[c['country']];
+      c['country'] = StringUtil.codeToCountry(c['country']);
       countries.add(TypeStatistics(c, 'country'));
     }
 
@@ -119,7 +119,7 @@ class TypeStatistics {
         meanScore: map['meanScore'].toDouble(),
         hoursWatched: map['minutesWatched'] ~/ 60,
         chaptersRead: map['chaptersRead'],
-        value: Convert.clarifyEnum(map[key])!,
+        value: key.noScreamingSnakeCase,
       );
 
   final int count;

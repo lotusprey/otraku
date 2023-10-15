@@ -61,8 +61,8 @@ class Toast {
       launchUrl(
         Uri.parse(link),
         mode: LaunchMode.externalApplication,
-      ).onError((err, _) {
-        show(context, 'Could not open link: $err');
+      ).onError((_, __) {
+        show(context, 'Could not open link');
         return false;
       });
 }

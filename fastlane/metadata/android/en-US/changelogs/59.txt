@@ -1,0 +1,4 @@
+- Added calendar in discover to view and filter new episode schedules
+- Option for pure background in settings now not only makes dark backgrounds black, but also light backgrounds white
+- Fixed lazy-loading in "Following" on the media page
+- Other fixes and improvements

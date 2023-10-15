@@ -239,7 +239,7 @@ class TextDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      _DialogColumn(title: title, expand: false, child: SelectableText(text));
+      _DialogColumn(title: title, child: SelectableText(text));
 }
 
 class HtmlDialog extends StatelessWidget {
@@ -250,19 +250,14 @@ class HtmlDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      _DialogColumn(title: title, expand: true, child: HtmlContent(text));
+      _DialogColumn(title: title, child: HtmlContent(text));
 }
 
 class _DialogColumn extends StatelessWidget {
-  const _DialogColumn({
-    required this.title,
-    required this.child,
-    required this.expand,
-  });
+  const _DialogColumn({required this.title, required this.child});
 
   final String title;
   final Widget child;
-  final bool expand;
 
   @override
   Widget build(BuildContext context) {
@@ -275,12 +270,14 @@ class _DialogColumn extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
-              child:
-                  Text(title, style: Theme.of(context).textTheme.titleMedium),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ),
             const Divider(height: 2, thickness: 2),
             Flexible(
-              fit: expand ? FlexFit.tight : FlexFit.loose,
+              fit: FlexFit.loose,
               child: Scrollbar(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(vertical: 10),

@@ -1,4 +1,4 @@
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 
 class ReviewItem {
@@ -59,7 +59,9 @@ class Review {
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',
-        createdAt: Convert.millisToStr(map['createdAt']),
+        createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+          map['createdAt'],
+        ),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

@@ -1,6 +1,6 @@
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/convert.dart';
 
 typedef EditTag = ({int id, bool setComplete});
 
@@ -81,8 +81,10 @@ class Edit {
       score: (map['mediaListEntry']['score'] ?? 0).toDouble(),
       repeat: map['mediaListEntry']['repeat'] ?? 0,
       notes: map['mediaListEntry']['notes'] ?? '',
-      startedAt: Convert.mapToDateTime(map['mediaListEntry']['startedAt']),
-      completedAt: Convert.mapToDateTime(map['mediaListEntry']['completedAt']),
+      startedAt: DateTimeUtil.fromFuzzyDate(map['mediaListEntry']['startedAt']),
+      completedAt: DateTimeUtil.fromFuzzyDate(
+        map['mediaListEntry']['completedAt'],
+      ),
       private: map['mediaListEntry']['private'] ?? false,
       hiddenFromStatusLists:
           map['mediaListEntry']['hiddenFromStatusLists'] ?? false,
@@ -208,8 +210,8 @@ class Edit {
         'score': score,
         'repeat': repeat,
         'notes': notes,
-        'startedAt': Convert.dateTimeToMap(startedAt),
-        'completedAt': Convert.dateTimeToMap(completedAt),
+        'startedAt': startedAt != null ? startedAt!.fuzzyDate : null,
+        'completedAt': completedAt != null ? completedAt!.fuzzyDate : null,
         'private': private,
         'hiddenFromStatusLists': hiddenFromStatusLists,
         'advancedScores': advancedScores.entries.map((e) => e.value).toList(),

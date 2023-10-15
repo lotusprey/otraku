@@ -48,7 +48,9 @@ class _FilterList extends StatefulWidget {
 }
 
 class _FilterListState extends State<_FilterList> {
-  late ActivityFilter _filter = widget.filter;
+  late ActivityFilter _filter = widget.filter.copyWith(
+    typeIn: [...widget.filter.typeIn],
+  );
 
   @override
   Widget build(BuildContext context) {

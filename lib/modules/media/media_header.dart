@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/media/media_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -41,19 +41,18 @@ class MediaHeader extends StatelessWidget {
           if (info.isAdult) textRailItems['Adult'] = true;
 
           if (info.format != null) {
-            textRailItems[Convert.clarifyEnum(info.format)!] = false;
+            textRailItems[info.format!.noScreamingSnakeCase] = false;
           }
 
           if (media.edit.status != null) {
-            textRailItems[Convert.adaptListStatus(
-              media.edit.status!,
-              info.type == DiscoverType.anime,
+            textRailItems[media.edit.status!.format(
+              info.type == DiscoverType.Anime,
             )] = false;
           }
 
           if (info.airingAt != null) {
             textRailItems['Ep ${info.nextEpisode} in '
-                '${Convert.timeUntilTimestamp(info.airingAt)}'] = true;
+                '${info.airingAt!.timeUntil}'] = true;
           }
 
           if (media.edit.status != null) {
@@ -187,7 +186,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       children: [
         TopBarIcon(
           tooltip: 'Close',
-          icon: Ionicons.chevron_back_outline,
+          icon: Icons.arrow_back_ios_rounded,
           onTap: Navigator.of(context).pop,
         ),
         Expanded(

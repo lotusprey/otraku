@@ -210,7 +210,7 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const medias = r'''
+  static const mediaPage = r'''
     query Media($page: Int, $type: MediaType, $search:String, $status_in: [MediaStatus],
         $format_in: [MediaFormat], $genre_in: [String], $genre_not_in: [String],
         $tag_in: [String], $tag_not_in: [String], $onList: Boolean, $startFrom: FuzzyDateInt,
@@ -272,7 +272,7 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const characters = r'''
+  static const characterPage = r'''
     query Characters($page: Int, $search: String, $isBirthday: Boolean) {
       Page(page: $page) {
         pageInfo {hasNextPage}
@@ -338,7 +338,7 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const staffs = r'''
+  static const staffPage = r'''
     query Staff($page: Int, $search: String, $isBirthday: Boolean) {
       Page(page: $page) {
         pageInfo {hasNextPage}
@@ -369,7 +369,7 @@ abstract class GqlQuery {
     fragment info on Studio {id name favourites isFavourite siteUrl}
   ''';
 
-  static const studios = r'''
+  static const studioPage = r'''
     query Studios($page: Int, $search: String) {
       Page(page: $page) {
         pageInfo {hasNextPage}
@@ -396,7 +396,7 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const reviews = r'''
+  static const reviewPage = r'''
     query Reviews($userId: Int, $page: Int = 1, $sort: [ReviewSort] = [CREATED_AT_DESC]) {
       Page(page: $page) {
         pageInfo {hasNextPage total}
@@ -409,15 +409,6 @@ abstract class GqlQuery {
           media {id type title {userPreferred} bannerImage}
           user {id name}
         }
-      }
-    }
-  ''';
-
-  static const users = r'''
-    query Users($page: Int, $search: String) {
-      Page(page: $page) {
-        pageInfo {hasNextPage}
-        users(search: $search) {id name avatar {large}}
       }
     }
   ''';
@@ -455,6 +446,36 @@ abstract class GqlQuery {
         countries {count meanScore minutesWatched chaptersRead country}
       }
     ''';
+
+  static const userPage = r'''
+    query Users($page: Int, $search: String) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        users(search: $search) {id name avatar {large}}
+      }
+    }
+  ''';
+
+  static const calendar = r'''
+    query Calendar($page: Int, $airingFrom: Int, $airingTo: Int) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        airingSchedules(airingAt_greater: $airingFrom, airingAt_lesser: $airingTo) {
+          airingAt
+          episode
+          mediaId
+          media {
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+            season
+            seasonYear
+            mediaListEntry {status}
+            externalLinks {url site type color language}
+          }
+        }
+      }
+    }
+  ''';
 
   static const favorites = r'''
     query Favorites($userId: Int, $page: Int = 1, $withAnime: Boolean = false,
@@ -511,7 +532,7 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
-  static const activities = r'''
+  static const activityPage = r'''
     query Activities($userId: Int, $userIdNot: Int, $page: Int = 1, $isFollowing: Boolean,
         $hasRepliesOrText: Boolean, $typeIn: [ActivityType], $createdBefore: Int) {
       Page(page: $page) {

@@ -1,20 +1,21 @@
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/tile_item.dart';
-import 'package:otraku/common/utils/convert.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/review/review_models.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
 
 enum DiscoverType {
-  anime,
-  manga,
-  character,
-  staff,
-  studio,
-  user,
-  review,
+  Anime,
+  Manga,
+  Character,
+  Staff,
+  Studio,
+  User,
+  Review,
 }
 
 class DiscoverFilter {
@@ -118,12 +119,15 @@ class DiscoverMediaItem extends TileItem {
 
   factory DiscoverMediaItem(Map<String, dynamic> map) => DiscoverMediaItem._(
         id: map['id'],
-        type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
+        type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Options().imageQuality.value],
-        format: Convert.clarifyEnum(map['format']),
-        releaseStatus: Convert.clarifyEnum(map['status']),
-        listStatus: Convert.clarifyEnum(map['mediaListEntry']?['status']),
+        format: StringUtil.tryNoScreamingSnakeCase(map['format']),
+        releaseStatus: StringUtil.tryNoScreamingSnakeCase(map['status']),
+        listStatus: EntryStatus.formatText(
+          map['mediaListEntry']?['status'],
+          map['type'] == 'ANIME',
+        ),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
         popularity: map['popularity'] ?? 0,

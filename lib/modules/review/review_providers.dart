@@ -70,7 +70,7 @@ class ReviewsNotifier
     state = await AsyncValue.guard(() async {
       final value = state.valueOrNull ?? const PagedWithTotal();
 
-      final data = await Api.get(GqlQuery.reviews, {
+      final data = await Api.get(GqlQuery.reviewPage, {
         'userId': userId,
         'page': value.next,
         'sort': sort.name,

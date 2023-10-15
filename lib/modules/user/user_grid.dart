@@ -36,7 +36,7 @@ class _Tile extends StatelessWidget {
     return LinkTile(
       id: item.id,
       info: item.imageUrl,
-      discoverType: DiscoverType.user,
+      discoverType: DiscoverType.User,
       child: Column(
         children: [
           Expanded(

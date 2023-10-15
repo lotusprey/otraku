@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/staff/staff_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
@@ -55,7 +55,7 @@ class StaffFilterButton extends StatelessWidget {
 
             final sortItems = <String, int>{};
             for (int i = 0; i < MediaSort.values.length; i += 2) {
-              String key = Convert.clarifyEnum(MediaSort.values[i].name)!;
+              String key = MediaSort.values[i].name.noScreamingSnakeCase;
               sortItems[key] = i ~/ 2;
             }
 

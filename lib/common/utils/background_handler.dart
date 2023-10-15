@@ -56,7 +56,7 @@ class BackgroundHandler {
         AndroidFlutterLocalNotificationsPlugin>();
     if (android == null) return true;
 
-    return await android.requestPermission() ?? true;
+    return await android.requestNotificationsPermission() ?? true;
   }
 
   /// Should be called, for example, when the user logs out of an account.

@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/studio/studio_providers.dart';
-import 'package:otraku/common/utils/convert.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/loaders.dart/loaders.dart';
+import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/overlays/toast.dart';
@@ -228,7 +228,7 @@ class _FilterButton extends StatelessWidget {
 
             final sortItems = <String, int>{};
             for (int i = 0; i < MediaSort.values.length; i += 2) {
-              String key = Convert.clarifyEnum(MediaSort.values[i].name)!;
+              String key = MediaSort.values[i].name.noScreamingSnakeCase;
               sortItems[key] = i ~/ 2;
             }
 

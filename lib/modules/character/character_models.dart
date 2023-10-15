@@ -2,13 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/convert.dart';
 
 TileItem characterItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.character,
+      type: DiscoverType.Character,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -48,7 +48,8 @@ class Character {
       altNamesSpoilers: altNamesSpoilers,
       description: map['description'] ?? '',
       imageUrl: map['image']['large'],
-      dateOfBirth: Convert.mapToDateStr(map['dateOfBirth']),
+      dateOfBirth:
+          DateTimeUtil.fromFuzzyDate(map['dateOfBirth'])?.formattedDate,
       bloodType: map['bloodType'],
       gender: map['gender'],
       age: map['age'],

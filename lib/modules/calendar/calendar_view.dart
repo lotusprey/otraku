@@ -218,24 +218,19 @@ class _ExternalLinkList extends StatelessWidget {
       itemBuilder: (context, i) {
         return Padding(
           padding: const EdgeInsets.only(right: 5),
-          child: OutlinedButton(
+          child: ActionChip(
             onPressed: () => Toast.launch(context, links[i].url),
-            onLongPress: () => Toast.copy(context, links[i].url),
-            child: Row(
-              children: [
-                if (links[i].color != null)
-                  Container(
+            label: Text(links[i].site),
+            avatar: links[i].color != null
+                ? Container(
                     height: 15,
                     width: 15,
-                    margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
                       borderRadius: Consts.borderRadiusMin,
                       color: links[i].color,
                     ),
-                  ),
-                Text(links[i].site),
-              ],
-            ),
+                  )
+                : null,
           ),
         );
       },

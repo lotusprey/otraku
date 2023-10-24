@@ -261,15 +261,15 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
               return CheckBoxTriField(
                 key: Key(name),
                 title: name,
-                initial: inclusive.contains(name)
-                    ? 1
+                value: inclusive.contains(name)
+                    ? true
                     : exclusive.contains(name)
-                        ? -1
-                        : 0,
-                onChanged: (state) {
-                  if (state == 0) {
+                        ? false
+                        : null,
+                onChanged: (v) {
+                  if (v == null) {
                     exclusive.remove(name);
-                  } else if (state == 1) {
+                  } else if (v) {
                     inclusive.add(name);
                   } else {
                     inclusive.remove(name);

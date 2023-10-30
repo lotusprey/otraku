@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/user/user_models.dart';
@@ -8,7 +9,6 @@ import 'package:otraku/modules/user/user_header.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/html_content.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -80,17 +80,15 @@ class UserSubView extends StatelessWidget {
             slivers: [
               header,
               _ButtonRow(id),
-              if (data.description.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: ConstrainedView(
-                    child: Card(
-                      child: Padding(
-                        padding: Consts.padding,
-                        child: HtmlContent(data.description),
-                      ),
-                    ),
+              if (data.description.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                SliverConstrainedView(
+                  sliver: HtmlContent(
+                    data.description,
+                    renderMode: RenderMode.sliverList,
                   ),
                 ),
+              ],
               const SliverFooter(),
             ],
           ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/staff/staff_providers.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -141,18 +142,13 @@ class StaffInfoTab extends StatelessWidget {
                       _InfoTile('Blood Type', data.bloodType!),
                   ]),
                 ),
-                if (data.description.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Card(
-                        child: Padding(
-                          padding: Consts.padding,
-                          child: HtmlContent(data.description),
-                        ),
-                      ),
-                    ),
+                if (data.description.isNotEmpty) ...[
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  HtmlContent(
+                    data.description,
+                    renderMode: RenderMode.sliverList,
                   ),
+                ],
                 const SliverFooter(),
               ],
             ),

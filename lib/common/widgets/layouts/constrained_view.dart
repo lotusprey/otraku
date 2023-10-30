@@ -20,3 +20,22 @@ class ConstrainedView extends StatelessWidget {
     );
   }
 }
+
+class SliverConstrainedView extends StatelessWidget {
+  const SliverConstrainedView({required this.sliver});
+
+  final Widget sliver;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        final side = (constraints.crossAxisExtent - Consts.layoutMedium) / 2;
+        return SliverPadding(
+          padding: EdgeInsets.symmetric(horizontal: side < 10 ? 10 : side),
+          sliver: sliver,
+        );
+      },
+    );
+  }
+}

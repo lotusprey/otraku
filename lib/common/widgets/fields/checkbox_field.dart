@@ -83,9 +83,8 @@ class CheckBoxTriField extends StatefulWidget {
     required this.title,
     required this.initial,
     required this.onChanged,
-    Key? key,
-  })  : assert(initial > -2 && initial < 2),
-        super(key: key);
+    super.key,
+  })  : assert(initial > -2 && initial < 2);
 
   final String title;
   final int initial;

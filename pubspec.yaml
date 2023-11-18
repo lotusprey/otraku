@@ -49,7 +49,7 @@ dependencies:
   flutter_local_notifications: ^16.1.0
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.10.6
+  flutter_widget_from_html_core: ^0.14.6
 
   # An addition to the material icons.
   ionicons: ^0.2.1

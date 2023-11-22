@@ -13,7 +13,10 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.4.5
+  flutter_riverpod: ^2.4.7
+
+  # Routing.
+  go_router: ^12.1.1
 
   # Data fetching.
   http: ^1.1.0
@@ -49,7 +52,7 @@ dependencies:
   flutter_local_notifications: ^16.1.0
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.14.6
+  flutter_widget_from_html_core: ^0.14.7
 
   # An addition to the material icons.
   ionicons: ^0.2.1
@@ -58,7 +61,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^3.0.0
+  flutter_lints: ^3.0.1
 
 flutter_icons:
   ios: true

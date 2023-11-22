@@ -96,12 +96,11 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ConstrainedView(child: SettingsAboutTab(_scrollCtrl)),
     ];
 
-    return WillPopScope(
-      onWillPop: () {
+    return PopScope(
+      onPopInvoked: (_) {
         if (_shouldUpdate) {
           ref.read(settingsProvider.notifier).update(_settings.value!);
         }
-        return Future.value(true);
       },
       child: PageScaffold(
         bottomBar: BottomNavBar(

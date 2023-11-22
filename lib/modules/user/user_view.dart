@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_header.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -110,66 +111,38 @@ class _ButtonRow extends StatelessWidget {
         _Button(
           label: 'Anime',
           icon: Ionicons.film,
-          onTap: () => Navigator.pushNamed(
-            context,
-            RouteArg.collection,
-            arguments: RouteArg(id: id, variant: true),
-          ),
+          onTap: () => context.push(Routes.anime(id)),
         ),
         _Button(
           label: 'Manga',
           icon: Ionicons.bookmark,
-          onTap: () => Navigator.pushNamed(
-            context,
-            RouteArg.collection,
-            arguments: RouteArg(id: id, variant: false),
-          ),
+          onTap: () => context.push(Routes.manga(id)),
         ),
       ],
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.activities,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.activities(id)),
       ),
       _Button(
         label: 'Social',
         icon: Ionicons.people_circle,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.friends,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.social(id)),
       ),
       _Button(
         label: 'Favourites',
         icon: Icons.favorite,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.favourites,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.favorites(id)),
       ),
       _Button(
         label: 'Statistics',
         icon: Ionicons.stats_chart,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.statistics,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.statistics(id)),
       ),
       _Button(
         label: 'Reviews',
         icon: Icons.rate_review,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.reviews,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.reviews(id)),
       ),
     ];
 

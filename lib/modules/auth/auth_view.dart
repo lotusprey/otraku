@@ -2,11 +2,12 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/route_arg.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -33,11 +34,7 @@ class AuthViewState extends State<AuthView> {
       }
 
       Options().selectedAccount = account;
-      Navigator.pushReplacementNamed(
-        context,
-        RouteArg.home,
-        arguments: RouteArg(id: Options().idOf(account)),
-      );
+      context.go(Routes.home());
     });
   }
 

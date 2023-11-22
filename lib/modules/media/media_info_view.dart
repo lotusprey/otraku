@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -137,8 +137,7 @@ class MediaInfoView extends StatelessWidget {
                 )..mediaFilter.genreIn.add(info.genres[i]);
                 notifier.state = filter;
 
-                ref.read(homeProvider).homeTab = HomeTab.discover;
-                Navigator.popUntil(context, (r) => r.isFirst);
+                context.go(Routes.home(HomeTab.discover));
               },
             ),
           if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
@@ -146,22 +145,22 @@ class MediaInfoView extends StatelessWidget {
             _PlainScrollCards(
               title: 'Studios',
               items: info.studios.keys.toList(),
-              onTap: (index) => LinkTile.openView(
-                context: context,
-                id: info.studios[info.studios.keys.elementAt(index)]!,
-                imageUrl: info.studios.keys.elementAt(index),
-                discoverType: DiscoverType.Studio,
+              onTap: (i) => context.push(
+                Routes.studio(
+                  info.studios.values.elementAt(i),
+                  info.studios.keys.elementAt(i),
+                ),
               ),
             ),
           if (info.producers.isNotEmpty)
             _PlainScrollCards(
               title: 'Producers',
               items: info.producers.keys.toList(),
-              onTap: (i) => LinkTile.openView(
-                context: context,
-                id: info.producers[info.producers.keys.elementAt(i)]!,
-                imageUrl: info.producers.keys.elementAt(i),
-                discoverType: DiscoverType.Studio,
+              onTap: (i) => context.push(
+                Routes.studio(
+                  info.producers.values.elementAt(i),
+                  info.producers.keys.elementAt(i),
+                ),
               ),
             ),
           if (info.externalLinks.isNotEmpty)
@@ -344,8 +343,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         )..mediaFilter.tagIn.add(tags[i].name);
         notifier.state = filter;
 
-        widget.ref.read(homeProvider).homeTab = HomeTab.discover;
-        Navigator.popUntil(context, (r) => r.isFirst);
+        context.go(Routes.home(HomeTab.discover));
       },
       onLongPress: (i) => showPopUp(
         context,

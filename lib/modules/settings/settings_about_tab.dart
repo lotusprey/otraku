@@ -69,10 +69,10 @@ class SettingsAboutTab extends StatelessWidget {
               'https://sites.google.com/view/otraku/privacy-policy',
             ),
           ),
-          const ListTile(
-            leading: Icon(Ionicons.log_out_outline),
-            title: Text('Accounts'),
-            onTap: Api.logOut,
+          ListTile(
+            leading: const Icon(Ionicons.log_out_outline),
+            title: const Text('Accounts'),
+            onTap: () => Api.logOut(context),
           ),
           const ListTile(
             leading: Icon(Ionicons.trash_bin_outline),

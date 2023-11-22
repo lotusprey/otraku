@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -192,10 +193,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           TopBarIcon(
             tooltip: 'Settings',
             icon: Ionicons.cog_outline,
-            onTap: () => Navigator.pushNamed(
-              context,
-              RouteArg.settings,
-            ),
+            onTap: () => context.push(Routes.settings),
           ),
       ],
     );

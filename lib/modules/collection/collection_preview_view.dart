@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/collection/collection_grid.dart';
 import 'package:otraku/modules/collection/collection_list.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
@@ -10,7 +12,6 @@ import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -93,12 +94,7 @@ class _CollectionPreviewViewState extends State<CollectionPreviewView> {
                       ),
                     );
                     final e = entries[Random().nextInt(entries.length)];
-
-                    Navigator.pushNamed(
-                      context,
-                      RouteArg.media,
-                      arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
-                    );
+                    context.push(Routes.media(e.mediaId, e.imageUrl));
                   },
                 ),
             ],

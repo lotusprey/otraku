@@ -130,10 +130,15 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   }
 
   @override
+  void deactivate() {
+    ref.invalidate(mediaFollowingProvider(widget.id));
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _scrollCtrl.removeListener(_scrollListener);
     widget.tabCtrl.removeListener(_tabListener);
-    ref.invalidate(mediaFollowingProvider(widget.id));
     super.dispose();
   }
 

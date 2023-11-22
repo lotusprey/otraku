@@ -5,18 +5,26 @@ import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 
+const homeFeedId = -1;
+
 final activitiesProvider = StateNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, AsyncValue<Paged<Activity>>, int?>(
-  (ref, userId) => ActivitiesNotifier(
-    viewerId: Options().id!,
-    filter: ref.watch(activityFilterProvider(userId)),
-  ),
+    .family<ActivitiesNotifier, AsyncValue<Paged<Activity>>, int>(
+  (ref, userId) {
+    if (userId == homeFeedId) {
+      ref.keepAlive();
+    }
+
+    return ActivitiesNotifier(
+      viewerId: Options().id!,
+      filter: ref.watch(activityFilterProvider(userId)),
+    );
+  },
 );
 
 final activityFilterProvider = StateNotifierProvider.autoDispose
-    .family<ActivityFilterNotifier, ActivityFilter, int?>(
+    .family<ActivityFilterNotifier, ActivityFilter, int>(
   (ref, userId) => ActivityFilterNotifier(
-    userId == null
+    userId == homeFeedId
         ? HomeActivityFilter(
             Options()
                 .feedActivityFilters

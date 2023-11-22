@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
@@ -20,6 +21,22 @@ class MediaInfoView extends StatelessWidget {
 
   final Media media;
   final ScrollController scrollCtrl;
+
+  Widget _buildFadingHtmlDescription(String description) {
+    return ShaderMask(
+      // Recreate the TextOverflow.fade effect
+      shaderCallback: (bounds) => const LinearGradient(
+        begin: Alignment(0.0, 0.8),
+        end: Alignment(0.0, 1.0),
+        colors: [Colors.white, Colors.transparent],
+      ).createShader(bounds),
+      child: ConstrainedBox(
+        // Limit height to 4 lines of Text
+        constraints: const BoxConstraints(maxHeight: 72),
+        child: HtmlContent(description),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,11 +95,7 @@ class MediaInfoView extends StatelessWidget {
                   child: Card(
                     child: Padding(
                       padding: Consts.padding,
-                      child: Text(
-                        info.description,
-                        maxLines: 4,
-                        overflow: TextOverflow.fade,
-                      ),
+                      child: _buildFadingHtmlDescription(info.description),
                     ),
                   ),
                   onTap: () => showPopUp(

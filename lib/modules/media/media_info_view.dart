@@ -22,22 +22,6 @@ class MediaInfoView extends StatelessWidget {
   final Media media;
   final ScrollController scrollCtrl;
 
-  Widget _buildFadingHtmlDescription(String description) {
-    return ShaderMask(
-      // Recreate the TextOverflow.fade effect
-      shaderCallback: (bounds) => const LinearGradient(
-        begin: Alignment(0.0, 0.8),
-        end: Alignment(0.0, 1.0),
-        colors: [Colors.white, Colors.transparent],
-      ).createShader(bounds),
-      child: ConstrainedBox(
-        // Limit height to 4 lines of Text
-        constraints: const BoxConstraints(maxHeight: 72),
-        child: HtmlContent(description),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final info = media.info;
@@ -95,7 +79,17 @@ class MediaInfoView extends StatelessWidget {
                   child: Card(
                     child: Padding(
                       padding: Consts.padding,
-                      child: _buildFadingHtmlDescription(info.description),
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment(0.0, 0.7),
+                          end: Alignment(0.0, 1.0),
+                          colors: [Colors.white, Colors.transparent],
+                        ).createShader(bounds),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 72),
+                          child: HtmlContent(info.description),
+                        ),
+                      ),
                     ),
                   ),
                   onTap: () => showPopUp(

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/route_arg.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/modules/discover/discover_media_grid.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
@@ -80,7 +81,7 @@ class _TopBarContent extends StatelessWidget {
                 TopBarIcon(
                   tooltip: 'Calendar',
                   icon: Ionicons.calendar_outline,
-                  onTap: () => Navigator.pushNamed(context, RouteArg.calendar),
+                  onTap: () => context.push(Routes.calendar),
                 ),
               if (type == DiscoverType.Anime || type == DiscoverType.Manga)
                 TopBarIcon(

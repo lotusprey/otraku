@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
+import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/activity/activity_provider.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
@@ -22,10 +23,10 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class ActivityView extends ConsumerStatefulWidget {
-  const ActivityView(this.id, this.onChanged);
+  const ActivityView(this.id, this.feedId);
 
   final int id;
-  final void Function(Activity?)? onChanged;
+  final int? feedId;
 
   @override
   ConsumerState<ActivityView> createState() => _ActivityViewState();
@@ -106,20 +107,11 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                               activity: data.activity,
                               footer: ActivityFooter(
                                 activity: data.activity,
-                                onChanged: () =>
-                                    widget.onChanged?.call(data.activity),
-                                onDeleted: () {
-                                  widget.onChanged?.call(null);
-                                  Navigator.pop(context);
-                                },
+                                onDeleted: () => _onDeleted(data.activity),
+                                onChanged: () => _onChanged(data.activity),
+                                onEdited: _onEdited,
                                 onPinned: () => setState(() {}),
                                 onOpenReplies: null,
-                                onEdited: (map) {
-                                  ref
-                                      .read(
-                                          activityProvider(widget.id).notifier)
-                                      .replaceActivity(map, Options().id!);
-                                },
                               ),
                             ),
                           ),
@@ -140,6 +132,32 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
         ),
       ),
     );
+  }
+
+  void _onDeleted(Activity activity) {
+    if (widget.feedId != null) {
+      ref.read(activitiesProvider(widget.feedId!).notifier).remove(widget.id);
+    }
+    Navigator.pop(context);
+  }
+
+  void _onChanged(Activity activity) {
+    if (widget.feedId != null) {
+      ref
+          .read(activitiesProvider(widget.feedId!).notifier)
+          .updateActivity(activity);
+    }
+  }
+
+  void _onEdited(Map<String, dynamic> map) {
+    final activity = ref
+        .read(activityProvider(widget.id).notifier)
+        .replaceActivity(map, Options().id!);
+    if (activity != null && widget.feedId != null) {
+      ref
+          .read(activitiesProvider(widget.feedId!).notifier)
+          .updateActivity(activity);
+    }
   }
 }
 

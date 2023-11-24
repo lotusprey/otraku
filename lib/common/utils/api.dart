@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 
 abstract class Api {
   static final _url = Uri.parse('https://graphql.anilist.co');
@@ -15,13 +13,56 @@ abstract class Api {
 
   static String? _accessToken;
 
-  // Save credentials to an account.
-  static Future<void> register(
+  static Future<bool> init() async {
+    final account = Options().selectedAccount;
+    if (account == null) return false;
+    if (_didAccountExpire(account)) return false;
+
+    _accessToken = await const FlutterSecureStorage()
+        .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
+    return true;
+  }
+
+  static bool hasActiveAccount() => _accessToken != null;
+
+  static Future<bool> selectAccount(int account) async {
+    if (Options().idOf(account) == null) return false;
+    if (_didAccountExpire(account)) return false;
+
+    _accessToken = await const FlutterSecureStorage()
+        .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
+    if (_accessToken == null) return false;
+
+    Options().selectedAccount = account;
+    return true;
+  }
+
+  static Future<void> unselectAccount() async {
+    _accessToken = null;
+    Options().selectedAccount = null;
+  }
+
+  static Future<bool> addAccount(
     int account,
     String token,
     int expiration,
   ) async {
-    if (account < 0 || account > 1) return;
+    if (account < 0 || account > 1) return false;
+
+    _accessToken = token;
+    try {
+      final data = await get('query Id {Viewer {id}}');
+      final id = data['Viewer']?['id'];
+      if (id == null) {
+        _accessToken = null;
+        return false;
+      }
+
+      Options().setIdOf(account, id);
+    } catch (_) {
+      _accessToken = null;
+      return false;
+    }
 
     await const FlutterSecureStorage().write(
       key: account == 0 ? _TOKEN_0 : _TOKEN_1,
@@ -31,60 +72,11 @@ abstract class Api {
     expiration = DateTime.now()
         .add(Duration(seconds: expiration, days: -1))
         .millisecondsSinceEpoch;
-
     Options().setExpirationOf(account, expiration);
-  }
-
-  // Try loading a saved account.
-  static Future<bool> logIn(int account) async {
-    if (account < 0 || account > 1) return false;
-
-    if (_accessToken == null) {
-      // Check the token's expiration date.
-      if (Options().expirationOf(account) != null) {
-        final date = DateTime.fromMillisecondsSinceEpoch(
-          Options().expirationOf(account)!,
-        );
-        if (DateTime.now().compareTo(date) >= 0) {
-          removeAccount(account);
-          return false;
-        }
-      }
-
-      // Try to acquire the token from the storage.
-      _accessToken = await const FlutterSecureStorage()
-          .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
-
-      if (_accessToken == null) return false;
-    }
-
-    // Fetch the viewer's id, if needed.
-    if (Options().idOf(account) == null) {
-      try {
-        final data = await get('query Id {Viewer {id}}');
-        Options().setIdOf(account, data['Viewer']?['id']);
-        if (Options().idOf(account) == null) {
-          _accessToken = null;
-          return false;
-        }
-      } catch (_) {
-        return false;
-      }
-    }
-
+    Options().selectedAccount = account;
     return true;
   }
 
-  // Log out and show available accounts.
-  static Future<void> logOut() async {
-    _accessToken = null;
-    Options().selectedAccount = null;
-    final context = RouteArg.navKey.currentContext;
-    if (context == null) return;
-    Navigator.pushNamedAndRemoveUntil(context, RouteArg.auth, (_) => false);
-  }
-
-  // Remove a saved account.
   static Future<void> removeAccount(int account) async {
     Options().setIdOf(account, null);
     Options().setExpirationOf(account, null);
@@ -92,7 +84,20 @@ abstract class Api {
         .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
   }
 
-  static bool loggedIn() => _accessToken != null;
+  static bool _didAccountExpire(int account) {
+    if (Options().expirationOf(account) == null) return false;
+
+    final expirationDate = DateTime.fromMillisecondsSinceEpoch(
+      Options().expirationOf(account)!,
+    );
+
+    if (DateTime.now().compareTo(expirationDate) < 0) {
+      return false;
+    }
+
+    removeAccount(account);
+    return true;
+  }
 
   // Send a request.
   static Future<Map<String, dynamic>> get(

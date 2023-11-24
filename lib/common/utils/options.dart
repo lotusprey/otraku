@@ -289,8 +289,7 @@ class Options extends ChangeNotifier {
   int get lastNotificationId => _lastNotificationId;
   String get lastVersionCode => _lastVersionCode;
   DateTime? get lastBackgroundWork => _lastBackgroundWork;
-
-  int? get account => _account;
+  int? get selectedAccount => _account;
 
   bool isAvailableAccount(int i) {
     if (i < 0 || i > 1) return false;

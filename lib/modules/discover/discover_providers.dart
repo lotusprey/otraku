@@ -11,12 +11,12 @@ import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 
-final discoverFilterProvider = StateProvider.autoDispose(
+final discoverFilterProvider = StateProvider(
   (ref) => DiscoverFilter(Options().defaultDiscoverType),
 );
 
-final discoverProvider = StateNotifierProvider.autoDispose<DiscoverNotifier,
-    AsyncValue<DiscoverItems>>(
+final discoverProvider =
+    StateNotifierProvider<DiscoverNotifier, AsyncValue<DiscoverItems>>(
   (ref) => DiscoverNotifier(ref.watch(discoverFilterProvider)),
 );
 

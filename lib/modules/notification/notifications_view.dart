@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/notification/notification_model.dart';
 import 'package:otraku/modules/notification/notification_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
@@ -132,12 +132,13 @@ class _NotificationItem extends StatelessWidget {
               children: [
                 if (item.imageUrl != null && item.headId != null)
                   GestureDetector(
-                    onTap: () => LinkTile.openView(
-                      context: context,
-                      id: item.headId!,
-                      imageUrl: item.imageUrl,
-                      discoverType: item.discoverType ?? DiscoverType.User,
-                    ),
+                    onTap: () => context.push(switch (item.discoverType) {
+                      DiscoverType.Anime || DiscoverType.Manga => Routes.media(
+                          item.headId!,
+                          item.imageUrl,
+                        ),
+                      _ => Routes.user(item.headId!, item.imageUrl),
+                    }),
                     onLongPress: () {
                       if (item.discoverType == DiscoverType.Anime ||
                           item.discoverType == DiscoverType.Manga) {
@@ -164,25 +165,12 @@ class _NotificationItem extends StatelessWidget {
                       NotificationType.ACTIVITY_REPLY ||
                       NotificationType.ACTIVITY_REPLY_LIKE ||
                       NotificationType.ACTIVITY_REPLY_SUBSCRIBED =>
-                        Navigator.pushNamed(
-                          context,
-                          RouteArg.activity,
-                          arguments: RouteArg(id: item.bodyId),
-                        ),
-                      NotificationType.FOLLOWING => LinkTile.openView(
-                          context: context,
-                          id: item.headId!,
-                          imageUrl: item.imageUrl,
-                          discoverType: DiscoverType.User,
-                        ),
+                        context.push(Routes.activity(item.bodyId!)),
+                      NotificationType.FOLLOWING =>
+                        context.push(Routes.user(item.headId!, item.imageUrl)),
                       NotificationType.AIRING ||
                       NotificationType.RELATED_MEDIA_ADDITION =>
-                        LinkTile.openView(
-                          context: context,
-                          id: item.bodyId!,
-                          imageUrl: item.imageUrl,
-                          discoverType: item.discoverType!,
-                        ),
+                        context.push(Routes.media(item.headId!, item.imageUrl)),
                       NotificationType.MEDIA_DATA_CHANGE ||
                       NotificationType.MEDIA_MERGE ||
                       NotificationType.MEDIA_DELETION =>

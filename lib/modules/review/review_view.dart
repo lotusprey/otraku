@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/modules/review/review_header.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/review/review_providers.dart';
-import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 
 class ReviewView extends StatelessWidget {
@@ -34,11 +34,8 @@ class ReviewView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 15, bottom: 5),
                 sliver: SliverToBoxAdapter(
                   child: GestureDetector(
-                    onTap: () => LinkTile.openView(
-                      context: context,
-                      id: data.mediaId,
-                      imageUrl: data.mediaCover,
-                      discoverType: DiscoverType.Anime,
+                    onTap: () => context.push(
+                      Routes.media(data.mediaId, data.mediaCover),
                     ),
                     child: Text(
                       data.mediaTitle,
@@ -50,11 +47,8 @@ class ReviewView extends StatelessWidget {
               ),
               SliverToBoxAdapter(
                 child: GestureDetector(
-                  onTap: () => LinkTile.openView(
-                    context: context,
-                    id: data.userId,
-                    imageUrl: data.userAvatar,
-                    discoverType: DiscoverType.User,
+                  onTap: () => context.push(
+                    Routes.user(data.userId, data.userAvatar),
                   ),
                   child: RichText(
                     textAlign: TextAlign.center,

@@ -2,8 +2,8 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 
-class ActivityState {
-  ActivityState(this.activity, this.replies);
+class ExpandedActivity {
+  ExpandedActivity(this.activity, this.replies);
 
   final Activity activity;
   final Paged<ActivityReply> replies;

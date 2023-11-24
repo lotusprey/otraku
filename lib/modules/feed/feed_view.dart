@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/activity/activity_filter_sheet.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activities_view.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -31,7 +32,7 @@ class FeedView extends StatelessWidget {
 
         final openNotifications = () {
           ref.read(settingsProvider.notifier).clearUnread();
-          Navigator.pushNamed(context, RouteArg.notifications);
+          context.push(Routes.notifications);
         };
 
         Widget result = TopBarIcon(
@@ -66,7 +67,7 @@ class FeedView extends StatelessWidget {
                   CompositionView(
                     composition: Composition.status(null, ''),
                     onDone: (map) => ref
-                        .read(activitiesProvider(null).notifier)
+                        .read(activitiesProvider(homeFeedId).notifier)
                         .insertActivity(map, Options().id!),
                   ),
                 ),
@@ -80,12 +81,12 @@ class FeedView extends StatelessWidget {
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,
-                onTap: () => showActivityFilterSheet(context, ref, null),
+                onTap: () => showActivityFilterSheet(context, ref, homeFeedId),
               ),
               notificationIcon,
             ],
           ),
-          child: ActivitiesSubView(null, scrollCtrl),
+          child: ActivitiesSubView(homeFeedId, scrollCtrl),
         );
       },
     );

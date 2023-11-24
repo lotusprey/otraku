@@ -2,14 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/fields/search_field.dart';
 import 'package:otraku/modules/collection/collection_grid.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
@@ -138,12 +139,7 @@ class _TopBarContent extends StatelessWidget {
                   onTap: () {
                     final entries = ref.read(entriesProvider(tag));
                     final e = entries[Random().nextInt(entries.length)];
-
-                    Navigator.pushNamed(
-                      context,
-                      RouteArg.media,
-                      arguments: RouteArg(id: e.mediaId, info: e.imageUrl),
-                    );
+                    context.push(Routes.media(e.mediaId, e.imageUrl));
                   },
                 ),
               TopBarIcon(

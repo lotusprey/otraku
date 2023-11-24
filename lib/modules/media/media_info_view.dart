@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/routing.dart';
+import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
@@ -78,10 +78,16 @@ class MediaInfoView extends StatelessWidget {
                   child: Card(
                     child: Padding(
                       padding: Consts.padding,
-                      child: Text(
-                        info.description,
-                        maxLines: 4,
-                        overflow: TextOverflow.fade,
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment(0.0, 0.7),
+                          end: Alignment(0.0, 1.0),
+                          colors: [Colors.white, Colors.transparent],
+                        ).createShader(bounds),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 72),
+                          child: HtmlContent(info.description),
+                        ),
                       ),
                     ),
                   ),

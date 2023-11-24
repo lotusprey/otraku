@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
@@ -14,100 +13,37 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/toast.dart';
 
 class AuthView extends StatefulWidget {
-  const AuthView();
+  const AuthView([this.credentials]);
+
+  final (String, int)? credentials;
 
   @override
   AuthViewState createState() => AuthViewState();
 }
 
 class AuthViewState extends State<AuthView> {
-  StreamSubscription<String>? _sub;
   bool _loading = false;
-
-  void _verify(int account) {
-    setState(() => _loading = true);
-
-    Api.logIn(account).then((loggedIn) {
-      if (!loggedIn) {
-        setState(() => _loading = false);
-        return;
-      }
-
-      Options().selectedAccount = account;
-      context.go(Routes.home());
-    });
-  }
-
-  Future<void> _requestAccessToken(int account) async {
-    setState(() => _loading = true);
-
-    // Prepare to receive an authentication token.
-    _clearStreamSubscription();
-    _sub = AppLinks().stringLinkStream.listen((link) async {
-      final start = link.indexOf('=') + 1;
-      final middle = link.indexOf('&');
-      final end = link.lastIndexOf('=') + 1;
-
-      if (start < 1 || middle < 1 || end < 1) {
-        setState(() => _loading = false);
-        showPopUp(
-          context,
-          const ConfirmationDialog(
-            content: 'Needed data is missing',
-            title: 'Faulty response',
-          ),
-        );
-        return;
-      }
-
-      final token = link.substring(start, middle);
-      final expiration = int.tryParse(link.substring(end)) ?? -1;
-
-      if (token.isEmpty || expiration < 0) {
-        setState(() => _loading = false);
-        showPopUp(
-          context,
-          const ConfirmationDialog(
-            content: 'Could not parse data',
-            title: 'Faulty response',
-          ),
-        );
-        return;
-      }
-
-      await Api.register(account, token, expiration);
-      _clearStreamSubscription();
-      _verify(account);
-    });
-
-    // Redirect to the browser for authentication.
-    final ok = await Toast.launch(
-      context,
-      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
-    );
-
-    if (!ok) setState(() => _loading = false);
-  }
-
-  void _clearStreamSubscription() {
-    _sub?.cancel();
-    _sub = null;
-  }
+  int _account = 0;
 
   @override
   void initState() {
     super.initState();
-    if (Options().account != null) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _verify(Options().account!),
-      );
-    }
+    _attemptToFinishAccountSetup();
   }
 
   @override
-  void dispose() {
-    _sub?.cancel();
-    super.dispose();
+  void didUpdateWidget(covariant AuthView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _attemptToFinishAccountSetup();
+  }
+
+  void _attemptToFinishAccountSetup() async {
+    if (widget.credentials == null) return;
+    final token = widget.credentials!.$1;
+    final expiration = widget.credentials!.$2;
+    if (await Api.addAccount(_account, token, expiration) && mounted) {
+      context.go(Routes.home());
+    }
   }
 
   @override
@@ -119,16 +55,11 @@ class AuthViewState extends State<AuthView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Center(child: Loader()),
-            if (_sub != null) ...[
-              const SizedBox(height: 10),
-              TextButton(
-                child: const Text('Cancel'),
-                onPressed: () {
-                  _clearStreamSubscription();
-                  setState(() => _loading = false);
-                },
-              ),
-            ],
+            const SizedBox(height: 10),
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => setState(() => _loading = false),
+            ),
           ],
         ),
       );
@@ -197,7 +128,7 @@ class AuthViewState extends State<AuthView> {
                       icon: Ionicons.enter_outline,
                       tooltip: available0 ? 'Log In' : 'Connect',
                       onTap: () =>
-                          available0 ? _verify(0) : _requestAccessToken(0),
+                          available0 ? _selectAccount(0) : _addAccount(0),
                     ),
                   ],
                 ),
@@ -248,7 +179,7 @@ class AuthViewState extends State<AuthView> {
                       icon: Ionicons.enter_outline,
                       tooltip: available1 ? 'Log In' : 'Connect',
                       onTap: () =>
-                          available1 ? _verify(1) : _requestAccessToken(1),
+                          available1 ? _selectAccount(1) : _addAccount(1),
                     ),
                   ],
                 ),
@@ -265,5 +196,21 @@ class AuthViewState extends State<AuthView> {
         ),
       ),
     );
+  }
+
+  void _selectAccount(int account) async {
+    if (await Api.selectAccount(account) && mounted) {
+      context.go(Routes.home());
+    }
+  }
+
+  Future<void> _addAccount(int account) async {
+    setState(() => _loading = true);
+    _account = account;
+    final ok = await Toast.launch(
+      context,
+      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
+    );
+    if (!ok) setState(() => _loading = false);
   }
 }

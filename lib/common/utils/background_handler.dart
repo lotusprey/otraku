@@ -26,6 +26,14 @@ class BackgroundHandler {
       },
     );
 
+    // Check if the app was launched by a notification.
+    _notificationPlugin.getNotificationAppLaunchDetails().then(
+      (launchDetails) {
+        if (launchDetails?.notificationResponse?.payload == null) return;
+        notificationCtrl.add(launchDetails!.notificationResponse!.payload!);
+      },
+    );
+
     await Workmanager().initialize(_fetch);
 
     if (Platform.isAndroid) {
@@ -35,16 +43,6 @@ class BackgroundHandler {
         constraints: Constraints(networkType: NetworkType.connected),
       );
     }
-  }
-
-  /// If the app was launched by a notification, add it to [notificationCtrl].
-  static checkForLaunchNotification(StreamController<String> notificationCtrl) {
-    _notificationPlugin.getNotificationAppLaunchDetails().then(
-      (launchDetails) {
-        if (launchDetails?.notificationResponse?.payload == null) return;
-        notificationCtrl.add(launchDetails!.notificationResponse!.payload!);
-      },
-    );
   }
 
   /// Request for a permission to send notifications, if not already granted.
@@ -64,14 +62,11 @@ class BackgroundHandler {
 void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
       await Options.init();
-      if (Options().account == null) return true;
+      if (Options().selectedAccount == null) return true;
       Options().lastBackgroundWork = DateTime.now();
 
       // Log in.
-      if (!Api.loggedIn()) {
-        final ok = await Api.logIn(Options().account!);
-        if (!ok) return true;
-      }
+      if (!Api.hasActiveAccount() && !await Api.init()) return true;
 
       // Get new notifications.
       Map<String, dynamic> data;

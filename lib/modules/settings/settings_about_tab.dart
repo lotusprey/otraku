@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/toast.dart';
@@ -72,7 +74,10 @@ class SettingsAboutTab extends StatelessWidget {
           ListTile(
             leading: const Icon(Ionicons.log_out_outline),
             title: const Text('Accounts'),
-            onTap: () => Api.logOut(context),
+            onTap: () {
+              Api.unselectAccount();
+              context.go(Routes.auth);
+            },
           ),
           const ListTile(
             leading: Icon(Ionicons.trash_bin_outline),

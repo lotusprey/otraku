@@ -45,7 +45,20 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
     GoRoute(
       path: '/auth',
       onExit: onExit,
-      builder: (context, state) => const AuthView(),
+      builder: (context, state) {
+        final fragment = state.uri.fragment;
+        if (fragment.isEmpty) return const AuthView();
+
+        final start = fragment.indexOf('=') + 1;
+        final middle = fragment.indexOf('&');
+        final end = fragment.lastIndexOf('=') + 1;
+
+        final token = fragment.substring(start, middle);
+        final expiration = int.tryParse(fragment.substring(end)) ?? -1;
+        if (token.isEmpty || expiration < 0) return const AuthView();
+
+        return AuthView((token, expiration));
+      },
     ),
     GoRoute(
       path: '/home',

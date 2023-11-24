@@ -36,13 +36,18 @@ class AppState extends ConsumerState<App> {
   void initState() {
     super.initState();
     _router = GoRouter(
-      initialLocation: Api.isSessionActive() ? Routes.home() : Routes.auth,
+      initialLocation: Api.hasActiveAccount() ? Routes.home() : Routes.auth,
       routes: buildRoutes(() => Options().confirmExit),
+      debugLogDiagnostics: true,
     );
 
+    if (Options().lastVersionCode != versionCode) {
+      Options().updateVersionCode();
+      BackgroundHandler.requestPermissionForNotifications();
+    }
+
     Options().addListener(() => setState(() {}));
-    _notificationSubscription =
-        _notificationCtrl.stream.listen((path) => context.push(path));
+    _notificationSubscription = _notificationCtrl.stream.listen(_router.push);
   }
 
   @override
@@ -54,19 +59,14 @@ class AppState extends ConsumerState<App> {
 
   @override
   Widget build(BuildContext context) {
-    if (Options().lastVersionCode != versionCode) {
-      Options().updateVersionCode();
-      BackgroundHandler.requestPermissionForNotifications();
-    }
-
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         ColorScheme lightScheme;
         ColorScheme darkScheme;
         var theme = Options().theme;
 
-        /// The system schemes must be cached, so
-        /// they can later be used in the settings.
+        // The system schemes must be cached, so
+        // they can later be used in the settings.
         final notifier = ref.watch(homeProvider.notifier);
         final hasDynamic = lightDynamic != null && darkDynamic != null;
 
@@ -143,9 +143,9 @@ class AppState extends ConsumerState<App> {
           darkTheme: data,
           routerConfig: _router,
           builder: (context, child) {
-            /// Override the [textScaleFactor], because some devices apply
-            /// too high of a factor and it breaks the app visually.
-            /// [child] can't be null, because [onGenerateRoute] is provided.
+            // Override the [textScaleFactor], because some devices apply
+            // too high of a factor and it breaks the app visually.
+            // [child] can't be null, because [onGenerateRoute] is provided.
             final mediaQuery = MediaQuery.of(context);
             final scale = mediaQuery.textScaler.clamp(
               minScaleFactor: 0.8,

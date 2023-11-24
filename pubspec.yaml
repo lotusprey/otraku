@@ -39,9 +39,6 @@ dependencies:
   # Opening links in the browser.
   url_launcher: ^6.2.1
 
-  # Flutter deep linking didn't handle url fragments before. When [go_router] is implemented, this can be removed.
-  app_links: ^3.4.5
-
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.6.8
 

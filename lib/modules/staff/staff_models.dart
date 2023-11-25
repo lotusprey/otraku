@@ -47,10 +47,8 @@ class Staff {
       altNames: altNames,
       imageUrl: map['image']['large'],
       description: map['description'] ?? '',
-      dateOfBirth:
-          DateTimeUtil.fromFuzzyDate(map['dateOfBirth'])?.formattedDate,
-      dateOfDeath:
-          DateTimeUtil.fromFuzzyDate(map['dateOfDeath'])?.formattedDate,
+      dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
+      dateOfDeath: StringUtil.fromFuzzyDate(map['dateOfDeath']),
       bloodType: map['bloodType'],
       homeTown: map['homeTown'],
       gender: map['gender'],

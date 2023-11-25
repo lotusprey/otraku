@@ -92,7 +92,7 @@ class SettingsAboutTab extends StatelessWidget {
           if (lastNotificationFetch != null) ...[
             const SizedBox(height: 30),
             Text(
-              'Performed a notification check around ${DateTimeUtil.tryFormattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+              'Performed a notification check around ${DateTimeUtil.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),

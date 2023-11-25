@@ -38,7 +38,6 @@ class AppState extends ConsumerState<App> {
     _router = GoRouter(
       initialLocation: Api.hasActiveAccount() ? Routes.home() : Routes.auth,
       routes: buildRoutes(() => Options().confirmExit),
-      debugLogDiagnostics: true,
     );
 
     if (Options().lastVersionCode != versionCode) {

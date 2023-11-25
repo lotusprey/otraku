@@ -77,9 +77,11 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  const PieChart(
-      {required this.title, required this.names, required this.values})
-      : assert(names.length == values.length);
+  const PieChart({
+    required this.title,
+    required this.names,
+    required this.values,
+  }) : assert(names.length == values.length);
 
   final String title;
   final List<String> names;

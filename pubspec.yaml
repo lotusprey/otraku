@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.4.7
+  flutter_riverpod: ^2.4.8
 
   # Routing.
   go_router: ^12.1.1

@@ -352,8 +352,8 @@ class MediaInfo {
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: DateTimeUtil.fromFuzzyDate(map['startDate'])?.formattedDate,
-      endDate: DateTimeUtil.fromFuzzyDate(map['endDate'])?.formattedDate,
+      startDate: StringUtil.fromFuzzyDate(map['startDate']),
+      endDate: StringUtil.fromFuzzyDate(map['endDate']),
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,

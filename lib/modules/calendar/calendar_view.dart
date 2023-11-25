@@ -70,9 +70,7 @@ class _CalendarViewState extends State<CalendarView> {
                     _setDate(ref, newDate);
                   }
                 }),
-                child: Text(
-                  '${date.formattedDate} - ${date.formattedWeekday}',
-                ),
+                child: Text(date.formattedWithWeekDay),
               ),
             ),
             SizedBox(

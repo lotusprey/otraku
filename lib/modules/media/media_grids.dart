@@ -117,6 +117,7 @@ class MediaReviewGrid extends StatelessWidget {
               id: items[i].userId,
               info: items[i].avatar,
               discoverType: DiscoverType.User,
+              additionalData: items[i].username,
               child: Row(
                 children: [
                   Hero(
@@ -194,6 +195,7 @@ class MediaFollowingGrid extends StatelessWidget {
           id: items[i].userId,
           info: items[i].userAvatar,
           discoverType: DiscoverType.User,
+          additionalData: items[i].userName,
           child: Card(
             child: Row(
               children: [

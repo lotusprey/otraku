@@ -29,6 +29,7 @@ class ReplyCard extends StatelessWidget {
           id: reply.user.id,
           info: reply.user.imageUrl,
           discoverType: DiscoverType.User,
+          additionalData: reply.user.name,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

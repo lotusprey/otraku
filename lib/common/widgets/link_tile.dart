@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
@@ -11,12 +12,14 @@ class LinkTile extends StatelessWidget {
     required this.info,
     required this.discoverType,
     required this.child,
+    this.additionalData,
     super.key,
   });
 
   final DiscoverType discoverType;
   final int id;
   final String? info;
+  final String? additionalData;
   final Widget child;
 
   @override
@@ -31,10 +34,13 @@ class LinkTile extends StatelessWidget {
         DiscoverType.User => Routes.user(id, info),
         DiscoverType.Review => Routes.review(id, info),
       }),
-      onLongPress: () {
-        if (discoverType == DiscoverType.Anime ||
-            discoverType == DiscoverType.Manga) {
-          showSheet(context, EditView((id: id, setComplete: false)));
+      onLongPress: () async {
+        switch (discoverType) {
+          case DiscoverType.Anime || DiscoverType.Manga:
+            showSheet(context, EditView((id: id, setComplete: false)));
+          case DiscoverType.User:
+            await Clipboard.setData(ClipboardData(text: "$additionalData"));
+          default:
         }
       },
       child: child,

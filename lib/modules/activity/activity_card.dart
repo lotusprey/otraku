@@ -71,6 +71,7 @@ class ActivityCard extends StatelessWidget {
                 id: activity.agent.id,
                 info: activity.agent.imageUrl,
                 discoverType: DiscoverType.User,
+                additionalData: activity.agent.name,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -108,6 +109,7 @@ class ActivityCard extends StatelessWidget {
                 id: activity.reciever!.id,
                 info: activity.reciever!.imageUrl,
                 discoverType: DiscoverType.User,
+                additionalData: activity.reciever?.name,
                 child: ClipRRect(
                   borderRadius: Consts.borderRadiusMin,
                   child: CachedImage(

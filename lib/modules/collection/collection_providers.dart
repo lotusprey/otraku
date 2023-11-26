@@ -46,6 +46,11 @@ final entriesProvider = Provider.autoDispose.family(
             break;
           }
         }
+
+        if (entry.notes != null && entry.notes!.toLowerCase().contains(search)) {
+          contains = true;
+        }
+
         if (!contains) continue;
       }
 

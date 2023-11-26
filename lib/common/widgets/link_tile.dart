@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/routing.dart';
+import 'package:otraku/common/widgets/overlays/toast.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
@@ -39,7 +39,7 @@ class LinkTile extends StatelessWidget {
           case DiscoverType.Anime || DiscoverType.Manga:
             showSheet(context, EditView((id: id, setComplete: false)));
           case DiscoverType.User:
-            await Clipboard.setData(ClipboardData(text: "$additionalData"));
+            Toast.copy(context, "$additionalData");
           default:
         }
       },

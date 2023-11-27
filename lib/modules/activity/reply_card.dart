@@ -15,8 +15,9 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  const ReplyCard(this.activityId, this.reply);
+  const ReplyCard(this.ref, this.activityId, this.reply);
 
+  final WidgetRef ref;
   final int activityId;
   final ActivityReply reply;
 
@@ -83,6 +84,10 @@ class ReplyCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                     ],
+                    Visibility(
+                        visible: reply.user.id != Options().id,
+                        child: _ReplyMentionButton(ref, activityId, reply.user)
+                    ),
                     _ReplyLikeButton(reply),
                   ],
                 ),
@@ -142,6 +147,50 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
       ]),
+    );
+  }
+}
+
+class _ReplyMentionButton extends StatefulWidget {
+  const _ReplyMentionButton(this.ref, this.activityId, this.user);
+
+  final WidgetRef ref;
+  final int activityId;
+  final ActivityUser user;
+
+  @override
+  State<StatefulWidget> createState() => _ReplyMentionButtonState();
+}
+
+class _ReplyMentionButtonState extends State<_ReplyMentionButton> {
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: Row(
+        children: [
+          Tooltip(
+            message: 'Reply',
+            child: InkResponse(
+              radius: 10,
+              onTap: () => showSheet(
+                context,
+                CompositionView(
+                  composition: Composition.reply(null, '@${widget.user.name} ', widget.activityId),
+                  onDone: (map) => widget.ref
+                      .read(activityProvider(widget.activityId).notifier)
+                      .appendReply(map),
+                ),
+              ),
+              child: const Icon(
+                Icons.reply,
+                size: Consts.iconSmall,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+        ],
+      ),
     );
   }
 }

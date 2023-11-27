@@ -86,7 +86,12 @@ class ReplyCard extends StatelessWidget {
                     ],
                     Visibility(
                         visible: reply.user.id != Options().id,
-                        child: _ReplyMentionButton(ref, activityId, reply.user)
+                        child: Row(
+                          children: [
+                            _ReplyMentionButton(ref, activityId, reply.user),
+                            const SizedBox(width: 10),
+                          ],
+                        )
                     ),
                     _ReplyLikeButton(reply),
                   ],
@@ -167,29 +172,24 @@ class _ReplyMentionButtonState extends State<_ReplyMentionButton> {
   Widget build(BuildContext context) {
     return SizedBox(
       height: 40,
-      child: Row(
-        children: [
-          Tooltip(
-            message: 'Reply',
-            child: InkResponse(
-              radius: 10,
-              onTap: () => showSheet(
-                context,
-                CompositionView(
-                  composition: Composition.reply(null, '@${widget.user.name} ', widget.activityId),
-                  onDone: (map) => widget.ref
-                      .read(activityProvider(widget.activityId).notifier)
-                      .appendReply(map),
-                ),
-              ),
-              child: const Icon(
-                Icons.reply,
-                size: Consts.iconSmall,
-              ),
+      child: Tooltip(
+        message: 'Reply',
+        child: InkResponse(
+          radius: 10,
+          onTap: () => showSheet(
+            context,
+            CompositionView(
+              composition: Composition.reply(null, '@${widget.user.name} ', widget.activityId),
+              onDone: (map) => widget.ref
+                  .read(activityProvider(widget.activityId).notifier)
+                  .appendReply(map),
             ),
           ),
-          const SizedBox(width: 10),
-        ],
+          child: const Icon(
+            Icons.reply,
+            size: Consts.iconSmall,
+          ),
+        ),
       ),
     );
   }

@@ -15,9 +15,8 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  const ReplyCard(this.ref, this.activityId, this.reply);
+  const ReplyCard(this.activityId, this.reply);
 
-  final WidgetRef ref;
   final int activityId;
   final ActivityReply reply;
 
@@ -65,11 +64,12 @@ class ReplyCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const Spacer(),
-                    if (reply.user.id == Options().id) ...[
+                    ...[
                       Consumer(
                         builder: (context, ref, _) => SizedBox(
                           height: 40,
-                          child: Tooltip(
+                          child: reply.user.id == Options().id ?
+                          Tooltip(
                             message: 'More',
                             child: InkResponse(
                               radius: 10,
@@ -79,20 +79,11 @@ class ReplyCard extends StatelessWidget {
                                 size: Consts.iconSmall,
                               ),
                             ),
-                          ),
+                          ) : _ReplyMentionButton(ref, activityId, reply.user),
                         ),
                       ),
                       const SizedBox(width: 10),
                     ],
-                    Visibility(
-                        visible: reply.user.id != Options().id,
-                        child: Row(
-                          children: [
-                            _ReplyMentionButton(ref, activityId, reply.user),
-                            const SizedBox(width: 10),
-                          ],
-                        )
-                    ),
                     _ReplyLikeButton(reply),
                   ],
                 ),

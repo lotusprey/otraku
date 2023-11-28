@@ -119,7 +119,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                             delegate: SliverChildBuilderDelegate(
                               childCount: data.replies.items.length,
                               (context, i) =>
-                                  ReplyCard(ref, widget.id, data.replies.items[i]),
+                                  ReplyCard(widget.id, data.replies.items[i]),
                             ),
                           ),
                           SliverFooter(loading: data.replies.hasNext),

@@ -64,26 +64,25 @@ class ReplyCard extends StatelessWidget {
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                     const Spacer(),
-                    ...[
-                      Consumer(
-                        builder: (context, ref, _) => SizedBox(
-                          height: 40,
-                          child: reply.user.id == Options().id ?
-                          Tooltip(
-                            message: 'More',
-                            child: InkResponse(
-                              radius: 10,
-                              onTap: () => _showMoreSheet(context, ref),
-                              child: const Icon(
-                                Ionicons.ellipsis_horizontal,
-                                size: Consts.iconSmall,
-                              ),
-                            ),
-                          ) : _ReplyMentionButton(ref, activityId, reply.user),
-                        ),
+                    Consumer(
+                      builder: (context, ref, _) => SizedBox(
+                        height: 40,
+                        child: reply.user.id == Options().id
+                            ? Tooltip(
+                                message: 'More',
+                                child: InkResponse(
+                                  radius: 10,
+                                  onTap: () => _showMoreSheet(context, ref),
+                                  child: const Icon(
+                                    Ionicons.ellipsis_horizontal,
+                                    size: Consts.iconSmall,
+                                  ),
+                                ),
+                              )
+                            : _ReplyMentionButton(ref, activityId, reply.user),
                       ),
+                    ),
                       const SizedBox(width: 10),
-                    ],
                     _ReplyLikeButton(reply),
                   ],
                 ),

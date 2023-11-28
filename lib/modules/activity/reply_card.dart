@@ -156,18 +156,13 @@ class ReplyCard extends StatelessWidget {
   }
 }
 
-class _ReplyMentionButton extends StatefulWidget {
+class _ReplyMentionButton extends StatelessWidget {
   const _ReplyMentionButton(this.ref, this.activityId, this.user);
 
   final WidgetRef ref;
   final int activityId;
   final ActivityUser user;
 
-  @override
-  State<StatefulWidget> createState() => _ReplyMentionButtonState();
-}
-
-class _ReplyMentionButtonState extends State<_ReplyMentionButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -179,9 +174,9 @@ class _ReplyMentionButtonState extends State<_ReplyMentionButton> {
           onTap: () => showSheet(
             context,
             CompositionView(
-              composition: Composition.reply(null, '@${widget.user.name} ', widget.activityId),
-              onDone: (map) => widget.ref
-                  .read(activityProvider(widget.activityId).notifier)
+              composition: Composition.reply(null, '@${user.name} ', activityId),
+              onDone: (map) => ref
+                  .read(activityProvider(activityId).notifier)
                   .appendReply(map),
             ),
           ),

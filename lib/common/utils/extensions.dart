@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/routing.dart';
 
 extension StringUtil on String {
   static String? codeToCountry(String? code) => switch (code) {
@@ -148,4 +150,8 @@ extension ColorUtil on Color {
       return null;
     }
   }
+}
+
+extension BuildContextUtil on BuildContext {
+  void back() => canPop() ? pop() : go(Routes.home());
 }

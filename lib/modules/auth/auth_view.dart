@@ -10,7 +10,7 @@ import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView([this.credentials]);

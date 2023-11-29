@@ -9,7 +9,7 @@ import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class StaffInfoTab extends StatelessWidget {
   const StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);

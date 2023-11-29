@@ -43,14 +43,26 @@
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
-               <!-- Deep links -> -->
+               <!-- Deep linking -->
                <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
                <intent-filter android:autoVerify="true">
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
                     <data android:scheme="app" android:host="otraku" android:pathPrefix="/auth" />
-                    <!-- <data android:scheme="https" android:host="anilist.co" /> -->
+               </intent-filter>
+               <intent-filter android:autoVerify="true">
+                    <action android:name="android.intent.action.VIEW" />
+                    <category android:name="android.intent.category.DEFAULT" />
+                    <category android:name="android.intent.category.BROWSABLE" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/anime/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/manga/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/character/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/staff/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/studio/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/review/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/user/" />
+                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/activity/" />
                </intent-filter>
           </activity>
           <meta-data android:name="flutterEmbedding" android:value="2" />

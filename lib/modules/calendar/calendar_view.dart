@@ -9,7 +9,7 @@ import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 import 'package:otraku/modules/calendar/calendar_filter_sheet.dart';

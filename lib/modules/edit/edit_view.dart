@@ -19,7 +19,7 @@ import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/score_field.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {

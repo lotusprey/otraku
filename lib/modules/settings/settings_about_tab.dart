@@ -7,7 +7,7 @@ import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
   const SettingsAboutTab(this.scrollCtrl);

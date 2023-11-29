@@ -4,7 +4,7 @@ import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class HtmlContent extends StatelessWidget {
   const HtmlContent(this.text, {this.renderMode = RenderMode.column});

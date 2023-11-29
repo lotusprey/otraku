@@ -17,7 +17,7 @@ import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {

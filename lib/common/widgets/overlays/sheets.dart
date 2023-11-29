@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>

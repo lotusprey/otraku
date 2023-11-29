@@ -82,6 +82,14 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       path: '/calendar',
       builder: (context, state) => const CalendarView(),
     ),
+    // GoRoute(
+    //   path: '/anime/:id',
+    //   redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    // ),
+    // GoRoute(
+    //   path: '/manga/:id',
+    //   redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    // ),
     GoRoute(
       path: '/media/:id',
       redirect: _parseIdOr404,

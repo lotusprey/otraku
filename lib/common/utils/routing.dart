@@ -82,14 +82,6 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       path: '/calendar',
       builder: (context, state) => const CalendarView(),
     ),
-    // GoRoute(
-    //   path: '/anime/:id',
-    //   redirect: (context, state) => '/media/${state.pathParameters['id']}',
-    // ),
-    // GoRoute(
-    //   path: '/manga/:id',
-    //   redirect: (context, state) => '/media/${state.pathParameters['id']}',
-    // ),
     GoRoute(
       path: '/media/:id',
       redirect: _parseIdOr404,
@@ -114,6 +106,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
         state.uri.queryParameters['image'],
       ),
     ),
+    // TODO user routes work with id, but name support is needed for deep links.
     GoRoute(
       path: '/user/:id',
       redirect: _parseIdOr404,
@@ -149,7 +142,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/anime/:id',
+      path: '/collection/anime/:id',
       redirect: _parseIdOr404,
       builder: (context, state) => CollectionView(
         int.parse(state.pathParameters['id']!),
@@ -157,7 +150,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/manga/:id',
+      path: '/collection/manga/:id',
       redirect: _parseIdOr404,
       builder: (context, state) => CollectionView(
         int.parse(state.pathParameters['id']!),
@@ -198,6 +191,14 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       builder: (context, state) => StatisticsView(
         int.parse(state.pathParameters['id']!),
       ),
+    ),
+    GoRoute(
+      path: '/anime/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/manga/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
   ];
 }
@@ -241,9 +242,9 @@ class Routes {
 
   static String thread(int id) => '/thread/$id';
 
-  static String anime(int id) => '/anime/$id';
+  static String animeCollection(int id) => '/collection/anime/$id';
 
-  static String manga(int id) => '/manga/$id';
+  static String mangaCollection(int id) => '/collection/manga/$id';
 
   static String activities(int id) => '/activities/$id';
 

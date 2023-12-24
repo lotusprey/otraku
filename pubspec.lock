@@ -101,10 +101,10 @@ packages:
     dependency: "direct main"
     description:
       name: dynamic_color
-      sha256: "8b8bd1d798bd393e11eddeaa8ae95b12ff028bf7d5998fc5d003488cd5f4ce2f"
+      sha256: a866f1f8947bfdaf674d7928e769eac7230388a2e7a2542824fad4bb5b87be3b
       url: "https://pub.dev"
     source: hosted
-    version: "1.6.8"
+    version: "1.6.9"
   fake_async:
     dependency: transitive
     description:
@@ -244,18 +244,18 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_widget_from_html_core
-      sha256: d3239b1670e83fafb209d0ddccfd19bb1cd5382b3ac9a507eb1b36274df78fec
+      sha256: "86d40a9f26d10011664df057c950e9c348ee1a7dbf141f295a07b0075ffd780b"
       url: "https://pub.dev"
     source: hosted
-    version: "0.14.7"
+    version: "0.14.9"
   go_router:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: c247a4f76071c3b97bb5ae8912968870d5565644801c5e09f3bc961b4d874895
+      sha256: ca7e4a2249f96773152f1853fa25933ac752495cdd7fdf5dafb9691bd05830fd
       url: "https://pub.dev"
     source: hosted
-    version: "12.1.1"
+    version: "13.0.0"
   hive:
     dependency: "direct main"
     description:
@@ -553,10 +553,10 @@ packages:
     dependency: "direct main"
     description:
       name: url_launcher
-      sha256: b1c9e98774adf8820c96fbc7ae3601231d324a7d5ebd8babe27b6dfac91357ba
+      sha256: e9aa5ea75c84cf46b3db4eea212523591211c3cf2e13099ee4ec147f54201c86
       url: "https://pub.dev"
     source: hosted
-    version: "6.2.1"
+    version: "6.2.2"
   url_launcher_android:
     dependency: transitive
     description:

@@ -30,6 +30,7 @@ class HomeView extends ConsumerStatefulWidget {
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
   final _id = Options().id!;
+  late final _userTag = idUserTag(_id);
   late final _animeCollectionTag = (userId: _id, ofAnime: true);
   late final _mangaCollectionTag = (userId: _id, ofAnime: false);
 
@@ -84,7 +85,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   Widget build(BuildContext context) {
     ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
-    ref.watch(userProvider(_id).select((_) => null));
+    ref.watch(userProvider(_userTag).select((_) => null));
 
     if (_tabCtrl.index == HomeTab.feed.index) {
       ref.watch(activitiesProvider(homeFeedId).select((_) => null));
@@ -179,7 +180,7 @@ class _HomeViewState extends ConsumerState<HomeView>
               key: Key(false.toString()),
             ),
           DiscoverView(_searchFocusNode, _discoverScrollCtrl),
-          UserSubView(_id, null, primaryScrollCtrl),
+          UserSubView(_userTag, null, primaryScrollCtrl),
         ],
       ),
     );

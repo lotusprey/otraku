@@ -25,6 +25,7 @@ class StatisticsView extends StatefulWidget {
 
 class _StatisticsViewState extends State<StatisticsView>
     with SingleTickerProviderStateMixin {
+  late final tag = idUserTag(widget.id);
   late final _tabCtrl = TabController(length: 2, vsync: this);
   final _scrollCtrl = ScrollController();
 
@@ -49,7 +50,7 @@ class _StatisticsViewState extends State<StatisticsView>
     final content = Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
-          userProvider(widget.id),
+          userProvider(tag),
           (_, s) => s.whenOrNull(
             error: (error, _) => showPopUp(
               context,
@@ -61,7 +62,7 @@ class _StatisticsViewState extends State<StatisticsView>
           ),
         );
 
-        return ref.watch(userProvider(widget.id)).when(
+        return ref.watch(userProvider(tag)).when(
               loading: () => const Center(child: Loader()),
               error: (_, __) => const Center(
                 child: Text('Failed to load statistics'),

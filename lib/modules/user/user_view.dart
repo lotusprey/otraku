@@ -16,30 +16,39 @@ import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class UserView extends StatelessWidget {
-  const UserView(this.id, this.avatarUrl);
+  const UserView(this.tag, this.avatarUrl);
 
-  final int id;
+  final UserTag tag;
   final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) =>
-      PageScaffold(child: UserSubView(id, avatarUrl));
+      PageScaffold(child: UserSubView(tag, avatarUrl));
 }
 
 class UserSubView extends StatelessWidget {
-  const UserSubView(this.id, this.avatarUrl, [this.scrollCtrl]);
+  const UserSubView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
 
-  final int id;
+  final UserTag tag;
   final String? avatarUrl;
-  final ScrollController? scrollCtrl;
+  final ScrollController? homeScrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
-          userProvider(id),
+          userProvider(tag),
           (_, s) => s.whenOrNull(
+            data: (data) {
+              if (homeScrollCtrl != null) {
+                Options().confirmAccountNameAndAvatar(
+                  data.id,
+                  data.name,
+                  data.imageUrl,
+                );
+              }
+            },
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
@@ -50,18 +59,18 @@ class UserSubView extends StatelessWidget {
           ),
         );
 
-        final user = ref.watch(userProvider(id));
+        final user = ref.watch(userProvider(tag));
 
         final header = UserHeader(
-          id: id,
-          isViewer: id == Options().id,
+          id: tag.id,
           user: user.valueOrNull,
+          isViewer: homeScrollCtrl != null,
           imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
         );
 
         return user.when(
           error: (_, __) => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
               const SliverFillRemaining(
@@ -70,17 +79,17 @@ class UserSubView extends StatelessWidget {
             ],
           ),
           loading: () => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
               const SliverFillRemaining(child: Center(child: Loader()))
             ],
           ),
           data: (data) => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
-              _ButtonRow(id),
+              _ButtonRow(data.id),
               if (data.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 10)),
                 SliverConstrainedView(

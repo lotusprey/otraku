@@ -4,36 +4,32 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/auth/account.dart';
 
 abstract class Api {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
-  static const _TOKEN_0 = 'token0';
-  static const _TOKEN_1 = 'token1';
-
   static String? _accessToken;
 
   static Future<bool> init() async {
-    final account = Options().selectedAccount;
-    if (account == null) return false;
-    if (_didAccountExpire(account)) return false;
+    if (Options().selectedAccount == null) return false;
+    final account = Options().accounts[Options().selectedAccount!];
+    if (DateTime.now().compareTo(account.expiration) >= 0) return false;
 
-    _accessToken = await const FlutterSecureStorage()
-        .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
+    _accessToken = await const FlutterSecureStorage().read(key: _key(account));
     return true;
   }
 
   static bool hasActiveAccount() => _accessToken != null;
 
-  static Future<bool> selectAccount(int account) async {
-    if (Options().idOf(account) == null) return false;
-    if (_didAccountExpire(account)) return false;
+  static Future<bool> selectAccount(int index) async {
+    if (index < 0 || index >= Options().accounts.length) return false;
 
-    _accessToken = await const FlutterSecureStorage()
-        .read(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
-    if (_accessToken == null) return false;
+    final account = Options().accounts[index];
+    if (DateTime.now().compareTo(account.expiration) >= 0) return false;
 
-    Options().selectedAccount = account;
+    Options().selectedAccount = index;
+    _accessToken = await const FlutterSecureStorage().read(key: _key(account));
     return true;
   }
 
@@ -43,63 +39,58 @@ abstract class Api {
   }
 
   static Future<bool> addAccount(
-    int account,
     String token,
-    int expiration,
+    int secondsLeftBeforeExpiration,
   ) async {
-    if (account < 0 || account > 1) return false;
-
     _accessToken = token;
     try {
-      final data = await get('query Id {Viewer {id}}');
+      final data = await get('query Viewer {Viewer {id name avatar {large}}}');
       final id = data['Viewer']?['id'];
-      if (id == null) {
+      final name = data['Viewer']?['name'];
+      final avatarUrl = data['Viewer']?['avatar']?['large'];
+      if (id == null || name == null || avatarUrl == null) {
         _accessToken = null;
         return false;
       }
 
-      Options().setIdOf(account, id);
+      if (Options().accounts.indexWhere((a) => a.id == id) > -1) return true;
+
+      final expiration = DateTime.now()
+          .add(Duration(seconds: secondsLeftBeforeExpiration, days: -1));
+      final account = Account(
+        id: id,
+        name: name,
+        avatarUrl: avatarUrl,
+        expiration: expiration,
+      );
+
+      Options().accounts = [...Options().accounts, account];
+      await const FlutterSecureStorage()
+          .write(key: _key(account), value: token);
+      return true;
     } catch (_) {
       _accessToken = null;
       return false;
     }
-
-    await const FlutterSecureStorage().write(
-      key: account == 0 ? _TOKEN_0 : _TOKEN_1,
-      value: token,
-    );
-
-    expiration = DateTime.now()
-        .add(Duration(seconds: expiration, days: -1))
-        .millisecondsSinceEpoch;
-    Options().setExpirationOf(account, expiration);
-    Options().selectedAccount = account;
-    return true;
   }
 
-  static Future<void> removeAccount(int account) async {
-    Options().setIdOf(account, null);
-    Options().setExpirationOf(account, null);
-    await const FlutterSecureStorage()
-        .delete(key: account == 0 ? _TOKEN_0 : _TOKEN_1);
-  }
+  static Future<void> removeAccount(int index) async {
+    final account = Options().accounts.elementAtOrNull(index);
+    if (account == null) return;
 
-  static bool _didAccountExpire(int account) {
-    if (Options().expirationOf(account) == null) return false;
-
-    final expirationDate = DateTime.fromMillisecondsSinceEpoch(
-      Options().expirationOf(account)!,
-    );
-
-    if (DateTime.now().compareTo(expirationDate) < 0) {
-      return false;
+    final selectedAccount = Options().selectedAccount;
+    if (selectedAccount != null && selectedAccount >= index) {
+      Options().selectedAccount = null;
     }
 
-    removeAccount(account);
-    return true;
+    await const FlutterSecureStorage().delete(key: _key(account));
+    Options().accounts.removeAt(index);
+    Options().accounts = Options().accounts;
   }
 
-  // Send a request.
+  static String _key(Account account) => 'auth${account.id}';
+
+  /// Send a GraphQL request.
   static Future<Map<String, dynamic>> get(
     String query, [
     Map<String, dynamic> variables = const {},

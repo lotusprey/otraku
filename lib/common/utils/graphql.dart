@@ -414,8 +414,8 @@ abstract class GqlQuery {
   ''';
 
   static const user = r'''
-      query User($userId: Int) {
-        User(id: $userId) {
+      query User($id: Int, $name: String) {
+        User(id: $id, name: $name) {
           id
           name
           about(asHtml: true)

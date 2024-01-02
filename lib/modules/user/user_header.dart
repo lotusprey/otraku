@@ -21,7 +21,7 @@ class UserHeader extends StatelessWidget {
     required this.imageUrl,
   });
 
-  final int id;
+  final int? id;
   final bool isViewer;
   final User? user;
   final String? imageUrl;
@@ -63,7 +63,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.textRailItems,
   });
 
-  final int id;
+  final int? id;
   final bool isViewer;
   final User? user;
   final String? imageUrl;
@@ -88,28 +88,27 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     final image = user?.imageUrl ?? imageUrl;
     final theme = Theme.of(context);
 
+    final avatar = ClipRRect(
+      borderRadius: Consts.borderRadiusMin,
+      child: SizedBox(
+        height: imageWidth,
+        width: imageWidth,
+        child: image != null
+            ? GestureDetector(
+                onTap: () => showPopUp(
+                  context,
+                  ImageDialog(image),
+                ),
+                child: CachedImage(image, fit: BoxFit.contain),
+              )
+            : null,
+      ),
+    );
+
     final infoContent = Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Hero(
-          tag: id,
-          child: ClipRRect(
-            borderRadius: Consts.borderRadiusMin,
-            child: SizedBox(
-              height: imageWidth,
-              width: imageWidth,
-              child: image != null
-                  ? GestureDetector(
-                      onTap: () => showPopUp(
-                        context,
-                        ImageDialog(image),
-                      ),
-                      child: CachedImage(image, fit: BoxFit.contain),
-                    )
-                  : null,
-            ),
-          ),
-        ),
+        id != null ? Hero(tag: id!, child: avatar) : avatar,
         const SizedBox(width: 10),
         Expanded(
           child: Column(

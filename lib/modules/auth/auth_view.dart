@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/routing.dart';
+import 'package:otraku/common/widgets/cached_image.dart';
+import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -23,7 +26,6 @@ class AuthView extends StatefulWidget {
 
 class AuthViewState extends State<AuthView> {
   bool _loading = false;
-  int _account = 0;
 
   @override
   void initState() {
@@ -41,7 +43,21 @@ class AuthViewState extends State<AuthView> {
     if (widget.credentials == null) return;
     final token = widget.credentials!.$1;
     final expiration = widget.credentials!.$2;
-    if (await Api.addAccount(_account, token, expiration) && mounted) {
+    await Api.addAccount(token, expiration);
+    setState(() => _loading = false);
+  }
+
+  Future<void> _triggerAccountSetup() async {
+    setState(() => _loading = true);
+    final ok = await Toast.launch(
+      context,
+      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
+    );
+    if (!ok) setState(() => _loading = false);
+  }
+
+  void _selectAccount(int index) async {
+    if (await Api.selectAccount(index) && mounted) {
       context.go(Routes.home());
     }
   }
@@ -56,161 +72,143 @@ class AuthViewState extends State<AuthView> {
           children: [
             const Center(child: Loader()),
             const SizedBox(height: 10),
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => setState(() => _loading = false),
+            Center(
+              child: TextButton(
+                child: const Text('Cancel'),
+                onPressed: () => setState(() => _loading = false),
+              ),
             ),
           ],
         ),
       );
     }
 
-    final available0 = Options().isAvailableAccount(0);
-    final available1 = Options().isAvailableAccount(1);
-
+    final accounts = Options().accounts;
     return Scaffold(
-      body: Container(
-        alignment: Alignment.bottomCenter,
-        padding: Consts.padding,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Otraku for AniList',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              const SizedBox(height: 20),
-              Container(
-                padding: Consts.padding,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  borderRadius: Consts.borderRadiusMin,
+      body: ConstrainedView(
+        child: ListView.builder(
+          padding: MediaQuery.of(context)
+              .padding
+              .add(const EdgeInsets.symmetric(vertical: 20)),
+          reverse: true,
+          itemExtent: 90,
+          itemCount: accounts.length + 1,
+          itemBuilder: (context, i) {
+            if (i == 0) {
+              return Card(
+                margin: const EdgeInsets.only(top: 10),
+                child: ListTile(
+                  contentPadding: Consts.padding,
+                  title: const Text('Add an account'),
+                  subtitle: const Text(
+                    'To add more accounts, you must be logged out in the browser.',
+                  ),
+                  onTap: _triggerAccountSetup,
                 ),
+              );
+            }
+
+            i--;
+            return Card(
+              margin: const EdgeInsets.only(top: 10),
+              child: InkWell(
+                onTap: () {
+                  if (DateTime.now().compareTo(accounts[i].expiration) < 0) {
+                    _selectAccount(i);
+                    return;
+                  }
+
+                  showPopUp(
+                    context,
+                    const ConfirmationDialog(
+                      title: 'Session expired',
+                      content: 'Please remove the account and add it again.',
+                    ),
+                  );
+                },
                 child: Row(
                   children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(
+                        left: Consts.radiusMin,
+                      ),
+                      child: CachedImage(accounts[i].avatarUrl, width: 70),
+                    ),
+                    const SizedBox(width: 10),
                     Column(
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Text('${accounts[i].name} ${accounts[i].id}'),
                         Text(
-                          'Primary Account',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        if (available0) ...[
-                          const SizedBox(height: 5),
-                          Text(
-                            Options().idOf(0)?.toString() ?? '',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ],
+                          DateTime.now().compareTo(accounts[i].expiration) < 0
+                              ? 'Expires in ${accounts[i].expiration.timeUntil}'
+                              : 'Expired',
+                          style: Theme.of(context).textTheme.labelMedium,
+                          overflow: TextOverflow.ellipsis,
+                        )
                       ],
                     ),
                     const Spacer(),
-                    if (available0)
-                      TopBarIcon(
-                        icon: Ionicons.close_circle_outline,
-                        tooltip: 'Remove Account',
-                        onTap: () => showPopUp(
-                          context,
-                          ConfirmationDialog(
-                            title: 'Remove Account?',
-                            mainAction: 'Yes',
-                            secondaryAction: 'No',
-                            onConfirm: () => Api.removeAccount(0)
-                                .then((_) => setState(() {})),
-                          ),
+                    TopBarIcon(
+                      icon: Ionicons.close_circle_outline,
+                      tooltip: 'Remove Account',
+                      onTap: () => showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Remove Account?',
+                          mainAction: 'Yes',
+                          secondaryAction: 'No',
+                          onConfirm: () =>
+                              Api.removeAccount(i).then((_) => setState(() {})),
                         ),
                       ),
-                    TopBarIcon(
-                      icon: Ionicons.enter_outline,
-                      tooltip: available0 ? 'Log In' : 'Connect',
-                      onTap: () =>
-                          available0 ? _selectAccount(0) : _addAccount(0),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              Container(
-                padding: Consts.padding,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                  borderRadius: Consts.borderRadiusMin,
-                ),
-                child: Row(
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Secondary Account',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        if (available1) ...[
-                          const SizedBox(height: 5),
-                          Text(
-                            Options().idOf(1)?.toString() ?? '',
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ],
-                      ],
-                    ),
-                    const Spacer(),
-                    if (available1)
-                      TopBarIcon(
-                        icon: Ionicons.close_circle_outline,
-                        tooltip: 'Remove Account',
-                        onTap: () => showPopUp(
-                          context,
-                          ConfirmationDialog(
-                            title: 'Remove Account?',
-                            mainAction: 'Yes',
-                            secondaryAction: 'No',
-                            onConfirm: () => Api.removeAccount(1)
-                                .then((_) => setState(() {})),
-                          ),
-                        ),
-                      ),
-                    TopBarIcon(
-                      icon: Ionicons.enter_outline,
-                      tooltip: available1 ? 'Log In' : 'Connect',
-                      onTap: () =>
-                          available1 ? _selectAccount(1) : _addAccount(1),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Text(
-                  'Before connecting another account, you should log out from the first one in the browser.',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-            ],
-          ),
+              // ListTile(
+              //   contentPadding: const EdgeInsets.all(0),
+              //   leading: CachedImage(account.avatarUrl, width: 70),
+              //   title: Text('${account.name} ${account.id}'),
+              //   subtitle: Text(
+              //     DateTime.now().compareTo(account.expiration) < 0
+              //         ? 'Expires in ${account.expiration.timeUntil}'
+              //         : 'Expired',
+              //   ),
+              //   onTap: () {
+              //     if (DateTime.now().compareTo(account.expiration) < 0) {
+              //       _selectAccount(i);
+              //       return;
+              //     }
+
+              //     showPopUp(
+              //       context,
+              //       const ConfirmationDialog(
+              //         title: 'Session expired',
+              //         content: 'Please remove the account and add it again.',
+              //       ),
+              //     );
+              //   },
+              //   trailing: TopBarIcon(
+              //     icon: Ionicons.close_circle_outline,
+              //     tooltip: 'Remove Account',
+              //     onTap: () => showPopUp(
+              //       context,
+              //       ConfirmationDialog(
+              //         title: 'Remove Account?',
+              //         mainAction: 'Yes',
+              //         secondaryAction: 'No',
+              //         onConfirm: () =>
+              //             Api.removeAccount(i).then((_) => setState(() {})),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            );
+          },
         ),
       ),
     );
-  }
-
-  void _selectAccount(int account) async {
-    if (await Api.selectAccount(account) && mounted) {
-      context.go(Routes.home());
-    }
-  }
-
-  Future<void> _addAccount(int account) async {
-    setState(() => _loading = true);
-    _account = account;
-    final ok = await Toast.launch(
-      context,
-      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
-    );
-    if (!ok) setState(() => _loading = false);
   }
 }

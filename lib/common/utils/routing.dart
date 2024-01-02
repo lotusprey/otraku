@@ -21,6 +21,7 @@ import 'package:otraku/modules/social/social_view.dart';
 import 'package:otraku/modules/staff/staff_view.dart';
 import 'package:otraku/modules/statistics/statistics_view.dart';
 import 'package:otraku/modules/studio/studio_view.dart';
+import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_view.dart';
 
 List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
@@ -106,14 +107,14 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
         state.uri.queryParameters['image'],
       ),
     ),
-    // TODO user routes work with id, but name support is needed for deep links.
     GoRoute(
-      path: '/user/:id',
-      redirect: _parseIdOr404,
-      builder: (context, state) => UserView(
-        int.parse(state.pathParameters['id']!),
-        state.uri.queryParameters['image'],
-      ),
+      path: '/user/:idOrName',
+      builder: (context, state) {
+        final param = state.pathParameters['idOrName']!;
+        final id = int.tryParse(param);
+        final tag = id != null ? idUserTag(id) : nameUserTag(param);
+        return UserView(tag, state.uri.queryParameters['image']);
+      },
     ),
     GoRoute(
       path: '/studio/:id',
@@ -230,6 +231,9 @@ class Routes {
 
   static String user(int id, [String? image]) =>
       '/user/$id${image != null ? "?image=$image" : ""}';
+
+  static String userByName(String name, [String? image]) =>
+      '/user/$name${image != null ? "?image=$image" : ""}';
 
   static String studio(int id, [String? name]) =>
       '/studio/$id${name != null ? "?name=$name" : ""}';

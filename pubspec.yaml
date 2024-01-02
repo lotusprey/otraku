@@ -34,7 +34,7 @@ dependencies:
   flutter_cache_manager: ^3.3.1
 
   # Image caching.
-  cached_network_image: ^3.3.0
+  cached_network_image: ^3.3.1
 
   # Opening links in the browser.
   url_launcher: ^6.2.2
@@ -46,10 +46,10 @@ dependencies:
   workmanager: ^0.5.2
 
   # Sending device notifications.
-  flutter_local_notifications: ^16.2.0
+  flutter_local_notifications: ^16.3.0
 
   # Translating html into flutter widgets.
-  flutter_widget_from_html_core: ^0.14.9
+  flutter_widget_from_html_core: ^0.14.10+1
 
   # An addition to the material icons.
   ionicons: ^0.2.1

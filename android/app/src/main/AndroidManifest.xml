@@ -45,24 +45,26 @@
                </intent-filter>
                <!-- Deep linking -->
                <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
-               <intent-filter android:autoVerify="true">
+               <intent-filter>
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="app" android:host="otraku" android:pathPrefix="/auth" />
+                    <data android:scheme="app" />
+                    <data android:host="otraku" android:pathPrefix="/auth" />
                </intent-filter>
-               <intent-filter android:autoVerify="true">
+               <intent-filter>
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
                     <category android:name="android.intent.category.BROWSABLE" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/anime/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/manga/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/character/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/staff/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/studio/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/review/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/user/" />
-                    <data android:scheme="https" android:host="anilist" android:pathPrefix="/activity/" />
+                    <data android:scheme="https" />
+                    <data android:host="anilist.co" android:pathPrefix="/anime/" />
+                    <data android:host="anilist.co" android:pathPrefix="/manga/" />
+                    <data android:host="anilist.co" android:pathPrefix="/character/" />
+                    <data android:host="anilist.co" android:pathPrefix="/staff/" />
+                    <data android:host="anilist.co" android:pathPrefix="/studio/" />
+                    <data android:host="anilist.co" android:pathPrefix="/review/" />
+                    <data android:host="anilist.co" android:pathPrefix="/user/" />
+                    <data android:host="anilist.co" android:pathPrefix="/activity/" />
                </intent-filter>
           </activity>
           <meta-data android:name="flutterEmbedding" android:value="2" />

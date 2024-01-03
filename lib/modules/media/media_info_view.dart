@@ -223,11 +223,12 @@ class _ScrollCards extends StatelessWidget {
             height: 42,
             child: ShadowedOverflowList(
               itemCount: itemCount,
-              itemBuilder: (context, i) => GestureDetector(
-                onTap: () => onTap(i),
-                onLongPress: () => onLongPress(i),
-                child: Card(
-                  margin: const EdgeInsets.only(right: 5, bottom: 2),
+              itemBuilder: (context, i) => Card(
+                margin: const EdgeInsets.only(right: 5, bottom: 2),
+                child: InkWell(
+                  borderRadius: Consts.borderRadiusMin,
+                  onTap: () => onTap(i),
+                  onLongPress: () => onLongPress(i),
                   child: Padding(
                     padding: Consts.padding,
                     child: builder(context, i),

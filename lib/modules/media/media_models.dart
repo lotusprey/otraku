@@ -427,11 +427,24 @@ enum ExternalLinkType {
       };
 }
 
+class MediaRank {
+  const MediaRank({
+    required this.text,
+    required this.typeIsScore,
+    required this.season,
+    required this.year,
+  });
+
+  final String text;
+  final bool typeIsScore;
+  final MediaSeason? season;
+  final int? year;
+}
+
 class MediaStats {
   MediaStats._();
 
-  final rankTexts = <String>[];
-  final rankTypes = <bool>[];
+  final ranks = <MediaRank>[];
 
   final scoreNames = <int>[];
   final scoreValues = <int>[];
@@ -445,21 +458,24 @@ class MediaStats {
     // The key is the text and the value signals
     // if the rank is about rating or popularity.
     if (map['rankings'] != null) {
-      for (final rank in map['rankings']) {
-        final String when = (rank['allTime'] ?? false)
+      for (final r in map['rankings']) {
+        final String when = (r['allTime'] ?? false)
             ? 'Ever'
-            : rank['season'] != null
-                ? '${(rank['season'] as String).noScreamingSnakeCase} ${rank['year'] ?? ''}'
-                : (rank['year'] ?? '').toString();
+            : r['season'] != null
+                ? '${(r['season'] as String).noScreamingSnakeCase} ${r['year'] ?? ''}'
+                : (r['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
-        if (rank['type'] == 'RATED') {
-          model.rankTexts.add('#${rank["rank"]} Highest Rated $when');
-          model.rankTypes.add(true);
-        } else {
-          model.rankTexts.add('#${rank["rank"]} Most Popular $when');
-          model.rankTypes.add(false);
-        }
+        model.ranks.add(MediaRank(
+          text: r['type'] == 'RATED'
+              ? '#${r["rank"]} Highest Rated $when'
+              : '#${r["rank"]} Most Popular $when',
+          typeIsScore: r['type'] == 'RATED',
+          season: r['season'] != null
+              ? MediaSeason.values.byName(r['season'])
+              : null,
+          year: r['year'],
+        ));
       }
     }
 

@@ -42,32 +42,41 @@ class BarChart extends StatelessWidget {
           child: ShadowedOverflowList(
             itemCount: names.length,
             itemExtent: barWidth + 5,
-            itemBuilder: (_, i) => Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  values[i].toString(),
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight + 10,
-                  margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0, 1],
-                      colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      ],
+            itemBuilder: (_, i) => Padding(
+              padding: const EdgeInsets.only(right: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    values[i].toString(),
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    height: values[i] * maxHeight + 10,
+                    margin: const EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: const [0, 1],
+                        colors: [
+                          Theme.of(context).colorScheme.primary,
+                          Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.1),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Text(names[i], style: Theme.of(context).textTheme.labelMedium),
-              ],
+                  Text(
+                    names[i],
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

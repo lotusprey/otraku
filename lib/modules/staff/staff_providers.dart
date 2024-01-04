@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/modules/staff/staff_models.dart';
-import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/models/relation.dart';
+import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/graphql.dart';
+import 'package:otraku/common/utils/image_quality.dart';
+import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/modules/staff/staff_models.dart';
 
 /// Favorite/Unfavorite staff. Returns `true` if successful.
 Future<bool> toggleFavoriteStaff(int staffId) async {
@@ -87,7 +87,7 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
           final media = Relation(
             id: m['node']['id'],
             title: m['node']['title']['userPreferred'],
-            imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+            imageUrl: m['node']['coverImage'][imageQuality],
             subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
             type: m['node']['type'] == 'ANIME'
                 ? DiscoverType.Anime
@@ -130,7 +130,7 @@ class StaffRelationNotifier extends StateNotifier<StaffRelations> {
           items.add(Relation(
             id: s['node']['id'],
             title: s['node']['title']['userPreferred'],
-            imageUrl: s['node']['coverImage'][Options().imageQuality.value],
+            imageUrl: s['node']['coverImage'][imageQuality],
             subtitle: s['staffRole'],
             type: s['node']['type'] == 'ANIME'
                 ? DiscoverType.Anime

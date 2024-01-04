@@ -1,6 +1,6 @@
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/image_quality.dart';
 
 class ExpandedActivity {
   ExpandedActivity(this.activity, this.replies);
@@ -187,7 +187,7 @@ class ActivityMedia {
   factory ActivityMedia(Map<String, dynamic> map) => ActivityMedia._(
         id: map['media']['id'],
         title: map['media']['title']['userPreferred'],
-        imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+        imageUrl: map['media']['coverImage'][imageQuality],
         format: StringUtil.tryNoScreamingSnakeCase(map['media']['format']),
         isAnime: map['type'] == 'ANIME_LIST',
       );

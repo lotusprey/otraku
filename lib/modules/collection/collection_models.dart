@@ -1,7 +1,7 @@
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/image_quality.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
@@ -348,7 +348,7 @@ class Entry {
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+      imageUrl: map['media']['coverImage'][imageQuality],
       format: map['media']['format'],
       status: map['media']['status'],
       entryStatus: EntryStatus.values.byName(map['status']),

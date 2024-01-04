@@ -54,6 +54,9 @@ dependencies:
   # An addition to the material icons.
   ionicons: ^0.2.1
 
+  # For checking the data saving mode of the device
+  data_saver: ^0.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

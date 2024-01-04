@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/modules/character/character_models.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/image_quality.dart';
+import 'package:otraku/modules/character/character_models.dart';
+import 'package:otraku/modules/discover/discover_models.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
 Future<bool> toggleFavoriteCharacter(int characterId) async {
@@ -91,7 +91,7 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
           items.add(Relation(
             id: a['node']['id'],
             title: a['node']['title']['userPreferred'],
-            imageUrl: a['node']['coverImage'][Options().imageQuality.value],
+            imageUrl: a['node']['coverImage'][imageQuality],
             subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
             type: DiscoverType.Anime,
           ));
@@ -144,7 +144,7 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
           items.add(Relation(
             id: m['node']['id'],
             title: m['node']['title']['userPreferred'],
-            imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+            imageUrl: m['node']['coverImage'][imageQuality],
             subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
             type: DiscoverType.Manga,
           ));

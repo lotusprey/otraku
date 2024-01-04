@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/image_quality.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 
 class CalendarItem {
@@ -33,7 +33,7 @@ class CalendarItem {
     return CalendarItem._(
       mediaId: map['mediaId'],
       title: map['media']['title']['userPreferred'],
-      cover: map['media']['coverImage'][Options().imageQuality.value],
+      cover: map['media']['coverImage'][imageQuality],
       episode: map['episode'],
       airingAt: DateTimeUtil.fromSecondsSinceEpoch(map['airingAt']),
       entryStatus: EntryStatus.formatText(

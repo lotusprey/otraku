@@ -6,14 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/api.dart';
-import 'package:otraku/common/utils/routing.dart';
-import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
+import 'package:otraku/common/utils/image_quality.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/utils/theming.dart';
+import 'package:otraku/modules/home/home_provider.dart';
 
 Future<void> main() async {
   await Options.init();
+  refreshImageQuality();
   await Api.init();
   BackgroundHandler.init(_notificationCtrl);
   runApp(const ProviderScope(child: App()));

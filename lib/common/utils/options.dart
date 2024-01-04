@@ -2,11 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:otraku/modules/auth/account.dart';
+import 'package:otraku/common/utils/image_quality.dart';
+import 'package:otraku/common/utils/theming.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
@@ -26,6 +27,7 @@ enum _OptionKey {
   animeCollectionPreview,
   mangaCollectionPreview,
   airingSortForPreview,
+  ignoreDataSaverMode,
   confirmExit,
   leftHanded,
   analogueClock,
@@ -85,6 +87,7 @@ class Options extends ChangeNotifier {
     this._analogueClock,
     this._feedOnFollowing,
     this._viewerActivitiesInFeed,
+    this._ignoreDataSaverMode,
     this._calendarSeason,
     this._calendarStatus,
     this._discoverItemView,
@@ -183,6 +186,7 @@ class Options extends ChangeNotifier {
       _optionBox.get(_OptionKey.analogueClock.name) ?? false,
       _optionBox.get(_OptionKey.feedOnFollowing.name) ?? false,
       _optionBox.get(_OptionKey.viewerActivitiesInFeed.name) ?? false,
+      _optionBox.get(_OptionKey.ignoreDataSaverMode.name) ?? false,
       calendarSeason,
       calendarStatus,
       discoverItemView,
@@ -246,6 +250,7 @@ class Options extends ChangeNotifier {
   bool _analogueClock;
   bool _feedOnFollowing;
   bool _viewerActivitiesInFeed;
+  bool _ignoreDataSaverMode;
   int _calendarSeason;
   int _calendarStatus;
   int _discoverItemView;
@@ -275,6 +280,7 @@ class Options extends ChangeNotifier {
   bool get analogueClock => _analogueClock;
   bool get feedOnFollowing => _feedOnFollowing;
   bool get viewerActivitiesInFeed => _viewerActivitiesInFeed;
+  bool get ignoreDataSaverMode => _ignoreDataSaverMode;
   int get calendarSeason => _calendarSeason;
   int get calendarStatus => _calendarStatus;
   int get discoverItemView => _discoverItemView;
@@ -366,6 +372,7 @@ class Options extends ChangeNotifier {
   set imageQuality(ImageQuality v) {
     _imageQuality = v;
     _optionBox.put(_OptionKey.imageQuality.name, v.index);
+    refreshImageQuality();
   }
 
   set animeCollectionPreview(bool v) {
@@ -406,6 +413,12 @@ class Options extends ChangeNotifier {
   set viewerActivitiesInFeed(bool v) {
     _viewerActivitiesInFeed = v;
     _optionBox.put(_OptionKey.viewerActivitiesInFeed.name, v);
+  }
+
+  set ignoreDataSaverMode(bool v) {
+    _ignoreDataSaverMode = v;
+    _optionBox.put(_OptionKey.ignoreDataSaverMode.name, v);
+    refreshImageQuality();
   }
 
   set calendarSeason(int v) {

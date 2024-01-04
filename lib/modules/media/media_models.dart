@@ -1,21 +1,21 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
+import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/image_quality.dart';
+import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_models.dart';
-import 'package:otraku/common/utils/options.dart';
 
 TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
       type: DiscoverType.Anime,
       title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Options().imageQuality.value],
+      imageUrl: map['coverImage'][imageQuality],
     );
 
 class Media {
@@ -121,7 +121,7 @@ class RelatedMedia {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Options().imageQuality.value],
+        imageUrl: map['node']['coverImage'][imageQuality],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
         format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
         status: StringUtil.tryNoScreamingSnakeCase(map['node']['status']),
@@ -223,8 +223,7 @@ class Recommendation {
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
       type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
-      imageUrl: map['mediaRecommendation']['coverImage']
-          [Options().imageQuality.value],
+      imageUrl: map['mediaRecommendation']['coverImage'][imageQuality],
     );
   }
 
@@ -339,7 +338,7 @@ class MediaInfo {
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
       description: map['description'] ?? '',
-      cover: map['coverImage'][Options().imageQuality.value],
+      cover: map['coverImage'][imageQuality],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: StringUtil.tryNoScreamingSnakeCase(map['format']),

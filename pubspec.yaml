@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^2.4.9
 
   # Routing.
-  go_router: ^13.0.0
+  go_router: ^13.0.1
 
   # Data fetching.
   http: ^1.1.2

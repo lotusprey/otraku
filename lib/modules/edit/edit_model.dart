@@ -1,6 +1,6 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/modules/settings/settings_provider.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 
 typedef EditTag = ({int id, bool setComplete});
 

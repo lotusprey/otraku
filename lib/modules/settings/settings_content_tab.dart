@@ -3,7 +3,7 @@ import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/settings/settings_provider.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';

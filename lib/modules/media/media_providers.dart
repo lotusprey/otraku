@@ -4,6 +4,7 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/models/relation.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
@@ -49,7 +50,7 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
     }
 
     return Media(
-      Edit(data, ref.watch(settingsProvider.notifier).value),
+      Edit(data, ref.watch(settingsProvider).valueOrNull ?? Settings.empty()),
       MediaInfo(data),
       MediaStats(data),
       relatedMedia,

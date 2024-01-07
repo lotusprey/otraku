@@ -39,18 +39,15 @@ class _ChipSelectorState extends State<ChipSelector> {
     return _ChipSelectorLayout(
       title: widget.title,
       options: widget.options,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: FilterChip(
-          label: Text(widget.options[index]),
-          selected: index == _current,
-          onSelected: (selected) {
-            if (_current == index && widget.mustHaveSelected) return;
+      itemBuilder: (context, index) => FilterChip(
+        label: Text(widget.options[index]),
+        selected: index == _current,
+        onSelected: (selected) {
+          if (_current == index && widget.mustHaveSelected) return;
 
-            setState(() => selected ? _current = index : _current = null);
-            widget.onChanged(_current);
-          },
-        ),
+          setState(() => selected ? _current = index : _current = null);
+          widget.onChanged(_current);
+        },
       ),
     );
   }
@@ -124,19 +121,16 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
     return _ChipSelectorLayout(
       title: widget.title,
       options: _options,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: FilterChip(
-          label: Text(_options[index]),
-          selected: widget.current.contains(_values[index]),
-          onSelected: (isSelected) {
-            setState(
-              () => isSelected
-                  ? widget.current.add(_values[index])
-                  : widget.current.remove(_values[index]),
-            );
-          },
-        ),
+      itemBuilder: (context, index) => FilterChip(
+        label: Text(_options[index]),
+        selected: widget.current.contains(_values[index]),
+        onSelected: (isSelected) {
+          setState(
+            () => isSelected
+                ? widget.current.add(_values[index])
+                : widget.current.remove(_values[index]),
+          );
+        },
       ),
     );
   }
@@ -185,39 +179,36 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
     return _ChipSelectorLayout(
       title: widget.title,
       options: _options,
-      itemBuilder: (context, index) => Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: FilterChip(
-          backgroundColor: Theme.of(context).colorScheme.surface,
-          labelStyle: TextStyle(
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
-          label: Text(_options[index]),
-          showCheckmark: false,
-          avatar: current == index
-              ? Icon(
-                  descending
-                      ? Icons.arrow_downward_rounded
-                      : Icons.arrow_upward_rounded,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                )
-              : null,
-          selected: current == index,
-          onSelected: (_) {
-            setState(
-              () {
-                int i = index * 2;
-                if (current == index) {
-                  if (!descending) i++;
-                } else {
-                  if (descending) i++;
-                }
-                _current = EntrySort.values.elementAt(i);
-              },
-            );
-            widget.onChanged(_current);
-          },
+      itemBuilder: (context, index) => FilterChip(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        labelStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSecondaryContainer,
         ),
+        label: Text(_options[index]),
+        showCheckmark: false,
+        avatar: current == index
+            ? Icon(
+                descending
+                    ? Icons.arrow_downward_rounded
+                    : Icons.arrow_upward_rounded,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
+              )
+            : null,
+        selected: current == index,
+        onSelected: (_) {
+          setState(
+            () {
+              int i = index * 2;
+              if (current == index) {
+                if (!descending) i++;
+              } else {
+                if (descending) i++;
+              }
+              _current = EntrySort.values.elementAt(i);
+            },
+          );
+          widget.onChanged(_current);
+        },
       ),
     );
   }

@@ -342,27 +342,26 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                     height: 40,
                     child: ShadowedOverflowList(
                       itemCount: _categoryIndices.length,
-                      itemBuilder: (_, i) => Padding(
-                        padding: const EdgeInsets.only(right: 5),
-                        child: _TagCategoryChip(
-                          name: _tags.categoryNames[_categoryIndices[i]],
-                          selected: i == _index,
-                          onTap: () {
-                            if (_index == i) return;
+                      itemBuilder: (_, i) => _TagCategoryChip(
+                        name: _tags.categoryNames[_categoryIndices[i]],
+                        selected: i == _index,
+                        onTap: () {
+                          if (_index == i) return;
 
-                            _index = i;
-                            _itemIndices.clear();
+                          _index = i;
+                          _itemIndices.clear();
 
-                            final itemsIndex = _categoryIndices[_index];
-                            for (final i in _tags.categoryItems[itemsIndex]) {
-                              if (_tags.names[i]
-                                  .toLowerCase()
-                                  .contains(_filter)) _itemIndices.add(i);
+                          final itemsIndex = _categoryIndices[_index];
+                          for (final i in _tags.categoryItems[itemsIndex]) {
+                            if (_tags.names[i]
+                                .toLowerCase()
+                                .contains(_filter)) {
+                              _itemIndices.add(i);
                             }
+                          }
 
-                            setState(() {});
-                          },
-                        ),
+                          setState(() {});
+                        },
                       ),
                     ),
                   ),

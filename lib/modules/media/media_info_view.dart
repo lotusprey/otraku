@@ -224,7 +224,7 @@ class _ScrollCards extends StatelessWidget {
             child: ShadowedOverflowList(
               itemCount: itemCount,
               itemBuilder: (context, i) => Card(
-                margin: const EdgeInsets.only(right: 5, bottom: 2),
+                margin: const EdgeInsets.only(bottom: 2),
                 child: InkWell(
                   borderRadius: Consts.borderRadiusMin,
                   onTap: () => onTap(i),

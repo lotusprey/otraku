@@ -181,17 +181,11 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: OutlinedButton(
-        onPressed: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(icon, color: Theme.of(context).colorScheme.onBackground),
-            Text(label, style: Theme.of(context).textTheme.bodyMedium),
-          ],
-        ),
+    return FilledButton.tonal(
+      onPressed: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [Icon(icon), Text(label)],
       ),
     );
   }

@@ -83,130 +83,127 @@ class _ThemeCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 5),
-        child: Column(
-          children: [
-            Container(
-              width: 120,
-              height: 170,
-              padding: const EdgeInsets.all(5),
-              decoration: BoxDecoration(
-                color: scheme.background,
-                border: Border.all(color: borderColor, width: borderWidth),
-                borderRadius: Consts.borderRadiusMin,
-              ),
-              child: Column(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 10,
-                        width: 60,
-                        decoration: BoxDecoration(
-                          color: scheme.onBackground,
-                          borderRadius: Consts.borderRadiusMax,
+      child: Column(
+        children: [
+          Container(
+            width: 120,
+            height: 170,
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              color: scheme.background,
+              border: Border.all(color: borderColor, width: borderWidth),
+              borderRadius: Consts.borderRadiusMin,
+            ),
+            child: Column(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 10,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: scheme.onBackground,
+                        borderRadius: Consts.borderRadiusMax,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      height: 40,
+                      padding: const EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: scheme.surfaceVariant,
+                        borderRadius: Consts.borderRadiusMin,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            height: 8,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: scheme.surfaceVariant,
+                              borderRadius: Consts.borderRadiusMax,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Container(
+                            height: 6,
+                            width: 110,
+                            decoration: BoxDecoration(
+                              color: scheme.onSurfaceVariant,
+                              borderRadius: Consts.borderRadiusMax,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Container(
+                      width: 16,
+                      height: 16,
+                      margin: const EdgeInsets.only(right: 7, bottom: 7),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: scheme.primary,
+                      ),
+                      child: Center(
+                        child: Container(
+                          width: 6,
+                          height: 2,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: Consts.borderRadiusMin,
+                            color: scheme.onPrimary,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
                       Container(
-                        height: 40,
-                        padding: const EdgeInsets.all(5),
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                          color: scheme.primary,
+                          shape: BoxShape.rectangle,
+                        ),
+                      ),
+                      Container(
+                        height: 8,
+                        width: 8,
                         decoration: BoxDecoration(
                           color: scheme.surfaceVariant,
-                          borderRadius: Consts.borderRadiusMin,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 8,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                color: scheme.surfaceVariant,
-                                borderRadius: Consts.borderRadiusMax,
-                              ),
-                            ),
-                            const SizedBox(height: 5),
-                            Container(
-                              height: 6,
-                              width: 110,
-                              decoration: BoxDecoration(
-                                color: scheme.onSurfaceVariant,
-                                borderRadius: Consts.borderRadiusMax,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        margin: const EdgeInsets.only(right: 7, bottom: 7),
-                        decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: scheme.primary,
                         ),
-                        child: Center(
-                          child: Container(
-                            width: 6,
-                            height: 2,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: Consts.borderRadiusMin,
-                              color: scheme.onPrimary,
-                            ),
-                          ),
+                      ),
+                      Container(
+                        height: 8,
+                        width: 8,
+                        decoration: BoxDecoration(
+                          color: scheme.surfaceVariant,
+                          shape: BoxShape.circle,
                         ),
                       ),
                     ],
                   ),
-                  SizedBox(
-                    height: 15,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.primary,
-                            shape: BoxShape.rectangle,
-                          ),
-                        ),
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceVariant,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        Container(
-                          height: 8,
-                          width: 8,
-                          decoration: BoxDecoration(
-                            color: scheme.surfaceVariant,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
-            const Spacer(),
-            Text(name),
-          ],
-        ),
+          ),
+          const Spacer(),
+          Text(name),
+        ],
       ),
     );
   }

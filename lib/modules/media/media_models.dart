@@ -115,7 +115,8 @@ class RelatedMedia {
     required this.imageUrl,
     required this.relationType,
     required this.format,
-    required this.status,
+    required this.listStatus,
+    required this.releaseStatus,
   });
 
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
@@ -124,7 +125,13 @@ class RelatedMedia {
         imageUrl: map['node']['coverImage'][Options().imageQuality.value],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
         format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
-        status: StringUtil.tryNoScreamingSnakeCase(map['node']['status']),
+        listStatus: EntryStatus.formatText(
+          map['node']['mediaListEntry']?['status'],
+          map['node']['type'] == 'ANIME',
+        ),
+        releaseStatus: StringUtil.tryNoScreamingSnakeCase(
+          map['node']['status'],
+        ),
         type: map['node']['type'] == 'ANIME'
             ? DiscoverType.Anime
             : DiscoverType.Manga,
@@ -136,7 +143,8 @@ class RelatedMedia {
   final String imageUrl;
   final String? relationType;
   final String? format;
-  final String? status;
+  final String? listStatus;
+  final String? releaseStatus;
 }
 
 class RelatedReview {

@@ -40,8 +40,9 @@ class MediaRelatedGrid extends StatelessWidget {
         (context, i) {
           final details = <String, bool>{
             if (items[i].relationType != null) items[i].relationType!: true,
+            if (items[i].listStatus != null) items[i].listStatus!: true,
             if (items[i].format != null) items[i].format!: false,
-            if (items[i].status != null) items[i].status!: false,
+            if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
           };
 
           return LinkTile(

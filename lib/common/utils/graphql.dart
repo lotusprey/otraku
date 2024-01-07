@@ -93,6 +93,7 @@ abstract class GqlQuery {
             title {userPreferred} 
             status(version: 2)
             coverImage {extraLarge large medium}
+            mediaListEntry {status}
           }
         }
       }

@@ -167,44 +167,6 @@ class AuthViewState extends State<AuthView> {
                   ],
                 ),
               ),
-              // ListTile(
-              //   contentPadding: const EdgeInsets.all(0),
-              //   leading: CachedImage(account.avatarUrl, width: 70),
-              //   title: Text('${account.name} ${account.id}'),
-              //   subtitle: Text(
-              //     DateTime.now().compareTo(account.expiration) < 0
-              //         ? 'Expires in ${account.expiration.timeUntil}'
-              //         : 'Expired',
-              //   ),
-              //   onTap: () {
-              //     if (DateTime.now().compareTo(account.expiration) < 0) {
-              //       _selectAccount(i);
-              //       return;
-              //     }
-
-              //     showPopUp(
-              //       context,
-              //       const ConfirmationDialog(
-              //         title: 'Session expired',
-              //         content: 'Please remove the account and add it again.',
-              //       ),
-              //     );
-              //   },
-              //   trailing: TopBarIcon(
-              //     icon: Ionicons.close_circle_outline,
-              //     tooltip: 'Remove Account',
-              //     onTap: () => showPopUp(
-              //       context,
-              //       ConfirmationDialog(
-              //         title: 'Remove Account?',
-              //         mainAction: 'Yes',
-              //         secondaryAction: 'No',
-              //         onConfirm: () =>
-              //             Api.removeAccount(i).then((_) => setState(() {})),
-              //       ),
-              //     ),
-              //   ),
-              // ),
             );
           },
         ),

@@ -119,7 +119,7 @@ class TypeStatistics {
         meanScore: map['meanScore'].toDouble(),
         hoursWatched: map['minutesWatched'] ~/ 60,
         chaptersRead: map['chaptersRead'],
-        value: key.noScreamingSnakeCase,
+        value: (map[key] as String).noScreamingSnakeCase,
       );
 
   final int count;

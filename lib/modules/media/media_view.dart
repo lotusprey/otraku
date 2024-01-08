@@ -130,10 +130,15 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
   }
 
   @override
+  void deactivate() {
+    ref.invalidate(mediaFollowingProvider(widget.id));
+    super.deactivate();
+  }
+
+  @override
   void dispose() {
     _scrollCtrl.removeListener(_scrollListener);
     widget.tabCtrl.removeListener(_tabListener);
-    ref.invalidate(mediaFollowingProvider(widget.id));
     super.dispose();
   }
 
@@ -269,8 +274,12 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
           child: CustomScrollView(
             controller: _scrollCtrl,
             slivers: [
-              if (stats.rankTexts.isNotEmpty)
-                MediaRankGrid(stats.rankTexts, stats.rankTypes),
+              if (stats.ranks.isNotEmpty)
+                MediaRankGrid(
+                  ref: ref,
+                  type: widget.media.info.type,
+                  ranks: stats.ranks,
+                ),
               if (stats.scoreNames.isNotEmpty)
                 SliverToBoxAdapter(
                   child: BarChart(

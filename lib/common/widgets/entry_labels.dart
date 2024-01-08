@@ -37,12 +37,12 @@ class ScoreLabel extends StatelessWidget {
         content = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_rounded, size: Consts.iconSmall),
-            const SizedBox(width: 3),
             Text(
               score.toStringAsFixed(0),
               style: Theme.of(context).textTheme.labelSmall,
             ),
+            const SizedBox(width: 3),
+            const Icon(Icons.star_rounded, size: Consts.iconSmall),
           ],
         );
       case ScoreFormat.POINT_10_DECIMAL:
@@ -52,9 +52,7 @@ class ScoreLabel extends StatelessWidget {
             const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
             const SizedBox(width: 3),
             Text(
-              score.toStringAsFixed(
-                score.truncate() == score ? 0 : 1,
-              ),
+              score.toStringAsFixed(1),
               style: Theme.of(context).textTheme.labelSmall,
             ),
           ],

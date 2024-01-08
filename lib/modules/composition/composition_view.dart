@@ -8,7 +8,7 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class CompositionView extends StatefulWidget {
   const CompositionView({required this.composition, required this.onDone});

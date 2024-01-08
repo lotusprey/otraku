@@ -21,11 +21,14 @@ class ShadowedOverflowList extends StatelessWidget {
       children: [
         ListView.builder(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: 5, right: 5, bottom: 2),
+          padding: const EdgeInsets.only(left: 10, right: 5, bottom: 2),
           itemExtent: itemExtent,
           itemCount: itemCount,
-          itemBuilder: itemBuilder,
           shrinkWrap: shrinkWrap,
+          itemBuilder: (context, i) => Padding(
+            padding: const EdgeInsets.only(right: 5),
+            child: itemBuilder(context, i),
+          ),
         ),
         Positioned(
           top: 0,

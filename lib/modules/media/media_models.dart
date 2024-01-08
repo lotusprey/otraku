@@ -115,7 +115,8 @@ class RelatedMedia {
     required this.imageUrl,
     required this.relationType,
     required this.format,
-    required this.status,
+    required this.listStatus,
+    required this.releaseStatus,
   });
 
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
@@ -124,7 +125,13 @@ class RelatedMedia {
         imageUrl: map['node']['coverImage'][Options().imageQuality.value],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
         format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
-        status: StringUtil.tryNoScreamingSnakeCase(map['node']['status']),
+        listStatus: EntryStatus.formatText(
+          map['node']['mediaListEntry']?['status'],
+          map['node']['type'] == 'ANIME',
+        ),
+        releaseStatus: StringUtil.tryNoScreamingSnakeCase(
+          map['node']['status'],
+        ),
         type: map['node']['type'] == 'ANIME'
             ? DiscoverType.Anime
             : DiscoverType.Manga,
@@ -136,7 +143,8 @@ class RelatedMedia {
   final String imageUrl;
   final String? relationType;
   final String? format;
-  final String? status;
+  final String? listStatus;
+  final String? releaseStatus;
 }
 
 class RelatedReview {
@@ -352,8 +360,8 @@ class MediaInfo {
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: DateTimeUtil.fromFuzzyDate(map['startDate'])?.formattedDate,
-      endDate: DateTimeUtil.fromFuzzyDate(map['endDate'])?.formattedDate,
+      startDate: StringUtil.fromFuzzyDate(map['startDate']),
+      endDate: StringUtil.fromFuzzyDate(map['endDate']),
       season: season,
       averageScore:
           map['averageScore'] != null ? '${map["averageScore"]}%' : null,
@@ -427,11 +435,24 @@ enum ExternalLinkType {
       };
 }
 
+class MediaRank {
+  const MediaRank({
+    required this.text,
+    required this.typeIsScore,
+    required this.season,
+    required this.year,
+  });
+
+  final String text;
+  final bool typeIsScore;
+  final MediaSeason? season;
+  final int? year;
+}
+
 class MediaStats {
   MediaStats._();
 
-  final rankTexts = <String>[];
-  final rankTypes = <bool>[];
+  final ranks = <MediaRank>[];
 
   final scoreNames = <int>[];
   final scoreValues = <int>[];
@@ -445,21 +466,24 @@ class MediaStats {
     // The key is the text and the value signals
     // if the rank is about rating or popularity.
     if (map['rankings'] != null) {
-      for (final rank in map['rankings']) {
-        final String when = (rank['allTime'] ?? false)
+      for (final r in map['rankings']) {
+        final String when = (r['allTime'] ?? false)
             ? 'Ever'
-            : rank['season'] != null
-                ? '${(rank['season'] as String).noScreamingSnakeCase} ${rank['year'] ?? ''}'
-                : (rank['year'] ?? '').toString();
+            : r['season'] != null
+                ? '${(r['season'] as String).noScreamingSnakeCase} ${r['year'] ?? ''}'
+                : (r['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
-        if (rank['type'] == 'RATED') {
-          model.rankTexts.add('#${rank["rank"]} Highest Rated $when');
-          model.rankTypes.add(true);
-        } else {
-          model.rankTexts.add('#${rank["rank"]} Most Popular $when');
-          model.rankTypes.add(false);
-        }
+        model.ranks.add(MediaRank(
+          text: r['type'] == 'RATED'
+              ? '#${r["rank"]} Highest Rated $when'
+              : '#${r["rank"]} Most Popular $when',
+          typeIsScore: r['type'] == 'RATED',
+          season: r['season'] != null
+              ? MediaSeason.values.byName(r['season'])
+              : null,
+          year: r['year'],
+        ));
       }
     }
 

@@ -7,6 +7,7 @@ import 'package:otraku/modules/edit/edit_buttons.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
@@ -19,7 +20,7 @@ import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/score_field.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
@@ -298,7 +299,8 @@ class _EditView extends StatelessWidget {
 
     final advancedScoring = Consumer(
       builder: (context, ref, _) {
-        final settings = ref.watch(settingsProvider.notifier).value;
+        final settings =
+            ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
 
         if (!settings.advancedScoringEnabled ||
             settings.scoreFormat != ScoreFormat.POINT_100 &&

@@ -1,44 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_header.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/html_content.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class UserView extends StatelessWidget {
-  const UserView(this.id, this.avatarUrl);
+  const UserView(this.tag, this.avatarUrl);
 
-  final int id;
+  final UserTag tag;
   final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) =>
-      PageScaffold(child: UserSubView(id, avatarUrl));
+      PageScaffold(child: UserSubView(tag, avatarUrl));
 }
 
 class UserSubView extends StatelessWidget {
-  const UserSubView(this.id, this.avatarUrl, [this.scrollCtrl]);
+  const UserSubView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
 
-  final int id;
+  final UserTag tag;
   final String? avatarUrl;
-  final ScrollController? scrollCtrl;
+  final ScrollController? homeScrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
-          userProvider(id),
+          userProvider(tag),
           (_, s) => s.whenOrNull(
+            data: (data) {
+              if (homeScrollCtrl != null) {
+                Options().confirmAccountNameAndAvatar(
+                  data.id,
+                  data.name,
+                  data.imageUrl,
+                );
+              }
+            },
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
@@ -49,18 +59,18 @@ class UserSubView extends StatelessWidget {
           ),
         );
 
-        final user = ref.watch(userProvider(id));
+        final user = ref.watch(userProvider(tag));
 
         final header = UserHeader(
-          id: id,
-          isViewer: id == Options().id,
+          id: tag.id,
           user: user.valueOrNull,
+          isViewer: homeScrollCtrl != null,
           imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
         );
 
         return user.when(
           error: (_, __) => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
               const SliverFillRemaining(
@@ -69,28 +79,26 @@ class UserSubView extends StatelessWidget {
             ],
           ),
           loading: () => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
               const SliverFillRemaining(child: Center(child: Loader()))
             ],
           ),
           data: (data) => CustomScrollView(
-            controller: scrollCtrl,
+            controller: homeScrollCtrl,
             slivers: [
               header,
-              _ButtonRow(id),
-              if (data.description.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: ConstrainedView(
-                    child: Card(
-                      child: Padding(
-                        padding: Consts.padding,
-                        child: HtmlContent(data.description),
-                      ),
-                    ),
+              _ButtonRow(data.id),
+              if (data.description.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                SliverConstrainedView(
+                  sliver: HtmlContent(
+                    data.description,
+                    renderMode: RenderMode.sliverList,
                   ),
                 ),
+              ],
               const SliverFooter(),
             ],
           ),
@@ -112,66 +120,38 @@ class _ButtonRow extends StatelessWidget {
         _Button(
           label: 'Anime',
           icon: Ionicons.film,
-          onTap: () => Navigator.pushNamed(
-            context,
-            RouteArg.collection,
-            arguments: RouteArg(id: id, variant: true),
-          ),
+          onTap: () => context.push(Routes.animeCollection(id)),
         ),
         _Button(
           label: 'Manga',
           icon: Ionicons.bookmark,
-          onTap: () => Navigator.pushNamed(
-            context,
-            RouteArg.collection,
-            arguments: RouteArg(id: id, variant: false),
-          ),
+          onTap: () => context.push(Routes.mangaCollection(id)),
         ),
       ],
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.activities,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.activities(id)),
       ),
       _Button(
         label: 'Social',
         icon: Ionicons.people_circle,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.friends,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.social(id)),
       ),
       _Button(
         label: 'Favourites',
         icon: Icons.favorite,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.favourites,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.favorites(id)),
       ),
       _Button(
         label: 'Statistics',
         icon: Ionicons.stats_chart,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.statistics,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.statistics(id)),
       ),
       _Button(
         label: 'Reviews',
         icon: Icons.rate_review,
-        onTap: () => Navigator.pushNamed(
-          context,
-          RouteArg.reviews,
-          arguments: RouteArg(id: id),
-        ),
+        onTap: () => context.push(Routes.reviews(id)),
       ),
     ];
 
@@ -201,17 +181,11 @@ class _Button extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 5),
-      child: OutlinedButton(
-        onPressed: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Icon(icon, color: Theme.of(context).colorScheme.onBackground),
-            Text(label, style: Theme.of(context).textTheme.bodyMedium),
-          ],
-        ),
+    return FilledButton.tonal(
+      onPressed: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [Icon(icon), Text(label)],
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -141,7 +142,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
               TopBarIcon(
                 tooltip: 'Close',
                 icon: Ionicons.chevron_back_outline,
-                onTap: Navigator.of(context).pop,
+                onTap: context.back,
               ),
               Expanded(
                 child: title != null

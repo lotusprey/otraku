@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/extensions.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
 /// It has (in order):
@@ -38,7 +39,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                 TopBarIcon(
                   tooltip: 'Close',
                   icon: Icons.arrow_back_ios_rounded,
-                  onTap: () => Navigator.maybePop(context),
+                  onTap: context.back,
                 )
               else
                 const SizedBox(width: 10),

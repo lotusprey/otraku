@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/modules/character/character_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -8,7 +9,7 @@ import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class CharacterInfoTab extends StatelessWidget {
   const CharacterInfoTab(this.id, this.imageUrl, this.scrollCtrl);
@@ -148,18 +149,13 @@ class CharacterInfoTab extends StatelessWidget {
                       _InfoTile('Blood Type', data.bloodType!),
                   ]),
                 ),
-                if (data.description.isNotEmpty)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Card(
-                        child: Padding(
-                          padding: Consts.padding,
-                          child: HtmlContent(data.description),
-                        ),
-                      ),
-                    ),
+                if (data.description.isNotEmpty) ...[
+                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  HtmlContent(
+                    data.description,
+                    renderMode: RenderMode.sliverList,
                   ),
+                ],
                 const SliverFooter(),
               ],
             ),

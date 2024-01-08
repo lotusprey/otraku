@@ -15,15 +15,13 @@ import 'package:otraku/modules/discover/discover_view.dart';
 import 'package:otraku/modules/collection/collection_view.dart';
 import 'package:otraku/modules/feed/feed_view.dart';
 import 'package:otraku/modules/user/user_view.dart';
-import 'package:otraku/common/utils/background_handler.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
-import 'package:otraku/common/widgets/overlays/dialogs.dart';
 
 class HomeView extends ConsumerStatefulWidget {
-  const HomeView(this.id);
+  const HomeView({this.tab});
 
-  final int id;
+  final HomeTab? tab;
 
   @override
   ConsumerState<HomeView> createState() => _HomeViewState();
@@ -31,14 +29,16 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  late final _animeCollectionTag = (userId: widget.id, ofAnime: true);
-  late final _mangaCollectionTag = (userId: widget.id, ofAnime: false);
+  final _id = Options().id!;
+  late final _userTag = idUserTag(_id);
+  late final _animeCollectionTag = (userId: _id, ofAnime: true);
+  late final _mangaCollectionTag = (userId: _id, ofAnime: false);
 
   final _searchFocusNode = FocusNode();
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
-    loadMore: () => ref.read(activitiesProvider(null).notifier).fetch(),
+    loadMore: () => ref.read(activitiesProvider(homeFeedId).notifier).fetch(),
   );
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
@@ -51,15 +51,27 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   void initState() {
     super.initState();
-    _tabCtrl.index = ref.read(homeProvider.notifier).homeTab.index;
-    _tabCtrl.addListener(
-      () => ref.read(homeProvider).homeTab = HomeTab.values[_tabCtrl.index],
-    );
+    _tabCtrl.index = Options().defaultHomeTab.index;
+    if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
+    _tabCtrl.addListener(() => setState(() {}));
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeView oldWidget) {
+    if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void deactivate() {
+    ref.invalidate(discoverProvider);
+    ref.invalidate(discoverFilterProvider);
+    ref.invalidate(activitiesProvider(homeFeedId));
+    super.deactivate();
   }
 
   @override
   void dispose() {
-    BackgroundHandler.clearNotifications();
     _searchFocusNode.dispose();
     _animeScrollCtrl.dispose();
     _mangaScrollCtrl.dispose();
@@ -71,45 +83,17 @@ class _HomeViewState extends ConsumerState<HomeView>
 
   @override
   Widget build(BuildContext context) {
-    BackgroundHandler.handleNotificationLaunch();
-
-    if (Options().lastVersionCode != versionCode) {
-      BackgroundHandler.checkPermission().then((hasPermission) {
-        if (!hasPermission) {
-          BackgroundHandler.requestPermission().then((success) {
-            if (!success && mounted) {
-              showPopUp(
-                context,
-                const ConfirmationDialog(
-                  title: 'No permission to send notifications',
-                ),
-              );
-            }
-          });
-        }
-        Options().updateVersionCode();
-      });
-    }
-
-    ref.listen(
-      homeProvider.select((s) => s.homeTab),
-      (_, tab) => _tabCtrl.index = tab.index,
-    );
-
     ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
-    ref.watch(userProvider(widget.id).select((_) => null));
+    ref.watch(userProvider(_userTag).select((_) => null));
 
-    final notifier = ref.watch(homeProvider);
-    notifier.checkLazyTabs();
-
-    if (notifier.didOpenFeed) {
-      ref.watch(activitiesProvider(null).select((_) => null));
-    }
-
-    if (notifier.didOpenDiscover) {
+    if (_tabCtrl.index == HomeTab.feed.index) {
+      ref.watch(activitiesProvider(homeFeedId).select((_) => null));
+    } else if (_tabCtrl.index == HomeTab.discover.index) {
       ref.watch(discoverProvider.select((_) => null));
     }
+
+    final notifier = ref.watch(homeProvider);
 
     notifier.didExpandCollection(true)
         ? ref.watch(entriesProvider(_animeCollectionTag).select((_) => null))
@@ -125,101 +109,81 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
-    return WillPopScope(
-      onWillPop: () => _onWillPopHome(context),
-      child: PageScaffold(
-        bottomBar: BottomNavBar(
-          current: notifier.homeTab.index,
-          onChanged: (i) => ref.read(homeProvider).homeTab = HomeTab.values[i],
-          items: {
-            for (final t in HomeTab.values) t.title: t.iconData,
-          },
-          onSame: (i) {
-            final tab = HomeTab.values[i];
+    return PageScaffold(
+      bottomBar: BottomNavBar(
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        items: {
+          for (final t in HomeTab.values) t.title: t.iconData,
+        },
+        onSame: (i) {
+          final tab = HomeTab.values[i];
 
-            switch (tab) {
-              case HomeTab.anime:
-                if (_animeScrollCtrl.position.pixels > 0) {
-                  _animeScrollCtrl.scrollToTop();
-                } else if (ref.read(homeProvider).didExpandCollection(true)) {
-                  _toggleSearchFocus();
-                }
-                return;
-              case HomeTab.manga:
-                if (_mangaScrollCtrl.position.pixels > 0) {
-                  _mangaScrollCtrl.scrollToTop();
-                } else if (ref.read(homeProvider).didExpandCollection(false)) {
-                  _toggleSearchFocus();
-                }
-                return;
-              case HomeTab.discover:
-                if (_discoverScrollCtrl.position.pixels > 0) {
-                  _discoverScrollCtrl.scrollToTop();
-                } else {
-                  _toggleSearchFocus();
-                }
-                return;
-              case HomeTab.feed:
-                _feedScrollCtrl.scrollToTop();
-              case HomeTab.profile:
-                primaryScrollCtrl.scrollToTop();
-                return;
-            }
-          },
-        ),
-        child: TabBarView(
-          controller: _tabCtrl,
-          children: [
-            FeedView(_feedScrollCtrl),
-            if (notifier.didExpandCollection(true))
-              CollectionSubView(
-                scrollCtrl: _animeScrollCtrl,
-                tag: _animeCollectionTag,
-                focusNode: _searchFocusNode,
-                key: Key(true.toString()),
-              )
-            else
-              CollectionPreviewView(
-                scrollCtrl: _animeScrollCtrl,
-                tag: _animeCollectionTag,
-                key: Key(true.toString()),
-              ),
-            if (notifier.didExpandCollection(false))
-              CollectionSubView(
-                scrollCtrl: _mangaScrollCtrl,
-                tag: _mangaCollectionTag,
-                focusNode: _searchFocusNode,
-                key: Key(false.toString()),
-              )
-            else
-              CollectionPreviewView(
-                scrollCtrl: _mangaScrollCtrl,
-                tag: _mangaCollectionTag,
-                key: Key(false.toString()),
-              ),
-            DiscoverView(_searchFocusNode, _discoverScrollCtrl),
-            UserSubView(widget.id, null, primaryScrollCtrl),
-          ],
-        ),
+          switch (tab) {
+            case HomeTab.anime:
+              if (_animeScrollCtrl.position.pixels > 0) {
+                _animeScrollCtrl.scrollToTop();
+              } else if (ref.read(homeProvider).didExpandCollection(true)) {
+                _toggleSearchFocus();
+              }
+              return;
+            case HomeTab.manga:
+              if (_mangaScrollCtrl.position.pixels > 0) {
+                _mangaScrollCtrl.scrollToTop();
+              } else if (ref.read(homeProvider).didExpandCollection(false)) {
+                _toggleSearchFocus();
+              }
+              return;
+            case HomeTab.discover:
+              if (_discoverScrollCtrl.position.pixels > 0) {
+                _discoverScrollCtrl.scrollToTop();
+              } else {
+                _toggleSearchFocus();
+              }
+              return;
+            case HomeTab.feed:
+              _feedScrollCtrl.scrollToTop();
+            case HomeTab.profile:
+              primaryScrollCtrl.scrollToTop();
+              return;
+          }
+        },
+      ),
+      child: TabBarView(
+        controller: _tabCtrl,
+        children: [
+          FeedView(_feedScrollCtrl),
+          if (notifier.didExpandCollection(true))
+            CollectionSubView(
+              scrollCtrl: _animeScrollCtrl,
+              tag: _animeCollectionTag,
+              focusNode: _searchFocusNode,
+              key: Key(true.toString()),
+            )
+          else
+            CollectionPreviewView(
+              scrollCtrl: _animeScrollCtrl,
+              tag: _animeCollectionTag,
+              key: Key(true.toString()),
+            ),
+          if (notifier.didExpandCollection(false))
+            CollectionSubView(
+              scrollCtrl: _mangaScrollCtrl,
+              tag: _mangaCollectionTag,
+              focusNode: _searchFocusNode,
+              key: Key(false.toString()),
+            )
+          else
+            CollectionPreviewView(
+              scrollCtrl: _mangaScrollCtrl,
+              tag: _mangaCollectionTag,
+              key: Key(false.toString()),
+            ),
+          DiscoverView(_searchFocusNode, _discoverScrollCtrl),
+          UserSubView(_userTag, null, primaryScrollCtrl),
+        ],
       ),
     );
-  }
-
-  Future<bool> _onWillPopHome(BuildContext context) async {
-    if (!Options().confirmExit) return Future.value(true);
-
-    bool ok = false;
-    await showPopUp(
-      context,
-      ConfirmationDialog(
-        title: 'Exit?',
-        mainAction: 'Yes',
-        secondaryAction: 'No',
-        onConfirm: () => ok = true,
-      ),
-    );
-
-    return Future.value(ok);
   }
 
   void _toggleSearchFocus() => _searchFocusNode.hasFocus

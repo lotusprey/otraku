@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/entry_labels.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/modules/discover/discover_providers.dart';
+import 'package:otraku/modules/filter/filter_models.dart';
+import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/media/media_providers.dart';
 import 'package:otraku/common/utils/consts.dart';
@@ -33,8 +40,9 @@ class MediaRelatedGrid extends StatelessWidget {
         (context, i) {
           final details = <String, bool>{
             if (items[i].relationType != null) items[i].relationType!: true,
+            if (items[i].listStatus != null) items[i].listStatus!: true,
             if (items[i].format != null) items[i].format!: false,
-            if (items[i].status != null) items[i].status!: false,
+            if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
           };
 
           return LinkTile(
@@ -446,10 +454,15 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
 }
 
 class MediaRankGrid extends StatelessWidget {
-  const MediaRankGrid(this.rankTexts, this.rankTypes);
+  const MediaRankGrid({
+    required this.ref,
+    required this.type,
+    required this.ranks,
+  });
 
-  final List<String> rankTexts;
-  final List<bool> rankTypes;
+  final WidgetRef ref;
+  final DiscoverType type;
+  final List<MediaRank> ranks;
 
   @override
   Widget build(BuildContext context) {
@@ -461,28 +474,55 @@ class MediaRankGrid extends StatelessWidget {
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
-          (_, i) => Card(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Row(
-                children: [
-                  Icon(
-                    rankTypes[i] ? Ionicons.star : Icons.favorite_rounded,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+          (_, i) {
+            return Card(
+              child: InkWell(
+                borderRadius: Consts.borderRadiusMin,
+                onTap: () {
+                  final notifier = ref.read(discoverFilterProvider.notifier);
+                  final filter = notifier.state.copyWith(
+                    type: type,
+                    search: '',
+                    mediaFilter: DiscoverMediaFilter(),
+                  );
+                  filter.mediaFilter.season = ranks[i].season;
+                  filter.mediaFilter.startYearFrom = ranks[i].year;
+                  filter.mediaFilter.startYearTo = ranks[i].year;
+                  filter.mediaFilter.sort = ranks[i].typeIsScore
+                      ? MediaSort.SCORE_DESC
+                      : MediaSort.POPULARITY_DESC;
+                  notifier.state = filter;
+
+                  context.go(Routes.home(HomeTab.discover));
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
                   ),
-                  const SizedBox(width: 5),
-                  Expanded(
-                    child: Text(
-                      rankTexts[i],
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
-                    ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        ranks[i].typeIsScore
+                            ? Ionicons.star
+                            : Icons.favorite_rounded,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 5),
+                      Expanded(
+                        child: Text(
+                          ranks[i].text,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-          childCount: rankTexts.length,
+            );
+          },
+          childCount: ranks.length,
         ),
       ),
     );

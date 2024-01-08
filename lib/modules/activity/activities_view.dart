@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/activity/activity_filter_sheet.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
@@ -9,7 +11,6 @@ import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -76,7 +77,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
 class ActivitiesSubView extends StatelessWidget {
   const ActivitiesSubView(this.id, this.scrollCtrl);
 
-  final int? id;
+  final int id;
   final ScrollController scrollCtrl;
 
   @override
@@ -88,7 +89,7 @@ class ActivitiesSubView extends StatelessWidget {
           scrollCtrl: scrollCtrl,
           onRefresh: () {
             ref.invalidate(activitiesProvider(id));
-            if (id == null) {
+            if (id == homeFeedId) {
               ref.read(settingsProvider.notifier).refetchUnread();
             }
           },
@@ -109,8 +110,9 @@ class ActivitiesSubView extends StatelessWidget {
                           .read(activitiesProvider(id).notifier)
                           .togglePin(data.items[i].id)
                       : null,
-                  onOpenReplies: () =>
-                      _onOpenReplies(context, ref, data.items[i]),
+                  onOpenReplies: () => context.push(
+                    Routes.activity(data.items[i].id, id),
+                  ),
                   onEdited: (map) {
                     ref
                         .read(activitiesProvider(id).notifier)
@@ -122,27 +124,6 @@ class ActivitiesSubView extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  void _onOpenReplies(BuildContext context, WidgetRef ref, Activity activity) {
-    Navigator.pushNamed(
-      context,
-      RouteArg.activity,
-      arguments: RouteArg(
-        id: activity.id,
-        callback: (arg) {
-          final updatedActivity = arg as Activity?;
-          if (updatedActivity == null) {
-            ref.read(activitiesProvider(id).notifier).remove(activity.id);
-            return;
-          }
-
-          ref
-              .read(activitiesProvider(id).notifier)
-              .updateActivity(updatedActivity);
-        },
-      ),
     );
   }
 }

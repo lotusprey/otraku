@@ -7,16 +7,6 @@ final homeProvider =
     ChangeNotifierProvider.autoDispose((ref) => HomeNotifier());
 
 class HomeNotifier extends ChangeNotifier {
-  HomeTab _homeTab = Options().defaultHomeTab;
-
-  HomeTab get homeTab => _homeTab;
-
-  set homeTab(HomeTab val) {
-    if (_homeTab == val) return;
-    _homeTab = val;
-    notifyListeners();
-  }
-
   /// The system schemes acquired asynchronously
   /// from [DynamicColorBuilder] are cached.
   ColorScheme? _systemLightScheme;
@@ -28,21 +18,6 @@ class HomeNotifier extends ChangeNotifier {
   void setSystemSchemes(ColorScheme? l, ColorScheme? d) {
     _systemLightScheme = l;
     _systemDarkScheme = d;
-  }
-
-  /// The discover and feed tab are loaded lazily, when first opened.
-  var _didOpenFeed = false;
-  var _didOpenDiscover = false;
-
-  bool get didOpenFeed => _didOpenFeed;
-  bool get didOpenDiscover => _didOpenDiscover;
-
-  void checkLazyTabs() {
-    if (_homeTab == HomeTab.feed) {
-      _didOpenFeed = true;
-    } else if (_homeTab == HomeTab.discover) {
-      _didOpenDiscover = true;
-    }
   }
 
   /// In preview mode, user's collections first load only current media.

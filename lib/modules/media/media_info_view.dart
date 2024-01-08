@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/routing.dart';
+import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
-import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class MediaInfoView extends StatelessWidget {
   const MediaInfoView(this.media, this.scrollCtrl);
@@ -78,10 +79,16 @@ class MediaInfoView extends StatelessWidget {
                   child: Card(
                     child: Padding(
                       padding: Consts.padding,
-                      child: Text(
-                        info.description,
-                        maxLines: 4,
-                        overflow: TextOverflow.fade,
+                      child: ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          begin: Alignment(0.0, 0.7),
+                          end: Alignment(0.0, 1.0),
+                          colors: [Colors.white, Colors.transparent],
+                        ).createShader(bounds),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 72),
+                          child: HtmlContent(info.description),
+                        ),
                       ),
                     ),
                   ),
@@ -137,8 +144,7 @@ class MediaInfoView extends StatelessWidget {
                 )..mediaFilter.genreIn.add(info.genres[i]);
                 notifier.state = filter;
 
-                ref.read(homeProvider).homeTab = HomeTab.discover;
-                Navigator.popUntil(context, (r) => r.isFirst);
+                context.go(Routes.home(HomeTab.discover));
               },
             ),
           if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
@@ -146,22 +152,22 @@ class MediaInfoView extends StatelessWidget {
             _PlainScrollCards(
               title: 'Studios',
               items: info.studios.keys.toList(),
-              onTap: (index) => LinkTile.openView(
-                context: context,
-                id: info.studios[info.studios.keys.elementAt(index)]!,
-                imageUrl: info.studios.keys.elementAt(index),
-                discoverType: DiscoverType.Studio,
+              onTap: (i) => context.push(
+                Routes.studio(
+                  info.studios.values.elementAt(i),
+                  info.studios.keys.elementAt(i),
+                ),
               ),
             ),
           if (info.producers.isNotEmpty)
             _PlainScrollCards(
               title: 'Producers',
               items: info.producers.keys.toList(),
-              onTap: (i) => LinkTile.openView(
-                context: context,
-                id: info.producers[info.producers.keys.elementAt(i)]!,
-                imageUrl: info.producers.keys.elementAt(i),
-                discoverType: DiscoverType.Studio,
+              onTap: (i) => context.push(
+                Routes.studio(
+                  info.producers.values.elementAt(i),
+                  info.producers.keys.elementAt(i),
+                ),
               ),
             ),
           if (info.externalLinks.isNotEmpty)
@@ -217,11 +223,12 @@ class _ScrollCards extends StatelessWidget {
             height: 42,
             child: ShadowedOverflowList(
               itemCount: itemCount,
-              itemBuilder: (context, i) => GestureDetector(
-                onTap: () => onTap(i),
-                onLongPress: () => onLongPress(i),
-                child: Card(
-                  margin: const EdgeInsets.only(right: 5, bottom: 2),
+              itemBuilder: (context, i) => Card(
+                margin: const EdgeInsets.only(bottom: 2),
+                child: InkWell(
+                  borderRadius: Consts.borderRadiusMin,
+                  onTap: () => onTap(i),
+                  onLongPress: () => onLongPress(i),
                   child: Padding(
                     padding: Consts.padding,
                     child: builder(context, i),
@@ -344,8 +351,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         )..mediaFilter.tagIn.add(tags[i].name);
         notifier.state = filter;
 
-        widget.ref.read(homeProvider).homeTab = HomeTab.discover;
-        Navigator.popUntil(context, (r) => r.isFirst);
+        context.go(Routes.home(HomeTab.discover));
       },
       onLongPress: (i) => showPopUp(
         context,

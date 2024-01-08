@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
-import 'package:otraku/common/utils/route_arg.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 
 class UserHeader extends StatelessWidget {
@@ -19,7 +21,7 @@ class UserHeader extends StatelessWidget {
     required this.imageUrl,
   });
 
-  final int id;
+  final int? id;
   final bool isViewer;
   final User? user;
   final String? imageUrl;
@@ -61,7 +63,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.textRailItems,
   });
 
-  final int id;
+  final int? id;
   final bool isViewer;
   final User? user;
   final String? imageUrl;
@@ -86,28 +88,27 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     final image = user?.imageUrl ?? imageUrl;
     final theme = Theme.of(context);
 
+    final avatar = ClipRRect(
+      borderRadius: Consts.borderRadiusMin,
+      child: SizedBox(
+        height: imageWidth,
+        width: imageWidth,
+        child: image != null
+            ? GestureDetector(
+                onTap: () => showPopUp(
+                  context,
+                  ImageDialog(image),
+                ),
+                child: CachedImage(image, fit: BoxFit.contain),
+              )
+            : null,
+      ),
+    );
+
     final infoContent = Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        Hero(
-          tag: id,
-          child: ClipRRect(
-            borderRadius: Consts.borderRadiusMin,
-            child: SizedBox(
-              height: imageWidth,
-              width: imageWidth,
-              child: image != null
-                  ? GestureDetector(
-                      onTap: () => showPopUp(
-                        context,
-                        ImageDialog(image),
-                      ),
-                      child: CachedImage(image, fit: BoxFit.contain),
-                    )
-                  : null,
-            ),
-          ),
-        ),
+        id != null ? Hero(tag: id!, child: avatar) : avatar,
         const SizedBox(width: 10),
         Expanded(
           child: Column(
@@ -164,7 +165,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             : TopBarIcon(
                 tooltip: 'Close',
                 icon: Icons.arrow_back_ios_new_rounded,
-                onTap: Navigator.of(context).pop,
+                onTap: context.back,
               ),
         Expanded(
           child: user?.name == null
@@ -192,10 +193,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           TopBarIcon(
             tooltip: 'Settings',
             icon: Ionicons.cog_outline,
-            onTap: () => Navigator.pushNamed(
-              context,
-              RouteArg.settings,
-            ),
+            onTap: () => context.push(Routes.settings),
           ),
       ],
     );

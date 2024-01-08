@@ -9,7 +9,7 @@ import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 import 'package:otraku/modules/calendar/calendar_filter_sheet.dart';
@@ -70,9 +70,7 @@ class _CalendarViewState extends State<CalendarView> {
                     _setDate(ref, newDate);
                   }
                 }),
-                child: Text(
-                  '${date.formattedDate} - ${date.formattedWeekday}',
-                ),
+                child: Text(date.formattedWithWeekDay),
               ),
             ),
             SizedBox(
@@ -218,24 +216,19 @@ class _ExternalLinkList extends StatelessWidget {
       itemBuilder: (context, i) {
         return Padding(
           padding: const EdgeInsets.only(right: 5),
-          child: OutlinedButton(
+          child: ActionChip(
             onPressed: () => Toast.launch(context, links[i].url),
-            onLongPress: () => Toast.copy(context, links[i].url),
-            child: Row(
-              children: [
-                if (links[i].color != null)
-                  Container(
+            label: Text(links[i].site),
+            avatar: links[i].color != null
+                ? Container(
                     height: 15,
                     width: 15,
-                    margin: const EdgeInsets.only(right: 10),
                     decoration: BoxDecoration(
                       borderRadius: Consts.borderRadiusMin,
                       color: links[i].color,
                     ),
-                  ),
-                Text(links[i].site),
-              ],
-            ),
+                  )
+                : null,
           ),
         );
       },

@@ -52,7 +52,7 @@ class BarChart extends StatelessWidget {
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: values[i] * maxHeight + 10,
-                  margin: const EdgeInsets.only(right: 5, top: 5, bottom: 5),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
@@ -66,7 +66,10 @@ class BarChart extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(names[i], style: Theme.of(context).textTheme.labelMedium),
+                Text(
+                  names[i],
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
               ],
             ),
           ),
@@ -77,9 +80,11 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  const PieChart(
-      {required this.title, required this.names, required this.values})
-      : assert(names.length == values.length);
+  const PieChart({
+    required this.title,
+    required this.names,
+    required this.values,
+  }) : assert(names.length == values.length);
 
   final String title;
   final List<String> names;

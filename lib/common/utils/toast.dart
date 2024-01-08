@@ -9,7 +9,7 @@ class Toast {
   static OverlayEntry? _entry;
   static bool _busy = false;
 
-  // Present a toast message.
+  /// Present a toast message.
   static void show(BuildContext context, String text) {
     _busy = true;
     _entry?.remove();
@@ -51,12 +51,12 @@ class Toast {
     _busy = false;
   }
 
-  // Copy text to clipboard and notify with a toast.
+  /// Copy [text] to clipboard and notify with a toast.
   static void copy(BuildContext context, String text) =>
       Clipboard.setData(ClipboardData(text: text))
           .then((_) => show(context, 'Copied'));
 
-  // Launch something in the browser or show a toast if unsuccessful.
+  /// Launch [link] in the browser or show a toast if unsuccessful.
   static Future<bool> launch(BuildContext context, String link) async =>
       launchUrl(
         Uri.parse(link),

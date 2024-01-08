@@ -81,28 +81,21 @@ class CheckBoxFieldState extends State<CheckBoxField> {
 class CheckBoxTriField extends StatefulWidget {
   const CheckBoxTriField({
     required this.title,
-    required this.initial,
+    required this.value,
     required this.onChanged,
-    Key? key,
-  })  : assert(initial > -2 && initial < 2),
-        super(key: key);
+    super.key,
+  });
 
   final String title;
-  final int initial;
-  final void Function(int) onChanged;
+  final bool? value;
+  final void Function(bool?) onChanged;
 
   @override
   CheckBoxTriFieldState createState() => CheckBoxTriFieldState();
 }
 
 class CheckBoxTriFieldState extends State<CheckBoxTriField> {
-  late int _state;
-
-  @override
-  void initState() {
-    super.initState();
-    _state = widget.initial;
-  }
+  late bool? _value = widget.value;
 
   @override
   Widget build(BuildContext context) {
@@ -113,8 +106,14 @@ class CheckBoxTriFieldState extends State<CheckBoxTriField> {
         behavior: HitTestBehavior.opaque,
         onTap: () {
           Feedback.forTap(context);
-          setState(() => _state < 1 ? _state++ : _state = -1);
-          widget.onChanged(_state);
+          setState(
+            () => _value == null
+                ? _value = true
+                : _value!
+                    ? _value = false
+                    : _value = null,
+          );
+          widget.onChanged(_value);
         },
         child: Row(
           children: [
@@ -125,21 +124,21 @@ class CheckBoxTriFieldState extends State<CheckBoxTriField> {
               margin: const EdgeInsets.only(right: 10),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _state == 0
+                color: _value == null
                     ? null
-                    : _state == 1
+                    : _value == true
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.error,
                 border: Border.all(
-                  color: _state != 0
+                  color: _value != null
                       ? Colors.transparent
                       : Theme.of(context).colorScheme.surfaceVariant,
                   width: 2,
                 ),
               ),
-              child: _state != 0
+              child: _value != null
                   ? Icon(
-                      _state == 1 ? Icons.add_rounded : Icons.remove_rounded,
+                      _value! ? Icons.add_rounded : Icons.remove_rounded,
                       color: Theme.of(context).colorScheme.background,
                       size: Consts.iconSmall,
                     )

@@ -1,6 +1,6 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/modules/settings/settings_provider.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 
 typedef EditTag = ({int id, bool setComplete});
 
@@ -210,8 +210,8 @@ class Edit {
         'score': score,
         'repeat': repeat,
         'notes': notes,
-        'startedAt': startedAt != null ? startedAt!.fuzzyDate : null,
-        'completedAt': completedAt != null ? completedAt!.fuzzyDate : null,
+        'startedAt': startedAt?.fuzzyDate,
+        'completedAt': completedAt?.fuzzyDate,
         'private': private,
         'hiddenFromStatusLists': hiddenFromStatusLists,
         'advancedScores': advancedScores.entries.map((e) => e.value).toList(),

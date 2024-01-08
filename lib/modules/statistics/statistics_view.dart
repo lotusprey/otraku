@@ -25,11 +25,12 @@ class StatisticsView extends StatefulWidget {
 
 class _StatisticsViewState extends State<StatisticsView>
     with SingleTickerProviderStateMixin {
+  late final tag = idUserTag(widget.id);
   late final _tabCtrl = TabController(length: 2, vsync: this);
   final _scrollCtrl = ScrollController();
 
-  int _primaryBarChartTab = 0; // 0-1
-  int _secondaryBarChartTab = 0; // 0-2
+  int _primaryBarChartTab = 0;
+  int _secondaryBarChartTab = 0;
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _StatisticsViewState extends State<StatisticsView>
     final content = Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
-          userProvider(widget.id),
+          userProvider(tag),
           (_, s) => s.whenOrNull(
             error: (error, _) => showPopUp(
               context,
@@ -61,7 +62,7 @@ class _StatisticsViewState extends State<StatisticsView>
           ),
         );
 
-        return ref.watch(userProvider(widget.id)).when(
+        return ref.watch(userProvider(tag)).when(
               loading: () => const Center(child: Loader()),
               error: (_, __) => const Center(
                 child: Text('Failed to load statistics'),
@@ -237,30 +238,25 @@ class _Details extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: titles.length,
-        (context, i) => Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
+        (context, i) => Row(
+          children: [
+            Icon(
+              icons[i],
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 10),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  icons[i],
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                Text(
+                  titles[i],
+                  style: Theme.of(context).textTheme.labelMedium,
                 ),
-                const SizedBox(width: 10),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      titles[i],
-                      style: Theme.of(context).textTheme.labelMedium,
-                    ),
-                    Text(subtitles[i].toString()),
-                  ],
-                ),
+                Text(subtitles[i].toString()),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );

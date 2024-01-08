@@ -90,7 +90,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' followed you.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: DiscoverType.User,
@@ -104,7 +104,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' mentioned you in an activity.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -117,7 +117,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' sent you a message.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -130,7 +130,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' replied to your activity.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -143,7 +143,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your activity.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -156,7 +156,7 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your reply.'],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -172,7 +172,7 @@ class SiteNotification {
               ' replied to activity you are subscribed to.',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -189,7 +189,7 @@ class SiteNotification {
               if (map['thread'] != null) map['thread']['title'],
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -209,7 +209,7 @@ class SiteNotification {
                 ' commented in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -229,7 +229,7 @@ class SiteNotification {
                 ' liked your comment in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -249,7 +249,7 @@ class SiteNotification {
                 ' replied to your comment in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -269,7 +269,7 @@ class SiteNotification {
                 ' mentioned you in a subscribed thread',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -288,7 +288,7 @@ class SiteNotification {
               ' aired',
             ],
             markTextOnEvenIndex: false,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -307,7 +307,7 @@ class SiteNotification {
               ' was added to the site',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -326,7 +326,7 @@ class SiteNotification {
               ' received site data changes',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -351,7 +351,7 @@ class SiteNotification {
               map['media']['title']['userPreferred'],
             ],
             markTextOnEvenIndex: false,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -368,7 +368,7 @@ class SiteNotification {
               ' was deleted from the site',
             ],
             markTextOnEvenIndex: true,
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );

@@ -2,8 +2,8 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 
-class ActivityState {
-  ActivityState(this.activity, this.replies);
+class ExpandedActivity {
+  ExpandedActivity(this.activity, this.replies);
 
   final Activity activity;
   final Paged<ActivityReply> replies;
@@ -28,7 +28,7 @@ class ActivityReply {
       isLiked: map['isLiked'] ?? false,
       user: ActivityUser(map['user']),
       text: map['text'] ?? '',
-      createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(map['createdAt']),
+      createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
     );
   }
 
@@ -71,7 +71,7 @@ class Activity {
             agent: ActivityUser(map['user']),
             siteUrl: map['siteUrl'],
             text: map['text'] ?? '',
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -100,7 +100,7 @@ class Activity {
             media: ActivityMedia(map),
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -120,7 +120,7 @@ class Activity {
             reciever: ActivityUser(map['recipient']),
             siteUrl: map['siteUrl'],
             text: map['message'] ?? '',
-            createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['messenger']['id'] == viewerId ||

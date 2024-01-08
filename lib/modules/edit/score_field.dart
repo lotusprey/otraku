@@ -16,12 +16,15 @@ class ScoreField extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final score = ref.watch(newEditProvider(tag).select((s) => s.score));
+        final scoreFormat =
+            ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
+                ScoreFormat.POINT_10;
 
         final onChanged = (v) => ref
             .read(newEditProvider(tag).notifier)
             .update((s) => s.copyWith(score: v));
 
-        return switch (ref.watch(settingsProvider.notifier).value.scoreFormat) {
+        return switch (scoreFormat) {
           ScoreFormat.POINT_3 => _SmileyScorePicker(score, onChanged),
           ScoreFormat.POINT_5 => _StarScorePicker(score, onChanged),
           ScoreFormat.POINT_10 => _TenScorePicker(score, onChanged),

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
@@ -63,7 +64,10 @@ final oldEditProvider = FutureProvider.autoDispose.family(
     }
 
     final data = await Api.get(GqlQuery.entry, {'mediaId': tag.id});
-    return Edit(data['Media'], ref.watch(settingsProvider.notifier).value);
+    return Edit(
+      data['Media'],
+      ref.watch(settingsProvider).valueOrNull ?? Settings.empty(),
+    );
   },
 );
 

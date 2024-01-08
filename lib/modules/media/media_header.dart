@@ -10,7 +10,7 @@ import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
@@ -187,7 +187,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         TopBarIcon(
           tooltip: 'Close',
           icon: Icons.arrow_back_ios_rounded,
-          onTap: Navigator.of(context).pop,
+          onTap: context.back,
         ),
         Expanded(
           child: info?.preferredTitle == null

@@ -1,0 +1,8 @@
+- Collection searching goes through both titles and notes
+- Activity replies have a "Reply" button for automatic mentions
+- Tapping on markdown images opens them as a popup
+- Tapping on user mentions is not handled as a link, but directly opens the user page
+- Tapping on a ranking in a media's statistics page redirects to the discover tab with added filters
+- Deep linking on android, if configured in settings
+- List status on related media in media pages
+- And other visual improvements and fixes

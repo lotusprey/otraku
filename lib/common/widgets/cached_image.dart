@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 /// A custom cache manager is needed to define exact image cap and stale period.
 final _cacheManager = CacheManager(
@@ -27,8 +27,8 @@ class CachedImage extends StatelessWidget {
 
   final String imageUrl;
   final BoxFit fit;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -40,9 +40,10 @@ class CachedImage extends StatelessWidget {
       cacheManager: _cacheManager,
       fadeInDuration: const Duration(milliseconds: 300),
       fadeOutDuration: const Duration(milliseconds: 300),
-      errorWidget: (context, url, error) => IconButton(
+      errorWidget: (context, _, __) => IconButton(
+        tooltip: 'Error',
         icon: const Icon(Icons.close_outlined),
-        onPressed: () => Toast.show(context, 'Failed loading: $imageUrl'),
+        onPressed: () => Toast.show(context, 'Failed to load image'),
       ),
     );
   }

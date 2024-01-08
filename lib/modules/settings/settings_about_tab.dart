@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/overlays/toast.dart';
+import 'package:otraku/common/utils/toast.dart';
 
 class SettingsAboutTab extends StatelessWidget {
   const SettingsAboutTab(this.scrollCtrl);
@@ -69,10 +71,13 @@ class SettingsAboutTab extends StatelessWidget {
               'https://sites.google.com/view/otraku/privacy-policy',
             ),
           ),
-          const ListTile(
-            leading: Icon(Ionicons.log_out_outline),
-            title: Text('Accounts'),
-            onTap: Api.logOut,
+          ListTile(
+            leading: const Icon(Ionicons.log_out_outline),
+            title: const Text('Accounts'),
+            onTap: () {
+              Api.unselectAccount();
+              context.go(Routes.auth);
+            },
           ),
           const ListTile(
             leading: Icon(Ionicons.trash_bin_outline),
@@ -87,7 +92,7 @@ class SettingsAboutTab extends StatelessWidget {
           if (lastNotificationFetch != null) ...[
             const SizedBox(height: 30),
             Text(
-              'Performed a notification check around ${DateTimeUtil.tryFormattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+              'Performed a notification check around ${DateTimeUtil.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium,
             ),

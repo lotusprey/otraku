@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:otraku/modules/auth/account.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/home/home_provider.dart';
@@ -9,7 +10,7 @@ import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.6+1';
+const versionCode = '1.2.7';
 
 /// General options keys.
 enum _OptionKey {
@@ -43,9 +44,8 @@ enum _OptionKey {
 
 /// User state keys.
 enum _ProfileKey {
-  account,
-  id,
-  expiration,
+  selectedAccount,
+  accounts,
 }
 
 /// Available image qualities.
@@ -66,6 +66,8 @@ const _profileBoxKey = 'profiles';
 /// [notifyListeners] is called when the theme configuration changes.
 class Options extends ChangeNotifier {
   Options._(
+    this._selectedAccount,
+    this._accounts,
     this._themeMode,
     this._theme,
     this._pureWhiteOrBlackTheme,
@@ -90,16 +92,18 @@ class Options extends ChangeNotifier {
     this._collectionPreviewItemView,
     this._feedActivityFilters,
     this._lastNotificationId,
-    this._lastVersionCode,
     this._lastBackgroundWork,
-    this._account,
-    this._id0,
-    this._id1,
-    this._expiration0,
-    this._expiration1,
+    this._lastVersionCode,
   );
 
   factory Options._read() {
+    final accounts =
+        (_profileBox.get(_ProfileKey.accounts.name) as List<dynamic>? ?? [])
+            .cast<Map<dynamic, dynamic>>()
+            .map((a) => Account.fromMap(a.cast<String, dynamic>()))
+            .toList();
+    final selectedAccount = _profileBox.get(_ProfileKey.selectedAccount.name);
+
     int themeMode = _optionBox.get(_OptionKey.themeMode.name) ?? 0;
     if (themeMode < 0 || themeMode >= ThemeMode.values.length) themeMode = 0;
 
@@ -160,6 +164,8 @@ class Options extends ChangeNotifier {
     }
 
     return Options._(
+      selectedAccount,
+      accounts,
       ThemeMode.values[themeMode],
       _optionBox.get(_OptionKey.themeIndex.name),
       _optionBox.get(_OptionKey.pureWhiteOrBlackTheme.name) ?? false,
@@ -184,13 +190,8 @@ class Options extends ChangeNotifier {
       collectionPreviewItemView,
       _optionBox.get(_OptionKey.feedActivityFilters.name) ?? [0, 1, 2],
       _optionBox.get(_OptionKey.lastNotificationId.name) ?? -1,
-      _optionBox.get(_OptionKey.lastVersionCode.name) ?? '',
       _optionBox.get(_OptionKey.lastBackgroundWork.name),
-      _profileBox.get(_ProfileKey.account.name),
-      _profileBox.get('${_ProfileKey.id.name}0'),
-      _profileBox.get('${_ProfileKey.id.name}1'),
-      _profileBox.get('${_ProfileKey.expiration.name}0'),
-      _profileBox.get('${_ProfileKey.expiration.name}1'),
+      _optionBox.get(_OptionKey.lastVersionCode.name) ?? '',
     );
   }
 
@@ -226,14 +227,8 @@ class Options extends ChangeNotifier {
   static Box get _optionBox => Hive.box(_optionsBoxKey);
   static Box get _profileBox => Hive.box(_profileBoxKey);
 
-  /// Administrative data.
-  int? _account;
-  int? _id0;
-  int? _id1;
-  int? _expiration0;
-  int? _expiration1;
-
-  /// General options.
+  int? _selectedAccount;
+  List<Account> _accounts;
   ThemeMode _themeMode;
   int? _theme;
   bool _pureWhiteOrBlackTheme;
@@ -258,11 +253,11 @@ class Options extends ChangeNotifier {
   int _collectionPreviewItemView;
   List<int> _feedActivityFilters;
   int _lastNotificationId;
-  String _lastVersionCode;
   DateTime? _lastBackgroundWork;
+  String _lastVersionCode;
 
-  /// Getters.
-
+  int? get selectedAccount => _selectedAccount;
+  List<Account> get accounts => _accounts;
   ThemeMode get themeMode => _themeMode;
   int? get theme => _theme;
   bool get pureWhiteOrBlackTheme => _pureWhiteOrBlackTheme;
@@ -287,47 +282,30 @@ class Options extends ChangeNotifier {
   int get collectionPreviewItemView => _collectionPreviewItemView;
   List<int> get feedActivityFilters => _feedActivityFilters;
   int get lastNotificationId => _lastNotificationId;
-  String get lastVersionCode => _lastVersionCode;
   DateTime? get lastBackgroundWork => _lastBackgroundWork;
-
-  int? get account => _account;
-
-  bool isAvailableAccount(int i) {
-    if (i < 0 || i > 1) return false;
-    return _profileBox.get('${_ProfileKey.id.name}$i') != null;
-  }
+  String get lastVersionCode => _lastVersionCode;
 
   int? get id {
-    if (_account == null) return null;
-    return _account == 0 ? _id0 : _id1;
+    if (_selectedAccount == null) return null;
+    return _accounts[_selectedAccount!].id;
   }
-
-  int? idOf(int v) {
-    if (v == 0) return _id0;
-    if (v == 1) return _id1;
-    return null;
-  }
-
-  int? expirationOf(int v) {
-    if (v == 0) return _expiration0;
-    if (v == 1) return _expiration1;
-    return null;
-  }
-
-  /// Setters.
 
   set selectedAccount(int? v) {
-    if (v == null && _account != null) {
-      _account = null;
-      _profileBox.delete(_ProfileKey.account.name);
+    if (v == null) {
+      if (selectedAccount == null) return;
+      _selectedAccount = null;
+      _profileBox.delete(_ProfileKey.selectedAccount.name);
       _instance.lastNotificationId = -1;
-    } else if (v == 0 && _account != 0) {
-      _account = 0;
-      _profileBox.put(_ProfileKey.account.name, 0);
-    } else if (v == 1 && _account != 1) {
-      _account = 1;
-      _profileBox.put(_ProfileKey.account.name, 1);
+    } else if (v != _selectedAccount && v > -1 && v < _accounts.length) {
+      _selectedAccount = v;
+      _profileBox.put(_ProfileKey.selectedAccount.name, v);
     }
+  }
+
+  set accounts(List<Account> v) {
+    _accounts = v;
+    final accountMaps = accounts.map((a) => a.toMap()).toList();
+    _profileBox.put(_ProfileKey.accounts.name, accountMaps);
   }
 
   set themeMode(ThemeMode v) {
@@ -465,30 +443,31 @@ class Options extends ChangeNotifier {
     _optionBox.put(_OptionKey.lastNotificationId.name, v);
   }
 
-  /// Updates the version code to the newest one.
-  void updateVersionCode() {
-    _lastVersionCode = versionCode;
-    _optionBox.put(_OptionKey.lastVersionCode.name, versionCode);
-  }
-
   set lastBackgroundWork(DateTime? v) {
     _lastBackgroundWork = v;
     _optionBox.put(_OptionKey.lastBackgroundWork.name, v);
   }
 
-  void setIdOf(int a, int? v) {
-    if (a < 0 || a > 1) return;
-    a == 0 ? _id0 = v : _id1 = v;
-    v != null
-        ? _profileBox.put('${_ProfileKey.id.name}$a', v)
-        : _profileBox.delete('${_ProfileKey.id.name}$a');
+  void updateVersionCodeToLatestVersion() {
+    _lastVersionCode = versionCode;
+    _optionBox.put(_OptionKey.lastVersionCode.name, versionCode);
   }
 
-  void setExpirationOf(int a, int? v) {
-    if (a < 0 || a > 1) return;
-    a == 0 ? _expiration0 = v : _expiration1 = v;
-    v != null
-        ? _profileBox.put('${_ProfileKey.expiration.name}$a', v)
-        : _profileBox.delete('${_ProfileKey.expiration.name}$a');
+  /// If the [name] or [avatarUrl] have changed, update the cached account info.
+  void confirmAccountNameAndAvatar(int id, String name, String avatarUrl) {
+    for (int i = 0; i < _accounts.length; i++) {
+      final account = _accounts[i];
+      if (account.id == id) {
+        if (account.name != name || account.avatarUrl != avatarUrl) {
+          _accounts[i] = Account(
+            id: id,
+            name: name,
+            avatarUrl: avatarUrl,
+            expiration: account.expiration,
+          );
+        }
+        return;
+      }
+    }
   }
 }

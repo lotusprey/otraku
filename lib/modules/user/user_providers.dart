@@ -13,9 +13,16 @@ Future<bool> toggleFollow(int userId) async {
   }
 }
 
-final userProvider = FutureProvider.autoDispose.family<User, int>(
-  (ref, userId) async {
-    final data = await Api.get(GqlQuery.user, {'userId': userId});
+typedef UserTag = ({int? id, String? name});
+UserTag idUserTag(int id) => (id: id, name: null);
+UserTag nameUserTag(String name) => (id: null, name: name);
+
+final userProvider = FutureProvider.autoDispose.family<User, UserTag>(
+  (ref, tag) async {
+    final data = await Api.get(
+      GqlQuery.user,
+      tag.id != null ? {'id': tag.id} : {'name': tag.name},
+    );
     return User(data['User']);
   },
 );

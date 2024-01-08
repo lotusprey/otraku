@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/routing.dart';
 
 extension StringUtil on String {
   static String? codeToCountry(String? code) => switch (code) {
@@ -52,6 +54,14 @@ extension StringUtil on String {
         onMatch: (_) => ' ',
         onNonMatch: (s) => s[0].toUpperCase() + s.substring(1).toLowerCase(),
       );
+
+  static String? fromFuzzyDate(Map<String, dynamic>? map) {
+    if (map == null) return null;
+    final year = map['year'];
+    final month = map['month'];
+    final day = map['day'];
+    return '${day != null ? '$day ' : ''}${month != null ? '${DateTimeUtil._formattedMonth(month)} ' : ''}$year';
+  }
 }
 
 extension DateTimeUtil on DateTime {
@@ -60,52 +70,24 @@ extension DateTimeUtil on DateTime {
   static DateTime fromSecondsSinceEpoch(int seconds) =>
       DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
 
-  static DateTime? fromFuzzyDate(Map<String, dynamic>? map) {
-    if (map?['year'] == null) return null;
-    return DateTime(map!['year'], map['month'] ?? 0, map['day'] ?? 0);
-  }
-
   static DateTime? tryFromSecondsSinceEpoch(int? seconds) =>
       seconds != null ? fromSecondsSinceEpoch(seconds) : null;
 
-  static String tryFormattedDateTimeFromSeconds(int? seconds) {
-    if (seconds == null) return '';
-    return fromSecondsSinceEpoch(seconds).formattedDateTime;
+  static String formattedDateTimeFromSeconds(int seconds) {
+    DateTime date = fromSecondsSinceEpoch(seconds);
+    return '${_formattedWeekday(date.weekday)}, ${date._formattedDate}, ${date.formattedTime}';
+  }
+
+  static DateTime? fromFuzzyDate(Map<String, dynamic>? map) {
+    if (map?['year'] == null) return null;
+    return DateTime(map!['year'], map['month'] ?? 1, map['day'] ?? 1);
   }
 
   Map<String, dynamic> get fuzzyDate =>
       {'year': year, 'month': month, 'day': day};
 
-  String get formattedDateTime =>
-      '$formattedWeekday, $formattedDate, $formattedTime';
-
-  String get formattedWeekday => switch (weekday) {
-        1 => 'Mon',
-        2 => 'Tue',
-        3 => 'Wed',
-        4 => 'Thu',
-        5 => 'Fri',
-        6 => 'Sat',
-        _ => 'Sun',
-      };
-
-  String get formattedDate {
-    final monthName = switch (month) {
-      1 => 'Jan',
-      2 => 'Feb',
-      3 => 'Mar',
-      4 => 'Apr',
-      5 => 'May',
-      6 => 'Jun',
-      7 => 'Jul',
-      8 => 'Aug',
-      9 => 'Sep',
-      10 => 'Oct',
-      11 => 'Nov',
-      _ => 'Dec',
-    };
-    return '$day $monthName $year';
-  }
+  String get formattedWithWeekDay =>
+      '$_formattedDate - ${_formattedWeekday(weekday)}';
 
   String get formattedTime {
     if (Options().analogueClock) {
@@ -131,6 +113,33 @@ extension DateTimeUtil on DateTime {
         '${hours < 1 ? "" : "${hours}h "}'
         '${minutes < 1 ? "" : "${minutes}m"}';
   }
+
+  String get _formattedDate => '$day ${_formattedMonth(month)} $year';
+
+  static String _formattedWeekday(int weekday) => switch (weekday) {
+        1 => 'Mon',
+        2 => 'Tue',
+        3 => 'Wed',
+        4 => 'Thu',
+        5 => 'Fri',
+        6 => 'Sat',
+        _ => 'Sun',
+      };
+
+  static String _formattedMonth(int month) => switch (month) {
+        1 => 'Jan',
+        2 => 'Feb',
+        3 => 'Mar',
+        4 => 'Apr',
+        5 => 'May',
+        6 => 'Jun',
+        7 => 'Jul',
+        8 => 'Aug',
+        9 => 'Sep',
+        10 => 'Oct',
+        11 => 'Nov',
+        _ => 'Dec',
+      };
 }
 
 extension ColorUtil on Color {
@@ -141,4 +150,8 @@ extension ColorUtil on Color {
       return null;
     }
   }
+}
+
+extension BuildContextUtil on BuildContext {
+  void back() => canPop() ? pop() : go(Routes.home());
 }

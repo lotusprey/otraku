@@ -59,9 +59,7 @@ class Review {
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: map['body'] ?? '',
-        createdAt: DateTimeUtil.tryFormattedDateTimeFromSeconds(
-          map['createdAt'],
-        ),
+        createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

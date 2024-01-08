@@ -48,8 +48,7 @@ class Character {
       altNamesSpoilers: altNamesSpoilers,
       description: map['description'] ?? '',
       imageUrl: map['image']['large'],
-      dateOfBirth:
-          DateTimeUtil.fromFuzzyDate(map['dateOfBirth'])?.formattedDate,
+      dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
       bloodType: map['bloodType'],
       gender: map['gender'],
       age: map['age'],

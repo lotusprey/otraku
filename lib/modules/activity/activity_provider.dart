@@ -78,11 +78,11 @@ Future<Object?> deleteActivityReply(int replyId) async {
 }
 
 final activityProvider = StateNotifierProvider.autoDispose
-    .family<ActivityNotifier, AsyncValue<ActivityState>, int>(
+    .family<ActivityNotifier, AsyncValue<ExpandedActivity>, int>(
   (ref, userId) => ActivityNotifier(userId, Options().id!),
 );
 
-class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
+class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
   ActivityNotifier(this.userId, this.viewerId)
       : super(const AsyncValue.loading()) {
     fetch();
@@ -111,7 +111,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
           state.value?.activity ?? Activity.maybe(data['Activity'], viewerId);
       if (activity == null) throw StateError('Could not parse activity');
 
-      return ActivityState(
+      return ExpandedActivity(
         activity,
         replies.withNext(
           items,
@@ -122,14 +122,16 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
   }
 
   /// Deserializes [map] and replaces the current activity.
-  void replaceActivity(Map<String, dynamic> map, int viewerId) {
-    if (!state.hasValue) return;
+  /// On success, it returns the new activity.
+  Activity? replaceActivity(Map<String, dynamic> map, int viewerId) {
+    if (!state.hasValue) return null;
     final value = state.value!;
 
     final activity = Activity.maybe(map, viewerId);
-    if (activity == null) return;
+    if (activity == null) return null;
 
-    state = AsyncData(ActivityState(activity, value.replies));
+    state = AsyncValue.data(ExpandedActivity(activity, value.replies));
+    return activity;
   }
 
   /// Deserializes [map] and appends it at the end.
@@ -141,7 +143,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     if (reply == null) return;
 
     value.activity.replyCount++;
-    state = AsyncData(ActivityState(
+    state = AsyncData(ExpandedActivity(
       value.activity,
       Paged(
         items: [...value.replies.items, reply],
@@ -162,7 +164,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
     for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == reply.id) {
         value.replies.items[i] = reply;
-        state = AsyncData(ActivityState(
+        state = AsyncData(ExpandedActivity(
           value.activity,
           Paged(
             items: value.replies.items,
@@ -185,7 +187,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ActivityState>> {
         value.replies.items.removeAt(i);
         value.activity.replyCount--;
 
-        state = AsyncData(ActivityState(
+        state = AsyncData(ExpandedActivity(
           value.activity,
           Paged(
             items: value.replies.items,

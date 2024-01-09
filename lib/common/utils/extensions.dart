@@ -56,8 +56,8 @@ extension StringUtil on String {
       );
 
   static String? fromFuzzyDate(Map<String, dynamic>? map) {
-    if (map == null) return null;
-    final year = map['year'];
+    if (map?['year'] == null) return null;
+    final year = map!['year'];
     final month = map['month'];
     final day = map['day'];
     return '${day != null ? '$day ' : ''}${month != null ? '${DateTimeUtil._formattedMonth(month)} ' : ''}$year';

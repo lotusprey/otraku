@@ -456,12 +456,12 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
 class MediaRankGrid extends StatelessWidget {
   const MediaRankGrid({
     required this.ref,
-    required this.type,
+    required this.info,
     required this.ranks,
   });
 
   final WidgetRef ref;
-  final DiscoverType type;
+  final MediaInfo info;
   final List<MediaRank> ranks;
 
   @override
@@ -481,7 +481,7 @@ class MediaRankGrid extends StatelessWidget {
                 onTap: () {
                   final notifier = ref.read(discoverFilterProvider.notifier);
                   final filter = notifier.state.copyWith(
-                    type: type,
+                    type: info.type,
                     search: '',
                     mediaFilter: DiscoverMediaFilter(),
                   );
@@ -491,6 +491,17 @@ class MediaRankGrid extends StatelessWidget {
                   filter.mediaFilter.sort = ranks[i].typeIsScore
                       ? MediaSort.SCORE_DESC
                       : MediaSort.POPULARITY_DESC;
+                  if (info.type == DiscoverType.Anime) {
+                    String? format = AnimeFormat.fromText(info.format)?.name;
+                    if (format != null) {
+                      filter.mediaFilter.animeFormats.add(format);
+                    }
+                  } else {
+                    String? format = MangaFormat.fromText(info.format)?.name;
+                    if (format != null) {
+                      filter.mediaFilter.mangaFormats.add(format);
+                    }
+                  }
                   notifier.state = filter;
 
                   context.go(Routes.home(HomeTab.discover));

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/modules/activity/activities_view.dart';
 import 'package:otraku/modules/activity/activity_view.dart';
@@ -39,9 +40,10 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
   };
 
   return [
+    GoRoute(path: '/', redirect: (context, state) => '/home'),
     GoRoute(
       path: '/404',
-      builder: (context, state) => const _NotFound(),
+      builder: (context, state) => const NotFoundView(canPop: true),
     ),
     GoRoute(
       path: '/auth',
@@ -92,7 +94,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/character/:id',
+      path: '/character/:id/:postfix(.*)',
       redirect: _parseIdOr404,
       builder: (context, state) => CharacterView(
         int.parse(state.pathParameters['id']!),
@@ -100,7 +102,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/staff/:id',
+      path: '/staff/:id/:postfix(.*)',
       redirect: _parseIdOr404,
       builder: (context, state) => StaffView(
         int.parse(state.pathParameters['id']!),
@@ -108,7 +110,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/user/:idOrName',
+      path: '/user/:idOrName/:postfix(.*)',
       builder: (context, state) {
         final param = state.pathParameters['idOrName']!;
         final id = int.tryParse(param);
@@ -117,7 +119,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       },
     ),
     GoRoute(
-      path: '/studio/:id',
+      path: '/studio/:id/:postfix(.*)',
       redirect: _parseIdOr404,
       builder: (context, state) => StudioView(
         int.parse(state.pathParameters['id']!),
@@ -194,11 +196,11 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/anime/:id',
+      path: '/anime/:id/:postfix(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
     GoRoute(
-      path: '/manga/:id',
+      path: '/manga/:id/:postfix(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
   ];
@@ -264,17 +266,28 @@ class Routes {
 String? _parseIdOr404(BuildContext _, GoRouterState state) =>
     int.tryParse(state.pathParameters['id'] ?? '') == null ? '404' : null;
 
-class _NotFound extends StatelessWidget {
-  const _NotFound();
+class NotFoundView extends StatelessWidget {
+  const NotFoundView({required this.canPop});
+
+  final bool canPop;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: TopBar(title: 'Not Found', canPop: canPop),
       body: Center(
-        child: Text(
-          '404 Not Found',
-          style: Theme.of(context).textTheme.titleMedium,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              '404 Not Found',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            TextButton(
+              child: const Text('Go Home'),
+              onPressed: () => context.go(Routes.home()),
+            ),
+          ],
         ),
       ),
     );

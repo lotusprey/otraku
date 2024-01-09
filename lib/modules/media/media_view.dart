@@ -277,7 +277,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
               if (stats.ranks.isNotEmpty)
                 MediaRankGrid(
                   ref: ref,
-                  type: widget.media.info.type,
+                  info: widget.media.info,
                   ranks: stats.ranks,
                 ),
               if (stats.scoreNames.isNotEmpty)

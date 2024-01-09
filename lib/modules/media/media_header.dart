@@ -317,6 +317,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           Material(
             color: Colors.transparent,
             child: TabBar(
+              tabAlignment: TabAlignment.center,
               splashBorderRadius: Consts.borderRadiusMin,
               controller: tabCtrl,
               isScrollable: true,

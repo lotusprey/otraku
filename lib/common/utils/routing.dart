@@ -94,7 +94,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/character/:id/:postfix(.*)',
+      path: '/character/:id',
       redirect: _parseIdOr404,
       builder: (context, state) => CharacterView(
         int.parse(state.pathParameters['id']!),
@@ -102,7 +102,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/staff/:id/:postfix(.*)',
+      path: '/staff/:id',
       redirect: _parseIdOr404,
       builder: (context, state) => StaffView(
         int.parse(state.pathParameters['id']!),
@@ -110,7 +110,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/user/:idOrName/:postfix(.*)',
+      path: '/user/:idOrName',
       builder: (context, state) {
         final param = state.pathParameters['idOrName']!;
         final id = int.tryParse(param);
@@ -119,7 +119,7 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       },
     ),
     GoRoute(
-      path: '/studio/:id/:postfix(.*)',
+      path: '/studio/:id',
       redirect: _parseIdOr404,
       builder: (context, state) => StudioView(
         int.parse(state.pathParameters['id']!),
@@ -196,12 +196,28 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       ),
     ),
     GoRoute(
-      path: '/anime/:id/:postfix(.*)',
+      path: '/anime/:id/:_(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
     GoRoute(
-      path: '/manga/:id/:postfix(.*)',
+      path: '/manga/:id/:_(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/character/:id/:_(.*)',
+      redirect: (context, state) => '/character/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/staff/:id/:_(.*)',
+      redirect: (context, state) => '/staff/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/studio/:id/:_(.*)',
+      redirect: (context, state) => '/studio/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/user/:name/:_(.*)',
+      redirect: (context, state) => '/user/${state.pathParameters['name']}',
     ),
   ];
 }

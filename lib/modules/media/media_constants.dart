@@ -13,13 +13,31 @@ enum AnimeFormat {
   SPECIAL,
   OVA,
   ONA,
-  MUSIC,
+  MUSIC;
+
+  static AnimeFormat? fromText(String? text) => switch (text) {
+        'Tv' => AnimeFormat.TV,
+        'Tv Short' => AnimeFormat.TV_SHORT,
+        'Movie' => AnimeFormat.MOVIE,
+        'Special' => AnimeFormat.SPECIAL,
+        'Ova' => AnimeFormat.OVA,
+        'Ona' => AnimeFormat.ONA,
+        'Music' => AnimeFormat.MUSIC,
+        _ => null,
+      };
 }
 
 enum MangaFormat {
   MANGA,
   NOVEL,
-  ONE_SHOT,
+  ONE_SHOT;
+
+  static MangaFormat? fromText(String? text) => switch (text) {
+        'Manga' => MangaFormat.MANGA,
+        'Novel' => MangaFormat.NOVEL,
+        'One Shot' => MangaFormat.ONE_SHOT,
+        _ => null,
+      };
 }
 
 enum MediaSeason {

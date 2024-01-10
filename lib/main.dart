@@ -38,6 +38,7 @@ class AppState extends ConsumerState<App> {
     _router = GoRouter(
       initialLocation: Api.hasActiveAccount() ? Routes.home() : Routes.auth,
       routes: buildRoutes(() => Options().confirmExit),
+      errorBuilder: (context, state) => const NotFoundView(canPop: false),
     );
 
     if (Options().lastVersionCode != versionCode) {

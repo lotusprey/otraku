@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.2.7+61
+version: 1.2.7+62
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -25,7 +25,7 @@ dependencies:
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.1.1
+  path_provider: ^2.1.2
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^9.0.0
@@ -37,7 +37,7 @@ dependencies:
   cached_network_image: ^3.3.1
 
   # Opening links in the browser.
-  url_launcher: ^6.2.2
+  url_launcher: ^6.2.3
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.6.9

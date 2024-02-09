@@ -367,15 +367,9 @@ class Entry {
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'],
       avgScore: map['media']['averageScore'],
-      releaseStart: DateTimeUtil.fromFuzzyDate(
-        map['media']['startDate'],
-      )?.millisecondsSinceEpoch,
-      watchStart: DateTimeUtil.fromFuzzyDate(
-        map['startedAt'],
-      )?.millisecondsSinceEpoch,
-      watchEnd: DateTimeUtil.fromFuzzyDate(
-        map['completedAt'],
-      )?.millisecondsSinceEpoch,
+      releaseStart: DateTimeUtil.fromFuzzyDate(map['media']['startDate']),
+      watchStart: DateTimeUtil.fromFuzzyDate(map['startedAt']),
+      watchEnd: DateTimeUtil.fromFuzzyDate(map['completedAt']),
     );
   }
 
@@ -398,9 +392,9 @@ class Entry {
   double score;
   String? notes;
   int? avgScore;
-  int? releaseStart;
-  int? watchStart;
-  int? watchEnd;
+  DateTime? releaseStart;
+  DateTime? watchStart;
+  DateTime? watchEnd;
 }
 
 enum EntryStatus {

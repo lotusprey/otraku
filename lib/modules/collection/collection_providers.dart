@@ -31,11 +31,11 @@ final entriesProvider = Provider.autoDispose.family(
     final list = collection.lists[collection.index];
 
     final releaseStartFrom = mediaFilter.startYearFrom != null
-        ? DateTime(mediaFilter.startYearFrom!).millisecondsSinceEpoch
-        : 0;
+        ? DateTime(mediaFilter.startYearFrom!)
+        : DateTime(1920);
     final releaseStartTo = mediaFilter.startYearTo != null
-        ? DateTime(mediaFilter.startYearTo! + 1).millisecondsSinceEpoch
-        : DateTime.now().add(const Duration(days: 900)).millisecondsSinceEpoch;
+        ? DateTime(mediaFilter.startYearTo! + 1)
+        : DateTime.now().add(const Duration(days: 900));
 
     for (final entry in list.entries) {
       if (search.isNotEmpty) {
@@ -72,8 +72,8 @@ final entriesProvider = Provider.autoDispose.family(
       }
 
       if (entry.releaseStart != null) {
-        if (releaseStartFrom > entry.releaseStart!) continue;
-        if (releaseStartTo < entry.releaseStart!) continue;
+        if (releaseStartFrom.isAfter(entry.releaseStart!)) continue;
+        if (releaseStartTo.isBefore(entry.releaseStart!)) continue;
       }
 
       if (mediaFilter.genreIn.isNotEmpty) {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
@@ -20,17 +21,28 @@ class ScoreField extends StatelessWidget {
             ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
                 ScoreFormat.POINT_10;
 
-        final onChanged = (v) => ref
+        final onChanged = (num v) => ref
             .read(newEditProvider(tag).notifier)
-            .update((s) => s.copyWith(score: v));
+            .update((s) => s.copyWith(score: v.toDouble()));
 
         return switch (scoreFormat) {
           ScoreFormat.POINT_3 => _SmileyScorePicker(score, onChanged),
           ScoreFormat.POINT_5 => _StarScorePicker(score, onChanged),
-          ScoreFormat.POINT_10 => _TenScorePicker(score, onChanged),
-          ScoreFormat.POINT_10_DECIMAL =>
-            _TenDecimalScorePicker(score, onChanged),
-          ScoreFormat.POINT_100 => _HundredScorePicker(score, onChanged),
+          ScoreFormat.POINT_10 => NumberField(
+              value: score.toInt(),
+              maxValue: 10,
+              onChanged: onChanged,
+            ),
+          ScoreFormat.POINT_10_DECIMAL => DecimalNumberField(
+              value: score,
+              maxValue: 10.0,
+              onChanged: onChanged,
+            ),
+          ScoreFormat.POINT_100 => NumberField(
+              value: score.toInt(),
+              maxValue: 100,
+              onChanged: onChanged,
+            ),
         };
       },
     );
@@ -98,81 +110,6 @@ class _StarScorePicker extends StatelessWidget {
         _star(context, 3),
         _star(context, 4),
         _star(context, 5),
-      ],
-    );
-  }
-}
-
-class _TenScorePicker extends StatelessWidget {
-  const _TenScorePicker(this.score, this.onChanged);
-
-  final double score;
-  final void Function(double) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Slider.adaptive(
-            value: score.truncateToDouble(),
-            onChanged: onChanged,
-            min: 0,
-            max: 10,
-            divisions: 10,
-          ),
-        ),
-        SizedBox(width: 30, child: Text(score.toStringAsFixed(0))),
-      ],
-    );
-  }
-}
-
-class _TenDecimalScorePicker extends StatelessWidget {
-  const _TenDecimalScorePicker(this.score, this.onChanged);
-
-  final double score;
-  final void Function(double) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Slider.adaptive(
-            value: score,
-            onChanged: (v) => onChanged((v * 10).round() / 10),
-            min: 0,
-            max: 10,
-            divisions: 100,
-          ),
-        ),
-        SizedBox(width: 40, child: Text(score.toStringAsFixed(1))),
-      ],
-    );
-  }
-}
-
-class _HundredScorePicker extends StatelessWidget {
-  const _HundredScorePicker(this.score, this.onChanged);
-
-  final double score;
-  final void Function(double) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Slider.adaptive(
-            value: score,
-            onChanged: onChanged,
-            min: 0,
-            max: 100,
-            divisions: 100,
-          ),
-        ),
-        SizedBox(width: 30, child: Text(score.toStringAsFixed(0))),
       ],
     );
   }

@@ -10,10 +10,11 @@ class LabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: Theme.of(context).textTheme.labelMedium),
+        const SizedBox(height: 5),
         child,
       ],
     );

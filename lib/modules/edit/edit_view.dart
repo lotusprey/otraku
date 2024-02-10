@@ -136,7 +136,7 @@ class _EditView extends StatelessWidget {
               final progress = ref.watch(provider.select((s) => s.progress));
 
               return NumberField(
-                initial: progress,
+                value: progress,
                 maxValue: oldEdit.progressMax ?? 100000,
                 onChanged: (progress) {
                   ref.read(provider.notifier).update((s) {
@@ -195,7 +195,7 @@ class _EditView extends StatelessWidget {
           label: 'Repeat',
           child: Consumer(
             builder: (context, ref, _) => NumberField(
-              initial: ref.read(provider).repeat,
+              value: ref.read(provider).repeat,
               onChanged: (repeat) => ref
                   .read(provider.notifier)
                   .update((s) => s.copyWith(repeat: repeat.toInt())),
@@ -207,7 +207,7 @@ class _EditView extends StatelessWidget {
             label: 'Progress Volumes',
             child: Consumer(
               builder: (context, ref, _) => NumberField(
-                initial: ref.read(provider).progressVolumes,
+                value: ref.read(provider).progressVolumes,
                 maxValue: oldEdit.progressVolumesMax ?? 100000,
                 onChanged: (progressVolumes) =>
                     ref.read(provider.notifier).update(
@@ -309,6 +309,27 @@ class _EditView extends StatelessWidget {
         }
 
         final scores = ref.watch(provider.notifier).state.advancedScores;
+        final isDecimal = settings.scoreFormat == ScoreFormat.POINT_10_DECIMAL;
+
+        final onChanged = (entry, score) {
+          scores[entry.key] = score.toDouble();
+
+          int count = 0;
+          double avg = 0;
+          for (final v in scores.values) {
+            if (v > 0) {
+              avg += v;
+              count++;
+            }
+          }
+
+          if (count > 0) avg /= count;
+
+          final notifier = ref.read(provider.notifier);
+          if (notifier.state.score != avg) {
+            notifier.update((s) => s.copyWith(score: avg));
+          }
+        };
 
         return _FieldGrid(
           minWidth: 140,
@@ -316,29 +337,17 @@ class _EditView extends StatelessWidget {
             for (final s in scores.entries)
               LabeledField(
                 label: s.key,
-                child: NumberField(
-                  initial: s.value,
-                  maxValue: 100,
-                  onChanged: (score) {
-                    scores[s.key] = score.toDouble();
-
-                    int count = 0;
-                    double avg = 0;
-                    for (final v in scores.values) {
-                      if (v > 0) {
-                        avg += v;
-                        count++;
-                      }
-                    }
-
-                    if (count > 0) avg /= count;
-
-                    final notifier = ref.read(provider.notifier);
-                    if (notifier.state.score != avg) {
-                      notifier.update((s) => s.copyWith(score: avg));
-                    }
-                  },
-                ),
+                child: isDecimal
+                    ? DecimalNumberField(
+                        value: s.value,
+                        maxValue: 100.0,
+                        onChanged: (score) => onChanged(s, score),
+                      )
+                    : NumberField(
+                        value: s.value.toInt(),
+                        maxValue: 100,
+                        onChanged: (score) => onChanged(s, score),
+                      ),
               ),
           ],
         );
@@ -383,12 +392,9 @@ class _EditView extends StatelessWidget {
               SliverToBoxAdapter(
                 child: LabeledField(
                   label: 'Notes',
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: GrowableTextField(
-                      text: notifier.state.notes,
-                      onChanged: (notes) => notifier.state.notes = notes,
-                    ),
+                  child: GrowableTextField(
+                    text: notifier.state.notes,
+                    onChanged: (notes) => notifier.state.notes = notes,
                   ),
                 ),
               ),

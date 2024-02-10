@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/common/widgets/fields/labeled_field.dart';
+import 'package:otraku/common/widgets/fields/number_field.dart';
 
-const _minYear = 1960.0;
+const _minYear = 1930;
 
 class YearRangePicker extends StatefulWidget {
   const YearRangePicker({
@@ -20,9 +22,9 @@ class YearRangePicker extends StatefulWidget {
 }
 
 class _YearRangePickerState extends State<YearRangePicker> {
-  late double _maxYear;
-  late double _from;
-  late double _to;
+  late int _maxYear;
+  late int _from;
+  late int _to;
 
   @override
   void initState() {
@@ -37,9 +39,9 @@ class _YearRangePickerState extends State<YearRangePicker> {
   }
 
   void _init() {
-    _maxYear = DateTime.now().year.toDouble() + 1;
-    _from = widget.from?.toDouble() ?? _minYear;
-    _to = widget.to?.toDouble() ?? _maxYear;
+    _maxYear = DateTime.now().year + 1;
+    _from = widget.from ?? _minYear;
+    _to = widget.to ?? _maxYear;
     if (_from < _minYear) _from = _minYear;
     if (_to > _maxYear) _to = _maxYear;
     if (_from > _to) _from = _to;
@@ -47,49 +49,47 @@ class _YearRangePickerState extends State<YearRangePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          children: [
-            Text(widget.title, style: Theme.of(context).textTheme.labelMedium),
-            const Spacer(),
-            SizedBox(
-              width: 50,
-              child: Text(
-                _from.truncate().toString(),
-                textAlign: TextAlign.left,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-            const Text(' - '),
-            SizedBox(
-              width: 50,
-              child: Text(
-                _to.truncate().toString(),
-                textAlign: TextAlign.right,
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ),
-          ],
-        ),
-        RangeSlider(
-          values: RangeValues(_from, _to),
-          min: _minYear,
-          max: _maxYear,
-          divisions: (_maxYear - _minYear + 1).truncate(),
-          onChanged: (range) {
-            setState(() {
-              _from = range.start;
-              _to = range.end;
-            });
+    return LabeledField(
+      label: widget.title,
+      child: Row(
+        children: [
+          Flexible(
+            child: NumberField(
+              value: _from,
+              minValue: _minYear,
+              maxValue: _maxYear,
+              onChanged: (from) {
+                setState(() {
+                  _from = from;
+                  if (_to < _from) _to = _from;
+                });
 
-            _from > _minYear || _to < _maxYear
-                ? widget.onChanged(_from.truncate(), _to.truncate())
-                : widget.onChanged(null, null);
-          },
-        ),
-      ],
+                _from > _minYear || _to < _maxYear
+                    ? widget.onChanged(_from, _to)
+                    : widget.onChanged(null, null);
+              },
+            ),
+          ),
+          const SizedBox(width: 10),
+          Flexible(
+            child: NumberField(
+              value: _to,
+              minValue: _minYear,
+              maxValue: _maxYear,
+              onChanged: (to) {
+                setState(() {
+                  _to = to;
+                  if (_from > _to) _from = _to;
+                });
+
+                _from > _minYear || _to < _maxYear
+                    ? widget.onChanged(_from, _to)
+                    : widget.onChanged(null, null);
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

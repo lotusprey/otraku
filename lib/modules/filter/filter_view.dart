@@ -121,7 +121,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           ),
           const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
-            title: 'Start Year',
+            title: 'Release Year Range',
             from: filter.startYearFrom,
             to: filter.startYearTo,
             onChanged: (from, to) {
@@ -129,7 +129,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
@@ -227,7 +227,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
-            title: 'Start Year',
+            title: 'Release Year Range',
             from: filter.startYearFrom,
             to: filter.startYearTo,
             onChanged: (from, to) {
@@ -235,7 +235,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values

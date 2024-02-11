@@ -340,7 +340,7 @@ class _EditView extends StatelessWidget {
                 child: isDecimal
                     ? DecimalNumberField(
                         value: s.value,
-                        maxValue: 100.0,
+                        maxValue: 10.0,
                         onChanged: (score) => onChanged(s, score),
                       )
                     : NumberField(

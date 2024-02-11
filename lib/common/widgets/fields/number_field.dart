@@ -102,67 +102,72 @@ class _NumberFieldState extends State<_NumberField> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Row(
-        children: [
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: Semantics(
-              button: true,
-              child: InkResponse(
-                onTap: () => _validateInput(_ctrl.text, -widget.stepValue),
-                radius: 10,
-                child: Tooltip(
-                  message: 'Decrement',
-                  onTriggered: () => _validateInput(widget.minValue.toString()),
-                  child: const Icon(Icons.remove),
+    return Expanded(
+      child: Card(
+        child: Row(
+          children: [
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Semantics(
+                button: true,
+                child: InkResponse(
+                  onTap: () => _validateInput(_ctrl.text, -widget.stepValue),
+                  radius: 10,
+                  child: Tooltip(
+                    message: 'Decrement',
+                    onTriggered: () => _validateInput(
+                      widget.minValue.toString(),
+                      0,
+                    ),
+                    child: const Icon(Icons.remove),
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: TextField(
-              controller: _ctrl,
-              keyboardType: TextInputType.numberWithOptions(
-                decimal: widget.isDecimal,
-              ),
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(
-                  widget.isDecimal ? RegExp(r'^\d*\.?\d*$') : RegExp(r'\d*'),
+            Expanded(
+              child: TextField(
+                controller: _ctrl,
+                keyboardType: TextInputType.numberWithOptions(
+                  decimal: widget.isDecimal,
                 ),
-              ],
-              textAlign: TextAlign.center,
-              style: _isValid
-                  ? Theme.of(context).textTheme.bodyMedium
-                  : Theme.of(context).textTheme.labelMedium,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(0),
-              ),
-              onChanged: _validateInput,
-            ),
-          ),
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: Semantics(
-              button: true,
-              child: InkResponse(
-                onTap: () => _validateInput(_ctrl.text, widget.stepValue),
-                radius: 10,
-                child: Tooltip(
-                  message: 'Increment',
-                  onTriggered: () {
-                    if (widget.maxValue == null) return;
-                    _validateInput(widget.maxValue.toString());
-                  },
-                  child: const Icon(Icons.add),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(
+                    widget.isDecimal ? RegExp(r'^\d*\.?\d?$') : RegExp(r'\d*'),
+                  ),
+                ],
+                textAlign: TextAlign.center,
+                style: _isValid
+                    ? Theme.of(context).textTheme.bodyMedium
+                    : Theme.of(context).textTheme.labelMedium,
+                decoration: const InputDecoration(
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.all(0),
                 ),
+                onChanged: _validateInput,
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: Semantics(
+                button: true,
+                child: InkResponse(
+                  onTap: () => _validateInput(_ctrl.text, widget.stepValue),
+                  radius: 10,
+                  child: Tooltip(
+                    message: 'Increment',
+                    onTriggered: () {
+                      if (widget.maxValue == null) return;
+                      _validateInput(widget.maxValue.toString(), 0);
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -185,8 +190,8 @@ class _NumberFieldState extends State<_NumberField> {
     if (!_isValid) setState(() => _isValid = true);
     widget.onChanged(number);
 
-    // Unfinished decimal numbers like `4.` should not reset the field.
-    if (int.tryParse(value) == null) return;
+    // If the field was changed manually, it shouldn't erase an unfinished edit.
+    if (add == null) return;
 
     final text = number.toString();
     _ctrl.value = _ctrl.value.copyWith(

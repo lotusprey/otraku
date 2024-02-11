@@ -83,7 +83,12 @@ class CollectionSubView extends StatelessWidget {
               controller: scrollCtrl,
               slivers: [
                 SliverRefreshControl(
-                  onRefresh: () => ref.invalidate(collectionProvider(tag)),
+                  onRefresh: () {
+                    final index = ref.read(collectionProvider(tag)).index;
+
+                    final notifier = ref.refresh(collectionProvider(tag));
+                    notifier.index = index;
+                  },
                 ),
                 _Content(tag),
                 const SliverFooter(),

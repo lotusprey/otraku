@@ -1,2 +1,8 @@
-An unofficial AniList client for Android and iOS.
-You can view/track/explore anime/manga, interact with your feed and more.
+Otraku aims to support most AniList features and it already covers:
+- Tracking media and managing/filtering collections
+- Browsing/Filtering media/characters/staff/studios/users/reviews
+- Viewing general and user activity feeds
+- Composing messages
+- Calendar for release schedules
+- Customization with different themes and other options
+And more!

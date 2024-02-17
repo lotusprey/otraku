@@ -126,7 +126,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
         final result = await updateProgress(item.mediaId, item.progress);
 
         if (result is! List<String>) {
-          if (mounted) {
+          if (context.mounted) {
             showPopUp(
               context,
               ConfirmationDialog(

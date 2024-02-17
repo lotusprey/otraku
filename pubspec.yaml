@@ -19,7 +19,7 @@ dependencies:
   go_router: ^13.2.0
 
   # Data fetching.
-  http: ^1.2.0
+  http: ^1.2.1
 
   # Settings storage.
   hive: ^2.2.3

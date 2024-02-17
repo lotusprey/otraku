@@ -50,9 +50,9 @@ class ReviewView extends StatelessWidget {
                   onTap: () => context.push(
                     Routes.user(data.userId, data.userAvatar),
                   ),
-                  child: RichText(
+                  child: Text.rich(
                     textAlign: TextAlign.center,
-                    text: TextSpan(
+                    TextSpan(
                       style: Theme.of(context).textTheme.titleMedium,
                       children: [
                         TextSpan(

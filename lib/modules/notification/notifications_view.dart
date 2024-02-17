@@ -212,22 +212,25 @@ class _NotificationItem extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          RichText(
-                            maxLines: 3,
-                            overflow: TextOverflow.fade,
-                            text: TextSpan(
-                              children: [
-                                for (int i = 0; i < item.texts.length; i++)
-                                  TextSpan(
-                                    text: item.texts[i],
-                                    style: (i % 2 == 0) ==
-                                            item.markTextOnEvenIndex
-                                        ? Theme.of(context).textTheme.bodyLarge
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium,
-                                  ),
-                              ],
+                          Flexible(
+                            child: Text.rich(
+                              overflow: TextOverflow.fade,
+                              TextSpan(
+                                children: [
+                                  for (int i = 0; i < item.texts.length; i++)
+                                    TextSpan(
+                                      text: item.texts[i],
+                                      style: (i % 2 == 0) ==
+                                              item.markTextOnEvenIndex
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                           Text(
@@ -266,9 +269,9 @@ class _NotificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final title = RichText(
+    final title = Text.rich(
       overflow: TextOverflow.fade,
-      text: TextSpan(
+      TextSpan(
         children: [
           for (int i = 0; i < item.texts.length; i++)
             TextSpan(
@@ -305,7 +308,7 @@ class _NotificationDialog extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  title,
+                  Flexible(child: title),
                   if (item.details != null) ...[
                     const SizedBox(height: 10),
                     HtmlContent(item.details!),

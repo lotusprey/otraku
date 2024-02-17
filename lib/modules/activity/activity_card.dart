@@ -160,9 +160,9 @@ class _ActivityMediaBox extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
-                      child: RichText(
+                      child: Text.rich(
                         overflow: TextOverflow.fade,
-                        text: TextSpan(
+                        TextSpan(
                           children: [
                             TextSpan(
                               text: text,

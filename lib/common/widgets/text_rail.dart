@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 /// Lists text details in a fancy way, marking
 /// the ones that come with a [true] value.
 class TextRail extends StatelessWidget {
-  const TextRail(this.items, {this.style});
+  const TextRail(this.items, {this.style, this.maxLines});
 
   final Map<String, bool> items;
   final TextStyle? style;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +20,10 @@ class TextRail extends StatelessWidget {
       color: Theme.of(context).colorScheme.primary,
     );
 
-    return RichText(
-      text: TextSpan(
+    return Text.rich(
+      overflow: TextOverflow.fade,
+      maxLines: maxLines,
+      TextSpan(
         style: style,
         children: [
           for (int i = 0; i < items.length - 1; i++) ...[

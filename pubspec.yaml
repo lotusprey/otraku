@@ -37,7 +37,7 @@ dependencies:
   cached_network_image: ^3.3.1
 
   # Opening links in the browser.
-  url_launcher: ^6.2.4
+  url_launcher: ^6.2.5
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.6.9

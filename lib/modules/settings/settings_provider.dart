@@ -9,9 +9,11 @@ import 'package:otraku/modules/collection/collection_providers.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
 final settingsProvider =
-    AsyncNotifierProvider<SettingsNotifier, Settings>(SettingsNotifier.new);
+    AsyncNotifierProvider.autoDispose<SettingsNotifier, Settings>(
+  SettingsNotifier.new,
+);
 
-class SettingsNotifier extends AsyncNotifier<Settings> {
+class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
     final data = await Api.get(GqlQuery.settings);

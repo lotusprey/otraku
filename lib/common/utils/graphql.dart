@@ -252,7 +252,7 @@ abstract class GqlQuery {
     }
     fragment info on Character {
       id
-      name{userPreferred native alternative alternativeSpoiler}
+      name{first middle last native alternative alternativeSpoiler}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
@@ -323,7 +323,7 @@ abstract class GqlQuery {
     }
     fragment info on Staff {
       id
-      name{userPreferred native alternative}
+      name{first middle last native alternative}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
@@ -692,6 +692,13 @@ abstract class GqlQuery {
           }
         }
       }
+    }
+  ''';
+
+  static const genresAndTags = '''
+    query Filters {
+      GenreCollection
+      MediaTagCollection {id name description category isGeneralSpoiler}
     }
   ''';
 }

@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
+import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
@@ -24,7 +26,10 @@ final staffProvider = FutureProvider.autoDispose.family(
       GqlQuery.staff,
       {'id': id, 'withInfo': true},
     );
-    return Staff(data['Staff']);
+
+    final settings =
+        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
+    return Staff(data['Staff'], settings.personNaming);
   },
 );
 

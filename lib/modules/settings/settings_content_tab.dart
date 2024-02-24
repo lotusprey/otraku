@@ -44,7 +44,7 @@ class SettingsContentTab extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: CheckBoxField(
-            title: 'Restrict Messages to Following',
+            title: 'Only user I follow can message me',
             initial: settings.restrictMessagesToFollowing,
             onChanged: (val) {
               settings.restrictMessagesToFollowing = val;
@@ -63,21 +63,21 @@ class SettingsContentTab extends StatelessWidget {
                 'English': 'ENGLISH',
                 'Native': 'NATIVE',
               },
-              onChanged: (String val) {
+              onChanged: (val) {
                 settings.titleLanguage = val;
                 scheduleUpdate();
               },
             ),
             DropDownField(
-              title: 'Character & Staff Name',
-              value: settings.staffNameLanguage,
+              title: 'Character & Staff Names',
+              value: settings.personNaming,
               items: const {
-                'Romaji, Western Order': 'ROMAJI_WESTERN',
-                'Romaji': 'ROMAJI',
-                'Native': 'NATIVE',
+                'Romaji, Western Order': PersonNaming.ROMAJI_WESTERN,
+                'Romaji': PersonNaming.ROMAJI,
+                'Native': PersonNaming.NATIVE,
               },
-              onChanged: (String val) {
-                settings.staffNameLanguage = val;
+              onChanged: (val) {
+                settings.personNaming = val;
                 scheduleUpdate();
               },
             ),
@@ -99,7 +99,7 @@ class SettingsContentTab extends StatelessWidget {
                 '2 Weeks': 20160,
                 'Always': 29160,
               },
-              onChanged: (int val) {
+              onChanged: (val) {
                 settings.activityMergeTime = val;
                 scheduleUpdate();
               },
@@ -135,7 +135,7 @@ class SettingsContentTab extends StatelessWidget {
               value: settings.scoreFormat,
               items: Map.fromIterable(
                 ScoreFormat.values,
-                key: (v) => (v as ScoreFormat).name.noScreamingSnakeCase,
+                key: (v) => (v as ScoreFormat).label,
               ),
               onChanged: (val) {
                 settings.scoreFormat = val;

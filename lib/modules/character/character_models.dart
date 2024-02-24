@@ -5,6 +5,7 @@ import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem characterItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
@@ -30,20 +31,37 @@ class Character {
     required this.isFavorite,
   });
 
-  factory Character(Map<String, dynamic> map) {
-    final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null) {
-      altNames.insert(0, map['name']['native'].toString());
-    }
+  factory Character(Map<String, dynamic> map, PersonNaming personNaming) {
+    final names = map['name'];
+    final nameSegments = [
+      names['first'],
+      if (names['middle']?.isNotEmpty ?? false) names['middle'],
+      if (names['last']?.isNotEmpty ?? false) names['last'],
+    ];
 
+    final fullName = personNaming == PersonNaming.ROMAJI_WESTERN
+        ? nameSegments.join(' ')
+        : nameSegments.reversed.toList().join(' ');
+    final nativeName = names['native'];
+
+    final altNames = List<String>.from(names['alternative'] ?? []);
     final altNamesSpoilers = List<String>.from(
-      map['name']['alternativeSpoiler'] ?? [],
+      names['alternativeSpoiler'] ?? [],
       growable: false,
     );
 
+    String name;
+    if (personNaming != PersonNaming.NATIVE) {
+      name = fullName;
+      altNames.insert(0, nativeName);
+    } else {
+      name = nativeName;
+      altNames.insert(0, fullName);
+    }
+
     return Character._(
       id: map['id'],
-      name: map['name']['userPreferred'] ?? '',
+      name: name,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
       description: map['description'] ?? '',

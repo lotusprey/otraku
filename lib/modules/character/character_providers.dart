@@ -7,6 +7,8 @@ import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
+import 'package:otraku/modules/settings/settings_provider.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
 Future<bool> toggleFavoriteCharacter(int characterId) async {
@@ -24,7 +26,10 @@ final characterProvider = FutureProvider.autoDispose.family(
       GqlQuery.character,
       {'id': id, 'withInfo': true},
     );
-    return Character(data['Character']);
+
+    final settings =
+        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
+    return Character(data['Character'], settings.personNaming);
   },
 );
 

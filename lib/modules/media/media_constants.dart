@@ -16,13 +16,13 @@ enum AnimeFormat {
   MUSIC;
 
   static AnimeFormat? fromText(String? text) => switch (text) {
-        'Tv' => AnimeFormat.TV,
-        'Tv Short' => AnimeFormat.TV_SHORT,
-        'Movie' => AnimeFormat.MOVIE,
-        'Special' => AnimeFormat.SPECIAL,
-        'Ova' => AnimeFormat.OVA,
-        'Ona' => AnimeFormat.ONA,
-        'Music' => AnimeFormat.MUSIC,
+        'Tv' => TV,
+        'Tv Short' => TV_SHORT,
+        'Movie' => MOVIE,
+        'Special' => SPECIAL,
+        'Ova' => OVA,
+        'Ona' => ONA,
+        'Music' => MUSIC,
         _ => null,
       };
 }
@@ -33,9 +33,9 @@ enum MangaFormat {
   ONE_SHOT;
 
   static MangaFormat? fromText(String? text) => switch (text) {
-        'Manga' => MangaFormat.MANGA,
-        'Novel' => MangaFormat.NOVEL,
-        'One Shot' => MangaFormat.ONE_SHOT,
+        'Manga' => MANGA,
+        'Novel' => NOVEL,
+        'One Shot' => ONE_SHOT,
         _ => null,
       };
 }
@@ -52,7 +52,15 @@ enum ScoreFormat {
   POINT_10_DECIMAL,
   POINT_10,
   POINT_5,
-  POINT_3,
+  POINT_3;
+
+  String get label => switch (this) {
+        POINT_100 => '100 Points',
+        POINT_10_DECIMAL => '10 Decimal Points',
+        POINT_10 => '10 Points',
+        POINT_5 => '5 Stars',
+        POINT_3 => '3 Smileys',
+      };
 }
 
 enum MediaSource {
@@ -133,28 +141,23 @@ enum EntrySort {
   final String label;
 
   /// The API supports only few default sortings.
-  static const rowOrders = [
-    EntrySort.SCORE_DESC,
-    EntrySort.TITLE,
-    EntrySort.UPDATED_DESC,
-    EntrySort.ADDED_DESC,
-  ];
+  static const rowOrders = [SCORE_DESC, TITLE, UPDATED_DESC, ADDED_DESC];
 
   /// Format as an API row order.
   String toRowOrder() => switch (this) {
-        EntrySort.SCORE_DESC => 'score',
-        EntrySort.UPDATED_DESC => 'updatedAt',
-        EntrySort.ADDED_DESC => 'id',
-        EntrySort.TITLE => 'title',
+        SCORE_DESC => 'score',
+        UPDATED_DESC => 'updatedAt',
+        ADDED_DESC => 'id',
+        TITLE => 'title',
         _ => 'title',
       };
 
   /// Translate API row order to general sorting.
   static EntrySort fromRowOrder(String key) => switch (key) {
-        'score' => EntrySort.SCORE_DESC,
-        'updatedAt' => EntrySort.UPDATED_DESC,
-        'id' => EntrySort.ADDED_DESC,
-        'title' => EntrySort.TITLE,
-        _ => EntrySort.TITLE,
+        'score' => SCORE_DESC,
+        'updatedAt' => UPDATED_DESC,
+        'id' => ADDED_DESC,
+        'title' => TITLE,
+        _ => TITLE,
       };
 }

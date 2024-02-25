@@ -16,10 +16,15 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
-  const OpaqueSheet({required this.builder, this.initialHeight});
+  const OpaqueSheet({
+    required this.builder,
+    this.padding = const EdgeInsets.symmetric(horizontal: 10),
+    this.initialHeight,
+  });
 
   final Widget Function(BuildContext, ScrollController) builder;
   final double? initialHeight;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +43,7 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: padding,
             constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background,

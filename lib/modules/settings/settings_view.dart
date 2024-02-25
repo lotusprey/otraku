@@ -68,9 +68,13 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     const errorWidget = Center(child: Text('Failed to load settings'));
 
     final tabs = [
-      ConstrainedView(child: SettingsAppTab(_scrollCtrl)),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAppTab(_scrollCtrl),
+      ),
       if (_settings.hasValue) ...[
         ConstrainedView(
+          padding: EdgeInsets.zero,
           child: SettingsContentTab(
             _scrollCtrl,
             _settings.value!,
@@ -78,6 +82,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           ),
         ),
         ConstrainedView(
+          padding: EdgeInsets.zero,
           child: SettingsNotificationsTab(
             _scrollCtrl,
             _settings.value!,
@@ -91,7 +96,10 @@ class _SettingsViewState extends ConsumerState<SettingsView>
         loadWidget,
         loadWidget,
       ],
-      ConstrainedView(child: SettingsAboutTab(_scrollCtrl)),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAboutTab(_scrollCtrl),
+      ),
     ];
 
     return PageScaffold(

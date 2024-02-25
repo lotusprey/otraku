@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
+import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/activity/activities_providers.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
@@ -11,7 +11,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
   ActivityFilter filter = ref.read(activityFilterProvider(id));
   double initialHeight = MediaQuery.of(context).padding.bottom +
       Consts.tapTargetSize * ActivityType.values.length +
-      20;
+      40;
 
   if (filter is HomeActivityFilter) {
     initialHeight += Consts.tapTargetSize * 1.5;
@@ -20,6 +20,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
   showSheet(
     context,
     OpaqueSheet(
+      padding: EdgeInsets.zero,
       initialHeight: initialHeight,
       builder: (context, scrollCtrl) => _FilterList(
         filter: filter,
@@ -54,61 +55,66 @@ class _FilterListState extends State<_FilterList> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      controller: widget.scrollCtrl,
-      physics: Consts.physics,
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      children: [
-        for (final a in ActivityType.values)
-          CheckBoxField(
-            title: a.text,
-            initial: _filter.typeIn.contains(a),
-            onChanged: (val) {
-              setState(() {
-                val ? _filter.typeIn.add(a) : _filter.typeIn.remove(a);
-                _filter = _filter.copyWith(typeIn: _filter.typeIn);
-              });
-              widget.onChanged(_filter);
-            },
-          ),
-        ...switch (_filter) {
-          UserActivityFilter _ => [],
-          HomeActivityFilter filter => [
-              const Divider(),
-              CheckBoxField(
-                title: 'Your Activities',
-                initial: filter.withViewerActivities,
-                onChanged: (v) {
-                  setState(
-                    () => _filter = filter.copyWith(withViewerActivities: v),
-                  );
-                  widget.onChanged(_filter);
-                },
-              ),
-              SegmentedButton(
-                segments: const [
-                  ButtonSegment(
-                    value: true,
-                    label: Text('Following'),
-                    icon: Icon(Ionicons.people_outline),
+    return Material(
+      child: ListView(
+        controller: widget.scrollCtrl,
+        physics: Consts.physics,
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        children: [
+          for (final a in ActivityType.values)
+            StatefulCheckboxListTile(
+              title: Text(a.text),
+              value: _filter.typeIn.contains(a),
+              onChanged: (val) {
+                setState(() {
+                  val! ? _filter.typeIn.add(a) : _filter.typeIn.remove(a);
+                  _filter = _filter.copyWith(typeIn: _filter.typeIn);
+                });
+                widget.onChanged(_filter);
+              },
+            ),
+          ...switch (_filter) {
+            UserActivityFilter _ => [],
+            HomeActivityFilter filter => [
+                const Divider(),
+                StatefulCheckboxListTile(
+                  title: const Text('My Activities'),
+                  value: filter.withViewerActivities,
+                  onChanged: (v) {
+                    setState(
+                      () => _filter = filter.copyWith(withViewerActivities: v!),
+                    );
+                    widget.onChanged(_filter);
+                  },
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                  child: SegmentedButton(
+                    segments: const [
+                      ButtonSegment(
+                        value: true,
+                        label: Text('Following'),
+                        icon: Icon(Ionicons.people_outline),
+                      ),
+                      ButtonSegment(
+                        value: false,
+                        label: Text('Global'),
+                        icon: Icon(Ionicons.planet_outline),
+                      ),
+                    ],
+                    selected: {filter.onFollowing},
+                    onSelectionChanged: (v) {
+                      setState(
+                        () => _filter = filter.copyWith(onFollowing: v.first),
+                      );
+                      widget.onChanged(_filter);
+                    },
                   ),
-                  ButtonSegment(
-                    value: false,
-                    label: Text('Global'),
-                    icon: Icon(Ionicons.planet_outline),
-                  ),
-                ],
-                selected: {filter.onFollowing},
-                onSelectionChanged: (v) {
-                  setState(
-                    () => _filter = filter.copyWith(onFollowing: v.first),
-                  );
-                  widget.onChanged(_filter);
-                },
-              ),
-            ],
-        }
-      ],
+                ),
+              ],
+          }
+        ],
+      ),
     );
   }
 }

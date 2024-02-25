@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
-import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders/loaders.dart';
 
 class SettingsContentTab extends StatelessWidget {
   const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);
@@ -19,199 +16,193 @@ class SettingsContentTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const dropDownGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      minWidth: 170,
-      height: 75,
-    );
-    const checkBoxGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      minWidth: 220,
-      mainAxisSpacing: 0,
-      height: Consts.tapTargetSize,
-    );
-    const smallGridDelegate = SliverGridDelegateWithMinWidthAndFixedHeight(
-      minWidth: 140,
-      mainAxisSpacing: 0,
-      height: Consts.tapTargetSize,
-    );
+    const tilePadding = EdgeInsets.only(bottom: 10, left: 10, right: 10);
 
-    return CustomScrollView(
+    return ListView(
       controller: scrollCtrl,
-      slivers: [
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: CheckBoxField(
-            title: 'Only user I follow can message me',
-            initial: settings.restrictMessagesToFollowing,
-            onChanged: (val) {
-              settings.restrictMessagesToFollowing = val;
-              scheduleUpdate();
-            },
-          ),
-        ),
-        SliverGrid(
-          gridDelegate: dropDownGridDelegate,
-          delegate: SliverChildListDelegate.fixed([
-            DropDownField(
-              title: 'Title Language',
-              value: settings.titleLanguage,
-              items: const {
-                'Romaji': 'ROMAJI',
-                'English': 'ENGLISH',
-                'Native': 'NATIVE',
-              },
-              onChanged: (val) {
-                settings.titleLanguage = val;
-                scheduleUpdate();
-              },
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + TopBar.height + 10,
+        bottom: MediaQuery.of(context).padding.bottom + 10,
+      ),
+      children: [
+        ExpansionTile(
+          title: const Text('Media'),
+          initiallyExpanded: true,
+          children: [
+            Padding(
+              padding: tilePadding,
+              child: DropDownField(
+                title: 'Title Language',
+                value: settings.titleLanguage,
+                items: const {
+                  'Romaji': 'ROMAJI',
+                  'English': 'ENGLISH',
+                  'Native': 'NATIVE',
+                },
+                onChanged: (val) {
+                  settings.titleLanguage = val;
+                  scheduleUpdate();
+                },
+              ),
             ),
-            DropDownField(
-              title: 'Character & Staff Names',
-              value: settings.personNaming,
-              items: const {
-                'Romaji, Western Order': PersonNaming.ROMAJI_WESTERN,
-                'Romaji': PersonNaming.ROMAJI,
-                'Native': PersonNaming.NATIVE,
-              },
-              onChanged: (val) {
-                settings.personNaming = val;
-                scheduleUpdate();
-              },
+            Padding(
+              padding: tilePadding,
+              child: DropDownField(
+                title: 'Character & Staff Names',
+                value: settings.personNaming,
+                items: const {
+                  'Romaji, Western Order': PersonNaming.ROMAJI_WESTERN,
+                  'Romaji': PersonNaming.ROMAJI,
+                  'Native': PersonNaming.NATIVE,
+                },
+                onChanged: (val) {
+                  settings.personNaming = val;
+                  scheduleUpdate();
+                },
+              ),
             ),
-            DropDownField(
-              title: 'Activity Merge Time',
-              value: settings.activityMergeTime,
-              items: const {
-                'Never': 0,
-                '30 Minutes': 30,
-                '1 Hour': 60,
-                '2 Hours': 120,
-                '3 Hours': 180,
-                '6 Hours': 360,
-                '12 Hours': 720,
-                '1 Day': 1440,
-                '2 Days': 2880,
-                '3 Days': 4320,
-                '1 Week': 10080,
-                '2 Weeks': 20160,
-                'Always': 29160,
-              },
-              onChanged: (val) {
-                settings.activityMergeTime = val;
-                scheduleUpdate();
-              },
+            Padding(
+              padding: tilePadding,
+              child: DropDownField(
+                title: 'Activity Merge Time',
+                value: settings.activityMergeTime,
+                items: const {
+                  'Never': 0,
+                  '30 Minutes': 30,
+                  '1 Hour': 60,
+                  '2 Hours': 120,
+                  '3 Hours': 180,
+                  '6 Hours': 360,
+                  '12 Hours': 720,
+                  '1 Day': 1440,
+                  '2 Days': 2880,
+                  '3 Days': 4320,
+                  '1 Week': 10080,
+                  '2 Weeks': 20160,
+                  'Always': 29160,
+                },
+                onChanged: (val) {
+                  settings.activityMergeTime = val;
+                  scheduleUpdate();
+                },
+              ),
             ),
-          ]),
-        ),
-        SliverGrid(
-          gridDelegate: checkBoxGridDelegate,
-          delegate: SliverChildListDelegate.fixed([
-            CheckBoxField(
-              title: 'Airing Anime Notifications',
-              initial: settings.airingNotifications,
-              onChanged: (val) {
-                settings.airingNotifications = val;
-                scheduleUpdate();
-              },
-            ),
-            CheckBoxField(
-              title: '18+ Content',
-              initial: settings.displayAdultContent,
+            StatefulSwitchListTile(
+              title: const Text('18+ Content'),
+              value: settings.displayAdultContent,
               onChanged: (val) {
                 settings.displayAdultContent = val;
                 scheduleUpdate();
               },
             ),
-          ]),
+            StatefulSwitchListTile(
+              title: const Text('Airing Anime Notifications'),
+              value: settings.airingNotifications,
+              onChanged: (val) {
+                settings.airingNotifications = val;
+                scheduleUpdate();
+              },
+            ),
+          ],
         ),
-        SliverGrid(
-          gridDelegate: dropDownGridDelegate,
-          delegate: SliverChildListDelegate.fixed([
-            DropDownField<ScoreFormat>(
-              title: 'Scoring System',
-              value: settings.scoreFormat,
-              items: Map.fromIterable(
-                ScoreFormat.values,
-                key: (v) => (v as ScoreFormat).label,
+        ExpansionTile(
+          title: const Text('Lists'),
+          initiallyExpanded: true,
+          children: [
+            Padding(
+              padding: tilePadding,
+              child: DropDownField<ScoreFormat>(
+                title: 'Scoring System',
+                value: settings.scoreFormat,
+                items: Map.fromIterable(
+                  ScoreFormat.values,
+                  key: (v) => (v as ScoreFormat).label,
+                ),
+                onChanged: (val) {
+                  settings.scoreFormat = val;
+                  scheduleUpdate();
+                },
               ),
-              onChanged: (val) {
-                settings.scoreFormat = val;
-                scheduleUpdate();
-              },
             ),
-            DropDownField<EntrySort>(
-              title: 'Default Site List Sort',
-              value: settings.defaultSort,
-              items: Map.fromIterable(
-                EntrySort.rowOrders,
-                key: (s) => s.label,
+            Padding(
+              padding: tilePadding,
+              child: DropDownField<EntrySort>(
+                title: 'Default Site List Sort',
+                value: settings.defaultSort,
+                items: Map.fromIterable(
+                  EntrySort.rowOrders,
+                  key: (s) => s.label,
+                ),
+                onChanged: (val) {
+                  settings.defaultSort = val;
+                  scheduleUpdate();
+                },
               ),
+            ),
+            StatefulCheckboxListTile(
+              title: const Text('Split Completed Anime'),
+              value: settings.splitCompletedAnime,
               onChanged: (val) {
-                settings.defaultSort = val;
+                settings.splitCompletedAnime = val!;
                 scheduleUpdate();
               },
             ),
-          ]),
-        ),
-        SliverGrid(
-          gridDelegate: checkBoxGridDelegate,
-          delegate: SliverChildListDelegate.fixed([
-            CheckBoxField(
-              title: 'Split Completed Anime',
-              initial: settings.splitCompletedAnime,
+            StatefulCheckboxListTile(
+              title: const Text('Split Completed Manga'),
+              value: settings.splitCompletedManga,
               onChanged: (val) {
-                settings.splitCompletedAnime = val;
+                settings.splitCompletedManga = val!;
                 scheduleUpdate();
               },
             ),
-            CheckBoxField(
-              title: 'Split Completed Manga',
-              initial: settings.splitCompletedManga,
-              onChanged: (val) {
-                settings.splitCompletedManga = val;
-                scheduleUpdate();
-              },
-            ),
-            CheckBoxField(
-              title: 'Advanced Scoring',
-              initial: settings.advancedScoringEnabled,
+            StatefulSwitchListTile(
+              title: const Text('Advanced Scoring'),
+              value: settings.advancedScoringEnabled,
               onChanged: (val) {
                 settings.advancedScoringEnabled = val;
                 scheduleUpdate();
               },
             ),
-          ]),
+            Padding(
+              padding: tilePadding,
+              child: ChipNamingGrid(
+                title: 'Advanced Scores',
+                placeholder: 'advanced scores',
+                names: settings.advancedScores,
+                onChanged: scheduleUpdate,
+              ),
+            ),
+          ],
         ),
-        SliverToBoxAdapter(
-          child: ChipNamingGrid(
-            title: 'Advanced Scores',
-            placeholder: 'advanced scores',
-            names: settings.advancedScores,
-            onChanged: scheduleUpdate,
-          ),
-        ),
-        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-        const SliverToBoxAdapter(
-          child: Text('Disable List Activity Creation of:'),
-        ),
-        SliverGrid(
-          gridDelegate: smallGridDelegate,
-          delegate: SliverChildListDelegate.fixed([
+        ExpansionTile(
+          title: const Text('Social'),
+          initiallyExpanded: true,
+          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Text('List Activity Creation'),
+            ),
             for (final e in settings.disabledListActivity.entries)
-              CheckBoxField(
-                title: e.key.name.noScreamingSnakeCase,
-                initial: e.value,
+              StatefulCheckboxListTile(
+                title: Text(e.key.name.noScreamingSnakeCase),
+                value: !e.value,
                 onChanged: (val) {
-                  settings.disabledListActivity[e.key] = val;
+                  settings.disabledListActivity[e.key] = !val!;
                   scheduleUpdate();
                 },
               ),
-          ]),
+            StatefulSwitchListTile(
+              title: const Text('Limit Messages'),
+              subtitle: const Text('Only users I follow can message me'),
+              value: settings.restrictMessagesToFollowing,
+              onChanged: (val) {
+                settings.restrictMessagesToFollowing = val;
+                scheduleUpdate();
+              },
+            ),
+          ],
         ),
-        const SliverFooter(),
       ],
     );
   }

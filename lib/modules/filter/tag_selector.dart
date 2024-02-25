@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/search_field.dart';
+import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
@@ -89,6 +89,7 @@ class TagSelectorState extends State<TagSelector> {
       onEdit: () => showSheet(
         context,
         OpaqueSheet(
+          padding: EdgeInsets.zero,
           builder: (context, scrollCtrl) => _FilterTagSheet(
             inclusiveGenres: widget.inclusiveGenres,
             exclusiveGenres: widget.exclusiveGenres,
@@ -246,38 +247,38 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
     return Stack(
       children: [
         if (_itemIndices.isNotEmpty)
-          ListView.builder(
-            padding: EdgeInsets.only(
-              top: 110,
-              left: 10,
-              right: 10,
-              bottom: MediaQuery.of(context).padding.bottom,
+          Material(
+            child: ListView.builder(
+              padding: EdgeInsets.only(
+                top: 110,
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              controller: widget.scrollCtrl,
+              itemCount: _itemIndices.length,
+              itemExtent: 56,
+              itemBuilder: (_, i) {
+                final name = _tags.names[_itemIndices[i]];
+                return StatefulCheckboxListTile(
+                  title: Text(name),
+                  tristate: true,
+                  value: inclusive.contains(name)
+                      ? true
+                      : exclusive.contains(name)
+                          ? null
+                          : false,
+                  onChanged: (v) {
+                    if (v == null) {
+                      inclusive.remove(name);
+                      exclusive.add(name);
+                    } else if (v) {
+                      inclusive.add(name);
+                    } else {
+                      exclusive.remove(name);
+                    }
+                  },
+                );
+              },
             ),
-            controller: widget.scrollCtrl,
-            itemExtent: Consts.tapTargetSize,
-            itemCount: _itemIndices.length,
-            itemBuilder: (_, i) {
-              final name = _tags.names[_itemIndices[i]];
-              return CheckBoxTriField(
-                key: Key(name),
-                title: name,
-                value: inclusive.contains(name)
-                    ? true
-                    : exclusive.contains(name)
-                        ? false
-                        : null,
-                onChanged: (v) {
-                  if (v == null) {
-                    exclusive.remove(name);
-                  } else if (v) {
-                    inclusive.add(name);
-                  } else {
-                    inclusive.remove(name);
-                    exclusive.add(name);
-                  }
-                },
-              );
-            },
           )
         else
           const Center(child: Text('No Results')),

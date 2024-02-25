@@ -90,11 +90,13 @@ class SettingsAboutTab extends StatelessWidget {
             onTap: Options.resetOptions,
           ),
           if (lastNotificationFetch != null) ...[
-            const SizedBox(height: 30),
-            Text(
-              'Performed a notification check around ${DateTimeUtil.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelMedium,
+            Padding(
+              padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
+              child: Text(
+                'Performed a notification check around ${DateTimeUtil.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
             ),
           ],
         ],

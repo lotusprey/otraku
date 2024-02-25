@@ -3,15 +3,19 @@ import 'package:otraku/common/utils/consts.dart';
 
 /// Horizontally constrains [child] into the center.
 class ConstrainedView extends StatelessWidget {
-  const ConstrainedView({required this.child});
+  const ConstrainedView({
+    required this.child,
+    this.padding = const EdgeInsets.symmetric(horizontal: 10),
+  });
 
   final Widget child;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: padding,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: Consts.layoutBig),
           child: child,

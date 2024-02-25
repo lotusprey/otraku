@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/edit/edit_buttons.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/fields/growable_text_field.dart';
@@ -354,26 +353,9 @@ class _EditView extends StatelessWidget {
       },
     );
 
-    final advancedSettings = Consumer(
-      builder: (context, ref, _) {
-        final notifier = ref.watch(provider.notifier);
-
-        return _CheckBoxGrid(
-          {
-            'Private': notifier.state.private,
-            'Hidden From Status Lists': notifier.state.hiddenFromStatusLists,
-          },
-          (key, val) => key == 'Private'
-              ? notifier.update((s) => s.copyWith(private: val))
-              : notifier.update((s) => s.copyWith(hiddenFromStatusLists: val)),
-        );
-      },
-    );
-
     const space = SliverToBoxAdapter(child: SizedBox(height: 10));
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+    return Material(
       child: Consumer(
         builder: (context, ref, _) {
           final notifier = ref.watch(provider.notifier);
@@ -386,15 +368,21 @@ class _EditView extends StatelessWidget {
               tracking,
               space,
               SliverToBoxAdapter(
-                child: LabeledField(label: 'Score', child: ScoreField(tag)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: LabeledField(label: 'Score', child: ScoreField(tag)),
+                ),
               ),
               space,
               SliverToBoxAdapter(
-                child: LabeledField(
-                  label: 'Notes',
-                  child: GrowableTextField(
-                    text: notifier.state.notes,
-                    onChanged: (notes) => notifier.state.notes = notes,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: LabeledField(
+                    label: 'Notes',
+                    child: GrowableTextField(
+                      text: notifier.state.notes,
+                      onChanged: (notes) => notifier.state.notes = notes,
+                    ),
                   ),
                 ),
               ),
@@ -403,16 +391,40 @@ class _EditView extends StatelessWidget {
               space,
               advancedScoring,
               space,
-              const _Label('Additional Settings'),
-              advancedSettings,
-              if (notifier.state.customLists.isNotEmpty) ...[
-                space,
-                const _Label('Custom Lists'),
-                _CheckBoxGrid(
-                  notifier.state.customLists,
-                  (key, val) => notifier.state.customLists[key] = val,
+              SliverToBoxAdapter(
+                child: StatefulCheckboxListTile(
+                  title: const Text('Private'),
+                  value: notifier.state.private,
+                  onChanged: (v) => notifier.update(
+                    (s) => s.copyWith(private: v),
+                  ),
                 ),
-              ],
+              ),
+              SliverToBoxAdapter(
+                child: StatefulCheckboxListTile(
+                  title: const Text('Hidden From Status Lists'),
+                  value: notifier.state.hiddenFromStatusLists,
+                  onChanged: (v) => notifier.update(
+                    (s) => s.copyWith(hiddenFromStatusLists: v),
+                  ),
+                ),
+              ),
+              if (notifier.state.customLists.isNotEmpty)
+                SliverToBoxAdapter(
+                  child: ExpansionTile(
+                    title: const Text('Custom Lists'),
+                    initiallyExpanded: true,
+                    children: [
+                      for (final e in notifier.state.customLists.entries)
+                        StatefulCheckboxListTile(
+                          title: Text(e.key),
+                          value: e.value,
+                          onChanged: (v) =>
+                              notifier.state.customLists[e.key] = v!,
+                        ),
+                    ],
+                  ),
+                ),
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: MediaQuery.of(context).padding.bottom +
@@ -428,19 +440,6 @@ class _EditView extends StatelessWidget {
   }
 }
 
-class _Label extends StatelessWidget {
-  const _Label(this.label);
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Text(label, style: Theme.of(context).textTheme.labelMedium),
-    );
-  }
-}
-
 class _FieldGrid extends StatelessWidget {
   const _FieldGrid({required this.minWidth, required this.children});
 
@@ -449,39 +448,14 @@ class _FieldGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverGrid(
-      delegate: SliverChildListDelegate.fixed(children),
-      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: minWidth,
-        height: 71,
-      ),
-    );
-  }
-}
-
-class _CheckBoxGrid extends StatelessWidget {
-  const _CheckBoxGrid(this.map, this.onChanged);
-
-  final Map<String, bool> map;
-  final Function(String, bool) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    if (map.isEmpty) return const SliverToBoxAdapter();
-
-    return SliverGrid(
-      delegate: SliverChildBuilderDelegate(
-        (_, index) => CheckBoxField(
-          title: map.entries.elementAt(index).key,
-          initial: map.entries.elementAt(index).value,
-          onChanged: (val) => onChanged(map.entries.elementAt(index).key, val),
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      sliver: SliverGrid(
+        delegate: SliverChildListDelegate.fixed(children),
+        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+          minWidth: minWidth,
+          height: 71,
         ),
-        childCount: map.length,
-      ),
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 180,
-        mainAxisSpacing: 0,
-        height: Consts.tapTargetSize,
       ),
     );
   }

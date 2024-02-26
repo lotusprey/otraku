@@ -117,33 +117,35 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(characterMediaProvider(id).select(
-          (s) => s.languages.length < 2,
-        ))) return const SizedBox();
+        return ref.watch(characterMediaProvider(id)).maybeWhen(
+              data: (data) {
+                if (data.languages.length < 2) return const SizedBox();
 
-        return ActionButton(
-          tooltip: 'Language',
-          icon: Ionicons.globe_outline,
-          onTap: () {
-            final characterMedia = ref.read(characterMediaProvider(id));
-            final languages = characterMedia.languages;
-            final language = characterMedia.language;
+                return ActionButton(
+                  tooltip: 'Language',
+                  icon: Ionicons.globe_outline,
+                  onTap: () {
+                    final languages = data.languages;
+                    final language = data.language;
 
-            showSheet(
-              context,
-              GradientSheet([
-                for (int i = 0; i < languages.length; i++)
-                  GradientSheetButton(
-                    text: languages.elementAt(i),
-                    selected: languages.elementAt(i) == language,
-                    onTap: () => ref
-                        .read(characterMediaProvider(id).notifier)
-                        .changeLanguage(languages.elementAt(i)),
-                  ),
-              ]),
+                    showSheet(
+                      context,
+                      GradientSheet([
+                        for (int i = 0; i < languages.length; i++)
+                          GradientSheetButton(
+                            text: languages.elementAt(i),
+                            selected: languages.elementAt(i) == language,
+                            onTap: () => ref
+                                .read(characterMediaProvider(id).notifier)
+                                .changeLanguage(languages.elementAt(i)),
+                          ),
+                      ]),
+                    );
+                  },
+                );
+              },
+              orElse: () => const SizedBox(),
             );
-          },
-        );
       },
     );
   }

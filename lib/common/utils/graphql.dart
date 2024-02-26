@@ -351,10 +351,10 @@ abstract class GqlQuery {
   ''';
 
   static const studio = r'''
-    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false) {
+    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false, $withMedia: Boolean = false) {
       Studio(id: $id) {
         ...info @include(if: $withInfo)
-        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) {
+        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) @include(if: $withMedia) {
           pageInfo {hasNextPage}
           nodes {
             id

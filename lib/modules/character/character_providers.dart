@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/character/character_models.dart';
@@ -5,7 +7,6 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
@@ -33,28 +34,39 @@ final characterProvider = FutureProvider.autoDispose.family(
   },
 );
 
-final characterFilterProvider =
-    StateProvider.autoDispose.family((ref, _) => CharacterFilter());
-
-final characterMediaProvider = StateNotifierProvider.autoDispose
+final characterMediaProvider = AsyncNotifierProvider.autoDispose
     .family<CharacterMediaNotifier, CharacterMedia, int>(
-  (ref, int id) =>
-      CharacterMediaNotifier(id, ref.watch(characterFilterProvider(id))),
+  CharacterMediaNotifier.new,
 );
 
-class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
-  CharacterMediaNotifier(this.id, this.filter) : super(const CharacterMedia()) {
-    _fetch(null);
+final characterFilterProvider = NotifierProvider.autoDispose
+    .family<CharacterFilterNotifier, CharacterFilter, int>(
+  CharacterFilterNotifier.new,
+);
+
+class CharacterMediaNotifier
+    extends AutoDisposeFamilyAsyncNotifier<CharacterMedia, int> {
+  late CharacterFilter filter;
+
+  @override
+  FutureOr<CharacterMedia> build(arg) async {
+    filter = ref.watch(characterFilterProvider(arg));
+    return await _fetch(const CharacterMedia(), null);
   }
 
-  final int id;
-  final CharacterFilter filter;
+  Future<void> fetch(bool onAnime) async {
+    final oldState = state.valueOrNull ?? const CharacterMedia();
+    if (onAnime) {
+      if (!oldState.anime.hasNext) return;
+    } else {
+      if (!oldState.manga.hasNext) return;
+    }
+    state = await AsyncValue.guard(() => _fetch(oldState, onAnime));
+  }
 
-  Future<void> fetch(bool onAnime) => _fetch(onAnime);
-
-  Future<void> _fetch(bool? onAnime) async {
-    final variables = <String, dynamic>{
-      'id': id,
+  Future<CharacterMedia> _fetch(CharacterMedia oldState, bool? onAnime) async {
+    final variables = {
+      'id': arg,
       'onList': filter.onList,
       'sort': filter.sort.name,
     };
@@ -63,67 +75,55 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
       variables['withAnime'] = true;
       variables['withManga'] = true;
     } else if (onAnime) {
-      if (!(state.anime.valueOrNull?.hasNext ?? true)) return;
       variables['withAnime'] = true;
-      variables['page'] = state.anime.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.anime.next;
     } else if (!onAnime) {
-      if (!(state.manga.valueOrNull?.hasNext ?? true)) return;
       variables['withManga'] = true;
-      variables['page'] = state.manga.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.manga.next;
     }
 
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.character, variables);
-      return data['Character'];
-    });
+    var data = await Api.get(GqlQuery.character, variables);
+    data = data['Character'];
 
-    var anime = state.anime;
-    var manga = state.manga;
-    var languageToVoiceActors = state.languageToVoiceActors;
-    var language = state.language;
+    var anime = oldState.anime;
+    var manga = oldState.manga;
+    var languageToVoiceActors = {...oldState.languageToVoiceActors};
+    var language = oldState.language;
 
     if (onAnime == null || onAnime) {
-      anime = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['anime'];
-        final value = anime.valueOrNull ?? const Paged();
+      final map = data['anime'];
+      final items = <Relation>[];
+      for (final a in map['edges']) {
+        items.add(Relation(
+          id: a['node']['id'],
+          title: a['node']['title']['userPreferred'],
+          imageUrl: a['node']['coverImage'][Options().imageQuality.value],
+          subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
+          type: DiscoverType.Anime,
+        ));
 
-        /// The map could be immutable, so a copy is made.
-        languageToVoiceActors = {...state.languageToVoiceActors};
+        if (a['voiceActors'] != null) {
+          for (final va in a['voiceActors']) {
+            final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
+            if (l == null) continue;
 
-        final items = <Relation>[];
-        for (final a in map['edges']) {
-          items.add(Relation(
-            id: a['node']['id'],
-            title: a['node']['title']['userPreferred'],
-            imageUrl: a['node']['coverImage'][Options().imageQuality.value],
-            subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
-            type: DiscoverType.Anime,
-          ));
+            final currentLanguage = languageToVoiceActors.putIfAbsent(
+              l,
+              () => <int, List<Relation>>{},
+            );
 
-          if (a['voiceActors'] != null) {
-            for (final va in a['voiceActors']) {
-              final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
-              if (l == null) continue;
+            final currentMedia = currentLanguage.putIfAbsent(
+              items.last.id,
+              () => [],
+            );
 
-              final currentLanguage = languageToVoiceActors.putIfAbsent(
-                l,
-                () => <int, List<Relation>>{},
-              );
-
-              final currentMedia = currentLanguage.putIfAbsent(
-                items.last.id,
-                () => [],
-              );
-
-              currentMedia.add(Relation(
-                id: va['id'],
-                title: va['name']['userPreferred'],
-                imageUrl: va['image']['large'],
-                subtitle: l,
-                type: DiscoverType.Staff,
-              ));
-            }
+            currentMedia.add(Relation(
+              id: va['id'],
+              title: va['name']['userPreferred'],
+              imageUrl: va['image']['large'],
+              subtitle: l,
+              type: DiscoverType.Staff,
+            ));
           }
         }
 
@@ -131,38 +131,27 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
           language = languageToVoiceActors.keys.first;
         }
 
-        return Future.value(value.withNext(
-          items,
-          map['pageInfo']['hasNextPage'] ?? false,
-        ));
-      });
+        anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
+      }
     }
 
     if (onAnime == null || !onAnime) {
-      manga = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['manga'];
-        final value = manga.valueOrNull ?? const Paged();
-
-        final items = <Relation>[];
-        for (final m in map['edges']) {
-          items.add(Relation(
-            id: m['node']['id'],
-            title: m['node']['title']['userPreferred'],
-            imageUrl: m['node']['coverImage'][Options().imageQuality.value],
-            subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
-            type: DiscoverType.Manga,
-          ));
-        }
-
-        return Future.value(value.withNext(
-          items,
-          map['pageInfo']['hasNextPage'] ?? false,
+      final map = data['manga'];
+      final items = <Relation>[];
+      for (final m in map['edges']) {
+        items.add(Relation(
+          id: m['node']['id'],
+          title: m['node']['title']['userPreferred'],
+          imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+          subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
+          type: DiscoverType.Manga,
         ));
-      });
+      }
+
+      manga = manga.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
-    state = CharacterMedia(
+    return CharacterMedia(
       anime: anime,
       manga: manga,
       languageToVoiceActors: languageToVoiceActors,
@@ -170,10 +159,21 @@ class CharacterMediaNotifier extends StateNotifier<CharacterMedia> {
     );
   }
 
-  void changeLanguage(String language) => state = CharacterMedia(
-        anime: state.anime,
-        manga: state.manga,
-        languageToVoiceActors: state.languageToVoiceActors,
-        language: language,
+  void changeLanguage(String language) => state = state.whenData(
+        (data) => CharacterMedia(
+          anime: data.anime,
+          manga: data.manga,
+          languageToVoiceActors: data.languageToVoiceActors,
+          language: language,
+        ),
       );
+}
+
+class CharacterFilterNotifier
+    extends AutoDisposeFamilyNotifier<CharacterFilter, int> {
+  @override
+  CharacterFilter build(arg) => CharacterFilter();
+
+  @override
+  set state(CharacterFilter newState) => super.state = newState;
 }

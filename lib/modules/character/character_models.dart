@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
@@ -91,29 +90,16 @@ class Character {
   bool isFavorite;
 }
 
-class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.onList});
-
-  final MediaSort sort;
-  final bool? onList;
-
-  CharacterFilter copyWith({MediaSort? sort, bool? Function()? onList}) =>
-      CharacterFilter(
-        sort: sort ?? this.sort,
-        onList: onList == null ? this.onList : onList(),
-      );
-}
-
 class CharacterMedia {
   const CharacterMedia({
-    this.anime = const AsyncValue.loading(),
-    this.manga = const AsyncValue.loading(),
+    this.anime = const Paged(),
+    this.manga = const Paged(),
     this.languageToVoiceActors = const {},
     this.language = '',
   });
 
-  final AsyncValue<Paged<Relation>> anime;
-  final AsyncValue<Paged<Relation>> manga;
+  final Paged<Relation> anime;
+  final Paged<Relation> manga;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -128,8 +114,8 @@ class CharacterMedia {
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
   List<(Relation, Relation?)> getAnimeAndVoiceActors() {
-    final anime = this.anime.valueOrNull?.items;
-    if (anime == null || anime.isEmpty) return [];
+    final anime = this.anime.items;
+    if (anime.isEmpty) return [];
 
     final actorsPerMedia = languageToVoiceActors[language];
     if (actorsPerMedia == null) return [for (final a in anime) (a, null)];
@@ -149,4 +135,17 @@ class CharacterMedia {
 
     return animeAndVoiceActors;
   }
+}
+
+class CharacterFilter {
+  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.onList});
+
+  final MediaSort sort;
+  final bool? onList;
+
+  CharacterFilter copyWith({MediaSort? sort, bool? Function()? onList}) =>
+      CharacterFilter(
+        sort: sort ?? this.sort,
+        onList: onList == null ? this.onList : onList(),
+      );
 }

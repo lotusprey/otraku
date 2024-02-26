@@ -111,15 +111,27 @@ class _StaffViewState extends ConsumerState<StaffView>
           children: [
             StaffInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
             PagedView<(Relation, Relation)>(
-              provider: staffRelationsProvider(widget.id)
-                  .select((s) => s.charactersAndMedia),
+              provider: staffRelationsProvider(widget.id).select(
+                (s) => s.unwrapPrevious().map(
+                      data: (data) => AsyncValue.data(
+                        data.value.charactersAndMedia,
+                      ),
+                      error: (e) => AsyncValue.error(e, e.stackTrace),
+                      loading: (_) => const AsyncValue.loading(),
+                    ),
+              ),
               onData: (data) => RelationGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<Relation>(
-              provider:
-                  staffRelationsProvider(widget.id).select((s) => s.roles),
+              provider: staffRelationsProvider(widget.id).select(
+                (s) => s.unwrapPrevious().map(
+                      data: (data) => AsyncValue.data(data.value.roles),
+                      error: (e) => AsyncValue.error(e, e.stackTrace),
+                      loading: (_) => const AsyncValue.loading(),
+                    ),
+              ),
               onData: (data) => SingleRelationGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,

@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
@@ -102,6 +101,16 @@ class Staff {
   bool isFavorite;
 }
 
+class StaffRelations {
+  const StaffRelations({
+    this.charactersAndMedia = const Paged(),
+    this.roles = const Paged(),
+  });
+
+  final Paged<(Relation, Relation)> charactersAndMedia;
+  final Paged<Relation> roles;
+}
+
 class StaffFilter {
   StaffFilter({
     this.sort = MediaSort.START_DATE_DESC,
@@ -123,14 +132,4 @@ class StaffFilter {
         ofAnime: ofAnime == null ? this.ofAnime : ofAnime(),
         onList: onList == null ? this.onList : onList(),
       );
-}
-
-class StaffRelations {
-  const StaffRelations({
-    this.charactersAndMedia = const AsyncValue.loading(),
-    this.roles = const AsyncValue.loading(),
-  });
-
-  final AsyncValue<Paged<(Relation, Relation)>> charactersAndMedia;
-  final AsyncValue<Paged<Relation>> roles;
 }

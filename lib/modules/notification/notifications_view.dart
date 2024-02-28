@@ -5,8 +5,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/notification/notification_model.dart';
-import 'package:otraku/modules/notification/notification_provider.dart';
+import 'package:otraku/modules/notification/notifications_model.dart';
+import 'package:otraku/modules/notification/notifications_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
@@ -56,7 +56,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           trailing: [
             Expanded(
               child: Text(
-                '${ref.watch(notificationFilterProvider).text} Notifications',
+                '${ref.watch(notificationsFilterProvider).text} Notifications',
                 style: Theme.of(context).textTheme.titleLarge,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -95,16 +95,16 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       Consumer(
         builder: (context, ref, _) {
           final index =
-              ref.read(notificationFilterProvider.notifier).state.index;
+              ref.read(notificationsFilterProvider.notifier).state.index;
 
           return GradientSheet([
-            for (int i = 0; i < NotificationFilterType.values.length; i++)
+            for (int i = 0; i < NotificationFilter.values.length; i++)
               GradientSheetButton(
-                text: NotificationFilterType.values.elementAt(i).text,
+                text: NotificationFilter.values.elementAt(i).text,
                 selected: index == i,
                 onTap: () => ref
-                    .read(notificationFilterProvider.notifier)
-                    .state = NotificationFilterType.values.elementAt(i),
+                    .read(notificationsFilterProvider.notifier)
+                    .state = NotificationFilter.values.elementAt(i),
               ),
           ]);
         },

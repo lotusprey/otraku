@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/calendar/calendar_provider.dart';
@@ -35,7 +34,6 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
               season = v == null
                   ? CalendarSeasonFilter.All
                   : CalendarSeasonFilter.values[v + 1];
-              Options().calendarSeason = season.index;
             },
           ),
           ChipSelector(
@@ -51,7 +49,6 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
               status = v == null
                   ? CalendarStatusFilter.All
                   : CalendarStatusFilter.values[v + 1];
-              Options().calendarStatus = status.index;
             },
           ),
         ],

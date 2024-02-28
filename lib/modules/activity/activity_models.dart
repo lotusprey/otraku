@@ -12,7 +12,9 @@ class ExpandedActivity {
 class ActivityReply {
   ActivityReply._({
     required this.id,
-    required this.user,
+    required this.authorId,
+    required this.authorName,
+    required this.authorAvatarUrl,
     required this.text,
     required this.createdAt,
     this.likeCount = 0,
@@ -24,82 +26,60 @@ class ActivityReply {
 
     return ActivityReply._(
       id: map['id'],
-      likeCount: map['likeCount'] ?? 0,
-      isLiked: map['isLiked'] ?? false,
-      user: ActivityUser(map['user']),
+      authorId: map['user']['id'],
+      authorName: map['user']['name'],
+      authorAvatarUrl: map['user']['avatar']['large'],
       text: map['text'] ?? '',
       createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
+      likeCount: map['likeCount'] ?? 0,
+      isLiked: map['isLiked'] ?? false,
     );
   }
 
   final int id;
-  final ActivityUser user;
+  final int authorId;
+  final String authorName;
+  final String authorAvatarUrl;
   final String text;
   final String createdAt;
   int likeCount;
   bool isLiked;
 }
 
-class Activity {
-  Activity._({
+sealed class Activity {
+  Activity({
     required this.id,
-    required this.type,
-    required this.agent,
+    required this.authorId,
+    required this.authorName,
+    required this.authorAvatarUrl,
     required this.createdAt,
+    required this.text,
     required this.siteUrl,
     required this.isOwned,
+    required this.replyCount,
+    required this.likeCount,
+    required this.isLiked,
+    required this.isSubscribed,
     required this.isPinned,
-    this.media,
-    this.reciever,
-    this.text = '',
-    this.likeCount = 0,
-    this.replyCount = 0,
-    this.isPrivate = false,
-    this.isLiked = false,
-    this.isSubscribed = false,
   });
 
-  static Activity? maybe(Map<String, dynamic> map, int viewerId) {
+  static Activity? maybe(
+    Map<String, dynamic> map,
+    int viewerId,
+    ImageQuality imageQuality,
+  ) {
     try {
       switch (map['type']) {
         case 'TEXT':
           if (map['user'] == null) return null;
 
-          return Activity._(
+          return StatusActivity(
             id: map['id'],
-            type: ActivityType.TEXT,
-            agent: ActivityUser(map['user']),
+            authorId: map['user']['id'],
+            authorName: map['user']['name'],
+            authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: map['text'] ?? '',
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
-              map['createdAt'],
-            ),
-            isOwned: map['user']['id'] == viewerId,
-            replyCount: map['replyCount'] ?? 0,
-            likeCount: map['likeCount'] ?? 0,
-            isLiked: map['isLiked'] ?? false,
-            isSubscribed: map['isSubscribed'] ?? false,
-            isPinned: map['isPinned'] ?? false,
-          );
-        case 'ANIME_LIST':
-        case 'MANGA_LIST':
-          if (map['user'] == null || map['media'] == null) return null;
-
-          final type = map['type'] == 'ANIME_LIST'
-              ? ActivityType.ANIME_LIST
-              : ActivityType.MANGA_LIST;
-          final progress =
-              map['progress'] != null ? '${map['progress']} of ' : '';
-          final status = (map['status'] as String)[0].toUpperCase() +
-              (map['status'] as String).substring(1);
-
-          return Activity._(
-            id: map['id'],
-            type: type,
-            agent: ActivityUser(map['user']),
-            media: ActivityMedia(map),
-            siteUrl: map['siteUrl'],
-            text: '$status $progress',
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -113,11 +93,14 @@ class Activity {
         case 'MESSAGE':
           if (map['messenger'] == null || map['recipient'] == null) return null;
 
-          return Activity._(
+          return MessageActivity(
             id: map['id'],
-            type: ActivityType.MESSAGE,
-            agent: ActivityUser(map['messenger']),
-            reciever: ActivityUser(map['recipient']),
+            authorId: map['messenger']['id'],
+            authorName: map['messenger']['name'],
+            authorAvatarUrl: map['messenger']['avatar']['large'],
+            recipientId: map['recipient']['id'],
+            recipientName: map['recipient']['name'],
+            recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: map['message'] ?? '',
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
@@ -132,6 +115,37 @@ class Activity {
             isSubscribed: map['isSubscribed'] ?? false,
             isPinned: false,
           );
+        case 'ANIME_LIST':
+        case 'MANGA_LIST':
+          if (map['user'] == null || map['media'] == null) return null;
+
+          final progress =
+              map['progress'] != null ? '${map['progress']} of ' : '';
+          final status = (map['status'] as String)[0].toUpperCase() +
+              (map['status'] as String).substring(1);
+
+          return MediaActivity(
+            id: map['id'],
+            authorId: map['user']['id'],
+            authorName: map['user']['name'],
+            authorAvatarUrl: map['user']['avatar']['large'],
+            mediaId: map['media']['id'],
+            title: map['media']['title']['userPreferred'],
+            coverUrl: map['media']['coverImage'][imageQuality.value],
+            format: StringUtil.tryNoScreamingSnakeCase(map['media']['format']),
+            isAnime: map['type'] == 'ANIME_LIST',
+            siteUrl: map['siteUrl'],
+            text: '$status $progress',
+            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+              map['createdAt'],
+            ),
+            isOwned: map['user']['id'] == viewerId,
+            replyCount: map['replyCount'] ?? 0,
+            likeCount: map['likeCount'] ?? 0,
+            isLiked: map['isLiked'] ?? false,
+            isSubscribed: map['isSubscribed'] ?? false,
+            isPinned: map['isPinned'] ?? false,
+          );
         default:
           return null;
       }
@@ -141,62 +155,133 @@ class Activity {
   }
 
   final int id;
-  final ActivityType type;
-  final ActivityUser agent;
-  final ActivityUser? reciever;
-  final ActivityMedia? media;
-  final String? siteUrl;
-  final String text;
-  final bool isOwned;
-  final bool isPrivate;
+  final int authorId;
+  final String authorName;
+  final String authorAvatarUrl;
   final String createdAt;
-  int likeCount;
+  final String text;
+  final String siteUrl;
+  final bool isOwned;
   int replyCount;
+  int likeCount;
   bool isLiked;
   bool isSubscribed;
   bool isPinned;
 }
 
-class ActivityUser {
-  const ActivityUser._({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
+class StatusActivity extends Activity {
+  StatusActivity({
+    required super.id,
+    required super.authorId,
+    required super.authorName,
+    required super.authorAvatarUrl,
+    required super.createdAt,
+    required super.text,
+    required super.siteUrl,
+    required super.isOwned,
+    required super.replyCount,
+    required super.likeCount,
+    required super.isLiked,
+    required super.isSubscribed,
+    required super.isPinned,
   });
-
-  factory ActivityUser(Map<String, dynamic> map) => ActivityUser._(
-        id: map['id'],
-        name: map['name'],
-        imageUrl: map['avatar']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
 }
 
-class ActivityMedia {
-  const ActivityMedia._({
-    required this.id,
+class MessageActivity extends Activity {
+  MessageActivity({
+    required super.id,
+    required super.authorId,
+    required super.authorName,
+    required super.authorAvatarUrl,
+    required super.createdAt,
+    required super.text,
+    required super.siteUrl,
+    required super.isOwned,
+    required super.replyCount,
+    required super.likeCount,
+    required super.isLiked,
+    required super.isSubscribed,
+    required super.isPinned,
+    required this.recipientId,
+    required this.recipientName,
+    required this.recipientAvatarUrl,
+    required this.isPrivate,
+  });
+
+  final int recipientId;
+  final String recipientName;
+  final String recipientAvatarUrl;
+  final bool isPrivate;
+}
+
+class MediaActivity extends Activity {
+  MediaActivity({
+    required super.id,
+    required super.authorId,
+    required super.authorName,
+    required super.authorAvatarUrl,
+    required super.createdAt,
+    required super.text,
+    required super.siteUrl,
+    required super.isOwned,
+    required super.replyCount,
+    required super.likeCount,
+    required super.isLiked,
+    required super.isSubscribed,
+    required super.isPinned,
+    required this.mediaId,
     required this.title,
-    required this.imageUrl,
+    required this.coverUrl,
     required this.isAnime,
     required this.format,
   });
 
-  factory ActivityMedia(Map<String, dynamic> map) => ActivityMedia._(
-        id: map['media']['id'],
-        title: map['media']['title']['userPreferred'],
-        imageUrl: map['media']['coverImage'][Options().imageQuality.value],
-        format: StringUtil.tryNoScreamingSnakeCase(map['media']['format']),
-        isAnime: map['type'] == 'ANIME_LIST',
-      );
-
-  final int id;
+  final int mediaId;
   final String title;
-  final String imageUrl;
+  final String coverUrl;
   final bool isAnime;
   final String? format;
+}
+
+sealed class ActivitiesFilter {
+  const ActivitiesFilter(this.typeIn);
+
+  final List<ActivityType> typeIn;
+
+  ActivitiesFilter copyWith({List<ActivityType>? typeIn});
+}
+
+class UserActivityFilter extends ActivitiesFilter {
+  const UserActivityFilter(super.typeIn, this.userId);
+
+  final int userId;
+
+  @override
+  ActivitiesFilter copyWith({List<ActivityType>? typeIn}) =>
+      UserActivityFilter(typeIn ?? this.typeIn, userId);
+}
+
+class HomeActivityFilter extends ActivitiesFilter {
+  const HomeActivityFilter(
+    super.typeIn,
+    this.onFollowing,
+    this.withViewerActivities,
+  );
+
+  final bool onFollowing;
+  final bool withViewerActivities;
+
+  @override
+  ActivitiesFilter copyWith({
+    List<ActivityType>? typeIn,
+    bool? onFollowing,
+    bool? withViewerActivities,
+  }) =>
+      HomeActivityFilter(
+        typeIn ?? this.typeIn,
+        onFollowing ?? this.onFollowing,
+        withViewerActivities ?? this.withViewerActivities,
+      );
 }
 
 enum ActivityType {
@@ -208,45 +293,4 @@ enum ActivityType {
   const ActivityType(this.text);
 
   final String text;
-}
-
-sealed class ActivityFilter {
-  const ActivityFilter(this.typeIn);
-
-  final List<ActivityType> typeIn;
-
-  ActivityFilter copyWith({List<ActivityType>? typeIn});
-}
-
-class UserActivityFilter extends ActivityFilter {
-  const UserActivityFilter(super.typeIn, this.userId);
-
-  final int userId;
-
-  @override
-  ActivityFilter copyWith({List<ActivityType>? typeIn}) =>
-      UserActivityFilter(typeIn ?? this.typeIn, userId);
-}
-
-class HomeActivityFilter extends ActivityFilter {
-  const HomeActivityFilter(
-    super.typeIn,
-    this.onFollowing,
-    this.withViewerActivities,
-  );
-
-  final bool onFollowing;
-  final bool withViewerActivities;
-
-  @override
-  ActivityFilter copyWith({
-    List<ActivityType>? typeIn,
-    bool? onFollowing,
-    bool? withViewerActivities,
-  }) =>
-      HomeActivityFilter(
-        typeIn ?? this.typeIn,
-        onFollowing ?? this.onFollowing,
-        withViewerActivities ?? this.withViewerActivities,
-      );
 }

@@ -120,9 +120,12 @@ class _CalendarViewState extends State<CalendarView> {
     );
   }
 
-  void _setDate(WidgetRef ref, DateTime date) => ref
-      .read(calendarFilterProvider.notifier)
-      .update((s) => s.copyWith(date: date));
+  void _setDate(WidgetRef ref, DateTime date) {
+    final filter = ref.read(calendarFilterProvider);
+    ref.read(calendarFilterProvider.notifier).state = filter.copyWith(
+      date: date,
+    );
+  }
 }
 
 class _Tile extends StatelessWidget {

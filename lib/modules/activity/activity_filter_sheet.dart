@@ -4,11 +4,11 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/modules/activity/activities_providers.dart';
+import 'package:otraku/modules/activity/activities_provider.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
-  ActivityFilter filter = ref.read(activityFilterProvider(id));
+  ActivitiesFilter filter = ref.read(activitiesFilterProvider(id));
   double initialHeight = MediaQuery.of(context).padding.bottom +
       Consts.tapTargetSize * ActivityType.values.length +
       40;
@@ -29,7 +29,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
       ),
     ),
   ).then((_) {
-    ref.read(activityFilterProvider(id).notifier).state = filter;
+    ref.read(activitiesFilterProvider(id).notifier).state = filter;
   });
 }
 
@@ -40,8 +40,8 @@ class _FilterList extends StatefulWidget {
     required this.scrollCtrl,
   });
 
-  final ActivityFilter filter;
-  final void Function(ActivityFilter) onChanged;
+  final ActivitiesFilter filter;
+  final void Function(ActivitiesFilter) onChanged;
   final ScrollController scrollCtrl;
 
   @override
@@ -49,7 +49,7 @@ class _FilterList extends StatefulWidget {
 }
 
 class _FilterListState extends State<_FilterList> {
-  late ActivityFilter _filter = widget.filter.copyWith(
+  late ActivitiesFilter _filter = widget.filter.copyWith(
     typeIn: [...widget.filter.typeIn],
   );
 

@@ -1,6 +1,6 @@
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/notification/notification_model.dart';
+import 'package:otraku/modules/notification/notifications_model.dart';
 
 /// Some fields are modifiable to allow for quick and simple edits.
 /// But to apply those edits, the [SettingsNotifier] should be used.

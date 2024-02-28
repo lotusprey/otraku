@@ -14,7 +14,9 @@ Future<bool> toggleFollow(int userId) async {
 }
 
 typedef UserTag = ({int? id, String? name});
+
 UserTag idUserTag(int id) => (id: id, name: null);
+
 UserTag nameUserTag(String name) => (id: null, name: name);
 
 final userProvider = FutureProvider.autoDispose.family<User, UserTag>(

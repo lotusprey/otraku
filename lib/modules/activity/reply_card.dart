@@ -26,8 +26,8 @@ class ReplyCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         LinkTile(
-          id: reply.user.id,
-          info: reply.user.imageUrl,
+          id: reply.authorId,
+          info: reply.authorAvatarUrl,
           discoverType: DiscoverType.User,
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -35,13 +35,13 @@ class ReplyCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: Consts.borderRadiusMin,
                 child: CachedImage(
-                  reply.user.imageUrl,
+                  reply.authorAvatarUrl,
                   height: 50,
                   width: 50,
                 ),
               ),
               const SizedBox(width: 10),
-              Text(reply.user.name),
+              Text(reply.authorName),
             ],
           ),
         ),
@@ -67,7 +67,7 @@ class ReplyCard extends StatelessWidget {
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
                         height: 40,
-                        child: reply.user.id == Options().id
+                        child: reply.authorId == Options().id
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(
@@ -79,10 +79,14 @@ class ReplyCard extends StatelessWidget {
                                   ),
                                 ),
                               )
-                            : _ReplyMentionButton(ref, activityId, reply.user),
+                            : _ReplyMentionButton(
+                                ref,
+                                activityId,
+                                reply.authorName,
+                              ),
                       ),
                     ),
-                      const SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     _ReplyLikeButton(reply),
                   ],
                 ),
@@ -147,11 +151,11 @@ class ReplyCard extends StatelessWidget {
 }
 
 class _ReplyMentionButton extends StatelessWidget {
-  const _ReplyMentionButton(this.ref, this.activityId, this.user);
+  const _ReplyMentionButton(this.ref, this.activityId, this.username);
 
   final WidgetRef ref;
   final int activityId;
-  final ActivityUser user;
+  final String username;
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +168,7 @@ class _ReplyMentionButton extends StatelessWidget {
           onTap: () => showSheet(
             context,
             CompositionView(
-              composition: Composition.reply(null, '@${user.name} ', activityId),
+              composition: Composition.reply(null, '@$username ', activityId),
               onDone: (map) => ref
                   .read(activityProvider(activityId).notifier)
                   .appendReply(map),

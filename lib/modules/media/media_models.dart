@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/common/models/paged.dart';
@@ -40,18 +39,18 @@ enum MediaTab {
 
 class MediaRelations {
   const MediaRelations({
-    this.characters = const AsyncValue.loading(),
-    this.staff = const AsyncValue.loading(),
-    this.reviews = const AsyncValue.loading(),
-    this.recommendations = const AsyncValue.loading(),
+    this.characters = const Paged(),
+    this.staff = const Paged(),
+    this.reviews = const Paged(),
+    this.recommendations = const Paged(),
     this.languageToVoiceActors = const {},
     this.language = '',
   });
 
-  final AsyncValue<Paged<Relation>> characters;
-  final AsyncValue<Paged<Relation>> staff;
-  final AsyncValue<Paged<RelatedReview>> reviews;
-  final AsyncValue<Paged<Recommendation>> recommendations;
+  final Paged<Relation> characters;
+  final Paged<Relation> staff;
+  final Paged<RelatedReview> reviews;
+  final Paged<Recommendation> recommendations;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -66,9 +65,7 @@ class MediaRelations {
   /// corresponding to the current [language]. If there are
   /// multiple actors, the given character is repeated for each actor.
   List<(Relation, Relation?)> getCharactersAndVoiceActors() {
-    final chars = characters.valueOrNull?.items;
-    if (chars == null) return [];
-
+    final chars = characters.items;
     final actorsPerMedia = languageToVoiceActors[language];
     if (actorsPerMedia == null) return [for (final c in chars) (c, null)];
 
@@ -89,10 +86,10 @@ class MediaRelations {
   }
 
   MediaRelations copyWith({
-    AsyncValue<Paged<Relation>>? characters,
-    AsyncValue<Paged<Relation>>? staff,
-    AsyncValue<Paged<RelatedReview>>? reviews,
-    AsyncValue<Paged<Recommendation>>? recommendations,
+    Paged<Relation>? characters,
+    Paged<Relation>? staff,
+    Paged<RelatedReview>? reviews,
+    Paged<Recommendation>? recommendations,
     Map<String, Map<int, List<Relation>>>? languageToVoiceActors,
     String? language,
   }) =>

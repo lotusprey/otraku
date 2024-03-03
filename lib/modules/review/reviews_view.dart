@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/review/review_models.dart';
-import 'package:otraku/modules/review/review_providers.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/modules/review/review_grid.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
+import 'package:otraku/modules/review/reviews_provider.dart';
 
 class ReviewsView extends ConsumerStatefulWidget {
   const ReviewsView(this.id);
@@ -60,20 +60,20 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
               icon: Ionicons.funnel_outline,
               onTap: () {
                 final index = ref
-                    .read(reviewSortProvider(widget.id).notifier)
+                    .read(reviewsSortProvider(widget.id).notifier)
                     .state
                     .index;
 
                 showSheet(
                   context,
                   GradientSheet([
-                    for (int i = 0; i < ReviewSort.values.length; i++)
+                    for (int i = 0; i < ReviewsSort.values.length; i++)
                       GradientSheetButton(
-                        text: ReviewSort.values.elementAt(i).text,
+                        text: ReviewsSort.values.elementAt(i).text,
                         selected: index == i,
                         onTap: () => ref
-                            .read(reviewSortProvider(widget.id).notifier)
-                            .state = ReviewSort.values.elementAt(i),
+                            .read(reviewsSortProvider(widget.id).notifier)
+                            .state = ReviewsSort.values.elementAt(i),
                       ),
                   ]),
                 );

@@ -15,7 +15,7 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
     context,
     OpaqueSheet(
       initialHeight:
-          MediaQuery.of(context).padding.bottom + Consts.tapTargetSize * 3 + 20,
+          MediaQuery.paddingOf(context).bottom + Consts.tapTargetSize * 3 + 20,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Consts.physics,

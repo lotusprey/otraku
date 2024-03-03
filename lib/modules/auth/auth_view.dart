@@ -87,9 +87,9 @@ class AuthViewState extends State<AuthView> {
     return Scaffold(
       body: ConstrainedView(
         child: ListView.builder(
-          padding: MediaQuery.of(context)
-              .padding
-              .add(const EdgeInsets.symmetric(vertical: 20)),
+          padding: MediaQuery.paddingOf(context).add(
+            const EdgeInsets.symmetric(vertical: 20),
+          ),
           reverse: true,
           itemExtent: 90,
           itemCount: accounts.length + 1,

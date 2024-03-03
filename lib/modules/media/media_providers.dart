@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
@@ -58,179 +60,168 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
   },
 );
 
-final mediaRelationsProvider = StateNotifierProvider.autoDispose
+final mediaRelationsProvider = AsyncNotifierProvider.autoDispose
     .family<MediaRelationsNotifier, MediaRelations, int>(
-  (ref, int mediaId) => MediaRelationsNotifier(mediaId),
+  MediaRelationsNotifier.new,
 );
 
-final mediaFollowingProvider = StateNotifierProvider.family<
-    MediaFollowingNotifier, AsyncValue<Paged<MediaFollowing>>, int>(
-  (ref, int mediaId) => MediaFollowingNotifier(mediaId),
+final mediaFollowingProvider = AsyncNotifierProvider.family<
+    MediaFollowingNotifier, Paged<MediaFollowing>, int>(
+  MediaFollowingNotifier.new,
 );
 
-class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
-  MediaRelationsNotifier(this.mediaId) : super(const MediaRelations()) {
-    _fetch(null);
+class MediaRelationsNotifier
+    extends AutoDisposeFamilyAsyncNotifier<MediaRelations, int> {
+  @override
+  FutureOr<MediaRelations> build(arg) => _fetch(const MediaRelations(), null);
+
+  Future<void> fetch(MediaTab tab) async {
+    final oldState = state.valueOrNull ?? const MediaRelations();
+    state = switch (tab) {
+      MediaTab.info ||
+      MediaTab.relations ||
+      MediaTab.following ||
+      MediaTab.statistics =>
+        state,
+      MediaTab.characters => oldState.characters.hasNext
+          ? await AsyncValue.guard(() => _fetch(oldState, tab))
+          : state,
+      MediaTab.staff => oldState.staff.hasNext
+          ? await AsyncValue.guard(() => _fetch(oldState, tab))
+          : state,
+      MediaTab.reviews => oldState.reviews.hasNext
+          ? await AsyncValue.guard(() => _fetch(oldState, tab))
+          : state,
+      MediaTab.recommendations => oldState.recommendations.hasNext
+          ? await AsyncValue.guard(() => _fetch(oldState, tab))
+          : state,
+    };
   }
 
-  final int mediaId;
-
-  Future<void> fetch(MediaTab tab) => _fetch(tab);
-
-  Future<void> _fetch(MediaTab? tab) async {
-    if (tab == MediaTab.following) return;
-
-    final variables = <String, dynamic>{'id': mediaId};
+  Future<MediaRelations> _fetch(MediaRelations oldState, MediaTab? tab) async {
+    final variables = <String, dynamic>{'id': arg};
     if (tab == null) {
       variables['withRecommendations'] = true;
       variables['withCharacters'] = true;
       variables['withStaff'] = true;
       variables['withReviews'] = true;
     } else if (tab == MediaTab.recommendations) {
-      if (!(state.recommendations.valueOrNull?.hasNext ?? true)) return;
       variables['withRecommendations'] = true;
-      variables['page'] = state.recommendations.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.recommendations.next;
     } else if (tab == MediaTab.characters) {
-      if (!(state.characters.valueOrNull?.hasNext ?? true)) return;
       variables['withCharacters'] = true;
-      variables['page'] = state.characters.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.characters.next;
     } else if (tab == MediaTab.staff) {
-      if (!(state.staff.valueOrNull?.hasNext ?? true)) return;
       variables['withStaff'] = true;
-      variables['page'] = state.staff.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.staff.next;
     } else if (tab == MediaTab.reviews) {
-      if (!(state.reviews.valueOrNull?.hasNext ?? true)) return;
       variables['withReviews'] = true;
-      variables['page'] = state.reviews.valueOrNull?.next ?? 1;
+      variables['page'] = oldState.reviews.next;
     }
 
-    final data = await AsyncValue.guard<Map<String, dynamic>>(() async {
-      final data = await Api.get(GqlQuery.media, variables);
-      return data['Media'];
-    });
+    var data = await Api.get(GqlQuery.media, variables);
+    data = data['Media'];
 
-    var characters = state.characters;
-    var staff = state.staff;
-    var reviews = state.reviews;
-    var recommended = state.recommendations;
-    var languageToVoiceActors = state.languageToVoiceActors;
-    var language = state.language;
+    var characters = oldState.characters;
+    var staff = oldState.staff;
+    var reviews = oldState.reviews;
+    var recommendations = oldState.recommendations;
+    var languageToVoiceActors = {...oldState.languageToVoiceActors};
+    var language = oldState.language;
 
     if (tab == null || tab == MediaTab.characters) {
-      characters = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['characters'];
-        final value = characters.valueOrNull ?? const Paged();
+      final map = data['characters'];
+      final items = <Relation>[];
+      for (final c in map['edges']) {
+        items.add(Relation(
+          id: c['node']['id'],
+          title: c['node']['name']['userPreferred'],
+          imageUrl: c['node']['image']['large'],
+          subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
+          type: DiscoverType.Character,
+        ));
 
-        /// The map could be immutable, so a copy is made.
-        languageToVoiceActors = {...state.languageToVoiceActors};
+        if (c['voiceActors'] == null) continue;
 
-        final items = <Relation>[];
-        for (final c in map['edges']) {
-          items.add(Relation(
-            id: c['node']['id'],
-            title: c['node']['name']['userPreferred'],
-            imageUrl: c['node']['image']['large'],
-            subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
-            type: DiscoverType.Character,
-          ));
+        for (final va in c['voiceActors']) {
+          final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
+          if (l == null) continue;
 
-          if (c['voiceActors'] == null) continue;
+          final currentLanguage = languageToVoiceActors.putIfAbsent(
+            l,
+            () => <int, List<Relation>>{},
+          );
 
-          for (final va in c['voiceActors']) {
-            final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
-            if (l == null) continue;
+          final currentCharacter = currentLanguage.putIfAbsent(
+            items.last.id,
+            () => [],
+          );
 
-            final currentLanguage = languageToVoiceActors.putIfAbsent(
-              l,
-              () => <int, List<Relation>>{},
-            );
-
-            final currentCharacter = currentLanguage.putIfAbsent(
-              items.last.id,
-              () => [],
-            );
-
-            currentCharacter.add(Relation(
-              id: va['id'],
-              title: va['name']['userPreferred'],
-              imageUrl: va['image']['large'],
-              subtitle: l,
-              type: DiscoverType.Staff,
-            ));
-          }
-        }
-
-        if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
-          language = languageToVoiceActors.keys.first;
-        }
-
-        return Future.value(
-          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-        );
-      });
-    }
-
-    if (tab == null || tab == MediaTab.staff) {
-      staff = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['staff'];
-        final value = staff.valueOrNull ?? const Paged();
-
-        final items = <Relation>[];
-        for (final s in map['edges']) {
-          items.add(Relation(
-            id: s['node']['id'],
-            title: s['node']['name']['userPreferred'],
-            imageUrl: s['node']['image']['large'],
-            subtitle: s['role'],
+          currentCharacter.add(Relation(
+            id: va['id'],
+            title: va['name']['userPreferred'],
+            imageUrl: va['image']['large'],
+            subtitle: l,
             type: DiscoverType.Staff,
           ));
         }
+      }
 
-        return Future.value(
-          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-        );
-      });
+      if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
+        language = languageToVoiceActors.keys.first;
+      }
+
+      characters = characters.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+      );
+    }
+
+    if (tab == null || tab == MediaTab.staff) {
+      final map = data['staff'];
+      final items = <Relation>[];
+      for (final s in map['edges']) {
+        items.add(Relation(
+          id: s['node']['id'],
+          title: s['node']['name']['userPreferred'],
+          imageUrl: s['node']['image']['large'],
+          subtitle: s['role'],
+          type: DiscoverType.Staff,
+        ));
+      }
+
+      staff = staff.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
     if (tab == null || tab == MediaTab.reviews) {
-      reviews = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['reviews'];
-        final value = reviews.valueOrNull ?? const Paged();
+      final map = data['reviews'];
+      final items = <RelatedReview>[];
+      for (final r in map['nodes']) {
+        final item = RelatedReview.maybe(r);
+        if (item != null) items.add(item);
+      }
 
-        final items = <RelatedReview>[];
-        for (final r in map['nodes']) {
-          final item = RelatedReview.maybe(r);
-          if (item != null) items.add(item);
-        }
-
-        return Future.value(
-          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-        );
-      });
+      reviews = reviews.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+      );
     }
 
     if (tab == null || tab == MediaTab.recommendations) {
-      recommended = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        final map = data.value!['recommendations'];
-        final value = recommended.valueOrNull ?? const Paged();
+      final map = data['recommendations'];
+      final items = <Recommendation>[];
+      for (final r in map['nodes']) {
+        if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
+      }
 
-        final items = <Recommendation>[];
-        for (final r in map['nodes']) {
-          if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
-        }
-
-        return Future.value(
-          value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-        );
-      });
+      recommendations = recommendations.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+      );
     }
 
-    state = state.copyWith(
-      recommendations: recommended,
+    return oldState.copyWith(
+      recommendations: recommendations,
       characters: characters,
       staff: staff,
       reviews: reviews,
@@ -239,44 +230,43 @@ class MediaRelationsNotifier extends StateNotifier<MediaRelations> {
     );
   }
 
-  void changeLanguage(String language) => state = MediaRelations(
-        recommendations: state.recommendations,
-        characters: state.characters,
-        staff: state.staff,
-        reviews: state.reviews,
-        languageToVoiceActors: state.languageToVoiceActors,
-        language: language,
+  void changeLanguage(String language) => state = state.whenData(
+        (data) => MediaRelations(
+          recommendations: data.recommendations,
+          characters: data.characters,
+          staff: data.staff,
+          reviews: data.reviews,
+          languageToVoiceActors: data.languageToVoiceActors,
+          language: language,
+        ),
       );
 }
 
 class MediaFollowingNotifier
-    extends StateNotifier<AsyncValue<Paged<MediaFollowing>>> {
-  MediaFollowingNotifier(this.mediaId) : super(const AsyncValue.loading()) {
-    fetch();
-  }
-
-  final int mediaId;
+    extends FamilyAsyncNotifier<Paged<MediaFollowing>, int> {
+  @override
+  FutureOr<Paged<MediaFollowing>> build(arg) => _fetch(const Paged());
 
   Future<void> fetch() async {
-    if (!(state.valueOrNull?.hasNext ?? true)) return;
+    final oldState = state.valueOrNull ?? const Paged();
+    if (!oldState.hasNext) return;
+    state = await AsyncValue.guard(() => _fetch(oldState));
+  }
 
-    state = await AsyncValue.guard(() async {
-      final value = state.valueOrNull ?? const Paged();
+  Future<Paged<MediaFollowing>> _fetch(Paged<MediaFollowing> oldState) async {
+    final data = await Api.get(
+      GqlQuery.mediaFollowing,
+      {'mediaId': arg, 'page': oldState.next},
+    );
 
-      final data = await Api.get(
-        GqlQuery.mediaFollowing,
-        {'mediaId': mediaId, 'page': value.next},
-      );
+    final items = <MediaFollowing>[];
+    for (final f in data['Page']['mediaList']) {
+      items.add(MediaFollowing(f));
+    }
 
-      final items = <MediaFollowing>[];
-      for (final f in data['Page']['mediaList']) {
-        items.add(MediaFollowing(f));
-      }
-
-      return value.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      );
-    });
+    return oldState.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    );
   }
 }

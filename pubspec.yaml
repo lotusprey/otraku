@@ -40,7 +40,7 @@ dependencies:
   url_launcher: ^6.2.5
 
   # Access to platform theme and easy theme interpolation.
-  dynamic_color: ^1.6.9
+  dynamic_color: ^1.7.0
 
   # Background tasks for notification fetching.
   workmanager: ^0.5.2

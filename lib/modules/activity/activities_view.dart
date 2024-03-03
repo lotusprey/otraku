@@ -86,11 +86,7 @@ class ActivitiesSubView extends StatelessWidget {
       builder: (context, ref, _) {
         return PagedView<Activity>(
           provider: activitiesProvider(id).select(
-            (s) => s.unwrapPrevious().map(
-                  data: (data) => AsyncValue.data(data.value),
-                  error: (e) => AsyncValue.error(e, e.stackTrace),
-                  loading: (_) => const AsyncValue.loading(),
-                ),
+            (s) => s.unwrapPrevious().whenData((data) => data),
           ),
           scrollCtrl: scrollCtrl,
           onRefresh: () {

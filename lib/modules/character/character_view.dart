@@ -114,11 +114,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
             CharacterInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
             PagedView<Relation>(
               provider: characterMediaProvider(widget.id).select(
-                (s) => s.unwrapPrevious().map(
-                      data: (data) => AsyncValue.data(data.value.anime),
-                      error: (e) => AsyncValue.error(e, e.stackTrace),
-                      loading: (_) => const AsyncValue.loading(),
-                    ),
+                (s) => s.unwrapPrevious().whenData((data) => data.anime),
               ),
               onData: (data) {
                 return RelationGrid(
@@ -133,11 +129,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
             ),
             PagedView<Relation>(
               provider: characterMediaProvider(widget.id).select(
-                (s) => s.unwrapPrevious().map(
-                      data: (data) => AsyncValue.data(data.value.manga),
-                      error: (e) => AsyncValue.error(e, e.stackTrace),
-                      loading: (_) => const AsyncValue.loading(),
-                    ),
+                (s) => s.unwrapPrevious().whenData((data) => data.manga),
               ),
               onData: (data) => SingleRelationGrid(data.items),
               scrollCtrl: _scrollCtrl,

@@ -141,7 +141,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           ),
           SizedBox(
             height:
-                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
           ),
         ],
       ),
@@ -280,7 +280,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           SizedBox(
             height:
-                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
           ),
         ],
       ),

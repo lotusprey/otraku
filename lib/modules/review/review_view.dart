@@ -4,9 +4,11 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
+import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/modules/review/review_header.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/review/review_providers.dart';
+import 'package:otraku/modules/review/review_models.dart';
+import 'package:otraku/modules/review/review_provider.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 
 class ReviewView extends StatelessWidget {
@@ -19,7 +21,7 @@ class ReviewView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer(builder: (context, ref, _) {
-        final data = ref.watch(reviewProvider(id).select((s) => s.value));
+        final data = ref.watch(reviewProvider(id).select((s) => s.valueOrNull));
 
         return CustomScrollView(
           slivers: [
@@ -101,11 +103,11 @@ class ReviewView extends StatelessWidget {
                   ),
                 ),
               ),
-              _RateButtons(id),
+              _RateButtons(data),
               SliverPadding(
                 padding: EdgeInsets.only(
                   top: 20,
-                  bottom: MediaQuery.of(context).viewPadding.bottom + 10,
+                  bottom: MediaQuery.viewPaddingOf(context).bottom + 10,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: Text(
@@ -124,9 +126,9 @@ class ReviewView extends StatelessWidget {
 }
 
 class _RateButtons extends StatefulWidget {
-  const _RateButtons(this.id);
+  const _RateButtons(this.review);
 
-  final int id;
+  final Review review;
 
   @override
   _RateButtonsState createState() => _RateButtonsState();
@@ -136,55 +138,95 @@ class _RateButtonsState extends State<_RateButtons> {
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
-      child: Consumer(
-        builder: (context, ref, _) {
-          final value = ref.watch(
-            reviewProvider(widget.id).select((s) => s.asData!.value),
-          );
-
-          final rate = ref.watch(reviewProvider(widget.id).notifier).rate;
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      value.viewerRating == true
-                          ? Icons.thumb_up
-                          : Icons.thumb_up_outlined,
-                    ),
-                    color: value.viewerRating == true
-                        ? Theme.of(context).colorScheme.primary
-                        : null,
-                    onPressed: () =>
-                        rate(value.viewerRating != true ? true : null),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      value.viewerRating == false
-                          ? Icons.thumb_down
-                          : Icons.thumb_down_outlined,
-                    ),
-                    color: value.viewerRating == false
-                        ? Theme.of(context).colorScheme.error
-                        : null,
-                    onPressed: () =>
-                        rate(value.viewerRating != false ? false : null),
-                  ),
-                ],
+              IconButton(
+                icon: Icon(
+                  widget.review.viewerRating == true
+                      ? Icons.thumb_up
+                      : Icons.thumb_up_outlined,
+                ),
+                color: widget.review.viewerRating == true
+                    ? Theme.of(context).colorScheme.primary
+                    : null,
+                onPressed: () => _rate(
+                  widget.review.viewerRating != true ? true : null,
+                ),
               ),
-              Text(
-                '${value.rating}/${value.totalRating} users liked this review',
-                style: Theme.of(context).textTheme.labelMedium,
-                textAlign: TextAlign.center,
+              IconButton(
+                icon: Icon(
+                  widget.review.viewerRating == false
+                      ? Icons.thumb_down
+                      : Icons.thumb_down_outlined,
+                ),
+                color: widget.review.viewerRating == false
+                    ? Theme.of(context).colorScheme.error
+                    : null,
+                onPressed: () => _rate(
+                  widget.review.viewerRating != false ? false : null,
+                ),
               ),
             ],
-          );
-        },
+          ),
+          Text(
+            '${widget.review.rating}/${widget.review.totalRating} users liked this review',
+            style: Theme.of(context).textTheme.labelMedium,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
+  }
+
+  void _rate(bool? rating) {
+    final oldRating = widget.review.rating;
+    final oldTotalRating = widget.review.totalRating;
+    final oldViewerRating = widget.review.viewerRating;
+
+    setState(() {
+      if (rating == null) {
+        if (oldViewerRating == true) {
+          widget.review.rating--;
+        }
+        widget.review.totalRating--;
+      } else if (rating) {
+        if (oldViewerRating == null) {
+          widget.review.totalRating++;
+        }
+        widget.review.rating++;
+      } else {
+        if (oldViewerRating == null) {
+          widget.review.totalRating++;
+        } else {
+          widget.review.rating--;
+        }
+      }
+
+      widget.review.viewerRating = rating;
+    });
+
+    rateReview(widget.review.id, rating).then((err) {
+      if (err == null) return;
+
+      setState(() {
+        widget.review.rating = oldRating;
+        widget.review.totalRating = oldTotalRating;
+        widget.review.viewerRating = oldViewerRating;
+      });
+
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not rate review',
+            content: err.toString(),
+          ),
+        );
+      }
+    });
   }
 }

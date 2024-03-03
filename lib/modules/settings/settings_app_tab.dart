@@ -17,12 +17,13 @@ class SettingsAppTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const tilePadding = EdgeInsets.only(bottom: 10, left: 10, right: 10);
+    final listPadding = MediaQuery.paddingOf(context);
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + TopBar.height + 10,
-        bottom: MediaQuery.of(context).padding.bottom + 10,
+        top: listPadding.top + TopBar.height + 10,
+        bottom: listPadding.bottom + 10,
       ),
       children: [
         ExpansionTile(

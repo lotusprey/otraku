@@ -84,44 +84,21 @@ class Review {
   final String createdAt;
   final String siteUrl;
   final int score;
-  final int rating;
-  final int totalRating;
-  final bool? viewerRating;
-
-  Review copyWith(Map<String, dynamic> map) => Review._(
-        id: id,
-        userId: userId,
-        mediaId: mediaId,
-        userName: userName,
-        userAvatar: userAvatar,
-        mediaTitle: mediaTitle,
-        mediaCover: mediaCover,
-        banner: banner,
-        summary: summary,
-        text: text,
-        createdAt: createdAt,
-        siteUrl: siteUrl,
-        score: score,
-        rating: map['rating'] ?? rating,
-        totalRating: map['ratingAmount'] ?? totalRating,
-        viewerRating: map['userRating'] == 'UP_VOTE'
-            ? true
-            : map['userRating'] == 'DOWN_VOTE'
-                ? false
-                : null,
-      );
+  int rating;
+  int totalRating;
+  bool? viewerRating;
 }
 
-enum ReviewSort {
+enum ReviewsSort {
   CREATED_AT_DESC,
   CREATED_AT,
   RATING_DESC,
   RATING;
 
   String get text => switch (this) {
-        ReviewSort.CREATED_AT => 'Oldest',
-        ReviewSort.CREATED_AT_DESC => 'Newest',
-        ReviewSort.RATING => 'Lowest Rated',
-        ReviewSort.RATING_DESC => 'Highest Rated',
+        ReviewsSort.CREATED_AT => 'Oldest',
+        ReviewsSort.CREATED_AT_DESC => 'Newest',
+        ReviewsSort.RATING => 'Lowest Rated',
+        ReviewsSort.RATING_DESC => 'Highest Rated',
       };
 }

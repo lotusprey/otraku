@@ -1,29 +1,28 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 
 class Favorites {
   const Favorites({
-    this.anime = const AsyncValue.loading(),
-    this.manga = const AsyncValue.loading(),
-    this.characters = const AsyncValue.loading(),
-    this.staff = const AsyncValue.loading(),
-    this.studios = const AsyncValue.loading(),
+    this.anime = const PagedWithTotal(),
+    this.manga = const PagedWithTotal(),
+    this.characters = const PagedWithTotal(),
+    this.staff = const PagedWithTotal(),
+    this.studios = const PagedWithTotal(),
   });
 
-  final AsyncValue<PagedWithTotal<TileItem>> anime;
-  final AsyncValue<PagedWithTotal<TileItem>> manga;
-  final AsyncValue<PagedWithTotal<TileItem>> characters;
-  final AsyncValue<PagedWithTotal<TileItem>> staff;
-  final AsyncValue<PagedWithTotal<StudioItem>> studios;
+  final PagedWithTotal<TileItem> anime;
+  final PagedWithTotal<TileItem> manga;
+  final PagedWithTotal<TileItem> characters;
+  final PagedWithTotal<TileItem> staff;
+  final PagedWithTotal<StudioItem> studios;
 
   int getCount(FavoritesTab tab) => switch (tab) {
-        FavoritesTab.anime => anime.valueOrNull?.total ?? 0,
-        FavoritesTab.manga => manga.valueOrNull?.total ?? 0,
-        FavoritesTab.characters => characters.valueOrNull?.total ?? 0,
-        FavoritesTab.staff => staff.valueOrNull?.total ?? 0,
-        FavoritesTab.studios => studios.valueOrNull?.total ?? 0,
+        FavoritesTab.anime => anime.total,
+        FavoritesTab.manga => manga.total,
+        FavoritesTab.characters => characters.total,
+        FavoritesTab.staff => staff.total,
+        FavoritesTab.studios => studios.total,
       };
 }
 

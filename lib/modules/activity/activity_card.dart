@@ -309,13 +309,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
         activity.likeCount += isLiked ? 1 : -1;
       });
 
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not toggle like',
-          content: err.toString(),
-        ),
-      );
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not toggle like',
+            content: err.toString(),
+          ),
+        );
+      }
     });
   }
 

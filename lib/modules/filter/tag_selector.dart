@@ -251,7 +251,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
             child: ListView.builder(
               padding: EdgeInsets.only(
                 top: 110,
-                bottom: MediaQuery.of(context).padding.bottom,
+                bottom: MediaQuery.paddingOf(context).bottom,
               ),
               controller: widget.scrollCtrl,
               itemCount: _itemIndices.length,

@@ -427,7 +427,7 @@ class _EditView extends StatelessWidget {
                 ),
               SliverToBoxAdapter(
                 child: SizedBox(
-                  height: MediaQuery.of(context).padding.bottom +
+                  height: MediaQuery.paddingOf(context).bottom +
                       BottomBar.height +
                       10,
                 ),

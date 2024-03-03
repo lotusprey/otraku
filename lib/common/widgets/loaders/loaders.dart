@@ -31,9 +31,8 @@ class SliverRefreshControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = withTopOffset
-        ? MediaQuery.of(context).padding.top + TopBar.height
-        : 0.0;
+    final topOffset =
+        withTopOffset ? MediaQuery.paddingOf(context).top + TopBar.height : 0.0;
 
     return SliverPadding(
       padding: EdgeInsets.only(top: topOffset + 10),
@@ -84,7 +83,7 @@ class SliverFooter extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.only(
             top: 10,
-            bottom: MediaQuery.of(context).padding.bottom + 10,
+            bottom: MediaQuery.paddingOf(context).bottom + 10,
           ),
           child: loading ? const Loader() : null,
         ),

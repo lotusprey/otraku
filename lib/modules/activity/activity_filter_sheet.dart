@@ -9,7 +9,7 @@ import 'package:otraku/modules/activity/activity_models.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
   ActivitiesFilter filter = ref.read(activitiesFilterProvider(id));
-  double initialHeight = MediaQuery.of(context).padding.bottom +
+  double initialHeight = MediaQuery.paddingOf(context).bottom +
       Consts.tapTargetSize * ActivityType.values.length +
       40;
 

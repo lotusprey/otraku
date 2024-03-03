@@ -112,13 +112,9 @@ class _StaffViewState extends ConsumerState<StaffView>
             StaffInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
             PagedView<(Relation, Relation)>(
               provider: staffRelationsProvider(widget.id).select(
-                (s) => s.unwrapPrevious().map(
-                      data: (data) => AsyncValue.data(
-                        data.value.charactersAndMedia,
-                      ),
-                      error: (e) => AsyncValue.error(e, e.stackTrace),
-                      loading: (_) => const AsyncValue.loading(),
-                    ),
+                (s) => s
+                    .unwrapPrevious()
+                    .whenData((data) => data.charactersAndMedia),
               ),
               onData: (data) => RelationGrid(data.items),
               scrollCtrl: _scrollCtrl,
@@ -126,11 +122,7 @@ class _StaffViewState extends ConsumerState<StaffView>
             ),
             PagedView<Relation>(
               provider: staffRelationsProvider(widget.id).select(
-                (s) => s.unwrapPrevious().map(
-                      data: (data) => AsyncValue.data(data.value.roles),
-                      error: (e) => AsyncValue.error(e, e.stackTrace),
-                      loading: (_) => const AsyncValue.loading(),
-                    ),
+                (s) => s.unwrapPrevious().whenData((data) => data.roles),
               ),
               onData: (data) => SingleRelationGrid(data.items),
               scrollCtrl: _scrollCtrl,

@@ -284,9 +284,8 @@ class _NotificationDialog extends StatelessWidget {
       ),
     );
 
-    final imageWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.30
-        : 100.0;
+    final size = MediaQuery.sizeOf(context);
+    final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
 
     return DialogBox(
       Padding(

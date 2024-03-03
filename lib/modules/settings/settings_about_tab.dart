@@ -16,6 +16,7 @@ class SettingsAboutTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final padding = MediaQuery.paddingOf(context);
     final lastNotificationFetch =
         Options().lastBackgroundWork?.millisecondsSinceEpoch;
 
@@ -24,8 +25,8 @@ class SettingsAboutTab extends StatelessWidget {
       child: ListView(
         controller: scrollCtrl,
         padding: EdgeInsets.only(
-          top: MediaQuery.of(context).padding.top + TopBar.height + 10,
-          bottom: MediaQuery.of(context).padding.bottom + 10,
+          top: padding.top + TopBar.height + 10,
+          bottom: padding.bottom + 10,
         ),
         children: [
           Image.asset(

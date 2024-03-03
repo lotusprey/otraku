@@ -22,7 +22,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
 
   /// Update settings and if necessary
   /// restart collections to reflect the changes.
-  Future<void> updateWith(Settings other) async {
+  Future<void> updateSettings(Settings other) async {
     final prev = state.valueOrNull;
     state = await AsyncValue.guard(() async {
       final data = await Api.get(GqlMutation.updateSettings, other.toMap());

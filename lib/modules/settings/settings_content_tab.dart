@@ -8,21 +8,21 @@ import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 
 class SettingsContentTab extends StatelessWidget {
-  const SettingsContentTab(this.scrollCtrl, this.settings, this.scheduleUpdate);
+  const SettingsContentTab(this.scrollCtrl, this.settings);
 
   final ScrollController scrollCtrl;
   final Settings settings;
-  final void Function() scheduleUpdate;
 
   @override
   Widget build(BuildContext context) {
     const tilePadding = EdgeInsets.only(bottom: 10, left: 10, right: 10);
+    final listPadding = MediaQuery.paddingOf(context);
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + TopBar.height + 10,
-        bottom: MediaQuery.of(context).padding.bottom + 10,
+        top: listPadding.top + TopBar.height + 10,
+        bottom: listPadding.bottom + 10,
       ),
       children: [
         ExpansionTile(
@@ -39,10 +39,7 @@ class SettingsContentTab extends StatelessWidget {
                   'English': 'ENGLISH',
                   'Native': 'NATIVE',
                 },
-                onChanged: (val) {
-                  settings.titleLanguage = val;
-                  scheduleUpdate();
-                },
+                onChanged: (val) => settings.titleLanguage = val,
               ),
             ),
             Padding(
@@ -55,10 +52,7 @@ class SettingsContentTab extends StatelessWidget {
                   'Romaji': PersonNaming.ROMAJI,
                   'Native': PersonNaming.NATIVE,
                 },
-                onChanged: (val) {
-                  settings.personNaming = val;
-                  scheduleUpdate();
-                },
+                onChanged: (val) => settings.personNaming = val,
               ),
             ),
             Padding(
@@ -81,27 +75,18 @@ class SettingsContentTab extends StatelessWidget {
                   '2 Weeks': 20160,
                   'Always': 29160,
                 },
-                onChanged: (val) {
-                  settings.activityMergeTime = val;
-                  scheduleUpdate();
-                },
+                onChanged: (val) => settings.activityMergeTime = val,
               ),
             ),
             StatefulSwitchListTile(
               title: const Text('18+ Content'),
               value: settings.displayAdultContent,
-              onChanged: (val) {
-                settings.displayAdultContent = val;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.displayAdultContent = val,
             ),
             StatefulSwitchListTile(
               title: const Text('Airing Anime Notifications'),
               value: settings.airingNotifications,
-              onChanged: (val) {
-                settings.airingNotifications = val;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.airingNotifications = val,
             ),
           ],
         ),
@@ -118,10 +103,7 @@ class SettingsContentTab extends StatelessWidget {
                   ScoreFormat.values,
                   key: (v) => (v as ScoreFormat).label,
                 ),
-                onChanged: (val) {
-                  settings.scoreFormat = val;
-                  scheduleUpdate();
-                },
+                onChanged: (val) => settings.scoreFormat = val,
               ),
             ),
             Padding(
@@ -133,35 +115,23 @@ class SettingsContentTab extends StatelessWidget {
                   EntrySort.rowOrders,
                   key: (s) => s.label,
                 ),
-                onChanged: (val) {
-                  settings.defaultSort = val;
-                  scheduleUpdate();
-                },
+                onChanged: (val) => settings.defaultSort = val,
               ),
             ),
             StatefulCheckboxListTile(
               title: const Text('Split Completed Anime'),
               value: settings.splitCompletedAnime,
-              onChanged: (val) {
-                settings.splitCompletedAnime = val!;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.splitCompletedAnime = val!,
             ),
             StatefulCheckboxListTile(
               title: const Text('Split Completed Manga'),
               value: settings.splitCompletedManga,
-              onChanged: (val) {
-                settings.splitCompletedManga = val!;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.splitCompletedManga = val!,
             ),
             StatefulSwitchListTile(
               title: const Text('Advanced Scoring'),
               value: settings.advancedScoringEnabled,
-              onChanged: (val) {
-                settings.advancedScoringEnabled = val;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.advancedScoringEnabled = val,
             ),
             Padding(
               padding: tilePadding,
@@ -169,7 +139,7 @@ class SettingsContentTab extends StatelessWidget {
                 title: 'Advanced Scores',
                 placeholder: 'advanced scores',
                 names: settings.advancedScores,
-                onChanged: scheduleUpdate,
+                onChanged: () {},
               ),
             ),
           ],
@@ -187,19 +157,14 @@ class SettingsContentTab extends StatelessWidget {
               StatefulCheckboxListTile(
                 title: Text(e.key.name.noScreamingSnakeCase),
                 value: !e.value,
-                onChanged: (val) {
-                  settings.disabledListActivity[e.key] = !val!;
-                  scheduleUpdate();
-                },
+                onChanged: (val) =>
+                    settings.disabledListActivity[e.key] = !val!,
               ),
             StatefulSwitchListTile(
               title: const Text('Limit Messages'),
               subtitle: const Text('Only users I follow can message me'),
               value: settings.restrictMessagesToFollowing,
-              onChanged: (val) {
-                settings.restrictMessagesToFollowing = val;
-                scheduleUpdate();
-              },
+              onChanged: (val) => settings.restrictMessagesToFollowing = val,
             ),
           ],
         ),

@@ -7,7 +7,6 @@ import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/html_content.dart';
@@ -33,14 +32,10 @@ class ActivityCard extends StatelessWidget {
         padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
         child: Column(
           children: [
-            if (activity.media != null)
-              _ActivityMediaBox(activity.media!, activity.text)
+            if (activity is MediaActivity)
+              _ActivityMediaBox(activity as MediaActivity)
             else
-              UnconstrainedBox(
-                constrainedAxis: Axis.horizontal,
-                alignment: Alignment.topLeft,
-                child: HtmlContent(activity.text),
-              ),
+              HtmlContent(activity.text),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -68,8 +63,8 @@ class ActivityCard extends StatelessWidget {
           children: [
             Flexible(
               child: LinkTile(
-                id: activity.agent.id,
-                info: activity.agent.imageUrl,
+                id: activity.authorId,
+                info: activity.authorAvatarUrl,
                 discoverType: DiscoverType.User,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -77,7 +72,7 @@ class ActivityCard extends StatelessWidget {
                     ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: CachedImage(
-                        activity.agent.imageUrl,
+                        activity.authorAvatarUrl,
                         height: 50,
                         width: 50,
                       ),
@@ -85,7 +80,7 @@ class ActivityCard extends StatelessWidget {
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(
-                        activity.agent.name,
+                        activity.authorName,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                       ),
@@ -94,34 +89,39 @@ class ActivityCard extends StatelessWidget {
                 ),
               ),
             ),
-            if (activity.reciever != null) ...[
-              if (activity.isPrivate)
-                const Padding(
-                  padding: EdgeInsets.only(left: 10),
-                  child: Icon(Ionicons.eye_off_outline),
-                ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Icon(Icons.arrow_right_alt),
-              ),
-              LinkTile(
-                id: activity.reciever!.id,
-                info: activity.reciever!.imageUrl,
-                discoverType: DiscoverType.User,
-                child: ClipRRect(
-                  borderRadius: Consts.borderRadiusMin,
-                  child: CachedImage(
-                    activity.reciever!.imageUrl,
-                    height: 50,
-                    width: 50,
+            ...switch (activity) {
+              MessageActivity message => [
+                  if (message.isPrivate)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 10),
+                      child: Icon(Ionicons.eye_off_outline),
+                    ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: Icon(Icons.arrow_right_alt),
                   ),
-                ),
-              ),
-            ] else if (activity.isPinned)
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Icon(Icons.push_pin_outlined),
-              ),
+                  LinkTile(
+                    id: message.recipientId,
+                    info: message.recipientAvatarUrl,
+                    discoverType: DiscoverType.User,
+                    child: ClipRRect(
+                      borderRadius: Consts.borderRadiusMin,
+                      child: CachedImage(
+                        message.recipientAvatarUrl,
+                        height: 50,
+                        width: 50,
+                      ),
+                    ),
+                  ),
+                ],
+              _ when activity.isPinned => const [
+                  Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Icon(Icons.push_pin_outlined),
+                  ),
+                ],
+              _ => const [],
+            },
           ],
         ),
         const SizedBox(height: 5),
@@ -132,25 +132,23 @@ class ActivityCard extends StatelessWidget {
 }
 
 class _ActivityMediaBox extends StatelessWidget {
-  const _ActivityMediaBox(this.activityMedia, this.text);
+  const _ActivityMediaBox(this.item);
 
-  final ActivityMedia activityMedia;
-  final String text;
+  final MediaActivity item;
 
   @override
   Widget build(BuildContext context) {
     return LinkTile(
-      id: activityMedia.id,
-      info: activityMedia.imageUrl,
-      discoverType:
-          activityMedia.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
+      id: item.id,
+      info: item.coverUrl,
+      discoverType: item.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(
           children: [
             ClipRRect(
               borderRadius: Consts.borderRadiusMin,
-              child: CachedImage(activityMedia.imageUrl, width: 70),
+              child: CachedImage(item.coverUrl, width: 70),
             ),
             Expanded(
               child: Padding(
@@ -160,26 +158,26 @@ class _ActivityMediaBox extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
-                      child: RichText(
+                      child: Text.rich(
                         overflow: TextOverflow.fade,
-                        text: TextSpan(
+                        TextSpan(
                           children: [
                             TextSpan(
-                              text: text,
+                              text: item.text,
                               style: Theme.of(context).textTheme.labelMedium,
                             ),
                             TextSpan(
-                              text: activityMedia.title,
+                              text: item.title,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
                       ),
                     ),
-                    if (activityMedia.format != null) ...[
+                    if (item.format != null) ...[
                       const SizedBox(height: 5),
                       Text(
-                        activityMedia.format!,
+                        item.format!,
                         style: Theme.of(context).textTheme.labelMedium,
                       ),
                     ],
@@ -311,13 +309,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
         activity.likeCount += isLiked ? 1 : -1;
       });
 
-      showPopUp(
-        context,
-        ConfirmationDialog(
-          title: 'Could not toggle like',
-          content: err.toString(),
-        ),
-      );
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not toggle like',
+            content: err.toString(),
+          ),
+        );
+      }
     });
   }
 
@@ -328,30 +328,46 @@ class _ActivityFooterState extends State<ActivityFooter> {
     showSheet(
       context,
       Consumer(
-        builder: (context, ref, __) =>
-            GradientSheet.link(context, activity.siteUrl!, [
-          if (activity.isOwned) ...[
-            if (activity.type == ActivityType.TEXT ||
-                activity.type == ActivityType.MESSAGE &&
-                    activity.agent.id == Options().id)
-              GradientSheetButton(
-                text: 'Edit',
-                icon: Icons.edit_outlined,
-                onTap: () => showSheet(
-                  context,
-                  CompositionView(
-                    composition: activity.reciever == null
-                        ? Composition.status(activity.id, activity.text)
-                        : Composition.message(
-                            activity.id,
-                            activity.text,
-                            activity.reciever!.id,
-                          ),
-                    onDone: (map) => widget.onEdited?.call(map),
+        builder: (context, ref, __) {
+          final ownershipButtons = <Widget>[];
+          if (activity.isOwned) {
+            switch (activity) {
+              case StatusActivity _:
+                ownershipButtons.add(GradientSheetButton(
+                  text: 'Edit',
+                  icon: Icons.edit_outlined,
+                  onTap: () => showSheet(
+                    context,
+                    CompositionView(
+                      composition: Composition.status(
+                        activity.id,
+                        activity.text,
+                      ),
+                      onDone: (map) => widget.onEdited?.call(map),
+                    ),
                   ),
-                ),
-              ),
-            GradientSheetButton(
+                ));
+              case MessageActivity _:
+                ownershipButtons.add(GradientSheetButton(
+                  text: 'Edit',
+                  icon: Icons.edit_outlined,
+                  onTap: () => showSheet(
+                    context,
+                    CompositionView(
+                      composition: Composition.message(
+                        activity.id,
+                        activity.text,
+                        activity.recipientId,
+                      ),
+                      onDone: (map) => widget.onEdited?.call(map),
+                    ),
+                  ),
+                ));
+              case MediaActivity _:
+                break;
+            }
+
+            ownershipButtons.add(GradientSheetButton(
               text: 'Delete',
               icon: Ionicons.trash_outline,
               onTap: () => showPopUp(
@@ -375,63 +391,72 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   },
                 ),
               ),
-            ),
-          ],
-          if (widget.onPinned != null &&
-              activity.isOwned &&
-              activity.type != ActivityType.MESSAGE)
-            GradientSheetButton(
-              text: activity.isPinned ? 'Unpin' : 'Pin',
-              icon:
-                  activity.isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-              onTap: () {
-                final isPinned = activity.isPinned;
-                activity.isPinned = !isPinned;
+            ));
+          }
 
-                toggleActivityPin(activity).then((err) {
-                  if (err == null) {
-                    widget.onPinned!();
-                    return;
-                  }
+          return GradientSheet.link(
+            context,
+            activity.siteUrl,
+            [
+              ...ownershipButtons,
+              if (widget.onPinned != null &&
+                  activity.isOwned &&
+                  activity is! MessageActivity)
+                GradientSheetButton(
+                  text: activity.isPinned ? 'Unpin' : 'Pin',
+                  icon: activity.isPinned
+                      ? Icons.push_pin
+                      : Icons.push_pin_outlined,
+                  onTap: () {
+                    final isPinned = activity.isPinned;
+                    activity.isPinned = !isPinned;
 
-                  activity.isPinned = isPinned;
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not toggle pin',
-                      content: err.toString(),
-                    ),
-                  );
-                });
-              },
-            ),
-          GradientSheetButton(
-            text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-            icon: !activity.isSubscribed
-                ? Ionicons.notifications_outline
-                : Ionicons.notifications_off_outline,
-            onTap: () {
-              final isSubscribed = activity.isSubscribed;
-              activity.isSubscribed = !isSubscribed;
+                    toggleActivityPin(activity).then((err) {
+                      if (err == null) {
+                        widget.onPinned!();
+                        return;
+                      }
 
-              toggleActivitySubscription(activity).then((err) {
-                if (err == null) {
-                  widget.onChanged?.call();
-                  return;
-                }
+                      activity.isPinned = isPinned;
+                      showPopUp(
+                        context,
+                        ConfirmationDialog(
+                          title: 'Could not toggle pin',
+                          content: err.toString(),
+                        ),
+                      );
+                    });
+                  },
+                ),
+              GradientSheetButton(
+                text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
+                icon: !activity.isSubscribed
+                    ? Ionicons.notifications_outline
+                    : Ionicons.notifications_off_outline,
+                onTap: () {
+                  final isSubscribed = activity.isSubscribed;
+                  activity.isSubscribed = !isSubscribed;
 
-                activity.isSubscribed = isSubscribed;
-                showPopUp(
-                  context,
-                  ConfirmationDialog(
-                    title: 'Could not toggle subscription',
-                    content: err.toString(),
-                  ),
-                );
-              });
-            },
-          ),
-        ]),
+                  toggleActivitySubscription(activity).then((err) {
+                    if (err == null) {
+                      widget.onChanged?.call();
+                      return;
+                    }
+
+                    activity.isSubscribed = isSubscribed;
+                    showPopUp(
+                      context,
+                      ConfirmationDialog(
+                        title: 'Could not toggle subscription',
+                        content: err.toString(),
+                      ),
+                    );
+                  });
+                },
+              ),
+            ],
+          );
+        },
       ),
     );
   }

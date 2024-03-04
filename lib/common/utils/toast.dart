@@ -14,14 +14,16 @@ class Toast {
     _busy = true;
     _entry?.remove();
 
+    final bottomOffset = 70 +
+        MediaQuery.viewPaddingOf(context).bottom +
+        MediaQuery.viewInsetsOf(context).bottom;
+
     _entry = OverlayEntry(
       builder: (context) => Align(
         alignment: Alignment.bottomCenter,
         child: Container(
           margin: EdgeInsets.only(
-            bottom: 70 +
-                MediaQuery.of(context).viewPadding.bottom +
-                MediaQuery.of(context).viewInsets.bottom,
+            bottom: bottomOffset,
           ),
           padding: Consts.padding,
           decoration: BoxDecoration(

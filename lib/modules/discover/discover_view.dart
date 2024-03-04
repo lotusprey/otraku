@@ -110,15 +110,15 @@ class _TopBarContent extends StatelessWidget {
                         ref.read(discoverFilterProvider).reviewSort.index;
 
                     final sheetButtons = [
-                      for (int i = 0; i < ReviewSort.values.length; i++)
+                      for (int i = 0; i < ReviewsSort.values.length; i++)
                         GradientSheetButton(
-                            text: ReviewSort.values.elementAt(i).text,
+                            text: ReviewsSort.values.elementAt(i).text,
                             selected: index == i,
                             onTap: () => ref
                                 .read(discoverFilterProvider.notifier)
                                 .update(
                                   (s) => s.copyWith(
-                                    reviewSort: ReviewSort.values.elementAt(i),
+                                    reviewSort: ReviewsSort.values.elementAt(i),
                                   ),
                                 )),
                     ];

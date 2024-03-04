@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/activity/activity_filter_sheet.dart';
-import 'package:otraku/modules/activity/activities_providers.dart';
+import 'package:otraku/modules/activity/activities_provider.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/composition/composition_view.dart';
@@ -85,7 +85,9 @@ class ActivitiesSubView extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return PagedView<Activity>(
-          provider: activitiesProvider(id),
+          provider: activitiesProvider(id).select(
+            (s) => s.unwrapPrevious().whenData((data) => data),
+          ),
           scrollCtrl: scrollCtrl,
           onRefresh: () {
             ref.invalidate(activitiesProvider(id));

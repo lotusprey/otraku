@@ -252,7 +252,7 @@ abstract class GqlQuery {
     }
     fragment info on Character {
       id
-      name{userPreferred native alternative alternativeSpoiler}
+      name{first middle last native alternative alternativeSpoiler}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
@@ -323,7 +323,7 @@ abstract class GqlQuery {
     }
     fragment info on Staff {
       id
-      name{userPreferred native alternative}
+      name{first middle last native alternative}
       image{large}
       description(asHtml: true)
       dateOfBirth{year month day}
@@ -351,10 +351,10 @@ abstract class GqlQuery {
   ''';
 
   static const studio = r'''
-    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false) {
+    query Studio($id: Int, $page: Int = 1, $sort: [MediaSort], $onList: Boolean, $isMain: Boolean, $withInfo: Boolean = false, $withMedia: Boolean = false) {
       Studio(id: $id) {
         ...info @include(if: $withInfo)
-        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) {
+        media(page: $page, sort: $sort, onList: $onList, isMain: $isMain) @include(if: $withMedia) {
           pageInfo {hasNextPage}
           nodes {
             id
@@ -694,6 +694,13 @@ abstract class GqlQuery {
       }
     }
   ''';
+
+  static const genresAndTags = '''
+    query Filters {
+      GenreCollection
+      MediaTagCollection {id name description category isGeneralSpoiler}
+    }
+  ''';
 }
 
 abstract class GqlMutation {
@@ -845,6 +852,7 @@ abstract class _GqlFragment {
       progress
       score
       notes
+      private
       repeat
       startedAt {year month day}
       completedAt {year month day}

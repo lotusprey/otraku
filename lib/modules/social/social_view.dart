@@ -47,7 +47,9 @@ class _SocialViewState extends ConsumerState<SocialView>
     final tab = SocialTab.values[_tabCtrl.index];
 
     final count = ref.watch(
-      socialProvider(widget.id).select((s) => s.getCount(tab)),
+      socialProvider(widget.id).select(
+        (s) => s.valueOrNull?.getCount(tab) ?? 0,
+      ),
     );
 
     final onRefresh = () => ref.invalidate(socialProvider(widget.id));
@@ -80,13 +82,17 @@ class _SocialViewState extends ConsumerState<SocialView>
           controller: _tabCtrl,
           children: [
             PagedView<UserItem>(
-              provider: socialProvider(widget.id).select((s) => s.following),
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.following),
+              ),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<UserItem>(
-              provider: socialProvider(widget.id).select((s) => s.followers),
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.followers),
+              ),
               onData: (data) => UserGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,

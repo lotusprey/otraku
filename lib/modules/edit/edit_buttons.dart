@@ -57,7 +57,7 @@ class _EditButtonsState extends State<EditButtons> {
           final entry = await updateEntry(newEdit, Options().id!);
 
           if (entry is! Entry) {
-            if (mounted) {
+            if (context.mounted) {
               showPopUp(
                 context,
                 ConfirmationDialog(
@@ -93,9 +93,7 @@ class _EditButtonsState extends State<EditButtons> {
           }
 
           widget.callback?.call(newEdit);
-          if (mounted) {
-            Navigator.pop(context);
-          }
+          if (context.mounted) Navigator.pop(context);
         },
       );
 
@@ -115,7 +113,7 @@ class _EditButtonsState extends State<EditButtons> {
               final oldEdit = widget.oldEdit;
               final err = await removeEntry(oldEdit.entryId!);
 
-              if (mounted) {
+              if (context.mounted) {
                 Navigator.pop(context);
 
                 if (err != null) {

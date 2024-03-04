@@ -1,10 +1,10 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem characterItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
@@ -30,20 +30,37 @@ class Character {
     required this.isFavorite,
   });
 
-  factory Character(Map<String, dynamic> map) {
-    final altNames = List<String>.from(map['name']['alternative'] ?? []);
-    if (map['name']['native'] != null) {
-      altNames.insert(0, map['name']['native'].toString());
-    }
+  factory Character(Map<String, dynamic> map, PersonNaming personNaming) {
+    final names = map['name'];
+    final nameSegments = [
+      names['first'],
+      if (names['middle']?.isNotEmpty ?? false) names['middle'],
+      if (names['last']?.isNotEmpty ?? false) names['last'],
+    ];
 
+    final fullName = personNaming == PersonNaming.ROMAJI_WESTERN
+        ? nameSegments.join(' ')
+        : nameSegments.reversed.toList().join(' ');
+    final nativeName = names['native'];
+
+    final altNames = List<String>.from(names['alternative'] ?? []);
     final altNamesSpoilers = List<String>.from(
-      map['name']['alternativeSpoiler'] ?? [],
+      names['alternativeSpoiler'] ?? [],
       growable: false,
     );
 
+    String name;
+    if (personNaming != PersonNaming.NATIVE) {
+      name = fullName;
+      altNames.insert(0, nativeName);
+    } else {
+      name = nativeName;
+      altNames.insert(0, fullName);
+    }
+
     return Character._(
       id: map['id'],
-      name: map['name']['userPreferred'] ?? '',
+      name: name,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
       description: map['description'] ?? '',
@@ -73,29 +90,16 @@ class Character {
   bool isFavorite;
 }
 
-class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.onList});
-
-  final MediaSort sort;
-  final bool? onList;
-
-  CharacterFilter copyWith({MediaSort? sort, bool? Function()? onList}) =>
-      CharacterFilter(
-        sort: sort ?? this.sort,
-        onList: onList == null ? this.onList : onList(),
-      );
-}
-
 class CharacterMedia {
   const CharacterMedia({
-    this.anime = const AsyncValue.loading(),
-    this.manga = const AsyncValue.loading(),
+    this.anime = const Paged(),
+    this.manga = const Paged(),
     this.languageToVoiceActors = const {},
     this.language = '',
   });
 
-  final AsyncValue<Paged<Relation>> anime;
-  final AsyncValue<Paged<Relation>> manga;
+  final Paged<Relation> anime;
+  final Paged<Relation> manga;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -110,8 +114,8 @@ class CharacterMedia {
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
   List<(Relation, Relation?)> getAnimeAndVoiceActors() {
-    final anime = this.anime.valueOrNull?.items;
-    if (anime == null || anime.isEmpty) return [];
+    final anime = this.anime.items;
+    if (anime.isEmpty) return [];
 
     final actorsPerMedia = languageToVoiceActors[language];
     if (actorsPerMedia == null) return [for (final a in anime) (a, null)];
@@ -131,4 +135,17 @@ class CharacterMedia {
 
     return animeAndVoiceActors;
   }
+}
+
+class CharacterFilter {
+  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.inLists});
+
+  final MediaSort sort;
+  final bool? inLists;
+
+  CharacterFilter copyWith({MediaSort? sort, bool? Function()? inLists}) =>
+      CharacterFilter(
+        sort: sort ?? this.sort,
+        inLists: inLists == null ? this.inLists : inLists(),
+      );
 }

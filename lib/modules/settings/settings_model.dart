@@ -1,6 +1,6 @@
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/notification/notification_model.dart';
+import 'package:otraku/modules/notification/notifications_model.dart';
 
 /// Some fields are modifiable to allow for quick and simple edits.
 /// But to apply those edits, the [SettingsNotifier] should be used.
@@ -10,7 +10,7 @@ class Settings {
     required this.scoreFormat,
     required this.defaultSort,
     required this.titleLanguage,
-    required this.staffNameLanguage,
+    required this.personNaming,
     required this.activityMergeTime,
     required this.splitCompletedAnime,
     required this.splitCompletedManga,
@@ -34,8 +34,9 @@ class Settings {
           map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
         titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
-        staffNameLanguage:
-            map['options']['staffNameLanguage'] ?? 'ROMAJI_WESTERN',
+        personNaming: PersonNaming.fromText(
+          map['options']['staffNameLanguage'],
+        ),
         activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']
                 ['splitCompletedSectionByFormat'] ??
@@ -74,7 +75,7 @@ class Settings {
         scoreFormat: ScoreFormat.POINT_10,
         defaultSort: EntrySort.TITLE,
         titleLanguage: 'ROMAJI',
-        staffNameLanguage: 'ROMAJI_WESTERN',
+        personNaming: PersonNaming.ROMAJI_WESTERN,
         activityMergeTime: 720,
         splitCompletedAnime: false,
         splitCompletedManga: false,
@@ -92,7 +93,7 @@ class Settings {
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
   String titleLanguage;
-  String staffNameLanguage;
+  PersonNaming personNaming;
   int activityMergeTime;
   bool splitCompletedAnime;
   bool splitCompletedManga;
@@ -112,7 +113,7 @@ class Settings {
         scoreFormat: scoreFormat,
         defaultSort: defaultSort,
         titleLanguage: titleLanguage,
-        staffNameLanguage: staffNameLanguage,
+        personNaming: personNaming,
         activityMergeTime: activityMergeTime,
         splitCompletedAnime: splitCompletedAnime,
         splitCompletedManga: splitCompletedManga,
@@ -129,7 +130,7 @@ class Settings {
 
   Map<String, dynamic> toMap() => {
         'titleLanguage': titleLanguage,
-        'staffNameLanguage': staffNameLanguage,
+        'staffNameLanguage': personNaming.name,
         'activityMergeTime': activityMergeTime,
         'displayAdultContent': displayAdultContent,
         'scoreFormat': scoreFormat.name,
@@ -146,5 +147,17 @@ class Settings {
         'notificationOptions': notificationOptions.entries
             .map((e) => {'type': e.key.name, 'enabled': e.value})
             .toList(),
+      };
+}
+
+enum PersonNaming {
+  ROMAJI_WESTERN,
+  ROMAJI,
+  NATIVE;
+
+  static PersonNaming fromText(String? s) => switch (s) {
+        'ROMAJI' => ROMAJI,
+        'NATIVE' => NATIVE,
+        _ => ROMAJI_WESTERN,
       };
 }

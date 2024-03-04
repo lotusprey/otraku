@@ -1,19 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/modules/user/user_models.dart';
 
 class Social {
   const Social({
-    this.following = const AsyncValue.loading(),
-    this.followers = const AsyncValue.loading(),
+    this.following = const PagedWithTotal(),
+    this.followers = const PagedWithTotal(),
   });
 
-  final AsyncValue<PagedWithTotal<UserItem>> following;
-  final AsyncValue<PagedWithTotal<UserItem>> followers;
+  final PagedWithTotal<UserItem> following;
+  final PagedWithTotal<UserItem> followers;
 
   int getCount(SocialTab tab) => switch (tab) {
-        SocialTab.following => following.valueOrNull?.total ?? 0,
-        SocialTab.followers => followers.valueOrNull?.total ?? 0,
+        SocialTab.following => following.total,
+        SocialTab.followers => followers.total,
       };
 }
 

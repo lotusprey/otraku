@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/models/paged.dart';
@@ -13,8 +12,8 @@ class StudioItem {
   final String name;
 }
 
-class StudioInfo {
-  StudioInfo._({
+class Studio {
+  Studio._({
     required this.id,
     required this.name,
     required this.siteUrl,
@@ -22,7 +21,7 @@ class StudioInfo {
     required this.isFavorite,
   });
 
-  factory StudioInfo(Map<String, dynamic> map) => StudioInfo._(
+  factory Studio(Map<String, dynamic> map) => Studio._(
         id: map['id'],
         name: map['name'],
         siteUrl: map['siteUrl'],
@@ -32,20 +31,15 @@ class StudioInfo {
 
   final int id;
   final String name;
-  final String? siteUrl;
+  final String siteUrl;
   final int favorites;
   bool isFavorite;
 }
 
-class Studio {
-  const Studio({
-    this.info = const AsyncValue.loading(),
-    this.media = const AsyncValue.loading(),
-    this.categories = const {},
-  });
+class StudioMedia {
+  const StudioMedia({this.media = const Paged(), this.categories = const {}});
 
-  final AsyncValue<StudioInfo> info;
-  final AsyncValue<Paged<TileItem>> media;
+  final Paged<TileItem> media;
 
   /// If the items in [media] are sorted by date, [categories] will represent
   /// each time category (e.g. "2022") and the index of the first item in
@@ -58,22 +52,22 @@ class Studio {
 class StudioFilter {
   StudioFilter({
     this.sort = MediaSort.START_DATE_DESC,
-    this.onList,
+    this.inLists,
     this.isMain,
   });
 
   final MediaSort sort;
-  final bool? onList;
+  final bool? inLists;
   final bool? isMain;
 
   StudioFilter copyWith({
     MediaSort? sort,
-    bool? Function()? onList,
+    bool? Function()? inLists,
     bool? Function()? isMain,
   }) =>
       StudioFilter(
         sort: sort ?? this.sort,
-        onList: onList == null ? this.onList : onList(),
+        inLists: inLists == null ? this.inLists : inLists(),
         isMain: isMain == null ? this.isMain : isMain(),
       );
 }

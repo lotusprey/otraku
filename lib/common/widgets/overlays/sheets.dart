@@ -16,17 +16,22 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
-  const OpaqueSheet({required this.builder, this.initialHeight});
+  const OpaqueSheet({
+    required this.builder,
+    this.padding = const EdgeInsets.symmetric(horizontal: 10),
+    this.initialHeight,
+  });
 
   final Widget Function(BuildContext, ScrollController) builder;
   final double? initialHeight;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
     Widget? sheet;
 
     double initialSize = initialHeight != null
-        ? initialHeight! / MediaQuery.of(context).size.height
+        ? initialHeight! / MediaQuery.sizeOf(context).height
         : 0.5;
     if (initialSize > 0.9) initialSize = 0.9;
 
@@ -38,7 +43,7 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: padding,
             constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.background,
@@ -67,7 +72,7 @@ class OpaqueSheetView extends StatelessWidget {
     Widget? sheet;
 
     return Padding(
-      padding: MediaQuery.of(context).viewInsets,
+      padding: MediaQuery.viewInsetsOf(context),
       child: DraggableScrollableSheet(
         expand: false,
         builder: (context, scrollCtrl) {
@@ -124,10 +129,10 @@ class GradientSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final requiredHeight = children.length * Consts.tapTargetSize +
-        MediaQuery.of(context).padding.bottom +
+        MediaQuery.paddingOf(context).bottom +
         50;
 
-    double height = requiredHeight / MediaQuery.of(context).size.height;
+    double height = requiredHeight / MediaQuery.sizeOf(context).height;
     if (height > 0.6) height = 0.6;
 
     return DraggableScrollableSheet(
@@ -158,7 +163,7 @@ class GradientSheet extends StatelessWidget {
               top: 50,
               left: 10,
               right: 10,
-              bottom: MediaQuery.of(context).padding.bottom,
+              bottom: MediaQuery.paddingOf(context).bottom,
             ),
             itemExtent: Consts.tapTargetSize,
             children: children,

@@ -72,7 +72,7 @@ class _ChipSelectorLayout extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10),
-          child: Text(title, style: Theme.of(context).textTheme.labelMedium),
+          child: Text(title),
         ),
         SizedBox(
           height: 40,

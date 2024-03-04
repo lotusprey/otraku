@@ -2,56 +2,6 @@ import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/utils/options.dart';
 
-enum NotificationFilterType {
-  all('All'),
-  replies('Replies'),
-  activity('Activity'),
-  forum('Forum'),
-  airing('Airing'),
-  follows('Follows'),
-  media('Media');
-
-  const NotificationFilterType(this.text);
-
-  final String text;
-
-  List<String>? get vars => switch (this) {
-        NotificationFilterType.all => null,
-        NotificationFilterType.replies => const [
-            'ACTIVITY_MESSAGE',
-            'ACTIVITY_REPLY',
-            'ACTIVITY_REPLY_SUBSCRIBED',
-            'ACTIVITY_MENTION',
-            'THREAD_COMMENT_REPLY',
-            'THREAD_COMMENT_MENTION',
-            'THREAD_SUBSCRIBED',
-          ],
-        NotificationFilterType.activity => const [
-            'ACTIVITY_MESSAGE',
-            'ACTIVITY_REPLY',
-            'ACTIVITY_REPLY_SUBSCRIBED',
-            'ACTIVITY_MENTION',
-            'ACTIVITY_LIKE',
-            'ACTIVITY_REPLY_LIKE',
-          ],
-        NotificationFilterType.forum => const [
-            'THREAD_COMMENT_REPLY',
-            'THREAD_COMMENT_MENTION',
-            'THREAD_SUBSCRIBED',
-            'THREAD_LIKE',
-            'THREAD_COMMENT_LIKE',
-          ],
-        NotificationFilterType.airing => const ['AIRING'],
-        NotificationFilterType.follows => const ['FOLLOWING'],
-        NotificationFilterType.media => const [
-            'RELATED_MEDIA_ADDITION',
-            'MEDIA_DATA_CHANGE',
-            'MEDIA_MERGE',
-            'MEDIA_DELETION',
-          ],
-      };
-}
-
 class SiteNotification {
   SiteNotification._({
     required this.id,
@@ -403,4 +353,54 @@ enum NotificationType {
   const NotificationType(this.text);
 
   final String text;
+}
+
+enum NotificationFilter {
+  all('All'),
+  replies('Replies'),
+  activity('Activity'),
+  forum('Forum'),
+  airing('Airing'),
+  follows('Follows'),
+  media('Media');
+
+  const NotificationFilter(this.text);
+
+  final String text;
+
+  List<String>? get vars => switch (this) {
+        NotificationFilter.all => null,
+        NotificationFilter.replies => const [
+            'ACTIVITY_MESSAGE',
+            'ACTIVITY_REPLY',
+            'ACTIVITY_REPLY_SUBSCRIBED',
+            'ACTIVITY_MENTION',
+            'THREAD_COMMENT_REPLY',
+            'THREAD_COMMENT_MENTION',
+            'THREAD_SUBSCRIBED',
+          ],
+        NotificationFilter.activity => const [
+            'ACTIVITY_MESSAGE',
+            'ACTIVITY_REPLY',
+            'ACTIVITY_REPLY_SUBSCRIBED',
+            'ACTIVITY_MENTION',
+            'ACTIVITY_LIKE',
+            'ACTIVITY_REPLY_LIKE',
+          ],
+        NotificationFilter.forum => const [
+            'THREAD_COMMENT_REPLY',
+            'THREAD_COMMENT_MENTION',
+            'THREAD_SUBSCRIBED',
+            'THREAD_LIKE',
+            'THREAD_COMMENT_LIKE',
+          ],
+        NotificationFilter.airing => const ['AIRING'],
+        NotificationFilter.follows => const ['FOLLOWING'],
+        NotificationFilter.media => const [
+            'RELATED_MEDIA_ADDITION',
+            'MEDIA_DATA_CHANGE',
+            'MEDIA_MERGE',
+            'MEDIA_DELETION',
+          ],
+      };
 }

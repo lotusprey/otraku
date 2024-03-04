@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/common/utils/api.dart';
@@ -77,48 +79,56 @@ Future<Object?> deleteActivityReply(int replyId) async {
   }
 }
 
-final activityProvider = StateNotifierProvider.autoDispose
-    .family<ActivityNotifier, AsyncValue<ExpandedActivity>, int>(
-  (ref, userId) => ActivityNotifier(userId, Options().id!),
+final activityProvider = AsyncNotifierProvider.autoDispose
+    .family<ActivityNotifier, ExpandedActivity, int>(
+  ActivityNotifier.new,
 );
 
-class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
-  ActivityNotifier(this.userId, this.viewerId)
-      : super(const AsyncValue.loading()) {
-    fetch();
+class ActivityNotifier
+    extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, int> {
+  late int viewerId;
+
+  @override
+  FutureOr<ExpandedActivity> build(arg) async {
+    viewerId = Options().id!;
+    return await _fetch(null);
   }
 
-  final int userId;
-  final int viewerId;
-
   Future<void> fetch() async {
-    state = await AsyncValue.guard(() async {
-      final replies = state.value?.replies ?? const Paged();
+    if (!(state.valueOrNull?.replies.hasNext ?? true)) return;
+    state = await AsyncValue.guard(() => _fetch(state.valueOrNull));
+  }
 
-      final data = await Api.get(GqlQuery.activity, {
-        'id': userId,
-        'page': replies.next,
-        if (replies.next == 1) 'withActivity': true,
-      });
+  Future<ExpandedActivity> _fetch(ExpandedActivity? oldState) async {
+    final replies = oldState?.replies ?? const Paged();
 
-      final items = <ActivityReply>[];
-      for (final r in data['Page']['activityReplies']) {
-        final item = ActivityReply.maybe(r);
-        if (item != null) items.add(item);
-      }
-
-      final activity =
-          state.value?.activity ?? Activity.maybe(data['Activity'], viewerId);
-      if (activity == null) throw StateError('Could not parse activity');
-
-      return ExpandedActivity(
-        activity,
-        replies.withNext(
-          items,
-          data['Page']['pageInfo']['hasNextPage'] ?? false,
-        ),
-      );
+    final data = await Api.get(GqlQuery.activity, {
+      'id': arg,
+      'page': replies.next,
+      if (replies.next == 1) 'withActivity': true,
     });
+
+    final items = <ActivityReply>[];
+    for (final r in data['Page']['activityReplies']) {
+      final item = ActivityReply.maybe(r);
+      if (item != null) items.add(item);
+    }
+
+    final activity = oldState?.activity ??
+        Activity.maybe(
+          data['Activity'],
+          viewerId,
+          Options().imageQuality,
+        );
+    if (activity == null) throw StateError('Could not parse activity');
+
+    return ExpandedActivity(
+      activity,
+      replies.withNext(
+        items,
+        data['Page']['pageInfo']['hasNextPage'] ?? false,
+      ),
+    );
   }
 
   /// Deserializes [map] and replaces the current activity.
@@ -127,7 +137,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
     if (!state.hasValue) return null;
     final value = state.value!;
 
-    final activity = Activity.maybe(map, viewerId);
+    final activity = Activity.maybe(map, viewerId, Options().imageQuality);
     if (activity == null) return null;
 
     state = AsyncValue.data(ExpandedActivity(activity, value.replies));
@@ -143,7 +153,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
     if (reply == null) return;
 
     value.activity.replyCount++;
-    state = AsyncData(ExpandedActivity(
+    state = AsyncValue.data(ExpandedActivity(
       value.activity,
       Paged(
         items: [...value.replies.items, reply],
@@ -164,7 +174,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
     for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == reply.id) {
         value.replies.items[i] = reply;
-        state = AsyncData(ExpandedActivity(
+        state = AsyncValue.data(ExpandedActivity(
           value.activity,
           Paged(
             items: value.replies.items,
@@ -187,7 +197,7 @@ class ActivityNotifier extends StateNotifier<AsyncValue<ExpandedActivity>> {
         value.replies.items.removeAt(i);
         value.activity.replyCount--;
 
-        state = AsyncData(ExpandedActivity(
+        state = AsyncValue.data(ExpandedActivity(
           value.activity,
           Paged(
             items: value.replies.items,

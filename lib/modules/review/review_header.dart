@@ -29,7 +29,7 @@ class ReviewHeader extends StatelessWidget {
         bannerUrl,
         mediaTitle,
         siteUrl,
-        MediaQuery.of(context).padding.top,
+        MediaQuery.paddingOf(context).top,
       ),
     );
   }

@@ -72,33 +72,7 @@ class MediaInfoView extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           if (info.description.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: GestureDetector(
-                  child: Card(
-                    child: Padding(
-                      padding: Consts.padding,
-                      child: ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          begin: Alignment(0.0, 0.7),
-                          end: Alignment(0.0, 1.0),
-                          colors: [Colors.white, Colors.transparent],
-                        ).createShader(bounds),
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxHeight: 72),
-                          child: HtmlContent(info.description),
-                        ),
-                      ),
-                    ),
-                  ),
-                  onTap: () => showPopUp(
-                    context,
-                    HtmlDialog(title: 'Description', text: info.description),
-                  ),
-                ),
-              ),
-            )
+            _ExpandableText(info.description)
           else
             const SliverToBoxAdapter(child: SizedBox(height: 10)),
           SliverGrid(
@@ -180,6 +154,50 @@ class MediaInfoView extends StatelessWidget {
             _Title('Synonyms', info.synonyms.join(', ')),
           const SliverFooter(),
         ],
+      ),
+    );
+  }
+}
+
+class _ExpandableText extends StatefulWidget {
+  const _ExpandableText(this.text);
+
+  final String text;
+
+  @override
+  State<_ExpandableText> createState() => _ExpandableTextState();
+}
+
+class _ExpandableTextState extends State<_ExpandableText> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final content = _expanded
+        ? HtmlContent(widget.text)
+        : ShaderMask(
+            shaderCallback: (bounds) => const LinearGradient(
+              begin: Alignment(0.0, 0.7),
+              end: Alignment(0.0, 1.0),
+              colors: [Colors.white, Colors.transparent],
+            ).createShader(bounds),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 72),
+              child: HtmlContent(widget.text),
+            ),
+          );
+
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: InkWell(
+          borderRadius: Consts.borderRadiusMax,
+          onTap: () => setState(() => _expanded = !_expanded),
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: content,
+          ),
+        ),
       ),
     );
   }

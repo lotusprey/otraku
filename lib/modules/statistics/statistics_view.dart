@@ -148,7 +148,7 @@ class _StatisticsView extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
+            height: MediaQuery.paddingOf(context).top + TopBar.height + 10,
           ),
         ),
         _Details(statistics, ofAnime),

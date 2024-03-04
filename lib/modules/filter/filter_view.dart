@@ -65,11 +65,13 @@ class CollectionFilterView extends StatefulWidget {
     required this.ofAnime,
     required this.filter,
     required this.onChanged,
+    required this.ofViewer,
   });
 
   final bool ofAnime;
   final CollectionMediaFilter filter;
   final void Function(CollectionMediaFilter) onChanged;
+  final bool ofViewer;
 
   @override
   State<CollectionFilterView> createState() => _CollectionFilterViewState();
@@ -121,7 +123,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           ),
           const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
-            title: 'Start Year',
+            title: 'Release Year Range',
             from: filter.startYearFrom,
             to: filter.startYearTo,
             onChanged: (from, to) {
@@ -129,7 +131,7 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
@@ -139,9 +141,38 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
+          if (widget.ofViewer)
+            ChipSelector(
+              title: 'Visibility',
+              options: const ['Private', 'Public'],
+              current: filter.isPrivate == null
+                  ? null
+                  : filter.isPrivate!
+                      ? 0
+                      : 1,
+              onChanged: (val) => filter.isPrivate = val == null
+                  ? null
+                  : val == 0
+                      ? true
+                      : false,
+            ),
+          ChipSelector(
+            title: 'Notes',
+            options: const ['With Notes', 'Without Notes'],
+            current: filter.hasNotes == null
+                ? null
+                : filter.hasNotes!
+                    ? 0
+                    : 1,
+            onChanged: (val) => filter.hasNotes = val == null
+                ? null
+                : val == 0
+                    ? true
+                    : false,
+          ),
           SizedBox(
             height:
-                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
           ),
         ],
       ),
@@ -227,7 +258,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           const Divider(indent: 10, endIndent: 10, height: 30),
           YearRangePicker(
-            title: 'Start Year',
+            title: 'Release Year Range',
             from: filter.startYearFrom,
             to: filter.startYearTo,
             onChanged: (from, to) {
@@ -235,7 +266,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10),
+          const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
             options: OriginCountry.values
@@ -252,13 +283,13 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           ChipSelector(
             title: 'List Presence',
-            options: const ['On List', 'Not on List'],
-            current: filter.onList == null
+            options: const ['In Lists', 'Not in Lists'],
+            current: filter.inLists == null
                 ? null
-                : filter.onList!
+                : filter.inLists!
                     ? 0
                     : 1,
-            onChanged: (val) => filter.onList = val == null
+            onChanged: (val) => filter.inLists = val == null
                 ? null
                 : val == 0
                     ? true
@@ -280,7 +311,7 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           SizedBox(
             height:
-                MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
           ),
         ],
       ),

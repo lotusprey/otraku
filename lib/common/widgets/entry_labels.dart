@@ -78,11 +78,11 @@ class ScoreLabel extends StatelessWidget {
 class NotesLabel extends StatelessWidget {
   const NotesLabel(this.notes);
 
-  final String? notes;
+  final String notes;
 
   @override
   Widget build(BuildContext context) {
-    if (notes == null) return const SizedBox();
+    if (notes.isEmpty) return const SizedBox();
 
     return SizedBox(
       height: 35,
@@ -95,7 +95,7 @@ class NotesLabel extends StatelessWidget {
             context,
             TextDialog(
               title: 'Comment',
-              text: notes!,
+              text: notes,
             ),
           ),
         ),

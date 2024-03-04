@@ -60,6 +60,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
       segmentedButtonTheme: const SegmentedButtonThemeData(
         style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
       ),
+      listTileTheme: const ListTileThemeData(
+        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+      ),
       typography: Typography.material2014(),
       textTheme: TextTheme(
         titleLarge: TextStyle(

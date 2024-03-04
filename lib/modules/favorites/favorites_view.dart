@@ -52,7 +52,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     final tab = FavoritesTab.values[_tabCtrl.index];
 
     final count = ref.watch(
-      favoritesProvider(widget.id).select((s) => s.getCount(tab)),
+      favoritesProvider(widget.id).select(
+        (s) => s.valueOrNull?.getCount(tab) ?? 0,
+      ),
     );
 
     final onRefresh = () => ref.invalidate(favoritesProvider(widget.id));
@@ -88,33 +90,41 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           controller: _tabCtrl,
           children: [
             PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select((s) => s.anime),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-            ),
-            PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select((s) => s.manga),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-            ),
-            PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select(
-                (s) => s.characters,
+                (s) => s.unwrapPrevious().whenData((data) => data.anime),
               ),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select((s) => s.staff),
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.manga),
+              ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.characters),
+              ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.staff),
+              ),
               onData: (data) => TileItemGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
             ),
             PagedView<StudioItem>(
-              provider: favoritesProvider(widget.id).select((s) => s.studios),
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.studios),
+              ),
               onData: (data) => StudioGrid(data.items),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,

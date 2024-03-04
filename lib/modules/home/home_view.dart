@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/modules/activity/activities_providers.dart';
+import 'package:otraku/modules/activity/activities_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_provider.dart';
 import 'package:otraku/modules/collection/collection_preview_view.dart';
 import 'package:otraku/modules/collection/collection_providers.dart';

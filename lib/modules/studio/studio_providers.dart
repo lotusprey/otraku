@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/media/media_constants.dart';
@@ -5,7 +7,6 @@ import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/models/paged.dart';
 
 /// Favorite/Unfavorite studio. Returns `true` if successful.
 Future<bool> toggleFavoriteStudio(int studioId) async {
@@ -17,83 +18,93 @@ Future<bool> toggleFavoriteStudio(int studioId) async {
   }
 }
 
-final studioFilterProvider =
-    StateProvider.autoDispose.family((ref, _) => StudioFilter());
-
-final studioProvider =
-    StateNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
-  (ref, int id) => StudioNotifier(id, ref.watch(studioFilterProvider(id))),
+final studioProvider = FutureProvider.autoDispose.family<Studio, int>(
+  (ref, id) async {
+    final data = await Api.get(GqlQuery.studio, {'id': id, 'withInfo': true});
+    return Studio(data['Studio']);
+  },
 );
 
-class StudioNotifier extends StateNotifier<Studio> {
-  StudioNotifier(this.id, this.filter) : super(const Studio()) {
-    fetch();
-  }
+final studioMediaProvider = AsyncNotifierProvider.autoDispose
+    .family<StudioMediaNotifier, StudioMedia, int>(
+  StudioMediaNotifier.new,
+);
 
-  final int id;
-  final StudioFilter filter;
+final studioFilterProvider = NotifierProvider.autoDispose
+    .family<StudioFilterNotifier, StudioFilter, int>(StudioFilterNotifier.new);
+
+class StudioMediaNotifier
+    extends AutoDisposeFamilyAsyncNotifier<StudioMedia, int> {
+  late StudioFilter filter;
+
+  @override
+  FutureOr<StudioMedia> build(arg) async {
+    filter = ref.watch(studioFilterProvider(arg));
+    return await _fetch(const StudioMedia());
+  }
 
   Future<void> fetch() async {
-    var info = state.info;
-    var media = state.media;
-    var categories = {...state.categories};
+    final oldState = state.valueOrNull ?? const StudioMedia();
+    if (!oldState.media.hasNext) return;
+    state = await AsyncValue.guard(() => _fetch(oldState));
+  }
 
-    final data = await AsyncValue.guard(
-      () => Api.get(GqlQuery.studio, {
-        'id': id,
-        'withInfo': info.valueOrNull == null,
-        'sort': filter.sort.name,
-        'onList': filter.onList,
-        'page': media.valueOrNull?.next ?? 1,
-        if (filter.isMain != null) 'isMain': filter.isMain,
-      }),
-    );
+  Future<StudioMedia> _fetch(StudioMedia oldState) async {
+    final categories = {...oldState.categories};
 
-    if (info.valueOrNull == null) {
-      info = await AsyncValue.guard(() {
-        if (data.hasError) throw data.error!;
-        return Future.value(StudioInfo(data.value!['Studio']));
-      });
-    }
-
-    media = await AsyncValue.guard(() {
-      if (data.hasError) throw data.error!;
-      final map = data.value!['Studio']['media'];
-      final value = media.valueOrNull ?? const Paged();
-
-      final items = <TileItem>[];
-      if (filter.sort != MediaSort.START_DATE &&
-          filter.sort != MediaSort.START_DATE_DESC) {
-        for (final m in map['nodes']) {
-          items.add(mediaItem(m));
-        }
-      } else {
-        final key = filter.sort == MediaSort.START_DATE ||
-                filter.sort == MediaSort.START_DATE_DESC
-            ? 'startDate'
-            : 'endDate';
-
-        var index = value.items.length;
-        for (final m in map['nodes']) {
-          var category = m[key]?['year']?.toString();
-          category ??=
-              m['status'] == 'CANCELLED' ? 'Cancelled' : 'To Be Announced';
-
-          if (!categories.containsKey(category)) {
-            categories[category] = index;
-          }
-
-          items.add(mediaItem(m));
-
-          index++;
-        }
-      }
-
-      return Future.value(
-        value.withNext(items, map['pageInfo']['hasNextPage'] ?? false),
-      );
+    final data = await Api.get(GqlQuery.studio, {
+      'id': arg,
+      'withMedia': true,
+      'page': oldState.media.next,
+      'sort': filter.sort.name,
+      'onList': filter.inLists,
+      if (filter.isMain != null) 'isMain': filter.isMain,
     });
 
-    state = Studio(info: info, media: media, categories: categories);
+    final map = data['Studio']['media'];
+    final items = <TileItem>[];
+    if (filter.sort != MediaSort.START_DATE &&
+        filter.sort != MediaSort.START_DATE_DESC) {
+      for (final m in map['nodes']) {
+        items.add(mediaItem(m));
+      }
+    } else {
+      final key = filter.sort == MediaSort.START_DATE ||
+              filter.sort == MediaSort.START_DATE_DESC
+          ? 'startDate'
+          : 'endDate';
+
+      var index = oldState.media.items.length;
+      for (final m in map['nodes']) {
+        var category = m[key]?['year']?.toString();
+        category ??=
+            m['status'] == 'CANCELLED' ? 'Cancelled' : 'To Be Announced';
+
+        if (!categories.containsKey(category)) {
+          categories[category] = index;
+        }
+
+        items.add(mediaItem(m));
+
+        index++;
+      }
+    }
+
+    return StudioMedia(
+      media: oldState.media.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+      ),
+      categories: categories,
+    );
   }
+}
+
+class StudioFilterNotifier
+    extends AutoDisposeFamilyNotifier<StudioFilter, int> {
+  @override
+  StudioFilter build(arg) => StudioFilter();
+
+  @override
+  set state(StudioFilter newState) => super.state = newState;
 }

@@ -64,20 +64,21 @@ class _CompositionViewState extends State<CompositionView>
         composition: widget.composition,
         onSave: () async {
           try {
-            widget.onDone(
-              await saveComposition(widget.composition),
-            );
-            if (mounted) Navigator.pop(context);
+            widget.onDone(await saveComposition(widget.composition));
+
+            if (context.mounted) Navigator.pop(context);
           } catch (e) {
-            if (!mounted) return;
-            Navigator.pop(context);
-            showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Could not post',
-                content: e.toString(),
-              ),
-            );
+            if (context.mounted) {
+              Navigator.pop(context);
+
+              showPopUp(
+                context,
+                ConfirmationDialog(
+                  title: 'Could not post',
+                  content: e.toString(),
+                ),
+              );
+            }
           }
         },
       ),
@@ -104,7 +105,7 @@ class _CompositionView extends StatelessWidget {
       left: 20,
       right: 20,
       top: 60,
-      bottom: MediaQuery.of(context).padding.bottom + BottomBar.height + 10,
+      bottom: MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
     );
 
     return Stack(

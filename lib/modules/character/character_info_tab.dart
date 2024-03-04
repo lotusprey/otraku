@@ -20,9 +20,8 @@ class CharacterInfoTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageWidth = MediaQuery.of(context).size.width < 430.0
-        ? MediaQuery.of(context).size.width * 0.30
-        : 100.0;
+    final size = MediaQuery.sizeOf(context);
+    final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
     final imageHeight = imageWidth * Consts.coverHtoWRatio;
 
     return Consumer(
@@ -58,41 +57,42 @@ class CharacterInfoTab extends StatelessWidget {
                         ),
                       ),
                     ),
-                  character.maybeWhen(
-                    orElse: () => const SizedBox(),
-                    data: (data) => Flexible(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          GestureDetector(
-                            onTap: () => Toast.copy(context, data.name),
-                            child: Text(
-                              data.name,
-                              style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                          ),
-                          if (data.altNames.isNotEmpty)
-                            Text(data.altNames.join(', ')),
-                          if (data.altNamesSpoilers.isNotEmpty)
-                            GestureDetector(
-                              behavior: HitTestBehavior.opaque,
-                              child: Text(
-                                'Spoiler names',
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                              onTap: () => showPopUp(
-                                context,
-                                TextDialog(
-                                  title: 'Spoiler names',
-                                  text: data.altNamesSpoilers.join(', '),
+                  character.unwrapPrevious().maybeWhen(
+                        orElse: () => const SizedBox(),
+                        data: (data) => Flexible(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              GestureDetector(
+                                onTap: () => Toast.copy(context, data.name),
+                                child: Text(
+                                  data.name,
+                                  style: Theme.of(context).textTheme.titleLarge,
                                 ),
                               ),
-                            ),
-                        ],
+                              if (data.altNames.isNotEmpty)
+                                Text(data.altNames.join(', ')),
+                              if (data.altNamesSpoilers.isNotEmpty)
+                                GestureDetector(
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Text(
+                                    'Spoiler names',
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
+                                  ),
+                                  onTap: () => showPopUp(
+                                    context,
+                                    TextDialog(
+                                      title: 'Spoiler names',
+                                      text: data.altNamesSpoilers.join(', '),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -104,62 +104,63 @@ class CharacterInfoTab extends StatelessWidget {
         );
 
         return ConstrainedView(
-          child: character.when(
-            loading: () => CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                refreshControl,
-                header,
-                const SliverFillRemaining(child: Center(child: Loader())),
-                const SliverFooter(),
-              ],
-            ),
-            error: (_, __) => CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                refreshControl,
-                header,
-                const SliverFillRemaining(
-                  child: Center(child: Text('No data')),
+          child: character.unwrapPrevious().when(
+                loading: () => CustomScrollView(
+                  physics: Consts.physics,
+                  controller: scrollCtrl,
+                  slivers: [
+                    refreshControl,
+                    header,
+                    const SliverFillRemaining(child: Center(child: Loader())),
+                    const SliverFooter(),
+                  ],
                 ),
-                const SliverFooter(),
-              ],
-            ),
-            data: (data) => CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                refreshControl,
-                header,
-                SliverGrid(
-                  gridDelegate:
-                      const SliverGridDelegateWithMinWidthAndFixedHeight(
-                    height: Consts.tapTargetSize,
-                    minWidth: 150,
-                  ),
-                  delegate: SliverChildListDelegate([
-                    _InfoTile('Favourites', data.favorites.toString()),
-                    if (data.gender != null) _InfoTile('Gender', data.gender!),
-                    if (data.age != null) _InfoTile('Age', data.age!),
-                    if (data.dateOfBirth != null)
-                      _InfoTile('Date of Birth', data.dateOfBirth!),
-                    if (data.bloodType != null)
-                      _InfoTile('Blood Type', data.bloodType!),
-                  ]),
+                error: (_, __) => CustomScrollView(
+                  physics: Consts.physics,
+                  controller: scrollCtrl,
+                  slivers: [
+                    refreshControl,
+                    header,
+                    const SliverFillRemaining(
+                      child: Center(child: Text('No data')),
+                    ),
+                    const SliverFooter(),
+                  ],
                 ),
-                if (data.description.isNotEmpty) ...[
-                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
-                  HtmlContent(
-                    data.description,
-                    renderMode: RenderMode.sliverList,
-                  ),
-                ],
-                const SliverFooter(),
-              ],
-            ),
-          ),
+                data: (data) => CustomScrollView(
+                  physics: Consts.physics,
+                  controller: scrollCtrl,
+                  slivers: [
+                    refreshControl,
+                    header,
+                    SliverGrid(
+                      gridDelegate:
+                          const SliverGridDelegateWithMinWidthAndFixedHeight(
+                        height: Consts.tapTargetSize,
+                        minWidth: 150,
+                      ),
+                      delegate: SliverChildListDelegate([
+                        _InfoTile('Favourites', data.favorites.toString()),
+                        if (data.gender != null)
+                          _InfoTile('Gender', data.gender!),
+                        if (data.age != null) _InfoTile('Age', data.age!),
+                        if (data.dateOfBirth != null)
+                          _InfoTile('Date of Birth', data.dateOfBirth!),
+                        if (data.bloodType != null)
+                          _InfoTile('Blood Type', data.bloodType!),
+                      ]),
+                    ),
+                    if (data.description.isNotEmpty) ...[
+                      const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                      HtmlContent(
+                        data.description,
+                        renderMode: RenderMode.sliverList,
+                      ),
+                    ],
+                    const SliverFooter(),
+                  ],
+                ),
+              ),
         );
       },
     );

@@ -49,13 +49,11 @@ class _ThemePreviewState extends State<ThemePreview> {
           ));
         }
 
-        return SliverToBoxAdapter(
-          child: SizedBox(
-            height: 195,
-            child: ShadowedOverflowList(
-              itemCount: children.length,
-              itemBuilder: (_, i) => children[i],
-            ),
+        return SizedBox(
+          height: 195,
+          child: ShadowedOverflowList(
+            itemCount: children.length,
+            itemBuilder: (_, i) => children[i],
           ),
         );
       },

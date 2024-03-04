@@ -25,7 +25,7 @@ class ChipGridTemplate extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(title, style: Theme.of(context).textTheme.labelMedium),
+            Text(title),
             const Spacer(),
             if (onClear != null && children.isNotEmpty)
               SizedBox(

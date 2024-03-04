@@ -101,32 +101,37 @@ class _MediaLanguageButtonState extends State<MediaLanguageButton> {
 
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(mediaRelationsProvider(widget.id).select(
-          (s) => s.languages.length < 2,
-        ))) return const SizedBox();
+        final languages = ref.watch(
+          mediaRelationsProvider(widget.id).select(
+            (s) => s.valueOrNull?.languages,
+          ),
+        );
+        final language = ref.watch(
+          mediaRelationsProvider(widget.id).select(
+            (s) => s.valueOrNull?.language,
+          ),
+        );
+
+        if (language == null || languages == null || languages.length < 2) {
+          return const SizedBox();
+        }
 
         return ActionButton(
           tooltip: 'Language',
           icon: Ionicons.globe_outline,
-          onTap: () {
-            final mediaRelations = ref.read(mediaRelationsProvider(widget.id));
-            final languages = mediaRelations.languages;
-            final language = mediaRelations.language;
-
-            showSheet(
-              context,
-              GradientSheet([
-                for (int i = 0; i < languages.length; i++)
-                  GradientSheetButton(
-                    text: languages.elementAt(i),
-                    selected: languages.elementAt(i) == language,
-                    onTap: () => ref
-                        .read(mediaRelationsProvider(widget.id).notifier)
-                        .changeLanguage(languages.elementAt(i)),
-                  ),
-              ]),
-            );
-          },
+          onTap: () => showSheet(
+            context,
+            GradientSheet([
+              for (int i = 0; i < languages.length; i++)
+                GradientSheetButton(
+                  text: languages.elementAt(i),
+                  selected: languages.elementAt(i) == language,
+                  onTap: () => ref
+                      .read(mediaRelationsProvider(widget.id).notifier)
+                      .changeLanguage(languages.elementAt(i)),
+                ),
+            ]),
+          ),
         );
       },
     );

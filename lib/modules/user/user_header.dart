@@ -28,7 +28,7 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = MediaQuery.of(context).padding.top;
+    final size = MediaQuery.sizeOf(context);
     final textRailItems = <String, bool>{};
     if (user != null) {
       if (user!.modRoles.isNotEmpty) textRailItems[user!.modRoles[0]] = false;
@@ -42,11 +42,9 @@ class UserHeader extends StatelessWidget {
         isViewer: isViewer,
         user: user,
         imageUrl: imageUrl,
-        topOffset: topOffset,
         textRailItems: textRailItems,
-        imageWidth: MediaQuery.of(context).size.width < 430.0
-            ? MediaQuery.of(context).size.width * 0.30
-            : 100.0,
+        topOffset: MediaQuery.paddingOf(context).top,
+        imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
       ),
     );
   }

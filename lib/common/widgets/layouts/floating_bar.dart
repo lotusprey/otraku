@@ -5,15 +5,10 @@ import 'package:otraku/common/widgets/drag_detector.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
 class FloatingBar extends StatefulWidget {
-  const FloatingBar({
-    required this.scrollCtrl,
-    required this.children,
-    this.centered = false,
-  });
+  const FloatingBar({required this.scrollCtrl, required this.children});
 
   final List<Widget> children;
   final ScrollController scrollCtrl;
-  final bool centered;
 
   @override
   FloatingBarState createState() => FloatingBarState();
@@ -79,18 +74,16 @@ class FloatingBarState extends State<FloatingBar>
       padding: EdgeInsets.only(
         left: 16,
         right: 16,
-        bottom: MediaQuery.of(context).padding.bottom + 16,
+        bottom: MediaQuery.paddingOf(context).bottom + 16,
       ),
       child: SlideTransition(
         position: _slideAnimation,
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Row(
-            mainAxisAlignment: widget.centered
-                ? MainAxisAlignment.center
-                : Options().leftHanded
-                    ? MainAxisAlignment.start
-                    : MainAxisAlignment.end,
+            mainAxisAlignment: Options().leftHanded
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
             children: [
               for (int i = 0; i < children.length; i++) ...[
                 const SizedBox(width: 10),

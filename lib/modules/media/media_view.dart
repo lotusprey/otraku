@@ -208,16 +208,16 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
           builder: (context, ref, _) => PagedView<Relation>(
             withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.characters,
+              (s) => s.unwrapPrevious().whenData((data) => data.characters),
             ),
             scrollCtrl: _scrollCtrl,
             onRefresh: () => _refresh(ref),
             onData: (data) {
               final mediaRelations = ref.watch(
-                mediaRelationsProvider(widget.id),
+                mediaRelationsProvider(widget.id).select((s) => s.valueOrNull),
               );
 
-              if (mediaRelations.languages.isEmpty) {
+              if (mediaRelations == null || mediaRelations.languages.isEmpty) {
                 return SingleRelationGrid(data.items);
               }
 
@@ -230,7 +230,9 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
         Consumer(
           builder: (context, ref, _) => PagedView<Relation>(
             withTopOffset: false,
-            provider: mediaRelationsProvider(widget.id).select((s) => s.staff),
+            provider: mediaRelationsProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.staff),
+            ),
             onData: (data) => SingleRelationGrid(data.items),
             scrollCtrl: _scrollCtrl,
             onRefresh: () => _refresh(ref),
@@ -240,7 +242,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
           builder: (context, ref, _) => PagedView<RelatedReview>(
             withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.reviews,
+              (s) => s.unwrapPrevious().whenData((data) => data.reviews),
             ),
             onData: (data) => MediaReviewGrid(
               data.items,
@@ -263,7 +265,8 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
           builder: (context, ref, _) => PagedView<Recommendation>(
             withTopOffset: false,
             provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.recommendations,
+              (s) =>
+                  s.unwrapPrevious().whenData((data) => data.recommendations),
             ),
             onData: (data) => MediaRecommendationGrid(widget.id, data.items),
             onRefresh: () => _refresh(ref),

@@ -32,20 +32,20 @@ class DiscoverFilter {
         search = '',
         mediaFilter = DiscoverMediaFilter(),
         hasBirthday = false,
-        reviewSort = ReviewSort.CREATED_AT_DESC;
+        reviewSort = ReviewsSort.CREATED_AT_DESC;
 
   final DiscoverType type;
   final String search;
   final DiscoverMediaFilter mediaFilter;
   final bool hasBirthday;
-  final ReviewSort reviewSort;
+  final ReviewsSort reviewSort;
 
   DiscoverFilter copyWith({
     DiscoverType? type,
     String? search,
     DiscoverMediaFilter? mediaFilter,
     bool? hasBirthday,
-    ReviewSort? reviewSort,
+    ReviewsSort? reviewSort,
   }) =>
       DiscoverFilter._(
         type: type ?? this.type,

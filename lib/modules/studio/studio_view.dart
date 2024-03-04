@@ -30,7 +30,7 @@ class StudioView extends ConsumerStatefulWidget {
 
 class _StudioViewState extends ConsumerState<StudioView> {
   late final _ctrl = PagedController(loadMore: () {
-    ref.read(studioProvider(widget.id).notifier).fetch();
+    ref.read(studioMediaProvider(widget.id).notifier).fetch();
   });
 
   @override
@@ -45,7 +45,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
       child: Consumer(
         builder: (context, ref, _) {
           ref.listen<AsyncValue>(
-            studioProvider(widget.id).select((s) => s.info),
+            studioProvider(widget.id),
             (_, s) {
               if (s.hasError) {
                 showPopUp(
@@ -59,13 +59,27 @@ class _StudioViewState extends ConsumerState<StudioView> {
             },
           );
 
-          final studio = ref.watch(studioProvider(widget.id));
-          final info = studio.info.valueOrNull;
-          final name = info?.name ?? widget.name;
-          final items = <Widget>[];
+          final studio = ref.watch(studioProvider(widget.id)).valueOrNull;
+          final studioMedia = ref.watch(studioMediaProvider(widget.id));
+          final name = studio?.name ?? widget.name;
+          final items = <Widget>[
+            if (studio != null)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 10,
+                    bottom: 20,
+                  ),
+                  child: Text(
+                    '${studio.favorites.toString()} favourites',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+              ),
+          ];
           bool? hasNext;
 
-          studio.media.unwrapPrevious().when(
+          studioMedia.unwrapPrevious().when(
                 loading: () => items.add(
                   const SliverFillRemaining(child: Center(child: Loader())),
                 ),
@@ -75,64 +89,51 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   ),
                 ),
                 data: (data) {
-                  hasNext = data.hasNext;
-
-                  if (info != null) {
-                    items.add(SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 10,
-                          bottom: 20,
-                        ),
-                        child: Text(
-                          '${info.favorites.toString()} favourites',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                      ),
-                    ));
-                  }
+                  hasNext = data.media.hasNext;
 
                   final sort = ref.watch(studioFilterProvider(widget.id)).sort;
 
                   if (sort != MediaSort.START_DATE &&
                       sort != MediaSort.START_DATE_DESC) {
-                    items.add(TileItemGrid(data.items));
+                    items.add(TileItemGrid(data.media.items));
                     return;
                   }
 
-                  for (int i = 0; i < studio.categories.length; i++) {
+                  for (int i = 0; i < data.categories.length; i++) {
                     items.add(SliverToBoxAdapter(
                       child: Text(
-                        studio.categories.keys.elementAt(i),
+                        data.categories.keys.elementAt(i),
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ));
 
-                    final beg = studio.categories.values.elementAt(i);
-                    final end = i < studio.categories.length - 1
-                        ? studio.categories.values.elementAt(i + 1)
-                        : data.items.length;
+                    final beg = data.categories.values.elementAt(i);
+                    final end = i < data.categories.length - 1
+                        ? data.categories.values.elementAt(i + 1)
+                        : data.media.items.length;
 
                     items.add(
                       SliverPadding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
-                        sliver: TileItemGrid(data.items.sublist(beg, end)),
+                        sliver: TileItemGrid(
+                          data.media.items.sublist(beg, end),
+                        ),
                       ),
                     );
                   }
                 },
               );
 
-          final topBar = info != null
+          final topBar = studio != null
               ? TopBar(
-                  title: info.name,
+                  title: name,
                   trailing: [
                     TopBarIcon(
                       tooltip: 'More',
                       icon: Ionicons.ellipsis_horizontal,
                       onTap: () => showSheet(
                         context,
-                        GradientSheet.link(context, info.siteUrl!),
+                        GradientSheet.link(context, studio.siteUrl),
                       ),
                     ),
                   ],
@@ -143,8 +144,8 @@ class _StudioViewState extends ConsumerState<StudioView> {
             topBar: topBar,
             floatingBar: FloatingBar(
               scrollCtrl: _ctrl,
-              children: info != null
-                  ? [_FavoriteButton(info), _FilterButton(widget.id)]
+              children: studio != null
+                  ? [_FavoriteButton(studio), _FilterButton(widget.id)]
                   : const [],
             ),
             child: ConstrainedView(
@@ -153,7 +154,10 @@ class _StudioViewState extends ConsumerState<StudioView> {
                 controller: hasNext != null ? _ctrl : null,
                 slivers: [
                   SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(studioProvider(widget.id)),
+                    onRefresh: () {
+                      ref.invalidate(studioProvider(widget.id));
+                      ref.invalidate(studioMediaProvider(widget.id));
+                    },
                   ),
                   if (name != null)
                     SliverToBoxAdapter(
@@ -183,7 +187,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
 class _FavoriteButton extends StatefulWidget {
   const _FavoriteButton(this.data);
 
-  final StudioInfo data;
+  final Studio data;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -258,13 +262,13 @@ class _FilterButton extends StatelessWidget {
                     ),
                     ChipSelector(
                       title: 'List Presence',
-                      options: const ['On List', 'Not on List'],
-                      current: filter.onList == null
+                      options: const ['In Lists', 'Not in Lists'],
+                      current: filter.inLists == null
                           ? null
-                          : filter.onList!
+                          : filter.inLists!
                               ? 0
                               : 1,
-                      onChanged: (val) => filter = filter.copyWith(onList: () {
+                      onChanged: (val) => filter = filter.copyWith(inLists: () {
                         if (val == null) return null;
                         return val == 0 ? true : false;
                       }),

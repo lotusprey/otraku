@@ -1,50 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/fields/checkbox_field.dart';
-import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
 class SettingsNotificationsTab extends StatelessWidget {
-  const SettingsNotificationsTab(
-    this.scrollCtrl,
-    this.settings,
-    this.scheduleUpdate,
-  );
+  const SettingsNotificationsTab(this.scrollCtrl, this.settings);
 
   final ScrollController scrollCtrl;
   final Settings settings;
-  final void Function() scheduleUpdate;
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollCtrl,
-      slivers: [
-        SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.of(context).padding.top + TopBar.height + 10,
-          ),
-        ),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            childCount: settings.notificationOptions.length,
-            (context, i) {
-              final e = settings.notificationOptions.entries.elementAt(i);
+    final listPadding = MediaQuery.paddingOf(context);
 
-              return CheckBoxField(
-                title: e.key.name.noScreamingSnakeCase,
-                initial: e.value,
-                onChanged: (val) {
-                  settings.notificationOptions[e.key] = val;
-                  scheduleUpdate();
-                },
-              );
-            },
-          ),
-        ),
-        const SliverFooter(),
-      ],
+    return ListView.builder(
+      controller: scrollCtrl,
+      padding: EdgeInsets.only(
+        top: listPadding.top + TopBar.height + 10,
+        bottom: listPadding.bottom + 10,
+      ),
+      itemCount: settings.notificationOptions.length,
+      itemBuilder: (context, i) {
+        final e = settings.notificationOptions.entries.elementAt(i);
+
+        return StatefulCheckboxListTile(
+          title: Text(e.key.name.noScreamingSnakeCase),
+          value: e.value,
+          onChanged: (v) => settings.notificationOptions[e.key] = v!,
+        );
+      },
     );
   }
 }

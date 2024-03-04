@@ -18,6 +18,8 @@ class CollectionMediaFilter {
   int? startYearFrom;
   int? startYearTo;
   OriginCountry? country;
+  bool? isPrivate;
+  bool? hasNotes;
 
   CollectionMediaFilter copy() => CollectionMediaFilter(true)
     ..statuses.addAll(statuses)
@@ -31,7 +33,9 @@ class CollectionMediaFilter {
     ..sort = sort
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
-    ..country = country;
+    ..country = country
+    ..isPrivate = isPrivate
+    ..hasNotes = hasNotes;
 }
 
 class DiscoverMediaFilter {
@@ -50,7 +54,7 @@ class DiscoverMediaFilter {
   int? startYearFrom;
   int? startYearTo;
   OriginCountry? country;
-  bool? onList;
+  bool? inLists;
   bool? isAdult;
 
   DiscoverMediaFilter copy() => DiscoverMediaFilter()
@@ -67,7 +71,7 @@ class DiscoverMediaFilter {
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
     ..country = country
-    ..onList = onList
+    ..inLists = inLists
     ..isAdult = isAdult;
 
   Map<String, dynamic> toMap(bool ofAnime) => {
@@ -84,7 +88,7 @@ class DiscoverMediaFilter {
         if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
         if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
         if (country != null) 'countryOfOrigin': country!.code,
-        if (onList != null) 'onList': onList,
+        if (inLists != null) 'onList': inLists,
         if (isAdult != null) 'isAdult': isAdult,
       };
 }

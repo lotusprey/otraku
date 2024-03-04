@@ -1,0 +1,8 @@
+- Added collection filters for public/private entries and for entries with/without notes
+- Changed release year filter design
+- In fields, you can long-tap the decrement/increment buttons to set the value to min/max
+- Reduced minimum year in release year filter to 1917
+- AniList settings are saved with a floating action button now
+- Fixed collection refresh forgetting the selected list
+- Fixed missing entries in collections and ignored name preferences
+- Fixed settings not reflecting account switching

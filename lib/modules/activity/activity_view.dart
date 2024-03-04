@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
-import 'package:otraku/modules/activity/activities_providers.dart';
+import 'package:otraku/modules/activity/activities_provider.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/activity/activity_provider.dart';
 import 'package:otraku/modules/activity/activity_card.dart';
@@ -46,7 +46,8 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
   @override
   Widget build(BuildContext context) {
     final activity = ref.watch(
-        activityProvider(widget.id).select((s) => s.valueOrNull?.activity));
+      activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
+    );
 
     return PageScaffold(
       child: TabScaffold(
@@ -173,18 +174,18 @@ class _TopBarContent extends StatelessWidget {
         children: [
           Flexible(
             child: LinkTile(
-              id: activity.agent.id,
-              info: activity.agent.imageUrl,
+              id: activity.authorId,
+              info: activity.authorAvatarUrl,
               discoverType: DiscoverType.User,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Hero(
-                    tag: activity.agent.id,
+                    tag: activity.authorId,
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: CachedImage(
-                        activity.agent.imageUrl,
+                        activity.authorAvatarUrl,
                         height: 40,
                         width: 40,
                       ),
@@ -193,7 +194,7 @@ class _TopBarContent extends StatelessWidget {
                   const SizedBox(width: 10),
                   Flexible(
                     child: Text(
-                      activity.agent.name,
+                      activity.authorName,
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
@@ -202,34 +203,39 @@ class _TopBarContent extends StatelessWidget {
               ),
             ),
           ),
-          if (activity.reciever != null) ...[
-            if (activity.isPrivate)
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: Icon(Ionicons.eye_off_outline),
-              ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(Icons.arrow_right_alt),
-            ),
-            LinkTile(
-              id: activity.reciever!.id,
-              info: activity.reciever!.imageUrl,
-              discoverType: DiscoverType.User,
-              child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
-                child: CachedImage(
-                  activity.reciever!.imageUrl,
-                  height: 40,
-                  width: 40,
+          ...switch (activity) {
+            MessageActivity message => [
+                if (message.isPrivate)
+                  const Padding(
+                    padding: EdgeInsets.only(left: 10),
+                    child: Icon(Ionicons.eye_off_outline),
+                  ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: Icon(Icons.arrow_right_alt),
                 ),
-              ),
-            ),
-          ] else if (activity.isPinned)
-            const Padding(
-              padding: EdgeInsets.only(left: 10),
-              child: Icon(Icons.push_pin_outlined),
-            ),
+                LinkTile(
+                  id: message.recipientId,
+                  info: message.recipientAvatarUrl,
+                  discoverType: DiscoverType.User,
+                  child: ClipRRect(
+                    borderRadius: Consts.borderRadiusMin,
+                    child: CachedImage(
+                      message.recipientAvatarUrl,
+                      height: 40,
+                      width: 40,
+                    ),
+                  ),
+                ),
+              ],
+            _ when activity.isPinned => const [
+                Padding(
+                  padding: EdgeInsets.only(left: 10),
+                  child: Icon(Icons.push_pin_outlined),
+                ),
+              ],
+            _ => const [],
+          },
         ],
       ),
     );

@@ -28,7 +28,7 @@ class MediaHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = MediaQuery.of(context).padding.top;
+    final topOffset = MediaQuery.paddingOf(context).top;
 
     return Consumer(
       builder: (context, ref, _) {
@@ -64,6 +64,8 @@ class MediaHeader extends StatelessWidget {
           }
         }
 
+        final size = MediaQuery.sizeOf(context);
+
         return SliverPersistentHeader(
           pinned: true,
           delegate: _Delegate(
@@ -74,9 +76,7 @@ class MediaHeader extends StatelessWidget {
             topOffset: topOffset,
             scrollToTop: scrollToTop,
             textRailItems: textRailItems,
-            imageWidth: MediaQuery.of(context).size.width < 430.0
-                ? MediaQuery.of(context).size.width * 0.30
-                : 100.0,
+            imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
           ),
         );
       },

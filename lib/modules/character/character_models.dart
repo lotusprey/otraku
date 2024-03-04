@@ -138,14 +138,14 @@ class CharacterMedia {
 }
 
 class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.onList});
+  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.inLists});
 
   final MediaSort sort;
-  final bool? onList;
+  final bool? inLists;
 
-  CharacterFilter copyWith({MediaSort? sort, bool? Function()? onList}) =>
+  CharacterFilter copyWith({MediaSort? sort, bool? Function()? inLists}) =>
       CharacterFilter(
         sort: sort ?? this.sort,
-        onList: onList == null ? this.onList : onList(),
+        inLists: inLists == null ? this.inLists : inLists(),
       );
 }

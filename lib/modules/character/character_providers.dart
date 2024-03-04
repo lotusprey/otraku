@@ -67,7 +67,7 @@ class CharacterMediaNotifier
   Future<CharacterMedia> _fetch(CharacterMedia oldState, bool? onAnime) async {
     final variables = {
       'id': arg,
-      'onList': filter.onList,
+      'onList': filter.inLists,
       'sort': filter.sort.name,
     };
 

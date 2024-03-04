@@ -154,6 +154,7 @@ class _TopBarContent extends StatelessWidget {
                   context,
                   CollectionFilterView(
                     ofAnime: tag.ofAnime,
+                    ofViewer: tag.userId == Options().id,
                     filter: ref.read(collectionFilterProvider(tag)).mediaFilter,
                     onChanged: (mediaFilter) => ref
                         .read(collectionFilterProvider(tag).notifier)

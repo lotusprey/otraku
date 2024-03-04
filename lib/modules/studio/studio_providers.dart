@@ -57,7 +57,7 @@ class StudioMediaNotifier
       'withMedia': true,
       'page': oldState.media.next,
       'sort': filter.sort.name,
-      'onList': filter.onList,
+      'onList': filter.inLists,
       if (filter.isMain != null) 'isMain': filter.isMain,
     });
 

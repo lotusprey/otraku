@@ -852,6 +852,7 @@ abstract class _GqlFragment {
       progress
       score
       notes
+      private
       repeat
       startedAt {year month day}
       completedAt {year month day}

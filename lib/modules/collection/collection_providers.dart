@@ -10,8 +10,9 @@ final collectionProvider = ChangeNotifierProvider.autoDispose.family(
   (ref, CollectionTag tag) => CollectionNotifier(tag),
 );
 
-final collectionFilterProvider = StateProvider.autoDispose.family(
-  (ref, CollectionTag tag) => CollectionFilter(tag.ofAnime),
+final collectionFilterProvider = NotifierProvider.autoDispose
+    .family<CollectionFilterNotifier, CollectionFilter, CollectionTag>(
+  CollectionFilterNotifier.new,
 );
 
 final entriesProvider = Provider.autoDispose.family(
@@ -47,9 +48,7 @@ final entriesProvider = Provider.autoDispose.family(
           }
         }
 
-        if (!contains &&
-            entry.notes != null &&
-            entry.notes!.toLowerCase().contains(search)) {
+        if (!contains && entry.notes.toLowerCase().contains(search)) {
           contains = true;
         }
 
@@ -118,6 +117,16 @@ final entriesProvider = Provider.autoDispose.family(
           }
         }
         if (isIn) continue;
+      }
+
+      if (mediaFilter.isPrivate != null &&
+          entry.isPrivate != mediaFilter.isPrivate) {
+        continue;
+      }
+
+      if (mediaFilter.hasNotes != null &&
+          entry.notes.isNotEmpty != mediaFilter.hasNotes) {
+        continue;
       }
 
       entries.add(entry);
@@ -379,4 +388,15 @@ class CollectionNotifier extends ChangeNotifier {
       }
     }
   }
+}
+
+class CollectionFilterNotifier
+    extends AutoDisposeFamilyNotifier<CollectionFilter, CollectionTag> {
+  @override
+  CollectionFilter build(arg) => CollectionFilter(arg.ofAnime);
+
+  CollectionFilter update(
+    CollectionFilter Function(CollectionFilter) callback,
+  ) =>
+      state = callback(state);
 }

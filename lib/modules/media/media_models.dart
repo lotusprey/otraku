@@ -189,7 +189,7 @@ class MediaFollowing {
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
         status: (map['status'] as String).noScreamingSnakeCase,
         score: (map['score'] ?? 0).toDouble(),
-        notes: map['notes'],
+        notes: map['notes'] ?? '',
         userId: map['user']['id'],
         userName: map['user']['name'],
         userAvatar: map['user']['avatar']['large'],
@@ -200,7 +200,7 @@ class MediaFollowing {
 
   final String status;
   final double score;
-  final String? notes;
+  final String notes;
   final int userId;
   final String userName;
   final String userAvatar;

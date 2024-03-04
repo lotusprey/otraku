@@ -70,7 +70,7 @@ class StaffRelationsNotifier
   ) async {
     final variables = {
       'id': arg,
-      'onList': filter.onList,
+      'onList': filter.inLists,
       'sort': filter.sort.name,
       if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
     };

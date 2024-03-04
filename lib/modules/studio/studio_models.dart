@@ -52,22 +52,22 @@ class StudioMedia {
 class StudioFilter {
   StudioFilter({
     this.sort = MediaSort.START_DATE_DESC,
-    this.onList,
+    this.inLists,
     this.isMain,
   });
 
   final MediaSort sort;
-  final bool? onList;
+  final bool? inLists;
   final bool? isMain;
 
   StudioFilter copyWith({
     MediaSort? sort,
-    bool? Function()? onList,
+    bool? Function()? inLists,
     bool? Function()? isMain,
   }) =>
       StudioFilter(
         sort: sort ?? this.sort,
-        onList: onList == null ? this.onList : onList(),
+        inLists: inLists == null ? this.inLists : inLists(),
         isMain: isMain == null ? this.isMain : isMain(),
       );
 }

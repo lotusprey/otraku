@@ -5,26 +5,6 @@ import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
-class CollectionFilter {
-  const CollectionFilter._({required this.search, required this.mediaFilter});
-
-  CollectionFilter(bool ofAnime)
-      : search = '',
-        mediaFilter = CollectionMediaFilter(ofAnime);
-
-  final String search;
-  final CollectionMediaFilter mediaFilter;
-
-  CollectionFilter copyWith({
-    String? search,
-    CollectionMediaFilter? mediaFilter,
-  }) =>
-      CollectionFilter._(
-        search: search ?? this.search,
-        mediaFilter: mediaFilter ?? this.mediaFilter,
-      );
-}
-
 class EntryList {
   EntryList._({
     required this.name,
@@ -315,10 +295,11 @@ class Entry {
     required this.createdAt,
     required this.updatedAt,
     required this.country,
+    required this.isPrivate,
     required this.genres,
     required this.tags,
-    required this.progress,
     required this.progressMax,
+    required this.progress,
     required this.repeat,
     required this.score,
     required this.notes,
@@ -359,13 +340,14 @@ class Entry {
       createdAt: map['createdAt'],
       updatedAt: map['updatedAt'],
       country: map['media']['countryOfOrigin'],
+      isPrivate: map['private'] ?? false,
       genres: List.from(map['media']['genres'] ?? [], growable: false),
       tags: tags,
-      progress: map['progress'] ?? 0,
       progressMax: map['media']['episodes'] ?? map['media']['chapters'],
+      progress: map['progress'] ?? 0,
       repeat: map['repeat'] ?? 0,
       score: map['score'].toDouble() ?? 0.0,
-      notes: map['notes'],
+      notes: map['notes'] ?? '',
       avgScore: map['media']['averageScore'],
       releaseStart: DateTimeUtil.fromFuzzyDate(map['media']['startDate']),
       watchStart: DateTimeUtil.fromFuzzyDate(map['startedAt']),
@@ -384,13 +366,14 @@ class Entry {
   final int? createdAt;
   final int? updatedAt;
   final String? country;
+  final bool isPrivate;
   final List<String> genres;
   final List<int> tags;
-  int progress;
   final int? progressMax;
+  int progress;
   int repeat;
   double score;
-  String? notes;
+  String notes;
   int? avgScore;
   DateTime? releaseStart;
   DateTime? watchStart;
@@ -416,4 +399,24 @@ enum EntryStatus {
         'DROPPED' => 'Dropped',
         _ => null,
       };
+}
+
+class CollectionFilter {
+  const CollectionFilter._({required this.search, required this.mediaFilter});
+
+  CollectionFilter(bool ofAnime)
+      : search = '',
+        mediaFilter = CollectionMediaFilter(ofAnime);
+
+  final String search;
+  final CollectionMediaFilter mediaFilter;
+
+  CollectionFilter copyWith({
+    String? search,
+    CollectionMediaFilter? mediaFilter,
+  }) =>
+      CollectionFilter._(
+        search: search ?? this.search,
+        mediaFilter: mediaFilter ?? this.mediaFilter,
+      );
 }

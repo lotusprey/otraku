@@ -262,13 +262,13 @@ class _FilterButton extends StatelessWidget {
                     ),
                     ChipSelector(
                       title: 'List Presence',
-                      options: const ['On List', 'Not on List'],
-                      current: filter.onList == null
+                      options: const ['In Lists', 'Not in Lists'],
+                      current: filter.inLists == null
                           ? null
-                          : filter.onList!
+                          : filter.inLists!
                               ? 0
                               : 1,
-                      onChanged: (val) => filter = filter.copyWith(onList: () {
+                      onChanged: (val) => filter = filter.copyWith(inLists: () {
                         if (val == null) return null;
                         return val == 0 ? true : false;
                       }),

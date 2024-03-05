@@ -91,9 +91,9 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
-          'Bio': Ionicons.book_outline,
+          'Bio': Ionicons.information_outline,
           'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.bookmark_outline,
+          'Manga': Ionicons.book_outline,
         },
       ),
       child: TabScaffold(

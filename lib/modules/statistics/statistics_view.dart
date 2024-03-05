@@ -107,7 +107,7 @@ class _StatisticsViewState extends State<StatisticsView>
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.bookmark_outline,
+          'Manga': Ionicons.book_outline,
         },
       ),
       child: TabScaffold(
@@ -202,7 +202,7 @@ class _Details extends StatelessWidget {
     subtitles.add(statistics.partsConsumed);
     if (ofAnime) {
       subtitles.add(((statistics.amountConsumed / 1440) * 10).round() / 10);
-      icons.add(Ionicons.tv_outline);
+      icons.add(Ionicons.film_outline);
       icons.add(Ionicons.play_outline);
       icons.add(Ionicons.calendar_clear_outline);
       titles.add('Total Anime');
@@ -210,9 +210,9 @@ class _Details extends StatelessWidget {
       titles.add('Days Watched');
     } else {
       subtitles.add(statistics.amountConsumed);
-      icons.add(Ionicons.bookmarks_outline);
-      icons.add(Ionicons.reader_outline);
       icons.add(Ionicons.book_outline);
+      icons.add(Ionicons.reader_outline);
+      icons.add(Ionicons.bookmark_outline);
       titles.add('Total Manga');
       titles.add('Chapters Read');
       titles.add('Volumes Read');

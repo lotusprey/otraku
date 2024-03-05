@@ -139,7 +139,7 @@ class _ActivityMediaBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return LinkTile(
-      id: item.id,
+      id: item.mediaId,
       info: item.coverUrl,
       discoverType: item.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
       child: ConstrainedBox(

@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.2.8+64
+version: 1.2.8+65
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -46,7 +46,7 @@ dependencies:
   workmanager: ^0.5.2
 
   # Sending device notifications.
-  flutter_local_notifications: ^16.3.2
+  flutter_local_notifications: ^16.3.3
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.14.11

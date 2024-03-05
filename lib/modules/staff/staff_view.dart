@@ -91,7 +91,7 @@ class _StaffViewState extends ConsumerState<StaffView>
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
-          'Bio': Ionicons.book_outline,
+          'Bio': Ionicons.information_outline,
           'Characters': Ionicons.mic_outline,
           'Roles': Ionicons.briefcase_outline,
         },

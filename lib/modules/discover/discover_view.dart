@@ -194,7 +194,7 @@ class _ActionButton extends StatelessWidget {
 
   static IconData _typeIcon(DiscoverType type) => switch (type) {
         DiscoverType.Anime => Ionicons.film_outline,
-        DiscoverType.Manga => Ionicons.bookmark_outline,
+        DiscoverType.Manga => Ionicons.book_outline,
         DiscoverType.Character => Ionicons.man_outline,
         DiscoverType.Staff => Ionicons.mic_outline,
         DiscoverType.Studio => Ionicons.business_outline,

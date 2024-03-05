@@ -62,7 +62,7 @@ enum HomeTab {
   IconData get iconData => switch (this) {
         feed => Ionicons.file_tray_outline,
         anime => Ionicons.film_outline,
-        manga => Ionicons.bookmark_outline,
+        manga => Ionicons.book_outline,
         discover => Ionicons.compass_outline,
         profile => Ionicons.person_outline,
       };

@@ -124,7 +124,7 @@ class _ButtonRow extends StatelessWidget {
         ),
         _Button(
           label: 'Manga',
-          icon: Ionicons.bookmark,
+          icon: Ionicons.book,
           onTap: () => context.push(Routes.mangaCollection(id)),
         ),
       ],

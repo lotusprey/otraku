@@ -66,9 +66,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
           'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.bookmark_outline,
+          'Manga': Ionicons.book_outline,
           'Characters': Ionicons.man_outline,
-          'Staff': Ionicons.mic_outline,
+          'Staff': Ionicons.briefcase_outline,
           'Studios': Ionicons.business_outline,
         },
       ),

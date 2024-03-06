@@ -49,12 +49,16 @@ class Staff {
     final altNames = List<String>.from(names['alternative'] ?? []);
 
     String name;
-    if (personNaming != PersonNaming.NATIVE) {
-      name = fullName;
-      altNames.insert(0, nativeName);
+    if (nativeName != null) {
+      if (personNaming != PersonNaming.NATIVE) {
+        name = fullName;
+        altNames.insert(0, nativeName);
+      } else {
+        name = nativeName;
+        altNames.insert(0, fullName);
+      }
     } else {
-      name = nativeName;
-      altNames.insert(0, fullName);
+      name = fullName;
     }
 
     final yearsActive = map['yearsActive'] as List?;

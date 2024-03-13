@@ -1,8 +1,10 @@
 Otraku aims to support most AniList features and it already covers:
+
 - Tracking media and managing/filtering collections
 - Browsing/Filtering media/characters/staff/studios/users/reviews
 - Viewing general and user activity feeds
 - Composing messages
 - Calendar for release schedules
 - Customization with different themes and other options
+
 And more!

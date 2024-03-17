@@ -4,5 +4,4 @@
 - Reduced minimum year in release year filter to 1917
 - AniList settings are saved with a floating action button now
 - Fixed collection refresh forgetting the selected list
-- Fixed missing entries in collections and ignored name preferences
-- Fixed settings not reflecting account switching
+- Fixed missing entries in collections, ignored name preferences and settings not reflecting account switching

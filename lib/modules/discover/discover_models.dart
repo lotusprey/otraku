@@ -61,43 +61,43 @@ sealed class DiscoverItems {
 }
 
 class DiscoverAnimeItems extends DiscoverItems {
-  const DiscoverAnimeItems(this.pages);
+  const DiscoverAnimeItems([this.pages = const Paged()]);
 
   final Paged<DiscoverMediaItem> pages;
 }
 
 class DiscoverMangaItems extends DiscoverItems {
-  const DiscoverMangaItems(this.pages);
+  const DiscoverMangaItems([this.pages = const Paged()]);
 
   final Paged<DiscoverMediaItem> pages;
 }
 
 class DiscoverCharacterItems extends DiscoverItems {
-  const DiscoverCharacterItems(this.pages);
+  const DiscoverCharacterItems([this.pages = const Paged()]);
 
   final Paged<TileItem> pages;
 }
 
 class DiscoverStaffItems extends DiscoverItems {
-  const DiscoverStaffItems(this.pages);
+  const DiscoverStaffItems([this.pages = const Paged()]);
 
   final Paged<TileItem> pages;
 }
 
 class DiscoverStudioItems extends DiscoverItems {
-  const DiscoverStudioItems(this.pages);
+  const DiscoverStudioItems([this.pages = const Paged()]);
 
   final Paged<StudioItem> pages;
 }
 
 class DiscoverUserItems extends DiscoverItems {
-  const DiscoverUserItems(this.pages);
+  const DiscoverUserItems([this.pages = const Paged()]);
 
   final Paged<UserItem> pages;
 }
 
 class DiscoverReviewItems extends DiscoverItems {
-  const DiscoverReviewItems(this.pages);
+  const DiscoverReviewItems([this.pages = const Paged()]);
 
   final Paged<ReviewItem> pages;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/character/character_models.dart';
@@ -9,42 +11,79 @@ import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/common/utils/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/models/paged.dart';
 
-final discoverFilterProvider = StateProvider(
-  (ref) => DiscoverFilter(Options().defaultDiscoverType),
+final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
+  DiscoverNotifier.new,
 );
 
-final discoverProvider =
-    StateNotifierProvider<DiscoverNotifier, AsyncValue<DiscoverItems>>(
-  (ref) => DiscoverNotifier(ref.watch(discoverFilterProvider)),
+final discoverFilterProvider =
+    NotifierProvider<DiscoverFilterNotifier, DiscoverFilter>(
+  DiscoverFilterNotifier.new,
 );
 
-class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
-  DiscoverNotifier(this.filter) : super(const AsyncValue.loading()) {
-    fetch();
+class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
+  late DiscoverFilter filter;
+
+  @override
+  FutureOr<DiscoverItems> build() {
+    filter = ref.watch(discoverFilterProvider);
+    return switch (filter.type) {
+      DiscoverType.Anime => _fetchAnime(const DiscoverAnimeItems()),
+      DiscoverType.Manga => _fetchManga(const DiscoverMangaItems()),
+      DiscoverType.Character =>
+        _fetchCharacters(const DiscoverCharacterItems()),
+      DiscoverType.Staff => _fetchStaff(const DiscoverStaffItems()),
+      DiscoverType.Studio => _fetchStudios(const DiscoverStudioItems()),
+      DiscoverType.User => _fetchUsers(const DiscoverUserItems()),
+      DiscoverType.Review => _fetchReviews(const DiscoverReviewItems()),
+    };
   }
 
-  final DiscoverFilter filter;
+  Future<void> fetch() async {
+    final oldValue = state.valueOrNull;
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(() => switch (filter.type) {
+          DiscoverType.Anime => _fetchAnime(
+              (oldValue is DiscoverAnimeItems)
+                  ? oldValue
+                  : const DiscoverAnimeItems(),
+            ),
+          DiscoverType.Manga => _fetchManga(
+              (oldValue is DiscoverMangaItems)
+                  ? oldValue
+                  : const DiscoverMangaItems(),
+            ),
+          DiscoverType.Character => _fetchCharacters(
+              (oldValue is DiscoverCharacterItems)
+                  ? oldValue
+                  : const DiscoverCharacterItems(),
+            ),
+          DiscoverType.Staff => _fetchStaff(
+              (oldValue is DiscoverStaffItems)
+                  ? oldValue
+                  : const DiscoverStaffItems(),
+            ),
+          DiscoverType.Studio => _fetchStudios(
+              (oldValue is DiscoverStudioItems)
+                  ? oldValue
+                  : const DiscoverStudioItems(),
+            ),
+          DiscoverType.User => _fetchUsers(
+              (oldValue is DiscoverUserItems)
+                  ? oldValue
+                  : const DiscoverUserItems(),
+            ),
+          DiscoverType.Review => _fetchReviews(
+              (oldValue is DiscoverReviewItems)
+                  ? oldValue
+                  : const DiscoverReviewItems(),
+            ),
+        });
+  }
 
-  Future<void> fetch() async =>
-      state = await AsyncValue.guard(() => switch (filter.type) {
-            DiscoverType.Anime => _fetchAnime(),
-            DiscoverType.Manga => _fetchManga(),
-            DiscoverType.Character => _fetchCharacters(),
-            DiscoverType.Staff => _fetchStaff(),
-            DiscoverType.Studio => _fetchStudios(),
-            DiscoverType.User => _fetchUsers(),
-            DiscoverType.Review => _fetchReviews(),
-          });
-
-  Future<DiscoverItems> _fetchAnime() async {
-    final value = (state.valueOrNull is DiscoverAnimeItems)
-        ? (state.valueOrNull as DiscoverAnimeItems).pages
-        : const Paged<DiscoverMediaItem>();
-
+  Future<DiscoverItems> _fetchAnime(DiscoverAnimeItems oldValue) async {
     final data = await Api.get(GqlQuery.mediaPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       'type': 'ANIME',
       if (filter.search.isNotEmpty) ...{
         'search': filter.search,
@@ -58,19 +97,15 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(DiscoverMediaItem(m));
     }
 
-    return DiscoverAnimeItems(value.withNext(
+    return DiscoverAnimeItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchManga() async {
-    final value = (state.valueOrNull is DiscoverMangaItems)
-        ? (state.valueOrNull as DiscoverMangaItems).pages
-        : const Paged<DiscoverMediaItem>();
-
+  Future<DiscoverItems> _fetchManga(DiscoverMangaItems oldValue) async {
     final data = await Api.get(GqlQuery.mediaPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       'type': 'MANGA',
       if (filter.search.isNotEmpty) ...{
         'search': filter.search,
@@ -84,19 +119,16 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(DiscoverMediaItem(m));
     }
 
-    return DiscoverMangaItems(value.withNext(
+    return DiscoverMangaItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchCharacters() async {
-    final value = (state.valueOrNull is DiscoverCharacterItems)
-        ? (state.valueOrNull as DiscoverCharacterItems).pages
-        : const Paged<TileItem>();
-
+  Future<DiscoverItems> _fetchCharacters(
+      DiscoverCharacterItems oldValue) async {
     final data = await Api.get(GqlQuery.characterPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
     });
@@ -106,19 +138,15 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(characterItem(c));
     }
 
-    return DiscoverCharacterItems(value.withNext(
+    return DiscoverCharacterItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchStaff() async {
-    final value = (state.valueOrNull is DiscoverStaffItems)
-        ? (state.valueOrNull as DiscoverStaffItems).pages
-        : const Paged<TileItem>();
-
+  Future<DiscoverItems> _fetchStaff(DiscoverStaffItems oldValue) async {
     final data = await Api.get(GqlQuery.staffPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
       if (filter.hasBirthday) 'isBirthday': true,
     });
@@ -128,19 +156,15 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(staffItem(s));
     }
 
-    return DiscoverStaffItems(value.withNext(
+    return DiscoverStaffItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchStudios() async {
-    final value = (state.valueOrNull is DiscoverStudioItems)
-        ? (state.valueOrNull as DiscoverStudioItems).pages
-        : const Paged<StudioItem>();
-
+  Future<DiscoverItems> _fetchStudios(DiscoverStudioItems oldValue) async {
     final data = await Api.get(GqlQuery.studioPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
     });
 
@@ -149,19 +173,15 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(StudioItem(s));
     }
 
-    return DiscoverStudioItems(value.withNext(
+    return DiscoverStudioItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchUsers() async {
-    final value = (state.valueOrNull is DiscoverUserItems)
-        ? (state.valueOrNull as DiscoverUserItems).pages
-        : const Paged<UserItem>();
-
+  Future<DiscoverItems> _fetchUsers(DiscoverUserItems oldValue) async {
     final data = await Api.get(GqlQuery.userPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       if (filter.search.isNotEmpty) 'search': filter.search,
     });
 
@@ -170,19 +190,15 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(UserItem(u));
     }
 
-    return DiscoverUserItems(value.withNext(
+    return DiscoverUserItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
 
-  Future<DiscoverItems> _fetchReviews() async {
-    final value = (state.valueOrNull is DiscoverReviewItems)
-        ? (state.valueOrNull as DiscoverReviewItems).pages
-        : const Paged<ReviewItem>();
-
+  Future<DiscoverItems> _fetchReviews(DiscoverReviewItems oldValue) async {
     final data = await Api.get(GqlQuery.reviewPage, {
-      'page': value.next,
+      'page': oldValue.pages.next,
       'sort': filter.reviewSort.name,
     });
 
@@ -191,9 +207,23 @@ class DiscoverNotifier extends StateNotifier<AsyncValue<DiscoverItems>> {
       items.add(ReviewItem(r));
     }
 
-    return DiscoverReviewItems(value.withNext(
+    return DiscoverReviewItems(oldValue.pages.withNext(
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
+}
+
+class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
+  @override
+  DiscoverFilter build() => DiscoverFilter(Options().defaultDiscoverType);
+
+  @override
+  DiscoverFilter get state => super.state;
+
+  @override
+  set state(DiscoverFilter newState) => super.state = state;
+
+  DiscoverFilter update(DiscoverFilter Function(DiscoverFilter) callback) =>
+      super.state = callback(state);
 }

@@ -106,24 +106,21 @@ class _TopBarContent extends StatelessWidget {
                   tooltip: 'Sort',
                   icon: Ionicons.funnel_outline,
                   onTap: () {
-                    final index =
-                        ref.read(discoverFilterProvider).reviewSort.index;
+                    final current = ref.read(discoverFilterProvider).reviewSort;
 
-                    final sheetButtons = [
-                      for (int i = 0; i < ReviewsSort.values.length; i++)
-                        GradientSheetButton(
-                            text: ReviewsSort.values.elementAt(i).text,
-                            selected: index == i,
+                    showSheet(
+                      context,
+                      GradientSheet([
+                        for (final rs in ReviewsSort.values)
+                          GradientSheetButton(
+                            text: rs.text,
+                            selected: rs == current,
                             onTap: () => ref
                                 .read(discoverFilterProvider.notifier)
-                                .update(
-                                  (s) => s.copyWith(
-                                    reviewSort: ReviewsSort.values.elementAt(i),
-                                  ),
-                                )),
-                    ];
-
-                    showSheet(context, GradientSheet(sheetButtons));
+                                .update((s) => s.copyWith(reviewSort: rs)),
+                          ),
+                      ]),
+                    );
                   },
                 )
               else
@@ -152,15 +149,14 @@ class _ActionButton extends StatelessWidget {
             showSheet(
               context,
               GradientSheet([
-                for (int i = 0; i < DiscoverType.values.length; i++)
+                for (final dt in DiscoverType.values)
                   GradientSheetButton(
-                    text: DiscoverType.values[i].name.noScreamingSnakeCase,
-                    icon: _typeIcon(DiscoverType.values[i]),
-                    selected: type.index == i,
-                    onTap: () =>
-                        ref.read(discoverFilterProvider.notifier).update(
-                              (s) => s.copyWith(type: DiscoverType.values[i]),
-                            ),
+                    text: dt.name.noScreamingSnakeCase,
+                    icon: _typeIcon(dt),
+                    selected: dt == type,
+                    onTap: () => ref
+                        .read(discoverFilterProvider.notifier)
+                        .update((s) => s.copyWith(type: dt)),
                   ),
               ]),
             );

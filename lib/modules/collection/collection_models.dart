@@ -5,6 +5,117 @@ import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
+sealed class Collection {
+  const Collection({required this.scoreFormat});
+
+  final ScoreFormat scoreFormat;
+
+  List<Entry> get entries;
+  String get listName;
+
+  void sort(EntrySort s);
+}
+
+class PreviewCollection extends Collection {
+  const PreviewCollection._({
+    required this.entries,
+    required super.scoreFormat,
+  });
+
+  factory PreviewCollection(Map<String, dynamic> map) {
+    final entries = <Entry>[];
+    for (final l in map['lists']) {
+      if (l['isCustomList']) continue;
+
+      for (final e in l['entries']) {
+        entries.add(Entry(e));
+      }
+    }
+
+    return PreviewCollection._(
+      entries: entries,
+      scoreFormat: ScoreFormat.values.byName(
+        map['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+      ),
+    );
+  }
+
+  @override
+  final List<Entry> entries;
+
+  @override
+  String get listName => 'Current';
+
+  @override
+  void sort(EntrySort s) {
+    entries.sort(entryComparator(s));
+  }
+}
+
+class FullCollection extends Collection {
+  const FullCollection._({
+    required this.lists,
+    required this.index,
+    required super.scoreFormat,
+  });
+
+  factory FullCollection(Map<String, dynamic> map, bool ofAnime, int index) {
+    final maps = map['lists'] as List<dynamic>;
+    final lists = <EntryList>[];
+    final metaData =
+        map['user']['mediaListOptions'][ofAnime ? 'animeList' : 'mangaList'];
+    bool splitCompleted = metaData['splitCompletedSectionByFormat'] ?? false;
+
+    for (final String section in metaData['sectionOrder']) {
+      final pos = maps.indexWhere((l) => l['name'] == section);
+      if (pos == -1) continue;
+
+      final l = maps.removeAt(pos);
+
+      lists.add(EntryList(l, splitCompleted));
+    }
+
+    for (final l in maps) {
+      lists.add(EntryList(l, splitCompleted));
+    }
+
+    if (index >= lists.length) index = 0;
+
+    return FullCollection._(
+      lists: lists,
+      index: index,
+      scoreFormat: ScoreFormat.values.byName(
+        map['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+      ),
+    );
+  }
+
+  final List<EntryList> lists;
+  final int index;
+
+  @override
+  List<Entry> get entries => lists.isEmpty ? const [] : lists[index].entries;
+
+  @override
+  String get listName => lists.isEmpty ? '' : lists[index].name;
+
+  @override
+  void sort(EntrySort s) {
+    final comparator = entryComparator(s);
+    for (final l in lists) {
+      l.entries.sort(comparator);
+    }
+  }
+
+  FullCollection withIndex(int newIndex) => newIndex == index
+      ? this
+      : FullCollection._(
+          lists: lists,
+          index: newIndex,
+          scoreFormat: scoreFormat,
+        );
+}
+
 class EntryList {
   EntryList._({
     required this.name,

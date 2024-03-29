@@ -1,7 +1,7 @@
 abstract class GqlQuery {
   static const collection = r'''
-    query Collection($userId: Int, $type: MediaType) {
-      MediaListCollection(userId: $userId, type: $type) {
+    query Collection($userId: Int, $type: MediaType, $status_in: [MediaListStatus]) {
+      MediaListCollection(userId: $userId, type: $type, status_in: $status_in) {
         lists {name isCustomList isSplitCompletedList status entries {...collectionEntry}}
         user {
           mediaListOptions {
@@ -11,16 +11,6 @@ abstract class GqlQuery {
             mangaList {sectionOrder splitCompletedSectionByFormat}
           }
         }
-      }
-    }
-  '''
-      '${_GqlFragment.collectionEntry}';
-
-  static const collectionPreview = r'''
-    query CollectionPreview($userId: Int, $type: MediaType) {
-      MediaListCollection(userId: $userId, type: $type, status_in: [CURRENT, REPEATING]) {
-        lists {isCustomList entries {...collectionEntry}}
-        user {mediaListOptions {scoreFormat}}
       }
     }
   '''

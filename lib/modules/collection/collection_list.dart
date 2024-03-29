@@ -4,7 +4,6 @@ import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/entry_labels.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
@@ -20,22 +19,18 @@ class CollectionList extends StatelessWidget {
   const CollectionList({
     required this.items,
     required this.scoreFormat,
-    required this.onProgressUpdate,
+    required this.onProgressUpdated,
   });
 
   final List<Entry> items;
   final ScoreFormat scoreFormat;
-
-  /// Called when a tile's progress gets incremented.
-  /// If `null` the increment button won't appear, so this
-  /// should only be `null` when viewing other users' collections.
-  final void Function(Entry, List<String>)? onProgressUpdate;
+  final Future<String?> Function(Entry)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
     return SliverFixedExtentList(
       delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i], scoreFormat, onProgressUpdate),
+        (_, i) => _Tile(items[i], scoreFormat, onProgressUpdated),
         childCount: items.length,
       ),
       // The added pixels are for the bottom margin.
@@ -45,11 +40,11 @@ class CollectionList extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdate);
+  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdated);
 
   final Entry entry;
   final ScoreFormat scoreFormat;
-  final void Function(Entry, List<String>)? onProgressUpdate;
+  final Future<String?> Function(Entry)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +74,7 @@ class _Tile extends StatelessWidget {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
-                child: _TileContent(entry, scoreFormat, onProgressUpdate),
+                child: _TileContent(entry, scoreFormat, onProgressUpdated),
               ),
             ),
           ],
@@ -92,11 +87,11 @@ class _Tile extends StatelessWidget {
 /// The content is a [StatefulWidget], as it
 /// needs to update when the progress increments.
 class _TileContent extends StatefulWidget {
-  const _TileContent(this.item, this.scoreFormat, this.onProgressUpdate);
+  const _TileContent(this.item, this.scoreFormat, this.onProgressUpdated);
 
   final Entry item;
   final ScoreFormat scoreFormat;
-  final void Function(Entry, List<String>)? onProgressUpdate;
+  final Future<String?> Function(Entry)? onProgressUpdated;
 
   @override
   State<_TileContent> createState() => __TileContentState();
@@ -192,14 +187,14 @@ class __TileContentState extends State<_TileContent> {
             else
               const SizedBox(),
             NotesLabel(item.notes),
-            _buildProgressButton(),
+            _buildProgressButton(context),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildProgressButton() {
+  Widget _buildProgressButton(BuildContext context) {
     final item = widget.item;
     final text = Text(
       item.progress == item.progressMax
@@ -208,7 +203,7 @@ class __TileContentState extends State<_TileContent> {
       style: Theme.of(context).textTheme.labelSmall,
     );
 
-    if (widget.onProgressUpdate == null || item.progress == item.progressMax) {
+    if (widget.onProgressUpdated == null || item.progress == item.progressMax) {
       return Tooltip(message: 'Progress', child: text);
     }
 
@@ -227,22 +222,19 @@ class __TileContentState extends State<_TileContent> {
         }
 
         setState(() => item.progress++);
-        final result = await updateProgress(item.mediaId, item.progress);
+        final err = await widget.onProgressUpdated!(item);
+        if (err == null) return;
 
-        if (result is! List<String>) {
-          if (mounted) {
-            showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Could not update progress',
-                content: result.toString(),
-              ),
-            );
-          }
-          return;
+        setState(() => item.progress--);
+        if (context.mounted) {
+          showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Could not update progress',
+              content: err,
+            ),
+          );
         }
-
-        widget.onProgressUpdate?.call(item, result);
       },
       child: Tooltip(
         message: 'Increment Progress',

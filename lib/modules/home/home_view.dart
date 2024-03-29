@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activities_provider.dart';
-import 'package:otraku/modules/collection/collection_preview_provider.dart';
-import 'package:otraku/modules/collection/collection_preview_view.dart';
-import 'package:otraku/modules/collection/collection_providers.dart';
+import 'package:otraku/modules/collection/collection_entries_provider.dart';
 import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
@@ -93,19 +91,10 @@ class _HomeViewState extends ConsumerState<HomeView>
       ref.watch(discoverProvider.select((_) => null));
     }
 
-    final notifier = ref.watch(homeProvider);
-
-    notifier.didExpandCollection(true)
-        ? ref.watch(entriesProvider(_animeCollectionTag).select((_) => null))
-        : ref.watch(
-            collectionPreviewProvider(_animeCollectionTag).select((_) => null),
-          );
-
-    notifier.didExpandCollection(false)
-        ? ref.watch(entriesProvider(_mangaCollectionTag).select((_) => null))
-        : ref.watch(
-            collectionPreviewProvider(_mangaCollectionTag).select((_) => null),
-          );
+    ref.watch(
+        collectionEntriesProvider(_animeCollectionTag).select((_) => null));
+    ref.watch(
+        collectionEntriesProvider(_mangaCollectionTag).select((_) => null));
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
@@ -153,32 +142,18 @@ class _HomeViewState extends ConsumerState<HomeView>
         controller: _tabCtrl,
         children: [
           FeedView(_feedScrollCtrl),
-          if (notifier.didExpandCollection(true))
-            CollectionSubView(
-              scrollCtrl: _animeScrollCtrl,
-              tag: _animeCollectionTag,
-              focusNode: _searchFocusNode,
-              key: Key(true.toString()),
-            )
-          else
-            CollectionPreviewView(
-              scrollCtrl: _animeScrollCtrl,
-              tag: _animeCollectionTag,
-              key: Key(true.toString()),
-            ),
-          if (notifier.didExpandCollection(false))
-            CollectionSubView(
-              scrollCtrl: _mangaScrollCtrl,
-              tag: _mangaCollectionTag,
-              focusNode: _searchFocusNode,
-              key: Key(false.toString()),
-            )
-          else
-            CollectionPreviewView(
-              scrollCtrl: _mangaScrollCtrl,
-              tag: _mangaCollectionTag,
-              key: Key(false.toString()),
-            ),
+          CollectionSubView(
+            scrollCtrl: _animeScrollCtrl,
+            tag: _animeCollectionTag,
+            focusNode: _searchFocusNode,
+            key: Key(true.toString()),
+          ),
+          CollectionSubView(
+            scrollCtrl: _mangaScrollCtrl,
+            tag: _mangaCollectionTag,
+            focusNode: _searchFocusNode,
+            key: Key(false.toString()),
+          ),
           DiscoverView(_searchFocusNode, _discoverScrollCtrl),
           UserSubView(_userTag, null, primaryScrollCtrl),
         ],

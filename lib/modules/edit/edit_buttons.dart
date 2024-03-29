@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/modules/collection/collection_preview_provider.dart';
-import 'package:otraku/modules/collection/collection_providers.dart';
+import 'package:otraku/modules/collection/collection_provider.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
-import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -54,46 +51,24 @@ class _EditButtonsState extends State<EditButtons> {
           final newEdit = ref.read(newEditProvider(widget.tag));
           setState(() => _loading = true);
 
-          final entry = await updateEntry(newEdit, Options().id!);
+          final tag = (userId: Options().id!, ofAnime: oldEdit.type == 'ANIME');
+          final err = await ref
+              .read(collectionProvider(tag).notifier)
+              .saveEntry(oldEdit, newEdit);
 
-          if (entry is! Entry) {
-            if (context.mounted) {
-              showPopUp(
-                context,
-                ConfirmationDialog(
-                  title: 'Could not update entry',
-                  content: entry.toString(),
-                ),
-              );
-            }
+          if (err == null) {
+            widget.callback?.call(newEdit);
+            if (context.mounted) Navigator.pop(context);
             return;
           }
 
-          final ofAnime = newEdit.type == 'ANIME';
-          final tag = (userId: Options().id!, ofAnime: ofAnime);
-
-          if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
-            await ref.read(collectionProvider(tag)).updateEntry(
-                  entry,
-                  oldEdit,
-                  newEdit,
-                  ref.read(collectionFilterProvider(tag)).mediaFilter.sort,
-                );
-          } else if (newEdit.status == EntryStatus.CURRENT ||
-              newEdit.status == EntryStatus.REPEATING) {
-            if (oldEdit.status == EntryStatus.CURRENT ||
-                oldEdit.status == EntryStatus.REPEATING) {
-              ref.read(collectionPreviewProvider(tag)).update(entry);
-            } else {
-              ref.read(collectionPreviewProvider(tag)).add(entry);
-            }
-          } else if (oldEdit.status == EntryStatus.CURRENT ||
-              oldEdit.status == EntryStatus.REPEATING) {
-            ref.read(collectionPreviewProvider(tag)).remove(entry.mediaId);
+          if (context.mounted) {
+            Navigator.pop(context);
+            showPopUp(
+              context,
+              ConfirmationDialog(title: 'Could not update entry', content: err),
+            );
           }
-
-          widget.callback?.call(newEdit);
-          if (context.mounted) Navigator.pop(context);
         },
       );
 
@@ -111,38 +86,31 @@ class _EditButtonsState extends State<EditButtons> {
               setState(() => _loading = true);
 
               final oldEdit = widget.oldEdit;
-              final err = await removeEntry(oldEdit.entryId!);
+              final tag = (
+                userId: Options().id!,
+                ofAnime: oldEdit.type == 'ANIME',
+              );
+
+              final err = await ref
+                  .read(collectionProvider(tag).notifier)
+                  .removeEntry(oldEdit);
+
+              if (err == null) {
+                widget.callback?.call(oldEdit.emptyCopy());
+                if (context.mounted) Navigator.pop(context);
+                return;
+              }
 
               if (context.mounted) {
                 Navigator.pop(context);
-
-                if (err != null) {
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
-                      title: 'Could not remove entry',
-                      content: err.toString(),
-                    ),
-                  );
-                  return;
-                }
-              } else {
-                if (err != null) return;
+                showPopUp(
+                  context,
+                  ConfirmationDialog(
+                    title: 'Could not remove entry',
+                    content: err,
+                  ),
+                );
               }
-
-              final ofAnime = oldEdit.type == 'ANIME';
-              final tag = (userId: Options().id!, ofAnime: ofAnime);
-
-              if (ref.read(homeProvider).didExpandCollection(ofAnime)) {
-                ref.read(collectionProvider(tag)).removeEntry(oldEdit);
-              } else if (oldEdit.status == EntryStatus.CURRENT ||
-                  oldEdit.status == EntryStatus.REPEATING) {
-                ref
-                    .read(collectionPreviewProvider(tag))
-                    .remove(oldEdit.mediaId);
-              }
-
-              widget.callback?.call(oldEdit.emptyCopy());
             },
           ),
         ),

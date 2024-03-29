@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -12,17 +11,10 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
-  const CollectionGrid({
-    required this.items,
-    required this.onProgressUpdate,
-  });
+  const CollectionGrid({required this.items, required this.onProgressUpdated});
 
   final List<Entry> items;
-
-  /// Called when a tile's progress gets incremented.
-  /// If `null` the increment button won't appear, so this
-  /// should only be `null` when viewing other users' collections.
-  final void Function(Entry, List<String>)? onProgressUpdate;
+  final Future<String?> Function(Entry)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +57,7 @@ class CollectionGrid extends StatelessWidget {
                     ),
                   ),
                 ),
-                _IncrementButton(items[i], onProgressUpdate),
+                _IncrementButton(items[i], onProgressUpdated),
               ],
             ),
           ),
@@ -76,10 +68,10 @@ class CollectionGrid extends StatelessWidget {
 }
 
 class _IncrementButton extends StatefulWidget {
-  const _IncrementButton(this.item, this.onProgressUpdate);
+  const _IncrementButton(this.item, this.onProgressUpdated);
 
   final Entry item;
-  final void Function(Entry, List<String>)? onProgressUpdate;
+  final Future<String?> Function(Entry)? onProgressUpdated;
 
   @override
   State<_IncrementButton> createState() => _IncrementButtonState();
@@ -105,15 +97,34 @@ class _IncrementButtonState extends State<_IncrementButton> {
       );
     }
 
-    final warning =
-        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!;
+    final overridenTextColor =
+        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
+            ? Theme.of(context).colorScheme.error
+            : null;
+
+    if (widget.onProgressUpdated == null) {
+      return Tooltip(
+        message: 'Progress',
+        child: SizedBox(
+          height: 30,
+          child: Center(
+            child: Text(
+              '${item.progress}/${item.progressMax ?? "?"}',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: overridenTextColor,
+                  ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 30),
         padding: const EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: warning ? Theme.of(context).colorScheme.error : null,
+        foregroundColor: overridenTextColor,
       ),
       onPressed: () async {
         if (item.progressMax != null &&
@@ -123,22 +134,19 @@ class _IncrementButtonState extends State<_IncrementButton> {
         }
 
         setState(() => item.progress++);
-        final result = await updateProgress(item.mediaId, item.progress);
+        final err = await widget.onProgressUpdated!(item);
+        if (err == null) return;
 
-        if (result is! List<String>) {
-          if (context.mounted) {
-            showPopUp(
-              context,
-              ConfirmationDialog(
-                title: 'Could not update progress',
-                content: result.toString(),
-              ),
-            );
-          }
-          return;
+        setState(() => item.progress--);
+        if (context.mounted) {
+          showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Could not update progress',
+              content: err,
+            ),
+          );
         }
-
-        widget.onProgressUpdate?.call(item, result);
       },
       child: Tooltip(
         message: 'Increment Progress',

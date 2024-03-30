@@ -10,7 +10,7 @@ import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.8+2';
+const versionCode = '1.3.0';
 
 /// General options keys.
 enum _OptionKey {

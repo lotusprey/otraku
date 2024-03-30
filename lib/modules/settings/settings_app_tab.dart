@@ -31,30 +31,7 @@ class SettingsAppTab extends StatelessWidget {
           initiallyExpanded: true,
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-              child: SegmentedButton(
-                segments: const [
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    label: Text('System'),
-                    icon: Icon(Icons.sync_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    label: Text('Light'),
-                    icon: Icon(Icons.wb_sunny_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    label: Text('Dark'),
-                    icon: Icon(Icons.mode_night_outlined),
-                  ),
-                ],
-                selected: {Options().themeMode},
-                onSelectionChanged: (v) => Options().themeMode = v.first,
-              ),
-            ),
+            const _ThemeModeSelection(),
             const ThemePreview(),
             StatefulSwitchListTile(
               title: const Text('Pure White/Black Theme'),
@@ -219,6 +196,45 @@ class SettingsAppTab extends StatelessWidget {
           onChanged: (v) => Options().confirmExit = v,
         ),
       ],
+    );
+  }
+}
+
+class _ThemeModeSelection extends StatefulWidget {
+  const _ThemeModeSelection();
+
+  @override
+  State<_ThemeModeSelection> createState() => __ThemeModeSelectionState();
+}
+
+class __ThemeModeSelectionState extends State<_ThemeModeSelection> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      child: SegmentedButton(
+        segments: const [
+          ButtonSegment(
+            value: ThemeMode.system,
+            label: Text('System'),
+            icon: Icon(Icons.sync_outlined),
+          ),
+          ButtonSegment(
+            value: ThemeMode.light,
+            label: Text('Light'),
+            icon: Icon(Icons.wb_sunny_outlined),
+          ),
+          ButtonSegment(
+            value: ThemeMode.dark,
+            label: Text('Dark'),
+            icon: Icon(Icons.mode_night_outlined),
+          ),
+        ],
+        selected: {Options().themeMode},
+        onSelectionChanged: (v) => setState(
+          () => Options().themeMode = v.first,
+        ),
+      ),
     );
   }
 }

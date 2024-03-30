@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
@@ -224,7 +225,12 @@ class _ImageDialogState extends State<ImageDialog>
         child: InteractiveViewer(
           clipBehavior: Clip.none,
           transformationController: _transformCtrl,
-          child: Image.network(widget.url),
+          child: CachedImage(
+            widget.url,
+            fit: BoxFit.contain,
+            width: null,
+            height: null,
+          ),
         ),
       ),
     );

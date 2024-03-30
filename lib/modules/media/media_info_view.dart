@@ -190,12 +190,14 @@ class _ExpandableTextState extends State<_ExpandableText> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 5),
-        child: InkWell(
-          borderRadius: Consts.borderRadiusMax,
-          onTap: () => setState(() => _expanded = !_expanded),
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: content,
+        child: Card.outlined(
+          child: InkWell(
+            borderRadius: Consts.borderRadiusMin,
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: content,
+            ),
           ),
         ),
       ),

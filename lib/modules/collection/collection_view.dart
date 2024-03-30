@@ -182,7 +182,7 @@ class _ActionButton extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final collection = ref.watch(
-          collectionProvider(tag).select((s) => s.valueOrNull),
+          collectionProvider(tag).select((s) => s.unwrapPrevious().valueOrNull),
         );
 
         return switch (collection) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/staff/staff_providers.dart';
+import 'package:otraku/modules/staff/staff_provider.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/html_content.dart';

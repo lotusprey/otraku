@@ -20,9 +20,11 @@ class _ThemePreviewState extends State<ThemePreview> {
 
     return Consumer(
       builder: (context, ref, _) {
-        final system = ref
-            .watch(homeProvider)
-            .getSystemScheme(brightness == Brightness.dark);
+        final system = ref.watch(homeProvider.select(
+          (s) => brightness == Brightness.dark
+              ? s.systemDarkScheme
+              : s.systemLightScheme,
+        ));
 
         final children = <_ThemeCard>[];
         if (system != null) {

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
@@ -84,9 +84,9 @@ class AppState extends ConsumerState<App> {
           darkDynamic = darkDynamic.harmonized().copyWith(
                 background: darkBackground,
               );
-          notifier.setSystemSchemes(lightDynamic, darkDynamic);
+          notifier.cacheSystemColorSchemes(lightDynamic, darkDynamic);
         } else {
-          notifier.setSystemSchemes(null, null);
+          notifier.cacheSystemColorSchemes(null, null);
         }
 
         if (theme == null && hasDynamic) {

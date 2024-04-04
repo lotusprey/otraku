@@ -1,4 +1,4 @@
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
 

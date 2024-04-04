@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/activity/activities_provider.dart';
+import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/collection/collection_entries_provider.dart';
-import 'package:otraku/modules/discover/discover_providers.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/discover/discover_filter_provider.dart';
+import 'package:otraku/modules/discover/discover_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
 import 'package:otraku/modules/user/user_providers.dart';
@@ -103,7 +106,7 @@ class _HomeViewState extends ConsumerState<HomeView>
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         items: {
-          for (final t in HomeTab.values) t.title: t.iconData,
+          for (final tab in HomeTab.values) tab.title: _homeTabIconData(tab),
         },
         onSame: (i) {
           final tab = HomeTab.values[i];
@@ -112,14 +115,14 @@ class _HomeViewState extends ConsumerState<HomeView>
             case HomeTab.anime:
               if (_animeScrollCtrl.position.pixels > 0) {
                 _animeScrollCtrl.scrollToTop();
-              } else if (ref.read(homeProvider).didExpandCollection(true)) {
+              } else {
                 _toggleSearchFocus();
               }
               return;
             case HomeTab.manga:
               if (_mangaScrollCtrl.position.pixels > 0) {
                 _mangaScrollCtrl.scrollToTop();
-              } else if (ref.read(homeProvider).didExpandCollection(false)) {
+              } else {
                 _toggleSearchFocus();
               }
               return;
@@ -164,4 +167,12 @@ class _HomeViewState extends ConsumerState<HomeView>
   void _toggleSearchFocus() => _searchFocusNode.hasFocus
       ? _searchFocusNode.unfocus()
       : _searchFocusNode.requestFocus();
+
+  IconData _homeTabIconData(HomeTab tab) => switch (tab) {
+        HomeTab.feed => Ionicons.file_tray_outline,
+        HomeTab.anime => Ionicons.film_outline,
+        HomeTab.manga => Ionicons.book_outline,
+        HomeTab.discover => Ionicons.compass_outline,
+        HomeTab.profile => Ionicons.person_outline,
+      };
 }

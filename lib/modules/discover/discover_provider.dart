@@ -1,24 +1,19 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/common/models/tile_item.dart';
+import 'package:otraku/modules/discover/discover_filter_provider.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/review/review_models.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
   DiscoverNotifier.new,
-);
-
-final discoverFilterProvider =
-    NotifierProvider<DiscoverFilterNotifier, DiscoverFilter>(
-  DiscoverFilterNotifier.new,
 );
 
 class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
@@ -212,18 +207,4 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
   }
-}
-
-class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
-  @override
-  DiscoverFilter build() => DiscoverFilter(Options().defaultDiscoverType);
-
-  @override
-  DiscoverFilter get state => super.state;
-
-  @override
-  set state(DiscoverFilter newState) => super.state = state;
-
-  DiscoverFilter update(DiscoverFilter Function(DiscoverFilter) callback) =>
-      super.state = callback(state);
 }

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/collection/collection_provider.dart';

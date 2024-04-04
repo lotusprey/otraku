@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 

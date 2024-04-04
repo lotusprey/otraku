@@ -6,8 +6,9 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
+import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 
@@ -37,11 +38,6 @@ final staffProvider = FutureProvider.autoDispose.family(
 final staffRelationsProvider = AsyncNotifierProvider.autoDispose
     .family<StaffRelationsNotifier, StaffRelations, int>(
   StaffRelationsNotifier.new,
-);
-
-final staffFilterProvider =
-    NotifierProvider.autoDispose.family<StaffFilterNotifier, StaffFilter, int>(
-  StaffFilterNotifier.new,
 );
 
 class StaffRelationsNotifier
@@ -153,12 +149,4 @@ class StaffRelationsNotifier
 
     return StaffRelations(charactersAndMedia: charactersAndMedia, roles: roles);
   }
-}
-
-class StaffFilterNotifier extends AutoDisposeFamilyNotifier<StaffFilter, int> {
-  @override
-  StaffFilter build(arg) => StaffFilter();
-
-  @override
-  set state(StaffFilter newState) => super.state = newState;
 }

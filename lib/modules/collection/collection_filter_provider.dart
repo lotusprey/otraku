@@ -15,7 +15,7 @@ class CollectionFilterNotifier
   CollectionFilter build(arg) {
     final filter = CollectionFilter(arg.ofAnime);
     final selectIsInAnimePreview = homeProvider.select(
-      (s) => !s.didExpandCollection(true),
+      (s) => !s.didExpandAnimeCollection,
     );
 
     if (arg.userId == Options().id &&

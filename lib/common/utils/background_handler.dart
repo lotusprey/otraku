@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:workmanager/workmanager.dart';

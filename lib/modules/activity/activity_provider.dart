@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/options.dart';

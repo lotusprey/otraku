@@ -4,7 +4,7 @@ import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/media/media_action_buttons.dart';
 import 'package:otraku/modules/media/media_grids.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/modules/statistics/charts.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/modules/media/media_info_view.dart';

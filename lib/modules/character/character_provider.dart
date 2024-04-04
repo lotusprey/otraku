@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/modules/character/character_filter_provider.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
@@ -37,11 +38,6 @@ final characterProvider = FutureProvider.autoDispose.family(
 final characterMediaProvider = AsyncNotifierProvider.autoDispose
     .family<CharacterMediaNotifier, CharacterMedia, int>(
   CharacterMediaNotifier.new,
-);
-
-final characterFilterProvider = NotifierProvider.autoDispose
-    .family<CharacterFilterNotifier, CharacterFilter, int>(
-  CharacterFilterNotifier.new,
 );
 
 class CharacterMediaNotifier
@@ -167,13 +163,4 @@ class CharacterMediaNotifier
           language: language,
         ),
       );
-}
-
-class CharacterFilterNotifier
-    extends AutoDisposeFamilyNotifier<CharacterFilter, int> {
-  @override
-  CharacterFilter build(arg) => CharacterFilter();
-
-  @override
-  set state(CharacterFilter newState) => super.state = newState;
 }

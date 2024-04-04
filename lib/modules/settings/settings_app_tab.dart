@@ -3,7 +3,7 @@ import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';

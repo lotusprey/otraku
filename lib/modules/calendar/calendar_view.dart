@@ -12,6 +12,7 @@ import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
+import 'package:otraku/modules/calendar/calendar_filter_provider.dart';
 import 'package:otraku/modules/calendar/calendar_filter_sheet.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/calendar/calendar_provider.dart';

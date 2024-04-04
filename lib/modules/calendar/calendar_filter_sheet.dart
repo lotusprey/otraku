@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
+import 'package:otraku/modules/calendar/calendar_filter_provider.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
-import 'package:otraku/modules/calendar/calendar_provider.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 
 void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {

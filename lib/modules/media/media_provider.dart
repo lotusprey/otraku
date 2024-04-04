@@ -8,7 +8,7 @@ import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 

@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/modules/notification/notifications_filter_provider.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
 import 'package:otraku/modules/notification/notifications_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';

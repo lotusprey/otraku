@@ -190,7 +190,7 @@ class _ActionButton extends StatelessWidget {
           PreviewCollection _ => ActionButton(
               tooltip: 'Load Entire Collection',
               icon: Ionicons.enter_outline,
-              onTap: () => ref.read(homeProvider).expandCollection(
+              onTap: () => ref.read(homeProvider.notifier).expandCollection(
                     tag.ofAnime,
                   ),
             ),

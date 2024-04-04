@@ -2,6 +2,8 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 
+const homeFeedId = -1;
+
 class ExpandedActivity {
   ExpandedActivity(this.activity, this.replies);
 

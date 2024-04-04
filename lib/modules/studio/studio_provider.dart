@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
+import 'package:otraku/modules/studio/studio_filter_provider.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 /// Favorite/Unfavorite studio. Returns `true` if successful.
@@ -29,9 +30,6 @@ final studioMediaProvider = AsyncNotifierProvider.autoDispose
     .family<StudioMediaNotifier, StudioMedia, int>(
   StudioMediaNotifier.new,
 );
-
-final studioFilterProvider = NotifierProvider.autoDispose
-    .family<StudioFilterNotifier, StudioFilter, int>(StudioFilterNotifier.new);
 
 class StudioMediaNotifier
     extends AutoDisposeFamilyAsyncNotifier<StudioMedia, int> {
@@ -98,13 +96,4 @@ class StudioMediaNotifier
       categories: categories,
     );
   }
-}
-
-class StudioFilterNotifier
-    extends AutoDisposeFamilyNotifier<StudioFilter, int> {
-  @override
-  StudioFilter build(arg) => StudioFilter();
-
-  @override
-  set state(StudioFilter newState) => super.state = newState;
 }

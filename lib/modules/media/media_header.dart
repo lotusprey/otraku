@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';

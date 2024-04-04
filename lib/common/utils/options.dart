@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:otraku/modules/auth/account.dart';
+import 'package:otraku/modules/viewer/account_model.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';

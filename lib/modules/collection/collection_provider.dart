@@ -6,7 +6,7 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 final collectionProvider = AsyncNotifierProvider.autoDispose
@@ -27,7 +27,9 @@ class CollectionNotifier
 
     final isFull = arg.userId != Options().id ||
         ref.watch(homeProvider.select(
-          (s) => s.didExpandCollection(arg.ofAnime),
+          (s) => arg.ofAnime
+              ? s.didExpandAnimeCollection
+              : s.didExpandMangaCollection,
         ));
 
     final data = await Api.get(GqlQuery.collection, {

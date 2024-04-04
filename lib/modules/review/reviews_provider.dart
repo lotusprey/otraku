@@ -2,18 +2,14 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/modules/review/review_models.dart';
+import 'package:otraku/modules/review/reviews_sort_provider.dart';
 
 final reviewsProvider = AsyncNotifierProvider.autoDispose
     .family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
   ReviewsNotifier.new,
-);
-
-final reviewsSortProvider =
-    NotifierProvider.autoDispose.family<ReviewsSortNotifier, ReviewsSort, int>(
-  ReviewsSortNotifier.new,
 );
 
 class ReviewsNotifier
@@ -52,15 +48,4 @@ class ReviewsNotifier
       data['Page']['pageInfo']['total'] ?? oldState.total,
     );
   }
-}
-
-class ReviewsSortNotifier extends AutoDisposeFamilyNotifier<ReviewsSort, int> {
-  @override
-  ReviewsSort build(arg) => ReviewsSort.CREATED_AT_DESC;
-
-  @override
-  ReviewsSort get state => super.state;
-
-  @override
-  set state(ReviewsSort newState) => super.state = newState;
 }

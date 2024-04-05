@@ -7,7 +7,7 @@ final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(
   HomeNotifier.new,
 );
 
-class HomeNotifier extends Notifier<Home> {
+class HomeNotifier extends AutoDisposeNotifier<Home> {
   @override
   Home build() => Home(
         didExpandAnimeCollection: !Options().animeCollectionPreview,

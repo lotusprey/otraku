@@ -130,7 +130,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         ),
       ),
       scrollbarTheme: ScrollbarThemeData(
+        interactive: true,
         radius: Consts.radiusMin,
+        thickness: MaterialStateProperty.all(5),
         thumbColor: MaterialStateProperty.all(scheme.primary),
       ),
       inputDecorationTheme: InputDecorationTheme(

@@ -79,22 +79,25 @@ class CollectionSubView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_ActionButton(tag)],
       ),
-      child: Consumer(
-        builder: (context, ref, _) {
-          return ConstrainedView(
-            child: CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                SliverRefreshControl(
-                  onRefresh: () => ref.invalidate(collectionProvider(tag)),
-                ),
-                _Content(tag),
-                const SliverFooter(),
-              ],
-            ),
-          );
-        },
+      child: Scrollbar(
+        controller: scrollCtrl,
+        child: Consumer(
+          builder: (context, ref, _) {
+            return ConstrainedView(
+              child: CustomScrollView(
+                physics: Consts.physics,
+                controller: scrollCtrl,
+                slivers: [
+                  SliverRefreshControl(
+                    onRefresh: () => ref.invalidate(collectionProvider(tag)),
+                  ),
+                  _Content(tag),
+                  const SliverFooter(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

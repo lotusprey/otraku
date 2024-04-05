@@ -84,9 +84,10 @@ class AppState extends ConsumerState<App> {
           darkDynamic = darkDynamic.harmonized().copyWith(
                 background: darkBackground,
               );
-          notifier.cacheSystemColorSchemes(lightDynamic, darkDynamic);
-        } else {
-          notifier.cacheSystemColorSchemes(null, null);
+
+          Future(
+            () => notifier.cacheSystemColorSchemes(lightDynamic, darkDynamic),
+          );
         }
 
         if (theme == null && hasDynamic) {

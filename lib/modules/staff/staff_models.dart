@@ -2,6 +2,7 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
@@ -68,7 +69,7 @@ class Staff {
       name: name,
       altNames: altNames,
       imageUrl: map['image']['large'],
-      description: map['description'] ?? '',
+      description: parseMarkdown(map['description'] ?? ''),
       dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
       dateOfDeath: StringUtil.fromFuzzyDate(map['dateOfDeath']),
       bloodType: map['bloodType'],

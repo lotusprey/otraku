@@ -63,8 +63,11 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
               onTap: () => showSheet(
                 context,
                 CompositionView(
-                  composition: Composition.reply(null, '', widget.id),
-                  onDone: (map) => ref
+                  tag: ActivityReplyCompositionTag(
+                    id: null,
+                    activityId: widget.id,
+                  ),
+                  onSaved: (map) => ref
                       .read(activityProvider(widget.id).notifier)
                       .appendReply(map),
                 ),

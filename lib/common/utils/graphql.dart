@@ -244,7 +244,7 @@ abstract class GqlQuery {
       id
       name{first middle last native alternative alternativeSpoiler}
       image{large}
-      description(asHtml: true)
+      description
       dateOfBirth{year month day}
       bloodType
       gender
@@ -315,7 +315,7 @@ abstract class GqlQuery {
       id
       name{first middle last native alternative}
       image{large}
-      description(asHtml: true)
+      description
       dateOfBirth{year month day}
       dateOfDeath{year month day}
       gender
@@ -374,7 +374,7 @@ abstract class GqlQuery {
       Review(id: $id) {
         id
         summary
-        body(asHtml: true)
+        body
         score
         rating
         ratingAmount
@@ -393,8 +393,7 @@ abstract class GqlQuery {
         pageInfo {hasNextPage total}
         reviews(userId: $userId, sort: $sort) {
           id
-          summary 
-          body(asHtml: true)
+          summary
           rating
           ratingAmount
           media {id type title {userPreferred} bannerImage}
@@ -409,7 +408,7 @@ abstract class GqlQuery {
         User(id: $id, name: $name) {
           id
           name
-          about(asHtml: true)
+          about
           avatar {large}
           bannerImage
           isFollowing
@@ -510,18 +509,27 @@ abstract class GqlQuery {
       }
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activityReplies(activityId: $id) {
-          id
-          likeCount
-          isLiked
-          createdAt
-          text(asHtml: true)
-          user {id name avatar {large}}
-        }
+        activityReplies(activityId: $id) {...activityReply}
       }
     }
   '''
-      '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
+      '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}${_GqlFragment.activityReply}';
+
+  static const activityComposition = r'''
+    query ActivityComposition($id: Int) {
+      Activity(id: $id) {
+        ... on TextActivity {text}
+        ... on ListActivity {id}
+        ... on MessageActivity {message}
+      }
+    }
+  ''';
+
+  static const activityReplyComposition = r'''
+    query ActivityReplyComposition($id: Int) {
+      ActivityReply(id: $id) {text}
+    }
+  ''';
 
   static const activityPage = r'''
     query Activities($userId: Int, $userIdNot: Int, $page: Int = 1, $isFollowing: Boolean,
@@ -777,24 +785,18 @@ abstract class GqlMutation {
       '${_GqlFragment.textActivity}';
 
   static const saveMessageActivity = r'''
-    mutation SaveMessageActivity($id: Int, $recipientId: Int, $text: String, $private: Boolean) {
-      SaveMessageActivity(id: $id, recipientId: $recipientId, message: $text, private: $private) {...messageActivity}
+    mutation SaveMessageActivity($id: Int, $recipientId: Int, $text: String, $isPrivate: Boolean) {
+      SaveMessageActivity(id: $id, recipientId: $recipientId, message: $text, private: $isPrivate) {...messageActivity}
     }
   '''
       '${_GqlFragment.messageActivity}';
 
   static const saveActivityReply = r'''
     mutation SaveActivityReply($id: Int, $activityId: Int, $text: String) {
-      SaveActivityReply(id: $id, activityId: $activityId, text: $text) {
-        id
-        likeCount
-        isLiked
-        createdAt
-        text(asHtml: true)
-        user {id name avatar {large}}
-      }
+      SaveActivityReply(id: $id, activityId: $activityId, text: $text) {...activityReply}
     }
-  ''';
+  '''
+      '${_GqlFragment.activityReply}';
 
   static const toggleLike = r'''
     mutation ToggleLike($id: Int, $type: LikeableType) {
@@ -898,8 +900,36 @@ abstract class _GqlFragment {
       isPinned
       createdAt
       siteUrl
+      text
       user {id name avatar {large}}
-      text(asHtml: true)
+    }
+  ''';
+
+  static const messageActivity = r'''
+    fragment messageActivity on MessageActivity {
+      id
+      type
+      replyCount
+      likeCount
+      isLiked
+      isSubscribed
+      isPrivate
+      createdAt
+      siteUrl
+      message
+      messenger {id name avatar {large}}
+      recipient {id name avatar {large}}
+    }
+  ''';
+
+  static const activityReply = r'''
+    fragment activityReply on ActivityReply {
+      id
+      likeCount
+      isLiked
+      createdAt
+      text
+      user {id name avatar {large}}
     }
   ''';
 
@@ -918,23 +948,6 @@ abstract class _GqlFragment {
       media {id type title {userPreferred} coverImage {extraLarge large medium} format}
       progress
       status
-    }
-  ''';
-
-  static const messageActivity = r'''
-    fragment messageActivity on MessageActivity {
-      id
-      type
-      replyCount
-      likeCount
-      isLiked
-      isSubscribed
-      isPrivate
-      createdAt
-      siteUrl
-      recipient {id name avatar {large}}
-      messenger {id name avatar {large}}
-      message(asHtml: true)
     }
   ''';
 }

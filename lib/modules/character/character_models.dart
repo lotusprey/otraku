@@ -2,6 +2,7 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
@@ -67,7 +68,7 @@ class Character {
       name: name,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
-      description: map['description'] ?? '',
+      description: parseMarkdown(map['description'] ?? ''),
       imageUrl: map['image']['large'],
       dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
       bloodType: map['bloodType'],

@@ -339,11 +339,8 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   onTap: () => showSheet(
                     context,
                     CompositionView(
-                      composition: Composition.status(
-                        activity.id,
-                        activity.text,
-                      ),
-                      onDone: (map) => widget.onEdited?.call(map),
+                      tag: StatusActivityCompositionTag(id: activity.id),
+                      onSaved: (map) => widget.onEdited?.call(map),
                     ),
                   ),
                 ));
@@ -354,12 +351,11 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   onTap: () => showSheet(
                     context,
                     CompositionView(
-                      composition: Composition.message(
-                        activity.id,
-                        activity.text,
-                        activity.recipientId,
+                      tag: MessageActivityCompositionTag(
+                        id: activity.id,
+                        recipientId: activity.recipientId,
                       ),
-                      onDone: (map) => widget.onEdited?.call(map),
+                      onSaved: (map) => widget.onEdited?.call(map),
                     ),
                   ),
                 ));

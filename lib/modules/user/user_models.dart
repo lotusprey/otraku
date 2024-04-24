@@ -1,4 +1,5 @@
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/modules/statistics/user_statistics.dart';
 
 class UserItem {
@@ -44,7 +45,7 @@ class User {
     return User._(
       id: map['id'],
       name: map['name'],
-      description: map['about'] ?? '',
+      description: parseMarkdown(map['about'] ?? ''),
       imageUrl: map['avatar']['large'],
       bannerUrl: map['bannerImage'],
       siteUrl: map['siteUrl'],

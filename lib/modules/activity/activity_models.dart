@@ -1,5 +1,6 @@
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/common/utils/options.dart';
 
 const homeFeedId = -1;
@@ -31,7 +32,7 @@ class ActivityReply {
       authorId: map['user']['id'],
       authorName: map['user']['name'],
       authorAvatarUrl: map['user']['avatar']['large'],
-      text: map['text'] ?? '',
+      text: parseMarkdown(map['text'] ?? ''),
       createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
       likeCount: map['likeCount'] ?? 0,
       isLiked: map['isLiked'] ?? false,
@@ -81,7 +82,7 @@ sealed class Activity {
             authorName: map['user']['name'],
             authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
-            text: map['text'] ?? '',
+            text: parseMarkdown(map['text'] ?? ''),
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -104,7 +105,7 @@ sealed class Activity {
             recipientName: map['recipient']['name'],
             recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
-            text: map['message'] ?? '',
+            text: parseMarkdown(map['message'] ?? ''),
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),

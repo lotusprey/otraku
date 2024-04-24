@@ -66,8 +66,8 @@ class FeedView extends StatelessWidget {
                 onTap: () => showSheet(
                   context,
                   CompositionView(
-                    composition: Composition.status(null, ''),
-                    onDone: (map) => ref
+                    tag: const StatusActivityCompositionTag(id: null),
+                    onSaved: (map) => ref
                         .read(activitiesProvider(homeFeedId).notifier)
                         .insertActivity(map, Options().id!),
                   ),

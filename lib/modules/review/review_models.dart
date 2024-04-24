@@ -1,4 +1,5 @@
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/common/utils/options.dart';
 
 class ReviewItem {
@@ -58,7 +59,7 @@ class Review {
         mediaCover: map['media']['coverImage'][Options().imageQuality.value],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
-        text: map['body'] ?? '',
+        text: parseMarkdown(map['body'] ?? ''),
         createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,

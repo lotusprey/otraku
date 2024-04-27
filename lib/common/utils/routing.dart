@@ -26,8 +26,9 @@ import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_view.dart';
 
 List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
-  final FutureOr<bool> Function(BuildContext) onExit = (BuildContext context) {
-    if (!shoudConfirmExit()) return true;
+  final onExit = (BuildContext context, GoRouterState _) {
+    if (!shoudConfirmExit()) return Future.value(true);
+
     return showPopUp<bool>(
       context,
       ConfirmationDialog(
@@ -195,6 +196,16 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
         int.parse(state.pathParameters['id']!),
       ),
     ),
+    // Anilist media endpoints are split between anime/manga.
+    GoRoute(
+      path: '/anime/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/manga/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    ),
+    // Paths with superfluous information must be handled.
     GoRoute(
       path: '/anime/:id/:_(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',

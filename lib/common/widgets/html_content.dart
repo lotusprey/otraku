@@ -47,26 +47,21 @@ class HtmlContent extends StatelessWidget {
               child: _errorBuilder(context, element.localName, err),
             ),
       customStylesBuilder: (element) {
-        final styles = <String, String>{};
-
-        if (element.localName == 'h1' ||
-            element.localName == 'h2' ||
-            element.localName == 'h3') styles['font-size'] = '20px';
-
-        if (element.localName == 'b' || element.localName == 'strong') {
-          styles['font-weight'] = '500';
-        }
-
-        if (element.localName == 'i' || element.localName == 'em') {
-          styles['font-style'] = 'italic';
-        }
-
-        if (element.localName == 'img') {
-          final width = element.attributes['width'];
-          if (width != null) styles['width'] = width;
-        }
-
-        return styles;
+        return switch (element.localName) {
+          'br' => const {'line-height': '15px'},
+          'i' || 'em' => const {'font-style': 'italic'},
+          'b' || 'strong' => const {'font-weight': '500'},
+          'h1' => const {'font-size': '20px', 'font-weight': '400'},
+          'h2' => const {'font-size': '18px', 'font-weight': '400'},
+          'h3' => const {'font-size': '17px', 'font-weight': '400'},
+          'h5' => const {'font-size': '13px', 'font-weight': '400'},
+          'h4' || 'h6' => const {'font-weight': '400'},
+          'a' => const {'text-decoration': 'none'},
+          'img' => element.attributes['width'] != null
+              ? {'width': element.attributes['width']!}
+              : null,
+          _ => const {},
+        };
       },
       customWidgetBuilder: (element) {
         if (element.localName == 'hr') {

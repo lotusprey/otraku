@@ -194,6 +194,10 @@ class _ExpandableTextState extends State<_ExpandableText> {
           child: InkWell(
             borderRadius: Consts.borderRadiusMin,
             onTap: () => setState(() => _expanded = !_expanded),
+            onLongPress: () {
+              final text = widget.text.replaceAll(RegExp(r'<br>'), '');
+              Toast.copy(context, text);
+            },
             child: Padding(
               padding: const EdgeInsets.all(10),
               child: content,

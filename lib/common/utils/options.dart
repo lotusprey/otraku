@@ -50,11 +50,13 @@ enum _ProfileKey {
 
 /// Available image qualities.
 enum ImageQuality {
-  VeryHigh('extraLarge'),
-  High('large'),
-  Medium('medium');
+  VeryHigh('Very High', 'extraLarge'),
+  High('High', 'large'),
+  Medium('Medium', 'medium');
 
-  const ImageQuality(this.value);
+  const ImageQuality(this.label, this.value);
+
+  final String label;
   final String value;
 }
 

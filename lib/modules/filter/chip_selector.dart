@@ -5,20 +5,26 @@ import 'package:otraku/modules/media/media_constants.dart';
 
 /// A horizontal list of chips, where only one can be selected at a time.
 class ChipSelector extends StatefulWidget {
+  /// Allows for nothing to be selected
   const ChipSelector({
     required this.title,
-    required this.options,
-    required this.current,
+    required this.labels,
+    required this.value,
     required this.onChanged,
-    this.mustHaveSelected = false,
-  }) : assert(current != null || !mustHaveSelected);
+  }) : mustHaveSelected = false;
+
+  /// Requires an option to be selected. [onChanged] will never receive `null`.
+  const ChipSelector.ensureSelected({
+    required this.title,
+    required this.labels,
+    required int this.value,
+    required this.onChanged,
+  }) : mustHaveSelected = true;
 
   final String title;
-  final List<String> options;
-  final int? current;
+  final List<String> labels;
+  final int? value;
   final void Function(int?) onChanged;
-
-  /// Whether it's allowed for [current] to be `null`.
   final bool mustHaveSelected;
 
   @override
@@ -26,27 +32,27 @@ class ChipSelector extends StatefulWidget {
 }
 
 class _ChipSelectorState extends State<ChipSelector> {
-  late int? _current = widget.current;
+  late int? _value = widget.value;
 
   @override
   void didUpdateWidget(covariant ChipSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _current = widget.current;
+    _value = widget.value;
   }
 
   @override
   Widget build(BuildContext context) {
     return _ChipSelectorLayout(
       title: widget.title,
-      options: widget.options,
+      options: widget.labels,
       itemBuilder: (context, index) => FilterChip(
-        label: Text(widget.options[index]),
-        selected: index == _current,
+        label: Text(widget.labels[index]),
+        selected: index == _value,
         onSelected: (selected) {
-          if (_current == index && widget.mustHaveSelected) return;
+          if (_value == index && widget.mustHaveSelected) return;
 
-          setState(() => selected ? _current = index : _current = null);
-          widget.onChanged(_current);
+          setState(() => selected ? _value = index : _value = null);
+          widget.onChanged(_value);
         },
       ),
     );

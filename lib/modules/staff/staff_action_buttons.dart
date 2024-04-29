@@ -72,11 +72,10 @@ class StaffFilterButton extends StatelessWidget {
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    ChipSelector(
+                    ChipSelector.ensureSelected(
                       title: 'Sort',
-                      options: MediaSort.values.map((s) => s.label).toList(),
-                      current: filter.sort.index,
-                      mustHaveSelected: true,
+                      labels: MediaSort.values.map((s) => s.label).toList(),
+                      value: filter.sort.index,
                       onChanged: (i) => filter = filter.copyWith(
                         sort: MediaSort.values.elementAt(i!),
                       ),
@@ -84,8 +83,8 @@ class StaffFilterButton extends StatelessWidget {
                     if (full) ...[
                       ChipSelector(
                         title: 'Type',
-                        options: const ['Anime', 'Manga'],
-                        current: filter.ofAnime == null
+                        labels: const ['Anime', 'Manga'],
+                        value: filter.ofAnime == null
                             ? null
                             : filter.ofAnime!
                                 ? 0
@@ -100,8 +99,8 @@ class StaffFilterButton extends StatelessWidget {
                     ],
                     ChipSelector(
                       title: 'List Presence',
-                      options: const ['In Lists', 'Not in Lists'],
-                      current: filter.inLists == null
+                      labels: const ['In Lists', 'Not in Lists'],
+                      value: filter.inLists == null
                           ? null
                           : filter.inLists!
                               ? 0

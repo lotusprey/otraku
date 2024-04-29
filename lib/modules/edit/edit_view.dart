@@ -302,13 +302,13 @@ class _EditView extends StatelessWidget {
             ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
 
         if (!settings.advancedScoringEnabled ||
-            settings.scoreFormat != ScoreFormat.POINT_100 &&
-                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL) {
+            settings.scoreFormat != ScoreFormat.point100 &&
+                settings.scoreFormat != ScoreFormat.point10Decimal) {
           return const SliverToBoxAdapter(child: SizedBox());
         }
 
         final scores = ref.watch(provider.notifier).state.advancedScores;
-        final isDecimal = settings.scoreFormat == ScoreFormat.POINT_10_DECIMAL;
+        final isDecimal = settings.scoreFormat == ScoreFormat.point10Decimal;
 
         final onChanged = (entry, score) {
           scores[entry.key] = score.toDouble();

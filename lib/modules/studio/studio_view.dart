@@ -252,19 +252,18 @@ class _FilterButton extends StatelessWidget {
                     vertical: 20,
                   ),
                   children: [
-                    ChipSelector(
+                    ChipSelector.ensureSelected(
                       title: 'Sort',
-                      options: MediaSort.values.map((s) => s.label).toList(),
-                      current: filter.sort.index,
-                      mustHaveSelected: true,
+                      labels: MediaSort.values.map((s) => s.label).toList(),
+                      value: filter.sort.index,
                       onChanged: (i) => filter = filter.copyWith(
                         sort: MediaSort.values.elementAt(i!),
                       ),
                     ),
                     ChipSelector(
                       title: 'List Presence',
-                      options: const ['In Lists', 'Not in Lists'],
-                      current: filter.inLists == null
+                      labels: const ['In Lists', 'Not in Lists'],
+                      value: filter.inLists == null
                           ? null
                           : filter.inLists!
                               ? 0
@@ -276,8 +275,8 @@ class _FilterButton extends StatelessWidget {
                     ),
                     ChipSelector(
                       title: 'Main Studio',
-                      options: const ['Is Main', 'Is Not Main'],
-                      current: filter.isMain == null
+                      labels: const ['Is Main', 'Is Not Main'],
+                      value: filter.isMain == null
                           ? null
                           : filter.isMain!
                               ? 0

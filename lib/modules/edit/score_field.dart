@@ -18,19 +18,19 @@ class ScoreField extends StatelessWidget {
         final score = ref.watch(newEditProvider(tag).select((s) => s.score));
         final scoreFormat =
             ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
-                ScoreFormat.POINT_10;
+                ScoreFormat.point10;
 
         final onChanged = (num v) => ref
             .read(newEditProvider(tag).notifier)
             .update((s) => s.copyWith(score: v.toDouble()));
 
         return switch (scoreFormat) {
-          ScoreFormat.POINT_3 => _SmileyScorePicker(score, onChanged),
-          ScoreFormat.POINT_5 => _StarScorePicker(score, onChanged),
-          ScoreFormat.POINT_10 => _TenScorePicker(score, onChanged),
-          ScoreFormat.POINT_10_DECIMAL =>
+          ScoreFormat.point3 => _SmileyScorePicker(score, onChanged),
+          ScoreFormat.point5 => _StarScorePicker(score, onChanged),
+          ScoreFormat.point10 => _TenScorePicker(score, onChanged),
+          ScoreFormat.point10Decimal =>
             _TenDecimalScorePicker(score, onChanged),
-          ScoreFormat.POINT_100 => _HundredScorePicker(score, onChanged),
+          ScoreFormat.point100 => _HundredScorePicker(score, onChanged),
         };
       },
     );

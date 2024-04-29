@@ -134,18 +134,18 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
-            options: OriginCountry.values
+            labels: OriginCountry.values
                 .map((v) => v.name.noScreamingSnakeCase)
                 .toList(),
-            current: filter.country?.index,
+            value: filter.country?.index,
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
           if (widget.ofViewer)
             ChipSelector(
               title: 'Visibility',
-              options: const ['Private', 'Public'],
-              current: filter.isPrivate == null
+              labels: const ['Private', 'Public'],
+              value: filter.isPrivate == null
                   ? null
                   : filter.isPrivate!
                       ? 0
@@ -158,8 +158,8 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
             ),
           ChipSelector(
             title: 'Notes',
-            options: const ['With Notes', 'Without Notes'],
-            current: filter.hasNotes == null
+            labels: const ['With Notes', 'Without Notes'],
+            value: filter.hasNotes == null
                 ? null
                 : filter.hasNotes!
                     ? 0
@@ -208,11 +208,10 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),
         children: [
-          ChipSelector(
+          ChipSelector.ensureSelected(
             title: 'Sorting',
-            options: MediaSort.values.map((s) => s.label).toList(),
-            current: filter.sort.index,
-            mustHaveSelected: true,
+            labels: MediaSort.values.map((s) => s.label).toList(),
+            value: filter.sort.index,
             onChanged: (i) => filter.sort = MediaSort.values.elementAt(i!),
           ),
           ChipEnumMultiSelector(
@@ -235,10 +234,10 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           if (widget.ofAnime)
             ChipSelector(
               title: 'Season',
-              options: MediaSeason.values
+              labels: MediaSeason.values
                   .map((v) => v.name.noScreamingSnakeCase)
                   .toList(),
-              current: filter.season?.index,
+              value: filter.season?.index,
               onChanged: (selected) => filter.season = selected != null
                   ? MediaSeason.values.elementAt(selected)
                   : null,
@@ -269,10 +268,10 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
-            options: OriginCountry.values
+            labels: OriginCountry.values
                 .map((v) => v.name.noScreamingSnakeCase)
                 .toList(),
-            current: filter.country?.index,
+            value: filter.country?.index,
             onChanged: (val) => filter.country =
                 val == null ? null : OriginCountry.values.elementAt(val),
           ),
@@ -283,8 +282,8 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           ChipSelector(
             title: 'List Presence',
-            options: const ['In Lists', 'Not in Lists'],
-            current: filter.inLists == null
+            labels: const ['In Lists', 'Not in Lists'],
+            value: filter.inLists == null
                 ? null
                 : filter.inLists!
                     ? 0
@@ -297,8 +296,8 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           ),
           ChipSelector(
             title: 'Age Restriction',
-            options: const ['Adult', 'Non-Adult'],
-            current: filter.isAdult == null
+            labels: const ['Adult', 'Non-Adult'],
+            value: filter.isAdult == null
                 ? null
                 : filter.isAdult!
                     ? 0

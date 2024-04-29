@@ -39,7 +39,7 @@ class Character {
       if (names['last']?.isNotEmpty ?? false) names['last'],
     ];
 
-    final fullName = personNaming == PersonNaming.ROMAJI_WESTERN
+    final fullName = personNaming == PersonNaming.romajiWestern
         ? nameSegments.join(' ')
         : nameSegments.reversed.toList().join(' ');
     final nativeName = names['native'];
@@ -52,7 +52,7 @@ class Character {
 
     String name;
     if (nativeName != null) {
-      if (personNaming != PersonNaming.NATIVE) {
+      if (personNaming != PersonNaming.native) {
         name = fullName;
         altNames.insert(0, nativeName);
       } else {

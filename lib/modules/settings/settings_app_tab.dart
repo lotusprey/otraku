@@ -6,7 +6,6 @@ import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
@@ -61,11 +60,10 @@ class SettingsAppTab extends StatelessWidget {
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Discover Media Sorting',
-                options: MediaSort.values.map((s) => s.label).toList(),
-                current: Options().defaultDiscoverSort.index,
-                mustHaveSelected: true,
+                labels: MediaSort.values.map((s) => s.label).toList(),
+                value: Options().defaultDiscoverSort.index,
                 onChanged: (i) => Options().defaultDiscoverSort =
                     MediaSort.values.elementAt(i!),
               ),
@@ -109,38 +107,31 @@ class SettingsAppTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: DropDownField<int>(
+              child: ChipSelector.ensureSelected(
                 title: 'Home Tab',
+                labels: HomeTab.values.map((v) => v.label).toList(),
                 value: Options().defaultHomeTab.index,
-                items: {
-                  for (final t in HomeTab.values) t.title: t.index,
-                },
-                onChanged: (v) => Options().defaultHomeTab = HomeTab.values[v],
+                onChanged: (v) => Options().defaultHomeTab = HomeTab.values[v!],
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField<DiscoverType>(
+              child: ChipSelector.ensureSelected(
                 title: 'Default Discover Type',
-                value: Options().defaultDiscoverType,
-                items: Map.fromIterable(
-                  DiscoverType.values,
-                  key: (v) => (v as DiscoverType).name,
-                ),
-                onChanged: (v) => Options().defaultDiscoverType = v,
+                labels: DiscoverType.values.map((v) => v.name).toList(),
+                value: Options().defaultDiscoverSort.index,
+                onChanged: (v) =>
+                    Options().defaultDiscoverType = DiscoverType.values[v!],
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField<ImageQuality>(
+              child: ChipSelector.ensureSelected(
                 title: 'Image Quality',
-                value: Options().imageQuality,
-                items: const {
-                  'Very High': ImageQuality.VeryHigh,
-                  'High': ImageQuality.High,
-                  'Medium': ImageQuality.Medium,
-                },
-                onChanged: (v) => Options().imageQuality = v,
+                labels: ImageQuality.values.map((v) => v.label).toList(),
+                value: Options().imageQuality.index,
+                onChanged: (v) =>
+                    Options().imageQuality = ImageQuality.values[v!],
               ),
             ),
           ],
@@ -150,32 +141,29 @@ class SettingsAppTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Discover View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().discoverItemView,
+                labels: const ['Detailed List', 'Simple Grid'],
+                value: Options().discoverItemView,
                 onChanged: (val) => Options().discoverItemView = val!,
-                mustHaveSelected: true,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Collection View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().collectionItemView,
+                labels: const ['Detailed List', 'Simple Grid'],
+                value: Options().collectionItemView,
                 onChanged: (val) => Options().collectionItemView = val!,
-                mustHaveSelected: true,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Collection Preview View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().collectionPreviewItemView,
+                labels: const ['Detailed List', 'Simple Grid'],
+                value: Options().collectionPreviewItemView,
                 onChanged: (val) => Options().collectionPreviewItemView = val!,
-                mustHaveSelected: true,
               ),
             ),
           ],

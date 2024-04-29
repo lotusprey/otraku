@@ -106,7 +106,7 @@ class _HomeViewState extends ConsumerState<HomeView>
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         items: {
-          for (final tab in HomeTab.values) tab.title: _homeTabIconData(tab),
+          for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
         },
         onSame: (i) {
           final tab = HomeTab.values[i];

@@ -48,17 +48,13 @@ class Home {
 }
 
 enum HomeTab {
-  feed,
-  anime,
-  manga,
-  discover,
-  profile;
+  feed('Feed'),
+  anime('Anime'),
+  manga('Manga'),
+  discover('Discover'),
+  profile('Profile');
 
-  String get title => switch (this) {
-        feed => 'Feed',
-        anime => 'Anime',
-        manga => 'Manga',
-        discover => 'Discover',
-        profile => 'Profile',
-      };
+  const HomeTab(this.label);
+
+  final String label;
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
+import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/common/widgets/fields/drop_down_field.dart';
@@ -31,28 +32,22 @@ class SettingsContentTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: DropDownField(
+              child: ChipSelector.ensureSelected(
                 title: 'Title Language',
-                value: settings.titleLanguage,
-                items: const {
-                  'Romaji': 'ROMAJI',
-                  'English': 'ENGLISH',
-                  'Native': 'NATIVE',
-                },
-                onChanged: (val) => settings.titleLanguage = val,
+                labels: TitleLanguage.labels,
+                value: settings.titleLanguage.index,
+                onChanged: (v) =>
+                    settings.titleLanguage = TitleLanguage.values[v!],
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField(
+              child: ChipSelector.ensureSelected(
                 title: 'Character & Staff Names',
-                value: settings.personNaming,
-                items: const {
-                  'Romaji, Western Order': PersonNaming.ROMAJI_WESTERN,
-                  'Romaji': PersonNaming.ROMAJI,
-                  'Native': PersonNaming.NATIVE,
-                },
-                onChanged: (val) => settings.personNaming = val,
+                labels: PersonNaming.labels,
+                value: settings.personNaming.index,
+                onChanged: (v) =>
+                    settings.personNaming = PersonNaming.values[v!],
               ),
             ),
             Padding(
@@ -96,14 +91,11 @@ class SettingsContentTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: DropDownField<ScoreFormat>(
+              child: ChipSelector.ensureSelected(
                 title: 'Scoring System',
-                value: settings.scoreFormat,
-                items: Map.fromIterable(
-                  ScoreFormat.values,
-                  key: (v) => (v as ScoreFormat).label,
-                ),
-                onChanged: (val) => settings.scoreFormat = val,
+                labels: ScoreFormat.labels,
+                value: settings.personNaming.index,
+                onChanged: (v) => settings.scoreFormat = ScoreFormat.values[v!],
               ),
             ),
             Padding(

@@ -48,19 +48,23 @@ enum MediaSeason {
 }
 
 enum ScoreFormat {
-  POINT_100,
-  POINT_10_DECIMAL,
-  POINT_10,
-  POINT_5,
-  POINT_3;
+  point100('100 Points', 'POINT_100'),
+  point10Decimal('10 Decimal Points', 'POINT_10_DECIMAL'),
+  point10('10 Points', 'POINT_10'),
+  point5('5 Stars', 'POINT_5'),
+  point3('3 Smileys', 'POINT_3');
 
-  String get label => switch (this) {
-        POINT_100 => '100 Points',
-        POINT_10_DECIMAL => '10 Decimal Points',
-        POINT_10 => '10 Points',
-        POINT_5 => '5 Stars',
-        POINT_3 => '3 Smileys',
-      };
+  const ScoreFormat(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static final labels = ScoreFormat.values.map((v) => v.label).toList();
+
+  static ScoreFormat from(String? value) => ScoreFormat.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => point10,
+      );
 }
 
 enum MediaSource {

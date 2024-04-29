@@ -332,7 +332,7 @@ class _ContentState extends State<_Content> {
                     collectionProvider(widget.tag).select(
                       (s) =>
                           s.valueOrNull?.scoreFormat ??
-                          ScoreFormat.POINT_10_DECIMAL,
+                          ScoreFormat.point10Decimal,
                     ),
                   ),
                 );

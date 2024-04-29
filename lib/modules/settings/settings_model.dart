@@ -27,16 +27,12 @@ class Settings {
 
   factory Settings(Map<String, dynamic> map) => Settings._(
         unreadNotifications: map['unreadNotificationCount'] ?? 0,
-        scoreFormat: ScoreFormat.values.byName(
-          map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
-        ),
+        scoreFormat: ScoreFormat.from(map['mediaListOptions']['scoreFormat']),
         defaultSort: EntrySort.fromRowOrder(
           map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
-        titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
-        personNaming: PersonNaming.fromText(
-          map['options']['staffNameLanguage'],
-        ),
+        titleLanguage: TitleLanguage.from(map['options']['titleLanguage']),
+        personNaming: PersonNaming.from(map['options']['staffNameLanguage']),
         activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']
                 ['splitCompletedSectionByFormat'] ??
@@ -72,10 +68,10 @@ class Settings {
 
   factory Settings.empty() => Settings._(
         unreadNotifications: 0,
-        scoreFormat: ScoreFormat.POINT_10,
+        scoreFormat: ScoreFormat.point10,
         defaultSort: EntrySort.TITLE,
-        titleLanguage: 'ROMAJI',
-        personNaming: PersonNaming.ROMAJI_WESTERN,
+        titleLanguage: TitleLanguage.romaji,
+        personNaming: PersonNaming.romajiWestern,
         activityMergeTime: 720,
         splitCompletedAnime: false,
         splitCompletedManga: false,
@@ -92,7 +88,7 @@ class Settings {
 
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
-  String titleLanguage;
+  TitleLanguage titleLanguage;
   PersonNaming personNaming;
   int activityMergeTime;
   bool splitCompletedAnime;
@@ -129,11 +125,11 @@ class Settings {
       );
 
   Map<String, dynamic> toMap() => {
-        'titleLanguage': titleLanguage,
-        'staffNameLanguage': personNaming.name,
+        'titleLanguage': titleLanguage.value,
+        'staffNameLanguage': personNaming.value,
         'activityMergeTime': activityMergeTime,
         'displayAdultContent': displayAdultContent,
-        'scoreFormat': scoreFormat.name,
+        'scoreFormat': scoreFormat.value,
         'rowOrder': defaultSort.toRowOrder(),
         'advancedScoring': advancedScores,
         'advancedScoringEnabled': advancedScoringEnabled,
@@ -150,14 +146,38 @@ class Settings {
       };
 }
 
-enum PersonNaming {
-  ROMAJI_WESTERN,
-  ROMAJI,
-  NATIVE;
+enum TitleLanguage {
+  romaji('Romaji', 'ROMAJI'),
+  english('English', 'ENGLISH'),
+  native('Native', 'NATIVE');
 
-  static PersonNaming fromText(String? s) => switch (s) {
-        'ROMAJI' => ROMAJI,
-        'NATIVE' => NATIVE,
-        _ => ROMAJI_WESTERN,
-      };
+  const TitleLanguage(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static final labels = TitleLanguage.values.map((v) => v.label).toList();
+
+  static TitleLanguage from(String? value) => TitleLanguage.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => romaji,
+      );
+}
+
+enum PersonNaming {
+  romajiWestern('Romaji, Western Order', 'ROMAJI_WESTERN'),
+  romaji('Romaji', 'ROMAJI'),
+  native('Native', 'NATIVE');
+
+  const PersonNaming(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static final labels = PersonNaming.values.map((v) => v.label).toList();
+
+  static PersonNaming from(String? value) => PersonNaming.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => romajiWestern,
+      );
 }

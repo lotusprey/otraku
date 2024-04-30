@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/common/widgets/fields/labeled_field.dart';
+import 'package:flutter/widgets.dart';
 import 'package:otraku/common/widgets/fields/number_field.dart';
 
 const _minYear = 1917;
@@ -49,49 +49,46 @@ class _YearRangePickerState extends State<YearRangePicker> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 70,
-      child: LabeledField(
-        label: widget.title,
-        child: Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              NumberField(
-                value: _from,
-                minValue: _minYear,
-                maxValue: _maxYear,
-                onChanged: (from) {
-                  setState(() {
-                    _from = from;
-                    if (_to < _from) _to = _from;
-                  });
+    return Row(
+      children: [
+        Expanded(
+          child: NumberField(
+            label: 'Release Start',
+            value: _from,
+            minValue: _minYear,
+            maxValue: _maxYear,
+            onChanged: (from) {
+              setState(() {
+                _from = from;
+                if (_to < _from) _to = _from;
+              });
 
-                  _from > _minYear || _to < _maxYear
-                      ? widget.onChanged(_from, _to)
-                      : widget.onChanged(null, null);
-                },
-              ),
-              const SizedBox(width: 10),
-              NumberField(
-                value: _to,
-                minValue: _minYear,
-                maxValue: _maxYear,
-                onChanged: (to) {
-                  setState(() {
-                    _to = to;
-                    if (_from > _to) _from = _to;
-                  });
-
-                  _from > _minYear || _to < _maxYear
-                      ? widget.onChanged(_from, _to)
-                      : widget.onChanged(null, null);
-                },
-              ),
-            ],
+              _from > _minYear || _to < _maxYear
+                  ? widget.onChanged(_from, _to)
+                  : widget.onChanged(null, null);
+            },
           ),
         ),
-      ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: NumberField(
+            label: 'Release End',
+            value: _to,
+            minValue: _minYear,
+            maxValue: _maxYear,
+            onChanged: (to) {
+              setState(() {
+                _to = to;
+                if (_from > _to) _from = _to;
+              });
+
+              _from > _minYear || _to < _maxYear
+                  ? widget.onChanged(_from, _to)
+                  : widget.onChanged(null, null);
+            },
+          ),
+        ),
+      ],
     );
   }
 }

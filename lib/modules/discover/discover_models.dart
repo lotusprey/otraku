@@ -9,13 +9,17 @@ import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
 
 enum DiscoverType {
-  Anime,
-  Manga,
-  Character,
-  Staff,
-  Studio,
-  User,
-  Review,
+  anime('Anime'),
+  manga('Manga'),
+  character('Character'),
+  staff('Staff'),
+  studio('Studio'),
+  user('User'),
+  review('Review');
+
+  const DiscoverType(this.label);
+
+  final String label;
 }
 
 class DiscoverFilter {
@@ -110,7 +114,7 @@ class DiscoverMediaItem extends TileItem {
     required super.imageUrl,
     required this.format,
     required this.releaseStatus,
-    required this.listStatus,
+    required this.entryStatus,
     required this.releaseYear,
     required this.averageScore,
     required this.popularity,
@@ -119,15 +123,12 @@ class DiscoverMediaItem extends TileItem {
 
   factory DiscoverMediaItem(Map<String, dynamic> map) => DiscoverMediaItem._(
         id: map['id'],
-        type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
+        type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Options().imageQuality.value],
         format: StringUtil.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: StringUtil.tryNoScreamingSnakeCase(map['status']),
-        listStatus: EntryStatus.formatText(
-          map['mediaListEntry']?['status'],
-          map['type'] == 'ANIME',
-        ),
+        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
         popularity: map['popularity'] ?? 0,
@@ -136,7 +137,7 @@ class DiscoverMediaItem extends TileItem {
 
   final String? format;
   final String? releaseStatus;
-  final String? listStatus;
+  final EntryStatus? entryStatus;
   final int? releaseYear;
   final int averageScore;
   final int popularity;

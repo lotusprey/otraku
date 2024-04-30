@@ -49,39 +49,39 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
       if (season == null || year == null) continue;
 
       switch (filter.season) {
-        case CalendarSeasonFilter.Current:
+        case CalendarSeasonFilter.current:
           final currSeason = _previousAndCurrentSeason().$2;
           if (season != currSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.Previous:
+        case CalendarSeasonFilter.previous:
           final prevSeason = _previousAndCurrentSeason().$1;
           if (season != prevSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.Other:
+        case CalendarSeasonFilter.other:
           final (prevSeason, currSeason) = _previousAndCurrentSeason();
           if ((season == prevSeason || season == currSeason) &&
               year >= filter.date.year - 1) {
             continue;
           }
           break;
-        case CalendarSeasonFilter.All:
+        case CalendarSeasonFilter.all:
           break;
       }
 
       final status = c['media']['mediaListEntry']?['status'];
       switch (filter.status) {
-        case CalendarStatusFilter.NotInLists:
+        case CalendarStatusFilter.notInLists:
           if (status != null) continue;
-        case CalendarStatusFilter.WatchingAndPlanning:
-          if (status != EntryStatus.CURRENT.name &&
-              status != EntryStatus.PLANNING.name) {
+        case CalendarStatusFilter.watchingAndPlanning:
+          if (status != EntryStatus.current.name &&
+              status != EntryStatus.planning.name) {
             continue;
           }
-        case CalendarStatusFilter.Other:
+        case CalendarStatusFilter.other:
           if (status == null ||
-              status == EntryStatus.CURRENT.name ||
-              status == EntryStatus.PLANNING.name) {
+              status == EntryStatus.current.name ||
+              status == EntryStatus.planning.name) {
             continue;
           }
-        case CalendarStatusFilter.All:
+        case CalendarStatusFilter.all:
           break;
       }
 

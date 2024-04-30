@@ -143,7 +143,10 @@ class _Tile extends StatelessWidget {
       else
         'Ep ${item.episode}': false,
     };
-    if (item.entryStatus != null) textRailItems[item.entryStatus!] = true;
+
+    if (item.entryStatus != null) {
+      textRailItems[item.entryStatus!.label(true)] = true;
+    }
 
     const contentPadding = EdgeInsets.symmetric(horizontal: 10);
 
@@ -151,7 +154,7 @@ class _Tile extends StatelessWidget {
       child: LinkTile(
         id: item.mediaId,
         info: item.cover,
-        discoverType: DiscoverType.Anime,
+        discoverType: DiscoverType.anime,
         child: Row(
           children: [
             Hero(

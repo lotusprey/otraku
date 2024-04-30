@@ -43,7 +43,7 @@ class SiteNotification {
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
-            discoverType: DiscoverType.User,
+            discoverType: DiscoverType.user,
           );
         case 'ACTIVITY_MENTION':
           return SiteNotification._(
@@ -242,8 +242,8 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'RELATED_MEDIA_ADDITION':
           return SiteNotification._(
@@ -261,8 +261,8 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DATA_CHANGE':
           return SiteNotification._(
@@ -280,8 +280,8 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_MERGE':
           final titles = List<String>.from(
@@ -305,8 +305,8 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DELETION':
           return SiteNotification._(

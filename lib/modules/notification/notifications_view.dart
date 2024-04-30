@@ -134,15 +134,15 @@ class _NotificationItem extends StatelessWidget {
                 if (item.imageUrl != null && item.headId != null)
                   GestureDetector(
                     onTap: () => context.push(switch (item.discoverType) {
-                      DiscoverType.Anime || DiscoverType.Manga => Routes.media(
+                      DiscoverType.anime || DiscoverType.manga => Routes.media(
                           item.headId!,
                           item.imageUrl,
                         ),
                       _ => Routes.user(item.headId!, item.imageUrl),
                     }),
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.Anime ||
-                          item.discoverType == DiscoverType.Manga) {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),
@@ -199,8 +199,8 @@ class _NotificationItem extends StatelessWidget {
                         ),
                     },
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.Anime ||
-                          item.discoverType == DiscoverType.Manga) {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),

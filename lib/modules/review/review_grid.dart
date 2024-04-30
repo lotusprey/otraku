@@ -36,7 +36,7 @@ class _Tile extends StatelessWidget {
     return LinkTile(
       id: item.id,
       info: item.bannerUrl,
-      discoverType: DiscoverType.Review,
+      discoverType: DiscoverType.review,
       child: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

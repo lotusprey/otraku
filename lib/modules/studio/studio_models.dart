@@ -51,7 +51,7 @@ class StudioMedia {
 
 class StudioFilter {
   StudioFilter({
-    this.sort = MediaSort.START_DATE_DESC,
+    this.sort = MediaSort.startDateDesc,
     this.inLists,
     this.isMain,
   });

@@ -45,8 +45,8 @@ class MediaHeader extends StatelessWidget {
           }
 
           if (media.edit.status != null) {
-            textRailItems[media.edit.status!.format(
-              info.type == DiscoverType.Anime,
+            textRailItems[media.edit.status!.label(
+              info.type == DiscoverType.anime,
             )] = false;
           }
 

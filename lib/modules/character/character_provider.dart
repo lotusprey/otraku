@@ -64,7 +64,7 @@ class CharacterMediaNotifier
     final variables = {
       'id': arg,
       'onList': filter.inLists,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
     };
 
     if (onAnime == null) {
@@ -95,7 +95,7 @@ class CharacterMediaNotifier
           title: a['node']['title']['userPreferred'],
           imageUrl: a['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
-          type: DiscoverType.Anime,
+          type: DiscoverType.anime,
         ));
 
         if (a['voiceActors'] != null) {
@@ -118,7 +118,7 @@ class CharacterMediaNotifier
               title: va['name']['userPreferred'],
               imageUrl: va['image']['large'],
               subtitle: l,
-              type: DiscoverType.Staff,
+              type: DiscoverType.staff,
             ));
           }
         }
@@ -140,7 +140,7 @@ class CharacterMediaNotifier
           title: m['node']['title']['userPreferred'],
           imageUrl: m['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
-          type: DiscoverType.Manga,
+          type: DiscoverType.manga,
         ));
       }
 

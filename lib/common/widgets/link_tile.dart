@@ -24,16 +24,16 @@ class LinkTile extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: () => context.push(switch (discoverType) {
-        DiscoverType.Anime || DiscoverType.Manga => Routes.media(id, info),
-        DiscoverType.Character => Routes.character(id, info),
-        DiscoverType.Staff => Routes.staff(id, info),
-        DiscoverType.Studio => Routes.studio(id, info),
-        DiscoverType.User => Routes.user(id, info),
-        DiscoverType.Review => Routes.review(id, info),
+        DiscoverType.anime || DiscoverType.manga => Routes.media(id, info),
+        DiscoverType.character => Routes.character(id, info),
+        DiscoverType.staff => Routes.staff(id, info),
+        DiscoverType.studio => Routes.studio(id, info),
+        DiscoverType.user => Routes.user(id, info),
+        DiscoverType.review => Routes.review(id, info),
       }),
       onLongPress: () {
-        if (discoverType == DiscoverType.Anime ||
-            discoverType == DiscoverType.Manga) {
+        if (discoverType == DiscoverType.anime ||
+            discoverType == DiscoverType.manga) {
           showSheet(context, EditView((id: id, setComplete: false)));
         }
       },

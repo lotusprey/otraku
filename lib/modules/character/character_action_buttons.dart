@@ -78,24 +78,20 @@ class CharacterMediaFilterButton extends StatelessWidget {
                   children: [
                     ChipSelector.ensureSelected(
                       title: 'Sort',
-                      labels: MediaSort.values.map((s) => s.label).toList(),
-                      value: filter.sort.index,
-                      onChanged: (i) => filter = filter.copyWith(
-                        sort: MediaSort.values.elementAt(i!),
-                      ),
+                      items: MediaSort.values.map((v) => (v.label, v)).toList(),
+                      value: filter.sort,
+                      onChanged: (v) => filter = filter.copyWith(sort: v),
                     ),
                     ChipSelector(
                       title: 'List Presence',
-                      labels: const ['In Lists', 'Not in Lists'],
-                      value: filter.inLists == null
-                          ? null
-                          : filter.inLists!
-                              ? 0
-                              : 1,
-                      onChanged: (val) => filter = filter.copyWith(inLists: () {
-                        if (val == null) return null;
-                        return val == 0 ? true : false;
-                      }),
+                      items: const [
+                        ('In Lists', true),
+                        ('Not in Lists', false),
+                      ],
+                      value: filter.inLists,
+                      onChanged: (v) => filter = filter.copyWith(
+                        inLists: () => v,
+                      ),
                     ),
                   ],
                 ),

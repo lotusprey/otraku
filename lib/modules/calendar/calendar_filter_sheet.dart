@@ -23,31 +23,21 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
         children: [
           ChipSelector(
             title: 'Season',
-            labels: const [
-              'Current',
-              'Previous',
-              'Other',
-            ],
-            value: season != CalendarSeasonFilter.All ? season.index - 1 : null,
-            onChanged: (v) {
-              season = v == null
-                  ? CalendarSeasonFilter.All
-                  : CalendarSeasonFilter.values[v + 1];
-            },
+            items: CalendarSeasonFilter.values
+                .skip(1)
+                .map((v) => (v.label, v))
+                .toList(),
+            value: season != CalendarSeasonFilter.all ? season : null,
+            onChanged: (v) => season = v ?? CalendarSeasonFilter.all,
           ),
           ChipSelector(
             title: 'Status',
-            labels: const [
-              'Watching/Planning',
-              'Not In Lists',
-              'Other',
-            ],
-            value: status != CalendarStatusFilter.All ? status.index - 1 : null,
-            onChanged: (v) {
-              status = v == null
-                  ? CalendarStatusFilter.All
-                  : CalendarStatusFilter.values[v + 1];
-            },
+            items: CalendarStatusFilter.values
+                .skip(1)
+                .map((v) => (v.label, v))
+                .toList(),
+            value: status != CalendarStatusFilter.all ? status : null,
+            onChanged: (v) => status = v ?? CalendarStatusFilter.all,
           ),
         ],
       ),

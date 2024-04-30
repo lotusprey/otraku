@@ -179,7 +179,7 @@ class _TopBarContent extends StatelessWidget {
             child: LinkTile(
               id: activity.authorId,
               info: activity.authorAvatarUrl,
-              discoverType: DiscoverType.User,
+              discoverType: DiscoverType.user,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -220,7 +220,7 @@ class _TopBarContent extends StatelessWidget {
                 LinkTile(
                   id: message.recipientId,
                   info: message.recipientAvatarUrl,
-                  discoverType: DiscoverType.User,
+                  discoverType: DiscoverType.user,
                   child: ClipRRect(
                     borderRadius: Consts.borderRadiusMin,
                     child: CachedImage(

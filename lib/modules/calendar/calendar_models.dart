@@ -36,10 +36,7 @@ class CalendarItem {
       cover: map['media']['coverImage'][Options().imageQuality.value],
       episode: map['episode'],
       airingAt: DateTimeUtil.fromSecondsSinceEpoch(map['airingAt']),
-      entryStatus: EntryStatus.formatText(
-        map['media']['mediaListEntry']?['status'],
-        true,
-      ),
+      entryStatus: EntryStatus.from(map['media']['mediaListEntry']?['status']),
       streamingServices: streamingServices,
     );
   }
@@ -49,7 +46,7 @@ class CalendarItem {
   final String cover;
   final int episode;
   final DateTime airingAt;
-  final String? entryStatus;
+  final EntryStatus? entryStatus;
   final List<StreamingService> streamingServices;
 }
 
@@ -83,15 +80,23 @@ class CalendarFilter {
 }
 
 enum CalendarSeasonFilter {
-  All,
-  Current,
-  Previous,
-  Other,
+  all('All'),
+  current('Current'),
+  previous('Previous'),
+  other('Other');
+
+  const CalendarSeasonFilter(this.label);
+
+  final String label;
 }
 
 enum CalendarStatusFilter {
-  All,
-  WatchingAndPlanning,
-  NotInLists,
-  Other,
+  all('All'),
+  watchingAndPlanning('WatchingAndPlanning'),
+  notInLists('NotInLists'),
+  other('Other');
+
+  const CalendarStatusFilter(this.label);
+
+  final String label;
 }

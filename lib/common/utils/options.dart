@@ -124,9 +124,9 @@ class Options extends ChangeNotifier {
     if (mangaSort < 0 || mangaSort >= EntrySort.values.length) mangaSort = 0;
 
     int discoverSort = _optionBox.get(_OptionKey.defaultDiscoverSort.name) ??
-        MediaSort.TRENDING_DESC.index;
+        MediaSort.trendingDesc.index;
     if (discoverSort < 0 || discoverSort >= MediaSort.values.length) {
-      discoverSort = MediaSort.TRENDING_DESC.index;
+      discoverSort = MediaSort.trendingDesc.index;
     }
 
     int imageQualityIndex = _optionBox.get(_OptionKey.imageQuality.name) ?? 1;

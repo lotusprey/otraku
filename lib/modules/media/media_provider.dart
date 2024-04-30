@@ -138,7 +138,7 @@ class MediaRelationsNotifier
           title: c['node']['name']['userPreferred'],
           imageUrl: c['node']['image']['large'],
           subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
-          type: DiscoverType.Character,
+          type: DiscoverType.character,
         ));
 
         if (c['voiceActors'] == null) continue;
@@ -162,7 +162,7 @@ class MediaRelationsNotifier
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
             subtitle: l,
-            type: DiscoverType.Staff,
+            type: DiscoverType.staff,
           ));
         }
       }
@@ -186,7 +186,7 @@ class MediaRelationsNotifier
           title: s['node']['name']['userPreferred'],
           imageUrl: s['node']['image']['large'],
           subtitle: s['role'],
-          type: DiscoverType.Staff,
+          type: DiscoverType.staff,
         ));
       }
 

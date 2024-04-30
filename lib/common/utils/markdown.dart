@@ -49,6 +49,25 @@ class _HeaderSyntax extends HeaderSyntax {
 
   @override
   RegExp get pattern => _pattern;
+
+  @override
+  Node parse(BlockParser parser) {
+    final node = super.parse(parser) as Element;
+
+    // Directly parse inner content.
+    final children = node.children;
+    if (children != null && children.isNotEmpty) {
+      final parsedContent = BlockParser(
+        [Line(children[0].textContent)],
+        parser.document,
+      ).parseLines();
+
+      children.clear();
+      children.addAll(parsedContent);
+    }
+
+    return node;
+  }
 }
 
 abstract class _DelimitedBlockSyntax extends BlockSyntax {
@@ -214,7 +233,7 @@ class _ImageSyntax extends InlineSyntax {
 class _YouTubeSyntax extends InlineSyntax {
   _YouTubeSyntax()
       : super(
-          r'youtube\s?\(\s*(?:https:\/\/)?(?:www\.)?(?:(?:youtube\.com\/watch\?v=)|(?:youtu\.be\/))([^)]+)\)',
+          r'youtube\s?\(\s*(?:https:\/\/)?(?:www\.)?(?:(?:youtube\.com\/watch\?v=)|(?:youtu\.be\/))([^?&#)]+)(?:[^)]*)\)',
           caseSensitive: false,
         );
 

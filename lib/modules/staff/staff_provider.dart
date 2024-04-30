@@ -67,7 +67,7 @@ class StaffRelationsNotifier
     final variables = {
       'id': arg,
       'onList': filter.inLists,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
       if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
     };
 
@@ -98,8 +98,8 @@ class StaffRelationsNotifier
           imageUrl: m['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
-              ? DiscoverType.Anime
-              : DiscoverType.Manga,
+              ? DiscoverType.anime
+              : DiscoverType.manga,
         );
 
         for (final c in m['characters']) {
@@ -110,7 +110,7 @@ class StaffRelationsNotifier
               id: c['id'],
               title: c['name']['userPreferred'],
               imageUrl: c['image']['large'],
-              type: DiscoverType.Character,
+              type: DiscoverType.character,
               subtitle: StringUtil.tryNoScreamingSnakeCase(
                 m['characterRole'],
               ),
@@ -136,8 +136,8 @@ class StaffRelationsNotifier
           imageUrl: s['node']['coverImage'][Options().imageQuality.value],
           subtitle: s['staffRole'],
           type: s['node']['type'] == 'ANIME'
-              ? DiscoverType.Anime
-              : DiscoverType.Manga,
+              ? DiscoverType.anime
+              : DiscoverType.manga,
         ));
       }
 

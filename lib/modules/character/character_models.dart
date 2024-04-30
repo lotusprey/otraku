@@ -9,7 +9,7 @@ import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem characterItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.Character,
+      type: DiscoverType.character,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -143,7 +143,7 @@ class CharacterMedia {
 }
 
 class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.inLists});
+  CharacterFilter({this.sort = MediaSort.trendingDesc, this.inLists});
 
   final MediaSort sort;
   final bool? inLists;

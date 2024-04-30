@@ -54,21 +54,21 @@ class StudioMediaNotifier
       'id': arg,
       'withMedia': true,
       'page': oldState.media.next,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
       'onList': filter.inLists,
       if (filter.isMain != null) 'isMain': filter.isMain,
     });
 
     final map = data['Studio']['media'];
     final items = <TileItem>[];
-    if (filter.sort != MediaSort.START_DATE &&
-        filter.sort != MediaSort.START_DATE_DESC) {
+    if (filter.sort != MediaSort.startDate &&
+        filter.sort != MediaSort.startDateDesc) {
       for (final m in map['nodes']) {
         items.add(mediaItem(m));
       }
     } else {
-      final key = filter.sort == MediaSort.START_DATE ||
-              filter.sort == MediaSort.START_DATE_DESC
+      final key = filter.sort == MediaSort.startDate ||
+              filter.sort == MediaSort.startDateDesc
           ? 'startDate'
           : 'endDate';
 

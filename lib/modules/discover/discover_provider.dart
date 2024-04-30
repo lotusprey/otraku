@@ -23,14 +23,14 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   FutureOr<DiscoverItems> build() {
     filter = ref.watch(discoverFilterProvider);
     return switch (filter.type) {
-      DiscoverType.Anime => _fetchAnime(const DiscoverAnimeItems()),
-      DiscoverType.Manga => _fetchManga(const DiscoverMangaItems()),
-      DiscoverType.Character =>
+      DiscoverType.anime => _fetchAnime(const DiscoverAnimeItems()),
+      DiscoverType.manga => _fetchManga(const DiscoverMangaItems()),
+      DiscoverType.character =>
         _fetchCharacters(const DiscoverCharacterItems()),
-      DiscoverType.Staff => _fetchStaff(const DiscoverStaffItems()),
-      DiscoverType.Studio => _fetchStudios(const DiscoverStudioItems()),
-      DiscoverType.User => _fetchUsers(const DiscoverUserItems()),
-      DiscoverType.Review => _fetchReviews(const DiscoverReviewItems()),
+      DiscoverType.staff => _fetchStaff(const DiscoverStaffItems()),
+      DiscoverType.studio => _fetchStudios(const DiscoverStudioItems()),
+      DiscoverType.user => _fetchUsers(const DiscoverUserItems()),
+      DiscoverType.review => _fetchReviews(const DiscoverReviewItems()),
     };
   }
 
@@ -38,37 +38,37 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
     final oldValue = state.valueOrNull;
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() => switch (filter.type) {
-          DiscoverType.Anime => _fetchAnime(
+          DiscoverType.anime => _fetchAnime(
               (oldValue is DiscoverAnimeItems)
                   ? oldValue
                   : const DiscoverAnimeItems(),
             ),
-          DiscoverType.Manga => _fetchManga(
+          DiscoverType.manga => _fetchManga(
               (oldValue is DiscoverMangaItems)
                   ? oldValue
                   : const DiscoverMangaItems(),
             ),
-          DiscoverType.Character => _fetchCharacters(
+          DiscoverType.character => _fetchCharacters(
               (oldValue is DiscoverCharacterItems)
                   ? oldValue
                   : const DiscoverCharacterItems(),
             ),
-          DiscoverType.Staff => _fetchStaff(
+          DiscoverType.staff => _fetchStaff(
               (oldValue is DiscoverStaffItems)
                   ? oldValue
                   : const DiscoverStaffItems(),
             ),
-          DiscoverType.Studio => _fetchStudios(
+          DiscoverType.studio => _fetchStudios(
               (oldValue is DiscoverStudioItems)
                   ? oldValue
                   : const DiscoverStudioItems(),
             ),
-          DiscoverType.User => _fetchUsers(
+          DiscoverType.user => _fetchUsers(
               (oldValue is DiscoverUserItems)
                   ? oldValue
                   : const DiscoverUserItems(),
             ),
-          DiscoverType.Review => _fetchReviews(
+          DiscoverType.review => _fetchReviews(
               (oldValue is DiscoverReviewItems)
                   ? oldValue
                   : const DiscoverReviewItems(),

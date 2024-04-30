@@ -5,7 +5,6 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
-import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 
 class SettingsContentTab extends StatelessWidget {
@@ -34,43 +33,41 @@ class SettingsContentTab extends StatelessWidget {
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Title Language',
-                labels: TitleLanguage.labels,
-                value: settings.titleLanguage.index,
-                onChanged: (v) =>
-                    settings.titleLanguage = TitleLanguage.values[v!],
+                items: TitleLanguage.values.map((v) => (v.label, v)).toList(),
+                value: settings.titleLanguage,
+                onChanged: (v) => settings.titleLanguage = v,
               ),
             ),
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Character & Staff Names',
-                labels: PersonNaming.labels,
-                value: settings.personNaming.index,
-                onChanged: (v) =>
-                    settings.personNaming = PersonNaming.values[v!],
+                items: PersonNaming.values.map((v) => (v.label, v)).toList(),
+                value: settings.personNaming,
+                onChanged: (v) => settings.personNaming = v,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField(
+              child: ChipSelector.ensureSelected(
                 title: 'Activity Merge Time',
+                items: const [
+                  ('Never', 0),
+                  ('30 Minutes', 30),
+                  ('1 Hour', 60),
+                  ('2 Hours', 120),
+                  ('3 Hours', 180),
+                  ('6 Hours', 360),
+                  ('12 Hours', 720),
+                  ('1 Day', 1440),
+                  ('2 Days', 2880),
+                  ('3 Days', 4320),
+                  ('1 Week', 10080),
+                  ('2 Weeks', 20160),
+                  ('Always', 29160),
+                ],
                 value: settings.activityMergeTime,
-                items: const {
-                  'Never': 0,
-                  '30 Minutes': 30,
-                  '1 Hour': 60,
-                  '2 Hours': 120,
-                  '3 Hours': 180,
-                  '6 Hours': 360,
-                  '12 Hours': 720,
-                  '1 Day': 1440,
-                  '2 Days': 2880,
-                  '3 Days': 4320,
-                  '1 Week': 10080,
-                  '2 Weeks': 20160,
-                  'Always': 29160,
-                },
-                onChanged: (val) => settings.activityMergeTime = val,
+                onChanged: (v) => settings.activityMergeTime = v,
               ),
             ),
             StatefulSwitchListTile(
@@ -93,21 +90,18 @@ class SettingsContentTab extends StatelessWidget {
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Scoring System',
-                labels: ScoreFormat.labels,
-                value: settings.personNaming.index,
-                onChanged: (v) => settings.scoreFormat = ScoreFormat.values[v!],
+                items: ScoreFormat.values.map((v) => (v.label, v)).toList(),
+                value: settings.scoreFormat,
+                onChanged: (v) => settings.scoreFormat = v,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField<EntrySort>(
+              child: ChipSelector.ensureSelected(
                 title: 'Default Site List Sort',
+                items: EntrySort.rowOrders.map((v) => (v.label, v)).toList(),
                 value: settings.defaultSort,
-                items: Map.fromIterable(
-                  EntrySort.rowOrders,
-                  key: (s) => s.label,
-                ),
-                onChanged: (val) => settings.defaultSort = val,
+                onChanged: (v) => settings.defaultSort = v,
               ),
             ),
             StatefulCheckboxListTile(

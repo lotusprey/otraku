@@ -9,7 +9,7 @@ import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem staffItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.Staff,
+      type: DiscoverType.staff,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -118,7 +118,7 @@ class StaffRelations {
 
 class StaffFilter {
   StaffFilter({
-    this.sort = MediaSort.START_DATE_DESC,
+    this.sort = MediaSort.startDateDesc,
     this.ofAnime,
     this.inLists,
   });

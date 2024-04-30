@@ -75,10 +75,10 @@ class DiscoverMediaFilter {
     ..isAdult = isAdult;
 
   Map<String, dynamic> toMap(bool ofAnime) => {
-        'sort': sort.name,
+        'sort': sort.value,
         if (ofAnime && animeFormats.isNotEmpty) 'format_in': animeFormats,
         if (!ofAnime && mangaFormats.isNotEmpty) 'format_in': mangaFormats,
-        if (ofAnime && season != null) 'season': season!.name,
+        if (ofAnime && season != null) 'season': season!.value,
         if (statuses.isNotEmpty) 'status_in': statuses,
         if (genreIn.isNotEmpty) 'genre_in': genreIn,
         if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,

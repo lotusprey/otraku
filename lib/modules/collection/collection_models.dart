@@ -34,8 +34,8 @@ class PreviewCollection extends Collection {
 
     return PreviewCollection._(
       entries: entries,
-      scoreFormat: ScoreFormat.values.byName(
-        map['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+      scoreFormat: ScoreFormat.from(
+        map['user']['mediaListOptions']['scoreFormat'],
       ),
     );
   }
@@ -84,8 +84,8 @@ class FullCollection extends Collection {
     return FullCollection._(
       lists: lists,
       index: index,
-      scoreFormat: ScoreFormat.values.byName(
-        map['user']?['mediaListOptions']?['scoreFormat'] ?? 'POINT_10_DECIMAL',
+      scoreFormat: ScoreFormat.from(
+        map['user']['mediaListOptions']['scoreFormat'],
       ),
     );
   }
@@ -125,15 +125,14 @@ class EntryList {
   });
 
   factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
-    final status = !map['isCustomList'] && map['status'] != null
-        ? EntryStatus.values.byName(map['status'])
-        : null;
+    final status =
+        !map['isCustomList'] ? EntryStatus.from(map['status']) : null;
 
     return EntryList._(
       name: map['name'],
       status: status,
       splitCompletedListFormat:
-          splitCompleted && status == EntryStatus.COMPLETED
+          splitCompleted && status == EntryStatus.completed
               ? map['entries'][0]['media']['format']
               : null,
       entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
@@ -443,7 +442,7 @@ class Entry {
       imageUrl: map['media']['coverImage'][Options().imageQuality.value],
       format: map['media']['format'],
       status: map['media']['status'],
-      entryStatus: EntryStatus.values.byName(map['status']),
+      entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
         map['media']['nextAiringEpisode']?['airingAt'],
@@ -492,24 +491,28 @@ class Entry {
 }
 
 enum EntryStatus {
-  CURRENT,
-  PLANNING,
-  COMPLETED,
-  DROPPED,
-  PAUSED,
-  REPEATING;
+  current('CURRENT'),
+  planning('PLANNING'),
+  completed('COMPLETED'),
+  dropped('DROPPED'),
+  paused('PAUSED'),
+  repeating('REPEATING');
 
-  String format(bool ofAnime) => formatText(name, ofAnime)!;
+  const EntryStatus(this.value);
 
-  static String? formatText(String? text, bool ofAnime) => switch (text) {
-        'CURRENT' => ofAnime ? 'Watching' : 'Reading',
-        'REPEATING' => ofAnime ? 'Rewatching' : 'Rereading',
-        'COMPLETED' => 'Completed',
-        'PAUSED' => 'Paused',
-        'PLANNING' => 'Planning',
-        'DROPPED' => 'Dropped',
-        _ => null,
+  final String value;
+
+  String label(bool ofAnime) => switch (this) {
+        current => ofAnime ? 'Watching' : 'Reading',
+        repeating => ofAnime ? 'Rewatching' : 'Rereading',
+        completed => 'Completed',
+        paused => 'Paused',
+        planning => 'Planning',
+        dropped => 'Dropped',
       };
+
+  static EntryStatus? from(String? value) =>
+      EntryStatus.values.firstWhereOrNull((v) => v.value == value);
 }
 
 class CollectionFilter {

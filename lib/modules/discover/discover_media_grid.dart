@@ -43,7 +43,13 @@ class _Tile extends StatelessWidget {
     if (item.releaseYear != null) {
       textRailItems[item.releaseYear!.toString()] = false;
     }
-    if (item.listStatus != null) textRailItems[item.listStatus!] = true;
+
+    if (item.entryStatus != null) {
+      textRailItems[item.entryStatus!.label(
+        item.type == DiscoverType.anime,
+      )] = true;
+    }
+
     if (item.isAdult) textRailItems['Adult'] = true;
 
     final detailTextStyle = Theme.of(context).textTheme.labelSmall;
@@ -51,7 +57,7 @@ class _Tile extends StatelessWidget {
     return Card(
       child: LinkTile(
         id: item.id,
-        discoverType: DiscoverType.Anime,
+        discoverType: DiscoverType.anime,
         info: item.imageUrl,
         child: Row(
           children: [

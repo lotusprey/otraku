@@ -57,12 +57,12 @@ class Settings {
           map['mediaListOptions']['mangaList']['customLists'] ?? <String>[],
         ),
         disabledListActivity: {
-          for (var n in map['options']['disabledListActivity'])
-            EntryStatus.values.byName(n['type']): n['disabled']
+          for (var activity in map['options']['disabledListActivity'])
+            EntryStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {
-          for (var n in map['options']['notificationOptions'])
-            NotificationType.values.byName(n['type']): n['enabled']
+          for (var option in map['options']['notificationOptions'])
+            NotificationType.values.byName(option['type']): option['enabled']
         },
       );
 
@@ -156,8 +156,6 @@ enum TitleLanguage {
   final String label;
   final String value;
 
-  static final labels = TitleLanguage.values.map((v) => v.label).toList();
-
   static TitleLanguage from(String? value) => TitleLanguage.values.firstWhere(
         (v) => v.value == value,
         orElse: () => romaji,
@@ -173,8 +171,6 @@ enum PersonNaming {
 
   final String label;
   final String value;
-
-  static final labels = PersonNaming.values.map((v) => v.label).toList();
 
   static PersonNaming from(String? value) => PersonNaming.values.firstWhere(
         (v) => v.value == value,

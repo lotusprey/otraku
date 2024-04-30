@@ -12,7 +12,7 @@ import 'package:otraku/common/utils/options.dart';
 
 TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.Anime,
+      type: DiscoverType.anime,
       title: map['title']['userPreferred'],
       imageUrl: map['coverImage'][Options().imageQuality.value],
     );
@@ -112,7 +112,7 @@ class RelatedMedia {
     required this.imageUrl,
     required this.relationType,
     required this.format,
-    required this.listStatus,
+    required this.entryStatus,
     required this.releaseStatus,
   });
 
@@ -122,16 +122,13 @@ class RelatedMedia {
         imageUrl: map['node']['coverImage'][Options().imageQuality.value],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
         format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
-        listStatus: EntryStatus.formatText(
-          map['node']['mediaListEntry']?['status'],
-          map['node']['type'] == 'ANIME',
-        ),
+        entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
         releaseStatus: StringUtil.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
         type: map['node']['type'] == 'ANIME'
-            ? DiscoverType.Anime
-            : DiscoverType.Manga,
+            ? DiscoverType.anime
+            : DiscoverType.manga,
       );
 
   final int id;
@@ -140,7 +137,7 @@ class RelatedMedia {
   final String imageUrl;
   final String? relationType;
   final String? format;
-  final String? listStatus;
+  final EntryStatus? entryStatus;
   final String? releaseStatus;
 }
 
@@ -193,8 +190,8 @@ class MediaFollowing {
         userId: map['user']['id'],
         userName: map['user']['name'],
         userAvatar: map['user']['avatar']['large'],
-        scoreFormat: ScoreFormat.values.byName(
-          map['user']['mediaListOptions']['scoreFormat'] ?? 'POINT_10_DECIMAL',
+        scoreFormat: ScoreFormat.from(
+          map['user']['mediaListOptions']?['scoreFormat'],
         ),
       );
 
@@ -227,7 +224,7 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
           [Options().imageQuality.value],
     );
@@ -312,7 +309,7 @@ class MediaInfo {
   final String? source;
   final String? hashtag;
   final String? siteUrl;
-  final String? countryOfOrigin;
+  final OriginCountry? countryOfOrigin;
   final bool isAdult;
   final externalLinks = <ExternalLink>[];
 
@@ -335,7 +332,7 @@ class MediaInfo {
 
     final model = MediaInfo._(
       id: map['id'],
-      type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
+      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       isFavorite: map['isFavourite'] ?? false,
       favourites: map['favourites'] ?? 0,
       preferredTitle: map['title']['userPreferred'],
@@ -368,7 +365,7 @@ class MediaInfo {
       source: StringUtil.tryNoScreamingSnakeCase(map['source']),
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
-      countryOfOrigin: StringUtil.codeToCountry(map['countryOfOrigin']),
+      countryOfOrigin: OriginCountry.fromCode(map['countryOfOrigin']),
       isAdult: map['isAdult'] ?? false,
     );
 
@@ -464,10 +461,12 @@ class MediaStats {
     // if the rank is about rating or popularity.
     if (map['rankings'] != null) {
       for (final r in map['rankings']) {
+        final season = MediaSeason.from(r['season']);
+
         final String when = (r['allTime'] ?? false)
             ? 'Ever'
-            : r['season'] != null
-                ? '${(r['season'] as String).noScreamingSnakeCase} ${r['year'] ?? ''}'
+            : season != null
+                ? '${season.label} ${r['year'] ?? ''}'
                 : (r['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
@@ -476,9 +475,7 @@ class MediaStats {
               ? '#${r["rank"]} Highest Rated $when'
               : '#${r["rank"]} Most Popular $when',
           typeIsScore: r['type'] == 'RATED',
-          season: r['season'] != null
-              ? MediaSeason.values.byName(r['season'])
-              : null,
+          season: season,
           year: r['year'],
         ));
       }
@@ -510,7 +507,7 @@ class MediaStats {
 
           model.statusNames.insert(
             index,
-            EntryStatus.formatText(s['status'], map['type'] == 'ANIME')!,
+            EntryStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
           );
         }
       }

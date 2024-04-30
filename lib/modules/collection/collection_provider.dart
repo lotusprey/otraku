@@ -248,10 +248,10 @@ class CollectionNotifier
     Edit oldEdit,
     Edit newEdit,
   ) {
-    if (newEdit.status == EntryStatus.CURRENT ||
-        newEdit.status == EntryStatus.REPEATING) {
-      if (oldEdit.status == EntryStatus.CURRENT ||
-          oldEdit.status == EntryStatus.REPEATING) {
+    if (newEdit.status == EntryStatus.current ||
+        newEdit.status == EntryStatus.repeating) {
+      if (oldEdit.status == EntryStatus.current ||
+          oldEdit.status == EntryStatus.repeating) {
         final entries = collection.entries;
         for (int i = 0; i < entries.length; i++) {
           if (entries[i].mediaId == entry.mediaId) {

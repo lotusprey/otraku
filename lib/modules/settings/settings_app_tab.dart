@@ -62,10 +62,9 @@ class SettingsAppTab extends StatelessWidget {
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Discover Media Sorting',
-                labels: MediaSort.values.map((s) => s.label).toList(),
-                value: Options().defaultDiscoverSort.index,
-                onChanged: (i) => Options().defaultDiscoverSort =
-                    MediaSort.values.elementAt(i!),
+                items: MediaSort.values.map((e) => (e.label, e)).toList(),
+                value: Options().defaultDiscoverSort,
+                onChanged: (v) => Options().defaultDiscoverSort = v,
               ),
             ),
           ],
@@ -109,29 +108,27 @@ class SettingsAppTab extends StatelessWidget {
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Home Tab',
-                labels: HomeTab.values.map((v) => v.label).toList(),
-                value: Options().defaultHomeTab.index,
-                onChanged: (v) => Options().defaultHomeTab = HomeTab.values[v!],
+                items: HomeTab.values.map((v) => (v.label, v)).toList(),
+                value: Options().defaultHomeTab,
+                onChanged: (v) => Options().defaultHomeTab = v,
               ),
             ),
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Default Discover Type',
-                labels: DiscoverType.values.map((v) => v.name).toList(),
-                value: Options().defaultDiscoverSort.index,
-                onChanged: (v) =>
-                    Options().defaultDiscoverType = DiscoverType.values[v!],
+                items: DiscoverType.values.map((v) => (v.label, v)).toList(),
+                value: Options().defaultDiscoverType,
+                onChanged: (v) => Options().defaultDiscoverType = v,
               ),
             ),
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Image Quality',
-                labels: ImageQuality.values.map((v) => v.label).toList(),
-                value: Options().imageQuality.index,
-                onChanged: (v) =>
-                    Options().imageQuality = ImageQuality.values[v!],
+                items: ImageQuality.values.map((v) => (v.label, v)).toList(),
+                value: Options().imageQuality,
+                onChanged: (v) => Options().imageQuality = v,
               ),
             ),
           ],
@@ -143,27 +140,27 @@ class SettingsAppTab extends StatelessWidget {
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Discover View',
-                labels: const ['Detailed List', 'Simple Grid'],
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
                 value: Options().discoverItemView,
-                onChanged: (val) => Options().discoverItemView = val!,
+                onChanged: (val) => Options().discoverItemView = val,
               ),
             ),
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Collection View',
-                labels: const ['Detailed List', 'Simple Grid'],
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
                 value: Options().collectionItemView,
-                onChanged: (val) => Options().collectionItemView = val!,
+                onChanged: (val) => Options().collectionItemView = val,
               ),
             ),
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
                 title: 'Collection Preview View',
-                labels: const ['Detailed List', 'Simple Grid'],
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
                 value: Options().collectionPreviewItemView,
-                onChanged: (val) => Options().collectionPreviewItemView = val!,
+                onChanged: (val) => Options().collectionPreviewItemView = val,
               ),
             ),
           ],

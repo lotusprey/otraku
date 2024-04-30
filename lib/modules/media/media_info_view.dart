@@ -57,7 +57,7 @@ class MediaInfoView extends StatelessWidget {
       info.popularity,
       info.favourites,
       info.source,
-      info.countryOfOrigin,
+      info.countryOfOrigin?.label,
     ];
 
     for (int i = infoData.length - 1; i >= 0; i--) {

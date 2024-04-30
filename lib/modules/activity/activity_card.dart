@@ -65,7 +65,7 @@ class ActivityCard extends StatelessWidget {
               child: LinkTile(
                 id: activity.authorId,
                 info: activity.authorAvatarUrl,
-                discoverType: DiscoverType.User,
+                discoverType: DiscoverType.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -103,7 +103,7 @@ class ActivityCard extends StatelessWidget {
                   LinkTile(
                     id: message.recipientId,
                     info: message.recipientAvatarUrl,
-                    discoverType: DiscoverType.User,
+                    discoverType: DiscoverType.user,
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: CachedImage(
@@ -141,7 +141,7 @@ class _ActivityMediaBox extends StatelessWidget {
     return LinkTile(
       id: item.mediaId,
       info: item.coverUrl,
-      discoverType: item.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
+      discoverType: item.isAnime ? DiscoverType.anime : DiscoverType.manga,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(

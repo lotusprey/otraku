@@ -6,11 +6,11 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_buttons.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
+import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
-import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/common/widgets/fields/growable_text_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -76,22 +76,20 @@ class _EditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = newEditProvider(tag);
+    final ofAnime = oldEdit.type == 'ANIME';
 
-    final tracking = _FieldGrid(
-      minWidth: 140,
-      children: [
-        Consumer(
+    final status = SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Consumer(
           builder: (context, ref, _) {
             final status = ref.watch(provider.select((s) => s.status));
 
-            return DropDownField<EntryStatus?>(
-              hint: 'Add',
+            return ChipSelector(
               title: 'Status',
+              items:
+                  EntryStatus.values.map((v) => (v.label(ofAnime), v)).toList(),
               value: status,
-              items: Map.fromIterable(
-                EntryStatus.values,
-                key: (v) => v.format(oldEdit.type == 'ANIME'),
-              ),
               onChanged: (status) => ref.read(provider.notifier).update(
                 (s) {
                   var startedAt = s.startedAt;
@@ -99,12 +97,12 @@ class _EditView extends StatelessWidget {
                   var progress = s.progress;
 
                   if (oldEdit.status == null &&
-                      status == EntryStatus.CURRENT &&
+                      status == EntryStatus.current &&
                       startedAt == null) {
                     startedAt = DateTime.now();
                     Toast.show(context, 'Start date changed');
                   } else if (oldEdit.status != status &&
-                      status == EntryStatus.COMPLETED &&
+                      status == EntryStatus.completed &&
                       completedAt == null) {
                     completedAt = DateTime.now();
                     var text = 'Completed date changed';
@@ -128,93 +126,93 @@ class _EditView extends StatelessWidget {
             );
           },
         ),
-        LabeledField(
-          label: 'Progress',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final progress = ref.watch(provider.select((s) => s.progress));
+      ),
+    );
 
-              return NumberField(
-                value: progress,
-                maxValue: oldEdit.progressMax ?? 100000,
-                onChanged: (progress) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
-                    var startedAt = s.startedAt;
-                    var completedAt = s.completedAt;
+    final tracking = _FieldGrid(
+      minWidth: 140,
+      children: [
+        Consumer(
+          builder: (context, ref, _) {
+            final progress = ref.watch(provider.select((s) => s.progress));
 
-                    String? text;
-                    if (progress == s.progressMax &&
-                        oldEdit.progress != progress) {
-                      if (oldEdit.status == status &&
-                          status != EntryStatus.COMPLETED) {
-                        status = EntryStatus.COMPLETED;
-                        text = 'Status changed';
-                      }
+            return NumberField(
+              label: 'Progress',
+              value: progress,
+              maxValue: oldEdit.progressMax ?? 100000,
+              onChanged: (progress) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
+                  var startedAt = s.startedAt;
+                  var completedAt = s.completedAt;
 
-                      if (oldEdit.completedAt == completedAt &&
-                          completedAt == null) {
-                        completedAt = DateTime.now();
-                        text = text == null
-                            ? 'Completed date changed'
-                            : 'Status & Completed date changed';
-                      }
-
-                      if (text != null) Toast.show(context, text);
-                    } else if (oldEdit.progress == 0 &&
-                        oldEdit.progress != progress) {
-                      if (oldEdit.status == status &&
-                          (status == null || status == EntryStatus.PLANNING)) {
-                        status = EntryStatus.CURRENT;
-                        text = 'Status changed';
-                      }
-
-                      if (oldEdit.startedAt == null && startedAt == null) {
-                        startedAt = DateTime.now();
-                        text = text == null
-                            ? 'Start date changed'
-                            : 'Status & start date changed';
-                      }
+                  String? text;
+                  if (progress == s.progressMax &&
+                      oldEdit.progress != progress) {
+                    if (oldEdit.status == status &&
+                        status != EntryStatus.completed) {
+                      status = EntryStatus.completed;
+                      text = 'Status changed';
                     }
-                    if (text != null) Toast.show(context, text);
 
-                    return s.copyWith(
-                      progress: progress.toInt(),
-                      status: status,
-                      startedAt: () => startedAt,
-                      completedAt: () => completedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                    if (oldEdit.completedAt == completedAt &&
+                        completedAt == null) {
+                      completedAt = DateTime.now();
+                      text = text == null
+                          ? 'Completed date changed'
+                          : 'Status & Completed date changed';
+                    }
+
+                    if (text != null) Toast.show(context, text);
+                  } else if (oldEdit.progress == 0 &&
+                      oldEdit.progress != progress) {
+                    if (oldEdit.status == status &&
+                        (status == null || status == EntryStatus.planning)) {
+                      status = EntryStatus.current;
+                      text = 'Status changed';
+                    }
+
+                    if (oldEdit.startedAt == null && startedAt == null) {
+                      startedAt = DateTime.now();
+                      text = text == null
+                          ? 'Start date changed'
+                          : 'Status & start date changed';
+                    }
+                  }
+                  if (text != null) Toast.show(context, text);
+
+                  return s.copyWith(
+                    progress: progress.toInt(),
+                    status: status,
+                    startedAt: () => startedAt,
+                    completedAt: () => completedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
-        LabeledField(
-          label: 'Repeat',
-          child: Consumer(
-            builder: (context, ref, _) => NumberField(
-              value: ref.read(provider).repeat,
-              onChanged: (repeat) => ref
-                  .read(provider.notifier)
-                  .update((s) => s.copyWith(repeat: repeat.toInt())),
-            ),
+        Consumer(
+          builder: (context, ref, _) => NumberField(
+            label: 'Repeat',
+            value: ref.read(provider).repeat,
+            onChanged: (repeat) => ref
+                .read(provider.notifier)
+                .update((s) => s.copyWith(repeat: repeat.toInt())),
           ),
         ),
         if (oldEdit.type != 'ANIME')
-          LabeledField(
-            label: 'Progress Volumes',
-            child: Consumer(
-              builder: (context, ref, _) => NumberField(
-                value: ref.read(provider).progressVolumes,
-                maxValue: oldEdit.progressVolumesMax ?? 100000,
-                onChanged: (progressVolumes) =>
-                    ref.read(provider.notifier).update(
-                          (s) => s.copyWith(
-                            progressVolumes: progressVolumes.toInt(),
-                          ),
+          Consumer(
+            builder: (context, ref, _) => NumberField(
+              label: 'Volume Progress',
+              value: ref.read(provider).progressVolumes,
+              maxValue: oldEdit.progressVolumesMax ?? 100000,
+              onChanged: (progressVolumes) =>
+                  ref.read(provider.notifier).update(
+                        (s) => s.copyWith(
+                          progressVolumes: progressVolumes.toInt(),
                         ),
-              ),
+                      ),
             ),
           ),
       ],
@@ -238,7 +236,7 @@ class _EditView extends StatelessWidget {
                     if (startedAt != null &&
                         oldEdit.status == null &&
                         status == null) {
-                      status = EntryStatus.CURRENT;
+                      status = EntryStatus.current;
                       Toast.show(context, 'Status changed');
                     }
 
@@ -267,10 +265,10 @@ class _EditView extends StatelessWidget {
                     var progress = s.progress;
 
                     if (completedAt != null &&
-                        oldEdit.status != EntryStatus.COMPLETED &&
-                        oldEdit.status != EntryStatus.REPEATING &&
+                        oldEdit.status != EntryStatus.completed &&
+                        oldEdit.status != EntryStatus.repeating &&
                         oldEdit.status == status) {
-                      status = EntryStatus.COMPLETED;
+                      status = EntryStatus.completed;
                       String text = 'Status changed';
 
                       if (s.progressMax != null &&
@@ -334,20 +332,19 @@ class _EditView extends StatelessWidget {
           minWidth: 140,
           children: [
             for (final s in scores.entries)
-              LabeledField(
-                label: s.key,
-                child: isDecimal
-                    ? DecimalNumberField(
-                        value: s.value,
-                        maxValue: 10.0,
-                        onChanged: (score) => onChanged(s, score),
-                      )
-                    : NumberField(
-                        value: s.value.toInt(),
-                        maxValue: 100,
-                        onChanged: (score) => onChanged(s, score),
-                      ),
-              ),
+              isDecimal
+                  ? NumberField.decimal(
+                      label: s.key,
+                      value: s.value,
+                      maxValue: 10.0,
+                      onChanged: (score) => onChanged(s, score),
+                    )
+                  : NumberField(
+                      label: s.key,
+                      value: s.value.toInt(),
+                      maxValue: 100,
+                      onChanged: (score) => onChanged(s, score),
+                    ),
           ],
         );
       },
@@ -364,6 +361,7 @@ class _EditView extends StatelessWidget {
             controller: scrollCtrl,
             slivers: [
               space,
+              status,
               space,
               tracking,
               space,

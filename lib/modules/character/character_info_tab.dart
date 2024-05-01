@@ -79,7 +79,7 @@ class CharacterInfoTab extends StatelessWidget {
                                   child: Text(
                                     'Spoiler names',
                                     style:
-                                        Theme.of(context).textTheme.bodyLarge,
+                                        Theme.of(context).textTheme.labelLarge,
                                   ),
                                   onTap: () => showPopUp(
                                     context,

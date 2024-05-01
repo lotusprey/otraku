@@ -57,7 +57,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           trailing: [
             Expanded(
               child: Text(
-                '${ref.watch(notificationsFilterProvider).text} Notifications',
+                '${ref.watch(notificationsFilterProvider).label} Notifications',
                 style: Theme.of(context).textTheme.titleLarge,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -101,7 +101,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           return GradientSheet([
             for (int i = 0; i < NotificationFilter.values.length; i++)
               GradientSheetButton(
-                text: NotificationFilter.values.elementAt(i).text,
+                text: NotificationFilter.values.elementAt(i).label,
                 selected: index == i,
                 onTap: () => ref
                     .read(notificationsFilterProvider.notifier)
@@ -160,27 +160,27 @@ class _NotificationItem extends StatelessWidget {
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () => switch (item.type) {
-                      NotificationType.ACTIVITY_LIKE ||
-                      NotificationType.ACTIVITY_MENTION ||
-                      NotificationType.ACTIVITY_MESSAGE ||
-                      NotificationType.ACTIVITY_REPLY ||
-                      NotificationType.ACTIVITY_REPLY_LIKE ||
-                      NotificationType.ACTIVITY_REPLY_SUBSCRIBED =>
+                      NotificationType.activityLike ||
+                      NotificationType.activityMention ||
+                      NotificationType.activityMessage ||
+                      NotificationType.activityReply ||
+                      NotificationType.acrivityReplyLike ||
+                      NotificationType.activityReplySubscribed =>
                         context.push(Routes.activity(item.bodyId!)),
-                      NotificationType.FOLLOWING =>
+                      NotificationType.following =>
                         context.push(Routes.user(item.headId!, item.imageUrl)),
-                      NotificationType.AIRING ||
-                      NotificationType.RELATED_MEDIA_ADDITION =>
+                      NotificationType.airing ||
+                      NotificationType.relatedMediaAddition =>
                         context.push(Routes.media(item.headId!, item.imageUrl)),
-                      NotificationType.MEDIA_DATA_CHANGE ||
-                      NotificationType.MEDIA_MERGE ||
-                      NotificationType.MEDIA_DELETION =>
+                      NotificationType.mediaDataChange ||
+                      NotificationType.mediaMerge ||
+                      NotificationType.mediaDeletion =>
                         showPopUp(context, _NotificationDialog(item)),
-                      NotificationType.THREAD_LIKE ||
-                      NotificationType.THREAD_SUBSCRIBED ||
-                      NotificationType.THREAD_COMMENT_LIKE ||
-                      NotificationType.THREAD_COMMENT_REPLY ||
-                      NotificationType.THREAD_COMMENT_MENTION =>
+                      NotificationType.threadLike ||
+                      NotificationType.threadReplySubscribed ||
+                      NotificationType.threadCommentLike ||
+                      NotificationType.threadCommentReply ||
+                      NotificationType.threadCommentMention =>
                         showPopUp(
                           context,
                           ConfirmationDialog(
@@ -225,7 +225,7 @@ class _NotificationItem extends StatelessWidget {
                                               item.markTextOnEvenIndex
                                           ? Theme.of(context)
                                               .textTheme
-                                              .bodyLarge
+                                              .labelLarge
                                           : Theme.of(context)
                                               .textTheme
                                               .bodyMedium,
@@ -278,7 +278,7 @@ class _NotificationDialog extends StatelessWidget {
             TextSpan(
               text: item.texts[i],
               style: (i % 2 == 0) == item.markTextOnEvenIndex
-                  ? Theme.of(context).textTheme.bodyLarge
+                  ? Theme.of(context).textTheme.labelLarge
                   : Theme.of(context).textTheme.bodyMedium,
             ),
         ],

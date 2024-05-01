@@ -62,7 +62,7 @@ class Settings {
         },
         notificationOptions: {
           for (var option in map['options']['notificationOptions'])
-            NotificationType.values.byName(option['type']): option['enabled']
+            NotificationType.from(option['type'])!: option['enabled']
         },
       );
 
@@ -138,10 +138,10 @@ class Settings {
         'restrictMessagesToFollowing': restrictMessagesToFollowing,
         'airingNotifications': airingNotifications,
         'disabledListActivity': disabledListActivity.entries
-            .map((e) => {'type': e.key.name, 'disabled': e.value})
+            .map((e) => {'type': e.key.value, 'disabled': e.value})
             .toList(),
         'notificationOptions': notificationOptions.entries
-            .map((e) => {'type': e.key.name, 'enabled': e.value})
+            .map((e) => {'type': e.key.value, 'enabled': e.value})
             .toList(),
       };
 }

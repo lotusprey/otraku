@@ -11,10 +11,8 @@ import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
-import 'package:otraku/common/widgets/fields/growable_text_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
-import 'package:otraku/common/widgets/fields/labeled_field.dart';
 import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/score_field.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -221,75 +219,70 @@ class _EditView extends StatelessWidget {
     final dates = _FieldGrid(
       minWidth: 165,
       children: [
-        LabeledField(
-          label: 'Started',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final startedAt = ref.watch(provider.select((s) => s.startedAt));
+        Consumer(
+          builder: (context, ref, _) {
+            final startedAt = ref.watch(provider.select((s) => s.startedAt));
 
-              return DateField(
-                date: startedAt,
-                onChanged: (startedAt) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
+            return DateField(
+              label: 'Started',
+              value: startedAt,
+              onChanged: (value) => (startedAt) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
 
-                    if (startedAt != null &&
-                        oldEdit.status == null &&
-                        status == null) {
-                      status = EntryStatus.current;
-                      Toast.show(context, 'Status changed');
-                    }
+                  if (startedAt != null &&
+                      oldEdit.status == null &&
+                      status == null) {
+                    status = EntryStatus.current;
+                    Toast.show(context, 'Status changed');
+                  }
 
-                    return s.copyWith(
-                      status: status,
-                      startedAt: () => startedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                  return s.copyWith(
+                    status: status,
+                    startedAt: () => startedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
-        LabeledField(
-          label: 'Completed',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final completedAt =
-                  ref.watch(provider.select((s) => s.completedAt));
+        Consumer(
+          builder: (context, ref, _) {
+            final completedAt =
+                ref.watch(provider.select((s) => s.completedAt));
 
-              return DateField(
-                date: completedAt,
-                onChanged: (completedAt) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
-                    var progress = s.progress;
+            return DateField(
+              label: 'Completed',
+              value: completedAt,
+              onChanged: (completedAt) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
+                  var progress = s.progress;
 
-                    if (completedAt != null &&
-                        oldEdit.status != EntryStatus.completed &&
-                        oldEdit.status != EntryStatus.repeating &&
-                        oldEdit.status == status) {
-                      status = EntryStatus.completed;
-                      String text = 'Status changed';
+                  if (completedAt != null &&
+                      oldEdit.status != EntryStatus.completed &&
+                      oldEdit.status != EntryStatus.repeating &&
+                      oldEdit.status == status) {
+                    status = EntryStatus.completed;
+                    String text = 'Status changed';
 
-                      if (s.progressMax != null &&
-                          s.progress < s.progressMax!) {
-                        progress = s.progressMax!;
-                        text = 'Status & progress changed';
-                      }
-
-                      Toast.show(context, text);
+                    if (s.progressMax != null && s.progress < s.progressMax!) {
+                      progress = s.progressMax!;
+                      text = 'Status & progress changed';
                     }
 
-                    return s.copyWith(
-                      status: status,
-                      progress: progress,
-                      completedAt: () => completedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                    Toast.show(context, text);
+                  }
+
+                  return s.copyWith(
+                    status: status,
+                    progress: progress,
+                    completedAt: () => completedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
       ],
     );
@@ -361,34 +354,22 @@ class _EditView extends StatelessWidget {
             controller: scrollCtrl,
             slivers: [
               space,
+              space,
               status,
               space,
+              space,
               tracking,
-              space,
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LabeledField(label: 'Score', child: ScoreField(tag)),
-                ),
-              ),
-              space,
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LabeledField(
-                    label: 'Notes',
-                    child: GrowableTextField(
-                      text: notifier.state.notes,
-                      onChanged: (notes) => notifier.state.notes = notes,
-                    ),
-                  ),
-                ),
-              ),
-              space,
-              dates,
+              SliverToBoxAdapter(child: ScoreField(tag)),
               space,
               advancedScoring,
               space,
+              _Notes(
+                value: notifier.state.notes,
+                onChanged: (notes) => notifier.state.notes = notes,
+              ),
+              space,
+              space,
+              dates,
               SliverToBoxAdapter(
                 child: StatefulCheckboxListTile(
                   title: const Text('Private'),
@@ -452,9 +433,47 @@ class _FieldGrid extends StatelessWidget {
         delegate: SliverChildListDelegate.fixed(children),
         gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: minWidth,
-          height: 71,
+          height: 58,
         ),
       ),
     );
   }
+}
+
+class _Notes extends StatefulWidget {
+  const _Notes({required this.value, required this.onChanged});
+
+  final String value;
+  final void Function(String) onChanged;
+
+  @override
+  _NotesState createState() => _NotesState();
+}
+
+class _NotesState extends State<_Notes> {
+  late final _ctrl = TextEditingController(text: widget.value);
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: TextField(
+            minLines: 1,
+            maxLines: 10,
+            controller: _ctrl,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: const InputDecoration(
+              labelText: 'Notes',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) => widget.onChanged(value),
+          ),
+        ),
+      );
 }

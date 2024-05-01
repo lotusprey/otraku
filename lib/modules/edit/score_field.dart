@@ -13,26 +13,38 @@ class ScoreField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final score = ref.watch(newEditProvider(tag).select((s) => s.score));
-        final scoreFormat =
-            ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
-                ScoreFormat.point10;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: 'Score',
+          border: OutlineInputBorder(),
+        ),
+        child: Consumer(
+          builder: (context, ref, _) {
+            final score = ref.watch(
+              newEditProvider(tag).select((s) => s.score),
+            );
 
-        final onChanged = (num v) => ref
-            .read(newEditProvider(tag).notifier)
-            .update((s) => s.copyWith(score: v.toDouble()));
+            final scoreFormat =
+                ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
+                    ScoreFormat.point10;
 
-        return switch (scoreFormat) {
-          ScoreFormat.point3 => _SmileyScorePicker(score, onChanged),
-          ScoreFormat.point5 => _StarScorePicker(score, onChanged),
-          ScoreFormat.point10 => _TenScorePicker(score, onChanged),
-          ScoreFormat.point10Decimal =>
-            _TenDecimalScorePicker(score, onChanged),
-          ScoreFormat.point100 => _HundredScorePicker(score, onChanged),
-        };
-      },
+            final onChanged = (num v) => ref
+                .read(newEditProvider(tag).notifier)
+                .update((s) => s.copyWith(score: v.toDouble()));
+
+            return switch (scoreFormat) {
+              ScoreFormat.point3 => _SmileyScorePicker(score, onChanged),
+              ScoreFormat.point5 => _StarScorePicker(score, onChanged),
+              ScoreFormat.point10 => _TenScorePicker(score, onChanged),
+              ScoreFormat.point10Decimal =>
+                _TenDecimalScorePicker(score, onChanged),
+              ScoreFormat.point100 => _HundredScorePicker(score, onChanged),
+            };
+          },
+        ),
+      ),
     );
   }
 }
@@ -43,27 +55,28 @@ class _SmileyScorePicker extends StatelessWidget {
   final double score;
   final void Function(double) onChanged;
 
-  Widget _face(BuildContext context, int index, Icon icon) {
-    return IconButton(
-      iconSize: 30,
-      padding: const EdgeInsets.all(5),
-      icon: icon,
-      color: score.floor() != index
-          ? Theme.of(context).colorScheme.surfaceVariant
-          : Theme.of(context).colorScheme.primary,
-      onPressed: () =>
-          score.floor() != index ? onChanged(index.toDouble()) : onChanged(0),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    const items = [
+      (1, Icon(Icons.sentiment_very_dissatisfied), 'Score Disliked'),
+      (2, Icon(Icons.sentiment_neutral), 'Score Neutral'),
+      (3, Icon(Icons.sentiment_very_satisfied), 'Score Liked'),
+    ];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _face(context, 1, const Icon(Icons.sentiment_very_dissatisfied)),
-        _face(context, 2, const Icon(Icons.sentiment_neutral)),
-        _face(context, 3, const Icon(Icons.sentiment_very_satisfied)),
+        for (final (i, icon, tooltip) in items)
+          IconButton(
+            tooltip: score.floor() != i ? tooltip : 'Unscore',
+            iconSize: 30,
+            icon: icon,
+            color: score.floor() != i
+                ? Theme.of(context).colorScheme.surfaceVariant
+                : Theme.of(context).colorScheme.primary,
+            onPressed: () =>
+                score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
+          ),
       ],
     );
   }
@@ -75,29 +88,22 @@ class _StarScorePicker extends StatelessWidget {
   final double score;
   final void Function(double) onChanged;
 
-  Widget _star(BuildContext context, int index) {
-    return IconButton(
-      iconSize: 30,
-      padding: const EdgeInsets.all(5),
-      icon: score >= index
-          ? const Icon(Icons.star_rounded)
-          : const Icon(Icons.star_outline_rounded),
-      color: Theme.of(context).colorScheme.primary,
-      onPressed: () =>
-          score.floor() != index ? onChanged(index.toDouble()) : onChanged(0),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _star(context, 1),
-        _star(context, 2),
-        _star(context, 3),
-        _star(context, 4),
-        _star(context, 5),
+        for (int i = 1; i < 6; i++)
+          IconButton(
+            tooltip: score.floor() != i ? 'Score $i Stars' : 'Unscore',
+            iconSize: 30,
+            icon: score >= i
+                ? const Icon(Icons.star_rounded)
+                : const Icon(Icons.star_outline_rounded),
+            color: Theme.of(context).colorScheme.primary,
+            onPressed: () =>
+                score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
+          ),
       ],
     );
   }

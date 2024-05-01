@@ -64,7 +64,7 @@ class _ChipSelectorState<T> extends State<ChipSelector<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
       length: widget.items.length,
       itemBuilder: (context, i) {
@@ -118,7 +118,7 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
       length: _options.length,
       itemBuilder: (context, index) => FilterChip(
@@ -176,7 +176,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
     final current = _current.index ~/ 2;
     final descending = _current.index % 2 != 0;
 
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
       length: _options.length,
       itemBuilder: (context, index) => FilterChip(
@@ -214,8 +214,8 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
   }
 }
 
-class _ChipSelectorLayout extends StatelessWidget {
-  const _ChipSelectorLayout({
+class _ChipSelector extends StatelessWidget {
+  const _ChipSelector({
     required this.title,
     required this.length,
     required this.itemBuilder,

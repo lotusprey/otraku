@@ -82,12 +82,17 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         ),
         bodyLarge: TextStyle(
           fontSize: Consts.fontMedium,
-          color: scheme.primary,
+          color: scheme.onBackground,
           fontWeight: FontWeight.normal,
         ),
         bodyMedium: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onBackground,
+          fontWeight: FontWeight.normal,
+        ),
+        labelLarge: TextStyle(
+          fontSize: Consts.fontMedium,
+          color: scheme.primary,
           fontWeight: FontWeight.normal,
         ),
         labelMedium: TextStyle(

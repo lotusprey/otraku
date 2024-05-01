@@ -360,7 +360,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
 
     final spoilerTextStyle = Theme.of(context)
         .textTheme
-        .bodyLarge
+        .bodyMedium
         ?.copyWith(color: Theme.of(context).colorScheme.error);
 
     return _ScrollCards(

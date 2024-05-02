@@ -5,106 +5,103 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/html_content.dart';
+import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/discover/discover_filter_provider.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
-import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/utils/toast.dart';
 
 class MediaInfoView extends StatelessWidget {
-  const MediaInfoView(this.media, this.scrollCtrl);
+  const MediaInfoView(this.info, this.scrollCtrl);
 
-  final Media media;
+  final MediaInfo info;
   final ScrollController scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
-    final info = media.info;
-
-    final infoTitles = [
-      'Status',
-      'Episodes',
-      'Duration',
-      'Chapters',
-      'Volumes',
-      'Start Date',
-      'End Date',
-      'Season',
-      'Average Score',
-      'Mean Score',
-      'Popularity',
-      'Favourites',
-      'Source',
-      'Origin',
-    ];
-
-    final infoData = [
-      info.status,
-      info.episodes,
-      info.duration,
-      info.chapters,
-      info.volumes,
-      info.startDate,
-      info.endDate,
-      info.season,
-      info.averageScore,
-      info.meanScore,
-      info.popularity,
-      info.favourites,
-      info.source,
-      info.countryOfOrigin?.label,
-    ];
-
-    for (int i = infoData.length - 1; i >= 0; i--) {
-      if (infoData[i] == null) {
-        infoData.removeAt(i);
-        infoTitles.removeAt(i);
+    String? release;
+    if (info.startDate != null) {
+      if (info.endDate != null) {
+        if (info.startDate != info.endDate) {
+          release = '${info.startDate} - ${info.endDate}';
+        } else {
+          release = info.startDate!;
+        }
+      } else {
+        release = '${info.startDate} - ?';
       }
     }
+
+    final details = [
+      if (release != null) ('Release', release),
+      if (info.status != null) ('Status', info.status!),
+      if (info.episodes != null) ('Episodes', info.episodes!.toString()),
+      if (info.duration != null) ('Duration', info.duration!),
+      if (info.chapters != null) ('Chapters', info.chapters!.toString()),
+      if (info.volumes != null) ('Volumes', info.volumes!.toString()),
+      if (info.season != null) ('Season', info.season!),
+      if (info.source != null) ('Source', info.source!),
+      if (info.countryOfOrigin != null) ('Origin', info.countryOfOrigin!.label),
+    ];
+
+    final titles = [
+      if (info.hashtag != null) ('Hashtag', info.hashtag!),
+      if (info.romajiTitle != null) ('Romaji', info.romajiTitle!),
+      if (info.englishTitle != null) ('English', info.englishTitle!),
+      if (info.nativeTitle != null) ('Native', info.nativeTitle!),
+      if (info.synonyms.isNotEmpty) ('Synonyms', info.synonyms.join('\n')),
+    ];
+
+    const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));
 
     return Consumer(
       builder: (context, ref, _) => CustomScrollView(
         controller: scrollCtrl,
         slivers: [
           if (info.description.isNotEmpty)
-            _ExpandableText(info.description)
+            _Description(info.description)
           else
-            const SliverToBoxAdapter(child: SizedBox(height: 10)),
-          SliverGrid(
-            gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-              height: Consts.tapTargetSize,
-              minWidth: 130,
-            ),
-            delegate: SliverChildBuilderDelegate(
-              (context, i) => Card(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 5,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        infoTitles[i],
-                        maxLines: 1,
-                        style: Theme.of(context).textTheme.labelMedium,
+            spacing,
+          SliverToBoxAdapter(
+            child: Card.outlined(
+              child: Padding(
+                padding: Consts.padding,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _IconTile(
+                      text: info.favourites.toString(),
+                      tooltip: 'Favorites',
+                      icon: Icons.favorite_outline_rounded,
+                    ),
+                    _IconTile(
+                      text: info.popularity.toString(),
+                      tooltip: 'Popularity',
+                      icon: Icons.person_outline_rounded,
+                    ),
+                    if (info.averageScore != null)
+                      _IconTile(
+                        text: info.averageScore!.toString(),
+                        tooltip: 'Weighted Average Score',
+                        icon: Icons.percent_rounded,
                       ),
-                      Text(infoData[i].toString(), maxLines: 1),
-                    ],
-                  ),
+                    if (info.meanScore != null)
+                      _IconTile(
+                        text: info.meanScore!.toString(),
+                        tooltip: 'Mean Score',
+                        icon: Ionicons.star_half_outline,
+                      ),
+                  ],
                 ),
               ),
-              childCount: infoData.length,
             ),
           ),
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          spacing,
+          _Rows(details),
+          spacing,
           if (info.genres.isNotEmpty)
             _PlainScrollCards(
               title: 'Genres',
@@ -121,8 +118,8 @@ class MediaInfoView extends StatelessWidget {
                 context.go(Routes.home(HomeTab.discover));
               },
             ),
-          if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
-          if (info.studios.isNotEmpty)
+          if (info.tags.isNotEmpty) ...[_TagScrollCards(info, ref), spacing],
+          if (info.studios.isNotEmpty) ...[
             _PlainScrollCards(
               title: 'Studios',
               items: info.studios.keys.toList(),
@@ -133,7 +130,9 @@ class MediaInfoView extends StatelessWidget {
                 ),
               ),
             ),
-          if (info.producers.isNotEmpty)
+            spacing,
+          ],
+          if (info.producers.isNotEmpty) ...[
             _PlainScrollCards(
               title: 'Producers',
               items: info.producers.keys.toList(),
@@ -144,31 +143,36 @@ class MediaInfoView extends StatelessWidget {
                 ),
               ),
             ),
-          if (info.externalLinks.isNotEmpty)
+            spacing,
+          ],
+          if (info.externalLinks.isNotEmpty) ...[
             _ExternalLinkScrollCards(info.externalLinks),
-          if (info.hashtag != null) _Title('Hashtag', info.hashtag!),
-          if (info.romajiTitle != null) _Title('Romaji', info.romajiTitle!),
-          if (info.englishTitle != null) _Title('English', info.englishTitle!),
-          if (info.nativeTitle != null) _Title('Native', info.nativeTitle!),
-          if (info.synonyms.isNotEmpty)
-            _Title('Synonyms', info.synonyms.join(', ')),
-          const SliverFooter(),
+            spacing,
+          ],
+          _Rows(titles),
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).bottom +
+                  floatingBarItemHeight +
+                  26,
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class _ExpandableText extends StatefulWidget {
-  const _ExpandableText(this.text);
+class _Description extends StatefulWidget {
+  const _Description(this.text);
 
   final String text;
 
   @override
-  State<_ExpandableText> createState() => _ExpandableTextState();
+  State<_Description> createState() => _DescriptionState();
 }
 
-class _ExpandableTextState extends State<_ExpandableText> {
+class _DescriptionState extends State<_Description> {
   bool _expanded = false;
 
   @override
@@ -189,7 +193,7 @@ class _ExpandableTextState extends State<_ExpandableText> {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Card.outlined(
           child: InkWell(
             borderRadius: Consts.borderRadiusMin,
@@ -202,6 +206,77 @@ class _ExpandableTextState extends State<_ExpandableText> {
               padding: const EdgeInsets.all(10),
               child: content,
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IconTile extends StatelessWidget {
+  const _IconTile({
+    required this.text,
+    required this.tooltip,
+    required this.icon,
+  });
+
+  final String text;
+  final String tooltip;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(text),
+          const SizedBox(height: 5),
+          Icon(
+            icon,
+            size: Consts.iconSmall,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Rows extends StatelessWidget {
+  const _Rows(this.items);
+
+  final List<(String, String)> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedSliver(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+        ),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      sliver: SliverPadding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        sliver: SliverList.separated(
+          itemCount: items.length,
+          separatorBuilder: (context, _) => const Divider(),
+          itemBuilder: (context, i) => Row(
+            children: [
+              const SizedBox(width: 10),
+              Text(items[i].$1),
+              const SizedBox(width: 10),
+              Expanded(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => Toast.copy(context, items[i].$2),
+                  child: Text(items[i].$2, textAlign: TextAlign.end),
+                ),
+              ),
+              const SizedBox(width: 10),
+            ],
           ),
         ),
       ),
@@ -261,7 +336,6 @@ class _ScrollCards extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
         ],
       ),
     );
@@ -287,43 +361,6 @@ class _PlainScrollCards extends StatelessWidget {
       onTap: onTap,
       onLongPress: (i) => Toast.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
-    );
-  }
-}
-
-class _ExternalLinkScrollCards extends StatelessWidget {
-  const _ExternalLinkScrollCards(this.items);
-
-  final List<ExternalLink> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return _ScrollCards(
-      title: "External Links",
-      itemCount: items.length,
-      onTap: (i) => Toast.launch(context, items[i].url),
-      onLongPress: (i) => Toast.copy(context, items[i].url),
-      builder: (context, i) => Row(
-        children: [
-          if (items[i].color != null)
-            Container(
-              padding: Consts.padding,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: Consts.borderRadiusMin,
-                color: items[i].color,
-              ),
-            ),
-          Text(items[i].site),
-          if (items[i].countryCode != null) ...[
-            const SizedBox(width: 5),
-            Text(
-              items[i].countryCode!,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-          ],
-        ],
-      ),
     );
   }
 }
@@ -382,12 +419,12 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         TextDialog(title: tags[i].name, text: tags[i].desciption),
       ),
       trailingAction: _showSpoilers != null
-          ? TopBarIcon(
+          ? IconButton(
               icon: _showSpoilers!
-                  ? Ionicons.eye_off_outline
-                  : Ionicons.eye_outline,
+                  ? const Icon(Ionicons.eye_off_outline)
+                  : const Icon(Ionicons.eye_outline),
               tooltip: _showSpoilers! ? 'Hide Spoilers' : 'Show Spoilers',
-              onTap: () => setState(() => _showSpoilers = !_showSpoilers!),
+              onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
             )
           : null,
       builder: (context, i) => Row(
@@ -408,42 +445,38 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
   }
 }
 
-class _Title extends StatelessWidget {
-  const _Title(this.label, this.title);
+class _ExternalLinkScrollCards extends StatelessWidget {
+  const _ExternalLinkScrollCards(this.items);
 
-  final String label;
-  final String title;
+  final List<ExternalLink> items;
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 3),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(
-              width: 90,
-              child:
-                  Text(label, style: Theme.of(context).textTheme.labelMedium),
-            ),
-            Flexible(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => Toast.copy(context, title),
-                child: Text(
-                  title,
-                  maxLines: null,
-                  textAlign: TextAlign.right,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      ),
-                ),
+    return _ScrollCards(
+      title: "External Links",
+      itemCount: items.length,
+      onTap: (i) => Toast.launch(context, items[i].url),
+      onLongPress: (i) => Toast.copy(context, items[i].url),
+      builder: (context, i) => Row(
+        children: [
+          if (items[i].color != null)
+            Container(
+              padding: Consts.padding,
+              margin: const EdgeInsets.only(right: 10),
+              decoration: BoxDecoration(
+                borderRadius: Consts.borderRadiusMin,
+                color: items[i].color,
               ),
             ),
+          Text(items[i].site),
+          if (items[i].countryCode != null) ...[
+            const SizedBox(width: 5),
+            Text(
+              items[i].countryCode!,
+              style: Theme.of(context).textTheme.labelMedium,
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

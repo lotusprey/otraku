@@ -193,7 +193,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
-        ConstrainedView(child: MediaInfoView(widget.media, _scrollCtrl)),
+        ConstrainedView(child: MediaInfoView(widget.media.info, _scrollCtrl)),
         ConstrainedView(
           child: CustomScrollView(
             controller: _scrollCtrl,

@@ -221,8 +221,10 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           const Divider(indent: 10, endIndent: 10),
           Consumer(
             builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Failed to load tags'),
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load tags'),
+                  ),
                   data: (tags) => TagSelector(
                     inclusiveGenres: filter.genreIn,
                     exclusiveGenres: filter.genreNotIn,

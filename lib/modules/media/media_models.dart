@@ -277,8 +277,6 @@ class MediaInfo {
 
   final int id;
   final DiscoverType type;
-  final int favourites;
-  bool isFavorite;
   final String? preferredTitle;
   final String? romajiTitle;
   final String? englishTitle;
@@ -299,9 +297,11 @@ class MediaInfo {
   final String? startDate;
   final String? endDate;
   final String? season;
-  final String? averageScore;
-  final String? meanScore;
-  final int? popularity;
+  final int? averageScore;
+  final int? meanScore;
+  final int popularity;
+  final int favourites;
+  bool isFavorite;
   final List<String> genres;
   final studios = <String, int>{};
   final producers = <String, int>{};
@@ -333,8 +333,6 @@ class MediaInfo {
     final model = MediaInfo._(
       id: map['id'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
-      isFavorite: map['isFavourite'] ?? false,
-      favourites: map['favourites'] ?? 0,
       preferredTitle: map['title']['userPreferred'],
       romajiTitle: map['title']['romaji'],
       englishTitle: map['title']['english'],
@@ -357,10 +355,11 @@ class MediaInfo {
       startDate: StringUtil.fromFuzzyDate(map['startDate']),
       endDate: StringUtil.fromFuzzyDate(map['endDate']),
       season: season,
-      averageScore:
-          map['averageScore'] != null ? '${map["averageScore"]}%' : null,
-      meanScore: map['meanScore'] != null ? '${map["meanScore"]}%' : null,
-      popularity: map['popularity'],
+      averageScore: map['averageScore'],
+      meanScore: map['meanScore'],
+      popularity: map['popularity'] ?? 0,
+      isFavorite: map['isFavourite'] ?? false,
+      favourites: map['favourites'] ?? 0,
       genres: List<String>.from(map['genres'] ?? [], growable: false),
       source: StringUtil.tryNoScreamingSnakeCase(map['source']),
       hashtag: map['hashtag'],

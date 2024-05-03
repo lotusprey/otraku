@@ -9,7 +9,6 @@ import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
@@ -29,9 +28,11 @@ final characterProvider = FutureProvider.autoDispose.family(
       {'id': id, 'withInfo': true},
     );
 
-    final settings =
-        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
-    return Character(data['Character'], settings.personNaming);
+    final personNaming = await ref.watch(
+      settingsProvider.selectAsync((data) => data.personNaming),
+    );
+
+    return Character(data['Character'], personNaming);
   },
 );
 

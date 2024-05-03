@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
@@ -29,9 +28,11 @@ final staffProvider = FutureProvider.autoDispose.family(
       {'id': id, 'withInfo': true},
     );
 
-    final settings =
-        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
-    return Staff(data['Staff'], settings.personNaming);
+    final personNaming = await ref.watch(
+      settingsProvider.selectAsync((settings) => settings.personNaming),
+    );
+
+    return Staff(data['Staff'], personNaming);
   },
 );
 

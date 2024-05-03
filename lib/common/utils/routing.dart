@@ -196,7 +196,10 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
         int.parse(state.pathParameters['id']!),
       ),
     ),
-    // Anilist media endpoints are split between anime/manga.
+
+    // Extra routes for AniList deep links:
+    // - Media endpoints are split between anime/manga.
+    // - Paths can contain superfluous information after the path parameter.
     GoRoute(
       path: '/anime/:id',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
@@ -205,7 +208,6 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       path: '/manga/:id',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
-    // Paths with superfluous information must be handled.
     GoRoute(
       path: '/anime/:id/:_(.*)',
       redirect: (context, state) => '/media/${state.pathParameters['id']}',

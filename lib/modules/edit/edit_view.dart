@@ -8,7 +8,6 @@ import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
@@ -289,17 +288,22 @@ class _EditView extends StatelessWidget {
 
     final advancedScoring = Consumer(
       builder: (context, ref, _) {
-        final settings =
-            ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
+        final settings = ref.watch(
+          settingsProvider.select((s) => s.valueOrNull),
+        );
 
-        if (!settings.advancedScoringEnabled ||
-            settings.scoreFormat != ScoreFormat.point100 &&
-                settings.scoreFormat != ScoreFormat.point10Decimal) {
+        final advancedScoringEnabled =
+            settings?.advancedScoringEnabled ?? false;
+        final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
+
+        if (!advancedScoringEnabled ||
+            scoreFormat != ScoreFormat.point100 &&
+                scoreFormat != ScoreFormat.point10Decimal) {
           return const SliverToBoxAdapter(child: SizedBox());
         }
 
         final scores = ref.watch(provider.notifier).state.advancedScores;
-        final isDecimal = settings.scoreFormat == ScoreFormat.point10Decimal;
+        final isDecimal = scoreFormat == ScoreFormat.point10Decimal;
 
         final onChanged = (entry, score) {
           scores[entry.key] = score.toDouble();

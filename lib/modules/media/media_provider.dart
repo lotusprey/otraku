@@ -6,7 +6,6 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
@@ -51,8 +50,12 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
       if (relation['node'] != null) relatedMedia.add(RelatedMedia(relation));
     }
 
+    final settings = await ref.watch(
+      settingsProvider.selectAsync((settings) => settings),
+    );
+
     return Media(
-      Edit(data, ref.watch(settingsProvider).valueOrNull ?? Settings.empty()),
+      Edit(data, settings),
       MediaInfo(data),
       MediaStats(data),
       relatedMedia,

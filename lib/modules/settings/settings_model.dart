@@ -66,26 +66,6 @@ class Settings {
         },
       );
 
-  factory Settings.empty() => Settings._(
-        unreadNotifications: 0,
-        scoreFormat: ScoreFormat.point10,
-        defaultSort: EntrySort.TITLE,
-        titleLanguage: TitleLanguage.romaji,
-        personNaming: PersonNaming.romajiWestern,
-        activityMergeTime: 720,
-        splitCompletedAnime: false,
-        splitCompletedManga: false,
-        displayAdultContent: false,
-        airingNotifications: true,
-        advancedScoringEnabled: false,
-        restrictMessagesToFollowing: false,
-        advancedScores: [],
-        animeCustomLists: [],
-        mangaCustomLists: [],
-        disabledListActivity: {},
-        notificationOptions: {},
-      );
-
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
   TitleLanguage titleLanguage;

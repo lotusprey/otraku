@@ -388,10 +388,10 @@ abstract class GqlQuery {
   ''';
 
   static const reviewPage = r'''
-    query Reviews($userId: Int, $page: Int = 1, $sort: [ReviewSort] = [CREATED_AT_DESC]) {
+    query Reviews($userId: Int, $page: Int = 1, $mediaType: MediaType, $sort: [ReviewSort]) {
       Page(page: $page) {
         pageInfo {hasNextPage total}
-        reviews(userId: $userId, sort: $sort) {
+        reviews(userId: $userId, mediaType: $mediaType, sort: $sort) {
           id
           summary
           rating

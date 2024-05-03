@@ -9,7 +9,7 @@ import 'package:otraku/modules/discover/discover_media_grid.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/discover/discover_provider.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
-import 'package:otraku/modules/review/review_models.dart';
+import 'package:otraku/modules/review/reviews_filter_sheet.dart';
 import 'package:otraku/modules/studio/studio_grid.dart';
 import 'package:otraku/modules/user/user_grid.dart';
 import 'package:otraku/modules/review/review_grid.dart';
@@ -105,23 +105,13 @@ class _TopBarContent extends StatelessWidget {
                 TopBarIcon(
                   tooltip: 'Sort',
                   icon: Ionicons.funnel_outline,
-                  onTap: () {
-                    final current = ref.read(discoverFilterProvider).reviewSort;
-
-                    showSheet(
-                      context,
-                      GradientSheet([
-                        for (final rs in ReviewsSort.values)
-                          GradientSheetButton(
-                            text: rs.text,
-                            selected: rs == current,
-                            onTap: () => ref
-                                .read(discoverFilterProvider.notifier)
-                                .update((s) => s.copyWith(reviewSort: rs)),
-                          ),
-                      ]),
-                    );
-                  },
+                  onTap: () => showReviewsFilterSheet(
+                    context: context,
+                    filter: ref.read(discoverFilterProvider).reviewsFilter,
+                    onDone: (filter) => ref
+                        .read(discoverFilterProvider.notifier)
+                        .update((s) => s.copyWith(reviewsFilter: filter)),
+                  ),
                 )
               else
                 const SizedBox(width: 10),

@@ -28,7 +28,7 @@ class DiscoverFilter {
     required this.search,
     required this.mediaFilter,
     required this.hasBirthday,
-    required this.reviewSort,
+    required this.reviewsFilter,
   });
 
   DiscoverFilter(DiscoverType discoverType)
@@ -36,27 +36,27 @@ class DiscoverFilter {
         search = '',
         mediaFilter = DiscoverMediaFilter(),
         hasBirthday = false,
-        reviewSort = ReviewsSort.CREATED_AT_DESC;
+        reviewsFilter = const ReviewsFilter();
 
   final DiscoverType type;
   final String search;
   final DiscoverMediaFilter mediaFilter;
   final bool hasBirthday;
-  final ReviewsSort reviewSort;
+  final ReviewsFilter reviewsFilter;
 
   DiscoverFilter copyWith({
     DiscoverType? type,
     String? search,
     DiscoverMediaFilter? mediaFilter,
     bool? hasBirthday,
-    ReviewsSort? reviewSort,
+    ReviewsFilter? reviewsFilter,
   }) =>
       DiscoverFilter._(
         type: type ?? this.type,
         search: search ?? this.search,
         mediaFilter: mediaFilter ?? this.mediaFilter,
         hasBirthday: hasBirthday ?? this.hasBirthday,
-        reviewSort: reviewSort ?? this.reviewSort,
+        reviewsFilter: reviewsFilter ?? this.reviewsFilter,
       );
 }
 

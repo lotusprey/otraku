@@ -7,8 +7,8 @@ import 'package:otraku/modules/review/review_grid.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
-import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
+import 'package:otraku/modules/review/reviews_filter_sheet.dart';
 import 'package:otraku/modules/review/reviews_provider.dart';
 import 'package:otraku/modules/review/reviews_sort_provider.dart';
 
@@ -57,28 +57,15 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           scrollCtrl: _ctrl,
           children: [
             ActionButton(
-              tooltip: 'Sort',
               icon: Ionicons.funnel_outline,
-              onTap: () {
-                final index = ref
-                    .read(reviewsSortProvider(widget.id).notifier)
-                    .state
-                    .index;
-
-                showSheet(
-                  context,
-                  GradientSheet([
-                    for (int i = 0; i < ReviewsSort.values.length; i++)
-                      GradientSheetButton(
-                        text: ReviewsSort.values.elementAt(i).text,
-                        selected: index == i,
-                        onTap: () => ref
-                            .read(reviewsSortProvider(widget.id).notifier)
-                            .state = ReviewsSort.values.elementAt(i),
-                      ),
-                  ]),
-                );
-              },
+              tooltip: 'Filter',
+              onTap: () => showReviewsFilterSheet(
+                context: context,
+                filter: ref.read(reviewsFilterProvider(widget.id)),
+                onDone: (filter) => ref
+                    .read(reviewsFilterProvider(widget.id).notifier)
+                    .state = filter,
+              ),
             ),
           ],
         ),

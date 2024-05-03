@@ -14,11 +14,11 @@ final reviewsProvider = AsyncNotifierProvider.autoDispose
 
 class ReviewsNotifier
     extends AutoDisposeFamilyAsyncNotifier<PagedWithTotal<ReviewItem>, int> {
-  late ReviewsSort sort;
+  late ReviewsFilter filter;
 
   @override
   FutureOr<PagedWithTotal<ReviewItem>> build(arg) {
-    sort = ref.watch(reviewsSortProvider(arg));
+    filter = ref.watch(reviewsFilterProvider(arg));
     return _fetch(const PagedWithTotal());
   }
 
@@ -34,7 +34,8 @@ class ReviewsNotifier
     final data = await Api.get(GqlQuery.reviewPage, {
       'userId': arg,
       'page': oldState.next,
-      'sort': sort.name,
+      'sort': filter.sort.value,
+      if (filter.mediaType != null) 'mediaType': filter.mediaType!.value,
     });
 
     final items = <ReviewItem>[];

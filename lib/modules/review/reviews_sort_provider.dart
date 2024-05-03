@@ -1,18 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/review/review_models.dart';
 
-final reviewsSortProvider =
-    NotifierProvider.autoDispose.family<ReviewsSortNotifier, ReviewsSort, int>(
-  ReviewsSortNotifier.new,
+final reviewsFilterProvider = NotifierProvider.autoDispose
+    .family<ReviewsFilterNotifier, ReviewsFilter, int>(
+  ReviewsFilterNotifier.new,
 );
 
-class ReviewsSortNotifier extends AutoDisposeFamilyNotifier<ReviewsSort, int> {
+class ReviewsFilterNotifier
+    extends AutoDisposeFamilyNotifier<ReviewsFilter, int> {
   @override
-  ReviewsSort build(arg) => ReviewsSort.CREATED_AT_DESC;
+  ReviewsFilter build(arg) => const ReviewsFilter();
 
   @override
-  ReviewsSort get state => super.state;
-
-  @override
-  set state(ReviewsSort newState) => super.state = newState;
+  set state(ReviewsFilter newState) => super.state = newState;
 }

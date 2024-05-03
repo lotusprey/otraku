@@ -194,7 +194,9 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   Future<DiscoverItems> _fetchReviews(DiscoverReviewItems oldValue) async {
     final data = await Api.get(GqlQuery.reviewPage, {
       'page': oldValue.pages.next,
-      'sort': filter.reviewSort.name,
+      'sort': filter.reviewsFilter.sort.value,
+      if (filter.reviewsFilter.mediaType != null)
+        'mediaType': filter.reviewsFilter.mediaType!.value,
     });
 
     final items = <ReviewItem>[];

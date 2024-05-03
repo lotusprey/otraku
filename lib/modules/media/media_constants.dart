@@ -1,5 +1,15 @@
 import 'package:otraku/common/utils/extensions.dart';
 
+enum MediaType {
+  anime('Anime', 'ANIME'),
+  manga('Manga', 'MANGA');
+
+  const MediaType(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
 enum MediaStatus {
   FINISHED,
   RELEASING,

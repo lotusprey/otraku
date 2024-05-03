@@ -82,18 +82,16 @@ class MediaInfoView extends StatelessWidget {
                       tooltip: 'Popularity',
                       icon: Icons.person_outline_rounded,
                     ),
-                    if (info.averageScore != null)
-                      _IconTile(
-                        text: info.averageScore!.toString(),
-                        tooltip: 'Weighted Average Score',
-                        icon: Icons.percent_rounded,
-                      ),
-                    if (info.meanScore != null)
-                      _IconTile(
-                        text: info.meanScore!.toString(),
-                        tooltip: 'Mean Score',
-                        icon: Ionicons.star_half_outline,
-                      ),
+                    _IconTile(
+                      text: info.averageScore.toString(),
+                      tooltip: 'Weighted Average Score',
+                      icon: Icons.percent_rounded,
+                    ),
+                    _IconTile(
+                      text: info.meanScore.toString(),
+                      tooltip: 'Mean Score',
+                      icon: Ionicons.star_half_outline,
+                    ),
                   ],
                 ),
               ),
@@ -231,13 +229,13 @@ class _IconTile extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(text),
-          const SizedBox(height: 5),
           Icon(
             icon,
             size: Consts.iconSmall,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
+          const SizedBox(height: 5),
+          Text(text),
         ],
       ),
     );
@@ -309,10 +307,7 @@ class _ScrollCards extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.labelMedium,
-              ),
+              Text(title),
               const Spacer(),
               if (trailingAction != null) trailingAction!,
             ],

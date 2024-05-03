@@ -242,8 +242,6 @@ class MediaInfo {
   MediaInfo._({
     required this.id,
     required this.type,
-    required this.favourites,
-    required this.isFavorite,
     required this.preferredTitle,
     required this.romajiTitle,
     required this.englishTitle,
@@ -267,6 +265,8 @@ class MediaInfo {
     required this.averageScore,
     required this.meanScore,
     required this.popularity,
+    required this.favourites,
+    required this.isFavorite,
     required this.genres,
     required this.source,
     required this.hashtag,
@@ -297,8 +297,8 @@ class MediaInfo {
   final String? startDate;
   final String? endDate;
   final String? season;
-  final int? averageScore;
-  final int? meanScore;
+  final int averageScore;
+  final int meanScore;
   final int popularity;
   final int favourites;
   bool isFavorite;
@@ -355,11 +355,11 @@ class MediaInfo {
       startDate: StringUtil.fromFuzzyDate(map['startDate']),
       endDate: StringUtil.fromFuzzyDate(map['endDate']),
       season: season,
-      averageScore: map['averageScore'],
-      meanScore: map['meanScore'],
+      averageScore: map['averageScore'] ?? 0,
+      meanScore: map['meanScore'] ?? 0,
       popularity: map['popularity'] ?? 0,
-      isFavorite: map['isFavourite'] ?? false,
       favourites: map['favourites'] ?? 0,
+      isFavorite: map['isFavourite'] ?? false,
       genres: List<String>.from(map['genres'] ?? [], growable: false),
       source: StringUtil.tryNoScreamingSnakeCase(map['source']),
       hashtag: map['hashtag'],

@@ -44,7 +44,7 @@ class PreviewCollection extends Collection {
   final List<Entry> entries;
 
   @override
-  String get listName => 'Current';
+  String get listName => 'Preview';
 
   @override
   void sort(EntrySort s) {

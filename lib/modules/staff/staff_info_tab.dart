@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:otraku/common/utils/consts.dart';
+import 'package:otraku/common/widgets/table_list.dart';
 import 'package:otraku/modules/staff/staff_provider.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
-import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -30,55 +30,52 @@ class StaffInfoTab extends StatelessWidget {
         final imageUrl = staff.valueOrNull?.imageUrl ?? this.imageUrl;
 
         final header = SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (imageUrl != null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Hero(
-                        tag: id,
-                        child: ClipRRect(
-                          borderRadius: Consts.borderRadiusMin,
-                          child: Container(
-                            width: imageWidth,
-                            height: imageHeight,
-                            color: Theme.of(context).colorScheme.surfaceVariant,
-                            child: GestureDetector(
-                              child: CachedImage(imageUrl),
-                              onTap: () =>
-                                  showPopUp(context, ImageDialog(imageUrl)),
-                            ),
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (imageUrl != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Hero(
+                      tag: id,
+                      child: ClipRRect(
+                        borderRadius: Consts.borderRadiusMin,
+                        child: Container(
+                          width: imageWidth,
+                          height: imageHeight,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          child: GestureDetector(
+                            child: CachedImage(imageUrl),
+                            onTap: () =>
+                                showPopUp(context, ImageDialog(imageUrl)),
                           ),
                         ),
                       ),
                     ),
-                  staff.unwrapPrevious().maybeWhen(
-                        orElse: () => const SizedBox(),
-                        data: (data) => Flexible(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              GestureDetector(
-                                onTap: () => Toast.copy(context, data.name),
-                                child: Text(
-                                  data.name,
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
+                  ),
+                staff.unwrapPrevious().maybeWhen(
+                      orElse: () => const SizedBox(),
+                      data: (data) => Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Toast.copy(context, data.name),
+                              child: Text(
+                                data.name,
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
-                              if (data.altNames.isNotEmpty)
-                                Text(data.altNames.join(', ')),
-                            ],
-                          ),
+                            ),
+                            if (data.altNames.isNotEmpty)
+                              Text(data.altNames.join(', ')),
+                          ],
                         ),
                       ),
-                ],
-              ),
+                    ),
+              ],
             ),
           ),
         );
@@ -117,33 +114,26 @@ class StaffInfoTab extends StatelessWidget {
                   slivers: [
                     refreshControl,
                     header,
-                    SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithMinWidthAndFixedHeight(
-                        height: Consts.tapTargetSize,
-                        minWidth: 150,
-                      ),
-                      delegate: SliverChildListDelegate([
-                        _InfoTile('Favourites', data.favorites.toString()),
-                        if (data.gender != null)
-                          _InfoTile('Gender', data.gender!),
-                        if (data.age != null) _InfoTile('Age', data.age!),
-                        if (data.dateOfBirth != null)
-                          _InfoTile('Date of Birth', data.dateOfBirth!),
-                        if (data.dateOfDeath != null)
-                          _InfoTile('Date of Death', data.dateOfDeath!),
-                        if (data.startYear != null)
-                          _InfoTile('Active Since', data.startYear!),
-                        if (data.endYear != null)
-                          _InfoTile('Active Until', data.endYear!),
-                        if (data.homeTown != null)
-                          _InfoTile('Home Town', data.homeTown!),
-                        if (data.bloodType != null)
-                          _InfoTile('Blood Type', data.bloodType!),
-                      ]),
-                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+                    TableList([
+                      ('Favorites', data.favorites.toString()),
+                      if (data.dateOfBirth != null)
+                        ('Birth', data.dateOfBirth!),
+                      if (data.dateOfDeath != null)
+                        ('Death', data.dateOfDeath!),
+                      if (data.age != null) ('Age', data.age!),
+                      if (data.gender != null) ('Gender', data.gender!),
+                      if (data.startYear != null)
+                        (
+                          'Years Active',
+                          '${data.startYear} - ${data.endYear ?? 'Present'}',
+                        ),
+                      if (data.homeTown != null) ('Home Town', data.homeTown!),
+                      if (data.bloodType != null)
+                        ('Blood Type', data.bloodType!),
+                    ]),
                     if (data.description.isNotEmpty) ...[
-                      const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                      const SliverToBoxAdapter(child: SizedBox(height: 15)),
                       HtmlContent(
                         data.description,
                         renderMode: RenderMode.sliverList,
@@ -155,37 +145,6 @@ class StaffInfoTab extends StatelessWidget {
               ),
         );
       },
-    );
-  }
-}
-
-class _InfoTile extends StatelessWidget {
-  const _InfoTile(this.title, this.subtitle);
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 5,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              maxLines: 1,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            Text(subtitle, maxLines: 1),
-          ],
-        ),
-      ),
     );
   }
 }

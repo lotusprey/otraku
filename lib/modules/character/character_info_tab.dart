@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:otraku/common/widgets/table_list.dart';
 import 'package:otraku/modules/character/character_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
-import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -30,71 +30,67 @@ class CharacterInfoTab extends StatelessWidget {
         final imageUrl = character.valueOrNull?.imageUrl ?? this.imageUrl;
 
         final header = SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (imageUrl != null)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 10),
-                      child: Hero(
-                        tag: id,
-                        child: ClipRRect(
-                          borderRadius: Consts.borderRadiusMin,
-                          child: Container(
-                            width: imageWidth,
-                            height: imageHeight,
-                            color: Theme.of(context).colorScheme.surfaceVariant,
-                            child: GestureDetector(
-                              child: CachedImage(imageUrl),
-                              onTap: () =>
-                                  showPopUp(context, ImageDialog(imageUrl)),
-                            ),
+          child: IntrinsicHeight(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (imageUrl != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Hero(
+                      tag: id,
+                      child: ClipRRect(
+                        borderRadius: Consts.borderRadiusMin,
+                        child: Container(
+                          width: imageWidth,
+                          height: imageHeight,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          child: GestureDetector(
+                            child: CachedImage(imageUrl),
+                            onTap: () =>
+                                showPopUp(context, ImageDialog(imageUrl)),
                           ),
                         ),
                       ),
                     ),
-                  character.unwrapPrevious().maybeWhen(
-                        orElse: () => const SizedBox(),
-                        data: (data) => Flexible(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
+                  ),
+                character.unwrapPrevious().maybeWhen(
+                      orElse: () => const SizedBox(),
+                      data: (data) => Flexible(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            GestureDetector(
+                              onTap: () => Toast.copy(context, data.name),
+                              child: Text(
+                                data.name,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ),
+                            if (data.altNames.isNotEmpty)
+                              Text(data.altNames.join(', ')),
+                            if (data.altNamesSpoilers.isNotEmpty)
                               GestureDetector(
-                                onTap: () => Toast.copy(context, data.name),
+                                behavior: HitTestBehavior.opaque,
                                 child: Text(
-                                  data.name,
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  'Spoiler names',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                onTap: () => showPopUp(
+                                  context,
+                                  TextDialog(
+                                    title: 'Spoiler names',
+                                    text: data.altNamesSpoilers.join(', '),
+                                  ),
                                 ),
                               ),
-                              if (data.altNames.isNotEmpty)
-                                Text(data.altNames.join(', ')),
-                              if (data.altNamesSpoilers.isNotEmpty)
-                                GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  child: Text(
-                                    'Spoiler names',
-                                    style:
-                                        Theme.of(context).textTheme.labelLarge,
-                                  ),
-                                  onTap: () => showPopUp(
-                                    context,
-                                    TextDialog(
-                                      title: 'Spoiler names',
-                                      text: data.altNamesSpoilers.join(', '),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          ),
+                          ],
                         ),
                       ),
-                ],
-              ),
+                    ),
+              ],
             ),
           ),
         );
@@ -133,25 +129,18 @@ class CharacterInfoTab extends StatelessWidget {
                   slivers: [
                     refreshControl,
                     header,
-                    SliverGrid(
-                      gridDelegate:
-                          const SliverGridDelegateWithMinWidthAndFixedHeight(
-                        height: Consts.tapTargetSize,
-                        minWidth: 150,
-                      ),
-                      delegate: SliverChildListDelegate([
-                        _InfoTile('Favourites', data.favorites.toString()),
-                        if (data.gender != null)
-                          _InfoTile('Gender', data.gender!),
-                        if (data.age != null) _InfoTile('Age', data.age!),
-                        if (data.dateOfBirth != null)
-                          _InfoTile('Date of Birth', data.dateOfBirth!),
-                        if (data.bloodType != null)
-                          _InfoTile('Blood Type', data.bloodType!),
-                      ]),
-                    ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 15)),
+                    TableList([
+                      ('Favorites', data.favorites.toString()),
+                      if (data.dateOfBirth != null)
+                        ('Birth', data.dateOfBirth!),
+                      if (data.age != null) ('Age', data.age!),
+                      if (data.gender != null) ('Gender', data.gender!),
+                      if (data.bloodType != null)
+                        ('Blood Type', data.bloodType!),
+                    ]),
                     if (data.description.isNotEmpty) ...[
-                      const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                      const SliverToBoxAdapter(child: SizedBox(height: 15)),
                       HtmlContent(
                         data.description,
                         renderMode: RenderMode.sliverList,
@@ -163,37 +152,6 @@ class CharacterInfoTab extends StatelessWidget {
               ),
         );
       },
-    );
-  }
-}
-
-class _InfoTile extends StatelessWidget {
-  const _InfoTile(this.title, this.subtitle);
-
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 5,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              maxLines: 1,
-              style: Theme.of(context).textTheme.labelMedium,
-            ),
-            Text(subtitle, maxLines: 1),
-          ],
-        ),
-      ),
     );
   }
 }

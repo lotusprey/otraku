@@ -7,6 +7,7 @@ import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
+import 'package:otraku/common/widgets/table_list.dart';
 import 'package:otraku/modules/discover/discover_filter_provider.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_model.dart';
@@ -98,7 +99,7 @@ class MediaInfoView extends StatelessWidget {
             ),
           ),
           spacing,
-          _Rows(details),
+          TableList(details),
           spacing,
           if (info.genres.isNotEmpty)
             _PlainScrollCards(
@@ -147,7 +148,7 @@ class MediaInfoView extends StatelessWidget {
             _ExternalLinkScrollCards(info.externalLinks),
             spacing,
           ],
-          _Rows(titles),
+          TableList(titles),
           SliverToBoxAdapter(
             child: SizedBox(
               height: MediaQuery.paddingOf(context).bottom +
@@ -226,6 +227,7 @@ class _IconTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
+      triggerMode: TooltipTriggerMode.tap,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -237,46 +239,6 @@ class _IconTile extends StatelessWidget {
           const SizedBox(height: 5),
           Text(text),
         ],
-      ),
-    );
-  }
-}
-
-class _Rows extends StatelessWidget {
-  const _Rows(this.items);
-
-  final List<(String, String)> items;
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedSliver(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      sliver: SliverPadding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        sliver: SliverList.separated(
-          itemCount: items.length,
-          separatorBuilder: (context, _) => const Divider(),
-          itemBuilder: (context, i) => Row(
-            children: [
-              const SizedBox(width: 10),
-              Text(items[i].$1),
-              const SizedBox(width: 10),
-              Expanded(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Toast.copy(context, items[i].$2),
-                  child: Text(items[i].$2, textAlign: TextAlign.end),
-                ),
-              ),
-              const SizedBox(width: 10),
-            ],
-          ),
-        ),
       ),
     );
   }

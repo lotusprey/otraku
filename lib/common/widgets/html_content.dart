@@ -38,14 +38,20 @@ class HtmlContent extends StatelessWidget {
         if (source != null) showPopUp(context, ImageDialog(source));
       },
       factoryBuilder: () => _CustomWidgetFactory(),
-      onLoadingBuilder: (_, __, ___) => renderMode != RenderMode.sliverList
-          ? const Center(child: Loader())
-          : const SliverToBoxAdapter(child: Center(child: Loader())),
-      onErrorBuilder: (_, element, err) => renderMode != RenderMode.sliverList
-          ? _errorBuilder(context, element.localName, err)
-          : SliverToBoxAdapter(
-              child: _errorBuilder(context, element.localName, err),
+      onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
+      onErrorBuilder: (_, element, err) => Center(
+        child: IconButton(
+          tooltip: 'Error',
+          icon: const Icon(Icons.close_outlined),
+          onPressed: () => showPopUp(
+            context,
+            ConfirmationDialog(
+              title: 'Failed to load element ${element.localName}',
+              content: err.toString(),
             ),
+          ),
+        ),
+      ),
       customStylesBuilder: (element) {
         return switch (element.localName) {
           'br' => const {'line-height': '15px'},
@@ -128,23 +134,6 @@ class HtmlContent extends StatelessWidget {
       },
     );
   }
-
-  Widget _errorBuilder(
-    BuildContext context,
-    String? elementName,
-    dynamic err,
-  ) =>
-      IconButton(
-        tooltip: 'Error',
-        icon: const Icon(Icons.close_outlined),
-        onPressed: () => showPopUp(
-          context,
-          ConfirmationDialog(
-            title: 'Failed to load element $elementName',
-            content: err.toString(),
-          ),
-        ),
-      );
 }
 
 final _routeMatchers = {

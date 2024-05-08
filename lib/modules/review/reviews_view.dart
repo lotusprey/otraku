@@ -10,7 +10,7 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 import 'package:otraku/modules/review/reviews_filter_sheet.dart';
 import 'package:otraku/modules/review/reviews_provider.dart';
-import 'package:otraku/modules/review/reviews_sort_provider.dart';
+import 'package:otraku/modules/review/reviews_filter_provider.dart';
 
 class ReviewsView extends ConsumerStatefulWidget {
   const ReviewsView(this.id);

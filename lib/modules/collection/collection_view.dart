@@ -318,7 +318,15 @@ class _ContentState extends State<_Content> {
                         .saveEntryProgress
                     : null;
 
-                if (Options().collectionItemView == 1) {
+                final collectionIsExpanded = ref.watch(homeProvider.select(
+                  (s) => widget.tag.ofAnime
+                      ? s.didExpandAnimeCollection
+                      : s.didExpandMangaCollection,
+                ));
+
+                if (collectionIsExpanded && Options().collectionItemView == 1 ||
+                    !collectionIsExpanded &&
+                        Options().collectionPreviewItemView == 1) {
                   return CollectionGrid(
                     items: data,
                     onProgressUpdated: onProgressUpdated,

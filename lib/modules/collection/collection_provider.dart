@@ -38,9 +38,11 @@ class CollectionNotifier
       if (!isFull) 'status_in': ['CURRENT', 'REPEATING'],
     });
 
-    return isFull
+    final collection = isFull
         ? FullCollection(data['MediaListCollection'], arg.ofAnime, index)
         : PreviewCollection(data['MediaListCollection']);
+    collection.sort(_sort);
+    return collection;
   }
 
   void ensureSorted(EntrySort sort) {

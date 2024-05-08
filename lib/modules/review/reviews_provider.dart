@@ -5,7 +5,7 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/modules/review/review_models.dart';
-import 'package:otraku/modules/review/reviews_sort_provider.dart';
+import 'package:otraku/modules/review/reviews_filter_provider.dart';
 
 final reviewsProvider = AsyncNotifierProvider.autoDispose
     .family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(

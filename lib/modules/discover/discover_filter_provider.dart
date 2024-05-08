@@ -15,7 +15,7 @@ class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
   DiscoverFilter get state => super.state;
 
   @override
-  set state(DiscoverFilter newState) => super.state = state;
+  set state(DiscoverFilter newState) => super.state = newState;
 
   DiscoverFilter update(DiscoverFilter Function(DiscoverFilter) callback) =>
       super.state = callback(state);

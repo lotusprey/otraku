@@ -202,7 +202,7 @@ class Edit {
 
   Map<String, dynamic> toMap() => {
         'mediaId': mediaId,
-        'status': (status ?? EntryStatus.current).name,
+        'status': (status ?? EntryStatus.current).value,
         'progress': progress,
         'progressVolumes': progressVolumes,
         'score': score,

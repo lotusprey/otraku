@@ -233,7 +233,7 @@ class _ImageSyntax extends InlineSyntax {
 class _YouTubeSyntax extends InlineSyntax {
   _YouTubeSyntax()
       : super(
-          r'youtube\s?\(\s*(?:https:\/\/)?(?:www\.)?(?:(?:youtube\.com\/watch\?v=)|(?:youtu\.be\/))([^?&#)]+)(?:[^)]*)\)',
+          r'youtube\s?\(\s*(?:(?:https:\/\/)?(?:www\.)?(?:(?:(?:music\.)?youtube\.com\/watch\?v=)|(?:youtu\.be\/)))?([^?&#)]+)(?:[^)]*)\)',
           caseSensitive: false,
         );
 

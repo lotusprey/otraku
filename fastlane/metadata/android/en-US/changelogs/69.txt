@@ -1,0 +1,10 @@
+- AniList Markdown is supported almost fully
+- AniList links in markdown text are opened within the app
+- More markdown quick access buttons in the composition sheet
+- Collection previews can be filtered like full collections
+- User/Discover reviews can be filtered by media type
+- You can long-press to copy a media description
+- Redesigned media overview tab and other elements
+- Fixed bugs around deep link opening
+- Image popups are also cached
+- Other fixes and improvements

@@ -1,3 +1,15 @@
+import 'package:otraku/common/utils/extensions.dart';
+
+enum MediaType {
+  anime('Anime', 'ANIME'),
+  manga('Manga', 'MANGA');
+
+  const MediaType(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
 enum MediaStatus {
   FINISHED,
   RELEASING,
@@ -32,7 +44,7 @@ enum MangaFormat {
   NOVEL,
   ONE_SHOT;
 
-  static MangaFormat? fromText(String? text) => switch (text) {
+  static MangaFormat? fromLabel(String? s) => switch (s) {
         'Manga' => MANGA,
         'Novel' => NOVEL,
         'One Shot' => ONE_SHOT,
@@ -41,26 +53,36 @@ enum MangaFormat {
 }
 
 enum MediaSeason {
-  WINTER,
-  SPRING,
-  SUMMER,
-  FALL,
+  winter('Winter', 'WINTER'),
+  spring('Spring', 'SPRING'),
+  summer('Summer', 'SUMMER'),
+  fall('Fall', 'FALL');
+
+  const MediaSeason(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static MediaSeason? from(String? value) =>
+      MediaSeason.values.firstWhereOrNull((v) => v.value == value);
 }
 
 enum ScoreFormat {
-  POINT_100,
-  POINT_10_DECIMAL,
-  POINT_10,
-  POINT_5,
-  POINT_3;
+  point100('100 Points', 'POINT_100'),
+  point10Decimal('10 Decimal Points', 'POINT_10_DECIMAL'),
+  point10('10 Points', 'POINT_10'),
+  point5('5 Stars', 'POINT_5'),
+  point3('3 Smileys', 'POINT_3');
 
-  String get label => switch (this) {
-        POINT_100 => '100 Points',
-        POINT_10_DECIMAL => '10 Decimal Points',
-        POINT_10 => '10 Points',
-        POINT_5 => '5 Stars',
-        POINT_3 => '3 Smileys',
-      };
+  const ScoreFormat(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static ScoreFormat from(String? value) => ScoreFormat.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => point10,
+      );
 }
 
 enum MediaSource {
@@ -82,33 +104,38 @@ enum MediaSource {
 }
 
 enum OriginCountry {
-  JAPAN('JP'),
-  CHINA('CN'),
-  SOUTH_KOREA('KR'),
-  TAIWAN('TW');
+  japan('Japan', 'JP'),
+  china('China', 'CN'),
+  southKorea('South Korea', 'KR'),
+  taiwan('Taiwan', 'TW');
 
-  const OriginCountry(this.code);
+  const OriginCountry(this.label, this.code);
 
+  final String label;
   final String code;
+
+  static OriginCountry? fromCode(String? code) =>
+      OriginCountry.values.firstWhereOrNull((v) => v.code == code);
 }
 
 enum MediaSort {
-  TRENDING_DESC('Trending'),
-  POPULARITY_DESC('Popularity'),
-  SCORE_DESC('Score'),
-  SCORE('Worst Score'),
-  FAVOURITES_DESC('Favourites'),
-  START_DATE_DESC('Released Latest'),
-  START_DATE('Released Earliest'),
-  ID_DESC('Last Added'),
-  ID('First Added'),
-  TITLE_ROMAJI('Title Romaji'),
-  TITLE_ENGLISH('Title English'),
-  TITLE_NATIVE('Title Native');
+  trendingDesc('Trending', 'TRENDING_DESC'),
+  popularityDesc('Popularity', 'POPULARITY_DESC'),
+  scoreDesc('Score', 'SCORE_DESC'),
+  score('Worst Score', 'SCORE'),
+  favoritesDesc('Favourites', 'FAVOURITES_DESC'),
+  startDateDesc('Released Latest', 'START_DATE_DESC'),
+  startDate('Released Earliest', 'START_DATE'),
+  idDesc('Last Added', 'ID_DESC'),
+  id('First Added', 'ID'),
+  titleRomaji('Title Romaji', 'TITLE_ROMAJI'),
+  titleEnglish('Title English', 'TITLE_ENGLISH'),
+  titleNative('Title Native', 'TITLE_NATIVE');
 
-  const MediaSort(this.label);
+  const MediaSort(this.label, this.value);
 
   final String label;
+  final String value;
 }
 
 enum EntrySort {
@@ -137,7 +164,6 @@ enum EntrySort {
 
   const EntrySort(this.label);
 
-  /// Human readable name.
   final String label;
 
   /// The API supports only few default sortings.

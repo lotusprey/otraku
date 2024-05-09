@@ -65,7 +65,7 @@ class ActivityCard extends StatelessWidget {
               child: LinkTile(
                 id: activity.authorId,
                 info: activity.authorAvatarUrl,
-                discoverType: DiscoverType.User,
+                discoverType: DiscoverType.user,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -103,7 +103,7 @@ class ActivityCard extends StatelessWidget {
                   LinkTile(
                     id: message.recipientId,
                     info: message.recipientAvatarUrl,
-                    discoverType: DiscoverType.User,
+                    discoverType: DiscoverType.user,
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: CachedImage(
@@ -141,7 +141,7 @@ class _ActivityMediaBox extends StatelessWidget {
     return LinkTile(
       id: item.mediaId,
       info: item.coverUrl,
-      discoverType: item.isAnime ? DiscoverType.Anime : DiscoverType.Manga,
+      discoverType: item.isAnime ? DiscoverType.anime : DiscoverType.manga,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(
@@ -339,11 +339,8 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   onTap: () => showSheet(
                     context,
                     CompositionView(
-                      composition: Composition.status(
-                        activity.id,
-                        activity.text,
-                      ),
-                      onDone: (map) => widget.onEdited?.call(map),
+                      tag: StatusActivityCompositionTag(id: activity.id),
+                      onSaved: (map) => widget.onEdited?.call(map),
                     ),
                   ),
                 ));
@@ -354,12 +351,11 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   onTap: () => showSheet(
                     context,
                     CompositionView(
-                      composition: Composition.message(
-                        activity.id,
-                        activity.text,
-                        activity.recipientId,
+                      tag: MessageActivityCompositionTag(
+                        id: activity.id,
+                        recipientId: activity.recipientId,
                       ),
-                      onDone: (map) => widget.onEdited?.call(map),
+                      onSaved: (map) => widget.onEdited?.call(map),
                     ),
                   ),
                 ));

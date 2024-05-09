@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/collection/collection_preview_provider.dart';
-import 'package:otraku/modules/collection/collection_providers.dart';
+import 'package:otraku/modules/collection/collection_provider.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
 final settingsProvider =
@@ -49,21 +48,11 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     }
 
     if (invalidateAnimeCollection) {
-      final tag = (userId: id, ofAnime: true);
-      if (ref.exists(collectionProvider(tag))) {
-        ref.invalidate(collectionProvider(tag));
-      } else {
-        ref.invalidate(collectionPreviewProvider(tag));
-      }
+      ref.invalidate(collectionProvider((userId: id, ofAnime: true)));
     }
 
     if (invalidateMangaCollection) {
-      final tag = (userId: id, ofAnime: false);
-      if (ref.exists(collectionProvider(tag))) {
-        ref.invalidate(collectionProvider(tag));
-      } else {
-        ref.invalidate(collectionPreviewProvider(tag));
-      }
+      ref.invalidate(collectionProvider((userId: id, ofAnime: false)));
     }
   }
 

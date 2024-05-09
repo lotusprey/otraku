@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
+import 'package:otraku/modules/notification/notifications_filter_provider.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
 import 'package:otraku/modules/notification/notifications_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
@@ -56,7 +57,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           trailing: [
             Expanded(
               child: Text(
-                '${ref.watch(notificationsFilterProvider).text} Notifications',
+                '${ref.watch(notificationsFilterProvider).label} Notifications',
                 style: Theme.of(context).textTheme.titleLarge,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
@@ -100,7 +101,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           return GradientSheet([
             for (int i = 0; i < NotificationFilter.values.length; i++)
               GradientSheetButton(
-                text: NotificationFilter.values.elementAt(i).text,
+                text: NotificationFilter.values.elementAt(i).label,
                 selected: index == i,
                 onTap: () => ref
                     .read(notificationsFilterProvider.notifier)
@@ -133,15 +134,15 @@ class _NotificationItem extends StatelessWidget {
                 if (item.imageUrl != null && item.headId != null)
                   GestureDetector(
                     onTap: () => context.push(switch (item.discoverType) {
-                      DiscoverType.Anime || DiscoverType.Manga => Routes.media(
+                      DiscoverType.anime || DiscoverType.manga => Routes.media(
                           item.headId!,
                           item.imageUrl,
                         ),
                       _ => Routes.user(item.headId!, item.imageUrl),
                     }),
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.Anime ||
-                          item.discoverType == DiscoverType.Manga) {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),
@@ -159,27 +160,27 @@ class _NotificationItem extends StatelessWidget {
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () => switch (item.type) {
-                      NotificationType.ACTIVITY_LIKE ||
-                      NotificationType.ACTIVITY_MENTION ||
-                      NotificationType.ACTIVITY_MESSAGE ||
-                      NotificationType.ACTIVITY_REPLY ||
-                      NotificationType.ACTIVITY_REPLY_LIKE ||
-                      NotificationType.ACTIVITY_REPLY_SUBSCRIBED =>
+                      NotificationType.activityLike ||
+                      NotificationType.activityMention ||
+                      NotificationType.activityMessage ||
+                      NotificationType.activityReply ||
+                      NotificationType.acrivityReplyLike ||
+                      NotificationType.activityReplySubscribed =>
                         context.push(Routes.activity(item.bodyId!)),
-                      NotificationType.FOLLOWING =>
+                      NotificationType.following =>
                         context.push(Routes.user(item.headId!, item.imageUrl)),
-                      NotificationType.AIRING ||
-                      NotificationType.RELATED_MEDIA_ADDITION =>
+                      NotificationType.airing ||
+                      NotificationType.relatedMediaAddition =>
                         context.push(Routes.media(item.headId!, item.imageUrl)),
-                      NotificationType.MEDIA_DATA_CHANGE ||
-                      NotificationType.MEDIA_MERGE ||
-                      NotificationType.MEDIA_DELETION =>
+                      NotificationType.mediaDataChange ||
+                      NotificationType.mediaMerge ||
+                      NotificationType.mediaDeletion =>
                         showPopUp(context, _NotificationDialog(item)),
-                      NotificationType.THREAD_LIKE ||
-                      NotificationType.THREAD_SUBSCRIBED ||
-                      NotificationType.THREAD_COMMENT_LIKE ||
-                      NotificationType.THREAD_COMMENT_REPLY ||
-                      NotificationType.THREAD_COMMENT_MENTION =>
+                      NotificationType.threadLike ||
+                      NotificationType.threadReplySubscribed ||
+                      NotificationType.threadCommentLike ||
+                      NotificationType.threadCommentReply ||
+                      NotificationType.threadCommentMention =>
                         showPopUp(
                           context,
                           ConfirmationDialog(
@@ -198,8 +199,8 @@ class _NotificationItem extends StatelessWidget {
                         ),
                     },
                     onLongPress: () {
-                      if (item.discoverType == DiscoverType.Anime ||
-                          item.discoverType == DiscoverType.Manga) {
+                      if (item.discoverType == DiscoverType.anime ||
+                          item.discoverType == DiscoverType.manga) {
                         showSheet(
                           context,
                           EditView((id: item.headId!, setComplete: false)),
@@ -224,7 +225,7 @@ class _NotificationItem extends StatelessWidget {
                                               item.markTextOnEvenIndex
                                           ? Theme.of(context)
                                               .textTheme
-                                              .bodyLarge
+                                              .labelLarge
                                           : Theme.of(context)
                                               .textTheme
                                               .bodyMedium,
@@ -277,7 +278,7 @@ class _NotificationDialog extends StatelessWidget {
             TextSpan(
               text: item.texts[i],
               style: (i % 2 == 0) == item.markTextOnEvenIndex
-                  ? Theme.of(context).textTheme.bodyLarge
+                  ? Theme.of(context).textTheme.labelLarge
                   : Theme.of(context).textTheme.bodyMedium,
             ),
         ],

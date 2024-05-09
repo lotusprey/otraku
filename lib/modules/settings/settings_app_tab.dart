@@ -3,10 +3,9 @@ import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/widgets/fields/drop_down_field.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 
 class SettingsAppTab extends StatelessWidget {
@@ -31,30 +30,7 @@ class SettingsAppTab extends StatelessWidget {
           initiallyExpanded: true,
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
-              child: SegmentedButton(
-                segments: const [
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    label: Text('System'),
-                    icon: Icon(Icons.sync_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    label: Text('Light'),
-                    icon: Icon(Icons.wb_sunny_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    label: Text('Dark'),
-                    icon: Icon(Icons.mode_night_outlined),
-                  ),
-                ],
-                selected: {Options().themeMode},
-                onSelectionChanged: (v) => Options().themeMode = v.first,
-              ),
-            ),
+            const _ThemeModeSelection(),
             const ThemePreview(),
             StatefulSwitchListTile(
               title: const Text('Pure White/Black Theme'),
@@ -84,13 +60,11 @@ class SettingsAppTab extends StatelessWidget {
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Discover Media Sorting',
-                options: MediaSort.values.map((s) => s.label).toList(),
-                current: Options().defaultDiscoverSort.index,
-                mustHaveSelected: true,
-                onChanged: (i) => Options().defaultDiscoverSort =
-                    MediaSort.values.elementAt(i!),
+                items: MediaSort.values.map((e) => (e.label, e)).toList(),
+                value: Options().defaultDiscoverSort,
+                onChanged: (v) => Options().defaultDiscoverSort = v,
               ),
             ),
           ],
@@ -132,37 +106,28 @@ class SettingsAppTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: DropDownField<int>(
+              child: ChipSelector.ensureSelected(
                 title: 'Home Tab',
-                value: Options().defaultHomeTab.index,
-                items: {
-                  for (final t in HomeTab.values) t.title: t.index,
-                },
-                onChanged: (v) => Options().defaultHomeTab = HomeTab.values[v],
+                items: HomeTab.values.map((v) => (v.label, v)).toList(),
+                value: Options().defaultHomeTab,
+                onChanged: (v) => Options().defaultHomeTab = v,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField<DiscoverType>(
+              child: ChipSelector.ensureSelected(
                 title: 'Default Discover Type',
+                items: DiscoverType.values.map((v) => (v.label, v)).toList(),
                 value: Options().defaultDiscoverType,
-                items: Map.fromIterable(
-                  DiscoverType.values,
-                  key: (v) => (v as DiscoverType).name,
-                ),
                 onChanged: (v) => Options().defaultDiscoverType = v,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: DropDownField<ImageQuality>(
+              child: ChipSelector.ensureSelected(
                 title: 'Image Quality',
+                items: ImageQuality.values.map((v) => (v.label, v)).toList(),
                 value: Options().imageQuality,
-                items: const {
-                  'Very High': ImageQuality.VeryHigh,
-                  'High': ImageQuality.High,
-                  'Medium': ImageQuality.Medium,
-                },
                 onChanged: (v) => Options().imageQuality = v,
               ),
             ),
@@ -173,32 +138,29 @@ class SettingsAppTab extends StatelessWidget {
           children: [
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Discover View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().discoverItemView,
-                onChanged: (val) => Options().discoverItemView = val!,
-                mustHaveSelected: true,
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
+                value: Options().discoverItemView,
+                onChanged: (val) => Options().discoverItemView = val,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Collection View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().collectionItemView,
-                onChanged: (val) => Options().collectionItemView = val!,
-                mustHaveSelected: true,
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
+                value: Options().collectionItemView,
+                onChanged: (val) => Options().collectionItemView = val,
               ),
             ),
             Padding(
               padding: tilePadding,
-              child: ChipSelector(
+              child: ChipSelector.ensureSelected(
                 title: 'Collection Preview View',
-                options: const ['Detailed List', 'Simple Grid'],
-                current: Options().collectionPreviewItemView,
-                onChanged: (val) => Options().collectionPreviewItemView = val!,
-                mustHaveSelected: true,
+                items: const [('Detailed List', 0), ('Simple Grid', 1)],
+                value: Options().collectionPreviewItemView,
+                onChanged: (val) => Options().collectionPreviewItemView = val,
               ),
             ),
           ],
@@ -219,6 +181,45 @@ class SettingsAppTab extends StatelessWidget {
           onChanged: (v) => Options().confirmExit = v,
         ),
       ],
+    );
+  }
+}
+
+class _ThemeModeSelection extends StatefulWidget {
+  const _ThemeModeSelection();
+
+  @override
+  State<_ThemeModeSelection> createState() => __ThemeModeSelectionState();
+}
+
+class __ThemeModeSelectionState extends State<_ThemeModeSelection> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      child: SegmentedButton(
+        segments: const [
+          ButtonSegment(
+            value: ThemeMode.system,
+            label: Text('System'),
+            icon: Icon(Icons.sync_outlined),
+          ),
+          ButtonSegment(
+            value: ThemeMode.light,
+            label: Text('Light'),
+            icon: Icon(Icons.wb_sunny_outlined),
+          ),
+          ButtonSegment(
+            value: ThemeMode.dark,
+            label: Text('Dark'),
+            icon: Icon(Icons.mode_night_outlined),
+          ),
+        ],
+        selected: {Options().themeMode},
+        onSelectionChanged: (v) => setState(
+          () => Options().themeMode = v.first,
+        ),
+      ),
     );
   }
 }

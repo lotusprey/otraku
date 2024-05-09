@@ -1,4 +1,5 @@
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/modules/media/media_constants.dart';
 
 class UserStatistics {
   UserStatistics._({
@@ -34,7 +35,7 @@ class UserStatistics {
       statuses.add(TypeStatistics(s, 'status'));
     }
     for (final c in map['countries']) {
-      c['country'] = StringUtil.codeToCountry(c['country']);
+      c['country'] = OriginCountry.fromCode(c['country'])?.label;
       countries.add(TypeStatistics(c, 'country'));
     }
 

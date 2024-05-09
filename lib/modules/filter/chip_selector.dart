@@ -4,100 +4,100 @@ import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 
 /// A horizontal list of chips, where only one can be selected at a time.
-class ChipSelector extends StatefulWidget {
-  const ChipSelector({
+class ChipSelector<T> extends StatefulWidget {
+  const ChipSelector._({
     required this.title,
-    required this.options,
-    required this.current,
+    required this.items,
+    required this.value,
     required this.onChanged,
-    this.mustHaveSelected = false,
-  }) : assert(current != null || !mustHaveSelected);
+    required this.mustHaveSelected,
+  });
+
+  /// Allows for nothing to be selected.
+  factory ChipSelector({
+    required String title,
+    required List<(String label, T value)> items,
+    required T? value,
+    required void Function(T?) onChanged,
+  }) =>
+      ChipSelector._(
+        title: title,
+        items: items,
+        value: value,
+        onChanged: onChanged,
+        mustHaveSelected: false,
+      );
+
+  /// Requires an option to be selected. [onChanged] will never receive `null`.
+  factory ChipSelector.ensureSelected({
+    required String title,
+    required List<(String label, T value)> items,
+    required T value,
+    required void Function(T) onChanged,
+  }) =>
+      ChipSelector._(
+        title: title,
+        items: items,
+        value: value,
+        onChanged: (v) => onChanged(v ?? value),
+        mustHaveSelected: true,
+      );
 
   final String title;
-  final List<String> options;
-  final int? current;
-  final void Function(int?) onChanged;
-
-  /// Whether it's allowed for [current] to be `null`.
+  final List<(String label, T value)> items;
+  final T? value;
+  final void Function(T?) onChanged;
   final bool mustHaveSelected;
 
   @override
-  State<ChipSelector> createState() => _ChipSelectorState();
+  State<ChipSelector<T>> createState() => _ChipSelectorState<T>();
 }
 
-class _ChipSelectorState extends State<ChipSelector> {
-  late int? _current = widget.current;
+class _ChipSelectorState<T> extends State<ChipSelector<T>> {
+  late T? _value = widget.value;
 
   @override
-  void didUpdateWidget(covariant ChipSelector oldWidget) {
+  void didUpdateWidget(covariant ChipSelector<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _current = widget.current;
+    _value = widget.value;
   }
 
   @override
   Widget build(BuildContext context) {
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
-      options: widget.options,
-      itemBuilder: (context, index) => FilterChip(
-        label: Text(widget.options[index]),
-        selected: index == _current,
-        onSelected: (selected) {
-          if (_current == index && widget.mustHaveSelected) return;
+      length: widget.items.length,
+      itemBuilder: (context, i) {
+        final (label, value) = widget.items[i];
 
-          setState(() => selected ? _current = index : _current = null);
-          widget.onChanged(_current);
-        },
-      ),
-    );
-  }
-}
+        return FilterChip(
+          label: Text(label),
+          selected: value == _value,
+          onSelected: (selected) {
+            // Should not pass `null` if [widget.mustHaveSelected].
+            if (value == _value && widget.mustHaveSelected) return;
 
-class _ChipSelectorLayout extends StatelessWidget {
-  const _ChipSelectorLayout({
-    required this.title,
-    required this.options,
-    required this.itemBuilder,
-  });
-
-  final String title;
-  final List<String> options;
-  final Widget Function(BuildContext, int) itemBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10),
-          child: Text(title),
-        ),
-        SizedBox(
-          height: 40,
-          child: ShadowedOverflowList(
-            itemCount: options.length,
-            itemBuilder: itemBuilder,
-          ),
-        ),
-      ],
+            setState(() => selected ? _value = value : _value = null);
+            widget.onChanged(_value);
+          },
+        );
+      },
     );
   }
 }
 
 /// A horizontal list of chips, where multiple can be selected at a time.
-/// Note: The state mutates [current] directly.
+/// Note: [values] is mutated directly.
 class ChipEnumMultiSelector<T extends Enum> extends StatefulWidget {
   const ChipEnumMultiSelector({
     required this.title,
     required this.options,
-    required this.current,
+    required this.values,
   });
 
   final String title;
   final List<T> options;
-  final List<String> current;
+  final List<String> values;
 
   @override
   State<ChipEnumMultiSelector> createState() => _ChipEnumMultiSelectorState();
@@ -118,17 +118,17 @@ class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
-      options: _options,
+      length: _options.length,
       itemBuilder: (context, index) => FilterChip(
         label: Text(_options[index]),
-        selected: widget.current.contains(_values[index]),
+        selected: widget.values.contains(_values[index]),
         onSelected: (isSelected) {
           setState(
             () => isSelected
-                ? widget.current.add(_values[index])
-                : widget.current.remove(_values[index]),
+                ? widget.values.add(_values[index])
+                : widget.values.remove(_values[index]),
           );
         },
       ),
@@ -176,9 +176,9 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
     final current = _current.index ~/ 2;
     final descending = _current.index % 2 != 0;
 
-    return _ChipSelectorLayout(
+    return _ChipSelector(
       title: widget.title,
-      options: _options,
+      length: _options.length,
       itemBuilder: (context, index) => FilterChip(
         backgroundColor: Theme.of(context).colorScheme.surface,
         labelStyle: TextStyle(
@@ -210,6 +210,39 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
           widget.onChanged(_current);
         },
       ),
+    );
+  }
+}
+
+class _ChipSelector extends StatelessWidget {
+  const _ChipSelector({
+    required this.title,
+    required this.length,
+    required this.itemBuilder,
+  });
+
+  final String title;
+  final int length;
+  final Widget Function(BuildContext, int) itemBuilder;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10),
+          child: Text(title),
+        ),
+        SizedBox(
+          height: 40,
+          child: ShadowedOverflowList(
+            itemCount: length,
+            itemBuilder: itemBuilder,
+          ),
+        ),
+      ],
     );
   }
 }

@@ -7,7 +7,7 @@ import 'package:otraku/modules/favorites/favorites_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 final favoritesProvider =

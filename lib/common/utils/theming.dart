@@ -82,12 +82,17 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         ),
         bodyLarge: TextStyle(
           fontSize: Consts.fontMedium,
-          color: scheme.primary,
+          color: scheme.onBackground,
           fontWeight: FontWeight.normal,
         ),
         bodyMedium: TextStyle(
           fontSize: Consts.fontMedium,
           color: scheme.onBackground,
+          fontWeight: FontWeight.normal,
+        ),
+        labelLarge: TextStyle(
+          fontSize: Consts.fontMedium,
+          color: scheme.primary,
           fontWeight: FontWeight.normal,
         ),
         labelMedium: TextStyle(
@@ -130,7 +135,9 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         ),
       ),
       scrollbarTheme: ScrollbarThemeData(
+        interactive: true,
         radius: Consts.radiusMin,
+        thickness: MaterialStateProperty.all(5),
         thumbColor: MaterialStateProperty.all(scheme.primary),
       ),
       inputDecorationTheme: InputDecorationTheme(

@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/modules/character/character_filter_provider.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 
 /// Favorite/Unfavorite character. Returns `true` if successful.
@@ -28,20 +28,17 @@ final characterProvider = FutureProvider.autoDispose.family(
       {'id': id, 'withInfo': true},
     );
 
-    final settings =
-        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
-    return Character(data['Character'], settings.personNaming);
+    final personNaming = await ref.watch(
+      settingsProvider.selectAsync((data) => data.personNaming),
+    );
+
+    return Character(data['Character'], personNaming);
   },
 );
 
 final characterMediaProvider = AsyncNotifierProvider.autoDispose
     .family<CharacterMediaNotifier, CharacterMedia, int>(
   CharacterMediaNotifier.new,
-);
-
-final characterFilterProvider = NotifierProvider.autoDispose
-    .family<CharacterFilterNotifier, CharacterFilter, int>(
-  CharacterFilterNotifier.new,
 );
 
 class CharacterMediaNotifier
@@ -68,7 +65,7 @@ class CharacterMediaNotifier
     final variables = {
       'id': arg,
       'onList': filter.inLists,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
     };
 
     if (onAnime == null) {
@@ -99,7 +96,7 @@ class CharacterMediaNotifier
           title: a['node']['title']['userPreferred'],
           imageUrl: a['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
-          type: DiscoverType.Anime,
+          type: DiscoverType.anime,
         ));
 
         if (a['voiceActors'] != null) {
@@ -122,7 +119,7 @@ class CharacterMediaNotifier
               title: va['name']['userPreferred'],
               imageUrl: va['image']['large'],
               subtitle: l,
-              type: DiscoverType.Staff,
+              type: DiscoverType.staff,
             ));
           }
         }
@@ -144,7 +141,7 @@ class CharacterMediaNotifier
           title: m['node']['title']['userPreferred'],
           imageUrl: m['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
-          type: DiscoverType.Manga,
+          type: DiscoverType.manga,
         ));
       }
 
@@ -167,13 +164,4 @@ class CharacterMediaNotifier
           language: language,
         ),
       );
-}
-
-class CharacterFilterNotifier
-    extends AutoDisposeFamilyNotifier<CharacterFilter, int> {
-  @override
-  CharacterFilter build(arg) => CharacterFilter();
-
-  @override
-  set state(CharacterFilter newState) => super.state = newState;
 }

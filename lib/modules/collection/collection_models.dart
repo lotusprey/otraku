@@ -5,6 +5,117 @@ import 'package:otraku/common/utils/options.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
+sealed class Collection {
+  const Collection({required this.scoreFormat});
+
+  final ScoreFormat scoreFormat;
+
+  List<Entry> get entries;
+  String get listName;
+
+  void sort(EntrySort s);
+}
+
+class PreviewCollection extends Collection {
+  const PreviewCollection._({
+    required this.entries,
+    required super.scoreFormat,
+  });
+
+  factory PreviewCollection(Map<String, dynamic> map) {
+    final entries = <Entry>[];
+    for (final l in map['lists']) {
+      if (l['isCustomList']) continue;
+
+      for (final e in l['entries']) {
+        entries.add(Entry(e));
+      }
+    }
+
+    return PreviewCollection._(
+      entries: entries,
+      scoreFormat: ScoreFormat.from(
+        map['user']['mediaListOptions']['scoreFormat'],
+      ),
+    );
+  }
+
+  @override
+  final List<Entry> entries;
+
+  @override
+  String get listName => 'Preview';
+
+  @override
+  void sort(EntrySort s) {
+    entries.sort(entryComparator(s));
+  }
+}
+
+class FullCollection extends Collection {
+  const FullCollection._({
+    required this.lists,
+    required this.index,
+    required super.scoreFormat,
+  });
+
+  factory FullCollection(Map<String, dynamic> map, bool ofAnime, int index) {
+    final maps = map['lists'] as List<dynamic>;
+    final lists = <EntryList>[];
+    final metaData =
+        map['user']['mediaListOptions'][ofAnime ? 'animeList' : 'mangaList'];
+    bool splitCompleted = metaData['splitCompletedSectionByFormat'] ?? false;
+
+    for (final String section in metaData['sectionOrder']) {
+      final pos = maps.indexWhere((l) => l['name'] == section);
+      if (pos == -1) continue;
+
+      final l = maps.removeAt(pos);
+
+      lists.add(EntryList(l, splitCompleted));
+    }
+
+    for (final l in maps) {
+      lists.add(EntryList(l, splitCompleted));
+    }
+
+    if (index >= lists.length) index = 0;
+
+    return FullCollection._(
+      lists: lists,
+      index: index,
+      scoreFormat: ScoreFormat.from(
+        map['user']['mediaListOptions']['scoreFormat'],
+      ),
+    );
+  }
+
+  final List<EntryList> lists;
+  final int index;
+
+  @override
+  List<Entry> get entries => lists.isEmpty ? const [] : lists[index].entries;
+
+  @override
+  String get listName => lists.isEmpty ? '' : lists[index].name;
+
+  @override
+  void sort(EntrySort s) {
+    final comparator = entryComparator(s);
+    for (final l in lists) {
+      l.entries.sort(comparator);
+    }
+  }
+
+  FullCollection withIndex(int newIndex) => newIndex == index
+      ? this
+      : FullCollection._(
+          lists: lists,
+          index: newIndex,
+          scoreFormat: scoreFormat,
+        );
+}
+
 class EntryList {
   EntryList._({
     required this.name,
@@ -14,15 +125,14 @@ class EntryList {
   });
 
   factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
-    final status = !map['isCustomList'] && map['status'] != null
-        ? EntryStatus.values.byName(map['status'])
-        : null;
+    final status =
+        !map['isCustomList'] ? EntryStatus.from(map['status']) : null;
 
     return EntryList._(
       name: map['name'],
       status: status,
       splitCompletedListFormat:
-          splitCompleted && status == EntryStatus.COMPLETED
+          splitCompleted && status == EntryStatus.completed
               ? map['entries'][0]['media']['format']
               : null,
       entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
@@ -332,7 +442,7 @@ class Entry {
       imageUrl: map['media']['coverImage'][Options().imageQuality.value],
       format: map['media']['format'],
       status: map['media']['status'],
-      entryStatus: EntryStatus.values.byName(map['status']),
+      entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
         map['media']['nextAiringEpisode']?['airingAt'],
@@ -381,24 +491,28 @@ class Entry {
 }
 
 enum EntryStatus {
-  CURRENT,
-  PLANNING,
-  COMPLETED,
-  DROPPED,
-  PAUSED,
-  REPEATING;
+  current('CURRENT'),
+  planning('PLANNING'),
+  completed('COMPLETED'),
+  dropped('DROPPED'),
+  paused('PAUSED'),
+  repeating('REPEATING');
 
-  String format(bool ofAnime) => formatText(name, ofAnime)!;
+  const EntryStatus(this.value);
 
-  static String? formatText(String? text, bool ofAnime) => switch (text) {
-        'CURRENT' => ofAnime ? 'Watching' : 'Reading',
-        'REPEATING' => ofAnime ? 'Rewatching' : 'Rereading',
-        'COMPLETED' => 'Completed',
-        'PAUSED' => 'Paused',
-        'PLANNING' => 'Planning',
-        'DROPPED' => 'Dropped',
-        _ => null,
+  final String value;
+
+  String label(bool ofAnime) => switch (this) {
+        current => ofAnime ? 'Watching' : 'Reading',
+        repeating => ofAnime ? 'Rewatching' : 'Rereading',
+        completed => 'Completed',
+        paused => 'Paused',
+        planning => 'Planning',
+        dropped => 'Dropped',
       };
+
+  static EntryStatus? from(String? value) =>
+      EntryStatus.values.firstWhereOrNull((v) => v.value == value);
 }
 
 class CollectionFilter {

@@ -1,19 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/modules/notification/notifications_filter_provider.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 final notificationsProvider = AsyncNotifierProvider.autoDispose<
     NotificationsNotifier, PagedWithTotal<SiteNotification>>(
   NotificationsNotifier.new,
-);
-
-final notificationsFilterProvider = NotifierProvider.autoDispose<
-    NotificationsFilterNotifier, NotificationFilter>(
-  NotificationsFilterNotifier.new,
 );
 
 class NotificationsNotifier
@@ -61,16 +57,4 @@ class NotificationsNotifier
       unreadCount,
     );
   }
-}
-
-class NotificationsFilterNotifier
-    extends AutoDisposeNotifier<NotificationFilter> {
-  @override
-  NotificationFilter build() => NotificationFilter.all;
-
-  @override
-  NotificationFilter get state => super.state;
-
-  @override
-  set state(NotificationFilter newState) => super.state = newState;
 }

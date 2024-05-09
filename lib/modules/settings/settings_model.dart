@@ -27,16 +27,12 @@ class Settings {
 
   factory Settings(Map<String, dynamic> map) => Settings._(
         unreadNotifications: map['unreadNotificationCount'] ?? 0,
-        scoreFormat: ScoreFormat.values.byName(
-          map['mediaListOptions']['scoreFormat'] ?? 'POINT_10',
-        ),
+        scoreFormat: ScoreFormat.from(map['mediaListOptions']['scoreFormat']),
         defaultSort: EntrySort.fromRowOrder(
           map['mediaListOptions']['rowOrder'] ?? 'TITLE',
         ),
-        titleLanguage: map['options']['titleLanguage'] ?? 'ROMAJI',
-        personNaming: PersonNaming.fromText(
-          map['options']['staffNameLanguage'],
-        ),
+        titleLanguage: TitleLanguage.from(map['options']['titleLanguage']),
+        personNaming: PersonNaming.from(map['options']['staffNameLanguage']),
         activityMergeTime: map['options']['activityMergeTime'] ?? 720,
         splitCompletedAnime: map['mediaListOptions']['animeList']
                 ['splitCompletedSectionByFormat'] ??
@@ -61,38 +57,18 @@ class Settings {
           map['mediaListOptions']['mangaList']['customLists'] ?? <String>[],
         ),
         disabledListActivity: {
-          for (var n in map['options']['disabledListActivity'])
-            EntryStatus.values.byName(n['type']): n['disabled']
+          for (var activity in map['options']['disabledListActivity'])
+            EntryStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {
-          for (var n in map['options']['notificationOptions'])
-            NotificationType.values.byName(n['type']): n['enabled']
+          for (var option in map['options']['notificationOptions'])
+            NotificationType.from(option['type'])!: option['enabled']
         },
-      );
-
-  factory Settings.empty() => Settings._(
-        unreadNotifications: 0,
-        scoreFormat: ScoreFormat.POINT_10,
-        defaultSort: EntrySort.TITLE,
-        titleLanguage: 'ROMAJI',
-        personNaming: PersonNaming.ROMAJI_WESTERN,
-        activityMergeTime: 720,
-        splitCompletedAnime: false,
-        splitCompletedManga: false,
-        displayAdultContent: false,
-        airingNotifications: true,
-        advancedScoringEnabled: false,
-        restrictMessagesToFollowing: false,
-        advancedScores: [],
-        animeCustomLists: [],
-        mangaCustomLists: [],
-        disabledListActivity: {},
-        notificationOptions: {},
       );
 
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
-  String titleLanguage;
+  TitleLanguage titleLanguage;
   PersonNaming personNaming;
   int activityMergeTime;
   bool splitCompletedAnime;
@@ -129,11 +105,11 @@ class Settings {
       );
 
   Map<String, dynamic> toMap() => {
-        'titleLanguage': titleLanguage,
-        'staffNameLanguage': personNaming.name,
+        'titleLanguage': titleLanguage.value,
+        'staffNameLanguage': personNaming.value,
         'activityMergeTime': activityMergeTime,
         'displayAdultContent': displayAdultContent,
-        'scoreFormat': scoreFormat.name,
+        'scoreFormat': scoreFormat.value,
         'rowOrder': defaultSort.toRowOrder(),
         'advancedScoring': advancedScores,
         'advancedScoringEnabled': advancedScoringEnabled,
@@ -142,22 +118,42 @@ class Settings {
         'restrictMessagesToFollowing': restrictMessagesToFollowing,
         'airingNotifications': airingNotifications,
         'disabledListActivity': disabledListActivity.entries
-            .map((e) => {'type': e.key.name, 'disabled': e.value})
+            .map((e) => {'type': e.key.value, 'disabled': e.value})
             .toList(),
         'notificationOptions': notificationOptions.entries
-            .map((e) => {'type': e.key.name, 'enabled': e.value})
+            .map((e) => {'type': e.key.value, 'enabled': e.value})
             .toList(),
       };
 }
 
-enum PersonNaming {
-  ROMAJI_WESTERN,
-  ROMAJI,
-  NATIVE;
+enum TitleLanguage {
+  romaji('Romaji', 'ROMAJI'),
+  english('English', 'ENGLISH'),
+  native('Native', 'NATIVE');
 
-  static PersonNaming fromText(String? s) => switch (s) {
-        'ROMAJI' => ROMAJI,
-        'NATIVE' => NATIVE,
-        _ => ROMAJI_WESTERN,
-      };
+  const TitleLanguage(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static TitleLanguage from(String? value) => TitleLanguage.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => romaji,
+      );
+}
+
+enum PersonNaming {
+  romajiWestern('Romaji, Western Order', 'ROMAJI_WESTERN'),
+  romaji('Romaji', 'ROMAJI'),
+  native('Native', 'NATIVE');
+
+  const PersonNaming(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static PersonNaming from(String? value) => PersonNaming.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => romajiWestern,
+      );
 }

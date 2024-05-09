@@ -4,13 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/entry_labels.dart';
+import 'package:otraku/modules/discover/discover_filter_provider.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/discover/discover_providers.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
@@ -40,7 +40,10 @@ class MediaRelatedGrid extends StatelessWidget {
         (context, i) {
           final details = <String, bool>{
             if (items[i].relationType != null) items[i].relationType!: true,
-            if (items[i].listStatus != null) items[i].listStatus!: true,
+            if (items[i].entryStatus != null)
+              items[i].entryStatus!.label(
+                    items[i].type == DiscoverType.anime,
+                  ): true,
             if (items[i].format != null) items[i].format!: false,
             if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
           };
@@ -124,7 +127,7 @@ class MediaReviewGrid extends StatelessWidget {
             LinkTile(
               id: items[i].userId,
               info: items[i].avatar,
-              discoverType: DiscoverType.User,
+              discoverType: DiscoverType.user,
               child: Row(
                 children: [
                   Hero(
@@ -155,7 +158,7 @@ class MediaReviewGrid extends StatelessWidget {
               child: LinkTile(
                 id: items[i].reviewId,
                 info: bannerUrl,
-                discoverType: DiscoverType.Review,
+                discoverType: DiscoverType.review,
                 child: Card(
                   child: SizedBox(
                     width: double.infinity,
@@ -201,7 +204,7 @@ class MediaFollowingGrid extends StatelessWidget {
         (context, i) => LinkTile(
           id: items[i].userId,
           info: items[i].userAvatar,
-          discoverType: DiscoverType.User,
+          discoverType: DiscoverType.user,
           child: Card(
             child: Row(
               children: [
@@ -489,15 +492,15 @@ class MediaRankGrid extends StatelessWidget {
                   filter.mediaFilter.startYearFrom = ranks[i].year;
                   filter.mediaFilter.startYearTo = ranks[i].year;
                   filter.mediaFilter.sort = ranks[i].typeIsScore
-                      ? MediaSort.SCORE_DESC
-                      : MediaSort.POPULARITY_DESC;
-                  if (info.type == DiscoverType.Anime) {
+                      ? MediaSort.scoreDesc
+                      : MediaSort.popularityDesc;
+                  if (info.type == DiscoverType.anime) {
                     String? format = AnimeFormat.fromText(info.format)?.name;
                     if (format != null) {
                       filter.mediaFilter.animeFormats.add(format);
                     }
                   } else {
-                    String? format = MangaFormat.fromText(info.format)?.name;
+                    String? format = MangaFormat.fromLabel(info.format)?.name;
                     if (format != null) {
                       filter.mediaFilter.mangaFormats.add(format);
                     }

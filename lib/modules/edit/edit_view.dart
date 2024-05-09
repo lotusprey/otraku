@@ -6,15 +6,12 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_buttons.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
+import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
-import 'package:otraku/common/widgets/fields/drop_down_field.dart';
-import 'package:otraku/common/widgets/fields/growable_text_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
-import 'package:otraku/common/widgets/fields/labeled_field.dart';
 import 'package:otraku/common/widgets/fields/number_field.dart';
 import 'package:otraku/modules/edit/score_field.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
@@ -76,22 +73,20 @@ class _EditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = newEditProvider(tag);
+    final ofAnime = oldEdit.type == 'ANIME';
 
-    final tracking = _FieldGrid(
-      minWidth: 140,
-      children: [
-        Consumer(
+    final status = SliverToBoxAdapter(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: Consumer(
           builder: (context, ref, _) {
             final status = ref.watch(provider.select((s) => s.status));
 
-            return DropDownField<EntryStatus?>(
-              hint: 'Add',
+            return ChipSelector(
               title: 'Status',
+              items:
+                  EntryStatus.values.map((v) => (v.label(ofAnime), v)).toList(),
               value: status,
-              items: Map.fromIterable(
-                EntryStatus.values,
-                key: (v) => v.format(oldEdit.type == 'ANIME'),
-              ),
               onChanged: (status) => ref.read(provider.notifier).update(
                 (s) {
                   var startedAt = s.startedAt;
@@ -99,12 +94,12 @@ class _EditView extends StatelessWidget {
                   var progress = s.progress;
 
                   if (oldEdit.status == null &&
-                      status == EntryStatus.CURRENT &&
+                      status == EntryStatus.current &&
                       startedAt == null) {
                     startedAt = DateTime.now();
                     Toast.show(context, 'Start date changed');
                   } else if (oldEdit.status != status &&
-                      status == EntryStatus.COMPLETED &&
+                      status == EntryStatus.completed &&
                       completedAt == null) {
                     completedAt = DateTime.now();
                     var text = 'Completed date changed';
@@ -128,93 +123,93 @@ class _EditView extends StatelessWidget {
             );
           },
         ),
-        LabeledField(
-          label: 'Progress',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final progress = ref.watch(provider.select((s) => s.progress));
+      ),
+    );
 
-              return NumberField(
-                value: progress,
-                maxValue: oldEdit.progressMax ?? 100000,
-                onChanged: (progress) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
-                    var startedAt = s.startedAt;
-                    var completedAt = s.completedAt;
+    final tracking = _FieldGrid(
+      minWidth: 140,
+      children: [
+        Consumer(
+          builder: (context, ref, _) {
+            final progress = ref.watch(provider.select((s) => s.progress));
 
-                    String? text;
-                    if (progress == s.progressMax &&
-                        oldEdit.progress != progress) {
-                      if (oldEdit.status == status &&
-                          status != EntryStatus.COMPLETED) {
-                        status = EntryStatus.COMPLETED;
-                        text = 'Status changed';
-                      }
+            return NumberField(
+              label: 'Progress',
+              value: progress,
+              maxValue: oldEdit.progressMax ?? 100000,
+              onChanged: (progress) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
+                  var startedAt = s.startedAt;
+                  var completedAt = s.completedAt;
 
-                      if (oldEdit.completedAt == completedAt &&
-                          completedAt == null) {
-                        completedAt = DateTime.now();
-                        text = text == null
-                            ? 'Completed date changed'
-                            : 'Status & Completed date changed';
-                      }
-
-                      if (text != null) Toast.show(context, text);
-                    } else if (oldEdit.progress == 0 &&
-                        oldEdit.progress != progress) {
-                      if (oldEdit.status == status &&
-                          (status == null || status == EntryStatus.PLANNING)) {
-                        status = EntryStatus.CURRENT;
-                        text = 'Status changed';
-                      }
-
-                      if (oldEdit.startedAt == null && startedAt == null) {
-                        startedAt = DateTime.now();
-                        text = text == null
-                            ? 'Start date changed'
-                            : 'Status & start date changed';
-                      }
+                  String? text;
+                  if (progress == s.progressMax &&
+                      oldEdit.progress != progress) {
+                    if (oldEdit.status == status &&
+                        status != EntryStatus.completed) {
+                      status = EntryStatus.completed;
+                      text = 'Status changed';
                     }
-                    if (text != null) Toast.show(context, text);
 
-                    return s.copyWith(
-                      progress: progress.toInt(),
-                      status: status,
-                      startedAt: () => startedAt,
-                      completedAt: () => completedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                    if (oldEdit.completedAt == completedAt &&
+                        completedAt == null) {
+                      completedAt = DateTime.now();
+                      text = text == null
+                          ? 'Completed date changed'
+                          : 'Status & Completed date changed';
+                    }
+
+                    if (text != null) Toast.show(context, text);
+                  } else if (oldEdit.progress == 0 &&
+                      oldEdit.progress != progress) {
+                    if (oldEdit.status == status &&
+                        (status == null || status == EntryStatus.planning)) {
+                      status = EntryStatus.current;
+                      text = 'Status changed';
+                    }
+
+                    if (oldEdit.startedAt == null && startedAt == null) {
+                      startedAt = DateTime.now();
+                      text = text == null
+                          ? 'Start date changed'
+                          : 'Status & start date changed';
+                    }
+                  }
+                  if (text != null) Toast.show(context, text);
+
+                  return s.copyWith(
+                    progress: progress.toInt(),
+                    status: status,
+                    startedAt: () => startedAt,
+                    completedAt: () => completedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
-        LabeledField(
-          label: 'Repeat',
-          child: Consumer(
-            builder: (context, ref, _) => NumberField(
-              value: ref.read(provider).repeat,
-              onChanged: (repeat) => ref
-                  .read(provider.notifier)
-                  .update((s) => s.copyWith(repeat: repeat.toInt())),
-            ),
+        Consumer(
+          builder: (context, ref, _) => NumberField(
+            label: 'Repeat',
+            value: ref.read(provider).repeat,
+            onChanged: (repeat) => ref
+                .read(provider.notifier)
+                .update((s) => s.copyWith(repeat: repeat.toInt())),
           ),
         ),
         if (oldEdit.type != 'ANIME')
-          LabeledField(
-            label: 'Progress Volumes',
-            child: Consumer(
-              builder: (context, ref, _) => NumberField(
-                value: ref.read(provider).progressVolumes,
-                maxValue: oldEdit.progressVolumesMax ?? 100000,
-                onChanged: (progressVolumes) =>
-                    ref.read(provider.notifier).update(
-                          (s) => s.copyWith(
-                            progressVolumes: progressVolumes.toInt(),
-                          ),
+          Consumer(
+            builder: (context, ref, _) => NumberField(
+              label: 'Volume Progress',
+              value: ref.read(provider).progressVolumes,
+              maxValue: oldEdit.progressVolumesMax ?? 100000,
+              onChanged: (progressVolumes) =>
+                  ref.read(provider.notifier).update(
+                        (s) => s.copyWith(
+                          progressVolumes: progressVolumes.toInt(),
                         ),
-              ),
+                      ),
             ),
           ),
       ],
@@ -223,92 +218,92 @@ class _EditView extends StatelessWidget {
     final dates = _FieldGrid(
       minWidth: 165,
       children: [
-        LabeledField(
-          label: 'Started',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final startedAt = ref.watch(provider.select((s) => s.startedAt));
+        Consumer(
+          builder: (context, ref, _) {
+            final startedAt = ref.watch(provider.select((s) => s.startedAt));
 
-              return DateField(
-                date: startedAt,
-                onChanged: (startedAt) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
+            return DateField(
+              label: 'Started',
+              value: startedAt,
+              onChanged: (value) => (startedAt) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
 
-                    if (startedAt != null &&
-                        oldEdit.status == null &&
-                        status == null) {
-                      status = EntryStatus.CURRENT;
-                      Toast.show(context, 'Status changed');
-                    }
+                  if (startedAt != null &&
+                      oldEdit.status == null &&
+                      status == null) {
+                    status = EntryStatus.current;
+                    Toast.show(context, 'Status changed');
+                  }
 
-                    return s.copyWith(
-                      status: status,
-                      startedAt: () => startedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                  return s.copyWith(
+                    status: status,
+                    startedAt: () => startedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
-        LabeledField(
-          label: 'Completed',
-          child: Consumer(
-            builder: (context, ref, _) {
-              final completedAt =
-                  ref.watch(provider.select((s) => s.completedAt));
+        Consumer(
+          builder: (context, ref, _) {
+            final completedAt =
+                ref.watch(provider.select((s) => s.completedAt));
 
-              return DateField(
-                date: completedAt,
-                onChanged: (completedAt) {
-                  ref.read(provider.notifier).update((s) {
-                    var status = s.status;
-                    var progress = s.progress;
+            return DateField(
+              label: 'Completed',
+              value: completedAt,
+              onChanged: (completedAt) {
+                ref.read(provider.notifier).update((s) {
+                  var status = s.status;
+                  var progress = s.progress;
 
-                    if (completedAt != null &&
-                        oldEdit.status != EntryStatus.COMPLETED &&
-                        oldEdit.status != EntryStatus.REPEATING &&
-                        oldEdit.status == status) {
-                      status = EntryStatus.COMPLETED;
-                      String text = 'Status changed';
+                  if (completedAt != null &&
+                      oldEdit.status != EntryStatus.completed &&
+                      oldEdit.status != EntryStatus.repeating &&
+                      oldEdit.status == status) {
+                    status = EntryStatus.completed;
+                    String text = 'Status changed';
 
-                      if (s.progressMax != null &&
-                          s.progress < s.progressMax!) {
-                        progress = s.progressMax!;
-                        text = 'Status & progress changed';
-                      }
-
-                      Toast.show(context, text);
+                    if (s.progressMax != null && s.progress < s.progressMax!) {
+                      progress = s.progressMax!;
+                      text = 'Status & progress changed';
                     }
 
-                    return s.copyWith(
-                      status: status,
-                      progress: progress,
-                      completedAt: () => completedAt,
-                    );
-                  });
-                },
-              );
-            },
-          ),
+                    Toast.show(context, text);
+                  }
+
+                  return s.copyWith(
+                    status: status,
+                    progress: progress,
+                    completedAt: () => completedAt,
+                  );
+                });
+              },
+            );
+          },
         ),
       ],
     );
 
     final advancedScoring = Consumer(
       builder: (context, ref, _) {
-        final settings =
-            ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
+        final settings = ref.watch(
+          settingsProvider.select((s) => s.valueOrNull),
+        );
 
-        if (!settings.advancedScoringEnabled ||
-            settings.scoreFormat != ScoreFormat.POINT_100 &&
-                settings.scoreFormat != ScoreFormat.POINT_10_DECIMAL) {
+        final advancedScoringEnabled =
+            settings?.advancedScoringEnabled ?? false;
+        final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
+
+        if (!advancedScoringEnabled ||
+            scoreFormat != ScoreFormat.point100 &&
+                scoreFormat != ScoreFormat.point10Decimal) {
           return const SliverToBoxAdapter(child: SizedBox());
         }
 
         final scores = ref.watch(provider.notifier).state.advancedScores;
-        final isDecimal = settings.scoreFormat == ScoreFormat.POINT_10_DECIMAL;
+        final isDecimal = scoreFormat == ScoreFormat.point10Decimal;
 
         final onChanged = (entry, score) {
           scores[entry.key] = score.toDouble();
@@ -334,20 +329,19 @@ class _EditView extends StatelessWidget {
           minWidth: 140,
           children: [
             for (final s in scores.entries)
-              LabeledField(
-                label: s.key,
-                child: isDecimal
-                    ? DecimalNumberField(
-                        value: s.value,
-                        maxValue: 10.0,
-                        onChanged: (score) => onChanged(s, score),
-                      )
-                    : NumberField(
-                        value: s.value.toInt(),
-                        maxValue: 100,
-                        onChanged: (score) => onChanged(s, score),
-                      ),
-              ),
+              isDecimal
+                  ? NumberField.decimal(
+                      label: s.key,
+                      value: s.value,
+                      maxValue: 10.0,
+                      onChanged: (score) => onChanged(s, score),
+                    )
+                  : NumberField(
+                      label: s.key,
+                      value: s.value.toInt(),
+                      maxValue: 100,
+                      onChanged: (score) => onChanged(s, score),
+                    ),
           ],
         );
       },
@@ -365,32 +359,21 @@ class _EditView extends StatelessWidget {
             slivers: [
               space,
               space,
+              status,
+              space,
+              space,
               tracking,
-              space,
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LabeledField(label: 'Score', child: ScoreField(tag)),
-                ),
-              ),
-              space,
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: LabeledField(
-                    label: 'Notes',
-                    child: GrowableTextField(
-                      text: notifier.state.notes,
-                      onChanged: (notes) => notifier.state.notes = notes,
-                    ),
-                  ),
-                ),
-              ),
-              space,
-              dates,
+              SliverToBoxAdapter(child: ScoreField(tag)),
               space,
               advancedScoring,
               space,
+              _Notes(
+                value: notifier.state.notes,
+                onChanged: (notes) => notifier.state.notes = notes,
+              ),
+              space,
+              space,
+              dates,
               SliverToBoxAdapter(
                 child: StatefulCheckboxListTile(
                   title: const Text('Private'),
@@ -454,9 +437,47 @@ class _FieldGrid extends StatelessWidget {
         delegate: SliverChildListDelegate.fixed(children),
         gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
           minWidth: minWidth,
-          height: 71,
+          height: 58,
         ),
       ),
     );
   }
+}
+
+class _Notes extends StatefulWidget {
+  const _Notes({required this.value, required this.onChanged});
+
+  final String value;
+  final void Function(String) onChanged;
+
+  @override
+  _NotesState createState() => _NotesState();
+}
+
+class _NotesState extends State<_Notes> {
+  late final _ctrl = TextEditingController(text: widget.value);
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: TextField(
+            minLines: 1,
+            maxLines: 10,
+            controller: _ctrl,
+            style: Theme.of(context).textTheme.bodyMedium,
+            decoration: const InputDecoration(
+              labelText: 'Notes',
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) => widget.onChanged(value),
+          ),
+        ),
+      );
 }

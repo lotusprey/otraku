@@ -2,21 +2,16 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/calendar/calendar_filter_provider.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 
 final calendarProvider =
     AsyncNotifierProvider.autoDispose<CalendarNotifier, Paged<CalendarItem>>(
   CalendarNotifier.new,
-);
-
-final calendarFilterProvider =
-    NotifierProvider.autoDispose<CalendarFilterNotifier, CalendarFilter>(
-  CalendarFilterNotifier.new,
 );
 
 class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
@@ -54,39 +49,39 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
       if (season == null || year == null) continue;
 
       switch (filter.season) {
-        case CalendarSeasonFilter.Current:
+        case CalendarSeasonFilter.current:
           final currSeason = _previousAndCurrentSeason().$2;
           if (season != currSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.Previous:
+        case CalendarSeasonFilter.previous:
           final prevSeason = _previousAndCurrentSeason().$1;
           if (season != prevSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.Other:
+        case CalendarSeasonFilter.other:
           final (prevSeason, currSeason) = _previousAndCurrentSeason();
           if ((season == prevSeason || season == currSeason) &&
               year >= filter.date.year - 1) {
             continue;
           }
           break;
-        case CalendarSeasonFilter.All:
+        case CalendarSeasonFilter.all:
           break;
       }
 
       final status = c['media']['mediaListEntry']?['status'];
       switch (filter.status) {
-        case CalendarStatusFilter.NotInLists:
+        case CalendarStatusFilter.notInLists:
           if (status != null) continue;
-        case CalendarStatusFilter.WatchingAndPlanning:
-          if (status != EntryStatus.CURRENT.name &&
-              status != EntryStatus.PLANNING.name) {
+        case CalendarStatusFilter.watchingAndPlanning:
+          if (status != EntryStatus.current.name &&
+              status != EntryStatus.planning.name) {
             continue;
           }
-        case CalendarStatusFilter.Other:
+        case CalendarStatusFilter.other:
           if (status == null ||
-              status == EntryStatus.CURRENT.name ||
-              status == EntryStatus.PLANNING.name) {
+              status == EntryStatus.current.name ||
+              status == EntryStatus.planning.name) {
             continue;
           }
-        case CalendarStatusFilter.All:
+        case CalendarStatusFilter.all:
           break;
       }
 
@@ -105,21 +100,4 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
         >= 9 && <= 11 => ('SUMMER', 'FALL'),
         _ => ('FALL', 'WINTER'),
       };
-}
-
-class CalendarFilterNotifier extends AutoDisposeNotifier<CalendarFilter> {
-  @override
-  CalendarFilter build() => CalendarFilter(
-        date: DateTime.now(),
-        season: CalendarSeasonFilter.values[Options().calendarSeason],
-        status: CalendarStatusFilter.values[Options().calendarStatus],
-      );
-
-  @override
-  set state(CalendarFilter newState) {
-    super.state = newState;
-
-    Options().calendarSeason = state.season.index;
-    Options().calendarStatus = state.status.index;
-  }
 }

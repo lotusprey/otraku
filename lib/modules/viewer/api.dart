@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/auth/account.dart';
+import 'package:otraku/modules/viewer/account_model.dart';
 
 abstract class Api {
   static final _url = Uri.parse('https://graphql.anilist.co');

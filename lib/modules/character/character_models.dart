@@ -2,13 +2,14 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem characterItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.Character,
+      type: DiscoverType.character,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -38,7 +39,7 @@ class Character {
       if (names['last']?.isNotEmpty ?? false) names['last'],
     ];
 
-    final fullName = personNaming == PersonNaming.ROMAJI_WESTERN
+    final fullName = personNaming == PersonNaming.romajiWestern
         ? nameSegments.join(' ')
         : nameSegments.reversed.toList().join(' ');
     final nativeName = names['native'];
@@ -51,7 +52,7 @@ class Character {
 
     String name;
     if (nativeName != null) {
-      if (personNaming != PersonNaming.NATIVE) {
+      if (personNaming != PersonNaming.native) {
         name = fullName;
         altNames.insert(0, nativeName);
       } else {
@@ -67,7 +68,7 @@ class Character {
       name: name,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
-      description: map['description'] ?? '',
+      description: parseMarkdown(map['description'] ?? ''),
       imageUrl: map['image']['large'],
       dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
       bloodType: map['bloodType'],
@@ -142,7 +143,7 @@ class CharacterMedia {
 }
 
 class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.TRENDING_DESC, this.inLists});
+  CharacterFilter({this.sort = MediaSort.trendingDesc, this.inLists});
 
   final MediaSort sort;
   final bool? inLists;

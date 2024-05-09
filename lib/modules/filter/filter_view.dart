@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
@@ -98,12 +97,12 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
-            current: filter.statuses,
+            values: filter.statuses,
           ),
           ChipEnumMultiSelector(
             title: 'Formats',
             options: widget.ofAnime ? AnimeFormat.values : MangaFormat.values,
-            current: filter.formats,
+            values: filter.formats,
           ),
           const Divider(indent: 10, endIndent: 10),
           Consumer(
@@ -134,41 +133,22 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
           const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
-            options: OriginCountry.values
-                .map((v) => v.name.noScreamingSnakeCase)
-                .toList(),
-            current: filter.country?.index,
-            onChanged: (val) => filter.country =
-                val == null ? null : OriginCountry.values.elementAt(val),
+            items: OriginCountry.values.map((v) => (v.label, v)).toList(),
+            value: filter.country,
+            onChanged: (v) => filter.country = v,
           ),
           if (widget.ofViewer)
             ChipSelector(
               title: 'Visibility',
-              options: const ['Private', 'Public'],
-              current: filter.isPrivate == null
-                  ? null
-                  : filter.isPrivate!
-                      ? 0
-                      : 1,
-              onChanged: (val) => filter.isPrivate = val == null
-                  ? null
-                  : val == 0
-                      ? true
-                      : false,
+              items: const [('Private', true), ('Public', false)],
+              value: filter.isPrivate,
+              onChanged: (v) => filter.isPrivate = v,
             ),
           ChipSelector(
             title: 'Notes',
-            options: const ['With Notes', 'Without Notes'],
-            current: filter.hasNotes == null
-                ? null
-                : filter.hasNotes!
-                    ? 0
-                    : 1,
-            onChanged: (val) => filter.hasNotes = val == null
-                ? null
-                : val == 0
-                    ? true
-                    : false,
+            items: const [('With Notes', true), ('Without Notes', false)],
+            value: filter.hasNotes,
+            onChanged: (v) => filter.hasNotes = v,
           ),
           SizedBox(
             height:
@@ -208,46 +188,43 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),
         children: [
-          ChipSelector(
+          ChipSelector.ensureSelected(
             title: 'Sorting',
-            options: MediaSort.values.map((s) => s.label).toList(),
-            current: filter.sort.index,
-            mustHaveSelected: true,
-            onChanged: (i) => filter.sort = MediaSort.values.elementAt(i!),
+            items: MediaSort.values.map((v) => (v.label, v)).toList(),
+            value: filter.sort,
+            onChanged: (v) => filter.sort = v,
           ),
           ChipEnumMultiSelector(
             title: 'Statuses',
             options: MediaStatus.values,
-            current: filter.statuses,
+            values: filter.statuses,
           ),
           if (widget.ofAnime)
             ChipEnumMultiSelector(
               title: 'Formats',
               options: AnimeFormat.values,
-              current: filter.animeFormats,
+              values: filter.animeFormats,
             )
           else
             ChipEnumMultiSelector(
               title: 'Formats',
               options: MangaFormat.values,
-              current: filter.mangaFormats,
+              values: filter.mangaFormats,
             ),
           if (widget.ofAnime)
             ChipSelector(
               title: 'Season',
-              options: MediaSeason.values
-                  .map((v) => v.name.noScreamingSnakeCase)
-                  .toList(),
-              current: filter.season?.index,
-              onChanged: (selected) => filter.season = selected != null
-                  ? MediaSeason.values.elementAt(selected)
-                  : null,
+              items: MediaSeason.values.map((v) => (v.label, v)).toList(),
+              value: filter.season,
+              onChanged: (v) => filter.season = v,
             ),
           const Divider(indent: 10, endIndent: 10),
           Consumer(
             builder: (context, ref, _) => ref.watch(tagsProvider).when(
-                  loading: () => const Loader(),
-                  error: (_, __) => const Text('Failed to load tags'),
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load tags'),
+                  ),
                   data: (tags) => TagSelector(
                     inclusiveGenres: filter.genreIn,
                     exclusiveGenres: filter.genreNotIn,
@@ -269,45 +246,29 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
           const Divider(indent: 10, endIndent: 10, height: 30),
           ChipSelector(
             title: 'Country',
-            options: OriginCountry.values
-                .map((v) => v.name.noScreamingSnakeCase)
-                .toList(),
-            current: filter.country?.index,
-            onChanged: (val) => filter.country =
-                val == null ? null : OriginCountry.values.elementAt(val),
+            items: OriginCountry.values.map((v) => (v.label, v)).toList(),
+            value: filter.country,
+            onChanged: (v) => filter.country = v,
           ),
           ChipEnumMultiSelector(
             title: 'Sources',
             options: MediaSource.values,
-            current: filter.sources,
+            values: filter.sources,
           ),
           ChipSelector(
             title: 'List Presence',
-            options: const ['In Lists', 'Not in Lists'],
-            current: filter.inLists == null
-                ? null
-                : filter.inLists!
-                    ? 0
-                    : 1,
-            onChanged: (val) => filter.inLists = val == null
-                ? null
-                : val == 0
-                    ? true
-                    : false,
+            items: const [
+              ('In Lists', true),
+              ('Not in Lists', false),
+            ],
+            value: filter.inLists,
+            onChanged: (v) => filter.inLists = v,
           ),
           ChipSelector(
             title: 'Age Restriction',
-            options: const ['Adult', 'Non-Adult'],
-            current: filter.isAdult == null
-                ? null
-                : filter.isAdult!
-                    ? 0
-                    : 1,
-            onChanged: (val) => filter.isAdult = val == null
-                ? null
-                : val == 0
-                    ? true
-                    : false,
+            items: const [('Adult', true), ('Non-Adult', false)],
+            value: filter.isAdult,
+            onChanged: (v) => filter.isAdult = v,
           ),
           SizedBox(
             height:

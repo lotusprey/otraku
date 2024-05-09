@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:otraku/modules/auth/account.dart';
+import 'package:otraku/modules/viewer/account_model.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.2.8+2';
+const versionCode = '1.3.2';
 
 /// General options keys.
 enum _OptionKey {
@@ -50,11 +50,13 @@ enum _ProfileKey {
 
 /// Available image qualities.
 enum ImageQuality {
-  VeryHigh('extraLarge'),
-  High('large'),
-  Medium('medium');
+  VeryHigh('Very High', 'extraLarge'),
+  High('High', 'large'),
+  Medium('Medium', 'medium');
 
-  const ImageQuality(this.value);
+  const ImageQuality(this.label, this.value);
+
+  final String label;
   final String value;
 }
 
@@ -122,9 +124,9 @@ class Options extends ChangeNotifier {
     if (mangaSort < 0 || mangaSort >= EntrySort.values.length) mangaSort = 0;
 
     int discoverSort = _optionBox.get(_OptionKey.defaultDiscoverSort.name) ??
-        MediaSort.TRENDING_DESC.index;
+        MediaSort.trendingDesc.index;
     if (discoverSort < 0 || discoverSort >= MediaSort.values.length) {
-      discoverSort = MediaSort.TRENDING_DESC.index;
+      discoverSort = MediaSort.trendingDesc.index;
     }
 
     int imageQualityIndex = _optionBox.get(_OptionKey.imageQuality.name) ?? 1;

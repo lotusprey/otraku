@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
+import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 
@@ -28,20 +28,17 @@ final staffProvider = FutureProvider.autoDispose.family(
       {'id': id, 'withInfo': true},
     );
 
-    final settings =
-        ref.watch(settingsProvider).valueOrNull ?? Settings.empty();
-    return Staff(data['Staff'], settings.personNaming);
+    final personNaming = await ref.watch(
+      settingsProvider.selectAsync((settings) => settings.personNaming),
+    );
+
+    return Staff(data['Staff'], personNaming);
   },
 );
 
 final staffRelationsProvider = AsyncNotifierProvider.autoDispose
     .family<StaffRelationsNotifier, StaffRelations, int>(
   StaffRelationsNotifier.new,
-);
-
-final staffFilterProvider =
-    NotifierProvider.autoDispose.family<StaffFilterNotifier, StaffFilter, int>(
-  StaffFilterNotifier.new,
 );
 
 class StaffRelationsNotifier
@@ -71,7 +68,7 @@ class StaffRelationsNotifier
     final variables = {
       'id': arg,
       'onList': filter.inLists,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
       if (filter.ofAnime != null) 'type': filter.ofAnime! ? 'ANIME' : 'MANGA',
     };
 
@@ -102,8 +99,8 @@ class StaffRelationsNotifier
           imageUrl: m['node']['coverImage'][Options().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
-              ? DiscoverType.Anime
-              : DiscoverType.Manga,
+              ? DiscoverType.anime
+              : DiscoverType.manga,
         );
 
         for (final c in m['characters']) {
@@ -114,7 +111,7 @@ class StaffRelationsNotifier
               id: c['id'],
               title: c['name']['userPreferred'],
               imageUrl: c['image']['large'],
-              type: DiscoverType.Character,
+              type: DiscoverType.character,
               subtitle: StringUtil.tryNoScreamingSnakeCase(
                 m['characterRole'],
               ),
@@ -140,8 +137,8 @@ class StaffRelationsNotifier
           imageUrl: s['node']['coverImage'][Options().imageQuality.value],
           subtitle: s['staffRole'],
           type: s['node']['type'] == 'ANIME'
-              ? DiscoverType.Anime
-              : DiscoverType.Manga,
+              ? DiscoverType.anime
+              : DiscoverType.manga,
         ));
       }
 
@@ -153,12 +150,4 @@ class StaffRelationsNotifier
 
     return StaffRelations(charactersAndMedia: charactersAndMedia, roles: roles);
   }
-}
-
-class StaffFilterNotifier extends AutoDisposeFamilyNotifier<StaffFilter, int> {
-  @override
-  StaffFilter build(arg) => StaffFilter();
-
-  @override
-  set state(StaffFilter newState) => super.state = newState;
 }

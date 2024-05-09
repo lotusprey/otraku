@@ -6,6 +6,7 @@ import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/activity/activity_filter_sheet.dart';
 import 'package:otraku/modules/activity/activities_provider.dart';
 import 'package:otraku/modules/activity/activities_view.dart';
+import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
@@ -65,8 +66,8 @@ class FeedView extends StatelessWidget {
                 onTap: () => showSheet(
                   context,
                   CompositionView(
-                    composition: Composition.status(null, ''),
-                    onDone: (map) => ref
+                    tag: const StatusActivityCompositionTag(id: null),
+                    onSaved: (map) => ref
                         .read(activitiesProvider(homeFeedId).notifier)
                         .insertActivity(map, Options().id!),
                   ),

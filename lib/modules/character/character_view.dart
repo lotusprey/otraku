@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/character/character_action_buttons.dart';
-import 'package:otraku/modules/character/character_providers.dart';
+import 'package:otraku/modules/character/character_provider.dart';
 import 'package:otraku/modules/character/character_info_tab.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/utils/paged_controller.dart';

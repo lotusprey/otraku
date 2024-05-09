@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
-import 'package:otraku/modules/activity/activities_provider.dart';
+import 'package:otraku/modules/activity/activities_filter_provider.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {

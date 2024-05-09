@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/modules/media/media_providers.dart';
+import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 
@@ -54,7 +54,7 @@ class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
         setState(() => widget.info.isFavorite = !widget.info.isFavorite);
         toggleFavoriteMedia(
           widget.info.id,
-          widget.info.type == DiscoverType.Anime,
+          widget.info.type == DiscoverType.anime,
         ).then((ok) {
           if (!ok) {
             setState(() => widget.info.isFavorite = !widget.info.isFavorite);

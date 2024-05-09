@@ -6,9 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/fields/search_field.dart';
+import 'package:otraku/modules/collection/collection_entries_provider.dart';
+import 'package:otraku/modules/collection/collection_filter_provider.dart';
 import 'package:otraku/modules/collection/collection_grid.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/modules/collection/collection_providers.dart';
+import 'package:otraku/modules/collection/collection_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
 import 'package:otraku/common/utils/options.dart';
@@ -20,6 +22,8 @@ import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/modules/collection/collection_list.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
+import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/media/media_constants.dart';
 
 class CollectionView extends StatefulWidget {
   const CollectionView(this.userId, this.ofAnime);
@@ -75,27 +79,25 @@ class CollectionSubView extends StatelessWidget {
         scrollCtrl: scrollCtrl,
         children: [_ActionButton(tag)],
       ),
-      child: Consumer(
-        builder: (context, ref, _) {
-          return ConstrainedView(
-            child: CustomScrollView(
-              physics: Consts.physics,
-              controller: scrollCtrl,
-              slivers: [
-                SliverRefreshControl(
-                  onRefresh: () {
-                    final index = ref.read(collectionProvider(tag)).index;
-
-                    final notifier = ref.refresh(collectionProvider(tag));
-                    notifier.index = index;
-                  },
-                ),
-                _Content(tag),
-                const SliverFooter(),
-              ],
-            ),
-          );
-        },
+      child: Scrollbar(
+        controller: scrollCtrl,
+        child: Consumer(
+          builder: (context, ref, _) {
+            return ConstrainedView(
+              child: CustomScrollView(
+                physics: Consts.physics,
+                controller: scrollCtrl,
+                slivers: [
+                  SliverRefreshControl(
+                    onRefresh: () => ref.invalidate(collectionProvider(tag)),
+                  ),
+                  _Content(tag),
+                  const SliverFooter(),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -111,14 +113,6 @@ class _TopBarContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final notifier = ref.watch(collectionProvider(tag));
-        if (notifier.lists.isEmpty) return const SizedBox();
-
-        /// If [entriesProvider] returns an empty list,
-        /// the random entry button shouldn't appear.
-        final noResults =
-            ref.watch(entriesProvider(tag).select((s) => s.isEmpty));
-
         return Expanded(
           child: Row(
             children: [
@@ -126,7 +120,9 @@ class _TopBarContent extends StatelessWidget {
                 child: SearchField(
                   debounce: Debounce(),
                   focusNode: focusNode,
-                  hint: notifier.lists[notifier.index].name,
+                  hint: ref.watch(collectionProvider(tag).select(
+                    (s) => s.valueOrNull?.listName ?? '',
+                  )),
                   value: ref.watch(
                     collectionFilterProvider(tag).select((s) => s.search),
                   ),
@@ -135,18 +131,27 @@ class _TopBarContent extends StatelessWidget {
                       .update((s) => s.copyWith(search: search)),
                 ),
               ),
-              if (noResults)
-                const SizedBox(width: 45)
-              else
-                TopBarIcon(
-                  tooltip: 'Random',
-                  icon: Ionicons.shuffle_outline,
-                  onTap: () {
-                    final entries = ref.read(entriesProvider(tag));
-                    final e = entries[Random().nextInt(entries.length)];
-                    context.push(Routes.media(e.mediaId, e.imageUrl));
-                  },
-                ),
+              TopBarIcon(
+                tooltip: 'Random',
+                icon: Ionicons.shuffle_outline,
+                onTap: () {
+                  final entries =
+                      ref.read(collectionEntriesProvider(tag)).valueOrNull ??
+                          const [];
+
+                  if (entries.isEmpty) {
+                    showPopUp(
+                      context,
+                      const ConfirmationDialog(title: 'No Entries'),
+                    );
+
+                    return;
+                  }
+
+                  final e = entries[Random().nextInt(entries.length)];
+                  context.push(Routes.media(e.mediaId, e.imageUrl));
+                },
+              ),
               TopBarIcon(
                 tooltip: 'Filter',
                 icon: Ionicons.funnel_outline,
@@ -179,74 +184,91 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        if (ref.watch(collectionProvider(tag).select(
-          (s) => s.lists.length < 2,
-        ))) {
-          return const SizedBox();
+        final collection = ref.watch(
+          collectionProvider(tag).select((s) => s.unwrapPrevious().valueOrNull),
+        );
+
+        return switch (collection) {
+          null => const SizedBox(),
+          PreviewCollection _ => ActionButton(
+              tooltip: 'Load Entire Collection',
+              icon: Ionicons.enter_outline,
+              onTap: () => ref.read(homeProvider.notifier).expandCollection(
+                    tag.ofAnime,
+                  ),
+            ),
+          FullCollection c => c.lists.length < 2
+              ? const SizedBox()
+              : _fullCollectionActionButton(context, ref, c.lists, c.index),
+        };
+      },
+    );
+  }
+
+  Widget _fullCollectionActionButton(
+    BuildContext context,
+    WidgetRef ref,
+    List<EntryList> lists,
+    int index,
+  ) {
+    return ActionButton(
+      tooltip: 'Lists',
+      icon: Ionicons.menu_outline,
+      onTap: () {
+        final theme = Theme.of(context);
+
+        showSheet(
+          context,
+          GradientSheet([
+            for (int i = 0; i < lists.length; i++)
+              GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  Navigator.pop(context);
+                  ref.read(collectionProvider(tag).notifier).changeIndex(i);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        lists[i].name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: i != index
+                            ? theme.textTheme.titleLarge
+                            : theme.textTheme.titleLarge?.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                      ),
+                    ),
+                    Text(
+                      ' ${lists[i].entries.length}',
+                      style: theme.textTheme.titleSmall,
+                    ),
+                  ],
+                ),
+              ),
+          ]),
+        );
+      },
+      onSwipe: (goRight) {
+        if (goRight) {
+          if (index < lists.length - 1) {
+            index++;
+          } else {
+            index = 0;
+          }
+        } else {
+          if (index > 0) {
+            index--;
+          } else {
+            index = lists.length - 1;
+          }
         }
 
-        return ActionButton(
-          tooltip: 'Lists',
-          icon: Ionicons.menu_outline,
-          onTap: () {
-            final notifier = ref.read(collectionProvider(tag));
-            final theme = Theme.of(context);
-
-            showSheet(
-              context,
-              GradientSheet([
-                for (int i = 0; i < notifier.lists.length; i++)
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      Navigator.pop(context);
-                      notifier.index = i;
-                    },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            notifier.lists[i].name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: i != notifier.index
-                                ? theme.textTheme.titleLarge
-                                : theme.textTheme.titleLarge?.copyWith(
-                                    color: theme.colorScheme.primary,
-                                  ),
-                          ),
-                        ),
-                        Text(
-                          ' ${notifier.lists[i].entries.length}',
-                          style: theme.textTheme.titleSmall,
-                        ),
-                      ],
-                    ),
-                  ),
-              ]),
-            );
-          },
-          onSwipe: (goRight) {
-            final notifier = ref.read(collectionProvider(tag));
-
-            if (goRight) {
-              if (notifier.index < notifier.lists.length - 1) {
-                notifier.index++;
-              } else {
-                notifier.index = 0;
-              }
-            } else {
-              if (notifier.index > 0) {
-                notifier.index--;
-              } else {
-                notifier.index = notifier.lists.length - 1;
-              }
-            }
-
-            return null;
-          },
-        );
+        ref.read(collectionProvider(tag).notifier).changeIndex(index);
+        return null;
       },
     );
   }
@@ -267,57 +289,63 @@ class _ContentState extends State<_Content> {
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
-          collectionProvider(widget.tag).select((s) => s.state),
+          collectionEntriesProvider(widget.tag),
           (_, s) => s.whenOrNull(
             error: (error, _) => showPopUp(
               context,
               ConfirmationDialog(
-                title: 'Failed to load collection',
+                title: 'Failed to load',
                 content: error.toString(),
               ),
             ),
           ),
         );
 
-        final notifier = ref.watch(collectionProvider(widget.tag));
-        if (notifier.state.isLoading) {
-          return const SliverFillRemaining(child: Center(child: Loader()));
-        }
+        return ref
+            .watch(collectionEntriesProvider(widget.tag))
+            .unwrapPrevious()
+            .when(
+              loading: () => const SliverFillRemaining(
+                child: Center(child: Loader()),
+              ),
+              error: (_, __) => const SliverFillRemaining(
+                child: Center(child: Text('No results')),
+              ),
+              data: (data) {
+                final onProgressUpdated = widget.tag.userId == Options().id
+                    ? ref
+                        .read(collectionProvider(widget.tag).notifier)
+                        .saveEntryProgress
+                    : null;
 
-        final entries = ref.watch(entriesProvider(widget.tag));
-        if (entries.isEmpty) {
-          return const SliverFillRemaining(
-            child: Center(child: Text('No results')),
-          );
-        }
+                final collectionIsExpanded = ref.watch(homeProvider.select(
+                  (s) => widget.tag.ofAnime
+                      ? s.didExpandAnimeCollection
+                      : s.didExpandMangaCollection,
+                ));
 
-        void Function(Entry, List<String>)? update;
-        if (widget.tag.userId == Options().id) {
-          update = (entry, customLists) {
-            ref.read(collectionProvider(widget.tag)).updateProgress(
-                  mediaId: entry.mediaId,
-                  progress: entry.progress,
-                  customLists: customLists,
-                  listStatus: entry.entryStatus,
-                  format: entry.format,
-                  sort: ref
-                      .read(collectionFilterProvider(widget.tag))
-                      .mediaFilter
-                      .sort,
+                if (collectionIsExpanded && Options().collectionItemView == 1 ||
+                    !collectionIsExpanded &&
+                        Options().collectionPreviewItemView == 1) {
+                  return CollectionGrid(
+                    items: data,
+                    onProgressUpdated: onProgressUpdated,
+                  );
+                }
+
+                return CollectionList(
+                  items: data,
+                  onProgressUpdated: onProgressUpdated,
+                  scoreFormat: ref.watch(
+                    collectionProvider(widget.tag).select(
+                      (s) =>
+                          s.valueOrNull?.scoreFormat ??
+                          ScoreFormat.point10Decimal,
+                    ),
+                  ),
                 );
-          };
-        }
-
-        return Options().collectionItemView == 0
-            ? CollectionList(
-                items: entries,
-                scoreFormat: notifier.scoreFormat,
-                onProgressUpdate: update,
-              )
-            : CollectionGrid(
-                items: entries,
-                onProgressUpdate: update,
-              );
+              },
+            );
       },
     );
   }

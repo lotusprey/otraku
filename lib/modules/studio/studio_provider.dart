@@ -4,8 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
+import 'package:otraku/modules/studio/studio_filter_provider.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
 /// Favorite/Unfavorite studio. Returns `true` if successful.
@@ -30,9 +31,6 @@ final studioMediaProvider = AsyncNotifierProvider.autoDispose
   StudioMediaNotifier.new,
 );
 
-final studioFilterProvider = NotifierProvider.autoDispose
-    .family<StudioFilterNotifier, StudioFilter, int>(StudioFilterNotifier.new);
-
 class StudioMediaNotifier
     extends AutoDisposeFamilyAsyncNotifier<StudioMedia, int> {
   late StudioFilter filter;
@@ -56,21 +54,21 @@ class StudioMediaNotifier
       'id': arg,
       'withMedia': true,
       'page': oldState.media.next,
-      'sort': filter.sort.name,
+      'sort': filter.sort.value,
       'onList': filter.inLists,
       if (filter.isMain != null) 'isMain': filter.isMain,
     });
 
     final map = data['Studio']['media'];
     final items = <TileItem>[];
-    if (filter.sort != MediaSort.START_DATE &&
-        filter.sort != MediaSort.START_DATE_DESC) {
+    if (filter.sort != MediaSort.startDate &&
+        filter.sort != MediaSort.startDateDesc) {
       for (final m in map['nodes']) {
         items.add(mediaItem(m));
       }
     } else {
-      final key = filter.sort == MediaSort.START_DATE ||
-              filter.sort == MediaSort.START_DATE_DESC
+      final key = filter.sort == MediaSort.startDate ||
+              filter.sort == MediaSort.startDateDesc
           ? 'startDate'
           : 'endDate';
 
@@ -98,13 +96,4 @@ class StudioMediaNotifier
       categories: categories,
     );
   }
-}
-
-class StudioFilterNotifier
-    extends AutoDisposeFamilyNotifier<StudioFilter, int> {
-  @override
-  StudioFilter build(arg) => StudioFilter();
-
-  @override
-  set state(StudioFilter newState) => super.state = newState;
 }

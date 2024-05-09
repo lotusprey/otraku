@@ -16,7 +16,7 @@ class ScoreLabel extends StatelessWidget {
 
     Widget content;
     switch (scoreFormat) {
-      case ScoreFormat.POINT_3:
+      case ScoreFormat.point3:
         if (score == 3) {
           content = const Icon(
             Icons.sentiment_very_satisfied,
@@ -33,7 +33,7 @@ class ScoreLabel extends StatelessWidget {
             size: Consts.iconSmall,
           );
         }
-      case ScoreFormat.POINT_5:
+      case ScoreFormat.point5:
         content = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -45,7 +45,7 @@ class ScoreLabel extends StatelessWidget {
             const Icon(Icons.star_rounded, size: Consts.iconSmall),
           ],
         );
-      case ScoreFormat.POINT_10_DECIMAL:
+      case ScoreFormat.point10Decimal:
         content = Row(
           mainAxisSize: MainAxisSize.min,
           children: [

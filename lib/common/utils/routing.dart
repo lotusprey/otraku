@@ -6,12 +6,12 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/modules/activity/activities_view.dart';
 import 'package:otraku/modules/activity/activity_view.dart';
-import 'package:otraku/modules/auth/auth_view.dart';
+import 'package:otraku/modules/viewer/auth_view.dart';
 import 'package:otraku/modules/calendar/calendar_view.dart';
 import 'package:otraku/modules/character/character_view.dart';
 import 'package:otraku/modules/collection/collection_view.dart';
 import 'package:otraku/modules/favorites/favorites_view.dart';
-import 'package:otraku/modules/home/home_provider.dart';
+import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/home/home_view.dart';
 import 'package:otraku/modules/media/media_view.dart';
 import 'package:otraku/modules/notification/notifications_view.dart';
@@ -26,8 +26,9 @@ import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_view.dart';
 
 List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
-  final FutureOr<bool> Function(BuildContext) onExit = (BuildContext context) {
-    if (!shoudConfirmExit()) return true;
+  final onExit = (BuildContext context, GoRouterState _) {
+    if (!shoudConfirmExit()) return Future.value(true);
+
     return showPopUp<bool>(
       context,
       ConfirmationDialog(
@@ -194,6 +195,18 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
       builder: (context, state) => StatisticsView(
         int.parse(state.pathParameters['id']!),
       ),
+    ),
+
+    // Extra routes for AniList deep links:
+    // - Media endpoints are split between anime/manga.
+    // - Paths can contain superfluous information after the path parameter.
+    GoRoute(
+      path: '/anime/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
+    ),
+    GoRoute(
+      path: '/manga/:id',
+      redirect: (context, state) => '/media/${state.pathParameters['id']}',
     ),
     GoRoute(
       path: '/anime/:id/:_(.*)',

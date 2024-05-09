@@ -28,7 +28,7 @@ class ReplyCard extends StatelessWidget {
         LinkTile(
           id: reply.authorId,
           info: reply.authorAvatarUrl,
-          discoverType: DiscoverType.User,
+          discoverType: DiscoverType.user,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -109,8 +109,11 @@ class ReplyCard extends StatelessWidget {
           onTap: () => showSheet(
             context,
             CompositionView(
-              composition: Composition.reply(reply.id, reply.text, activityId),
-              onDone: (map) => ref
+              tag: ActivityReplyCompositionTag(
+                id: reply.id,
+                activityId: activityId,
+              ),
+              onSaved: (map) => ref
                   .read(activityProvider(activityId).notifier)
                   .replaceReply(map),
             ),
@@ -168,8 +171,12 @@ class _ReplyMentionButton extends StatelessWidget {
           onTap: () => showSheet(
             context,
             CompositionView(
-              composition: Composition.reply(null, '@$username ', activityId),
-              onDone: (map) => ref
+              defaultText: '@$username ',
+              tag: ActivityReplyCompositionTag(
+                id: null,
+                activityId: activityId,
+              ),
+              onSaved: (map) => ref
                   .read(activityProvider(activityId).notifier)
                   .appendReply(map),
             ),

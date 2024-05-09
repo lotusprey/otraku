@@ -5,7 +5,7 @@ import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/staff/staff_action_buttons.dart';
 import 'package:otraku/modules/staff/staff_info_tab.dart';
-import 'package:otraku/modules/staff/staff_providers.dart';
+import 'package:otraku/modules/staff/staff_provider.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
 import 'package:otraku/common/widgets/grids/relation_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';

@@ -4,8 +4,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
-import 'package:otraku/modules/staff/staff_providers.dart';
+import 'package:otraku/modules/staff/staff_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
@@ -71,44 +72,33 @@ class StaffFilterButton extends StatelessWidget {
                   physics: Consts.physics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
-                    ChipSelector(
+                    ChipSelector.ensureSelected(
                       title: 'Sort',
-                      options: MediaSort.values.map((s) => s.label).toList(),
-                      current: filter.sort.index,
-                      mustHaveSelected: true,
-                      onChanged: (i) => filter = filter.copyWith(
-                        sort: MediaSort.values.elementAt(i!),
-                      ),
+                      items: MediaSort.values.map((v) => (v.label, v)).toList(),
+                      value: filter.sort,
+                      onChanged: (v) => filter = filter.copyWith(sort: v),
                     ),
                     if (full) ...[
                       ChipSelector(
                         title: 'Type',
-                        options: const ['Anime', 'Manga'],
-                        current: filter.ofAnime == null
-                            ? null
-                            : filter.ofAnime!
-                                ? 0
-                                : 1,
-                        onChanged: (val) =>
-                            filter = filter.copyWith(ofAnime: () {
-                          if (val == null) return null;
-                          return val == 0 ? true : false;
-                        }),
+                        items: const [('Anime', true), ('Manga', false)],
+                        value: filter.ofAnime,
+                        onChanged: (v) => filter = filter.copyWith(
+                          ofAnime: () => v,
+                        ),
                       ),
                       const SizedBox(height: 10),
                     ],
                     ChipSelector(
                       title: 'List Presence',
-                      options: const ['In Lists', 'Not in Lists'],
-                      current: filter.inLists == null
-                          ? null
-                          : filter.inLists!
-                              ? 0
-                              : 1,
-                      onChanged: (val) => filter = filter.copyWith(inLists: () {
-                        if (val == null) return null;
-                        return val == 0 ? true : false;
-                      }),
+                      items: const [
+                        ('In Lists', true),
+                        ('Not in Lists', false),
+                      ],
+                      value: filter.inLists,
+                      onChanged: (v) => filter = filter.copyWith(
+                        inLists: () => v,
+                      ),
                     ),
                   ],
                 ),

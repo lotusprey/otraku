@@ -3,15 +3,16 @@ import 'package:go_router/go_router.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/utils/routing.dart';
 
-extension StringUtil on String {
-  static String? codeToCountry(String? code) => switch (code) {
-        'JP' => 'Japan',
-        'CN' => 'China',
-        'KR' => 'South Korea',
-        'TW' => 'Taiwan',
-        _ => null,
-      };
+extension IterableUtil<E> on Iterable<E> {
+  E? firstWhereOrNull(bool Function(E) test) {
+    for (E element in this) {
+      if (test(element)) return element;
+    }
+    return null;
+  }
+}
 
+extension StringUtil on String {
   static String? languageToCode(String? language) => switch (language) {
         'Japanese' => 'JP',
         'Chinese' => 'CN',

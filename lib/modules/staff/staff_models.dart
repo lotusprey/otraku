@@ -2,13 +2,14 @@ import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
 TileItem staffItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
-      type: DiscoverType.Staff,
+      type: DiscoverType.staff,
       title: map['name']['userPreferred'],
       imageUrl: map['image']['large'],
     );
@@ -41,7 +42,7 @@ class Staff {
       if (names['last']?.isNotEmpty ?? false) names['last'],
     ];
 
-    final fullName = personNaming == PersonNaming.ROMAJI_WESTERN
+    final fullName = personNaming == PersonNaming.romajiWestern
         ? nameSegments.join(' ')
         : nameSegments.reversed.toList().join(' ');
     final nativeName = names['native'];
@@ -50,7 +51,7 @@ class Staff {
 
     String name;
     if (nativeName != null) {
-      if (personNaming != PersonNaming.NATIVE) {
+      if (personNaming != PersonNaming.native) {
         name = fullName;
         altNames.insert(0, nativeName);
       } else {
@@ -68,7 +69,7 @@ class Staff {
       name: name,
       altNames: altNames,
       imageUrl: map['image']['large'],
-      description: map['description'] ?? '',
+      description: parseMarkdown(map['description'] ?? ''),
       dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
       dateOfDeath: StringUtil.fromFuzzyDate(map['dateOfDeath']),
       bloodType: map['bloodType'],
@@ -117,7 +118,7 @@ class StaffRelations {
 
 class StaffFilter {
   StaffFilter({
-    this.sort = MediaSort.START_DATE_DESC,
+    this.sort = MediaSort.startDateDesc,
     this.ofAnime,
     this.inLists,
   });

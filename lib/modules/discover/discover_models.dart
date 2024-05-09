@@ -9,13 +9,17 @@ import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/user/user_models.dart';
 
 enum DiscoverType {
-  Anime,
-  Manga,
-  Character,
-  Staff,
-  Studio,
-  User,
-  Review,
+  anime('Anime'),
+  manga('Manga'),
+  character('Character'),
+  staff('Staff'),
+  studio('Studio'),
+  user('User'),
+  review('Review');
+
+  const DiscoverType(this.label);
+
+  final String label;
 }
 
 class DiscoverFilter {
@@ -24,7 +28,7 @@ class DiscoverFilter {
     required this.search,
     required this.mediaFilter,
     required this.hasBirthday,
-    required this.reviewSort,
+    required this.reviewsFilter,
   });
 
   DiscoverFilter(DiscoverType discoverType)
@@ -32,27 +36,27 @@ class DiscoverFilter {
         search = '',
         mediaFilter = DiscoverMediaFilter(),
         hasBirthday = false,
-        reviewSort = ReviewsSort.CREATED_AT_DESC;
+        reviewsFilter = const ReviewsFilter();
 
   final DiscoverType type;
   final String search;
   final DiscoverMediaFilter mediaFilter;
   final bool hasBirthday;
-  final ReviewsSort reviewSort;
+  final ReviewsFilter reviewsFilter;
 
   DiscoverFilter copyWith({
     DiscoverType? type,
     String? search,
     DiscoverMediaFilter? mediaFilter,
     bool? hasBirthday,
-    ReviewsSort? reviewSort,
+    ReviewsFilter? reviewsFilter,
   }) =>
       DiscoverFilter._(
         type: type ?? this.type,
         search: search ?? this.search,
         mediaFilter: mediaFilter ?? this.mediaFilter,
         hasBirthday: hasBirthday ?? this.hasBirthday,
-        reviewSort: reviewSort ?? this.reviewSort,
+        reviewsFilter: reviewsFilter ?? this.reviewsFilter,
       );
 }
 
@@ -61,43 +65,43 @@ sealed class DiscoverItems {
 }
 
 class DiscoverAnimeItems extends DiscoverItems {
-  const DiscoverAnimeItems(this.pages);
+  const DiscoverAnimeItems([this.pages = const Paged()]);
 
   final Paged<DiscoverMediaItem> pages;
 }
 
 class DiscoverMangaItems extends DiscoverItems {
-  const DiscoverMangaItems(this.pages);
+  const DiscoverMangaItems([this.pages = const Paged()]);
 
   final Paged<DiscoverMediaItem> pages;
 }
 
 class DiscoverCharacterItems extends DiscoverItems {
-  const DiscoverCharacterItems(this.pages);
+  const DiscoverCharacterItems([this.pages = const Paged()]);
 
   final Paged<TileItem> pages;
 }
 
 class DiscoverStaffItems extends DiscoverItems {
-  const DiscoverStaffItems(this.pages);
+  const DiscoverStaffItems([this.pages = const Paged()]);
 
   final Paged<TileItem> pages;
 }
 
 class DiscoverStudioItems extends DiscoverItems {
-  const DiscoverStudioItems(this.pages);
+  const DiscoverStudioItems([this.pages = const Paged()]);
 
   final Paged<StudioItem> pages;
 }
 
 class DiscoverUserItems extends DiscoverItems {
-  const DiscoverUserItems(this.pages);
+  const DiscoverUserItems([this.pages = const Paged()]);
 
   final Paged<UserItem> pages;
 }
 
 class DiscoverReviewItems extends DiscoverItems {
-  const DiscoverReviewItems(this.pages);
+  const DiscoverReviewItems([this.pages = const Paged()]);
 
   final Paged<ReviewItem> pages;
 }
@@ -110,7 +114,7 @@ class DiscoverMediaItem extends TileItem {
     required super.imageUrl,
     required this.format,
     required this.releaseStatus,
-    required this.listStatus,
+    required this.entryStatus,
     required this.releaseYear,
     required this.averageScore,
     required this.popularity,
@@ -119,15 +123,12 @@ class DiscoverMediaItem extends TileItem {
 
   factory DiscoverMediaItem(Map<String, dynamic> map) => DiscoverMediaItem._(
         id: map['id'],
-        type: map['type'] == 'ANIME' ? DiscoverType.Anime : DiscoverType.Manga,
+        type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Options().imageQuality.value],
         format: StringUtil.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: StringUtil.tryNoScreamingSnakeCase(map['status']),
-        listStatus: EntryStatus.formatText(
-          map['mediaListEntry']?['status'],
-          map['type'] == 'ANIME',
-        ),
+        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
         popularity: map['popularity'] ?? 0,
@@ -136,7 +137,7 @@ class DiscoverMediaItem extends TileItem {
 
   final String? format;
   final String? releaseStatus;
-  final String? listStatus;
+  final EntryStatus? entryStatus;
   final int? releaseYear;
   final int averageScore;
   final int popularity;

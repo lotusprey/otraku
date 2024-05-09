@@ -12,6 +12,7 @@ import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/utils/toast.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
+import 'package:otraku/modules/calendar/calendar_filter_provider.dart';
 import 'package:otraku/modules/calendar/calendar_filter_sheet.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/calendar/calendar_provider.dart';
@@ -142,7 +143,10 @@ class _Tile extends StatelessWidget {
       else
         'Ep ${item.episode}': false,
     };
-    if (item.entryStatus != null) textRailItems[item.entryStatus!] = true;
+
+    if (item.entryStatus != null) {
+      textRailItems[item.entryStatus!.label(true)] = true;
+    }
 
     const contentPadding = EdgeInsets.symmetric(horizontal: 10);
 
@@ -150,7 +154,7 @@ class _Tile extends StatelessWidget {
       child: LinkTile(
         id: item.mediaId,
         info: item.cover,
-        discoverType: DiscoverType.Anime,
+        discoverType: DiscoverType.anime,
         child: Row(
           children: [
             Hero(

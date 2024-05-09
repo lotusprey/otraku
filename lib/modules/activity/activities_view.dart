@@ -52,10 +52,13 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
               onTap: () => showSheet(
                 context,
                 CompositionView(
-                  composition: widget.id == Options().id
-                      ? Composition.status(null, '')
-                      : Composition.message(null, '', widget.id),
-                  onDone: (map) => ref
+                  tag: widget.id == Options().id
+                      ? const StatusActivityCompositionTag(id: null)
+                      : MessageActivityCompositionTag(
+                          id: null,
+                          recipientId: widget.id,
+                        ),
+                  onSaved: (map) => ref
                       .read(activitiesProvider(widget.id).notifier)
                       .insertActivity(map, Options().id!),
                 ),

@@ -71,9 +71,7 @@ class Edit {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: map['mediaListEntry']['status'] != null
-          ? EntryStatus.values.byName(map['mediaListEntry']['status'])
-          : null,
+      status: EntryStatus.from(map['mediaListEntry']['status']),
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
       progressVolumes: map['mediaListEntry']['progressVolumes'] ?? 0,
@@ -146,7 +144,7 @@ class Edit {
       mediaId: mediaId,
       type: type,
       entryId: entryId,
-      status: setComplete ? EntryStatus.COMPLETED : status,
+      status: setComplete ? EntryStatus.completed : status,
       progress: setComplete && progressMax != null ? progressMax! : progress,
       progressMax: progressMax,
       progressVolumes: setComplete && progressVolumesMax != null
@@ -204,7 +202,7 @@ class Edit {
 
   Map<String, dynamic> toMap() => {
         'mediaId': mediaId,
-        'status': (status ?? EntryStatus.CURRENT).name,
+        'status': (status ?? EntryStatus.current).value,
         'progress': progress,
         'progressVolumes': progressVolumes,
         'score': score,

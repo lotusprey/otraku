@@ -6,9 +6,8 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/models/relation.dart';
-import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
 
@@ -51,8 +50,12 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
       if (relation['node'] != null) relatedMedia.add(RelatedMedia(relation));
     }
 
+    final settings = await ref.watch(
+      settingsProvider.selectAsync((settings) => settings),
+    );
+
     return Media(
-      Edit(data, ref.watch(settingsProvider).valueOrNull ?? Settings.empty()),
+      Edit(data, settings),
       MediaInfo(data),
       MediaStats(data),
       relatedMedia,
@@ -138,7 +141,7 @@ class MediaRelationsNotifier
           title: c['node']['name']['userPreferred'],
           imageUrl: c['node']['image']['large'],
           subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
-          type: DiscoverType.Character,
+          type: DiscoverType.character,
         ));
 
         if (c['voiceActors'] == null) continue;
@@ -162,7 +165,7 @@ class MediaRelationsNotifier
             title: va['name']['userPreferred'],
             imageUrl: va['image']['large'],
             subtitle: l,
-            type: DiscoverType.Staff,
+            type: DiscoverType.staff,
           ));
         }
       }
@@ -186,7 +189,7 @@ class MediaRelationsNotifier
           title: s['node']['name']['userPreferred'],
           imageUrl: s['node']['image']['large'],
           subtitle: s['role'],
-          type: DiscoverType.Staff,
+          type: DiscoverType.staff,
         ));
       }
 

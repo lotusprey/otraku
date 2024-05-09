@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
-import 'package:otraku/common/utils/api.dart';
+import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/utils/options.dart';
 import 'package:workmanager/workmanager.dart';
@@ -90,87 +90,87 @@ void _fetch() => Workmanager().executeTask((_, __) async {
         if (notification == null) continue;
 
         (switch (notification.type) {
-          NotificationType.FOLLOWING => _show(
+          NotificationType.following => _show(
               notification,
               'New Follow',
               Routes.user(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_MESSAGE => _show(
+          NotificationType.activityMessage => _show(
               notification,
               'New Message',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_REPLY => _show(
+          NotificationType.activityReply => _show(
               notification,
               'New Reply',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_REPLY_SUBSCRIBED => _show(
+          NotificationType.activityReplySubscribed => _show(
               notification,
               'New Reply To Subscribed Activity',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_MENTION => _show(
+          NotificationType.activityMention => _show(
               notification,
               'New Mention',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_LIKE => _show(
+          NotificationType.activityLike => _show(
               notification,
               'New Activity Like',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.ACTIVITY_REPLY_LIKE => _show(
+          NotificationType.acrivityReplyLike => _show(
               notification,
               'New Reply Like',
               Routes.activity(notification.bodyId!),
             ),
-          NotificationType.THREAD_COMMENT_REPLY => _show(
+          NotificationType.threadCommentReply => _show(
               notification,
               'New Forum Reply',
               Routes.thread(notification.bodyId!),
             ),
-          NotificationType.THREAD_COMMENT_MENTION => _show(
+          NotificationType.threadCommentMention => _show(
               notification,
               'New Forum Mention',
               Routes.thread(notification.bodyId!),
             ),
-          NotificationType.THREAD_SUBSCRIBED => _show(
+          NotificationType.threadReplySubscribed => _show(
               notification,
               'New Forum Comment',
               Routes.thread(notification.bodyId!),
             ),
-          NotificationType.THREAD_LIKE => _show(
+          NotificationType.threadLike => _show(
               notification,
               'New Forum Like',
               Routes.thread(notification.bodyId!),
             ),
-          NotificationType.THREAD_COMMENT_LIKE => _show(
+          NotificationType.threadCommentLike => _show(
               notification,
               'New Forum Comment Like',
               Routes.thread(notification.bodyId!),
             ),
-          NotificationType.AIRING => _show(
+          NotificationType.airing => _show(
               notification,
               'New Episode',
               Routes.media(notification.bodyId!),
             ),
-          NotificationType.RELATED_MEDIA_ADDITION => _show(
+          NotificationType.relatedMediaAddition => _show(
               notification,
               'New Addition',
               Routes.media(notification.bodyId!),
             ),
-          NotificationType.MEDIA_DATA_CHANGE => _show(
+          NotificationType.mediaDataChange => _show(
               notification,
               'Modified Media',
               Routes.media(notification.bodyId!),
             ),
-          NotificationType.MEDIA_MERGE => _show(
+          NotificationType.mediaMerge => _show(
               notification,
               'Merged Media',
               Routes.media(notification.bodyId!),
             ),
-          NotificationType.MEDIA_DELETION =>
+          NotificationType.mediaDeletion =>
             _show(notification, 'Deleted Media', Routes.notifications),
         });
       }
@@ -186,8 +186,8 @@ void _fetch() => Workmanager().executeTask((_, __) async {
     NotificationDetails(
       android: AndroidNotificationDetails(
         notification.type.name,
-        notification.type.text,
-        channelDescription: notification.type.text,
+        notification.type.label,
+        channelDescription: notification.type.label,
       ),
     ),
     payload: payload,

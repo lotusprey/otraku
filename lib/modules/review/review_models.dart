@@ -1,5 +1,7 @@
 import 'package:otraku/common/utils/extensions.dart';
+import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/media/media_constants.dart';
 
 class ReviewItem {
   ReviewItem._({
@@ -58,7 +60,7 @@ class Review {
         mediaCover: map['media']['coverImage'][Options().imageQuality.value],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
-        text: map['body'] ?? '',
+        text: parseMarkdown(map['body'] ?? ''),
         createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
@@ -89,16 +91,30 @@ class Review {
   bool? viewerRating;
 }
 
-enum ReviewsSort {
-  CREATED_AT_DESC,
-  CREATED_AT,
-  RATING_DESC,
-  RATING;
+class ReviewsFilter {
+  const ReviewsFilter({this.mediaType, this.sort = ReviewsSort.createdAtDesc});
 
-  String get text => switch (this) {
-        ReviewsSort.CREATED_AT => 'Oldest',
-        ReviewsSort.CREATED_AT_DESC => 'Newest',
-        ReviewsSort.RATING => 'Lowest Rated',
-        ReviewsSort.RATING_DESC => 'Highest Rated',
-      };
+  final MediaType? mediaType;
+  final ReviewsSort sort;
+
+  ReviewsFilter copyWith({
+    MediaType? Function()? mediaType,
+    ReviewsSort? sort,
+  }) =>
+      ReviewsFilter(
+        mediaType: mediaType == null ? this.mediaType : mediaType(),
+        sort: sort ?? this.sort,
+      );
+}
+
+enum ReviewsSort {
+  createdAtDesc('Newest', 'CREATED_AT_DESC'),
+  createdAt('Oldest', 'CREATED_AT'),
+  ratingDesc('Highest Rated', 'RATING_DESC'),
+  rating('Lowest Rated', 'RATING');
+
+  const ReviewsSort(this.label, this.value);
+
+  final String label;
+  final String value;
 }

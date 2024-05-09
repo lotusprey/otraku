@@ -34,7 +34,7 @@ class SiteNotification {
         case 'FOLLOWING':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.FOLLOWING,
+            type: NotificationType.following,
             headId: map['user']['id'],
             bodyId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
@@ -43,12 +43,12 @@ class SiteNotification {
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
-            discoverType: DiscoverType.User,
+            discoverType: DiscoverType.user,
           );
         case 'ACTIVITY_MENTION':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_MENTION,
+            type: NotificationType.activityMention,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -61,7 +61,7 @@ class SiteNotification {
         case 'ACTIVITY_MESSAGE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_MESSAGE,
+            type: NotificationType.activityMessage,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -74,7 +74,7 @@ class SiteNotification {
         case 'ACTIVITY_REPLY':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_REPLY,
+            type: NotificationType.activityReply,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -87,7 +87,7 @@ class SiteNotification {
         case 'ACTIVITY_LIKE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_LIKE,
+            type: NotificationType.activityLike,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -100,7 +100,7 @@ class SiteNotification {
         case 'ACTIVITY_REPLY_LIKE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_REPLY_LIKE,
+            type: NotificationType.acrivityReplyLike,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -113,7 +113,7 @@ class SiteNotification {
         case 'ACTIVITY_REPLY_SUBSCRIBED':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.ACTIVITY_REPLY_SUBSCRIBED,
+            type: NotificationType.activityReplySubscribed,
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
@@ -129,7 +129,7 @@ class SiteNotification {
         case 'THREAD_LIKE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.THREAD_LIKE,
+            type: NotificationType.threadLike,
             headId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             details: map['thread']?['siteUrl'],
@@ -146,7 +146,7 @@ class SiteNotification {
         case 'THREAD_SUBSCRIBED':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.THREAD_SUBSCRIBED,
+            type: NotificationType.threadReplySubscribed,
             headId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             details: map['comment']?['siteUrl'],
@@ -166,7 +166,7 @@ class SiteNotification {
         case 'THREAD_COMMENT_LIKE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.THREAD_COMMENT_LIKE,
+            type: NotificationType.threadCommentLike,
             headId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             details: map['comment']?['siteUrl'],
@@ -186,7 +186,7 @@ class SiteNotification {
         case 'THREAD_COMMENT_REPLY':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.THREAD_COMMENT_REPLY,
+            type: NotificationType.threadCommentReply,
             headId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             details: map['comment']?['siteUrl'],
@@ -206,7 +206,7 @@ class SiteNotification {
         case 'THREAD_COMMENT_MENTION':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.THREAD_COMMENT_MENTION,
+            type: NotificationType.threadCommentMention,
             headId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             details: map['comment']?['siteUrl'],
@@ -226,7 +226,7 @@ class SiteNotification {
         case 'AIRING':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.AIRING,
+            type: NotificationType.airing,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
             imageUrl: map['media']['coverImage'][Options().imageQuality.value],
@@ -242,13 +242,13 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'RELATED_MEDIA_ADDITION':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.RELATED_MEDIA_ADDITION,
+            type: NotificationType.relatedMediaAddition,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
             imageUrl: map['media']['coverImage'][Options().imageQuality.value],
@@ -261,13 +261,13 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DATA_CHANGE':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.MEDIA_DATA_CHANGE,
+            type: NotificationType.mediaDataChange,
             headId: map['media']['id'],
             imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             details: map['reason'],
@@ -280,8 +280,8 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_MERGE':
           final titles = List<String>.from(
@@ -292,7 +292,7 @@ class SiteNotification {
 
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.MEDIA_MERGE,
+            type: NotificationType.mediaMerge,
             headId: map['media']['id'],
             imageUrl: map['media']['coverImage'][Options().imageQuality.value],
             details: map['reason'],
@@ -305,13 +305,13 @@ class SiteNotification {
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
-                ? DiscoverType.Anime
-                : DiscoverType.Manga,
+                ? DiscoverType.anime
+                : DiscoverType.manga,
           );
         case 'MEDIA_DELETION':
           return SiteNotification._(
             id: map['id'],
-            type: NotificationType.MEDIA_DELETION,
+            type: NotificationType.mediaDeletion,
             details: map['reason'],
             texts: [
               map['deletedMediaTitle'],
@@ -332,27 +332,32 @@ class SiteNotification {
 }
 
 enum NotificationType {
-  FOLLOWING('Follows'),
-  ACTIVITY_MESSAGE('Messages'),
-  ACTIVITY_REPLY('Activity replies'),
-  ACTIVITY_REPLY_SUBSCRIBED('Subscribed activity replies'),
-  ACTIVITY_MENTION('Activity mentions'),
-  ACTIVITY_LIKE('Activity likes'),
-  ACTIVITY_REPLY_LIKE('Activity reply likes'),
-  THREAD_COMMENT_REPLY('Thread comments'),
-  THREAD_COMMENT_MENTION('Thread mentions'),
-  THREAD_SUBSCRIBED('Subscribed thread replies'),
-  THREAD_LIKE('Thread likes'),
-  THREAD_COMMENT_LIKE('Thread comment likes'),
-  RELATED_MEDIA_ADDITION('Related media additions'),
-  MEDIA_DATA_CHANGE('Media changes'),
-  MEDIA_MERGE('Media merges'),
-  MEDIA_DELETION('Media deletions'),
-  AIRING('Episode releases');
+  following('Follows', 'FOLLOWING'),
+  activityMessage('Messages', 'ACTIVITY_MESSAGE'),
+  activityReply('Activity replies', 'ACTIVITY_REPLY'),
+  activityReplySubscribed(
+      'Subscribed activity replies', 'ACTIVITY_REPLY_SUBSCRIBED'),
+  activityMention('Activity mentions', 'ACTIVITY_MENTION'),
+  activityLike('Activity likes', 'ACTIVITY_LIKE'),
+  acrivityReplyLike('Activity reply likes', 'ACTIVITY_REPLY_LIKE'),
+  threadCommentReply('Thread comments', 'THREAD_COMMENT_REPLY'),
+  threadCommentMention('Thread mentions', 'THREAD_COMMENT_MENTION'),
+  threadReplySubscribed('Subscribed thread replies', 'THREAD_SUBSCRIBED'),
+  threadLike('Thread likes', 'THREAD_LIKE'),
+  threadCommentLike('Thread comment likes', 'THREAD_COMMENT_LIKE'),
+  relatedMediaAddition('Related media additions', 'RELATED_MEDIA_ADDITION'),
+  mediaDataChange('Media changes', 'MEDIA_DATA_CHANGE'),
+  mediaMerge('Media merges', 'MEDIA_MERGE'),
+  mediaDeletion('Media deletions', 'MEDIA_DELETION'),
+  airing('Episode releases', 'AIRING');
 
-  const NotificationType(this.text);
+  const NotificationType(this.label, this.value);
 
-  final String text;
+  final String label;
+  final String value;
+
+  static NotificationType? from(String? value) =>
+      NotificationType.values.firstWhereOrNull((v) => v.value == value);
 }
 
 enum NotificationFilter {
@@ -364,9 +369,9 @@ enum NotificationFilter {
   follows('Follows'),
   media('Media');
 
-  const NotificationFilter(this.text);
+  const NotificationFilter(this.label);
 
-  final String text;
+  final String label;
 
   List<String>? get vars => switch (this) {
         NotificationFilter.all => null,

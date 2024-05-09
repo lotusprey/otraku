@@ -109,11 +109,11 @@ class CollectionNotifier
         {'mediaId': entry.mediaId, 'progress': entry.progress},
       );
 
-      Map items =
-          data['SaveMediaListEntry']?['customLists']?.entries ?? const {};
+      final Map<String, dynamic> customListItems =
+          data['SaveMediaListEntry']?['customLists'] ?? const {};
 
-      for (final item in items.entries) {
-        if (item.value) customLists.add(item.key.toString().toLowerCase());
+      for (final entry in customListItems.entries) {
+        if (entry.value) customLists.add(entry.key.toString().toLowerCase());
       }
     } catch (e) {
       return e.toString();

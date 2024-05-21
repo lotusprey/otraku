@@ -14,7 +14,7 @@ class Loader extends StatelessWidget {
           height: 15,
           decoration: BoxDecoration(
             borderRadius: Consts.borderRadiusMin,
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
         ),
       ));

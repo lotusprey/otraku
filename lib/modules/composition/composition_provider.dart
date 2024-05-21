@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/modules/composition/composition_model.dart';
 import 'package:otraku/modules/viewer/api.dart';
@@ -44,27 +45,25 @@ class CompositionNotifier
     return AsyncValue.guard(() async {
       switch (arg) {
         case StatusActivityCompositionTag(id: var id):
-          final data = await Api.get(
-            GqlMutation.saveStatusActivity,
-            {if (id != null) 'id': id, 'text': value.text},
-          );
+          final data = await Api.get(GqlMutation.saveStatusActivity, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+          });
           return data['SaveTextActivity'];
         case MessageActivityCompositionTag(id: var id, recipientId: var rcpId):
-          final data = await Api.get(
-            GqlMutation.saveMessageActivity,
-            {
-              if (id != null) 'id': id,
-              'text': value.text,
-              'recipientId': rcpId,
-              if (value is PrivateComposition) 'isPrivate': value.isPrivate,
-            },
-          );
+          final data = await Api.get(GqlMutation.saveMessageActivity, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+            'recipientId': rcpId,
+            if (value is PrivateComposition) 'isPrivate': value.isPrivate,
+          });
           return data['SaveMessageActivity'];
         case ActivityReplyCompositionTag(id: var id, activityId: var actId):
-          final data = await Api.get(
-            GqlMutation.saveActivityReply,
-            {if (id != null) 'id': id, 'text': value.text, 'activityId': actId},
-          );
+          final data = await Api.get(GqlMutation.saveActivityReply, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+            'activityId': actId,
+          });
           return data['SaveActivityReply'];
       }
     });

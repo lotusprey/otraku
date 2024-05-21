@@ -5,7 +5,7 @@ import 'package:otraku/modules/viewer/account_model.dart';
 import 'package:otraku/modules/calendar/calendar_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/home/home_model.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/utils/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -66,8 +66,8 @@ const _profileBoxKey = 'profiles';
 
 /// Local settings.
 /// [notifyListeners] is called when the theme configuration changes.
-class Options extends ChangeNotifier {
-  Options._(
+class Persistence extends ChangeNotifier {
+  Persistence._(
     this._selectedAccount,
     this._accounts,
     this._themeMode,
@@ -98,7 +98,7 @@ class Options extends ChangeNotifier {
     this._lastVersionCode,
   );
 
-  factory Options._read() {
+  factory Persistence._read() {
     final accounts =
         (_profileBox.get(_ProfileKey.accounts.name) as List<dynamic>? ?? [])
             .cast<Map<dynamic, dynamic>>()
@@ -165,7 +165,7 @@ class Options extends ChangeNotifier {
       collectionPreviewItemView = 0;
     }
 
-    return Options._(
+    return Persistence._(
       selectedAccount,
       accounts,
       ThemeMode.values[themeMode],
@@ -197,9 +197,9 @@ class Options extends ChangeNotifier {
     );
   }
 
-  factory Options() => _instance;
+  factory Persistence() => _instance;
 
-  static late Options _instance;
+  static late Persistence _instance;
 
   static bool _didInit = false;
 
@@ -216,14 +216,14 @@ class Options extends ChangeNotifier {
     /// Initialise boxes and instance.
     await Hive.openBox(_optionsBoxKey);
     await Hive.openBox(_profileBoxKey);
-    _instance = Options._read();
+    _instance = Persistence._read();
   }
 
   /// Clears option data and resets instance.
   /// Doesn't affect local profile settings or online account settings.
   static void resetOptions() {
     Hive.box(_optionsBoxKey).clear();
-    _instance = Options._read();
+    _instance = Persistence._read();
   }
 
   static Box get _optionBox => Hive.box(_optionsBoxKey);

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class ScoreLabel extends StatelessWidget {
   const ScoreLabel(this.score, this.scoreFormat);

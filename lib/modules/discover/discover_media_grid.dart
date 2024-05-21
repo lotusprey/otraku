@@ -69,7 +69,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: 120 / Consts.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(item.imageUrl),
                 ),
               ),

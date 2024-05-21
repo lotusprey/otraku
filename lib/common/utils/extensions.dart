@@ -76,7 +76,7 @@ extension DateTimeUtil on DateTime {
 
   static String formattedDateTimeFromSeconds(int seconds) {
     DateTime date = fromSecondsSinceEpoch(seconds);
-    return '${_formattedWeekday(date.weekday)}, ${date._formattedDate}, ${date.formattedTime}';
+    return '${_formattedWeekday(date.weekday)}, ${date.formattedDate}, ${date.formattedTime}';
   }
 
   static DateTime? fromFuzzyDate(Map<String, dynamic>? map) {
@@ -88,10 +88,10 @@ extension DateTimeUtil on DateTime {
       {'year': year, 'month': month, 'day': day};
 
   String get formattedWithWeekDay =>
-      '$_formattedDate - ${_formattedWeekday(weekday)}';
+      '$formattedDate - ${_formattedWeekday(weekday)}';
 
   String get formattedTime {
-    if (Options().analogueClock) {
+    if (Persistence().analogueClock) {
       final (overflows, realHour) =
           hour > 12 ? (true, hour - 12) : (false, hour);
 
@@ -115,7 +115,7 @@ extension DateTimeUtil on DateTime {
         '${minutes < 1 ? "" : "${minutes}m"}';
   }
 
-  String get _formattedDate => '$day ${_formattedMonth(month)} $year';
+  String get formattedDate => '$day ${_formattedMonth(month)} $year';
 
   static String _formattedWeekday(int weekday) => switch (weekday) {
         1 => 'Mon',

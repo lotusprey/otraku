@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/studio/studio_filter_provider.dart';
 import 'package:otraku/modules/studio/studio_models.dart';
 import 'package:otraku/modules/studio/studio_provider.dart';

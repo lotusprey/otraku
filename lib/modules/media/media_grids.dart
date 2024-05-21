@@ -8,7 +8,6 @@ import 'package:otraku/modules/discover/discover_filter_provider.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/home/home_model.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/media/media_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
@@ -61,7 +60,9 @@ class MediaRelatedGrid extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         child: CachedImage(
                           items[i].imageUrl,
                           width: 100 / Consts.coverHtoWRatio,
@@ -298,7 +299,9 @@ class MediaRecommendationGrid extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         child: CachedImage(items[i].imageUrl!),
                       ),
                     ),
@@ -393,7 +396,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   : Icon(
                       Icons.thumb_up_outlined,
                       size: Consts.iconSmall,
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
             ),
           ),
@@ -446,7 +449,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   : Icon(
                       Icons.thumb_down_outlined,
                       size: Consts.iconSmall,
-                      color: Theme.of(context).colorScheme.onBackground,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
             ),
           ),
@@ -494,15 +497,11 @@ class MediaRankGrid extends StatelessWidget {
                   filter.mediaFilter.sort = ranks[i].typeIsScore
                       ? MediaSort.scoreDesc
                       : MediaSort.popularityDesc;
-                  if (info.type == DiscoverType.anime) {
-                    String? format = AnimeFormat.fromText(info.format)?.name;
-                    if (format != null) {
-                      filter.mediaFilter.animeFormats.add(format);
-                    }
-                  } else {
-                    String? format = MangaFormat.fromLabel(info.format)?.name;
-                    if (format != null) {
-                      filter.mediaFilter.mangaFormats.add(format);
+                  if (info.format != null) {
+                    if (info.type == DiscoverType.anime) {
+                      filter.mediaFilter.animeFormats.add(info.format!);
+                    } else {
+                      filter.mediaFilter.mangaFormats.add(info.format!);
                     }
                   }
                   notifier.state = filter;

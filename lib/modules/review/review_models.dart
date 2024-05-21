@@ -1,7 +1,7 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/markdown.dart';
 import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class ReviewItem {
   ReviewItem._({
@@ -57,7 +57,8 @@ class Review {
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage'][Options().imageQuality.value],
+        mediaCover: map['media']['coverImage']
+            [Persistence().imageQuality.value],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),

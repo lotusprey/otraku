@@ -11,7 +11,7 @@ class TableList extends StatelessWidget {
     return DecoratedSliver(
       decoration: BoxDecoration(
         border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         borderRadius: BorderRadius.circular(12),
       ),

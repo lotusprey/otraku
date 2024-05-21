@@ -72,7 +72,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   )
                 : DecoratedBox(
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceVariant,
+                      color: theme.colorScheme.surfaceContainerHighest,
                     ),
                   ),
           ),
@@ -83,7 +83,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             height: 15,
             child: Container(
               alignment: Alignment.topCenter,
-              color: theme.colorScheme.background,
+              color: theme.colorScheme.surface,
               child: Container(
                 height: 0,
                 decoration: BoxDecoration(
@@ -91,7 +91,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     BoxShadow(
                       blurRadius: 15,
                       spreadRadius: 25,
-                      color: theme.colorScheme.background,
+                      color: theme.colorScheme.surface,
                     ),
                   ],
                 ),
@@ -109,9 +109,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    theme.colorScheme.background,
-                    theme.colorScheme.background.withAlpha(200),
-                    theme.colorScheme.background.withAlpha(0),
+                    theme.colorScheme.surface,
+                    theme.colorScheme.surface.withAlpha(200),
+                    theme.colorScheme.surface.withAlpha(0),
                   ],
                 ),
               ),
@@ -125,9 +125,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.background,
-                ),
+                decoration: BoxDecoration(color: theme.colorScheme.surface),
               ),
             ),
           ),

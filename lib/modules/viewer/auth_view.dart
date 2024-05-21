@@ -83,7 +83,7 @@ class AuthViewState extends State<AuthView> {
       );
     }
 
-    final accounts = Options().accounts;
+    final accounts = Persistence().accounts;
     return Scaffold(
       body: ConstrainedView(
         child: ListView.builder(

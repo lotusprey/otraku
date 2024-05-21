@@ -10,16 +10,19 @@ final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(
 class HomeNotifier extends AutoDisposeNotifier<Home> {
   @override
   Home build() => Home(
-        didExpandAnimeCollection: !Options().animeCollectionPreview,
-        didExpandMangaCollection: !Options().mangaCollectionPreview,
+        didExpandAnimeCollection: !Persistence().animeCollectionPreview,
+        didExpandMangaCollection: !Persistence().mangaCollectionPreview,
       );
 
   void expandCollection(bool ofAnime) =>
       state = state.withExpandedCollection(ofAnime);
 
   void cacheSystemColorSchemes(
-    ColorScheme? systemLightScheme,
-    ColorScheme? systemDarkScheme,
+    Color? systemLightPrimaryColor,
+    Color? systemDarkPrimaryColor,
   ) =>
-      state = state.withSystemColorSchemes(systemLightScheme, systemDarkScheme);
+      state = state.withSystemColorSchemes(
+        systemLightPrimaryColor,
+        systemDarkPrimaryColor,
+      );
 }

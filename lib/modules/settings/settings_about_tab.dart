@@ -18,7 +18,7 @@ class SettingsAboutTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = MediaQuery.paddingOf(context);
     final lastNotificationFetch =
-        Options().lastBackgroundWork?.millisecondsSinceEpoch;
+        Persistence().lastBackgroundWork?.millisecondsSinceEpoch;
 
     return Align(
       alignment: Alignment.center,
@@ -88,7 +88,7 @@ class SettingsAboutTab extends StatelessWidget {
           const ListTile(
             leading: Icon(Ionicons.refresh_outline),
             title: Text('Reset Options'),
-            onTap: Options.resetOptions,
+            onTap: Persistence.resetOptions,
           ),
           if (lastNotificationFetch != null) ...[
             Padding(

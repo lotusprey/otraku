@@ -27,11 +27,11 @@ class Toast {
           ),
           padding: Consts.padding,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
             borderRadius: Consts.borderRadiusMin,
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 blurRadius: 10,
               ),
             ],
@@ -54,17 +54,23 @@ class Toast {
   }
 
   /// Copy [text] to clipboard and notify with a toast.
-  static void copy(BuildContext context, String text) =>
-      Clipboard.setData(ClipboardData(text: text))
-          .then((_) => show(context, 'Copied'));
+  static void copy(BuildContext context, String text) async {
+    await Clipboard.setData(ClipboardData(text: text));
+    if (context.mounted) show(context, 'Copied');
+  }
 
   /// Launch [link] in the browser or show a toast if unsuccessful.
-  static Future<bool> launch(BuildContext context, String link) async =>
-      launchUrl(
+  static Future<bool> launch(BuildContext context, String link) async {
+    try {
+      final ok = await launchUrl(
         Uri.parse(link),
         mode: LaunchMode.externalApplication,
-      ).onError((_, __) {
-        show(context, 'Could not open link');
-        return false;
-      });
+      );
+
+      if (ok) return true;
+    } catch (_) {}
+
+    if (context.mounted) show(context, 'Could not open link');
+    return false;
+  }
 }

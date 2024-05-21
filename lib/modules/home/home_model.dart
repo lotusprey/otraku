@@ -4,8 +4,8 @@ class Home {
   const Home({
     required this.didExpandAnimeCollection,
     required this.didExpandMangaCollection,
-    this.systemLightScheme,
-    this.systemDarkScheme,
+    this.systemLightPrimaryColor,
+    this.systemDarkPrimaryColor,
   });
 
   /// In preview mode, user's collections first load only current media.
@@ -16,34 +16,34 @@ class Home {
   final bool didExpandAnimeCollection;
   final bool didExpandMangaCollection;
 
-  /// The system schemes acquired asynchronously
+  /// The system primary colors acquired asynchronously
   /// from [DynamicColorBuilder] are cached.
-  final ColorScheme? systemLightScheme;
-  final ColorScheme? systemDarkScheme;
+  final Color? systemLightPrimaryColor;
+  final Color? systemDarkPrimaryColor;
 
   Home withExpandedCollection(bool ofAnime) => ofAnime
       ? Home(
           didExpandAnimeCollection: true,
           didExpandMangaCollection: didExpandMangaCollection,
-          systemLightScheme: systemLightScheme,
-          systemDarkScheme: systemDarkScheme,
+          systemLightPrimaryColor: systemLightPrimaryColor,
+          systemDarkPrimaryColor: systemDarkPrimaryColor,
         )
       : Home(
           didExpandAnimeCollection: didExpandAnimeCollection,
           didExpandMangaCollection: true,
-          systemLightScheme: systemLightScheme,
-          systemDarkScheme: systemDarkScheme,
+          systemLightPrimaryColor: systemLightPrimaryColor,
+          systemDarkPrimaryColor: systemDarkPrimaryColor,
         );
 
   Home withSystemColorSchemes(
-    ColorScheme? systemLightScheme,
-    ColorScheme? systemDarkScheme,
+    Color? systemLightPrimaryColor,
+    Color? systemDarkPrimaryColor,
   ) =>
       Home(
         didExpandAnimeCollection: didExpandAnimeCollection,
         didExpandMangaCollection: didExpandMangaCollection,
-        systemLightScheme: systemLightScheme,
-        systemDarkScheme: systemDarkScheme,
+        systemLightPrimaryColor: systemLightPrimaryColor,
+        systemDarkPrimaryColor: systemDarkPrimaryColor,
       );
 }
 

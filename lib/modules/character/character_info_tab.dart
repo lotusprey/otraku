@@ -45,7 +45,9 @@ class CharacterInfoTab extends StatelessWidget {
                         child: Container(
                           width: imageWidth,
                           height: imageHeight,
-                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                           child: GestureDetector(
                             child: CachedImage(imageUrl),
                             onTap: () =>

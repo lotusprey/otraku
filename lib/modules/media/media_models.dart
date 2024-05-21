@@ -6,7 +6,6 @@ import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/tag/tag_models.dart';
 import 'package:otraku/common/utils/options.dart';
 
@@ -14,7 +13,7 @@ TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
       type: DiscoverType.anime,
       title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Options().imageQuality.value],
+      imageUrl: map['coverImage'][Persistence().imageQuality.value],
     );
 
 class Media {
@@ -24,17 +23,6 @@ class Media {
   final MediaInfo info;
   final MediaStats stats;
   final List<RelatedMedia> relations;
-}
-
-enum MediaTab {
-  info,
-  relations,
-  characters,
-  staff,
-  reviews,
-  following,
-  recommendations,
-  statistics,
 }
 
 class MediaRelations {
@@ -119,7 +107,7 @@ class RelatedMedia {
   factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Options().imageQuality.value],
+        imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
         format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
         entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
@@ -226,7 +214,7 @@ class Recommendation {
       title: map['mediaRecommendation']['title']['userPreferred'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
-          [Options().imageQuality.value],
+          [Persistence().imageQuality.value],
     );
   }
 
@@ -286,7 +274,7 @@ class MediaInfo {
   final String cover;
   final String extraLargeCover;
   final String? banner;
-  final String? format;
+  final MediaFormat? format;
   final String? status;
   final int? nextEpisode;
   final DateTime? airingAt;
@@ -339,10 +327,10 @@ class MediaInfo {
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
       description: map['description'] ?? '',
-      cover: map['coverImage'][Options().imageQuality.value],
+      cover: map['coverImage'][Persistence().imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
-      format: StringUtil.tryNoScreamingSnakeCase(map['format']),
+      format: MediaFormat.from(map['format']),
       status: StringUtil.tryNoScreamingSnakeCase(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
@@ -514,4 +502,204 @@ class MediaStats {
 
     return model;
   }
+}
+
+enum MediaTab {
+  info,
+  relations,
+  characters,
+  staff,
+  reviews,
+  following,
+  recommendations,
+  statistics,
+}
+
+enum MediaType {
+  anime('Anime', 'ANIME'),
+  manga('Manga', 'MANGA');
+
+  const MediaType(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
+enum MediaStatus {
+  finished('Finished', 'FINISHED'),
+  releasing('Releasing', 'RELEASING'),
+  notYetReleased('Not Yet Released', 'NOT_YET_RELEASED'),
+  hiatus('Hiatus', 'HIATUS'),
+  cancelled('Cancelled', 'CANCELLED');
+
+  const MediaStatus(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
+enum MediaFormat {
+  tv('TV', 'TV'),
+  tvShort('TV Short', 'TV_SHORT'),
+  movie('Movie', 'MOVIE'),
+  special('Special', 'SPECIAL'),
+  ova('OVA', 'OVA'),
+  ona('ONA', 'ONA'),
+  music('Music', 'MUSIC'),
+
+  manga('Manga', 'MANGA'),
+  novel('Novel', 'NOVEL'),
+  oneShot('One Shot', 'ONE_SHOT');
+
+  const MediaFormat(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static const animeFormats = [tv, tvShort, movie, special, ova, ona, music];
+  static const mangaFormats = [manga, novel, oneShot];
+
+  static MediaFormat? from(String? value) =>
+      MediaFormat.values.firstWhereOrNull((v) => v.value == value);
+}
+
+enum MediaSeason {
+  winter('Winter', 'WINTER'),
+  spring('Spring', 'SPRING'),
+  summer('Summer', 'SUMMER'),
+  fall('Fall', 'FALL');
+
+  const MediaSeason(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static MediaSeason? from(String? value) =>
+      MediaSeason.values.firstWhereOrNull((v) => v.value == value);
+}
+
+enum MediaSource {
+  original('Original', 'ORIGINAL'),
+  anime('Anime', 'ANIME'),
+  manga('Manga', 'MANGA'),
+  novel('Novel', 'NOVEL'),
+  webNovel('Web Novel', 'WEB_NOVEL'),
+  lightNovel('Light Novel', 'LIGHT_NOVEL'),
+  visualNovel('Visual Novel', 'VISUAL_NOVEL'),
+  videoGame('Video Game', 'VIDEO_GAME'),
+  doujinshi('Doujinshi', 'DOUJINSHI'),
+  game('Game', 'GAME'),
+  comic('Comic', 'COMIC'),
+  liveAction('Live Action', 'LIVE_ACTION'),
+  multimediaProject('Multimedia Project', 'MULTIMEDIA_PROJECT'),
+  pictureBook('Picture Book', 'PICTURE_BOOK'),
+  other('Other', 'OTHER');
+
+  const MediaSource(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
+enum OriginCountry {
+  japan('Japan', 'JP'),
+  china('China', 'CN'),
+  southKorea('South Korea', 'KR'),
+  taiwan('Taiwan', 'TW');
+
+  const OriginCountry(this.label, this.code);
+
+  final String label;
+  final String code;
+
+  static OriginCountry? fromCode(String? code) =>
+      OriginCountry.values.firstWhereOrNull((v) => v.code == code);
+}
+
+enum ScoreFormat {
+  point100('100 Points', 'POINT_100'),
+  point10Decimal('10 Decimal Points', 'POINT_10_DECIMAL'),
+  point10('10 Points', 'POINT_10'),
+  point5('5 Stars', 'POINT_5'),
+  point3('3 Smileys', 'POINT_3');
+
+  const ScoreFormat(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  static ScoreFormat from(String? value) => ScoreFormat.values.firstWhere(
+        (v) => v.value == value,
+        orElse: () => point10,
+      );
+}
+
+enum MediaSort {
+  trendingDesc('Trending', 'TRENDING_DESC'),
+  popularityDesc('Popularity', 'POPULARITY_DESC'),
+  scoreDesc('Score', 'SCORE_DESC'),
+  score('Worst Score', 'SCORE'),
+  favoritesDesc('Favourites', 'FAVOURITES_DESC'),
+  startDateDesc('Released Latest', 'START_DATE_DESC'),
+  startDate('Released Earliest', 'START_DATE'),
+  idDesc('Last Added', 'ID_DESC'),
+  id('First Added', 'ID'),
+  titleRomaji('Title Romaji', 'TITLE_ROMAJI'),
+  titleEnglish('Title English', 'TITLE_ENGLISH'),
+  titleNative('Title Native', 'TITLE_NATIVE');
+
+  const MediaSort(this.label, this.value);
+
+  final String label;
+  final String value;
+}
+
+enum EntrySort {
+  title('Title'),
+  titleDesc('Title Z-A'),
+  score('Worst Score'),
+  scoreDesc('Best Score'),
+  updated('Updated'),
+  updatedDesc('Last Updated'),
+  added('Added'),
+  addedDesc('Last Added'),
+  airing('Airing'),
+  airingDesc('Last Airing'),
+  startedOn('Started'),
+  startedOnDesc('Last Started'),
+  completedOn('Completed'),
+  completedOnDesc('Last Completed'),
+  releasedOn('Release'),
+  releasedOnDesc('Last Release'),
+  progress('Least Progress'),
+  progressDesc('Most Progress'),
+  avgScore('Lowest Rated'),
+  avgScoreDesc('Highest Rated'),
+  repeated('Least Repeated'),
+  repeatedDesc('Most Repeated');
+
+  const EntrySort(this.label);
+
+  final String label;
+
+  /// The API supports only few default sortings.
+  static const rowOrders = [scoreDesc, title, updatedDesc, addedDesc];
+
+  /// Serialize to API row order.
+  String toRowOrder() => switch (this) {
+        scoreDesc => 'score',
+        updatedDesc => 'updatedAt',
+        addedDesc => 'id',
+        title => 'title',
+        _ => 'title',
+      };
+
+  /// Deserialize from API row order.
+  static EntrySort fromRowOrder(String key) => switch (key) {
+        'score' => scoreDesc,
+        'updatedAt' => updatedDesc,
+        'id' => addedDesc,
+        'title' => title,
+        _ => title,
+      };
 }

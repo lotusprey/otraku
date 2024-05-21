@@ -94,7 +94,7 @@ class CharacterMediaNotifier
         items.add(Relation(
           id: a['node']['id'],
           title: a['node']['title']['userPreferred'],
-          imageUrl: a['node']['coverImage'][Options().imageQuality.value],
+          imageUrl: a['node']['coverImage'][Persistence().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
           type: DiscoverType.anime,
         ));
@@ -139,7 +139,7 @@ class CharacterMediaNotifier
         items.add(Relation(
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+          imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
           type: DiscoverType.manga,
         ));

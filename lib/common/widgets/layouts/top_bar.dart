@@ -84,7 +84,7 @@ class TopBarIcon extends StatelessWidget {
         onPressed: onTap,
         color: accented
             ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onBackground,
+            : Theme.of(context).colorScheme.onSurface,
         padding: Consts.padding,
       ),
     );

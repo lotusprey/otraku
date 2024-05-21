@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/common/models/tile_item.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/studio/studio_filter_provider.dart';
 import 'package:otraku/modules/studio/studio_models.dart';

@@ -1,13 +1,14 @@
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class CollectionMediaFilter {
   CollectionMediaFilter(bool ofAnime)
-      : sort =
-            ofAnime ? Options().defaultAnimeSort : Options().defaultMangaSort;
+      : sort = ofAnime
+            ? Persistence().defaultAnimeSort
+            : Persistence().defaultMangaSort;
 
   final statuses = <String>[];
-  final formats = <String>[];
+  final formats = <MediaFormat>[];
   final genreIn = <String>[];
   final genreNotIn = <String>[];
   final tagIn = <String>[];
@@ -41,15 +42,15 @@ class CollectionMediaFilter {
 class DiscoverMediaFilter {
   DiscoverMediaFilter();
 
-  final statuses = <String>[];
-  final animeFormats = <String>[];
-  final mangaFormats = <String>[];
+  final statuses = <MediaStatus>[];
+  final animeFormats = <MediaFormat>[];
+  final mangaFormats = <MediaFormat>[];
   final genreIn = <String>[];
   final genreNotIn = <String>[];
   final tagIn = <String>[];
   final tagNotIn = <String>[];
-  final sources = <String>[];
-  MediaSort sort = Options().defaultDiscoverSort;
+  final sources = <MediaSource>[];
+  MediaSort sort = Persistence().defaultDiscoverSort;
   MediaSeason? season;
   int? startYearFrom;
   int? startYearTo;
@@ -76,15 +77,18 @@ class DiscoverMediaFilter {
 
   Map<String, dynamic> toMap(bool ofAnime) => {
         'sort': sort.value,
-        if (ofAnime && animeFormats.isNotEmpty) 'format_in': animeFormats,
-        if (!ofAnime && mangaFormats.isNotEmpty) 'format_in': mangaFormats,
+        if (ofAnime && animeFormats.isNotEmpty)
+          'format_in': animeFormats.map((v) => v.value).toList(),
+        if (!ofAnime && mangaFormats.isNotEmpty)
+          'format_in': mangaFormats.map((v) => v.value).toList(),
+        if (statuses.isNotEmpty)
+          'status_in': statuses.map((v) => v.value).toList(),
+        if (sources.isNotEmpty) 'sources': sources.map((v) => v.value).toList(),
         if (ofAnime && season != null) 'season': season!.value,
-        if (statuses.isNotEmpty) 'status_in': statuses,
         if (genreIn.isNotEmpty) 'genre_in': genreIn,
         if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
         if (tagIn.isNotEmpty) 'tag_in': tagIn,
         if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
-        if (sources.isNotEmpty) 'sources': sources,
         if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
         if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
         if (country != null) 'countryOfOrigin': country!.code,

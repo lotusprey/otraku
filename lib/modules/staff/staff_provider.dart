@@ -96,7 +96,7 @@ class StaffRelationsNotifier
         final media = Relation(
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage'][Options().imageQuality.value],
+          imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
           subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
               ? DiscoverType.anime
@@ -134,7 +134,7 @@ class StaffRelationsNotifier
         items.add(Relation(
           id: s['node']['id'],
           title: s['node']['title']['userPreferred'],
-          imageUrl: s['node']['coverImage'][Options().imageQuality.value],
+          imageUrl: s['node']['coverImage'][Persistence().imageQuality.value],
           subtitle: s['staffRole'],
           type: s['node']['type'] == 'ANIME'
               ? DiscoverType.anime

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 /// A horizontal list of chips, where only one can be selected at a time.
 class ChipSelector<T> extends StatefulWidget {
@@ -86,52 +86,44 @@ class _ChipSelectorState<T> extends State<ChipSelector<T>> {
   }
 }
 
-/// A horizontal list of chips, where multiple can be selected at a time.
-/// Note: [values] is mutated directly.
-class ChipEnumMultiSelector<T extends Enum> extends StatefulWidget {
-  const ChipEnumMultiSelector({
+/// A horizontal list of chips, where zero or more are selected.
+/// Note: [values] are mutated directly.
+class ChipMultiSelector<T> extends StatefulWidget {
+  const ChipMultiSelector({
     required this.title,
-    required this.options,
+    required this.items,
     required this.values,
   });
 
   final String title;
-  final List<T> options;
-  final List<String> values;
+  final List<(String label, T value)> items;
+  final List<T> values;
 
   @override
-  State<ChipEnumMultiSelector> createState() => _ChipEnumMultiSelectorState();
+  State<ChipMultiSelector<T>> createState() => _ChipMultiSelectorState<T>();
 }
 
-class _ChipEnumMultiSelectorState extends State<ChipEnumMultiSelector> {
-  final _options = <String>[];
-  final _values = <String>[];
-
-  @override
-  void initState() {
-    super.initState();
-    for (final o in widget.options) {
-      _options.add(o.name.noScreamingSnakeCase);
-      _values.add(o.name);
-    }
-  }
-
+class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
   @override
   Widget build(BuildContext context) {
     return _ChipSelector(
       title: widget.title,
-      length: _options.length,
-      itemBuilder: (context, index) => FilterChip(
-        label: Text(_options[index]),
-        selected: widget.values.contains(_values[index]),
-        onSelected: (isSelected) {
-          setState(
-            () => isSelected
-                ? widget.values.add(_values[index])
-                : widget.values.remove(_values[index]),
-          );
-        },
-      ),
+      length: widget.items.length,
+      itemBuilder: (context, i) {
+        final (label, value) = widget.items[i];
+
+        return FilterChip(
+          label: Text(label),
+          selected: widget.values.contains(value),
+          onSelected: (isSelected) {
+            setState(
+              () => isSelected
+                  ? widget.values.add(value)
+                  : widget.values.remove(value),
+            );
+          },
+        );
+      },
     );
   }
 }

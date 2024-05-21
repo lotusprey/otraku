@@ -53,7 +53,7 @@ class MediaInfoView extends StatelessWidget {
       if (info.romajiTitle != null) ('Romaji', info.romajiTitle!),
       if (info.englishTitle != null) ('English', info.englishTitle!),
       if (info.nativeTitle != null) ('Native', info.nativeTitle!),
-      if (info.synonyms.isNotEmpty) ('Synonyms', info.synonyms.join('\n')),
+      ...info.synonyms.map((s) => ('Synonym', s)),
     ];
 
     const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));

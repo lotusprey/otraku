@@ -35,7 +35,7 @@ class _EditButtonsState extends State<EditButtons> {
             : _removeButton(context, ref);
 
         return BottomBar(
-          Options().leftHanded
+          Persistence().leftHanded
               ? [saveButton, removeButton]
               : [removeButton, saveButton],
         );
@@ -51,7 +51,8 @@ class _EditButtonsState extends State<EditButtons> {
           final newEdit = ref.read(newEditProvider(widget.tag));
           setState(() => _loading = true);
 
-          final tag = (userId: Options().id!, ofAnime: oldEdit.type == 'ANIME');
+          final tag =
+              (userId: Persistence().id!, ofAnime: oldEdit.type == 'ANIME');
           final err = await ref
               .read(collectionProvider(tag).notifier)
               .saveEntry(oldEdit, newEdit);
@@ -87,7 +88,7 @@ class _EditButtonsState extends State<EditButtons> {
 
               final oldEdit = widget.oldEdit;
               final tag = (
-                userId: Options().id!,
+                userId: Persistence().id!,
                 ofAnime: oldEdit.type == 'ANIME',
               );
 

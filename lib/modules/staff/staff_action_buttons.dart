@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/staff/staff_provider.dart';

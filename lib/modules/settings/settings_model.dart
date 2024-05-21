@@ -1,5 +1,5 @@
 import 'package:otraku/modules/collection/collection_models.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/notification/notifications_model.dart';
 
 /// Some fields are modifiable to allow for quick and simple edits.

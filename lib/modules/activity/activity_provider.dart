@@ -90,7 +90,7 @@ class ActivityNotifier
 
   @override
   FutureOr<ExpandedActivity> build(arg) async {
-    viewerId = Options().id!;
+    viewerId = Persistence().id!;
     return await _fetch(null);
   }
 
@@ -118,7 +118,7 @@ class ActivityNotifier
         Activity.maybe(
           data['Activity'],
           viewerId,
-          Options().imageQuality,
+          Persistence().imageQuality,
         );
     if (activity == null) throw StateError('Could not parse activity');
 
@@ -137,7 +137,7 @@ class ActivityNotifier
     if (!state.hasValue) return null;
     final value = state.value!;
 
-    final activity = Activity.maybe(map, viewerId, Options().imageQuality);
+    final activity = Activity.maybe(map, viewerId, Persistence().imageQuality);
     if (activity == null) return null;
 
     state = AsyncValue.data(ExpandedActivity(activity, value.replies));

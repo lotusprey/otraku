@@ -23,7 +23,7 @@ import 'package:otraku/modules/collection/collection_list.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/home/home_provider.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class CollectionView extends StatefulWidget {
   const CollectionView(this.userId, this.ofAnime);
@@ -72,7 +72,7 @@ class CollectionSubView extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabScaffold(
       topBar: TopBar(
-        canPop: tag.userId != Options().id,
+        canPop: tag.userId != Persistence().id,
         trailing: [_TopBarContent(tag, focusNode)],
       ),
       floatingBar: FloatingBar(
@@ -159,7 +159,7 @@ class _TopBarContent extends StatelessWidget {
                   context,
                   CollectionFilterView(
                     ofAnime: tag.ofAnime,
-                    ofViewer: tag.userId == Options().id,
+                    ofViewer: tag.userId == Persistence().id,
                     filter: ref.read(collectionFilterProvider(tag)).mediaFilter,
                     onChanged: (mediaFilter) => ref
                         .read(collectionFilterProvider(tag).notifier)
@@ -312,21 +312,30 @@ class _ContentState extends State<_Content> {
                 child: Center(child: Text('No results')),
               ),
               data: (data) {
-                final onProgressUpdated = widget.tag.userId == Options().id
+                if (data.isEmpty) {
+                  return const SliverFillRemaining(
+                    child: Center(child: Text('No results')),
+                  );
+                }
+
+                final onProgressUpdated = widget.tag.userId == Persistence().id
                     ? ref
                         .read(collectionProvider(widget.tag).notifier)
                         .saveEntryProgress
                     : null;
 
-                final collectionIsExpanded = ref.watch(homeProvider.select(
-                  (s) => widget.tag.ofAnime
-                      ? s.didExpandAnimeCollection
-                      : s.didExpandMangaCollection,
-                ));
+                final collectionIsExpanded =
+                    widget.tag.userId != Persistence().id ||
+                        ref.watch(homeProvider.select(
+                          (s) => widget.tag.ofAnime
+                              ? s.didExpandAnimeCollection
+                              : s.didExpandMangaCollection,
+                        ));
 
-                if (collectionIsExpanded && Options().collectionItemView == 1 ||
+                if (collectionIsExpanded &&
+                        Persistence().collectionItemView == 1 ||
                     !collectionIsExpanded &&
-                        Options().collectionPreviewItemView == 1) {
+                        Persistence().collectionPreviewItemView == 1) {
                   return CollectionGrid(
                     items: data,
                     onProgressUpdated: onProgressUpdated,

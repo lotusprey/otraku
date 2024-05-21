@@ -42,7 +42,7 @@ class UserSubView extends StatelessWidget {
           (_, s) => s.whenOrNull(
             data: (data) {
               if (homeScrollCtrl != null) {
-                Options().confirmAccountNameAndAvatar(
+                Persistence().confirmAccountNameAndAvatar(
                   data.id,
                   data.name,
                   data.imageUrl,
@@ -116,7 +116,7 @@ class _ButtonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      if (id != Options().id) ...[
+      if (id != Persistence().id) ...[
         _Button(
           label: 'Anime',
           icon: Ionicons.film,

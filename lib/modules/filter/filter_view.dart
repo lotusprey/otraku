@@ -5,7 +5,7 @@ import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/filter/tag_selector.dart';
 import 'package:otraku/modules/filter/year_range_picker.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
@@ -47,7 +47,7 @@ class _FilterView<T> extends StatelessWidget {
 
     return OpaqueSheetView(
       buttons: BottomBar(
-        Options().leftHanded
+        Persistence().leftHanded
             ? [applyButton, clearButton]
             : [clearButton, applyButton],
       ),
@@ -94,17 +94,22 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
             current: filter.sort,
             onChanged: (v) => filter.sort = v,
           ),
-          ChipEnumMultiSelector(
+          ChipMultiSelector(
             title: 'Statuses',
-            options: MediaStatus.values,
+            items: MediaStatus.values.map((v) => (v.label, v)).toList(),
             values: filter.statuses,
           ),
-          ChipEnumMultiSelector(
+          ChipMultiSelector(
             title: 'Formats',
-            options: widget.ofAnime ? AnimeFormat.values : MangaFormat.values,
+            items: (widget.ofAnime
+                    ? MediaFormat.animeFormats
+                    : MediaFormat.mangaFormats)
+                .map((v) => (v.label, v))
+                .toList(),
             values: filter.formats,
           ),
-          const Divider(indent: 10, endIndent: 10),
+          const SizedBox(height: 5),
+          const Divider(),
           Consumer(
             builder: (context, ref, _) => ref.watch(tagsProvider).when(
                   loading: () => const Loader(),
@@ -120,7 +125,8 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
                   ),
                 ),
           ),
-          const Divider(indent: 10, endIndent: 10, height: 30),
+          const Divider(),
+          const SizedBox(height: 10),
           YearRangePicker(
             title: 'Release Year Range',
             from: filter.startYearFrom,
@@ -130,7 +136,8 @@ class _CollectionFilterViewState extends State<CollectionFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10, height: 30),
+          const SizedBox(height: 10),
+          const Divider(),
           ChipSelector(
             title: 'Country',
             items: OriginCountry.values.map((v) => (v.label, v)).toList(),
@@ -194,21 +201,21 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
             value: filter.sort,
             onChanged: (v) => filter.sort = v,
           ),
-          ChipEnumMultiSelector(
+          ChipMultiSelector(
             title: 'Statuses',
-            options: MediaStatus.values,
+            items: MediaStatus.values.map((v) => (v.label, v)).toList(),
             values: filter.statuses,
           ),
           if (widget.ofAnime)
-            ChipEnumMultiSelector(
+            ChipMultiSelector(
               title: 'Formats',
-              options: AnimeFormat.values,
+              items: MediaFormat.animeFormats.map((v) => (v.label, v)).toList(),
               values: filter.animeFormats,
             )
           else
-            ChipEnumMultiSelector(
+            ChipMultiSelector(
               title: 'Formats',
-              options: MangaFormat.values,
+              items: MediaFormat.mangaFormats.map((v) => (v.label, v)).toList(),
               values: filter.mangaFormats,
             ),
           if (widget.ofAnime)
@@ -218,7 +225,8 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
               value: filter.season,
               onChanged: (v) => filter.season = v,
             ),
-          const Divider(indent: 10, endIndent: 10),
+          const SizedBox(height: 5),
+          const Divider(),
           Consumer(
             builder: (context, ref, _) => ref.watch(tagsProvider).when(
                   loading: () => const Center(child: Loader()),
@@ -233,7 +241,8 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
                   ),
                 ),
           ),
-          const Divider(indent: 10, endIndent: 10, height: 30),
+          const Divider(),
+          const SizedBox(height: 10),
           YearRangePicker(
             title: 'Release Year Range',
             from: filter.startYearFrom,
@@ -243,16 +252,17 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
               filter.startYearTo = to;
             },
           ),
-          const Divider(indent: 10, endIndent: 10, height: 30),
+          const SizedBox(height: 10),
+          const Divider(),
           ChipSelector(
             title: 'Country',
             items: OriginCountry.values.map((v) => (v.label, v)).toList(),
             value: filter.country,
             onChanged: (v) => filter.country = v,
           ),
-          ChipEnumMultiSelector(
+          ChipMultiSelector(
             title: 'Sources',
-            options: MediaSource.values,
+            items: MediaSource.values.map((v) => (v.label, v)).toList(),
             values: filter.sources,
           ),
           ChipSelector(

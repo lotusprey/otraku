@@ -1,5 +1,5 @@
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class UserStatistics {
   UserStatistics._({

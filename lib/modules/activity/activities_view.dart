@@ -47,12 +47,13 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
           scrollCtrl: _ctrl,
           children: [
             ActionButton(
-              tooltip: widget.id == Options().id ? 'New Post' : 'New Message',
+              tooltip:
+                  widget.id == Persistence().id ? 'New Post' : 'New Message',
               icon: Icons.edit_outlined,
               onTap: () => showSheet(
                 context,
                 CompositionView(
-                  tag: widget.id == Options().id
+                  tag: widget.id == Persistence().id
                       ? const StatusActivityCompositionTag(id: null)
                       : MessageActivityCompositionTag(
                           id: null,
@@ -60,7 +61,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
                         ),
                   onSaved: (map) => ref
                       .read(activitiesProvider(widget.id).notifier)
-                      .insertActivity(map, Options().id!),
+                      .insertActivity(map, Persistence().id!),
                 ),
               ),
             ),
@@ -110,7 +111,7 @@ class ActivitiesSubView extends StatelessWidget {
                       .read(activitiesProvider(id).notifier)
                       .remove(data.items[i].id),
                   onChanged: null,
-                  onPinned: id == Options().id
+                  onPinned: id == Persistence().id
                       ? () => ref
                           .read(activitiesProvider(id).notifier)
                           .togglePin(data.items[i].id)

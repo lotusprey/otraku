@@ -33,7 +33,7 @@ class CalendarItem {
     return CalendarItem._(
       mediaId: map['mediaId'],
       title: map['media']['title']['userPreferred'],
-      cover: map['media']['coverImage'][Options().imageQuality.value],
+      cover: map['media']['coverImage'][Persistence().imageQuality.value],
       episode: map['episode'],
       airingAt: DateTimeUtil.fromSecondsSinceEpoch(map['airingAt']),
       entryStatus: EntryStatus.from(map['media']['mediaListEntry']?['status']),
@@ -92,8 +92,8 @@ enum CalendarSeasonFilter {
 
 enum CalendarStatusFilter {
   all('All'),
-  watchingAndPlanning('WatchingAndPlanning'),
-  notInLists('NotInLists'),
+  watchingAndPlanning('Watching And Planning'),
+  notInLists('Not In Lists'),
   other('Other');
 
   const CalendarStatusFilter(this.label);

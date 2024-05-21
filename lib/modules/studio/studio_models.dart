@@ -1,6 +1,6 @@
 import 'package:otraku/common/models/tile_item.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/models/paged.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 class StudioItem {
   StudioItem._({required this.id, required this.name});

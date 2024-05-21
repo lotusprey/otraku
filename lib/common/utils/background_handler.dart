@@ -61,9 +61,9 @@ class BackgroundHandler {
 @pragma('vm:entry-point')
 void _fetch() => Workmanager().executeTask((_, __) async {
       // Initialise local settings.
-      await Options.init();
-      if (Options().selectedAccount == null) return true;
-      Options().lastBackgroundWork = DateTime.now();
+      await Persistence.init();
+      if (Persistence().selectedAccount == null) return true;
+      Persistence().lastBackgroundWork = DateTime.now();
 
       // Log in.
       if (!Api.hasActiveAccount() && !await Api.init()) return true;
@@ -81,8 +81,8 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       if (count > ns.length) count = ns.length;
       if (count == 0) return true;
 
-      final last = Options().lastNotificationId;
-      Options().lastNotificationId = ns[0]?['id'] ?? -1;
+      final last = Persistence().lastNotificationId;
+      Persistence().lastNotificationId = ns[0]?['id'] ?? -1;
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {

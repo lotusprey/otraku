@@ -229,7 +229,8 @@ class SiteNotification {
             type: NotificationType.airing,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+            imageUrl: map['media']['coverImage']
+                [Persistence().imageQuality.value],
             texts: [
               'Episode ',
               map['episode'].toString(),
@@ -251,7 +252,8 @@ class SiteNotification {
             type: NotificationType.relatedMediaAddition,
             headId: map['media']['id'],
             bodyId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+            imageUrl: map['media']['coverImage']
+                [Persistence().imageQuality.value],
             texts: [
               map['media']['title']['userPreferred'],
               ' was added to the site',
@@ -269,7 +271,8 @@ class SiteNotification {
             id: map['id'],
             type: NotificationType.mediaDataChange,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+            imageUrl: map['media']['coverImage']
+                [Persistence().imageQuality.value],
             details: map['reason'],
             texts: [
               map['media']['title']['userPreferred'],
@@ -294,7 +297,8 @@ class SiteNotification {
             id: map['id'],
             type: NotificationType.mediaMerge,
             headId: map['media']['id'],
-            imageUrl: map['media']['coverImage'][Options().imageQuality.value],
+            imageUrl: map['media']['coverImage']
+                [Persistence().imageQuality.value],
             details: map['reason'],
             texts: [
               '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',

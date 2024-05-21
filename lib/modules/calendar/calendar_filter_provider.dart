@@ -11,15 +11,15 @@ class CalendarFilterNotifier extends AutoDisposeNotifier<CalendarFilter> {
   @override
   CalendarFilter build() => CalendarFilter(
         date: DateTime.now(),
-        season: CalendarSeasonFilter.values[Options().calendarSeason],
-        status: CalendarStatusFilter.values[Options().calendarStatus],
+        season: CalendarSeasonFilter.values[Persistence().calendarSeason],
+        status: CalendarStatusFilter.values[Persistence().calendarStatus],
       );
 
   @override
   set state(CalendarFilter newState) {
     super.state = newState;
 
-    Options().calendarSeason = state.season.index;
-    Options().calendarStatus = state.status.index;
+    Persistence().calendarSeason = state.season.index;
+    Persistence().calendarStatus = state.status.index;
   }
 }

@@ -4,7 +4,6 @@ import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/widgets/entry_labels.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/edit/edit_view.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
@@ -12,6 +11,7 @@ import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/text_rail.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 const _TILE_HEIGHT = 140.0;
 
@@ -66,7 +66,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: _TILE_HEIGHT / Consts.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(entry.imageUrl),
                 ),
               ),
@@ -113,7 +113,7 @@ class __TileContentState extends State<_TileContent> {
 
     final textRailItems = <String, bool>{};
     if (widget.item.format != null) {
-      textRailItems[widget.item.format!.noScreamingSnakeCase] = false;
+      textRailItems[widget.item.format!.label] = false;
     }
 
     if (widget.item.airingAt != null) {
@@ -158,8 +158,8 @@ class __TileContentState extends State<_TileContent> {
               colors: [
                 Theme.of(context).colorScheme.onSurfaceVariant,
                 Theme.of(context).colorScheme.onSurfaceVariant,
-                Theme.of(context).colorScheme.background,
-                Theme.of(context).colorScheme.background,
+                Theme.of(context).colorScheme.surface,
+                Theme.of(context).colorScheme.surface,
               ],
               stops: [0.0, progressPercent, progressPercent, 1.0],
             ),

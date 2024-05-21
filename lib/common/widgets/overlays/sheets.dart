@@ -9,7 +9,7 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
       context: context,
       builder: (context) => sheet,
       isScrollControlled: true,
-      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
+      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(100),
       backgroundColor: Colors.transparent,
       elevation: 0,
     );
@@ -46,7 +46,7 @@ class OpaqueSheet extends StatelessWidget {
             padding: padding,
             constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.background,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
             ),
             child: builder(context, scrollCtrl),
@@ -88,7 +88,7 @@ class OpaqueSheetView extends StatelessWidget {
         child: Container(
           constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.background,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
           ),
           child: Stack(
@@ -148,10 +148,10 @@ class GradientSheet extends StatelessWidget {
             end: Alignment.topCenter,
             stops: const [0, 0.6, 0.9, 1],
             colors: [
-              Theme.of(context).colorScheme.background,
-              Theme.of(context).colorScheme.background.withAlpha(200),
-              Theme.of(context).colorScheme.background.withAlpha(150),
-              Theme.of(context).colorScheme.background.withAlpha(0),
+              Theme.of(context).colorScheme.surface,
+              Theme.of(context).colorScheme.surface.withAlpha(200),
+              Theme.of(context).colorScheme.surface.withAlpha(150),
+              Theme.of(context).colorScheme.surface.withAlpha(0),
             ],
           ),
         ),
@@ -205,7 +205,7 @@ class GradientSheetButton extends StatelessWidget {
               icon,
               color: selected
                   ? theme.colorScheme.primary
-                  : theme.colorScheme.onBackground,
+                  : theme.colorScheme.onSurface,
             ),
             const SizedBox(width: 10),
           ],

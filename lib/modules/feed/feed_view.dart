@@ -69,7 +69,7 @@ class FeedView extends StatelessWidget {
                     tag: const StatusActivityCompositionTag(id: null),
                     onSaved: (map) => ref
                         .read(activitiesProvider(homeFeedId).notifier)
-                        .insertActivity(map, Options().id!),
+                        .insertActivity(map, Persistence().id!),
                   ),
                 ),
               ),

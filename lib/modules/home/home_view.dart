@@ -30,7 +30,7 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  final _id = Options().id!;
+  final _id = Persistence().id!;
   late final _userTag = idUserTag(_id);
   late final _animeCollectionTag = (userId: _id, ofAnime: true);
   late final _mangaCollectionTag = (userId: _id, ofAnime: false);
@@ -52,7 +52,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   void initState() {
     super.initState();
-    _tabCtrl.index = Options().defaultHomeTab.index;
+    _tabCtrl.index = Persistence().defaultHomeTab.index;
     if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
     _tabCtrl.addListener(() => setState(() {}));
   }

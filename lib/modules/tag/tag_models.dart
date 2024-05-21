@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:otraku/common/utils/extensions.dart';
+
 class Tag {
   final String name;
   final String desciption;
@@ -22,11 +24,10 @@ class Tag {
       );
 }
 
-// Stores all tags (genres as treated as tags too).
+/// Stores all tags (genres as treated as tags too).
 class TagGroup {
   TagGroup._({
-    required this.categoryNames,
-    required this.categoryItems,
+    required this.categories,
     required this.ids,
     required this.names,
     required this.descriptions,
@@ -34,18 +35,17 @@ class TagGroup {
   });
 
   factory TagGroup(Map<String, dynamic> map) {
-    final categoryNames = <String>['Genres'];
-    final categoryItems = <List<int>>[[]];
+    final categories = [(name: _genreCategoryName, indices: <int>[])];
     final ids = <int>[];
     final names = <String>[];
     final descriptions = <String>[];
     final indices = HashMap<String, int>();
 
-    // Genres are given negative indices, as
-    // to not get mixed up with normal tags.
+    /// Genres are given negative indices, as
+    /// to not get mixed up with normal tags.
     int id = -1;
     for (final g in map['GenreCollection']) {
-      categoryItems[0].add(ids.length);
+      categories[0].indices.add(ids.length);
       ids.add(id);
       names.add(g.toString());
       descriptions.add('');
@@ -55,19 +55,21 @@ class TagGroup {
     }
 
     for (final t in map['MediaTagCollection']) {
-      String category = t['category'] != null
+      String categoryName = t['category'] != null
           ? (t['category'] as String).replaceFirst('-', '/')
           : 'Other';
-      if (category.isEmpty) category = 'Other';
+      if (categoryName.isEmpty) categoryName = 'Other';
 
-      int index = categoryNames.indexOf(category);
-      if (index < 0) {
-        index = categoryNames.length;
-        categoryNames.add(category);
-        categoryItems.add([]);
+      var category = categories.firstWhereOrNull(
+        (c) => c.name == categoryName,
+      );
+
+      if (category == null) {
+        category = (name: categoryName, indices: []);
+        categories.add(category);
       }
-      categoryItems[index].add(ids.length);
 
+      category.indices.add(ids.length);
       ids.add(t['id']);
       names.add(t['name']);
       descriptions.add(t['description'] ?? '');
@@ -75,9 +77,18 @@ class TagGroup {
       indices.putIfAbsent(t['name'], () => names.length - 1);
     }
 
+    // Sort categories alphabetically.
+    // Genres must be at the front, while the adult category must be last.
+    categories.sort((a, b) {
+      if (a.name == _genreCategoryName) return -1;
+      if (a.name == _adultCategoryName) return 1;
+      if (b.name == _genreCategoryName) return 1;
+      if (b.name == _adultCategoryName) return -1;
+      return a.name.compareTo(b.name);
+    });
+
     return TagGroup._(
-      categoryNames: categoryNames,
-      categoryItems: categoryItems,
+      categories: categories,
       ids: ids,
       names: names,
       descriptions: descriptions,
@@ -85,15 +96,17 @@ class TagGroup {
     );
   }
 
-  final List<String> categoryNames;
-  final List<List<int>> categoryItems;
+  static const _genreCategoryName = 'Genres';
+  static const _adultCategoryName = 'Sexual Content';
 
-  // Tag data.
+  /// Each category has a name and a list of indices for its tags.
+  final List<({String name, List<int> indices})> categories;
+
+  /// Tag data.
   final List<int> ids;
   final List<String> names;
   final List<String> descriptions;
 
-  /// Associates a name with the corret index
-  /// in [ids]/[names]/[descriptions].
+  /// Associates a name with the corret index in [ids]/[names]/[descriptions].
   final HashMap<String, int> indices;
 }

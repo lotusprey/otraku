@@ -67,7 +67,7 @@ class ReplyCard extends StatelessWidget {
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
                         height: 40,
-                        child: reply.authorId == Options().id
+                        child: reply.authorId == Persistence().id
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(

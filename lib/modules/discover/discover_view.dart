@@ -229,7 +229,7 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverAnimeItems).pages,
-              onData: (data) => Options().discoverItemView == 0
+              onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
             );
@@ -239,7 +239,7 @@ class _Grid extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverMangaItems).pages,
-              onData: (data) => Options().discoverItemView == 0
+              onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
             );

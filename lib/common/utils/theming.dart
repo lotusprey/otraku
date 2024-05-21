@@ -1,33 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
 
-class ColorSeed {
-  const ColorSeed(this.seed);
-
-  final Color seed;
-
-  ColorScheme scheme(Brightness brightness) =>
-      ColorScheme.fromSeed(seedColor: seed, brightness: brightness);
-}
-
 const colorSeeds = {
-  'Navy': ColorSeed(Color(0xFF45A0F2)),
-  'Mint': ColorSeed(Color(0xFF2AB8B8)),
-  'Lavender': ColorSeed(Color(0xFFB4ABF5)),
-  'Caramel': ColorSeed(Color(0xFFF78204)),
-  'Forest': ColorSeed(Color(0xFF00FFA9)),
-  'Wine': ColorSeed(Color(0xFF894771)),
-  'Mustard': ColorSeed(Color(0xFFFFBF02)),
+  'Navy': Color(0xFF45A0F2),
+  'Mint': Color(0xFF2AB8B8),
+  'Lavender': Color(0xFFB4ABF5),
+  'Caramel': Color(0xFFF78204),
+  'Forest': Color(0xFF00FFA9),
+  'Wine': Color(0xFF894771),
+  'Mustard': Color(0xFFFFBF02),
 };
 
 ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
-      useMaterial3: true,
       fontFamily: 'Rubik',
       colorScheme: scheme,
-      scaffoldBackgroundColor: scheme.background,
+      scaffoldBackgroundColor: scheme.surface,
       disabledColor: scheme.surface,
       unselectedWidgetColor: scheme.surface,
-      splashColor: scheme.onBackground.withAlpha(20),
+      splashColor: scheme.onSurface.withAlpha(20),
       highlightColor: Colors.transparent,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
@@ -67,12 +57,12 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
       textTheme: TextTheme(
         titleLarge: TextStyle(
           fontSize: Consts.fontBig,
-          color: scheme.onBackground,
+          color: scheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
         titleMedium: TextStyle(
           fontSize: Consts.fontMedium,
-          color: scheme.onBackground,
+          color: scheme.onSurface,
           fontWeight: FontWeight.w500,
         ),
         titleSmall: TextStyle(
@@ -82,12 +72,12 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         ),
         bodyLarge: TextStyle(
           fontSize: Consts.fontMedium,
-          color: scheme.onBackground,
+          color: scheme.onSurface,
           fontWeight: FontWeight.normal,
         ),
         bodyMedium: TextStyle(
           fontSize: Consts.fontMedium,
-          color: scheme.onBackground,
+          color: scheme.onSurface,
           fontWeight: FontWeight.normal,
         ),
         labelLarge: TextStyle(
@@ -129,16 +119,16 @@ ThemeData themeDataFrom(ColorScheme scheme) => ThemeData(
         padding: Consts.padding,
         textStyle: TextStyle(color: scheme.onSurfaceVariant),
         decoration: BoxDecoration(
-          color: scheme.surfaceVariant,
+          color: scheme.surfaceContainerHighest,
           borderRadius: Consts.borderRadiusMin,
-          boxShadow: [BoxShadow(color: scheme.background, blurRadius: 10)],
+          boxShadow: [BoxShadow(color: scheme.surface, blurRadius: 10)],
         ),
       ),
       scrollbarTheme: ScrollbarThemeData(
         interactive: true,
         radius: Consts.radiusMin,
-        thickness: MaterialStateProperty.all(5),
-        thumbColor: MaterialStateProperty.all(scheme.primary),
+        thickness: WidgetStateProperty.all(5),
+        thumbColor: WidgetStateProperty.all(scheme.primary),
       ),
       inputDecorationTheme: InputDecorationTheme(
         isDense: true,

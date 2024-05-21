@@ -71,14 +71,14 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
         case CalendarStatusFilter.notInLists:
           if (status != null) continue;
         case CalendarStatusFilter.watchingAndPlanning:
-          if (status != EntryStatus.current.name &&
-              status != EntryStatus.planning.name) {
+          if (status != EntryStatus.current.value &&
+              status != EntryStatus.planning.value) {
             continue;
           }
         case CalendarStatusFilter.other:
           if (status == null ||
-              status == EntryStatus.current.name ||
-              status == EntryStatus.planning.name) {
+              status == EntryStatus.current.value ||
+              status == EntryStatus.planning.value) {
             continue;
           }
         case CalendarStatusFilter.all:

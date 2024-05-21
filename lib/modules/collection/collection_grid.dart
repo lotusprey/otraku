@@ -39,7 +39,9 @@ class CollectionGrid extends StatelessWidget {
                     child: ClipRRect(
                       borderRadius: Consts.borderRadiusMin,
                       child: Container(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceContainerHighest,
                         child: CachedImage(items[i].imageUrl),
                       ),
                     ),

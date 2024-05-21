@@ -12,12 +12,12 @@ class ActivitiesFilterNotifier
   @override
   ActivitiesFilter build(arg) => arg == homeFeedId
       ? HomeActivityFilter(
-          Options()
+          Persistence()
               .feedActivityFilters
               .map((f) => ActivityType.values[f])
               .toList(),
-          Options().feedOnFollowing,
-          Options().viewerActivitiesInFeed,
+          Persistence().feedOnFollowing,
+          Persistence().viewerActivitiesInFeed,
         )
       : UserActivityFilter(ActivityType.values, arg);
 
@@ -27,9 +27,10 @@ class ActivitiesFilterNotifier
 
     switch (state) {
       case HomeActivityFilter f:
-        Options().feedActivityFilters = f.typeIn.map((t) => t.index).toList();
-        Options().feedOnFollowing = f.onFollowing;
-        Options().viewerActivitiesInFeed = f.withViewerActivities;
+        Persistence().feedActivityFilters =
+            f.typeIn.map((t) => t.index).toList();
+        Persistence().feedOnFollowing = f.onFollowing;
+        Persistence().viewerActivitiesInFeed = f.withViewerActivities;
       case UserActivityFilter _:
         return;
     }

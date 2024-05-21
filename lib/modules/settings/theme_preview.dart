@@ -22,32 +22,38 @@ class _ThemePreviewState extends State<ThemePreview> {
       builder: (context, ref, _) {
         final system = ref.watch(homeProvider.select(
           (s) => brightness == Brightness.dark
-              ? s.systemDarkScheme
-              : s.systemLightScheme,
+              ? s.systemDarkPrimaryColor
+              : s.systemLightPrimaryColor,
         ));
+
+        final background =
+            brightness == Brightness.dark && Persistence().pureWhiteOrBlackTheme
+                ? Colors.black
+                : null;
 
         final children = <_ThemeCard>[];
         if (system != null) {
           children.add(_ThemeCard(
             name: 'System',
-            scheme: system,
-            active: Options().theme == null,
-            onTap: () => setState(() => Options().theme = null),
+            scheme: ColorScheme.fromSeed(
+              seedColor: system,
+              brightness: brightness,
+            ).copyWith(surface: background),
+            active: Persistence().theme == null,
+            onTap: () => setState(() => Persistence().theme = null),
           ));
         }
-
-        final background =
-            brightness == Brightness.dark && Options().pureWhiteOrBlackTheme
-                ? Colors.black
-                : null;
 
         for (int i = 0; i < colorSeeds.length; i++) {
           final e = colorSeeds.entries.elementAt(i);
           children.add(_ThemeCard(
             name: e.key,
-            scheme: e.value.scheme(brightness).copyWith(background: background),
-            active: Options().theme == i,
-            onTap: () => setState(() => Options().theme = i),
+            scheme: ColorScheme.fromSeed(
+              seedColor: e.value,
+              brightness: brightness,
+            ).copyWith(surface: background),
+            active: Persistence().theme == i,
+            onTap: () => setState(() => Persistence().theme = i),
           ));
         }
 
@@ -79,7 +85,8 @@ class _ThemeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderWidth = active ? 3.0 : 1.0;
-    final borderColor = active ? scheme.primary : scheme.surfaceVariant;
+    final borderColor =
+        active ? scheme.primary : scheme.surfaceContainerHighest;
 
     return GestureDetector(
       onTap: onTap,
@@ -90,7 +97,7 @@ class _ThemeCard extends StatelessWidget {
             height: 170,
             padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
-              color: scheme.background,
+              color: scheme.surface,
               border: Border.all(color: borderColor, width: borderWidth),
               borderRadius: Consts.borderRadiusMin,
             ),
@@ -103,7 +110,7 @@ class _ThemeCard extends StatelessWidget {
                       height: 10,
                       width: 60,
                       decoration: BoxDecoration(
-                        color: scheme.onBackground,
+                        color: scheme.onSurface,
                         borderRadius: Consts.borderRadiusMax,
                       ),
                     ),
@@ -112,7 +119,7 @@ class _ThemeCard extends StatelessWidget {
                       height: 40,
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
-                        color: scheme.surfaceVariant,
+                        color: scheme.surfaceContainerHighest,
                         borderRadius: Consts.borderRadiusMin,
                       ),
                       child: Column(
@@ -122,7 +129,7 @@ class _ThemeCard extends StatelessWidget {
                             height: 8,
                             width: 40,
                             decoration: BoxDecoration(
-                              color: scheme.surfaceVariant,
+                              color: scheme.surfaceContainerHighest,
                               borderRadius: Consts.borderRadiusMax,
                             ),
                           ),
@@ -183,7 +190,7 @@ class _ThemeCard extends StatelessWidget {
                         height: 8,
                         width: 8,
                         decoration: BoxDecoration(
-                          color: scheme.surfaceVariant,
+                          color: scheme.surfaceContainerHighest,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -191,7 +198,7 @@ class _ThemeCard extends StatelessWidget {
                         height: 8,
                         width: 8,
                         decoration: BoxDecoration(
-                          color: scheme.surfaceVariant,
+                          color: scheme.surfaceContainerHighest,
                           shape: BoxShape.circle,
                         ),
                       ),

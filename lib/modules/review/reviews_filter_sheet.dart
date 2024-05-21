@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/review/review_models.dart';
 
 Future<void> showReviewsFilterSheet({

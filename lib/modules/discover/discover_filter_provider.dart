@@ -9,7 +9,7 @@ final discoverFilterProvider =
 
 class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
   @override
-  DiscoverFilter build() => DiscoverFilter(Options().defaultDiscoverType);
+  DiscoverFilter build() => DiscoverFilter(Persistence().defaultDiscoverType);
 
   @override
   DiscoverFilter get state => super.state;

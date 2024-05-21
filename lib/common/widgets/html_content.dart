@@ -76,7 +76,7 @@ class HtmlContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               borderRadius: Consts.borderRadiusMin,
             ),
           );

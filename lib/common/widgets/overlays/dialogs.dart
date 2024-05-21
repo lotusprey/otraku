@@ -5,7 +5,7 @@ import 'package:otraku/common/widgets/html_content.dart';
 Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
       context: context,
       builder: (context) => PopUpAnimation(child),
-      barrierColor: Theme.of(context).colorScheme.background.withAlpha(100),
+      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(100),
     );
 
 class PopUpAnimation extends StatefulWidget {

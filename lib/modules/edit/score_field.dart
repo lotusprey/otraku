@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 
 /// Score picker.
@@ -72,7 +72,7 @@ class _SmileyScorePicker extends StatelessWidget {
             iconSize: 30,
             icon: icon,
             color: score.floor() != i
-                ? Theme.of(context).colorScheme.surfaceVariant
+                ? Theme.of(context).colorScheme.surfaceContainerHighest
                 : Theme.of(context).colorScheme.primary,
             onPressed: () =>
                 score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),

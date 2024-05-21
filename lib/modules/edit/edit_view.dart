@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
@@ -7,7 +8,7 @@ import 'package:otraku/modules/edit/edit_buttons.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/edit/edit_providers.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/widgets/fields/date_field.dart';
 import 'package:otraku/common/widgets/grids/sliver_grid_delegates.dart';
@@ -46,19 +47,19 @@ class EditView extends StatelessWidget {
         );
 
         return ref.watch(oldEditProvider(tag)).maybeWhen(
-              data: (oldEdit) => _build(oldEdit),
+              data: (oldEdit) => OpaqueSheetView(
+                buttons: EditButtons(tag, oldEdit, callback),
+                builder: (context, scrollCtrl) => _EditView(
+                  scrollCtrl,
+                  tag,
+                  oldEdit,
+                ),
+              ),
               orElse: () => OpaqueSheetView(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
             );
       },
-    );
-  }
-
-  Widget _build(Edit oldEdit) {
-    return OpaqueSheetView(
-      buttons: EditButtons(tag, oldEdit, callback),
-      builder: (context, scrollCtrl) => _EditView(scrollCtrl, tag, oldEdit),
     );
   }
 }
@@ -75,7 +76,7 @@ class _EditView extends StatelessWidget {
     final provider = newEditProvider(tag);
     final ofAnime = oldEdit.type == 'ANIME';
 
-    final status = SliverToBoxAdapter(
+    final statusField = SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Consumer(
@@ -126,80 +127,67 @@ class _EditView extends StatelessWidget {
       ),
     );
 
-    final tracking = _FieldGrid(
-      minWidth: 140,
-      children: [
-        Consumer(
-          builder: (context, ref, _) {
-            final progress = ref.watch(provider.select((s) => s.progress));
+    final progressField = Consumer(
+      builder: (context, ref, _) {
+        final progress = ref.watch(provider.select((s) => s.progress));
 
-            return NumberField(
-              label: 'Progress',
-              value: progress,
-              maxValue: oldEdit.progressMax ?? 100000,
-              onChanged: (progress) {
-                ref.read(provider.notifier).update((s) {
-                  var status = s.status;
-                  var startedAt = s.startedAt;
-                  var completedAt = s.completedAt;
+        return NumberField(
+          label: 'Progress',
+          value: progress,
+          maxValue: oldEdit.progressMax ?? 100000,
+          onChanged: (progress) {
+            ref.read(provider.notifier).update((s) {
+              var status = s.status;
+              var startedAt = s.startedAt;
+              var completedAt = s.completedAt;
 
-                  String? text;
-                  if (progress == s.progressMax &&
-                      oldEdit.progress != progress) {
-                    if (oldEdit.status == status &&
-                        status != EntryStatus.completed) {
-                      status = EntryStatus.completed;
-                      text = 'Status changed';
-                    }
+              String? text;
+              if (progress == s.progressMax && oldEdit.progress != progress) {
+                if (oldEdit.status == status &&
+                    status != EntryStatus.completed) {
+                  status = EntryStatus.completed;
+                  text = 'Status changed';
+                }
 
-                    if (oldEdit.completedAt == completedAt &&
-                        completedAt == null) {
-                      completedAt = DateTime.now();
-                      text = text == null
-                          ? 'Completed date changed'
-                          : 'Status & Completed date changed';
-                    }
+                if (oldEdit.completedAt == completedAt && completedAt == null) {
+                  completedAt = DateTime.now();
+                  text = text == null
+                      ? 'Completed date changed'
+                      : 'Status & Completed date changed';
+                }
 
-                    if (text != null) Toast.show(context, text);
-                  } else if (oldEdit.progress == 0 &&
-                      oldEdit.progress != progress) {
-                    if (oldEdit.status == status &&
-                        (status == null || status == EntryStatus.planning)) {
-                      status = EntryStatus.current;
-                      text = 'Status changed';
-                    }
+                if (text != null) Toast.show(context, text);
+              } else if (oldEdit.progress == 0 &&
+                  oldEdit.progress != progress) {
+                if (oldEdit.status == status &&
+                    (status == null || status == EntryStatus.planning)) {
+                  status = EntryStatus.current;
+                  text = 'Status changed';
+                }
 
-                    if (oldEdit.startedAt == null && startedAt == null) {
-                      startedAt = DateTime.now();
-                      text = text == null
-                          ? 'Start date changed'
-                          : 'Status & start date changed';
-                    }
-                  }
-                  if (text != null) Toast.show(context, text);
+                if (oldEdit.startedAt == null && startedAt == null) {
+                  startedAt = DateTime.now();
+                  text = text == null
+                      ? 'Start date changed'
+                      : 'Status & start date changed';
+                }
+              }
+              if (text != null) Toast.show(context, text);
 
-                  return s.copyWith(
-                    progress: progress.toInt(),
-                    status: status,
-                    startedAt: () => startedAt,
-                    completedAt: () => completedAt,
-                  );
-                });
-              },
-            );
+              return s.copyWith(
+                progress: progress.toInt(),
+                status: status,
+                startedAt: () => startedAt,
+                completedAt: () => completedAt,
+              );
+            });
           },
-        ),
-        Consumer(
-          builder: (context, ref, _) => NumberField(
-            label: 'Repeat',
-            value: ref.read(provider).repeat,
-            onChanged: (repeat) => ref
-                .read(provider.notifier)
-                .update((s) => s.copyWith(repeat: repeat.toInt())),
-          ),
-        ),
-        if (oldEdit.type != 'ANIME')
-          Consumer(
+        );
+      },
+    );
+
+    final volumeProgressField = oldEdit.type != 'ANIME'
+        ? Consumer(
             builder: (context, ref, _) => NumberField(
               label: 'Volume Progress',
               value: ref.read(provider).progressVolumes,
@@ -211,12 +199,29 @@ class _EditView extends StatelessWidget {
                         ),
                       ),
             ),
-          ),
-      ],
-    );
+          )
+        : null;
 
-    final dates = _FieldGrid(
-      minWidth: 165,
+    final progressFields = volumeProgressField == null
+        ? SliverPadding(
+            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+            sliver: SliverToBoxAdapter(child: progressField),
+          )
+        : _FieldGrid(
+            minWidth: 140,
+            children: [
+              if (Persistence().leftHanded) ...[
+                progressField,
+                volumeProgressField,
+              ] else ...[
+                volumeProgressField,
+                progressField,
+              ],
+            ],
+          );
+
+    final timelineFields = _FieldGrid(
+      minWidth: 195,
       children: [
         Consumer(
           builder: (context, ref, _) {
@@ -283,6 +288,15 @@ class _EditView extends StatelessWidget {
             );
           },
         ),
+        Consumer(
+          builder: (context, ref, _) => NumberField(
+            label: 'Repeat',
+            value: ref.read(provider).repeat,
+            onChanged: (repeat) => ref
+                .read(provider.notifier)
+                .update((s) => s.copyWith(repeat: repeat.toInt())),
+          ),
+        ),
       ],
     );
 
@@ -347,9 +361,8 @@ class _EditView extends StatelessWidget {
       },
     );
 
-    const space = SliverToBoxAdapter(child: SizedBox(height: 10));
-
     return Material(
+      color: Colors.transparent,
       child: Consumer(
         builder: (context, ref, _) {
           final notifier = ref.watch(provider.notifier);
@@ -357,23 +370,20 @@ class _EditView extends StatelessWidget {
           return CustomScrollView(
             controller: scrollCtrl,
             slivers: [
-              space,
-              space,
-              status,
-              space,
-              space,
-              tracking,
+              const SliverToBoxAdapter(child: SizedBox(height: 20)),
+              statusField,
+              const SliverToBoxAdapter(child: SizedBox(height: 15)),
+              progressFields,
               SliverToBoxAdapter(child: ScoreField(tag)),
-              space,
+              const SliverToBoxAdapter(child: SizedBox(height: 10)),
               advancedScoring,
-              space,
+              const SliverToBoxAdapter(child: SizedBox(height: 10)),
               _Notes(
                 value: notifier.state.notes,
                 onChanged: (notes) => notifier.state.notes = notes,
               ),
-              space,
-              space,
-              dates,
+              const SliverToBoxAdapter(child: SizedBox(height: 20)),
+              timelineFields,
               SliverToBoxAdapter(
                 child: StatefulCheckboxListTile(
                   title: const Text('Private'),

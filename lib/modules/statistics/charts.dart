@@ -108,8 +108,14 @@ class PieChart extends StatelessWidget {
               end: Alignment.centerRight,
               stops: const [0, 1],
               colors: [
-                Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
-                Theme.of(context).colorScheme.surfaceVariant.withAlpha(100),
+                Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withAlpha(50),
+                Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withAlpha(100),
               ],
             ),
           ),
@@ -137,7 +143,7 @@ class PieChart extends StatelessWidget {
                     ),
                     child: CustomPaint(
                       foregroundPainter: _PieLines(
-                        Theme.of(context).colorScheme.background,
+                        Theme.of(context).colorScheme.surface,
                         values,
                       ),
                     ),

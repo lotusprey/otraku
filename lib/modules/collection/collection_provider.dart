@@ -5,7 +5,7 @@ import 'package:otraku/common/utils/options.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/home/home_provider.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 
@@ -16,7 +16,7 @@ final collectionProvider = AsyncNotifierProvider.autoDispose
 
 class CollectionNotifier
     extends AutoDisposeFamilyAsyncNotifier<Collection, CollectionTag> {
-  var _sort = EntrySort.TITLE;
+  var _sort = EntrySort.title;
 
   @override
   FutureOr<Collection> build(arg) async {
@@ -25,7 +25,7 @@ class CollectionNotifier
       _ => 0,
     };
 
-    final isFull = arg.userId != Options().id ||
+    final isFull = arg.userId != Persistence().id ||
         ref.watch(homeProvider.select(
           (s) => arg.ofAnime
               ? s.didExpandAnimeCollection

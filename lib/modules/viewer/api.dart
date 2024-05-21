@@ -12,8 +12,8 @@ abstract class Api {
   static String? _accessToken;
 
   static Future<bool> init() async {
-    if (Options().selectedAccount == null) return false;
-    final account = Options().accounts[Options().selectedAccount!];
+    if (Persistence().selectedAccount == null) return false;
+    final account = Persistence().accounts[Persistence().selectedAccount!];
     if (DateTime.now().compareTo(account.expiration) >= 0) return false;
 
     _accessToken = await const FlutterSecureStorage().read(key: _key(account));
@@ -23,19 +23,19 @@ abstract class Api {
   static bool hasActiveAccount() => _accessToken != null;
 
   static Future<bool> selectAccount(int index) async {
-    if (index < 0 || index >= Options().accounts.length) return false;
+    if (index < 0 || index >= Persistence().accounts.length) return false;
 
-    final account = Options().accounts[index];
+    final account = Persistence().accounts[index];
     if (DateTime.now().compareTo(account.expiration) >= 0) return false;
 
-    Options().selectedAccount = index;
+    Persistence().selectedAccount = index;
     _accessToken = await const FlutterSecureStorage().read(key: _key(account));
     return true;
   }
 
   static Future<void> unselectAccount() async {
     _accessToken = null;
-    Options().selectedAccount = null;
+    Persistence().selectedAccount = null;
   }
 
   static Future<bool> addAccount(
@@ -53,10 +53,13 @@ abstract class Api {
         return false;
       }
 
-      if (Options().accounts.indexWhere((a) => a.id == id) > -1) return true;
+      if (Persistence().accounts.indexWhere((a) => a.id == id) > -1) {
+        return true;
+      }
 
       final expiration = DateTime.now()
           .add(Duration(seconds: secondsLeftBeforeExpiration, days: -1));
+
       final account = Account(
         id: id,
         name: name,
@@ -64,7 +67,7 @@ abstract class Api {
         expiration: expiration,
       );
 
-      Options().accounts = [...Options().accounts, account];
+      Persistence().accounts = [...Persistence().accounts, account];
       await const FlutterSecureStorage()
           .write(key: _key(account), value: token);
       return true;
@@ -75,17 +78,17 @@ abstract class Api {
   }
 
   static Future<void> removeAccount(int index) async {
-    final account = Options().accounts.elementAtOrNull(index);
+    final account = Persistence().accounts.elementAtOrNull(index);
     if (account == null) return;
 
-    final selectedAccount = Options().selectedAccount;
+    final selectedAccount = Persistence().selectedAccount;
     if (selectedAccount != null && selectedAccount >= index) {
-      Options().selectedAccount = null;
+      Persistence().selectedAccount = null;
     }
 
     await const FlutterSecureStorage().delete(key: _key(account));
-    Options().accounts.removeAt(index);
-    Options().accounts = Options().accounts;
+    Persistence().accounts.removeAt(index);
+    Persistence().accounts = Persistence().accounts;
   }
 
   static String _key(Account account) => 'auth${account.id}';

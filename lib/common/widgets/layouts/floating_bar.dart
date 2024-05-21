@@ -66,7 +66,7 @@ class FloatingBarState extends State<FloatingBar>
   Widget build(BuildContext context) {
     if (!_visible) return const SizedBox();
 
-    final children = Options().leftHanded
+    final children = Persistence().leftHanded
         ? widget.children
         : widget.children.reversed.toList();
 
@@ -81,7 +81,7 @@ class FloatingBarState extends State<FloatingBar>
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: Row(
-            mainAxisAlignment: Options().leftHanded
+            mainAxisAlignment: Persistence().leftHanded
                 ? MainAxisAlignment.start
                 : MainAxisAlignment.end,
             children: [
@@ -131,8 +131,10 @@ class ActionButton extends StatelessWidget {
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
-                color:
-                    Theme.of(context).colorScheme.surfaceVariant.withAlpha(50),
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest
+                    .withAlpha(50),
               ),
             ],
           ),

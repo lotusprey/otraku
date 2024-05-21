@@ -30,7 +30,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     final next = state.valueOrNull;
     if (prev == null || next == null) return;
 
-    final id = Options().id!;
+    final id = Persistence().id!;
     bool invalidateAnimeCollection = false;
     bool invalidateMangaCollection = false;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/common/utils/extensions.dart';
 
 class DateField extends StatefulWidget {
   const DateField({
@@ -18,13 +19,13 @@ class DateField extends StatefulWidget {
 
 class _DateFieldState extends State<DateField> {
   late DateTime? _value = widget.value;
-  late final _ctrl = TextEditingController(text: _dateToText(_value));
+  late final _ctrl = TextEditingController(text: _value?.formattedDate ?? '');
 
   @override
   void didUpdateWidget(covariant DateField oldWidget) {
     super.didUpdateWidget(oldWidget);
     _value = widget.value;
-    final text = _dateToText(_value);
+    final text = _value?.formattedDate ?? '';
     if (_ctrl.text != text) _ctrl.text = text;
   }
 
@@ -68,7 +69,7 @@ class _DateFieldState extends State<DateField> {
                 if (pickedDate == null) return;
 
                 _value = pickedDate;
-                _ctrl.text = _dateToText(_value);
+                _ctrl.text = _value?.formattedDate ?? '';
                 widget.onChanged(pickedDate);
               }),
             ),
@@ -94,7 +95,4 @@ class _DateFieldState extends State<DateField> {
       ),
     );
   }
-
-  String _dateToText(DateTime? date) =>
-      date != null ? '${date.year}-${date.month}-${date.day}' : '';
 }

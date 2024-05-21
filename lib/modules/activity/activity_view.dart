@@ -156,7 +156,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
   void _onEdited(Map<String, dynamic> map) {
     final activity = ref
         .read(activityProvider(widget.id).notifier)
-        .replaceActivity(map, Options().id!);
+        .replaceActivity(map, Persistence().id!);
     if (activity != null && widget.feedId != null) {
       ref
           .read(activitiesProvider(widget.feedId!).notifier)

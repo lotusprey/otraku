@@ -1,7 +1,7 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
-import 'package:otraku/modules/media/media_constants.dart';
 import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/modules/media/media_models.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
@@ -133,7 +133,7 @@ class EntryList {
       status: status,
       splitCompletedListFormat:
           splitCompleted && status == EntryStatus.completed
-              ? map['entries'][0]['media']['format']
+              ? MediaFormat.from(map['entries'][0]['media']['format'])
               : null,
       entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
     );
@@ -147,11 +147,8 @@ class EntryList {
   final EntryStatus? status;
 
   /// If the user's "completed" list is split by format and this is one of the
-  /// resulting lists, this holds the corresponding [AnimeFormat] or
-  /// [MangaFormat]. Parsing the `String` is unnecessary for now.
-  /// The value is `null`, if the list doesn't fulfill the
-  /// aforementioned conditions.
-  final String? splitCompletedListFormat;
+  /// resulting lists, [splitCompletedListFormat] is the corresponding format.
+  final MediaFormat? splitCompletedListFormat;
 
   void removeByMediaId(int id) {
     for (int i = 0; i < entries.length; i++) {
@@ -177,60 +174,60 @@ class EntryList {
 }
 
 int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
-      EntrySort.TITLE => (a, b) =>
+      EntrySort.title => (a, b) =>
           a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase()),
-      EntrySort.TITLE_DESC => (a, b) => b.titles[0].compareTo(a.titles[0]),
-      EntrySort.SCORE => (a, b) {
+      EntrySort.titleDesc => (a, b) => b.titles[0].compareTo(a.titles[0]),
+      EntrySort.score => (a, b) {
           final comparison = a.score.compareTo(b.score);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.SCORE_DESC => (a, b) {
+      EntrySort.scoreDesc => (a, b) {
           final comparison = b.score.compareTo(a.score);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.UPDATED => (a, b) {
+      EntrySort.updated => (a, b) {
           final comparison = a.updatedAt!.compareTo(b.updatedAt!);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.UPDATED_DESC => (a, b) {
+      EntrySort.updatedDesc => (a, b) {
           final comparison = b.updatedAt!.compareTo(a.updatedAt!);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.ADDED => (a, b) {
+      EntrySort.added => (a, b) {
           final comparison = a.createdAt!.compareTo(b.createdAt!);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.ADDED_DESC => (a, b) {
+      EntrySort.addedDesc => (a, b) {
           final comparison = b.createdAt!.compareTo(a.createdAt!);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.PROGRESS => (a, b) {
+      EntrySort.progress => (a, b) {
           final comparison = a.progress.compareTo(b.progress);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.PROGRESS_DESC => (a, b) {
+      EntrySort.progressDesc => (a, b) {
           final comparison = b.progress.compareTo(a.progress);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.REPEATED => (a, b) {
+      EntrySort.repeated => (a, b) {
           final comparison = a.repeat.compareTo(b.repeat);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.REPEATED_DESC => (a, b) {
+      EntrySort.repeatedDesc => (a, b) {
           final comparison = b.repeat.compareTo(a.repeat);
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.AIRING => (a, b) {
+      EntrySort.airing => (a, b) {
           if (a.airingAt == null) {
             if (b.airingAt == null) {
               return a.titles[0]
@@ -246,7 +243,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.AIRING_DESC => (a, b) {
+      EntrySort.airingDesc => (a, b) {
           if (b.airingAt == null) {
             if (a.airingAt == null) {
               return a.titles[0]
@@ -262,7 +259,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.RELEASED_ON => (a, b) {
+      EntrySort.releasedOn => (a, b) {
           if (a.releaseStart == null) {
             if (b.releaseStart == null) {
               return a.titles[0]
@@ -278,7 +275,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.RELEASED_ON_DESC => (a, b) {
+      EntrySort.releasedOnDesc => (a, b) {
           if (b.releaseStart == null) {
             if (a.releaseStart == null) {
               return a.titles[0]
@@ -294,7 +291,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.STARTED_ON => (a, b) {
+      EntrySort.startedOn => (a, b) {
           if (a.watchStart == null) {
             if (b.watchStart == null) {
               return a.titles[0]
@@ -310,7 +307,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.STARTED_ON_DESC => (a, b) {
+      EntrySort.startedOnDesc => (a, b) {
           if (b.watchStart == null) {
             if (a.watchStart == null) {
               return a.titles[0]
@@ -326,7 +323,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.COMPLETED_ON => (a, b) {
+      EntrySort.completedOn => (a, b) {
           if (a.watchEnd == null) {
             if (b.watchEnd == null) {
               return a.titles[0]
@@ -342,7 +339,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.COMPLETED_ON_DESC => (a, b) {
+      EntrySort.completedOnDesc => (a, b) {
           if (b.watchEnd == null) {
             if (a.watchEnd == null) {
               return a.titles[0]
@@ -358,7 +355,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.AVG_SCORE => (a, b) {
+      EntrySort.avgScore => (a, b) {
           if (a.avgScore == null) {
             if (b.avgScore == null) {
               return a.titles[0]
@@ -374,7 +371,7 @@ int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
           if (comparison != 0) return comparison;
           return a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase());
         },
-      EntrySort.AVG_SCORE_DESC => (a, b) {
+      EntrySort.avgScoreDesc => (a, b) {
           if (b.avgScore == null) {
             if (a.avgScore == null) {
               return a.titles[0]
@@ -439,8 +436,8 @@ class Entry {
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Options().imageQuality.value],
-      format: map['media']['format'],
+      imageUrl: map['media']['coverImage'][Persistence().imageQuality.value],
+      format: MediaFormat.from(map['media']['format']),
       status: map['media']['status'],
       entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
@@ -468,7 +465,7 @@ class Entry {
   final int mediaId;
   final List<String> titles;
   final String imageUrl;
-  final String? format;
+  final MediaFormat? format;
   final String? status;
   final EntryStatus? entryStatus;
   final int? nextEpisode;

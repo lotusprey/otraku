@@ -6,7 +6,7 @@ import 'package:otraku/modules/character/character_filter_provider.dart';
 import 'package:otraku/modules/character/character_models.dart';
 import 'package:otraku/modules/character/character_provider.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
-import 'package:otraku/modules/media/media_constants.dart';
+import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';

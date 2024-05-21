@@ -177,14 +177,14 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
       label: Text(widget.text),
       labelStyle: TextStyle(
         color: _positive
-            ? Theme.of(context).colorScheme.onPrimaryContainer
+            ? Theme.of(context).colorScheme.onSecondaryContainer
             : Theme.of(context).colorScheme.onErrorContainer,
       ),
       deleteIconColor: _positive
-          ? Theme.of(context).colorScheme.onPrimaryContainer
+          ? Theme.of(context).colorScheme.onSecondaryContainer
           : Theme.of(context).colorScheme.onErrorContainer,
       backgroundColor: _positive
-          ? Theme.of(context).colorScheme.primaryContainer
+          ? Theme.of(context).colorScheme.secondaryContainer
           : Theme.of(context).colorScheme.errorContainer,
       onDeleted: widget.onDeleted,
       onPressed: () {
@@ -216,8 +216,8 @@ class _FilterTagSheet extends ConsumerStatefulWidget {
 
 class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
   late final TagGroup _tags;
-  late final List<int> _categoryIndices;
   late final List<int> _itemIndices;
+  late final List<int> _categoryIndices;
   String _filter = '';
   int _index = 0;
 
@@ -225,11 +225,8 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
   void initState() {
     super.initState();
     _tags = ref.read(tagsProvider).valueOrNull!;
-    _itemIndices = [..._tags.categoryItems[_index]];
-    _categoryIndices = [];
-    for (int i = 0; i < _tags.categoryNames.length; i++) {
-      _categoryIndices.add(i);
-    }
+    _itemIndices = [..._tags.categories[_index].indices];
+    _categoryIndices = List.generate(_tags.categories.length, (i) => i);
   }
 
   @override
@@ -301,69 +298,14 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                     child: SearchField(
                       hint: 'Tag',
                       value: _filter,
-                      onChanged: (val) {
-                        _filter = val.toLowerCase();
-                        _categoryIndices.clear();
-                        _itemIndices.clear();
-
-                        categoryLoop:
-                        for (int i = 0; i < _tags.categoryNames.length; i++) {
-                          for (final j in _tags.categoryItems[i]) {
-                            if (_tags.names[j]
-                                .toLowerCase()
-                                .contains(_filter)) {
-                              _categoryIndices.add(i);
-                              continue categoryLoop;
-                            }
-                          }
-                        }
-
-                        if (_categoryIndices.isEmpty) {
-                          _index = 0;
-                          setState(() {});
-                          return;
-                        }
-
-                        if (_index >= _categoryIndices.length) {
-                          _index = _categoryIndices.length - 1;
-                        }
-
-                        final itemsIndex = _categoryIndices[_index];
-                        for (final i in _tags.categoryItems[itemsIndex]) {
-                          if (_tags.names[i].toLowerCase().contains(_filter)) {
-                            _itemIndices.add(i);
-                          }
-                        }
-
-                        setState(() {});
-                      },
+                      onChanged: _onSearch,
                     ),
                   ),
                   SizedBox(
                     height: 40,
                     child: ShadowedOverflowList(
                       itemCount: _categoryIndices.length,
-                      itemBuilder: (_, i) => _TagCategoryChip(
-                        name: _tags.categoryNames[_categoryIndices[i]],
-                        selected: i == _index,
-                        onTap: () {
-                          if (_index == i) return;
-
-                          _index = i;
-                          _itemIndices.clear();
-
-                          final itemsIndex = _categoryIndices[_index];
-                          for (final i in _tags.categoryItems[itemsIndex]) {
-                            if (_tags.names[i]
-                                .toLowerCase()
-                                .contains(_filter)) {
-                              _itemIndices.add(i);
-                            }
-                          }
-
-                          setState(() {});
-                        },
-                      ),
+                      itemBuilder: _buildCategoryChip,
                     ),
                   ),
                 ],
@@ -372,6 +314,61 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
           ),
         ),
       ],
+    );
+  }
+
+  void _onSearch(String val) {
+    _filter = val.toLowerCase();
+    _categoryIndices.clear();
+    _itemIndices.clear();
+
+    categoryLoop:
+    for (int i = 0; i < _tags.categories.length; i++) {
+      for (final j in _tags.categories[i].indices) {
+        if (_tags.names[j].toLowerCase().contains(_filter)) {
+          _categoryIndices.add(i);
+          continue categoryLoop;
+        }
+      }
+    }
+
+    if (_categoryIndices.isEmpty) {
+      _index = 0;
+      setState(() {});
+      return;
+    }
+
+    if (_index >= _categoryIndices.length) {
+      _index = _categoryIndices.length - 1;
+    }
+
+    for (final i in _tags.categories[_categoryIndices[_index]].indices) {
+      if (_tags.names[i].toLowerCase().contains(_filter)) {
+        _itemIndices.add(i);
+      }
+    }
+
+    setState(() {});
+  }
+
+  Widget _buildCategoryChip(BuildContext context, int i) {
+    return _TagCategoryChip(
+      name: _tags.categories[_categoryIndices[i]].name,
+      selected: i == _index,
+      onTap: () {
+        if (_index == i) return;
+
+        _index = i;
+        _itemIndices.clear();
+
+        for (final i in _tags.categories[_categoryIndices[_index]].indices) {
+          if (_tags.names[i].toLowerCase().contains(_filter)) {
+            _itemIndices.add(i);
+          }
+        }
+
+        setState(() {});
+      },
     );
   }
 }
@@ -397,14 +394,14 @@ class _TagCategoryChip extends StatelessWidget {
             ? Theme.of(context)
                 .textTheme
                 .bodyMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.background)
+                ?.copyWith(color: Theme.of(context).colorScheme.surface)
             : Theme.of(context).textTheme.bodyMedium,
         backgroundColor: selected
             ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.onSecondary,
         side: selected
             ? BorderSide(color: Theme.of(context).colorScheme.primary)
-            : BorderSide(color: Theme.of(context).colorScheme.onBackground),
+            : BorderSide(color: Theme.of(context).colorScheme.onSurface),
       ),
     );
   }

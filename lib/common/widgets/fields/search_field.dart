@@ -75,7 +75,7 @@ class _SearchFieldState extends State<SearchField> {
         isDense: false,
         hintText: widget.hint,
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceVariant,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.only(left: 15),
         constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
         suffixIcon: _ctrl.text.isNotEmpty
@@ -83,7 +83,7 @@ class _SearchFieldState extends State<SearchField> {
                 tooltip: 'Clear',
                 iconSize: Consts.iconSmall,
                 icon: const Icon(Icons.close_rounded),
-                color: Theme.of(context).colorScheme.onBackground,
+                color: Theme.of(context).colorScheme.onSurface,
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   _ctrl.clear();

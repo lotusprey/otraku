@@ -25,7 +25,7 @@ class ActivitiesNotifier
       ref.keepAlive();
     }
 
-    viewerId = Options().id!;
+    viewerId = Persistence().id!;
     filter = ref.watch(activitiesFilterProvider(arg));
     return await _fetch(const Paged());
   }
@@ -55,7 +55,7 @@ class ActivitiesNotifier
 
     final items = <Activity>[];
     for (final a in data['Page']['activities']) {
-      final item = Activity.maybe(a, viewerId, Options().imageQuality);
+      final item = Activity.maybe(a, viewerId, Persistence().imageQuality);
       if (item != null) items.add(item);
     }
 
@@ -74,7 +74,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    final activity = Activity.maybe(map, viewerId, Options().imageQuality);
+    final activity = Activity.maybe(map, viewerId, Persistence().imageQuality);
     if (activity == null) return;
 
     state = AsyncValue.data(Paged(
@@ -89,7 +89,7 @@ class ActivitiesNotifier
     if (!state.hasValue) return;
     final value = state.value!;
 
-    final activity = Activity.maybe(map, viewerId, Options().imageQuality);
+    final activity = Activity.maybe(map, viewerId, Persistence().imageQuality);
     if (activity == null) return;
 
     for (int i = 0; i < value.items.length; i++) {

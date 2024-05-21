@@ -41,7 +41,7 @@ class MediaHeader extends StatelessWidget {
           if (info.isAdult) textRailItems['Adult'] = true;
 
           if (info.format != null) {
-            textRailItems[info.format!.noScreamingSnakeCase] = false;
+            textRailItems[info.format!.label] = false;
           }
 
           if (media.edit.status != null) {
@@ -133,7 +133,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: Container(
               height: imageHeight,
               width: imageWidth,
-              color: theme.colorScheme.surfaceVariant,
+              color: theme.colorScheme.surfaceContainerHighest,
               child: cover != null
                   ? GestureDetector(
                       onTap: () => showPopUp(
@@ -164,7 +164,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                       shadows: [
                         Shadow(
                           blurRadius: 10,
-                          color: theme.colorScheme.background,
+                          color: theme.colorScheme.surface,
                         ),
                       ],
                     ),
@@ -238,7 +238,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                           )
                         : DecoratedBox(
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceVariant,
+                              color: theme.colorScheme.surfaceContainerHighest,
                             ),
                           ),
                   ),
@@ -249,7 +249,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     height: bannerOffset,
                     child: Container(
                       alignment: Alignment.topCenter,
-                      color: theme.colorScheme.background,
+                      color: theme.colorScheme.surface,
                       child: Container(
                         height: 0,
                         decoration: BoxDecoration(
@@ -257,7 +257,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                             BoxShadow(
                               blurRadius: 15,
                               spreadRadius: 25,
-                              color: theme.colorScheme.background,
+                              color: theme.colorScheme.surface,
                             ),
                           ],
                         ),
@@ -281,9 +281,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            theme.colorScheme.background,
-                            theme.colorScheme.background.withAlpha(200),
-                            theme.colorScheme.background.withAlpha(0),
+                            theme.colorScheme.surface,
+                            theme.colorScheme.surface.withAlpha(200),
+                            theme.colorScheme.surface.withAlpha(0),
                           ],
                         ),
                       ),
@@ -298,7 +298,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                       opacity: transition,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                          color: theme.colorScheme.background,
+                          color: theme.colorScheme.surface,
                         ),
                       ),
                     ),

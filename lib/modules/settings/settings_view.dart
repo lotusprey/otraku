@@ -6,10 +6,10 @@ import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/modules/settings/settings_app_tab.dart';
-import 'package:otraku/modules/settings/settings_content_tab.dart';
-import 'package:otraku/modules/settings/settings_notifications_tab.dart';
-import 'package:otraku/modules/settings/settings_about_tab.dart';
+import 'package:otraku/modules/settings/settings_app_view.dart';
+import 'package:otraku/modules/settings/settings_content_view.dart';
+import 'package:otraku/modules/settings/settings_notifications_view.dart';
+import 'package:otraku/modules/settings/settings_about_view.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -73,7 +73,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
         topBar: const TopBar(title: 'App'),
         child: ConstrainedView(
           padding: EdgeInsets.zero,
-          child: SettingsAppTab(_scrollCtrl),
+          child: SettingsAppSubview(_scrollCtrl),
         ),
       ),
       if (_settings != null) ...[
@@ -82,7 +82,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           floatingBar: floatingBar,
           child: ConstrainedView(
             padding: EdgeInsets.zero,
-            child: SettingsContentTab(_scrollCtrl, _settings!),
+            child: SettingsContentSubview(_scrollCtrl, _settings!),
           ),
         ),
         TabScaffold(
@@ -90,7 +90,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           floatingBar: floatingBar,
           child: ConstrainedView(
             padding: EdgeInsets.zero,
-            child: SettingsNotificationsTab(_scrollCtrl, _settings!),
+            child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
           ),
         ),
       ] else ...[
@@ -101,7 +101,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
         topBar: const TopBar(title: 'About'),
         child: ConstrainedView(
           padding: EdgeInsets.zero,
-          child: SettingsAboutTab(_scrollCtrl),
+          child: SettingsAboutSubview(_scrollCtrl),
         ),
       ),
     ];

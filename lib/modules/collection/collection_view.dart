@@ -13,7 +13,7 @@ import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/collection/collection_provider.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/filter/filter_view.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -47,7 +47,7 @@ class _CollectionViewState extends State<CollectionView> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      child: CollectionSubView(
+      child: CollectionSubview(
         tag: (userId: widget.userId, ofAnime: widget.ofAnime),
         scrollCtrl: _ctrl,
         focusNode: null,
@@ -56,8 +56,8 @@ class _CollectionViewState extends State<CollectionView> {
   }
 }
 
-class CollectionSubView extends StatelessWidget {
-  const CollectionSubView({
+class CollectionSubview extends StatelessWidget {
+  const CollectionSubview({
     required this.tag,
     required this.scrollCtrl,
     required this.focusNode,

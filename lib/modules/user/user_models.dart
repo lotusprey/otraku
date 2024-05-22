@@ -1,6 +1,6 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/markdown.dart';
-import 'package:otraku/modules/statistics/user_statistics.dart';
+import 'package:otraku/modules/statistics/statistics_model.dart';
 
 class UserItem {
   UserItem._({required this.id, required this.name, required this.imageUrl});
@@ -55,8 +55,8 @@ class User {
       donatorTier: map['donatorTier'] ?? 0,
       donatorBadge: map['donatorBadge'] ?? '',
       modRoles: modRoles,
-      animeStats: UserStatistics(map['statistics']['anime'], true),
-      mangaStats: UserStatistics(map['statistics']['manga'], false),
+      animeStats: Statistics(map['statistics']['anime'], true),
+      mangaStats: Statistics(map['statistics']['manga'], false),
     );
   }
 
@@ -72,6 +72,6 @@ class User {
   final int donatorTier;
   final String donatorBadge;
   final List<String> modRoles;
-  final UserStatistics animeStats;
-  final UserStatistics mangaStats;
+  final Statistics animeStats;
+  final Statistics mangaStats;
 }

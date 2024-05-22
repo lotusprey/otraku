@@ -57,7 +57,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
       ),
     );
 
-    final onRefresh = () => ref.invalidate(favoritesProvider(widget.id));
+    final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomNavBar(

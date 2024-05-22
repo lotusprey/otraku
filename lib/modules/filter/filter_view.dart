@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/filter/tag_selector.dart';

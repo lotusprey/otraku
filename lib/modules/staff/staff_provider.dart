@@ -9,7 +9,7 @@ import 'package:otraku/modules/staff/staff_filter_provider.dart';
 import 'package:otraku/modules/staff/staff_models.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 
 /// Favorite/Unfavorite staff. Returns `true` if successful.
 Future<bool> toggleFavoriteStaff(int staffId) async {

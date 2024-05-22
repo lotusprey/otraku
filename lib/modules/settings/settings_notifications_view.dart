@@ -4,8 +4,8 @@ import 'package:otraku/common/widgets/fields/stateful_tiles.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 
-class SettingsNotificationsTab extends StatelessWidget {
-  const SettingsNotificationsTab(this.scrollCtrl, this.settings);
+class SettingsNotificationsSubview extends StatelessWidget {
+  const SettingsNotificationsSubview(this.scrollCtrl, this.settings);
 
   final ScrollController scrollCtrl;
   final Settings settings;

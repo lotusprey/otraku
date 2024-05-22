@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/modules/statistics/user_statistics.dart';
+import 'package:otraku/modules/statistics/statistics_model.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
@@ -131,7 +131,7 @@ class _StatisticsView extends StatelessWidget {
     required this.onSecondaryTabChanged,
   });
 
-  final UserStatistics statistics;
+  final Statistics statistics;
   final bool ofAnime;
   final ScrollController scrollCtrl;
   final int Function() primaryBarChartTab;
@@ -197,7 +197,7 @@ class _StatisticsView extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  _Details(UserStatistics statistics, bool ofAnime) {
+  _Details(Statistics statistics, bool ofAnime) {
     subtitles.add(statistics.count);
     subtitles.add(statistics.partsConsumed);
     if (ofAnime) {

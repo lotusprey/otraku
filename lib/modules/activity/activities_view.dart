@@ -11,7 +11,7 @@ import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
@@ -93,8 +93,8 @@ class ActivitiesSubView extends StatelessWidget {
             (s) => s.unwrapPrevious().whenData((data) => data),
           ),
           scrollCtrl: scrollCtrl,
-          onRefresh: () {
-            ref.invalidate(activitiesProvider(id));
+          onRefresh: (invalidate) {
+            invalidate(activitiesProvider(id));
             if (id == homeFeedId) {
               ref.read(settingsProvider.notifier).refetchUnread();
             }

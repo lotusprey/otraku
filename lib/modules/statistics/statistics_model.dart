@@ -1,8 +1,8 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/modules/media/media_models.dart';
 
-class UserStatistics {
-  UserStatistics._({
+class Statistics {
+  Statistics._({
     required this.count,
     required this.meanScore,
     required this.standardDeviation,
@@ -15,7 +15,7 @@ class UserStatistics {
     required this.countries,
   });
 
-  factory UserStatistics(Map<String, dynamic> map, bool ofAnime) {
+  factory Statistics(Map<String, dynamic> map, bool ofAnime) {
     final scores = <AmountStatistics>[];
     final lengths = <AmountStatistics>[];
     final formats = <TypeStatistics>[];
@@ -53,7 +53,7 @@ class UserStatistics {
       return a.type.compareTo(b.type);
     });
 
-    return UserStatistics._(
+    return Statistics._(
       count: map['count'],
       meanScore: map['meanScore'].toDouble(),
       standardDeviation: map['standardDeviation'].toDouble(),

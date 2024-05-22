@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 
 final discoverFilterProvider =

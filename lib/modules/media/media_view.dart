@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/modules/media/media_action_buttons.dart';
-import 'package:otraku/modules/media/media_grids.dart';
+import 'package:otraku/modules/media/media_characters_view.dart';
+import 'package:otraku/modules/media/media_following_view.dart';
 import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/media/media_provider.dart';
-import 'package:otraku/modules/statistics/charts.dart';
+import 'package:otraku/modules/media/media_recommendations_view.dart';
+import 'package:otraku/modules/media/media_related_view.dart';
+import 'package:otraku/modules/media/media_reviews_view.dart';
+import 'package:otraku/modules/media/media_staff_view.dart';
+import 'package:otraku/modules/media/media_stats_view.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/modules/media/media_info_view.dart';
-import 'package:otraku/common/widgets/grids/relation_grid.dart';
+import 'package:otraku/modules/media/media_overview_view.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/modules/media/media_header.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/paged_view.dart';
 
 class MediaView extends StatefulWidget {
   const MediaView(this.id, this.coverUrl);
@@ -175,136 +177,34 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     }
   }
 
-  void _refresh(WidgetRef ref) {
-    if (widget.tabCtrl.index == MediaTab.following.index) {
-      ref.invalidate(mediaFollowingProvider(widget.id));
-    } else {
-      ref.invalidate(mediaRelationsProvider(widget.id));
-    }
-    _lastMaxExtent = 0;
-  }
-
   @override
   Widget build(BuildContext context) {
     ref.watch(mediaRelationsProvider(widget.id).select((_) => null));
 
-    final stats = widget.media.stats;
-
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
-        ConstrainedView(child: MediaInfoView(widget.media.info, _scrollCtrl)),
         ConstrainedView(
-          child: CustomScrollView(
-            controller: _scrollCtrl,
-            slivers: [
-              const SliverToBoxAdapter(child: SizedBox(height: 10)),
-              MediaRelatedGrid(widget.media.relations),
-              const SliverFooter(),
-            ],
-          ),
+          child: MediaOverviewSubview(widget.media.info, _scrollCtrl),
         ),
-        Consumer(
-          builder: (context, ref, _) => PagedView<Relation>(
-            withTopOffset: false,
-            provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.characters),
-            ),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: () => _refresh(ref),
-            onData: (data) {
-              final mediaRelations = ref.watch(
-                mediaRelationsProvider(widget.id).select((s) => s.valueOrNull),
-              );
-
-              if (mediaRelations == null || mediaRelations.languages.isEmpty) {
-                return SingleRelationGrid(data.items);
-              }
-
-              return RelationGrid(
-                mediaRelations.getCharactersAndVoiceActors(),
-              );
-            },
-          ),
+        MediaRelatedSubview(
+          relations: widget.media.related,
+          scrollCtrl: _scrollCtrl,
         ),
-        Consumer(
-          builder: (context, ref, _) => PagedView<Relation>(
-            withTopOffset: false,
-            provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.staff),
-            ),
-            onData: (data) => SingleRelationGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: () => _refresh(ref),
-          ),
+        MediaCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaStaffSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaReviewsSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          bannerUrl: widget.media.info.banner,
         ),
-        Consumer(
-          builder: (context, ref, _) => PagedView<RelatedReview>(
-            withTopOffset: false,
-            provider: mediaRelationsProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.reviews),
-            ),
-            onData: (data) => MediaReviewGrid(
-              data.items,
-              widget.media.info.banner,
-            ),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: () => _refresh(ref),
-          ),
-        ),
-        Consumer(
-          builder: (context, ref, _) => PagedView<MediaFollowing>(
-            withTopOffset: false,
-            provider: mediaFollowingProvider(widget.id),
-            onData: (data) => MediaFollowingGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: () => _refresh(ref),
-          ),
-        ),
-        Consumer(
-          builder: (context, ref, _) => PagedView<Recommendation>(
-            withTopOffset: false,
-            provider: mediaRelationsProvider(widget.id).select(
-              (s) =>
-                  s.unwrapPrevious().whenData((data) => data.recommendations),
-            ),
-            onData: (data) => MediaRecommendationGrid(widget.id, data.items),
-            onRefresh: () => _refresh(ref),
-            scrollCtrl: _scrollCtrl,
-          ),
-        ),
-        ConstrainedView(
-          child: CustomScrollView(
-            controller: _scrollCtrl,
-            slivers: [
-              if (stats.ranks.isNotEmpty)
-                MediaRankGrid(
-                  ref: ref,
-                  info: widget.media.info,
-                  ranks: stats.ranks,
-                ),
-              if (stats.scoreNames.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: BarChart(
-                    title: 'Score Distribution',
-                    names: stats.scoreNames.map((n) => n.toString()).toList(),
-                    values: stats.scoreValues,
-                  ),
-                ),
-              if (stats.statusNames.isNotEmpty)
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: PieChart(
-                      title: 'Status Distribution',
-                      names: stats.statusNames,
-                      values: stats.statusValues,
-                    ),
-                  ),
-                ),
-              const SliverFooter(),
-            ],
-          ),
+        MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaRecommendationsSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaStatsSubview(
+          ref: ref,
+          info: widget.media.info,
+          stats: widget.media.stats,
+          scrollCtrl: _scrollCtrl,
         ),
       ],
     );

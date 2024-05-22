@@ -101,7 +101,7 @@ class _CalendarViewState extends State<CalendarView> {
             child: PagedView(
               provider: calendarProvider,
               scrollCtrl: _scrollCtrl,
-              onRefresh: () => ref.invalidate(calendarProvider),
+              onRefresh: (invalidate) => invalidate(calendarProvider),
               onData: (data) => SliverGrid(
                 delegate: SliverChildBuilderDelegate(
                   (context, i) => _Tile(data.items[i]),

@@ -1,7 +1,7 @@
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 import 'package:otraku/modules/filter/filter_models.dart';
 import 'package:otraku/modules/review/review_models.dart';

@@ -13,7 +13,7 @@ import 'package:otraku/modules/review/reviews_filter_sheet.dart';
 import 'package:otraku/modules/studio/studio_grid.dart';
 import 'package:otraku/modules/user/user_grid.dart';
 import 'package:otraku/modules/review/review_grid.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/grids/tile_item_grid.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -21,8 +21,8 @@ import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/common/widgets/paged_view.dart';
 
-class DiscoverView extends StatelessWidget {
-  const DiscoverView(this.focusNode, this.scrollCtrl);
+class DiscoverSubview extends StatelessWidget {
+  const DiscoverSubview(this.focusNode, this.scrollCtrl);
 
   final FocusNode focusNode;
   final ScrollController scrollCtrl;
@@ -220,7 +220,7 @@ class _Grid extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
-        final onRefresh = () => ref.invalidate(discoverProvider);
+        final onRefresh = (invalidate) => invalidate(discoverProvider);
 
         switch (type) {
           case DiscoverType.anime:

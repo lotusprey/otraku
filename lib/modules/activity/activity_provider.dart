@@ -5,7 +5,7 @@ import 'package:otraku/modules/activity/activity_models.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/graphql.dart';
 import 'package:otraku/common/models/paged.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 
 /// Toggles an activity like and returns an error if unsuccessful.
 Future<Object?> toggleActivityLike(Activity activity) async {

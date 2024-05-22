@@ -1,6 +1,6 @@
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/markdown.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/media/media_models.dart';
 
 class ReviewItem {

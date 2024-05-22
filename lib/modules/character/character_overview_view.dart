@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/table_list.dart';
-import 'package:otraku/modules/staff/staff_provider.dart';
+import 'package:otraku/modules/character/character_provider.dart';
+import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/widgets/cached_image.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
@@ -11,12 +11,16 @@ import 'package:otraku/common/widgets/loaders/loaders.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/utils/toast.dart';
 
-class StaffInfoTab extends StatelessWidget {
-  const StaffInfoTab(this.id, this.imageUrl, this.scrollCtrl);
+class CharacterOverviewSubview extends StatelessWidget {
+  const CharacterOverviewSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.imageUrl,
+  });
 
   final int id;
-  final String? imageUrl;
   final ScrollController scrollCtrl;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -26,8 +30,8 @@ class StaffInfoTab extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, _) {
-        final staff = ref.watch(staffProvider(id));
-        final imageUrl = staff.valueOrNull?.imageUrl ?? this.imageUrl;
+        final character = ref.watch(characterProvider(id));
+        final imageUrl = character.valueOrNull?.imageUrl ?? this.imageUrl;
 
         final header = SliverToBoxAdapter(
           child: IntrinsicHeight(
@@ -57,7 +61,7 @@ class StaffInfoTab extends StatelessWidget {
                       ),
                     ),
                   ),
-                staff.unwrapPrevious().maybeWhen(
+                character.unwrapPrevious().maybeWhen(
                       orElse: () => const SizedBox(),
                       data: (data) => Flexible(
                         child: Column(
@@ -73,6 +77,21 @@ class StaffInfoTab extends StatelessWidget {
                             ),
                             if (data.altNames.isNotEmpty)
                               Text(data.altNames.join(', ')),
+                            if (data.altNamesSpoilers.isNotEmpty)
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                child: Text(
+                                  'Spoiler names',
+                                  style: Theme.of(context).textTheme.labelLarge,
+                                ),
+                                onTap: () => showPopUp(
+                                  context,
+                                  TextDialog(
+                                    title: 'Spoiler names',
+                                    text: data.altNamesSpoilers.join(', '),
+                                  ),
+                                ),
+                              ),
                           ],
                         ),
                       ),
@@ -83,11 +102,11 @@ class StaffInfoTab extends StatelessWidget {
         );
 
         final refreshControl = SliverRefreshControl(
-          onRefresh: () => ref.invalidate(staffProvider(id)),
+          onRefresh: () => ref.invalidate(characterProvider(id)),
         );
 
         return ConstrainedView(
-          child: staff.unwrapPrevious().when(
+          child: character.unwrapPrevious().when(
                 loading: () => CustomScrollView(
                   physics: Consts.physics,
                   controller: scrollCtrl,
@@ -121,16 +140,8 @@ class StaffInfoTab extends StatelessWidget {
                       ('Favorites', data.favorites.toString()),
                       if (data.dateOfBirth != null)
                         ('Birth', data.dateOfBirth!),
-                      if (data.dateOfDeath != null)
-                        ('Death', data.dateOfDeath!),
                       if (data.age != null) ('Age', data.age!),
                       if (data.gender != null) ('Gender', data.gender!),
-                      if (data.startYear != null)
-                        (
-                          'Years Active',
-                          '${data.startYear} - ${data.endYear ?? 'Present'}',
-                        ),
-                      if (data.homeTown != null) ('Home Town', data.homeTown!),
                       if (data.bloodType != null)
                         ('Blood Type', data.bloodType!),
                     ]),

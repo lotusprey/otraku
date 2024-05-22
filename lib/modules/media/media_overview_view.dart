@@ -15,8 +15,8 @@ import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
 import 'package:otraku/common/utils/toast.dart';
 
-class MediaInfoView extends StatelessWidget {
-  const MediaInfoView(this.info, this.scrollCtrl);
+class MediaOverviewSubview extends StatelessWidget {
+  const MediaOverviewSubview(this.info, this.scrollCtrl);
 
   final MediaInfo info;
   final ScrollController scrollCtrl;

@@ -52,7 +52,7 @@ class _SocialViewState extends ConsumerState<SocialView>
       ),
     );
 
-    final onRefresh = () => ref.invalidate(socialProvider(widget.id));
+    final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
     return PageScaffold(
       bottomBar: BottomNavBar(
@@ -82,20 +82,20 @@ class _SocialViewState extends ConsumerState<SocialView>
           controller: _tabCtrl,
           children: [
             PagedView<UserItem>(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
               provider: socialProvider(widget.id).select(
                 (s) => s.unwrapPrevious().whenData((data) => data.following),
               ),
               onData: (data) => UserGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
             ),
             PagedView<UserItem>(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
               provider: socialProvider(widget.id).select(
                 (s) => s.unwrapPrevious().whenData((data) => data.followers),
               ),
               onData: (data) => UserGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
             ),
           ],
         ),

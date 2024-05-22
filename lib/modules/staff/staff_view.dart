@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/common/models/relation.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/staff/staff_action_buttons.dart';
-import 'package:otraku/modules/staff/staff_info_tab.dart';
+import 'package:otraku/modules/staff/staff_characters_view.dart';
+import 'package:otraku/modules/staff/staff_overview_view.dart';
 import 'package:otraku/modules/staff/staff_provider.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/widgets/grids/relation_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/paged_view.dart';
+import 'package:otraku/modules/staff/staff_roles_view.dart';
 
 class StaffView extends ConsumerStatefulWidget {
   const StaffView(this.id, this.imageUrl);
@@ -67,7 +66,6 @@ class _StaffViewState extends ConsumerState<StaffView>
 
     final staff = ref.watch(staffProvider(widget.id));
     ref.watch(staffRelationsProvider(widget.id).select((_) => null));
-    final onRefresh = () => ref.invalidate(staffRelationsProvider(widget.id));
 
     final topBar = staff.valueOrNull != null
         ? TopBar(
@@ -91,7 +89,7 @@ class _StaffViewState extends ConsumerState<StaffView>
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
-          'Bio': Ionicons.information_outline,
+          'Overview': Ionicons.information_outline,
           'Characters': Ionicons.mic_outline,
           'Roles': Ionicons.briefcase_outline,
         },
@@ -109,25 +107,13 @@ class _StaffViewState extends ConsumerState<StaffView>
         child: TabBarView(
           controller: _tabCtrl,
           children: [
-            StaffInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
-            PagedView<(Relation, Relation)>(
-              provider: staffRelationsProvider(widget.id).select(
-                (s) => s
-                    .unwrapPrevious()
-                    .whenData((data) => data.charactersAndMedia),
-              ),
-              onData: (data) => RelationGrid(data.items),
+            StaffOverviewSubview(
+              id: widget.id,
               scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+              imageUrl: widget.imageUrl,
             ),
-            PagedView<Relation>(
-              provider: staffRelationsProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.roles),
-              ),
-              onData: (data) => SingleRelationGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-            ),
+            StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+            StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
           ],
         ),
       ),

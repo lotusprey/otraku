@@ -3,17 +3,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/widgets/overlays/sheets.dart';
 import 'package:otraku/modules/character/character_action_buttons.dart';
+import 'package:otraku/modules/character/character_anime_view.dart';
+import 'package:otraku/modules/character/character_manga_view.dart';
 import 'package:otraku/modules/character/character_provider.dart';
-import 'package:otraku/modules/character/character_info_tab.dart';
-import 'package:otraku/common/models/relation.dart';
+import 'package:otraku/modules/character/character_overview_view.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/widgets/grids/relation_grid.dart';
 import 'package:otraku/common/widgets/layouts/bottom_bar.dart';
 import 'package:otraku/common/widgets/layouts/floating_bar.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/overlays/dialogs.dart';
-import 'package:otraku/common/widgets/paged_view.dart';
 
 class CharacterView extends ConsumerStatefulWidget {
   const CharacterView(this.id, this.imageUrl);
@@ -67,7 +66,6 @@ class _CharacterViewState extends ConsumerState<CharacterView>
 
     final character = ref.watch(characterProvider(widget.id));
     ref.watch(characterMediaProvider(widget.id).select((_) => null));
-    final onRefresh = () => ref.invalidate(characterMediaProvider(widget.id));
 
     final topBar = character.valueOrNull != null
         ? TopBar(
@@ -91,7 +89,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
-          'Bio': Ionicons.information_outline,
+          'Overview': Ionicons.information_outline,
           'Anime': Ionicons.film_outline,
           'Manga': Ionicons.book_outline,
         },
@@ -111,30 +109,13 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         child: TabBarView(
           controller: _tabCtrl,
           children: [
-            CharacterInfoTab(widget.id, widget.imageUrl, _scrollCtrl),
-            PagedView<Relation>(
-              provider: characterMediaProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.anime),
-              ),
-              onData: (data) {
-                return RelationGrid(
-                  ref
-                      .watch(characterMediaProvider(widget.id))
-                      .requireValue
-                      .getAnimeAndVoiceActors(),
-                );
-              },
+            CharacterOverviewSubview(
+              id: widget.id,
               scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+              imageUrl: widget.imageUrl,
             ),
-            PagedView<Relation>(
-              provider: characterMediaProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.manga),
-              ),
-              onData: (data) => SingleRelationGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-            ),
+            CharacterAnimeSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+            CharacterMangaSubview(id: widget.id, scrollCtrl: _scrollCtrl),
           ],
         ),
       ),

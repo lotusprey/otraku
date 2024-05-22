@@ -76,6 +76,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ],
         ),
         child: PagedView<SiteNotification>(
+          scrollCtrl: _ctrl,
+          onRefresh: (invalidate) => invalidate(notificationsProvider),
           provider: notificationsProvider,
           onData: (data) => SliverList(
             delegate: SliverChildBuilderDelegate(
@@ -83,8 +85,6 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               childCount: data.items.length,
             ),
           ),
-          scrollCtrl: _ctrl,
-          onRefresh: () => ref.invalidate(notificationsProvider),
         ),
       ),
     );

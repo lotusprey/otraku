@@ -12,7 +12,7 @@ import 'package:otraku/modules/composition/composition_view.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/layouts/top_bar.dart';
 import 'package:otraku/common/widgets/link_tile.dart';
 import 'package:otraku/common/widgets/cached_image.dart';

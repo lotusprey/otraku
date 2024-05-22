@@ -8,7 +8,7 @@ import 'package:otraku/common/widgets/shadowed_overflow_list.dart';
 import 'package:otraku/modules/user/user_models.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/modules/user/user_header.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/html_content.dart';
 import 'package:otraku/common/widgets/layouts/constrained_view.dart';
 import 'package:otraku/common/widgets/layouts/scaffolds.dart';
@@ -23,11 +23,11 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      PageScaffold(child: UserSubView(tag, avatarUrl));
+      PageScaffold(child: UserSubview(tag, avatarUrl));
 }
 
-class UserSubView extends StatelessWidget {
-  const UserSubView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
+class UserSubview extends StatelessWidget {
+  const UserSubview(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
 
   final UserTag tag;
   final String? avatarUrl;

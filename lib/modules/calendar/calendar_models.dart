@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/collection/collection_models.dart';
 
 class CalendarItem {

@@ -19,7 +19,7 @@ class PagedView<T> extends StatelessWidget {
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
-  final void Function() onRefresh;
+  final void Function(void Function(ProviderOrFamily) invalidate) onRefresh;
   final Widget Function(Paged<T>) onData;
   final bool withTopOffset;
 
@@ -45,7 +45,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
   });
 
   final ProviderListenable<AsyncValue<T>> provider;
-  final void Function() onRefresh;
+  final void Function(void Function(ProviderOrFamily) invalidate) onRefresh;
   final bool withTopOffset;
 
   /// When data is available, [select] extracts a paginated list.
@@ -81,7 +81,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                 slivers: [
                   SliverRefreshControl(
                     withTopOffset: withTopOffset,
-                    onRefresh: onRefresh,
+                    onRefresh: () => onRefresh(ref.invalidate),
                   ),
                   const SliverFillRemaining(
                     child: Center(child: Text('Failed to load')),
@@ -97,7 +97,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                     slivers: [
                       SliverRefreshControl(
                         withTopOffset: withTopOffset,
-                        onRefresh: onRefresh,
+                        onRefresh: () => onRefresh(ref.invalidate),
                       ),
                       selection.items.isEmpty
                           ? const SliverFillRemaining(

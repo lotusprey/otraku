@@ -7,8 +7,8 @@ import 'package:otraku/modules/media/media_models.dart';
 import 'package:otraku/modules/settings/settings_model.dart';
 import 'package:otraku/common/widgets/grids/chip_grids.dart';
 
-class SettingsContentTab extends StatelessWidget {
-  const SettingsContentTab(this.scrollCtrl, this.settings);
+class SettingsContentSubview extends StatelessWidget {
+  const SettingsContentSubview(this.scrollCtrl, this.settings);
 
   final ScrollController scrollCtrl;
   final Settings settings;

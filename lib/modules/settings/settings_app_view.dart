@@ -5,11 +5,11 @@ import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/filter/chip_selector.dart';
 import 'package:otraku/modules/home/home_model.dart';
 import 'package:otraku/modules/media/media_models.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/settings/theme_preview.dart';
 
-class SettingsAppTab extends StatelessWidget {
-  const SettingsAppTab(this.scrollCtrl);
+class SettingsAppSubview extends StatelessWidget {
+  const SettingsAppSubview(this.scrollCtrl);
 
   final ScrollController scrollCtrl;
 

@@ -7,7 +7,7 @@ import 'package:otraku/common/models/tile_item.dart';
 import 'package:otraku/modules/discover/discover_models.dart';
 import 'package:otraku/modules/edit/edit_model.dart';
 import 'package:otraku/modules/tag/tag_models.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 
 TileItem mediaItem(Map<String, dynamic> map) => TileItem(
       id: map['id'],
@@ -17,12 +17,12 @@ TileItem mediaItem(Map<String, dynamic> map) => TileItem(
     );
 
 class Media {
-  Media(this.edit, this.info, this.stats, this.relations);
+  Media(this.edit, this.info, this.stats, this.related);
 
   Edit edit;
   final MediaInfo info;
   final MediaStats stats;
-  final List<RelatedMedia> relations;
+  final List<RelatedMedia> related;
 }
 
 class MediaRelations {

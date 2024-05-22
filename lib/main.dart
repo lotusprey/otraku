@@ -9,7 +9,7 @@ import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/modules/home/home_provider.dart';
 import 'package:otraku/common/utils/background_handler.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/utils/theming.dart';
 
 Future<void> main() async {

@@ -1,7 +1,7 @@
 import 'package:otraku/common/models/paged.dart';
 import 'package:otraku/common/utils/extensions.dart';
 import 'package:otraku/common/utils/markdown.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 
 const homeFeedId = -1;
 

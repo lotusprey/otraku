@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/common/utils/consts.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/common/widgets/drag_detector.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.

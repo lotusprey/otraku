@@ -11,7 +11,7 @@ import 'package:otraku/modules/settings/settings_provider.dart';
 import 'package:otraku/modules/tag/tag_provider.dart';
 import 'package:otraku/modules/user/user_providers.dart';
 import 'package:otraku/common/utils/paged_controller.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/discover/discover_view.dart';
 import 'package:otraku/modules/collection/collection_view.dart';
 import 'package:otraku/modules/feed/feed_view.dart';
@@ -144,21 +144,21 @@ class _HomeViewState extends ConsumerState<HomeView>
       child: TabBarView(
         controller: _tabCtrl,
         children: [
-          FeedView(_feedScrollCtrl),
-          CollectionSubView(
+          FeedSubview(_feedScrollCtrl),
+          CollectionSubview(
             scrollCtrl: _animeScrollCtrl,
             tag: _animeCollectionTag,
             focusNode: _searchFocusNode,
             key: Key(true.toString()),
           ),
-          CollectionSubView(
+          CollectionSubview(
             scrollCtrl: _mangaScrollCtrl,
             tag: _mangaCollectionTag,
             focusNode: _searchFocusNode,
             key: Key(false.toString()),
           ),
-          DiscoverView(_searchFocusNode, _discoverScrollCtrl),
-          UserSubView(_userTag, null, primaryScrollCtrl),
+          DiscoverSubview(_searchFocusNode, _discoverScrollCtrl),
+          UserSubview(_userTag, null, primaryScrollCtrl),
         ],
       ),
     );

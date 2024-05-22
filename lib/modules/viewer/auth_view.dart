@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/common/utils/consts.dart';
 import 'package:otraku/common/utils/extensions.dart';
-import 'package:otraku/common/utils/options.dart';
+import 'package:otraku/common/utils/persistence.dart';
 import 'package:otraku/modules/viewer/api.dart';
 import 'package:otraku/common/utils/routing.dart';
 import 'package:otraku/common/widgets/cached_image.dart';

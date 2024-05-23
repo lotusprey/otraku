@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/modules/viewer/api.dart';
-import 'package:otraku/common/utils/routing.dart';
-import 'package:otraku/modules/home/home_provider.dart';
-import 'package:otraku/common/utils/background_handler.dart';
-import 'package:otraku/common/utils/persistence.dart';
-import 'package:otraku/common/utils/theming.dart';
+import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/util/routing.dart';
+import 'package:otraku/feature/home/home_provider.dart';
+import 'package:otraku/util/background_handler.dart';
+import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
   await Persistence.init();

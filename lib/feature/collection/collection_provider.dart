@@ -6,7 +6,7 @@ import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
 final collectionProvider = AsyncNotifierProvider.autoDispose
@@ -32,11 +32,14 @@ class CollectionNotifier
               : s.didExpandMangaCollection,
         ));
 
-    final data = await Api.get(GqlQuery.collection, {
-      'userId': arg.userId,
-      'type': arg.ofAnime ? 'ANIME' : 'MANGA',
-      if (!isFull) 'status_in': ['CURRENT', 'REPEATING'],
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.collection,
+      {
+        'userId': arg.userId,
+        'type': arg.ofAnime ? 'ANIME' : 'MANGA',
+        if (!isFull) 'status_in': ['CURRENT', 'REPEATING'],
+      },
+    );
 
     final collection = isFull
         ? FullCollection(data['MediaListCollection'], arg.ofAnime, index)
@@ -67,9 +70,11 @@ class CollectionNotifier
     try {
       // There is an api bug in entry updating, which prevents tag
       // data from being returned. This is why 2 requests are needed.
-      await Api.get(GqlMutation.updateEntry, newEdit.toMap());
+      await ref
+          .read(repositoryProvider)
+          .request(GqlMutation.updateEntry, newEdit.toMap());
 
-      final data = await Api.get(
+      final data = await ref.read(repositoryProvider).request(
         GqlQuery.listEntry,
         {'userId': arg.userId, 'mediaId': newEdit.mediaId},
       );
@@ -104,7 +109,7 @@ class CollectionNotifier
   Future<String?> saveEntryProgress(Entry entry) async {
     final customLists = <String>[];
     try {
-      final data = await Api.get(
+      final data = await ref.read(repositoryProvider).request(
         GqlMutation.updateProgress,
         {'mediaId': entry.mediaId, 'progress': entry.progress},
       );
@@ -141,7 +146,9 @@ class CollectionNotifier
     if (edit.entryId == null) return 'Missing entry id';
 
     try {
-      await Api.get(GqlMutation.removeEntry, {'entryId': edit.entryId});
+      await ref
+          .read(repositoryProvider)
+          .request(GqlMutation.removeEntry, {'entryId': edit.entryId});
     } catch (e) {
       return e.toString();
     }

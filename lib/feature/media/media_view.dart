@@ -88,7 +88,12 @@ class _MediaViewState extends State<MediaView>
                       scrollCtrl: innerScrollCtrl,
                       children: [
                         MediaEditButton(media),
-                        MediaFavoriteButton(media.info),
+                        MediaFavoriteButton(
+                          media.info,
+                          ref
+                              .read(mediaProvider(widget.id).notifier)
+                              .toggleFavorite,
+                        ),
                         MediaLanguageButton(widget.id, _tabCtrl),
                       ],
                     ),
@@ -199,7 +204,13 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
           bannerUrl: widget.media.info.banner,
         ),
         MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-        MediaRecommendationsSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaRecommendationsSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          rateRecommendation: ref
+              .read(mediaRelationsProvider(widget.id).notifier)
+              .rateRecommendation,
+        ),
         MediaStatsSubview(
           ref: ref,
           info: widget.media.info,

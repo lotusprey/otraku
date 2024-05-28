@@ -100,7 +100,10 @@ class _StaffViewState extends ConsumerState<StaffView>
           scrollCtrl: _scrollCtrl,
           children: [
             if (_tabCtrl.index == 0 && staff.hasValue)
-              StaffFavoriteButton(staff.valueOrNull!),
+              StaffFavoriteButton(
+                staff.valueOrNull!,
+                ref.read(staffProvider(widget.id).notifier).toggleFavorite,
+              ),
             if (_tabCtrl.index > 0) StaffFilterButton(widget.id, true),
           ],
         ),

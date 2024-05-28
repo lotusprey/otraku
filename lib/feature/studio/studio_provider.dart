@@ -6,30 +6,35 @@ import 'package:otraku/model/tile_item.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-/// Favorite/Unfavorite studio. Returns `true` if successful.
-Future<bool> toggleFavoriteStudio(int studioId) async {
-  try {
-    await Api.get(GqlMutation.toggleFavorite, {'studio': studioId});
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
-
-final studioProvider = FutureProvider.autoDispose.family<Studio, int>(
-  (ref, id) async {
-    final data = await Api.get(GqlQuery.studio, {'id': id, 'withInfo': true});
-    return Studio(data['Studio']);
-  },
+final studioProvider =
+    AsyncNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
+  StudioNotifier.new,
 );
 
 final studioMediaProvider = AsyncNotifierProvider.autoDispose
     .family<StudioMediaNotifier, StudioMedia, int>(
   StudioMediaNotifier.new,
 );
+
+class StudioNotifier extends AutoDisposeFamilyAsyncNotifier<Studio, int> {
+  @override
+  FutureOr<Studio> build(arg) async {
+    final data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.studio, {'id': arg, 'withInfo': true});
+    return Studio(data['Studio']);
+  }
+
+  Future<bool> toggleFavorite() {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleFavorite,
+      {'studio': arg},
+    ).then((_) => true, onError: (_) => false);
+  }
+}
 
 class StudioMediaNotifier
     extends AutoDisposeFamilyAsyncNotifier<StudioMedia, int> {
@@ -50,7 +55,7 @@ class StudioMediaNotifier
   Future<StudioMedia> _fetch(StudioMedia oldState) async {
     final categories = {...oldState.categories};
 
-    final data = await Api.get(GqlQuery.studio, {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.studio, {
       'id': arg,
       'withMedia': true,
       'page': oldState.media.next,

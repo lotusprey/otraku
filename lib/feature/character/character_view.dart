@@ -100,7 +100,10 @@ class _CharacterViewState extends ConsumerState<CharacterView>
           scrollCtrl: _scrollCtrl,
           children: [
             if (_tabCtrl.index == 0 && character.hasValue)
-              CharacterFavoriteButton(character.valueOrNull!),
+              CharacterFavoriteButton(
+                character.valueOrNull!,
+                ref.read(characterProvider(widget.id).notifier).toggleFavorite,
+              ),
             if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id),
             if (_tabCtrl.index == 1)
               CharacterLanguageSelectionButton(widget.id),

@@ -6,15 +6,15 @@ import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
-import 'package:otraku/feature/staff/staff_provider.dart';
 import 'package:otraku/util/consts.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class StaffFavoriteButton extends StatefulWidget {
-  const StaffFavoriteButton(this.data);
+  const StaffFavoriteButton(this.staff, this.toggleFavorite);
 
-  final Staff data;
+  final Staff staff;
+  final Future<bool> Function() toggleFavorite;
 
   @override
   State<StaffFavoriteButton> createState() => _StaffFavoriteButtonState();
@@ -23,14 +23,16 @@ class StaffFavoriteButton extends StatefulWidget {
 class _StaffFavoriteButtonState extends State<StaffFavoriteButton> {
   @override
   Widget build(BuildContext context) {
+    final staff = widget.staff;
+
     return ActionButton(
-      icon: widget.data.isFavorite ? Icons.favorite : Icons.favorite_border,
-      tooltip: widget.data.isFavorite ? 'Unfavourite' : 'Favourite',
+      icon: staff.isFavorite ? Icons.favorite : Icons.favorite_border,
+      tooltip: staff.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
-        setState(() => widget.data.isFavorite = !widget.data.isFavorite);
-        toggleFavoriteStaff(widget.data.id).then((ok) {
+        setState(() => staff.isFavorite = !staff.isFavorite);
+        widget.toggleFavorite().then((ok) {
           if (!ok) {
-            setState(() => widget.data.isFavorite = !widget.data.isFavorite);
+            setState(() => staff.isFavorite = !staff.isFavorite);
           }
         });
       },

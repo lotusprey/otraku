@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
@@ -36,9 +35,10 @@ class _MediaEditButtonState extends State<MediaEditButton> {
 }
 
 class MediaFavoriteButton extends StatefulWidget {
-  const MediaFavoriteButton(this.info);
+  const MediaFavoriteButton(this.info, this.toggleFavorite);
 
   final MediaInfo info;
+  final Future<bool> Function() toggleFavorite;
 
   @override
   State<MediaFavoriteButton> createState() => _MediaFavoriteButtonState();
@@ -47,17 +47,16 @@ class MediaFavoriteButton extends StatefulWidget {
 class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
   @override
   Widget build(BuildContext context) {
+    final info = widget.info;
+
     return ActionButton(
-      icon: widget.info.isFavorite ? Icons.favorite : Icons.favorite_border,
-      tooltip: widget.info.isFavorite ? 'Unfavourite' : 'Favourite',
+      icon: info.isFavorite ? Icons.favorite : Icons.favorite_border,
+      tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
-        setState(() => widget.info.isFavorite = !widget.info.isFavorite);
-        toggleFavoriteMedia(
-          widget.info.id,
-          widget.info.type == DiscoverType.anime,
-        ).then((ok) {
+        setState(() => info.isFavorite = !info.isFavorite);
+        widget.toggleFavorite().then((ok) {
           if (!ok) {
-            setState(() => widget.info.isFavorite = !widget.info.isFavorite);
+            setState(() => info.isFavorite = !info.isFavorite);
           }
         });
       },

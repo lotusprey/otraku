@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
-import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/util/consts.dart';
@@ -195,18 +194,20 @@ class _ActivityMediaBox extends StatelessWidget {
 class ActivityFooter extends StatefulWidget {
   const ActivityFooter({
     required this.activity,
-    required this.onDeleted,
-    required this.onPinned,
-    required this.onChanged,
-    required this.onOpenReplies,
+    required this.remove,
+    required this.togglePin,
+    required this.toggleLike,
+    required this.toggleSubscription,
+    required this.openReplies,
     required this.onEdited,
   });
 
   final Activity activity;
-  final void Function() onDeleted;
-  final void Function()? onPinned;
-  final void Function()? onChanged;
-  final void Function()? onOpenReplies;
+  final Future<Object?> Function() remove;
+  final Future<Object?> Function() toggleLike;
+  final Future<Object?> Function() toggleSubscription;
+  final Future<Object?> Function()? togglePin;
+  final Future<Object?> Function()? openReplies;
   final void Function(Map<String, dynamic>)? onEdited;
 
   @override
@@ -241,7 +242,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             message: 'Replies',
             child: InkResponse(
               radius: 10,
-              onTap: widget.onOpenReplies,
+              onTap: widget.openReplies,
               child: Row(
                 children: [
                   Text(
@@ -287,38 +288,6 @@ class _ActivityFooterState extends State<ActivityFooter> {
         ),
       ],
     );
-  }
-
-  void _toggleLike() {
-    final activity = widget.activity;
-    final isLiked = activity.isLiked;
-
-    setState(() {
-      activity.isLiked = !isLiked;
-      activity.likeCount += isLiked ? -1 : 1;
-    });
-
-    toggleActivityLike(activity).then((err) {
-      if (err == null) {
-        widget.onChanged?.call();
-        return;
-      }
-
-      setState(() {
-        activity.isLiked = isLiked;
-        activity.likeCount += isLiked ? 1 : -1;
-      });
-
-      if (context.mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
-            title: 'Could not toggle like',
-            content: err.toString(),
-          ),
-        );
-      }
-    });
   }
 
   /// Show a sheet with additional options.
@@ -372,19 +341,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   title: 'Delete?',
                   mainAction: 'Yes',
                   secondaryAction: 'No',
-                  onConfirm: () {
-                    deleteActivity(widget.activity.id).then((err) {
-                      err == null
-                          ? widget.onDeleted()
-                          : showPopUp(
-                              context,
-                              ConfirmationDialog(
-                                title: 'Could not delete activity',
-                                content: err.toString(),
-                              ),
-                            );
-                    });
-                  },
+                  onConfirm: _remove,
                 ),
               ),
             ));
@@ -395,7 +352,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             activity.siteUrl,
             [
               ...ownershipButtons,
-              if (widget.onPinned != null &&
+              if (widget.togglePin != null &&
                   activity.isOwned &&
                   activity is! MessageActivity)
                 GradientSheetButton(
@@ -403,57 +360,106 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   icon: activity.isPinned
                       ? Icons.push_pin
                       : Icons.push_pin_outlined,
-                  onTap: () {
-                    final isPinned = activity.isPinned;
-                    activity.isPinned = !isPinned;
-
-                    toggleActivityPin(activity).then((err) {
-                      if (err == null) {
-                        widget.onPinned!();
-                        return;
-                      }
-
-                      activity.isPinned = isPinned;
-                      showPopUp(
-                        context,
-                        ConfirmationDialog(
-                          title: 'Could not toggle pin',
-                          content: err.toString(),
-                        ),
-                      );
-                    });
-                  },
+                  onTap: _togglePin,
                 ),
               GradientSheetButton(
                 text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
                 icon: !activity.isSubscribed
                     ? Ionicons.notifications_outline
                     : Ionicons.notifications_off_outline,
-                onTap: () {
-                  final isSubscribed = activity.isSubscribed;
-                  activity.isSubscribed = !isSubscribed;
-
-                  toggleActivitySubscription(activity).then((err) {
-                    if (err == null) {
-                      widget.onChanged?.call();
-                      return;
-                    }
-
-                    activity.isSubscribed = isSubscribed;
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Could not toggle subscription',
-                        content: err.toString(),
-                      ),
-                    );
-                  });
-                },
+                onTap: _toggleSubscription,
               ),
             ],
           );
         },
       ),
     );
+  }
+
+  void _toggleLike() {
+    final activity = widget.activity;
+    final isLiked = activity.isLiked;
+
+    setState(() {
+      activity.isLiked = !isLiked;
+      activity.likeCount += isLiked ? -1 : 1;
+    });
+
+    widget.toggleLike().then((err) {
+      if (err == null) return;
+
+      setState(() {
+        activity.isLiked = isLiked;
+        activity.likeCount += isLiked ? 1 : -1;
+      });
+
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not toggle like',
+            content: err.toString(),
+          ),
+        );
+      }
+    });
+  }
+
+  void _toggleSubscription() {
+    final activity = widget.activity;
+    activity.isSubscribed = !activity.isSubscribed;
+
+    widget.toggleSubscription().then((err) {
+      if (err == null) return;
+
+      activity.isSubscribed = !activity.isSubscribed;
+
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not toggle subscription',
+            content: err.toString(),
+          ),
+        );
+      }
+    });
+  }
+
+  void _togglePin() {
+    final activity = widget.activity;
+    activity.isPinned = !activity.isPinned;
+
+    widget.togglePin!().then((err) {
+      if (err == null) return;
+
+      activity.isPinned = !activity.isPinned;
+
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not toggle pin',
+            content: err.toString(),
+          ),
+        );
+      }
+    });
+  }
+
+  void _remove() {
+    widget.remove().then((err) {
+      if (err == null) return;
+
+      if (context.mounted) {
+        showPopUp(
+          context,
+          ConfirmationDialog(
+            title: 'Could not delete activity',
+            content: err.toString(),
+          ),
+        );
+      }
+    });
   }
 }

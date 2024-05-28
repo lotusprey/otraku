@@ -2,29 +2,34 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/review/review_models.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-/// Rates a review and returns an error if unsuccessful.
-Future<Object?> rateReview(int reviewId, bool? rating) async {
-  try {
-    await Api.get(GqlMutation.rateReview, {
-      'id': reviewId,
-      'rating': rating == null
-          ? 'NO_VOTE'
-          : rating
-              ? 'UP_VOTE'
-              : 'DOWN_VOTE',
-    });
-    return null;
-  } catch (e) {
-    return e;
+final reviewProvider =
+    AsyncNotifierProvider.autoDispose.family<ReviewNotifier, Review, int>(
+  ReviewNotifier.new,
+);
+
+class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
+  @override
+  FutureOr<Review> build(arg) async {
+    final data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.review, {'id': arg});
+    return Review(data['Review']);
+  }
+
+  Future<bool> rate(bool? rating) {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.rateReview,
+      {
+        'id': arg,
+        'rating': rating == null
+            ? 'NO_VOTE'
+            : rating
+                ? 'UP_VOTE'
+                : 'DOWN_VOTE',
+      },
+    ).then((_) => true, onError: (_) => false);
   }
 }
-
-final reviewProvider = FutureProvider.autoDispose.family<Review, int>(
-  (ref, arg) async {
-    final data = await Api.get(GqlQuery.review, {'id': arg});
-    return Review(data['Review']);
-  },
-);

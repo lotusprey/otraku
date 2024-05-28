@@ -66,6 +66,7 @@ class UserSubview extends StatelessWidget {
           user: user.valueOrNull,
           isViewer: homeScrollCtrl != null,
           imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
+          toggleFollow: ref.read(userProvider(tag).notifier).toggleFollow,
         );
 
         return user.when(

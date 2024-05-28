@@ -12,9 +12,10 @@ import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class CharacterFavoriteButton extends StatefulWidget {
-  const CharacterFavoriteButton(this.data);
+  const CharacterFavoriteButton(this.character, this.toggleFavorite);
 
-  final Character data;
+  final Character character;
+  final Future<bool> Function() toggleFavorite;
 
   @override
   State<CharacterFavoriteButton> createState() =>
@@ -24,17 +25,19 @@ class CharacterFavoriteButton extends StatefulWidget {
 class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
   @override
   Widget build(BuildContext context) {
+    final character = widget.character;
+
     return ActionButton(
-      icon: widget.data.isFavorite ? Icons.favorite : Icons.favorite_border,
-      tooltip: widget.data.isFavorite ? 'Unfavourite' : 'Favourite',
+      icon: character.isFavorite ? Icons.favorite : Icons.favorite_border,
+      tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
         setState(
-          () => widget.data.isFavorite = !widget.data.isFavorite,
+          () => character.isFavorite = !character.isFavorite,
         );
-        toggleFavoriteCharacter(widget.data.id).then((ok) {
+        widget.toggleFavorite().then((ok) {
           if (!ok) {
             setState(
-              () => widget.data.isFavorite = !widget.data.isFavorite,
+              () => character.isFavorite = !character.isFavorite,
             );
           }
         });

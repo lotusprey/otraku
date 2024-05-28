@@ -7,7 +7,6 @@ class SiteNotification {
     required this.id,
     required this.type,
     required this.texts,
-    required this.markTextOnEvenIndex,
     required this.createdAt,
     this.headId,
     this.bodyId,
@@ -20,7 +19,6 @@ class SiteNotification {
   final int id;
   final NotificationType type;
   final List<String> texts;
-  final bool markTextOnEvenIndex;
   final String createdAt;
   final int? headId;
   final int? bodyId;
@@ -38,8 +36,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' followed you.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' followed you'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -52,8 +49,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' mentioned you in an activity.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' mentioned you in an activity'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -65,8 +61,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' sent you a message.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' sent you a message'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -78,8 +73,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' replied to your activity.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' replied to your activity'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -91,8 +85,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' liked your activity.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' liked your activity'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -104,8 +97,7 @@ class SiteNotification {
             headId: map['user']['id'],
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
-            texts: [map['user']['name'], ' liked your reply.'],
-            markTextOnEvenIndex: true,
+            texts: [map['user']['name'], ' liked your reply'],
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -119,9 +111,8 @@ class SiteNotification {
             imageUrl: map['user']['avatar']['large'],
             texts: [
               map['user']['name'],
-              ' replied to activity you are subscribed to.',
+              ' replied to a subscribed activity',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -138,7 +129,6 @@ class SiteNotification {
               ' liked your thread ',
               if (map['thread'] != null) map['thread']['title'],
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -158,7 +148,6 @@ class SiteNotification {
               ] else
                 ' commented in a subscribed thread',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -178,7 +167,6 @@ class SiteNotification {
               ] else
                 ' liked your comment in a subscribed thread',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -198,7 +186,6 @@ class SiteNotification {
               ] else
                 ' replied to your comment in a subscribed thread',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -218,7 +205,6 @@ class SiteNotification {
               ] else
                 ' mentioned you in a subscribed thread',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -232,13 +218,11 @@ class SiteNotification {
             imageUrl: map['media']['coverImage']
                 [Persistence().imageQuality.value],
             texts: [
-              'Episode ',
-              map['episode'].toString(),
-              ' of ',
               map['media']['title']['userPreferred'],
+              ' episode ',
+              map['episode'].toString(),
               ' aired',
             ],
-            markTextOnEvenIndex: false,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -256,9 +240,8 @@ class SiteNotification {
                 [Persistence().imageQuality.value],
             texts: [
               map['media']['title']['userPreferred'],
-              ' was added to the site',
+              ' got added to the site',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -276,9 +259,8 @@ class SiteNotification {
             details: map['reason'],
             texts: [
               map['media']['title']['userPreferred'],
-              ' received site data changes',
+              ' got site data changes',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -301,10 +283,10 @@ class SiteNotification {
                 [Persistence().imageQuality.value],
             details: map['reason'],
             texts: [
-              '${titles.join(", ")} ${titles.length < 2 ? "was" : "were"} merged into ',
+              titles.join(", "),
+              ' got merged into ',
               map['media']['title']['userPreferred'],
             ],
-            markTextOnEvenIndex: false,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
@@ -319,9 +301,8 @@ class SiteNotification {
             details: map['reason'],
             texts: [
               map['deletedMediaTitle'],
-              ' was deleted from the site',
+              ' got deleted from the site',
             ],
-            markTextOnEvenIndex: true,
             createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),

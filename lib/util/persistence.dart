@@ -68,7 +68,7 @@ const _profileBoxKey = 'profiles';
 /// [notifyListeners] is called when the theme configuration changes.
 class Persistence extends ChangeNotifier {
   Persistence._(
-    this._selectedAccount,
+    this._selectedAccountIndex,
     this._accounts,
     this._themeMode,
     this._theme,
@@ -104,7 +104,8 @@ class Persistence extends ChangeNotifier {
             .cast<Map<dynamic, dynamic>>()
             .map((a) => Account.fromMap(a.cast<String, dynamic>()))
             .toList();
-    final selectedAccount = _profileBox.get(_ProfileKey.selectedAccount.name);
+    final selectedAccountIndex =
+        _profileBox.get(_ProfileKey.selectedAccount.name);
 
     int themeMode = _optionBox.get(_OptionKey.themeMode.name) ?? 0;
     if (themeMode < 0 || themeMode >= ThemeMode.values.length) themeMode = 0;
@@ -166,7 +167,7 @@ class Persistence extends ChangeNotifier {
     }
 
     return Persistence._(
-      selectedAccount,
+      selectedAccountIndex,
       accounts,
       ThemeMode.values[themeMode],
       _optionBox.get(_OptionKey.themeIndex.name),
@@ -229,7 +230,7 @@ class Persistence extends ChangeNotifier {
   static Box get _optionBox => Hive.box(_optionsBoxKey);
   static Box get _profileBox => Hive.box(_profileBoxKey);
 
-  int? _selectedAccount;
+  int? _selectedAccountIndex;
   List<Account> _accounts;
   ThemeMode _themeMode;
   int? _theme;
@@ -258,7 +259,8 @@ class Persistence extends ChangeNotifier {
   DateTime? _lastBackgroundWork;
   String _lastVersionCode;
 
-  int? get selectedAccount => _selectedAccount;
+  Account? get selectedAccount =>
+      _selectedAccountIndex != null ? _accounts[_selectedAccountIndex!] : null;
   List<Account> get accounts => _accounts;
   ThemeMode get themeMode => _themeMode;
   int? get theme => _theme;
@@ -288,18 +290,18 @@ class Persistence extends ChangeNotifier {
   String get lastVersionCode => _lastVersionCode;
 
   int? get id {
-    if (_selectedAccount == null) return null;
-    return _accounts[_selectedAccount!].id;
+    if (_selectedAccountIndex == null) return null;
+    return _accounts[_selectedAccountIndex!].id;
   }
 
-  set selectedAccount(int? v) {
+  set selectedAccountIndex(int? v) {
     if (v == null) {
-      if (selectedAccount == null) return;
-      _selectedAccount = null;
+      if (_selectedAccountIndex == null) return;
+      _selectedAccountIndex = null;
       _profileBox.delete(_ProfileKey.selectedAccount.name);
       _instance.lastNotificationId = -1;
-    } else if (v != _selectedAccount && v > -1 && v < _accounts.length) {
-      _selectedAccount = v;
+    } else if (v != _selectedAccountIndex && v > -1 && v < _accounts.length) {
+      _selectedAccountIndex = v;
       _profileBox.put(_ProfileKey.selectedAccount.name, v);
     }
   }

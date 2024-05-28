@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
 final oldEditProvider = FutureProvider.autoDispose.family(
@@ -12,7 +12,9 @@ final oldEditProvider = FutureProvider.autoDispose.family(
       if (edit != null) return edit;
     }
 
-    final data = await Api.get(GqlQuery.entry, {'mediaId': tag.id});
+    final data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.entry, {'mediaId': tag.id});
 
     final settings = await ref.watch(
       settingsProvider.selectAsync((settings) => settings),

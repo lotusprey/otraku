@@ -7,42 +7,31 @@ import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/model/paged.dart';
 
-Future<bool> toggleFavoriteMedia(int id, bool isAnime) async {
-  try {
-    await Api.get(
-      GqlMutation.toggleFavorite,
-      {(isAnime ? 'anime' : 'manga'): id},
-    );
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+final mediaProvider =
+    AsyncNotifierProvider.autoDispose.family<MediaNotifier, Media, int>(
+  MediaNotifier.new,
+);
 
-Future<bool> rateRecommendation(int mediaId, int recId, bool? rating) async {
-  try {
-    await Api.get(GqlMutation.rateRecommendation, {
-      'id': mediaId,
-      'recommendedId': recId,
-      'rating': rating == null
-          ? 'NO_RATING'
-          : rating
-              ? 'RATE_UP'
-              : 'RATE_DOWN',
-    });
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+final mediaRelationsProvider = AsyncNotifierProvider.autoDispose
+    .family<MediaRelationsNotifier, MediaRelations, int>(
+  MediaRelationsNotifier.new,
+);
 
-final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
-  (ref, mediaId) async {
-    var data = await Api.get(GqlQuery.media, {'id': mediaId, 'withInfo': true});
+final mediaFollowingProvider = AsyncNotifierProvider.family<
+    MediaFollowingNotifier, Paged<MediaFollowing>, int>(
+  MediaFollowingNotifier.new,
+);
+
+class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
+  @override
+  FutureOr<Media> build(int arg) async {
+    var data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.media, {'id': arg, 'withInfo': true});
     data = data['Media'];
 
     final relatedMedia = <RelatedMedia>[];
@@ -60,18 +49,18 @@ final mediaProvider = FutureProvider.autoDispose.family<Media, int>(
       MediaStats(data),
       relatedMedia,
     );
-  },
-);
+  }
 
-final mediaRelationsProvider = AsyncNotifierProvider.autoDispose
-    .family<MediaRelationsNotifier, MediaRelations, int>(
-  MediaRelationsNotifier.new,
-);
+  Future<bool> toggleFavorite() {
+    final type = state.valueOrNull?.info.type;
+    if (type == null) return Future.value(false);
 
-final mediaFollowingProvider = AsyncNotifierProvider.family<
-    MediaFollowingNotifier, Paged<MediaFollowing>, int>(
-  MediaFollowingNotifier.new,
-);
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleFavorite,
+      {(type == DiscoverType.anime ? 'anime' : 'manga'): arg},
+    ).then((_) => true, onError: (_) => false);
+  }
+}
 
 class MediaRelationsNotifier
     extends AutoDisposeFamilyAsyncNotifier<MediaRelations, int> {
@@ -122,7 +111,10 @@ class MediaRelationsNotifier
       variables['page'] = oldState.reviews.next;
     }
 
-    var data = await Api.get(GqlQuery.media, variables);
+    var data = await ref.read(repositoryProvider).request(
+          GqlQuery.media,
+          variables,
+        );
     data = data['Media'];
 
     var characters = oldState.characters;
@@ -243,6 +235,21 @@ class MediaRelationsNotifier
           language: language,
         ),
       );
+
+  Future<bool> rateRecommendation(int recId, bool? rating) {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.rateRecommendation,
+      {
+        'id': arg,
+        'recommendedId': recId,
+        'rating': rating == null
+            ? 'NO_RATING'
+            : rating
+                ? 'RATE_UP'
+                : 'RATE_DOWN',
+      },
+    ).then((_) => true, onError: (_) => false);
+  }
 }
 
 class MediaFollowingNotifier
@@ -257,7 +264,7 @@ class MediaFollowingNotifier
   }
 
   Future<Paged<MediaFollowing>> _fetch(Paged<MediaFollowing> oldState) async {
-    final data = await Api.get(
+    final data = await ref.read(repositoryProvider).request(
       GqlQuery.mediaFollowing,
       {'mediaId': arg, 'page': oldState.next},
     );

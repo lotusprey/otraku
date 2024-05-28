@@ -2,9 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/routing.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
-import 'package:otraku/feature/viewer/api.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:workmanager/workmanager.dart';
@@ -60,18 +61,26 @@ class BackgroundHandler {
 
 @pragma('vm:entry-point')
 void _fetch() => Workmanager().executeTask((_, __) async {
+      final container = ProviderContainer();
+
       // Initialise local settings.
       await Persistence.init();
       if (Persistence().selectedAccount == null) return true;
       Persistence().lastBackgroundWork = DateTime.now();
 
       // Log in.
-      if (!Api.hasActiveAccount() && !await Api.init()) return true;
+      if (!await container.read(repositoryProvider.notifier).init()) {
+        return true;
+      }
 
       // Get new notifications.
+      final repository = container.read(repositoryProvider);
       Map<String, dynamic> data;
       try {
-        data = await Api.get(GqlQuery.notifications, const {'withCount': true});
+        data = await repository.request(
+          GqlQuery.notifications,
+          const {'withCount': true},
+        );
       } catch (_) {
         return true;
       }
@@ -157,7 +166,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
             ),
           NotificationType.relatedMediaAddition => _show(
               notification,
-              'New Addition',
+              'Added Media',
               Routes.media(notification.bodyId!),
             ),
           NotificationType.mediaDataChange => _show(
@@ -170,8 +179,11 @@ void _fetch() => Workmanager().executeTask((_, __) async {
               'Merged Media',
               Routes.media(notification.bodyId!),
             ),
-          NotificationType.mediaDeletion =>
-            _show(notification, 'Deleted Media', Routes.notifications),
+          NotificationType.mediaDeletion => _show(
+              notification,
+              'Deleted Media',
+              Routes.notifications,
+            ),
         });
       }
 

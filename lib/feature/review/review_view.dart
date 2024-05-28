@@ -103,7 +103,7 @@ class ReviewView extends StatelessWidget {
                   ),
                 ),
               ),
-              _RateButtons(data),
+              _RateButtons(data, ref.read(reviewProvider(id).notifier).rate),
               SliverPadding(
                 padding: EdgeInsets.only(
                   top: 20,
@@ -126,9 +126,10 @@ class ReviewView extends StatelessWidget {
 }
 
 class _RateButtons extends StatefulWidget {
-  const _RateButtons(this.review);
+  const _RateButtons(this.review, this.rate);
 
   final Review review;
+  final Future<bool> Function(bool?) rate;
 
   @override
   _RateButtonsState createState() => _RateButtonsState();
@@ -137,6 +138,8 @@ class _RateButtons extends StatefulWidget {
 class _RateButtonsState extends State<_RateButtons> {
   @override
   Widget build(BuildContext context) {
+    final review = widget.review;
+
     return SliverToBoxAdapter(
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -146,34 +149,34 @@ class _RateButtonsState extends State<_RateButtons> {
             children: [
               IconButton(
                 icon: Icon(
-                  widget.review.viewerRating == true
+                  review.viewerRating == true
                       ? Icons.thumb_up
                       : Icons.thumb_up_outlined,
                 ),
-                color: widget.review.viewerRating == true
+                color: review.viewerRating == true
                     ? Theme.of(context).colorScheme.primary
                     : null,
                 onPressed: () => _rate(
-                  widget.review.viewerRating != true ? true : null,
+                  review.viewerRating != true ? true : null,
                 ),
               ),
               IconButton(
                 icon: Icon(
-                  widget.review.viewerRating == false
+                  review.viewerRating == false
                       ? Icons.thumb_down
                       : Icons.thumb_down_outlined,
                 ),
-                color: widget.review.viewerRating == false
+                color: review.viewerRating == false
                     ? Theme.of(context).colorScheme.error
                     : null,
                 onPressed: () => _rate(
-                  widget.review.viewerRating != false ? false : null,
+                  review.viewerRating != false ? false : null,
                 ),
               ),
             ],
           ),
           Text(
-            '${widget.review.rating}/${widget.review.totalRating} users liked this review',
+            '${review.rating}/${review.totalRating} users liked this review',
             style: Theme.of(context).textTheme.labelMedium,
             textAlign: TextAlign.center,
           ),
@@ -183,48 +186,46 @@ class _RateButtonsState extends State<_RateButtons> {
   }
 
   void _rate(bool? rating) {
-    final oldRating = widget.review.rating;
-    final oldTotalRating = widget.review.totalRating;
-    final oldViewerRating = widget.review.viewerRating;
+    final review = widget.review;
+    final oldRating = review.rating;
+    final oldTotalRating = review.totalRating;
+    final oldViewerRating = review.viewerRating;
 
     setState(() {
       if (rating == null) {
         if (oldViewerRating == true) {
-          widget.review.rating--;
+          review.rating--;
         }
-        widget.review.totalRating--;
+        review.totalRating--;
       } else if (rating) {
         if (oldViewerRating == null) {
-          widget.review.totalRating++;
+          review.totalRating++;
         }
-        widget.review.rating++;
+        review.rating++;
       } else {
         if (oldViewerRating == null) {
-          widget.review.totalRating++;
+          review.totalRating++;
         } else {
-          widget.review.rating--;
+          review.rating--;
         }
       }
 
-      widget.review.viewerRating = rating;
+      review.viewerRating = rating;
     });
 
-    rateReview(widget.review.id, rating).then((err) {
-      if (err == null) return;
+    widget.rate(rating).then((ok) {
+      if (ok) return;
 
       setState(() {
-        widget.review.rating = oldRating;
-        widget.review.totalRating = oldTotalRating;
-        widget.review.viewerRating = oldViewerRating;
+        review.rating = oldRating;
+        review.totalRating = oldTotalRating;
+        review.viewerRating = oldViewerRating;
       });
 
       if (context.mounted) {
         showPopUp(
           context,
-          ConfirmationDialog(
-            title: 'Could not rate review',
-            content: err.toString(),
-          ),
+          const ConfirmationDialog(title: 'Could not rate review'),
         );
       }
     });

@@ -146,7 +146,15 @@ class _StudioViewState extends ConsumerState<StudioView> {
             floatingBar: FloatingBar(
               scrollCtrl: _ctrl,
               children: studio != null
-                  ? [_FavoriteButton(studio), _FilterButton(widget.id)]
+                  ? [
+                      _FavoriteButton(
+                        studio,
+                        ref
+                            .read(studioProvider(widget.id).notifier)
+                            .toggleFavorite,
+                      ),
+                      _FilterButton(widget.id),
+                    ]
                   : const [],
             ),
             child: ConstrainedView(
@@ -186,9 +194,10 @@ class _StudioViewState extends ConsumerState<StudioView> {
 }
 
 class _FavoriteButton extends StatefulWidget {
-  const _FavoriteButton(this.data);
+  const _FavoriteButton(this.studio, this.toggleFavorite);
 
-  final Studio data;
+  final Studio studio;
+  final Future<bool> Function() toggleFavorite;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -197,17 +206,20 @@ class _FavoriteButton extends StatefulWidget {
 class __FavoriteButtonState extends State<_FavoriteButton> {
   @override
   Widget build(BuildContext context) {
+    final studio = widget.studio;
+
     return ActionButton(
-      icon: widget.data.isFavorite ? Icons.favorite : Icons.favorite_border,
-      tooltip: widget.data.isFavorite ? 'Unfavourite' : 'Favourite',
+      icon: studio.isFavorite ? Icons.favorite : Icons.favorite_border,
+      tooltip: studio.isFavorite ? 'Unfavourite' : 'Favourite',
       onTap: () {
         setState(
-          () => widget.data.isFavorite = !widget.data.isFavorite,
+          () => studio.isFavorite = !studio.isFavorite,
         );
-        toggleFavoriteStudio(widget.data.id).then((ok) {
+
+        widget.toggleFavorite().then((ok) {
           if (!ok) {
             setState(
-              () => widget.data.isFavorite = !widget.data.isFavorite,
+              () => studio.isFavorite = !studio.isFavorite,
             );
           }
         });

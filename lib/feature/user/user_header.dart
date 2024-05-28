@@ -5,7 +5,6 @@ import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/routing.dart';
 import 'package:otraku/feature/user/user_models.dart';
-import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -19,12 +18,14 @@ class UserHeader extends StatelessWidget {
     required this.isViewer,
     required this.user,
     required this.imageUrl,
+    required this.toggleFollow,
   });
 
   final int? id;
   final bool isViewer;
   final User? user;
   final String? imageUrl;
+  final Future<bool> Function() toggleFollow;
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +46,7 @@ class UserHeader extends StatelessWidget {
         textRailItems: textRailItems,
         topOffset: MediaQuery.paddingOf(context).top,
         imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
+        toggleFollow: toggleFollow,
       ),
     );
   }
@@ -59,6 +61,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.topOffset,
     required this.imageWidth,
     required this.textRailItems,
+    required this.toggleFollow,
   });
 
   final int? id;
@@ -68,6 +71,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final double topOffset;
   final double imageWidth;
   final Map<String, bool> textRailItems;
+  final Future<bool> Function() toggleFollow;
 
   @override
   Widget build(
@@ -177,7 +181,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   ),
                 ),
         ),
-        if (!isViewer && user != null) _FollowButton(user!),
+        if (!isViewer && user != null) _FollowButton(user!, toggleFollow),
         if (user?.siteUrl != null)
           TopBarIcon(
             tooltip: 'More',
@@ -320,9 +324,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
 }
 
 class _FollowButton extends StatefulWidget {
-  const _FollowButton(this.user);
+  const _FollowButton(this.user, this.toggleFollow);
 
   final User user;
+  final Future<bool> Function() toggleFollow;
 
   @override
   State<_FollowButton> createState() => __FollowButtonState();
@@ -331,29 +336,31 @@ class _FollowButton extends StatefulWidget {
 class __FollowButtonState extends State<_FollowButton> {
   @override
   Widget build(BuildContext context) {
+    final user = widget.user;
+
     return Padding(
       padding: const EdgeInsets.all(10),
       child: ElevatedButton.icon(
         icon: Icon(
-          widget.user.isFollowed
+          user.isFollowed
               ? Ionicons.person_remove_outline
               : Ionicons.person_add_outline,
           size: Consts.iconSmall,
         ),
         label: Text(
-          widget.user.isFollowed
-              ? widget.user.isFollower
+          user.isFollowed
+              ? user.isFollower
                   ? 'Mutual'
                   : 'Following'
-              : widget.user.isFollower
+              : user.isFollower
                   ? 'Follower'
                   : 'Follow',
         ),
         onPressed: () {
-          final isFollowed = widget.user.isFollowed;
-          setState(() => widget.user.isFollowed = !isFollowed);
-          toggleFollow(widget.user.id).then((ok) {
-            if (!ok) setState(() => widget.user.isFollowed = isFollowed);
+          final isFollowed = user.isFollowed;
+          setState(() => user.isFollowed = !isFollowed);
+          widget.toggleFollow().then((ok) {
+            if (!ok) setState(() => user.isFollowed = isFollowed);
           });
         },
       ),

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/model/paged.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/reviews_filter_provider.dart';
@@ -31,12 +31,15 @@ class ReviewsNotifier
   Future<PagedWithTotal<ReviewItem>> _fetch(
     PagedWithTotal<ReviewItem> oldState,
   ) async {
-    final data = await Api.get(GqlQuery.reviewPage, {
-      'userId': arg,
-      'page': oldState.next,
-      'sort': filter.sort.value,
-      if (filter.mediaType != null) 'mediaType': filter.mediaType!.value,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.reviewPage,
+      {
+        'userId': arg,
+        'page': oldState.next,
+        'sort': filter.sort.value,
+        if (filter.mediaType != null) 'mediaType': filter.mediaType!.value,
+      },
+    );
 
     final items = <ReviewItem>[];
     for (final r in data['Page']['reviews']) {

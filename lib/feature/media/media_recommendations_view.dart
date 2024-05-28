@@ -12,10 +12,12 @@ class MediaRecommendationsSubview extends StatelessWidget {
   const MediaRecommendationsSubview({
     required this.id,
     required this.scrollCtrl,
+    required this.rateRecommendation,
   });
 
   final int id;
   final ScrollController scrollCtrl;
+  final Future<bool> Function(int, bool?) rateRecommendation;
 
   @override
   Widget build(BuildContext context) {
@@ -26,16 +28,25 @@ class MediaRecommendationsSubview extends StatelessWidget {
       provider: mediaRelationsProvider(id).select(
         (s) => s.unwrapPrevious().whenData((data) => data.recommendations),
       ),
-      onData: (data) => _MediaRecommendationsGrid(id, data.items),
+      onData: (data) => _MediaRecommendationsGrid(
+        id,
+        data.items,
+        rateRecommendation,
+      ),
     );
   }
 }
 
 class _MediaRecommendationsGrid extends StatelessWidget {
-  const _MediaRecommendationsGrid(this.mediaId, this.items);
+  const _MediaRecommendationsGrid(
+    this.mediaId,
+    this.items,
+    this.rateRecommendation,
+  );
 
   final int mediaId;
   final List<Recommendation> items;
+  final Future<bool> Function(int, bool?) rateRecommendation;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +99,11 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5, right: 5),
-                  child: _RecommendationRating(mediaId, items[i]),
+                  child: _RecommendationRating(
+                    mediaId,
+                    items[i],
+                    rateRecommendation,
+                  ),
                 ),
               ],
             ),
@@ -100,10 +115,11 @@ class _MediaRecommendationsGrid extends StatelessWidget {
 }
 
 class _RecommendationRating extends StatefulWidget {
-  const _RecommendationRating(this.mediaId, this.item);
+  const _RecommendationRating(this.mediaId, this.item, this.rateRecommendation);
 
   final int mediaId;
   final Recommendation item;
+  final Future<bool> Function(int, bool?) rateRecommendation;
 
   @override
   State<_RecommendationRating> createState() => _RecommendationRatingState();
@@ -112,6 +128,8 @@ class _RecommendationRating extends StatefulWidget {
 class _RecommendationRatingState extends State<_RecommendationRating> {
   @override
   Widget build(BuildContext context) {
+    final item = widget.item;
+
     return SizedBox(
       height: 30,
       child: Row(
@@ -121,40 +139,36 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
             message: 'Agree',
             child: InkResponse(
               onTap: () {
-                final oldRating = widget.item.rating;
-                final oldUserRating = widget.item.userRating;
+                final oldRating = item.rating;
+                final oldUserRating = item.userRating;
 
                 setState(() {
-                  switch (widget.item.userRating) {
+                  switch (item.userRating) {
                     case true:
-                      widget.item.rating--;
-                      widget.item.userRating = null;
+                      item.rating--;
+                      item.userRating = null;
                       break;
                     case false:
-                      widget.item.rating += 2;
-                      widget.item.userRating = true;
+                      item.rating += 2;
+                      item.userRating = true;
                       break;
                     case null:
-                      widget.item.rating++;
-                      widget.item.userRating = true;
+                      item.rating++;
+                      item.userRating = true;
                       break;
                   }
                 });
 
-                rateRecommendation(
-                  widget.mediaId,
-                  widget.item.id,
-                  widget.item.userRating,
-                ).then((ok) {
+                widget.rateRecommendation(item.id, item.userRating).then((ok) {
                   if (!ok) {
                     setState(() {
-                      widget.item.rating = oldRating;
-                      widget.item.userRating = oldUserRating;
+                      item.rating = oldRating;
+                      item.userRating = oldUserRating;
                     });
                   }
                 });
               },
-              child: widget.item.userRating == true
+              child: item.userRating == true
                   ? Icon(
                       Icons.thumb_up,
                       size: Consts.iconSmall,
@@ -168,46 +182,42 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
             ),
           ),
           const SizedBox(width: 5),
-          Text(widget.item.rating.toString(), overflow: TextOverflow.fade),
+          Text(item.rating.toString(), overflow: TextOverflow.fade),
           const SizedBox(width: 5),
           Tooltip(
             message: 'Disagree',
             child: InkResponse(
               onTap: () {
-                final oldRating = widget.item.rating;
-                final oldUserRating = widget.item.userRating;
+                final oldRating = item.rating;
+                final oldUserRating = item.userRating;
 
                 setState(() {
-                  switch (widget.item.userRating) {
+                  switch (item.userRating) {
                     case true:
-                      widget.item.rating -= 2;
-                      widget.item.userRating = false;
+                      item.rating -= 2;
+                      item.userRating = false;
                       break;
                     case false:
-                      widget.item.rating++;
-                      widget.item.userRating = null;
+                      item.rating++;
+                      item.userRating = null;
                       break;
                     case null:
-                      widget.item.rating--;
-                      widget.item.userRating = false;
+                      item.rating--;
+                      item.userRating = false;
                       break;
                   }
                 });
 
-                rateRecommendation(
-                  widget.mediaId,
-                  widget.item.id,
-                  widget.item.userRating,
-                ).then((ok) {
+                widget.rateRecommendation(item.id, item.userRating).then((ok) {
                   if (!ok) {
                     setState(() {
-                      widget.item.rating = oldRating;
-                      widget.item.userRating = oldUserRating;
+                      item.rating = oldRating;
+                      item.userRating = oldUserRating;
                     });
                   }
                 });
               },
-              child: widget.item.userRating == false
+              child: item.userRating == false
                   ? Icon(
                       Icons.thumb_down,
                       size: Consts.iconSmall,

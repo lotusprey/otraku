@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/routing.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/background_handler.dart';
@@ -13,10 +13,12 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
+  final container = ProviderContainer();
   await Persistence.init();
-  await Api.init();
+  await container.read(repositoryProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
-  runApp(const ProviderScope(child: App()));
+
+  runApp(UncontrolledProviderScope(container: container, child: const App()));
 }
 
 final _notificationCtrl = StreamController<String>.broadcast();
@@ -36,7 +38,8 @@ class AppState extends ConsumerState<App> {
   void initState() {
     super.initState();
     _router = GoRouter(
-      initialLocation: Api.hasActiveAccount() ? Routes.home() : Routes.auth,
+      initialLocation:
+          Persistence().selectedAccount != null ? Routes.home() : Routes.auth,
       routes: buildRoutes(() => Persistence().confirmExit),
       errorBuilder: (context, state) => const NotFoundView(canPop: false),
     );

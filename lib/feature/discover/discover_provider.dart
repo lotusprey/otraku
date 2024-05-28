@@ -9,7 +9,7 @@ import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/user/user_models.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
 final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
@@ -76,15 +76,18 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchAnime(DiscoverAnimeItems oldValue) async {
-    final data = await Api.get(GqlQuery.mediaPage, {
-      'page': oldValue.pages.next,
-      'type': 'ANIME',
-      if (filter.search.isNotEmpty) ...{
-        'search': filter.search,
-        ...filter.mediaFilter.toMap(true)..['sort'] = 'SEARCH_MATCH',
-      } else
-        ...filter.mediaFilter.toMap(true),
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.mediaPage,
+      {
+        'page': oldValue.pages.next,
+        'type': 'ANIME',
+        if (filter.search.isNotEmpty) ...{
+          'search': filter.search,
+          ...filter.mediaFilter.toMap(true)..['sort'] = 'SEARCH_MATCH',
+        } else
+          ...filter.mediaFilter.toMap(true),
+      },
+    );
 
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
@@ -98,15 +101,18 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchManga(DiscoverMangaItems oldValue) async {
-    final data = await Api.get(GqlQuery.mediaPage, {
-      'page': oldValue.pages.next,
-      'type': 'MANGA',
-      if (filter.search.isNotEmpty) ...{
-        'search': filter.search,
-        ...filter.mediaFilter.toMap(false)..['sort'] = 'SEARCH_MATCH',
-      } else
-        ...filter.mediaFilter.toMap(false),
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.mediaPage,
+      {
+        'page': oldValue.pages.next,
+        'type': 'MANGA',
+        if (filter.search.isNotEmpty) ...{
+          'search': filter.search,
+          ...filter.mediaFilter.toMap(false)..['sort'] = 'SEARCH_MATCH',
+        } else
+          ...filter.mediaFilter.toMap(false),
+      },
+    );
 
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
@@ -121,11 +127,14 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
 
   Future<DiscoverItems> _fetchCharacters(
       DiscoverCharacterItems oldValue) async {
-    final data = await Api.get(GqlQuery.characterPage, {
-      'page': oldValue.pages.next,
-      if (filter.search.isNotEmpty) 'search': filter.search,
-      if (filter.hasBirthday) 'isBirthday': true,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.characterPage,
+      {
+        'page': oldValue.pages.next,
+        if (filter.search.isNotEmpty) 'search': filter.search,
+        if (filter.hasBirthday) 'isBirthday': true,
+      },
+    );
 
     final items = <TileItem>[];
     for (final c in data['Page']['characters']) {
@@ -139,11 +148,14 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchStaff(DiscoverStaffItems oldValue) async {
-    final data = await Api.get(GqlQuery.staffPage, {
-      'page': oldValue.pages.next,
-      if (filter.search.isNotEmpty) 'search': filter.search,
-      if (filter.hasBirthday) 'isBirthday': true,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.staffPage,
+      {
+        'page': oldValue.pages.next,
+        if (filter.search.isNotEmpty) 'search': filter.search,
+        if (filter.hasBirthday) 'isBirthday': true,
+      },
+    );
 
     final items = <TileItem>[];
     for (final s in data['Page']['staff']) {
@@ -157,10 +169,13 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchStudios(DiscoverStudioItems oldValue) async {
-    final data = await Api.get(GqlQuery.studioPage, {
-      'page': oldValue.pages.next,
-      if (filter.search.isNotEmpty) 'search': filter.search,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.studioPage,
+      {
+        'page': oldValue.pages.next,
+        if (filter.search.isNotEmpty) 'search': filter.search,
+      },
+    );
 
     final items = <StudioItem>[];
     for (final s in data['Page']['studios']) {
@@ -174,10 +189,13 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchUsers(DiscoverUserItems oldValue) async {
-    final data = await Api.get(GqlQuery.userPage, {
-      'page': oldValue.pages.next,
-      if (filter.search.isNotEmpty) 'search': filter.search,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.userPage,
+      {
+        'page': oldValue.pages.next,
+        if (filter.search.isNotEmpty) 'search': filter.search,
+      },
+    );
 
     final items = <UserItem>[];
     for (final u in data['Page']['users']) {
@@ -191,12 +209,15 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<DiscoverItems> _fetchReviews(DiscoverReviewItems oldValue) async {
-    final data = await Api.get(GqlQuery.reviewPage, {
-      'page': oldValue.pages.next,
-      'sort': filter.reviewsFilter.sort.value,
-      if (filter.reviewsFilter.mediaType != null)
-        'mediaType': filter.reviewsFilter.mediaType!.value,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.reviewPage,
+      {
+        'page': oldValue.pages.next,
+        'sort': filter.reviewsFilter.sort.value,
+        if (filter.reviewsFilter.mediaType != null)
+          'mediaType': filter.reviewsFilter.mediaType!.value,
+      },
+    );
 
     final items = <ReviewItem>[];
     for (final r in data['Page']['reviews']) {

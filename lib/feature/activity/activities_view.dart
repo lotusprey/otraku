@@ -61,7 +61,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
                         ),
                   onSaved: (map) => ref
                       .read(activitiesProvider(widget.id).notifier)
-                      .insertActivity(map, Persistence().id!),
+                      .prepend(map),
                 ),
               ),
             ),
@@ -107,23 +107,34 @@ class ActivitiesSubView extends StatelessWidget {
                 activity: data.items[i],
                 footer: ActivityFooter(
                   activity: data.items[i],
-                  onDeleted: () => ref
+                  toggleLike: () => ref
                       .read(activitiesProvider(id).notifier)
-                      .remove(data.items[i].id),
-                  onChanged: null,
-                  onPinned: id == Persistence().id
+                      .toggleLike(data.items[i]),
+                  toggleSubscription: () => ref
+                      .read(activitiesProvider(id).notifier)
+                      .toggleSubscription(data.items[i]),
+                  togglePin: id == Persistence().id
                       ? () => ref
                           .read(activitiesProvider(id).notifier)
-                          .togglePin(data.items[i].id)
+                          .togglePin(data.items[i])
                       : null,
-                  onOpenReplies: () => context.push(
+                  remove: () => ref
+                      .read(activitiesProvider(id).notifier)
+                      .remove(data.items[i]),
+                  onEdited: (map) {
+                    final activity = Activity.maybe(
+                      map,
+                      Persistence().id!,
+                      Persistence().imageQuality,
+                    );
+
+                    if (activity == null) return;
+
+                    ref.read(activitiesProvider(id).notifier).replace(activity);
+                  },
+                  openReplies: () => context.push(
                     Routes.activity(data.items[i].id, id),
                   ),
-                  onEdited: (map) {
-                    ref
-                        .read(activitiesProvider(id).notifier)
-                        .replaceActivity(map);
-                  },
                 ),
               ),
             ),

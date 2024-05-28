@@ -111,19 +111,26 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                               activity: data.activity,
                               footer: ActivityFooter(
                                 activity: data.activity,
-                                onDeleted: () => _onDeleted(data.activity),
-                                onChanged: () => _onChanged(data.activity),
+                                toggleLike: () => _toggleLike(data.activity),
+                                toggleSubscription: () =>
+                                    _toggleSubscription(data.activity),
+                                togglePin: () => _togglePin(data.activity),
+                                remove: () => _remove(data.activity),
                                 onEdited: _onEdited,
-                                onPinned: () => setState(() {}),
-                                onOpenReplies: null,
+                                openReplies: null,
                               ),
                             ),
                           ),
                           SliverList(
                             delegate: SliverChildBuilderDelegate(
                               childCount: data.replies.items.length,
-                              (context, i) =>
-                                  ReplyCard(widget.id, data.replies.items[i]),
+                              (context, i) => ReplyCard(
+                                activityId: widget.id,
+                                reply: data.replies.items[i],
+                                toggleLike: () => ref
+                                    .read(activityProvider(widget.id).notifier)
+                                    .toggleReplyLike(data.replies.items[i].id),
+                              ),
                             ),
                           ),
                           SliverFooter(loading: data.replies.hasNext),
@@ -138,29 +145,60 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     );
   }
 
-  void _onDeleted(Activity activity) {
+  Future<Object?> _toggleLike(Activity activity) {
     if (widget.feedId != null) {
-      ref.read(activitiesProvider(widget.feedId!).notifier).remove(widget.id);
+      return ref
+          .read(activitiesProvider(widget.feedId!).notifier)
+          .toggleLike(activity);
     }
-    Navigator.pop(context);
+
+    return ref.read(activityProvider(widget.id).notifier).toggleLike();
   }
 
-  void _onChanged(Activity activity) {
+  Future<Object?> _toggleSubscription(Activity activity) {
     if (widget.feedId != null) {
-      ref
+      return ref
           .read(activitiesProvider(widget.feedId!).notifier)
-          .updateActivity(activity);
+          .toggleSubscription(activity);
     }
+
+    return ref.read(activityProvider(widget.id).notifier).toggleSubscription();
+  }
+
+  Future<Object?> _togglePin(Activity activity) {
+    if (widget.feedId != null) {
+      return ref
+          .read(activitiesProvider(widget.feedId!).notifier)
+          .togglePin(activity);
+    }
+
+    return ref.read(activityProvider(widget.id).notifier).togglePin();
+  }
+
+  Future<Object?> _remove(Activity activity) {
+    Navigator.pop(context);
+
+    if (widget.feedId != null) {
+      return ref
+          .read(activitiesProvider(widget.feedId!).notifier)
+          .remove(activity);
+    }
+
+    return ref.read(activityProvider(widget.id).notifier).remove();
   }
 
   void _onEdited(Map<String, dynamic> map) {
-    final activity = ref
-        .read(activityProvider(widget.id).notifier)
-        .replaceActivity(map, Persistence().id!);
-    if (activity != null && widget.feedId != null) {
-      ref
-          .read(activitiesProvider(widget.feedId!).notifier)
-          .updateActivity(activity);
+    final activity = Activity.maybe(
+      map,
+      Persistence().id!,
+      Persistence().imageQuality,
+    );
+
+    if (activity == null) return;
+
+    ref.read(activityProvider(widget.id).notifier).replace(activity);
+    if (widget.feedId != null) {
+      ref.read(activitiesProvider(widget.feedId!).notifier).replace(activity);
     }
   }
 }

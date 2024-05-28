@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
@@ -15,7 +15,7 @@ final settingsProvider =
 class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
-    final data = await Api.get(GqlQuery.settings);
+    final data = await ref.read(repositoryProvider).request(GqlQuery.settings);
     return Settings(data['Viewer']);
   }
 
@@ -24,7 +24,9 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   Future<void> updateSettings(Settings other) async {
     final prev = state.valueOrNull;
     state = await AsyncValue.guard(() async {
-      final data = await Api.get(GqlMutation.updateSettings, other.toMap());
+      final data = await ref
+          .read(repositoryProvider)
+          .request(GqlMutation.updateSettings, other.toMap());
       return Settings(data['UpdateUser']);
     });
     final next = state.valueOrNull;
@@ -58,7 +60,9 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
 
   Future<void> refetchUnread() async {
     try {
-      final data = await Api.get(GqlQuery.settings, {'withData': false});
+      final data = await ref
+          .read(repositoryProvider)
+          .request(GqlQuery.settings, {'withData': false});
       state = state.whenData(
         (v) => v.copy(
           unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,

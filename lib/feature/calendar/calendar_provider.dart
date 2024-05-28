@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/model/paged.dart';
-import 'package:otraku/feature/viewer/api.dart';
 import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
@@ -36,7 +36,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
         .copyWith(hour: 23, minute: 59, second: 59)
         .secondsSinceEpoch;
 
-    final data = await Api.get(GqlQuery.calendar, {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.calendar, {
       'page': oldState.next,
       'airingFrom': airingFrom,
       'airingTo': airingTo,

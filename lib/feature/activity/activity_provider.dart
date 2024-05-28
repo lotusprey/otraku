@@ -2,82 +2,10 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/util/persistence.dart';
-
-/// Toggles an activity like and returns an error if unsuccessful.
-Future<Object?> toggleActivityLike(Activity activity) async {
-  try {
-    await Api.get(GqlMutation.toggleLike, {
-      'id': activity.id,
-      'type': 'ACTIVITY',
-    });
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
-
-/// Toggles an activity subscription and returns an error if unsuccessful.
-Future<Object?> toggleActivitySubscription(Activity activity) async {
-  try {
-    await Api.get(GqlMutation.toggleActivitySubscription, {
-      'id': activity.id,
-      'subscribe': activity.isSubscribed,
-    });
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
-
-/// Pins/Unpins an activity and returns an error if unsuccessful.
-Future<Object?> toggleActivityPin(Activity activity) async {
-  try {
-    await Api.get(GqlMutation.toggleActivityPin, {
-      'id': activity.id,
-      'pinned': activity.isPinned,
-    });
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
-
-/// Toggles a reply like and returns an error if unsuccessful.
-Future<Object?> toggleReplyLike(ActivityReply reply) async {
-  try {
-    await Api.get(GqlMutation.toggleLike, {
-      'id': reply.id,
-      'type': 'ACTIVITY_REPLY',
-    });
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
-
-/// Deletes an activity and returns an error if unsuccessful.
-Future<Object?> deleteActivity(int activityId) async {
-  try {
-    await Api.get(GqlMutation.deleteActivity, {'id': activityId});
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
-
-/// Deletes an activity reply and returns an error if unsuccessful.
-Future<Object?> deleteActivityReply(int replyId) async {
-  try {
-    await Api.get(GqlMutation.deleteActivityReply, {'id': replyId});
-    return null;
-  } catch (e) {
-    return e;
-  }
-}
 
 final activityProvider = AsyncNotifierProvider.autoDispose
     .family<ActivityNotifier, ExpandedActivity, int>(
@@ -102,7 +30,7 @@ class ActivityNotifier
   Future<ExpandedActivity> _fetch(ExpandedActivity? oldState) async {
     final replies = oldState?.replies ?? const Paged();
 
-    final data = await Api.get(GqlQuery.activity, {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.activity, {
       'id': arg,
       'page': replies.next,
       if (replies.next == 1) 'withActivity': true,
@@ -131,23 +59,16 @@ class ActivityNotifier
     );
   }
 
-  /// Deserializes [map] and replaces the current activity.
-  /// On success, it returns the new activity.
-  Activity? replaceActivity(Map<String, dynamic> map, int viewerId) {
-    if (!state.hasValue) return null;
-    final value = state.value!;
-
-    final activity = Activity.maybe(map, viewerId, Persistence().imageQuality);
-    if (activity == null) return null;
+  void replace(Activity activity) {
+    final value = state.valueOrNull;
+    if (value == null) return;
 
     state = AsyncValue.data(ExpandedActivity(activity, value.replies));
-    return activity;
   }
 
-  /// Deserializes [map] and appends it at the end.
   void appendReply(Map<String, dynamic> map) {
-    if (!state.hasValue) return;
-    final value = state.value!;
+    final value = state.valueOrNull;
+    if (value == null) return;
 
     final reply = ActivityReply.maybe(map);
     if (reply == null) return;
@@ -163,10 +84,9 @@ class ActivityNotifier
     ));
   }
 
-  /// Replaces an existing reply with another one.
   void replaceReply(Map<String, dynamic> map) {
-    if (!state.hasValue) return;
-    final value = state.value!;
+    final value = state.valueOrNull;
+    if (value == null) return;
 
     final reply = ActivityReply.maybe(map);
     if (reply == null) return;
@@ -187,10 +107,57 @@ class ActivityNotifier
     }
   }
 
-  /// Removes an already deleted reply.
-  void removeReply(int replyId) {
-    if (!state.hasValue) return;
-    final value = state.value!;
+  Future<Object?> toggleLike() {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleLike,
+      {'id': arg, 'type': 'ACTIVITY'},
+    ).then((_) => null, onError: (e) => e);
+  }
+
+  Future<Object?> toggleSubscription() {
+    final isSubscribed = state.valueOrNull?.activity.isSubscribed;
+    if (isSubscribed == null) return Future.value();
+
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleActivitySubscription,
+      {'id': arg, 'subscribe': isSubscribed},
+    ).then((_) => null, onError: (e) => e);
+  }
+
+  Future<Object?> togglePin() {
+    final isPinned = state.valueOrNull?.activity.isPinned;
+    if (isPinned == null) return Future.value();
+
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleActivityPin,
+      {'id': arg, 'pinned': isPinned},
+    ).then((_) => null, onError: (e) => e);
+  }
+
+  Future<Object?> toggleReplyLike(int replyId) {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleLike,
+      {'id': replyId, 'type': 'ACTIVITY_REPLY'},
+    ).then((_) => null, onError: (e) => e);
+  }
+
+  Future<Object?> remove() {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.deleteActivity,
+      {'id': arg},
+    ).then((_) => null, onError: (e) => e);
+  }
+
+  Future<Object?> removeReply(int replyId) async {
+    final value = state.valueOrNull;
+    if (value == null) return Future.value();
+
+    final err = await ref.read(repositoryProvider).request(
+      GqlMutation.deleteActivityReply,
+      {'id': replyId},
+    ).then((_) => null, onError: (e) => e);
+
+    if (err != null) return err;
 
     for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == replyId) {
@@ -205,8 +172,10 @@ class ActivityNotifier
             next: value.replies.next,
           ),
         ));
-        return;
+        break;
       }
     }
+
+    return null;
   }
 }

@@ -5,7 +5,7 @@ import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/model/paged.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
 final notificationsProvider = AsyncNotifierProvider.autoDispose<
@@ -32,14 +32,17 @@ class NotificationsNotifier
   Future<PagedWithTotal<SiteNotification>> _fetch(
     PagedWithTotal<SiteNotification> oldState,
   ) async {
-    final data = await Api.get(GqlQuery.notifications, {
-      'page': oldState.next,
-      if (filter == NotificationsFilter.all) ...{
-        'withCount': true,
-        'resetCount': true,
-      } else
-        'filter': filter.vars,
-    });
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.notifications,
+      {
+        'page': oldState.next,
+        if (filter == NotificationsFilter.all) ...{
+          'withCount': true,
+          'resetCount': true,
+        } else
+          'filter': filter.vars,
+      },
+    );
 
     int? unreadCount;
     if (filter.index < 1) {

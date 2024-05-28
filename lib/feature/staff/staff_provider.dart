@@ -8,25 +8,26 @@ import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
 
-/// Favorite/Unfavorite staff. Returns `true` if successful.
-Future<bool> toggleFavoriteStaff(int staffId) async {
-  try {
-    await Api.get(GqlMutation.toggleFavorite, {'staff': staffId});
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+final staffProvider =
+    AsyncNotifierProvider.autoDispose.family<StaffNotifier, Staff, int>(
+  StaffNotifier.new,
+);
 
-final staffProvider = FutureProvider.autoDispose.family(
-  (ref, int id) async {
-    final data = await Api.get(
+final staffRelationsProvider = AsyncNotifierProvider.autoDispose
+    .family<StaffRelationsNotifier, StaffRelations, int>(
+  StaffRelationsNotifier.new,
+);
+
+class StaffNotifier extends AutoDisposeFamilyAsyncNotifier<Staff, int> {
+  @override
+  FutureOr<Staff> build(arg) async {
+    final data = await ref.read(repositoryProvider).request(
       GqlQuery.staff,
-      {'id': id, 'withInfo': true},
+      {'id': arg, 'withInfo': true},
     );
 
     final personNaming = await ref.watch(
@@ -34,13 +35,15 @@ final staffProvider = FutureProvider.autoDispose.family(
     );
 
     return Staff(data['Staff'], personNaming);
-  },
-);
+  }
 
-final staffRelationsProvider = AsyncNotifierProvider.autoDispose
-    .family<StaffRelationsNotifier, StaffRelations, int>(
-  StaffRelationsNotifier.new,
-);
+  Future<bool> toggleFavorite() {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleFavorite,
+      {'staff': arg},
+    ).then((_) => true, onError: (_) => false);
+  }
+}
 
 class StaffRelationsNotifier
     extends AutoDisposeFamilyAsyncNotifier<StaffRelations, int> {
@@ -84,7 +87,10 @@ class StaffRelationsNotifier
       variables['page'] = oldState.roles.next;
     }
 
-    var data = await Api.get(GqlQuery.staff, variables);
+    var data = await ref.read(repositoryProvider).request(
+          GqlQuery.staff,
+          variables,
+        );
     data = data['Staff'];
 
     var charactersAndMedia = oldState.charactersAndMedia;

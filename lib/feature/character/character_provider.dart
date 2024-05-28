@@ -7,26 +7,22 @@ import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/model/relation.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 
-/// Favorite/Unfavorite character. Returns `true` if successful.
-Future<bool> toggleFavoriteCharacter(int characterId) async {
-  try {
-    await Api.get(GqlMutation.toggleFavorite, {'character': characterId});
-    return true;
-  } catch (_) {
-    return false;
-  }
-}
+final characterProvider =
+    AsyncNotifierProvider.autoDispose.family<CharacterNotifier, Character, int>(
+  CharacterNotifier.new,
+);
 
-final characterProvider = FutureProvider.autoDispose.family(
-  (ref, int id) async {
-    final data = await Api.get(
+class CharacterNotifier extends AutoDisposeFamilyAsyncNotifier<Character, int> {
+  @override
+  FutureOr<Character> build(int arg) async {
+    final data = await ref.read(repositoryProvider).request(
       GqlQuery.character,
-      {'id': id, 'withInfo': true},
+      {'id': arg, 'withInfo': true},
     );
 
     final personNaming = await ref.watch(
@@ -34,8 +30,15 @@ final characterProvider = FutureProvider.autoDispose.family(
     );
 
     return Character(data['Character'], personNaming);
-  },
-);
+  }
+
+  Future<bool> toggleFavorite() {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.toggleFavorite,
+      {'character': arg},
+    ).then((_) => true, onError: (_) => false);
+  }
+}
 
 final characterMediaProvider = AsyncNotifierProvider.autoDispose
     .family<CharacterMediaNotifier, CharacterMedia, int>(
@@ -80,7 +83,9 @@ class CharacterMediaNotifier
       variables['page'] = oldState.manga.next;
     }
 
-    var data = await Api.get(GqlQuery.character, variables);
+    var data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.character, variables);
     data = data['Character'];
 
     var anime = oldState.anime;

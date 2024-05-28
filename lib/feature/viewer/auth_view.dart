@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/feature/viewer/api.dart';
 import 'package:otraku/util/routing.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
@@ -15,7 +16,7 @@ import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/util/toast.dart';
 
-class AuthView extends StatefulWidget {
+class AuthView extends ConsumerStatefulWidget {
   const AuthView([this.credentials]);
 
   final (String, int)? credentials;
@@ -24,7 +25,7 @@ class AuthView extends StatefulWidget {
   AuthViewState createState() => AuthViewState();
 }
 
-class AuthViewState extends State<AuthView> {
+class AuthViewState extends ConsumerState<AuthView> {
   bool _loading = false;
 
   @override
@@ -43,7 +44,7 @@ class AuthViewState extends State<AuthView> {
     if (widget.credentials == null) return;
     final token = widget.credentials!.$1;
     final expiration = widget.credentials!.$2;
-    await Api.addAccount(token, expiration);
+    await ref.read(repositoryProvider.notifier).addAccount(token, expiration);
     setState(() => _loading = false);
   }
 
@@ -57,7 +58,8 @@ class AuthViewState extends State<AuthView> {
   }
 
   void _selectAccount(int index) async {
-    if (await Api.selectAccount(index) && mounted) {
+    final ok = await ref.read(repositoryProvider.notifier).selectAccount(index);
+    if (ok && mounted) {
       context.go(Routes.home());
     }
   }
@@ -159,8 +161,10 @@ class AuthViewState extends State<AuthView> {
                           title: 'Remove Account?',
                           mainAction: 'Yes',
                           secondaryAction: 'No',
-                          onConfirm: () =>
-                              Api.removeAccount(i).then((_) => setState(() {})),
+                          onConfirm: () => ref
+                              .read(repositoryProvider.notifier)
+                              .removeAccount(i)
+                              .then((_) => setState(() {})),
                         ),
                       ),
                     ),

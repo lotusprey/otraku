@@ -7,7 +7,7 @@ import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/feature/viewer/api.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
 final favoritesProvider =
@@ -62,7 +62,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
       variables['page'] = oldState.studios.next;
     }
 
-    var data = await Api.get(GqlQuery.favorites, variables);
+    var data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.favorites, variables);
     data = data['User']['favourites'];
 
     var anime = oldState.anime;

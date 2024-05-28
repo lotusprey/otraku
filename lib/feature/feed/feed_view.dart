@@ -10,7 +10,6 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -69,7 +68,7 @@ class FeedSubview extends StatelessWidget {
                     tag: const StatusActivityCompositionTag(id: null),
                     onSaved: (map) => ref
                         .read(activitiesProvider(homeFeedId).notifier)
-                        .insertActivity(map, Persistence().id!),
+                        .prepend(map),
                   ),
                 ),
               ),

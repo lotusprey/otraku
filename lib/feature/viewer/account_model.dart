@@ -18,6 +18,8 @@ class Account {
   final String avatarUrl;
   final DateTime expiration;
 
+  String get tokenPersistenceKey => 'auth$id';
+
   Map<String, dynamic> toMap() => {
         'id': id,
         'name': name,

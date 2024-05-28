@@ -222,8 +222,7 @@ class _NotificationItem extends StatelessWidget {
                                   for (int i = 0; i < item.texts.length; i++)
                                     TextSpan(
                                       text: item.texts[i],
-                                      style: (i % 2 == 0) ==
-                                              item.markTextOnEvenIndex
+                                      style: (i % 2 == 0)
                                           ? Theme.of(context)
                                               .textTheme
                                               .labelLarge
@@ -278,7 +277,7 @@ class _NotificationDialog extends StatelessWidget {
           for (int i = 0; i < item.texts.length; i++)
             TextSpan(
               text: item.texts[i],
-              style: (i % 2 == 0) == item.markTextOnEvenIndex
+              style: (i % 2 == 0)
                   ? Theme.of(context).textTheme.labelLarge
                   : Theme.of(context).textTheme.bodyMedium,
             ),

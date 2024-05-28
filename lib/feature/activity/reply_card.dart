@@ -15,10 +15,15 @@ import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
-  const ReplyCard(this.activityId, this.reply);
+  const ReplyCard({
+    required this.activityId,
+    required this.reply,
+    required this.toggleLike,
+  });
 
   final int activityId;
   final ActivityReply reply;
+  final Future<Object?> Function() toggleLike;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +92,7 @@ class ReplyCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-                    _ReplyLikeButton(reply),
+                    _ReplyLikeButton(reply: reply, toggleLike: toggleLike),
                   ],
                 ),
               ],
@@ -129,20 +134,19 @@ class ReplyCard extends StatelessWidget {
               mainAction: 'Yes',
               secondaryAction: 'No',
               onConfirm: () {
-                deleteActivityReply(reply.id).then((err) {
-                  if (err == null) {
-                    ref
-                        .read(activityProvider(activityId).notifier)
-                        .removeReply(reply.id);
-                  } else {
-                    showPopUp(
-                      context,
-                      ConfirmationDialog(
-                        title: 'Could not delete reply',
-                        content: err.toString(),
-                      ),
-                    );
-                  }
+                ref
+                    .read(activityProvider(activityId).notifier)
+                    .removeReply(reply.id)
+                    .then((err) {
+                  if (err == null) return;
+
+                  showPopUp(
+                    context,
+                    ConfirmationDialog(
+                      title: 'Could not delete reply',
+                      content: err.toString(),
+                    ),
+                  );
                 });
               },
             ),
@@ -192,9 +196,10 @@ class _ReplyMentionButton extends StatelessWidget {
 }
 
 class _ReplyLikeButton extends StatefulWidget {
-  const _ReplyLikeButton(this.reply);
+  const _ReplyLikeButton({required this.reply, required this.toggleLike});
 
   final ActivityReply reply;
+  final Future<Object?> Function() toggleLike;
 
   @override
   _ReplyLikeButtonState createState() => _ReplyLikeButtonState();
@@ -236,8 +241,6 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
     );
   }
 
-  /// Toggle a like and revert the change,
-  /// if the reqest was unsuccessful.
   void _toggleLike() {
     final reply = widget.reply;
     final isLiked = reply.isLiked;
@@ -247,7 +250,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? -1 : 1;
     });
 
-    toggleReplyLike(reply).then((err) {
+    widget.toggleLike().then((err) {
       if (err == null) return;
 
       setState(() {

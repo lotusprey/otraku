@@ -100,7 +100,6 @@ class MediaOverviewSubview extends StatelessWidget {
           ),
           spacing,
           TableList(details),
-          spacing,
           if (info.genres.isNotEmpty)
             _PlainScrollCards(
               title: 'Genres',
@@ -117,8 +116,8 @@ class MediaOverviewSubview extends StatelessWidget {
                 context.go(Routes.home(HomeTab.discover));
               },
             ),
-          if (info.tags.isNotEmpty) ...[_TagScrollCards(info, ref), spacing],
-          if (info.studios.isNotEmpty) ...[
+          if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
+          if (info.studios.isNotEmpty)
             _PlainScrollCards(
               title: 'Studios',
               items: info.studios.keys.toList(),
@@ -129,9 +128,7 @@ class MediaOverviewSubview extends StatelessWidget {
                 ),
               ),
             ),
-            spacing,
-          ],
-          if (info.producers.isNotEmpty) ...[
+          if (info.producers.isNotEmpty)
             _PlainScrollCards(
               title: 'Producers',
               items: info.producers.keys.toList(),
@@ -142,12 +139,9 @@ class MediaOverviewSubview extends StatelessWidget {
                 ),
               ),
             ),
-            spacing,
-          ],
-          if (info.externalLinks.isNotEmpty) ...[
+          if (info.externalLinks.isNotEmpty)
             _ExternalLinkScrollCards(info.externalLinks),
-            spacing,
-          ],
+          spacing,
           TableList(titles),
           SliverToBoxAdapter(
             child: SizedBox(
@@ -267,20 +261,20 @@ class _ScrollCards extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Text(title),
-              const Spacer(),
-              if (trailingAction != null) trailingAction!,
-            ],
+          SizedBox(
+            height: Consts.tapTargetSize,
+            child: Row(
+              children: [
+                Expanded(child: Text(title)),
+                if (trailingAction != null) trailingAction!,
+              ],
+            ),
           ),
-          if (trailingAction == null) const SizedBox(height: 10),
           SizedBox(
             height: 42,
             child: ShadowedOverflowList(
               itemCount: itemCount,
-              itemBuilder: (context, i) => Card(
-                margin: const EdgeInsets.only(bottom: 2),
+              itemBuilder: (context, i) => Card.outlined(
                 child: InkWell(
                   borderRadius: Consts.borderRadiusMin,
                   onTap: () => onTap(i),
@@ -417,12 +411,16 @@ class _ExternalLinkScrollCards extends StatelessWidget {
       builder: (context, i) => Row(
         children: [
           if (items[i].color != null)
-            Container(
-              padding: Consts.padding,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: Consts.borderRadiusMin,
-                color: items[i].color,
+            Semantics(
+              label: 'Color',
+              child: Container(
+                width: 15,
+                height: 15,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  borderRadius: Consts.borderRadiusMin,
+                  color: items[i].color,
+                ),
               ),
             ),
           Text(items[i].site),

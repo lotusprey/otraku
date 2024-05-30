@@ -4,7 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/discover/discover_filter_provider.dart';
+import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/filter/filter_collection_view.dart';
+import 'package:otraku/feature/filter/filter_discover_model.dart';
+import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/util/routing.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
@@ -51,6 +55,7 @@ class _CollectionViewState extends State<CollectionView> {
         tag: (userId: widget.userId, ofAnime: widget.ofAnime),
         scrollCtrl: _ctrl,
         focusNode: null,
+        tabCtrl: null,
       ),
     );
   }
@@ -61,11 +66,13 @@ class CollectionSubview extends StatelessWidget {
     required this.tag,
     required this.scrollCtrl,
     required this.focusNode,
+    required this.tabCtrl,
     super.key,
   });
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
+  final TabController? tabCtrl;
   final FocusNode? focusNode;
 
   @override
@@ -91,7 +98,7 @@ class CollectionSubview extends StatelessWidget {
                   SliverRefreshControl(
                     onRefresh: () => ref.invalidate(collectionProvider(tag)),
                   ),
-                  _Content(tag),
+                  _Content(tag, tabCtrl),
                   const SliverFooter(),
                 ],
               ),
@@ -275,9 +282,10 @@ class _ActionButton extends StatelessWidget {
 }
 
 class _Content extends StatefulWidget {
-  const _Content(this.tag);
+  const _Content(this.tag, this.tabCtrl);
 
   final CollectionTag tag;
+  final TabController? tabCtrl;
 
   @override
   State<_Content> createState() => _ContentState();
@@ -313,24 +321,40 @@ class _ContentState extends State<_Content> {
               ),
               data: (data) {
                 if (data.isEmpty) {
-                  return const SliverFillRemaining(
-                    child: Center(child: Text('No results')),
+                  if (widget.tabCtrl == null) {
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('No results')),
+                    );
+                  }
+
+                  return SliverFillRemaining(
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('No results'),
+                          TextButton(
+                            onPressed: () => _searchGlobally(ref),
+                            child: const Text('Search Globally'),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 }
 
-                final onProgressUpdated = widget.tag.userId == Persistence().id
+                final onProgressUpdated = widget.tabCtrl != null
                     ? ref
                         .read(collectionProvider(widget.tag).notifier)
                         .saveEntryProgress
                     : null;
 
-                final collectionIsExpanded =
-                    widget.tag.userId != Persistence().id ||
-                        ref.watch(homeProvider.select(
-                          (s) => widget.tag.ofAnime
-                              ? s.didExpandAnimeCollection
-                              : s.didExpandMangaCollection,
-                        ));
+                final collectionIsExpanded = widget.tabCtrl == null ||
+                    ref.watch(homeProvider.select(
+                      (s) => widget.tag.ofAnime
+                          ? s.didExpandAnimeCollection
+                          : s.didExpandMangaCollection,
+                    ));
 
                 if (collectionIsExpanded &&
                         Persistence().collectionItemView == 1 ||
@@ -357,5 +381,25 @@ class _ContentState extends State<_Content> {
             );
       },
     );
+  }
+
+  void _searchGlobally(WidgetRef ref) {
+    final tag = widget.tag;
+    final collectionFilter = ref.read(collectionFilterProvider(tag));
+
+    ref.read(discoverFilterProvider.notifier).update((f) => f.copyWith(
+          type: tag.ofAnime ? DiscoverType.anime : DiscoverType.manga,
+          search: collectionFilter.search,
+          mediaFilter: DiscoverMediaFilter.fromCollection(
+            filter: collectionFilter.mediaFilter,
+            ofAnime: tag.ofAnime,
+          ),
+        ));
+
+    widget.tabCtrl!.index = HomeTab.discover.index;
+
+    ref
+        .read(collectionFilterProvider(tag).notifier)
+        .update((_) => CollectionFilter(tag.ofAnime));
   }
 }

@@ -438,7 +438,7 @@ class Entry {
       titles: titles,
       imageUrl: map['media']['coverImage'][Persistence().imageQuality.value],
       format: MediaFormat.from(map['media']['format']),
-      status: map['media']['status'],
+      status: MediaStatus.from(map['media']['status']),
       entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
@@ -466,7 +466,7 @@ class Entry {
   final List<String> titles;
   final String imageUrl;
   final MediaFormat? format;
-  final String? status;
+  final MediaStatus? status;
   final EntryStatus? entryStatus;
   final int? nextEpisode;
   final DateTime? airingAt;

@@ -536,6 +536,9 @@ enum MediaStatus {
 
   final String label;
   final String value;
+
+  static MediaStatus? from(String? value) =>
+      MediaStatus.values.firstWhereOrNull((v) => v.value == value);
 }
 
 enum MediaFormat {

@@ -20,13 +20,15 @@ class MediaRelatedSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      controller: scrollCtrl,
-      slivers: [
-        const SliverToBoxAdapter(child: SizedBox(height: 10)),
-        _MediaRelatedGrid(relations),
-        const SliverFooter(),
-      ],
+    return ConstrainedView(
+      child: CustomScrollView(
+        controller: scrollCtrl,
+        slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          _MediaRelatedGrid(relations),
+          const SliverFooter(),
+        ],
+      ),
     );
   }
 }
@@ -44,16 +46,14 @@ class _MediaRelatedGrid extends StatelessWidget {
       );
     }
 
-    return ConstrainedView(
-      child: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: 230,
-          height: 100,
-        ),
-        delegate: SliverChildBuilderDelegate(
-          childCount: items.length,
-          _buildTile,
-        ),
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 230,
+        height: 100,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        _buildTile,
       ),
     );
   }

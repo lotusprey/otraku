@@ -12,7 +12,6 @@ import 'package:otraku/feature/media/media_staff_view.dart';
 import 'package:otraku/feature/media/media_stats_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -189,9 +188,7 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
-        ConstrainedView(
-          child: MediaOverviewSubview(widget.media.info, _scrollCtrl),
-        ),
+        MediaOverviewSubview(widget.media.info, _scrollCtrl),
         MediaRelatedSubview(
           relations: widget.media.related,
           scrollCtrl: _scrollCtrl,

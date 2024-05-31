@@ -91,9 +91,9 @@ class NotesLabel extends StatelessWidget {
         child: InkResponse(
           radius: 10,
           child: const Icon(Ionicons.chatbox, size: Consts.iconSmall),
-          onTap: () => showPopUp(
-            context,
-            TextDialog(
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) => TextDialog(
               title: 'Comment',
               text: notes,
             ),

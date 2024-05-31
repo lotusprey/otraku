@@ -47,9 +47,9 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       settingsProvider,
       (_, next) => next.when(
         data: (data) => _settings = data.copy(),
-        error: (error, _) => showPopUp(
-          context,
-          ConfirmationDialog(
+        error: (error, _) => showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Failed to load settings',
             content: error.toString(),
           ),

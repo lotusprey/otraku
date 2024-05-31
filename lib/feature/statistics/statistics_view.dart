@@ -52,9 +52,9 @@ class _StatisticsViewState extends State<StatisticsView>
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
+            error: (error, _) => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
                 title: 'Failed to load statistics',
                 content: error.toString(),
               ),

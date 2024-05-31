@@ -147,9 +147,10 @@ class _TopBarContent extends StatelessWidget {
                           const [];
 
                   if (entries.isEmpty) {
-                    showPopUp(
-                      context,
-                      const ConfirmationDialog(title: 'No Entries'),
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          const ConfirmationDialog(title: 'No Entries'),
                     );
 
                     return;
@@ -299,9 +300,9 @@ class _ContentState extends State<_Content> {
         ref.listen<AsyncValue>(
           collectionEntriesProvider(widget.tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
+            error: (error, _) => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
                 title: 'Failed to load',
                 content: error.toString(),
               ),

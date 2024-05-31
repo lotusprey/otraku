@@ -2,51 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 
-Future<T?> showPopUp<T>(BuildContext context, Widget child) => showDialog<T>(
-      context: context,
-      builder: (context) => PopUpAnimation(child),
-      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(100),
-    );
-
-class PopUpAnimation extends StatefulWidget {
-  const PopUpAnimation(this.child);
-
-  final Widget child;
-
-  @override
-  PopUpAnimationState createState() => PopUpAnimationState();
-}
-
-class PopUpAnimationState extends State<PopUpAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late Animation<double> _anim;
-
-  @override
-  void initState() {
-    super.initState();
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-      value: 0.1,
-    );
-    _anim = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    _ctrl.forward();
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => ScaleTransition(
-        scale: _anim,
-        child: widget.child,
-      );
-}
-
 class InputDialog extends StatelessWidget {
   const InputDialog({required this.initial, required this.onChanged});
 
@@ -244,8 +199,10 @@ class TextDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) =>
-      _DialogColumn(title: title, child: SelectableText(text));
+  Widget build(BuildContext context) => _DialogColumn(
+        title: title,
+        child: SelectableText(text),
+      );
 }
 
 class HtmlDialog extends StatelessWidget {

@@ -9,22 +9,18 @@ Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
       context: context,
       builder: (context) => sheet,
       isScrollControlled: true,
-      barrierColor: Theme.of(context).colorScheme.surface.withAlpha(100),
       backgroundColor: Colors.transparent,
-      elevation: 0,
     );
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class OpaqueSheet extends StatelessWidget {
   const OpaqueSheet({
     required this.builder,
-    this.padding = const EdgeInsets.symmetric(horizontal: 10),
     this.initialHeight,
   });
 
   final Widget Function(BuildContext, ScrollController) builder;
   final double? initialHeight;
-  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +39,7 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            padding: padding,
-            constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
+            constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
@@ -86,7 +81,7 @@ class OpaqueSheetView extends StatelessWidget {
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
       Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
+          constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
@@ -156,7 +151,7 @@ class GradientSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.layoutMedium),
+          constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
           child: ListView(
             controller: scrollCtrl,
             padding: EdgeInsets.only(

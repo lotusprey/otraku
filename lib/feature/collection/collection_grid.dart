@@ -141,9 +141,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
         setState(() => item.progress--);
         if (context.mounted) {
-          showPopUp(
-            context,
-            ConfirmationDialog(
+          showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
               title: 'Could not update progress',
               content: err,
             ),

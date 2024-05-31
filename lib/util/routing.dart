@@ -29,9 +29,9 @@ List<GoRoute> buildRoutes(bool Function() shoudConfirmExit) {
   final onExit = (BuildContext context, GoRouterState _) {
     if (!shoudConfirmExit()) return Future.value(true);
 
-    return showPopUp<bool>(
-      context,
-      ConfirmationDialog(
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => ConfirmationDialog(
         title: 'Exit?',
         mainAction: 'Yes',
         secondaryAction: 'No',

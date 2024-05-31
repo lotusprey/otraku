@@ -335,9 +335,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ownershipButtons.add(GradientSheetButton(
               text: 'Delete',
               icon: Ionicons.trash_outline,
-              onTap: () => showPopUp(
-                context,
-                ConfirmationDialog(
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
                   title: 'Delete?',
                   mainAction: 'Yes',
                   secondaryAction: 'No',
@@ -394,9 +394,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
       });
 
       if (context.mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Could not toggle like',
             content: err.toString(),
           ),
@@ -415,9 +415,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.isSubscribed = !activity.isSubscribed;
 
       if (context.mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Could not toggle subscription',
             content: err.toString(),
           ),
@@ -436,9 +436,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.isPinned = !activity.isPinned;
 
       if (context.mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Could not toggle pin',
             content: err.toString(),
           ),
@@ -452,9 +452,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
       if (err == null) return;
 
       if (context.mounted) {
-        showPopUp(
-          context,
-          ConfirmationDialog(
+        showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Could not delete activity',
             content: err.toString(),
           ),

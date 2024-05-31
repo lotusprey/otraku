@@ -372,9 +372,12 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
 
         context.go(Routes.home(HomeTab.discover));
       },
-      onLongPress: (i) => showPopUp(
-        context,
-        TextDialog(title: tags[i].name, text: tags[i].desciption),
+      onLongPress: (i) => showDialog(
+        context: context,
+        builder: (context) => TextDialog(
+          title: tags[i].name,
+          text: tags[i].desciption,
+        ),
       ),
       trailingAction: _showSpoilers != null
           ? IconButton(

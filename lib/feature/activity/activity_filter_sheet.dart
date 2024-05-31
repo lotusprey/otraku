@@ -20,7 +20,6 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
   showSheet(
     context,
     OpaqueSheet(
-      padding: EdgeInsets.zero,
       initialHeight: initialHeight,
       builder: (context, scrollCtrl) => _FilterList(
         filter: filter,
@@ -56,6 +55,7 @@ class _FilterListState extends State<_FilterList> {
   @override
   Widget build(BuildContext context) {
     return Material(
+      color: Colors.transparent,
       child: ListView(
         controller: widget.scrollCtrl,
         physics: Consts.physics,

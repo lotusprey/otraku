@@ -127,9 +127,9 @@ class ReplyCard extends StatelessWidget {
         GradientSheetButton(
           text: 'Delete',
           icon: Ionicons.trash_outline,
-          onTap: () => showPopUp(
-            context,
-            ConfirmationDialog(
+          onTap: () => showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
               title: 'Delete?',
               mainAction: 'Yes',
               secondaryAction: 'No',
@@ -140,9 +140,9 @@ class ReplyCard extends StatelessWidget {
                     .then((err) {
                   if (err == null) return;
 
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmationDialog(
                       title: 'Could not delete reply',
                       content: err.toString(),
                     ),
@@ -258,9 +258,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
         reply.likeCount += isLiked ? 1 : -1;
       });
 
-      showPopUp(
-        context,
-        ConfirmationDialog(
+      showDialog(
+        context: context,
+        builder: (context) => ConfirmationDialog(
           title: 'Could not toggle reply like',
           content: err.toString(),
         ),

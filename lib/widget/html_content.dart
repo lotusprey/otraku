@@ -35,7 +35,12 @@ class HtmlContent extends StatelessWidget {
       },
       onTapImage: (metadata) {
         final source = metadata.sources.firstOrNull?.url;
-        if (source != null) showPopUp(context, ImageDialog(source));
+        if (source != null) {
+          showDialog(
+            context: context,
+            builder: (context) => ImageDialog(source),
+          );
+        }
       },
       factoryBuilder: () => _CustomWidgetFactory(),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
@@ -43,9 +48,9 @@ class HtmlContent extends StatelessWidget {
         child: IconButton(
           tooltip: 'Error',
           icon: const Icon(Icons.close_outlined),
-          onPressed: () => showPopUp(
-            context,
-            ConfirmationDialog(
+          onPressed: () => showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
               title: 'Failed to load element ${element.localName}',
               content: err.toString(),
             ),

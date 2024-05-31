@@ -53,9 +53,9 @@ class _StaffViewState extends ConsumerState<StaffView>
       staffProvider(widget.id),
       (_, s) {
         if (s.hasError) {
-          showPopUp(
-            context,
-            ConfirmationDialog(
+          showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
               title: 'Failed to load staff',
               content: s.error.toString(),
             ),

@@ -176,15 +176,18 @@ class _NotificationItem extends StatelessWidget {
                       NotificationType.mediaDataChange ||
                       NotificationType.mediaMerge ||
                       NotificationType.mediaDeletion =>
-                        showPopUp(context, _NotificationDialog(item)),
+                        showDialog(
+                          context: context,
+                          builder: (context) => _NotificationDialog(item),
+                        ),
                       NotificationType.threadLike ||
                       NotificationType.threadReplySubscribed ||
                       NotificationType.threadCommentLike ||
                       NotificationType.threadCommentReply ||
                       NotificationType.threadCommentMention =>
-                        showPopUp(
-                          context,
-                          ConfirmationDialog(
+                        showDialog(
+                          context: context,
+                          builder: (context) => ConfirmationDialog(
                             title: 'Forum is not yet supported',
                             content: 'Open in browser?',
                             mainAction: 'Open',

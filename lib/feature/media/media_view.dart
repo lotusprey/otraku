@@ -62,9 +62,9 @@ class _MediaViewState extends State<MediaView>
               mediaProvider(widget.id),
               (_, s) {
                 if (s.hasError) {
-                  showPopUp(
-                    context,
-                    ConfirmationDialog(
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmationDialog(
                       title: 'Failed to load media',
                       content: s.error.toString(),
                     ),

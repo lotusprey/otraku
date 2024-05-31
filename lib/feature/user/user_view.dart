@@ -49,9 +49,9 @@ class UserSubview extends StatelessWidget {
                 );
               }
             },
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
+            error: (error, _) => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
                 title: 'Failed to load user',
                 content: error.toString(),
               ),

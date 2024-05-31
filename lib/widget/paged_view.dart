@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/consts.dart';
 import 'package:otraku/model/paged.dart';
@@ -64,9 +64,9 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         ref.listen<AsyncValue>(
           provider,
           (_, s) => s.whenOrNull(
-            error: (error, _) => showPopUp(
-              context,
-              ConfirmationDialog(
+            error: (error, _) => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
                 title: 'Failed to load',
                 content: error.toString(),
               ),

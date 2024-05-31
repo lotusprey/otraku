@@ -35,9 +35,9 @@ class EditView extends StatelessWidget {
           (_, s) => s.whenOrNull(
             error: (err, _) {
               Navigator.pop(context);
-              showPopUp(
-                context,
-                ConfirmationDialog(
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
                   title: 'Failed to load edit sheet',
                   content: err.toString(),
                 ),

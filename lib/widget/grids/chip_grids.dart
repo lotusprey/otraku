@@ -100,9 +100,9 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
           setState(() => widget.names.removeAt(i));
           widget.onChanged();
         },
-        onPressed: () => showPopUp(
-          context,
-          InputDialog(
+        onPressed: () => showDialog(
+          context: context,
+          builder: (context) => InputDialog(
             initial: widget.names[i],
             onChanged: (name) {
               if (name.isNotEmpty) {
@@ -121,9 +121,12 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
       children: children,
       onEdit: () {
         String name = '';
-        showPopUp(
-          context,
-          InputDialog(initial: name, onChanged: (n) => name = n),
+        showDialog(
+          context: context,
+          builder: (context) => InputDialog(
+            initial: name,
+            onChanged: (n) => name = n,
+          ),
         ).then((_) {
           if (name.isNotEmpty && !widget.names.contains(name)) {
             setState(() => widget.names.add(name));

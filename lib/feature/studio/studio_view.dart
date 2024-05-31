@@ -49,9 +49,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
             studioProvider(widget.id),
             (_, s) {
               if (s.hasError) {
-                showPopUp(
-                  context,
-                  ConfirmationDialog(
+                showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
                     title: 'Failed to load studio',
                     content: s.error.toString(),
                   ),

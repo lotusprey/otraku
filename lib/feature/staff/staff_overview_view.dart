@@ -54,8 +54,10 @@ class StaffOverviewSubview extends StatelessWidget {
                               .surfaceContainerHighest,
                           child: GestureDetector(
                             child: CachedImage(imageUrl),
-                            onTap: () =>
-                                showPopUp(context, ImageDialog(imageUrl)),
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => ImageDialog(imageUrl),
+                            ),
                           ),
                         ),
                       ),

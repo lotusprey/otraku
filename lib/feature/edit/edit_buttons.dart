@@ -65,9 +65,12 @@ class _EditButtonsState extends State<EditButtons> {
 
           if (context.mounted) {
             Navigator.pop(context);
-            showPopUp(
-              context,
-              ConfirmationDialog(title: 'Could not update entry', content: err),
+            showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
+                title: 'Could not update entry',
+                content: err,
+              ),
             );
           }
         },
@@ -77,9 +80,9 @@ class _EditButtonsState extends State<EditButtons> {
         text: 'Remove',
         icon: Ionicons.trash_bin_outline,
         warning: true,
-        onTap: () => showPopUp(
-          context,
-          ConfirmationDialog(
+        onTap: () => showDialog(
+          context: context,
+          builder: (context) => ConfirmationDialog(
             title: 'Remove entry?',
             mainAction: 'Yes',
             secondaryAction: 'No',
@@ -104,9 +107,9 @@ class _EditButtonsState extends State<EditButtons> {
 
               if (context.mounted) {
                 Navigator.pop(context);
-                showPopUp(
-                  context,
-                  ConfirmationDialog(
+                showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
                     title: 'Could not remove entry',
                     content: err,
                   ),

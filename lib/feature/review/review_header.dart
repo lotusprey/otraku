@@ -68,7 +68,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: bannerUrl != null
                 ? GestureDetector(
                     child: Hero(tag: id, child: CachedImage(bannerUrl!)),
-                    onTap: () => showPopUp(context, ImageDialog(bannerUrl!)),
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (context) => ImageDialog(bannerUrl!),
+                    ),
                   )
                 : DecoratedBox(
                     decoration: BoxDecoration(

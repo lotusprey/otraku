@@ -54,8 +54,10 @@ class CharacterOverviewSubview extends StatelessWidget {
                               .surfaceContainerHighest,
                           child: GestureDetector(
                             child: CachedImage(imageUrl),
-                            onTap: () =>
-                                showPopUp(context, ImageDialog(imageUrl)),
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => ImageDialog(imageUrl),
+                            ),
                           ),
                         ),
                       ),
@@ -84,9 +86,9 @@ class CharacterOverviewSubview extends StatelessWidget {
                                   'Spoiler names',
                                   style: Theme.of(context).textTheme.labelLarge,
                                 ),
-                                onTap: () => showPopUp(
-                                  context,
-                                  TextDialog(
+                                onTap: () => showDialog(
+                                  context: context,
+                                  builder: (context) => TextDialog(
                                     title: 'Spoiler names',
                                     text: data.altNamesSpoilers.join(', '),
                                   ),

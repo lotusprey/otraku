@@ -136,9 +136,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
               color: theme.colorScheme.surfaceContainerHighest,
               child: cover != null
                   ? GestureDetector(
-                      onTap: () => showPopUp(
-                        context,
-                        ImageDialog(info?.extraLargeCover ?? cover),
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) =>
+                            ImageDialog(info?.extraLargeCover ?? cover),
                       ),
                       child: CachedImage(cover),
                     )
@@ -231,9 +232,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     child: info?.banner != null
                         ? GestureDetector(
                             child: CachedImage(info!.banner!),
-                            onTap: () => showPopUp(
-                              context,
-                              ImageDialog(info!.banner!),
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (context) => ImageDialog(info!.banner!),
                             ),
                           )
                         : DecoratedBox(

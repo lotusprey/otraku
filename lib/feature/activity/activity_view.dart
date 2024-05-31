@@ -83,9 +83,9 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             ref.listen<AsyncValue>(
               activityProvider(widget.id),
               (_, s) => s.whenOrNull(
-                error: (error, _) => showPopUp(
-                  context,
-                  ConfirmationDialog(
+                error: (error, _) => showDialog(
+                  context: context,
+                  builder: (context) => ConfirmationDialog(
                     title: 'Failed to load activity',
                     content: error.toString(),
                   ),

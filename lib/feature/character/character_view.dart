@@ -53,9 +53,9 @@ class _CharacterViewState extends ConsumerState<CharacterView>
       characterProvider(widget.id),
       (_, s) {
         if (s.hasError) {
-          showPopUp(
-            context,
-            ConfirmationDialog(
+          showDialog(
+            context: context,
+            builder: (context) => ConfirmationDialog(
               title: 'Failed to load character',
               content: s.error.toString(),
             ),

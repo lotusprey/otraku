@@ -89,7 +89,6 @@ class TagSelectorState extends State<TagSelector> {
       onEdit: () => showSheet(
         context,
         OpaqueSheet(
-          padding: EdgeInsets.zero,
           builder: (context, scrollCtrl) => _FilterTagSheet(
             inclusiveGenres: widget.inclusiveGenres,
             exclusiveGenres: widget.exclusiveGenres,
@@ -245,6 +244,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
       children: [
         if (_itemIndices.isNotEmpty)
           Material(
+            color: Colors.transparent,
             child: ListView.builder(
               padding: EdgeInsets.only(
                 top: 110,

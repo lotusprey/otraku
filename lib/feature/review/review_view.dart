@@ -223,9 +223,11 @@ class _RateButtonsState extends State<_RateButtons> {
       });
 
       if (context.mounted) {
-        showPopUp(
-          context,
-          const ConfirmationDialog(title: 'Could not rate review'),
+        showDialog(
+          context: context,
+          builder: (context) => const ConfirmationDialog(
+            title: 'Could not rate review',
+          ),
         );
       }
     });

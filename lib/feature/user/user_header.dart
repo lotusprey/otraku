@@ -97,9 +97,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         width: imageWidth,
         child: image != null
             ? GestureDetector(
-                onTap: () => showPopUp(
-                  context,
-                  ImageDialog(image),
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => ImageDialog(image),
                 ),
                 child: CachedImage(image, fit: BoxFit.contain),
               )
@@ -140,9 +140,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                 behavior: HitTestBehavior.opaque,
                 onTap: () {
                   if (user?.modRoles.isNotEmpty ?? false) {
-                    showPopUp(
-                      context,
-                      TextDialog(
+                    showDialog(
+                      context: context,
+                      builder: (context) => TextDialog(
                         title: 'Roles',
                         text: user!.modRoles.join(', '),
                       ),
@@ -212,9 +212,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: user?.bannerUrl != null
                 ? GestureDetector(
                     child: CachedImage(user!.bannerUrl!),
-                    onTap: () => showPopUp(
-                      context,
-                      ImageDialog(user!.bannerUrl!),
+                    onTap: () => showDialog(
+                      context: context,
+                      builder: (context) => ImageDialog(user!.bannerUrl!),
                     ),
                   )
                 : DecoratedBox(

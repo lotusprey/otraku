@@ -20,8 +20,8 @@ abstract class Consts {
   static const coverHtoWRatio = 1.53;
 
   // Layout sizes.
-  static const layoutBig = 1000.0;
-  static const layoutMedium = 600.0;
+  static const mediumWidth = 840.0;
+  static const compactWidth = 600.0;
 
   // Font sizes.
   static const fontBig = 20.0;

@@ -120,9 +120,9 @@ class AuthViewState extends ConsumerState<AuthView> {
                     return;
                   }
 
-                  showPopUp(
-                    context,
-                    const ConfirmationDialog(
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ConfirmationDialog(
                       title: 'Session expired',
                       content: 'Please remove the account and add it again.',
                     ),
@@ -155,9 +155,9 @@ class AuthViewState extends ConsumerState<AuthView> {
                     TopBarIcon(
                       icon: Ionicons.close_circle_outline,
                       tooltip: 'Remove Account',
-                      onTap: () => showPopUp(
-                        context,
-                        ConfirmationDialog(
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (context) => ConfirmationDialog(
                           title: 'Remove Account?',
                           mainAction: 'Yes',
                           secondaryAction: 'No',

@@ -365,9 +365,11 @@ class _BottomBarState extends State<_BottomBar> {
 
                 setState(() => _locked = false);
                 if (context.mounted) {
-                  showPopUp(
-                    context,
-                    const ConfirmationDialog(title: 'Failed to Save'),
+                  showDialog(
+                    context: context,
+                    builder: (context) => const ConfirmationDialog(
+                      title: 'Failed to Save',
+                    ),
                   );
                 }
               },

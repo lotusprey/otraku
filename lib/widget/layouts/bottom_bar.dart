@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({
@@ -31,7 +31,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return ClipRect(
       child: BackdropFilter(
-        filter: Consts.blurFilter,
+        filter: Theming.blurFilter,
         child: NavigationBar(
           height: BottomBar.height,
           selectedIndex: _selected,
@@ -66,7 +66,7 @@ class BottomBar extends StatelessWidget {
 
     return ClipRect(
       child: BackdropFilter(
-        filter: Consts.blurFilter,
+        filter: Theming.blurFilter,
         child: SizedBox(
           height: height + bottomPadding,
           child: Material(

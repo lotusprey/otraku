@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -82,7 +82,7 @@ class HtmlContent extends StatelessWidget {
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surfaceContainerHighest,
-              borderRadius: Consts.borderRadiusMin,
+              borderRadius: Theming.borderRadiusSmall,
             ),
           );
         }

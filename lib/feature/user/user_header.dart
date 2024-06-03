@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -91,7 +91,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     final theme = Theme.of(context);
 
     final avatar = ClipRRect(
-      borderRadius: Consts.borderRadiusMin,
+      borderRadius: Theming.borderRadiusSmall,
       child: SizedBox(
         height: imageWidth,
         width: imageWidth,
@@ -255,7 +255,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Consts.tapTargetSize,
+            height: topOffset + Theming.tapTargetSize,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -274,7 +274,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Consts.tapTargetSize,
+            height: topOffset + Theming.tapTargetSize,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -289,7 +289,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           left: 0,
           right: 0,
           top: topOffset,
-          height: Consts.tapTargetSize,
+          height: Theming.tapTargetSize,
           child: topRow,
         ),
       ],
@@ -299,7 +299,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ? body
         : ClipRect(
             child: BackdropFilter(
-              filter: Consts.blurFilter,
+              filter: Theming.blurFilter,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: theme.navigationBarTheme.backgroundColor,
@@ -313,7 +313,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   static const _bannerBaseHeight = 200.0;
 
   @override
-  double get minExtent => topOffset + Consts.tapTargetSize;
+  double get minExtent => topOffset + Theming.tapTargetSize;
 
   @override
   double get maxExtent => topOffset + _bannerBaseHeight + imageWidth / 2;
@@ -345,7 +345,7 @@ class __FollowButtonState extends State<_FollowButton> {
           user.isFollowed
               ? Ionicons.person_remove_outline
               : Ionicons.person_add_outline,
-          size: Consts.iconSmall,
+          size: Theming.iconSmall,
         ),
         label: Text(
           user.isFollowed

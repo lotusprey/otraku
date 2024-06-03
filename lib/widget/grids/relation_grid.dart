@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/model/relation.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -149,12 +149,12 @@ class _RelationTile extends StatelessWidget {
             discoverType: item.type,
             info: item.imageUrl,
             child: ClipRRect(
-              borderRadius: Consts.borderRadiusMin,
+              borderRadius: Theming.borderRadiusSmall,
               child: CachedImage(item.imageUrl, width: 80),
             ),
           ),
           Expanded(
-            child: Padding(padding: Consts.padding, child: centerContent),
+            child: Padding(padding: Theming.paddingAll, child: centerContent),
           ),
           if (secondary != null)
             LinkTile(
@@ -163,7 +163,7 @@ class _RelationTile extends StatelessWidget {
               discoverType: secondary!.type,
               info: secondary!.imageUrl,
               child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 child: CachedImage(secondary!.imageUrl, width: 80),
               ),
             ),

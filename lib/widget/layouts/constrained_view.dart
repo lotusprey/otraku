@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 
 /// Horizontally constrains [child] into the center.
 class ConstrainedView extends StatelessWidget {
@@ -17,7 +17,7 @@ class ConstrainedView extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.mediumWidth),
+          constraints: const BoxConstraints(maxWidth: Theming.mediumWidth),
           child: child,
         ),
       ),
@@ -34,7 +34,7 @@ class SliverConstrainedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverLayoutBuilder(
       builder: (context, constraints) {
-        final side = (constraints.crossAxisExtent - Consts.compactWidth) / 2;
+        final side = (constraints.crossAxisExtent - Theming.compactWidth) / 2;
         return SliverPadding(
           padding: EdgeInsets.symmetric(horizontal: side < 10 ? 10 : side),
           sliver: sliver,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -20,7 +20,7 @@ class TileItemGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 40,
-        rawHWRatio: Consts.coverHtoWRatio,
+        rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
@@ -34,7 +34,7 @@ class TileItemGrid extends StatelessWidget {
                 child: Hero(
                   tag: items[i].id,
                   child: ClipRRect(
-                    borderRadius: Consts.borderRadiusMin,
+                    borderRadius: Theming.borderRadiusSmall,
                     child: Container(
                       color:
                           Theme.of(context).colorScheme.surfaceContainerHighest,

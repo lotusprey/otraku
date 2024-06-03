@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/model/paged.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -77,7 +77,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         return ref.watch(provider).unwrapPrevious().when(
               loading: () => const Center(child: Loader()),
               error: (err, __) => CustomScrollView(
-                physics: Consts.physics,
+                physics: Theming.bouncyPhysics,
                 slivers: [
                   SliverRefreshControl(
                     withTopOffset: withTopOffset,
@@ -92,7 +92,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                 final selection = select(data);
                 return ConstrainedView(
                   child: CustomScrollView(
-                    physics: Consts.physics,
+                    physics: Theming.bouncyPhysics,
                     controller: scrollCtrl,
                     slivers: [
                       SliverRefreshControl(

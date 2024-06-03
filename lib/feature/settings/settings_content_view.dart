@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
@@ -141,7 +140,7 @@ class SettingsContentSubview extends StatelessWidget {
             ),
             for (final e in settings.disabledListActivity.entries)
               StatefulCheckboxListTile(
-                title: Text(e.key.name.noScreamingSnakeCase),
+                title: Text(e.key.label(null)),
                 value: !e.value,
                 onChanged: (val) =>
                     settings.disabledListActivity[e.key] = !val!,

@@ -109,7 +109,7 @@ class RelatedMedia {
         title: map['node']['title']['userPreferred'],
         imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
         relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
-        format: StringUtil.tryNoScreamingSnakeCase(map['node']['format']),
+        format: MediaFormat.from(map['node']['format']),
         entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
         releaseStatus: StringUtil.tryNoScreamingSnakeCase(
           map['node']['status'],
@@ -124,7 +124,7 @@ class RelatedMedia {
   final String title;
   final String imageUrl;
   final String? relationType;
-  final String? format;
+  final MediaFormat? format;
   final EntryStatus? entryStatus;
   final String? releaseStatus;
 }
@@ -162,7 +162,7 @@ class RelatedReview {
 
 class MediaFollowing {
   MediaFollowing._({
-    required this.status,
+    required this.entryStatus,
     required this.score,
     required this.notes,
     required this.userId,
@@ -172,7 +172,7 @@ class MediaFollowing {
   });
 
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
-        status: (map['status'] as String).noScreamingSnakeCase,
+        entryStatus: EntryStatus.from(map['status'])!,
         score: (map['score'] ?? 0).toDouble(),
         notes: map['notes'] ?? '',
         userId: map['user']['id'],
@@ -183,7 +183,7 @@ class MediaFollowing {
         ),
       );
 
-  final String status;
+  final EntryStatus entryStatus;
   final double score;
   final String notes;
   final int userId;
@@ -275,7 +275,7 @@ class MediaInfo {
   final String extraLargeCover;
   final String? banner;
   final MediaFormat? format;
-  final String? status;
+  final ReleaseStatus? status;
   final int? nextEpisode;
   final DateTime? airingAt;
   final int? episodes;
@@ -294,7 +294,7 @@ class MediaInfo {
   final studios = <String, int>{};
   final producers = <String, int>{};
   final tags = <Tag>[];
-  final String? source;
+  final MediaSource? source;
   final String? hashtag;
   final String? siteUrl;
   final OriginCountry? countryOfOrigin;
@@ -331,7 +331,7 @@ class MediaInfo {
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: MediaFormat.from(map['format']),
-      status: StringUtil.tryNoScreamingSnakeCase(map['status']),
+      status: ReleaseStatus.from(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
         map['nextAiringEpisode']?['airingAt'],
@@ -349,7 +349,7 @@ class MediaInfo {
       favourites: map['favourites'] ?? 0,
       isFavorite: map['isFavourite'] ?? false,
       genres: List<String>.from(map['genres'] ?? [], growable: false),
-      source: StringUtil.tryNoScreamingSnakeCase(map['source']),
+      source: MediaSource.from(map['source']),
       hashtag: map['hashtag'],
       siteUrl: map['siteUrl'],
       countryOfOrigin: OriginCountry.fromCode(map['countryOfOrigin']),
@@ -525,20 +525,20 @@ enum MediaType {
   final String value;
 }
 
-enum MediaStatus {
+enum ReleaseStatus {
   finished('Finished', 'FINISHED'),
   releasing('Releasing', 'RELEASING'),
   notYetReleased('Not Yet Released', 'NOT_YET_RELEASED'),
   hiatus('Hiatus', 'HIATUS'),
   cancelled('Cancelled', 'CANCELLED');
 
-  const MediaStatus(this.label, this.value);
+  const ReleaseStatus(this.label, this.value);
 
   final String label;
   final String value;
 
-  static MediaStatus? from(String? value) =>
-      MediaStatus.values.firstWhereOrNull((v) => v.value == value);
+  static ReleaseStatus? from(String? value) =>
+      ReleaseStatus.values.firstWhereOrNull((v) => v.value == value);
 }
 
 enum MediaFormat {
@@ -602,6 +602,9 @@ enum MediaSource {
 
   final String label;
   final String value;
+
+  static MediaSource? from(String? value) =>
+      MediaSource.values.firstWhereOrNull((v) => v.value == value);
 }
 
 enum OriginCountry {

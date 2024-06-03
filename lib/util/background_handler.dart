@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';

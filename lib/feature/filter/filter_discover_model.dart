@@ -5,7 +5,7 @@ import 'package:otraku/feature/media/media_models.dart';
 class DiscoverMediaFilter {
   DiscoverMediaFilter();
 
-  final statuses = <MediaStatus>[];
+  final statuses = <ReleaseStatus>[];
   final animeFormats = <MediaFormat>[];
   final mangaFormats = <MediaFormat>[];
   final genreIn = <String>[];

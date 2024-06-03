@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
@@ -15,10 +15,10 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
     context,
     OpaqueSheet(
       initialHeight:
-          MediaQuery.paddingOf(context).bottom + Consts.tapTargetSize * 3 + 20,
+          MediaQuery.paddingOf(context).bottom + Theming.tapTargetSize * 3 + 20,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
-        physics: Consts.physics,
+        physics: Theming.bouncyPhysics,
         padding: const EdgeInsets.symmetric(vertical: 10),
         children: [
           ChipSelector(

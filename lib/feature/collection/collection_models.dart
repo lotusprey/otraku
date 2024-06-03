@@ -438,7 +438,7 @@ class Entry {
       titles: titles,
       imageUrl: map['media']['coverImage'][Persistence().imageQuality.value],
       format: MediaFormat.from(map['media']['format']),
-      status: MediaStatus.from(map['media']['status']),
+      status: ReleaseStatus.from(map['media']['status']),
       entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
@@ -466,7 +466,7 @@ class Entry {
   final List<String> titles;
   final String imageUrl;
   final MediaFormat? format;
-  final MediaStatus? status;
+  final ReleaseStatus? status;
   final EntryStatus? entryStatus;
   final int? nextEpisode;
   final DateTime? airingAt;
@@ -499,9 +499,17 @@ enum EntryStatus {
 
   final String value;
 
-  String label(bool ofAnime) => switch (this) {
-        current => ofAnime ? 'Watching' : 'Reading',
-        repeating => ofAnime ? 'Rewatching' : 'Rereading',
+  String label(bool? ofAnime) => switch (this) {
+        current => ofAnime == null
+            ? 'Current'
+            : ofAnime
+                ? 'Watching'
+                : 'Reading',
+        repeating => ofAnime == null
+            ? 'Repeating'
+            : ofAnime
+                ? 'Rewatching'
+                : 'Rereading',
         completed => 'Completed',
         paused => 'Paused',
         planning => 'Planning',

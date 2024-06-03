@@ -7,7 +7,7 @@ class CollectionMediaFilter {
             ? Persistence().defaultAnimeSort
             : Persistence().defaultMangaSort;
 
-  final statuses = <MediaStatus>[];
+  final statuses = <ReleaseStatus>[];
   final formats = <MediaFormat>[];
   final genreIn = <String>[];
   final genreNotIn = <String>[];

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
@@ -39,13 +39,13 @@ class MediaOverviewSubview extends StatelessWidget {
 
     final details = [
       if (release != null) ('Release', release),
-      if (info.status != null) ('Status', info.status!),
+      if (info.status != null) ('Status', info.status!.label),
       if (info.episodes != null) ('Episodes', info.episodes!.toString()),
       if (info.duration != null) ('Duration', info.duration!),
       if (info.chapters != null) ('Chapters', info.chapters!.toString()),
       if (info.volumes != null) ('Volumes', info.volumes!.toString()),
       if (info.season != null) ('Season', info.season!),
-      if (info.source != null) ('Source', info.source!),
+      if (info.source != null) ('Source', info.source!.label),
       if (info.countryOfOrigin != null) ('Origin', info.countryOfOrigin!.label),
     ];
 
@@ -71,7 +71,7 @@ class MediaOverviewSubview extends StatelessWidget {
             SliverToBoxAdapter(
               child: Card.outlined(
                 child: Padding(
-                  padding: Consts.padding,
+                  padding: Theming.paddingAll,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -193,7 +193,7 @@ class _DescriptionState extends State<_Description> {
         padding: const EdgeInsets.symmetric(vertical: 10),
         child: Card.outlined(
           child: InkWell(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Theming.borderRadiusSmall,
             onTap: () => setState(() => _expanded = !_expanded),
             onLongPress: () {
               final text = widget.text.replaceAll(RegExp(r'<br>'), '');
@@ -231,7 +231,7 @@ class _IconTile extends StatelessWidget {
         children: [
           Icon(
             icon,
-            size: Consts.iconSmall,
+            size: Theming.iconSmall,
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
           const SizedBox(height: 5),
@@ -266,7 +266,7 @@ class _ScrollCards extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: Consts.tapTargetSize,
+            height: Theming.tapTargetSize,
             child: Row(
               children: [
                 Expanded(child: Text(title)),
@@ -282,11 +282,11 @@ class _ScrollCards extends StatelessWidget {
                 button: true,
                 child: Card.outlined(
                   child: InkWell(
-                    borderRadius: Consts.borderRadiusMin,
+                    borderRadius: Theming.borderRadiusSmall,
                     onTap: () => onTap(i),
                     onLongPress: () => onLongPress(i),
                     child: Padding(
-                      padding: Consts.padding,
+                      padding: Theming.paddingAll,
                       child: builder(context, i),
                     ),
                   ),
@@ -428,7 +428,7 @@ class _ExternalLinkScrollCards extends StatelessWidget {
                 height: 15,
                 margin: const EdgeInsets.only(right: 10),
                 decoration: BoxDecoration(
-                  borderRadius: Consts.borderRadiusMin,
+                  borderRadius: Theming.borderRadiusSmall,
                   color: items[i].color,
                 ),
               ),

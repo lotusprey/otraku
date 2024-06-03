@@ -9,14 +9,14 @@ import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/filter/filter_collection_view.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_grid.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
@@ -92,7 +92,7 @@ class CollectionSubview extends StatelessWidget {
           builder: (context, ref, _) {
             return ConstrainedView(
               child: CustomScrollView(
-                physics: Consts.physics,
+                physics: Theming.bouncyPhysics,
                 controller: scrollCtrl,
                 slivers: [
                   SliverRefreshControl(

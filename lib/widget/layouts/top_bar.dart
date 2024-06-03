@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
+import 'package:otraku/util/theming.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
 /// It has (in order):
@@ -25,7 +25,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
 
     return ClipRect(
       child: BackdropFilter(
-        filter: Consts.blurFilter,
+        filter: Theming.blurFilter,
         child: Container(
           height: topPadding + preferredSize.height,
           decoration: BoxDecoration(
@@ -85,7 +85,7 @@ class TopBarIcon extends StatelessWidget {
         color: accented
             ? Theme.of(context).colorScheme.primary
             : Theme.of(context).colorScheme.onSurface,
-        padding: Consts.padding,
+        padding: Theming.paddingAll,
       ),
     );
   }

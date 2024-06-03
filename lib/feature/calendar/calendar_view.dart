@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
@@ -161,10 +161,10 @@ class _Tile extends StatelessWidget {
               tag: item.mediaId,
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(
-                  left: Consts.radiusMin,
+                  left: Theming.radiusSmall,
                 ),
                 child: Container(
-                  width: 120 / Consts.coverHtoWRatio,
+                  width: 120 / Theming.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(item.cover),
                 ),
@@ -231,7 +231,7 @@ class _ExternalLinkList extends StatelessWidget {
                     height: 15,
                     width: 15,
                     decoration: BoxDecoration(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       color: links[i].color,
                     ),
                   )

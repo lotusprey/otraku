@@ -4,9 +4,8 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/persistence.dart';
@@ -31,19 +30,12 @@ class App extends ConsumerStatefulWidget {
 }
 
 class AppState extends ConsumerState<App> {
-  late final GoRouter _router;
+  final _router = Routes.buildRouter(Persistence());
   late final StreamSubscription<String> _notificationSubscription;
 
   @override
   void initState() {
     super.initState();
-    _router = GoRouter(
-      initialLocation:
-          Persistence().selectedAccount != null ? Routes.home() : Routes.auth,
-      routes: buildRoutes(() => Persistence().confirmExit),
-      errorBuilder: (context, state) => const NotFoundView(canPop: false),
-    );
-
     if (Persistence().lastVersionCode != versionCode) {
       Persistence().updateVersionCodeToLatestVersion();
       BackgroundHandler.requestPermissionForNotifications();
@@ -95,11 +87,11 @@ class AppState extends ConsumerState<App> {
           darkSeed = systemDarkPrimaryColor;
         } else {
           theme ??= 0;
-          if (theme >= colorSeeds.length) {
-            theme = colorSeeds.length - 1;
+          if (theme >= Theming.colorSeeds.length) {
+            theme = Theming.colorSeeds.length - 1;
           }
 
-          lightSeed = colorSeeds.values.elementAt(theme);
+          lightSeed = Theming.colorSeeds.values.elementAt(theme);
           darkSeed = lightSeed;
         }
 
@@ -142,8 +134,8 @@ class AppState extends ConsumerState<App> {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Otraku',
-          theme: themeDataFrom(lightScheme),
-          darkTheme: themeDataFrom(darkScheme),
+          theme: Theming.schemeToThemeData(lightScheme),
+          darkTheme: Theming.schemeToThemeData(darkScheme),
           themeMode: themeMode,
           routerConfig: _router,
           builder: (context, child) {

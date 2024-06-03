@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/widget/overlays/sheets.dart';

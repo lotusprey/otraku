@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -186,11 +186,11 @@ class _CompositionBody extends StatelessWidget {
           left: 0,
           right: 0,
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
+            borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
             child: BackdropFilter(
-              filter: Consts.blurFilter,
+              filter: Theming.blurFilter,
               child: Container(
-                padding: Consts.padding,
+                padding: Theming.paddingAll,
                 color: Theme.of(context).navigationBarTheme.backgroundColor,
                 child: SegmentedButton(
                   segments: const [

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -67,7 +67,7 @@ class _MediaReviewGrid extends StatelessWidget {
                   Hero(
                     tag: items[i].userId,
                     child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
                         items[i].avatar,
                         height: 50,
@@ -78,7 +78,7 @@ class _MediaReviewGrid extends StatelessWidget {
                   const SizedBox(width: 10),
                   Text(items[i].username),
                   const Spacer(),
-                  const Icon(Icons.thumb_up_outlined, size: Consts.iconSmall),
+                  const Icon(Icons.thumb_up_outlined, size: Theming.iconSmall),
                   const SizedBox(width: 10),
                   Text(
                     items[i].rating,
@@ -97,7 +97,7 @@ class _MediaReviewGrid extends StatelessWidget {
                   child: SizedBox(
                     width: double.infinity,
                     child: Padding(
-                      padding: Consts.padding,
+                      padding: Theming.paddingAll,
                       child: Text(
                         items[i].summary,
                         style: Theme.of(context).textTheme.labelMedium,

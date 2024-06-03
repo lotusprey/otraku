@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
@@ -25,7 +24,7 @@ class SettingsNotificationsSubview extends StatelessWidget {
         final e = settings.notificationOptions.entries.elementAt(i);
 
         return StatefulCheckboxListTile(
-          title: Text(e.key.name.noScreamingSnakeCase),
+          title: Text(e.key.label),
           value: e.value,
           onChanged: (v) => settings.notificationOptions[e.key] = v!,
         );

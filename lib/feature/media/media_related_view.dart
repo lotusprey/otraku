@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
@@ -65,7 +65,7 @@ class _MediaRelatedGrid extends StatelessWidget {
         items[i].entryStatus!.label(
               items[i].type == DiscoverType.anime,
             ): true,
-      if (items[i].format != null) items[i].format!: false,
+      if (items[i].format != null) items[i].format!.label: false,
       if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
     };
 
@@ -80,19 +80,19 @@ class _MediaRelatedGrid extends StatelessWidget {
             Hero(
               tag: items[i].id,
               child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 child: Container(
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(
                     items[i].imageUrl,
-                    width: 100 / Consts.coverHtoWRatio,
+                    width: 100 / Theming.coverHtoWRatio,
                   ),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: Consts.padding,
+                padding: Theming.paddingAll,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

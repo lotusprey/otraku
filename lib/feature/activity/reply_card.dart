@@ -5,9 +5,9 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -38,7 +38,7 @@ class ReplyCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 child: CachedImage(
                   reply.authorAvatarUrl,
                   height: 50,
@@ -80,7 +80,7 @@ class ReplyCard extends StatelessWidget {
                                   onTap: () => _showMoreSheet(context, ref),
                                   child: const Icon(
                                     Ionicons.ellipsis_horizontal,
-                                    size: Consts.iconSmall,
+                                    size: Theming.iconSmall,
                                   ),
                                 ),
                               )
@@ -187,7 +187,7 @@ class _ReplyMentionButton extends StatelessWidget {
           ),
           child: const Icon(
             Icons.reply,
-            size: Consts.iconSmall,
+            size: Theming.iconSmall,
           ),
         ),
       ),
@@ -229,7 +229,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               const SizedBox(width: 5),
               Icon(
                 Icons.favorite,
-                size: Consts.iconSmall,
+                size: Theming.iconSmall,
                 color: widget.reply.isLiked
                     ? Theme.of(context).colorScheme.error
                     : null,

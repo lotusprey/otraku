@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 
 extension IterableUtil<E> on Iterable<E> {
   E? firstWhereOrNull(bool Function(E) test) {

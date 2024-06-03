@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -46,7 +46,7 @@ class _Tile extends StatelessWidget {
                 flex: 2,
                 child: ClipRRect(
                   borderRadius:
-                      const BorderRadius.vertical(top: Consts.radiusMin),
+                      const BorderRadius.vertical(top: Theming.radiusSmall),
                   child: Hero(
                     tag: item.id,
                     child: CachedImage(item.bannerUrl!),
@@ -56,7 +56,7 @@ class _Tile extends StatelessWidget {
             Expanded(
               flex: 3,
               child: Padding(
-                padding: Consts.padding,
+                padding: Theming.paddingAll,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -92,7 +92,7 @@ class _Tile extends StatelessWidget {
                               children: [
                                 const Icon(
                                   Icons.thumb_up_outlined,
-                                  size: Consts.iconSmall,
+                                  size: Theming.iconSmall,
                                 ),
                                 const SizedBox(height: 5),
                                 Text(

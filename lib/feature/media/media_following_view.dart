@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/entry_labels.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -58,7 +58,7 @@ class _MediaFollowingGrid extends StatelessWidget {
                   tag: items[i].userId,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.horizontal(
-                      left: Consts.radiusMin,
+                      left: Theming.radiusSmall,
                     ),
                     child: CachedImage(items[i].userAvatar, width: 70),
                   ),
@@ -79,7 +79,9 @@ class _MediaFollowingGrid extends StatelessWidget {
                           height: 35,
                           child: Row(
                             children: [
-                              Expanded(child: Text(items[i].status)),
+                              Expanded(
+                                child: Text(items[i].entryStatus.label(null)),
+                              ),
                               Expanded(
                                 child: Center(
                                   child: NotesLabel(items[i].notes),

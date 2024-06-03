@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -43,7 +43,7 @@ class _Tile extends StatelessWidget {
             child: Hero(
               tag: item.id,
               child: ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 child: CachedImage(item.imageUrl, fit: BoxFit.contain),
               ),
             ),

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -82,14 +82,14 @@ class _MediaRankGrid extends StatelessWidget {
       padding: const EdgeInsets.only(top: 10, bottom: 10),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Consts.tapTargetSize,
+          height: Theming.tapTargetSize,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
           (_, i) {
             return Card(
               child: InkWell(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 onTap: () {
                   final notifier = ref.read(discoverFilterProvider.notifier);
                   final filter = notifier.state.copyWith(

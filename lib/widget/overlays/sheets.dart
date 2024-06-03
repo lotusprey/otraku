@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
 
 /// Used to open [DraggableScrollableSheet].
@@ -39,10 +39,11 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            constraints: const BoxConstraints(maxWidth: Theming.compactWidth),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
-              borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
+              borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
             ),
             child: builder(context, scrollCtrl),
           ),
@@ -81,10 +82,10 @@ class OpaqueSheetView extends StatelessWidget {
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
       Center(
         child: Container(
-          constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
+          constraints: const BoxConstraints(maxWidth: Theming.compactWidth),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
-            borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
+            borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
           child: Stack(
             children: [
@@ -123,7 +124,7 @@ class GradientSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final requiredHeight = children.length * Consts.tapTargetSize +
+    final requiredHeight = children.length * Theming.tapTargetSize +
         MediaQuery.paddingOf(context).bottom +
         50;
 
@@ -151,7 +152,7 @@ class GradientSheet extends StatelessWidget {
           ),
         ),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Consts.compactWidth),
+          constraints: const BoxConstraints(maxWidth: Theming.compactWidth),
           child: ListView(
             controller: scrollCtrl,
             padding: EdgeInsets.only(
@@ -160,7 +161,7 @@ class GradientSheet extends StatelessWidget {
               right: 10,
               bottom: MediaQuery.paddingOf(context).bottom,
             ),
-            itemExtent: Consts.tapTargetSize,
+            itemExtent: Theming.tapTargetSize,
             children: children,
           ),
         ),

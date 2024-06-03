@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 
 class ChipGridTemplate extends StatelessWidget {
@@ -54,7 +54,7 @@ class ChipGridTemplate extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Consts.tapTargetSize,
+                height: Theming.tapTargetSize,
                 child: Center(
                   child: Text(
                     'No $placeholder',

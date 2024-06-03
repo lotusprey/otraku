@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 
 /// After [_delay] time has passed, since the last [run] call, call [callback].
 /// E.g. do a search query after the user stops typing.
@@ -81,7 +81,7 @@ class _SearchFieldState extends State<SearchField> {
         suffixIcon: _ctrl.text.isNotEmpty
             ? IconButton(
                 tooltip: 'Clear',
-                iconSize: Consts.iconSmall,
+                iconSize: Theming.iconSmall,
                 icon: const Icon(Icons.close_rounded),
                 color: Theme.of(context).colorScheme.onSurface,
                 padding: const EdgeInsets.all(0),

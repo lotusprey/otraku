@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -60,7 +60,7 @@ class _MediaRecommendationsGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 70,
-        rawHWRatio: Consts.coverHtoWRatio,
+        rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
@@ -75,7 +75,7 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                   child: Hero(
                     tag: items[i].id,
                     child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: Container(
                         color: Theme.of(context)
                             .colorScheme
@@ -171,12 +171,12 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
               child: item.userRating == true
                   ? Icon(
                       Icons.thumb_up,
-                      size: Consts.iconSmall,
+                      size: Theming.iconSmall,
                       color: Theme.of(context).colorScheme.primary,
                     )
                   : Icon(
                       Icons.thumb_up_outlined,
-                      size: Consts.iconSmall,
+                      size: Theming.iconSmall,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
             ),
@@ -220,12 +220,12 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
               child: item.userRating == false
                   ? Icon(
                       Icons.thumb_down,
-                      size: Consts.iconSmall,
+                      size: Theming.iconSmall,
                       color: Theme.of(context).colorScheme.error,
                     )
                   : Icon(
                       Icons.thumb_down_outlined,
-                      size: Consts.iconSmall,
+                      size: Theming.iconSmall,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
             ),

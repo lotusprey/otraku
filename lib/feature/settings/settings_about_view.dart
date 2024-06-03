@@ -5,7 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/util/toast.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -26,7 +26,7 @@ class StaffOverviewSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
-    final imageHeight = imageWidth * Consts.coverHtoWRatio;
+    final imageHeight = imageWidth * Theming.coverHtoWRatio;
 
     return Consumer(
       builder: (context, ref, _) {
@@ -45,7 +45,7 @@ class StaffOverviewSubview extends StatelessWidget {
                     child: Hero(
                       tag: id,
                       child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
+                        borderRadius: Theming.borderRadiusSmall,
                         child: Container(
                           width: imageWidth,
                           height: imageHeight,
@@ -95,7 +95,7 @@ class StaffOverviewSubview extends StatelessWidget {
         return ConstrainedView(
           child: staff.unwrapPrevious().when(
                 loading: () => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,
@@ -105,7 +105,7 @@ class StaffOverviewSubview extends StatelessWidget {
                   ],
                 ),
                 error: (_, __) => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,
@@ -117,7 +117,7 @@ class StaffOverviewSubview extends StatelessWidget {
                   ],
                 ),
                 data: (data) => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,

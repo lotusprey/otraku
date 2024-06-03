@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
@@ -159,7 +158,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
             ),
             child: ConstrainedView(
               child: CustomScrollView(
-                physics: Consts.physics,
+                physics: Theming.bouncyPhysics,
                 controller: hasNext != null ? _ctrl : null,
                 slivers: [
                   SliverRefreshControl(
@@ -243,22 +242,16 @@ class _FilterButton extends StatelessWidget {
           onTap: () {
             var filter = ref.read(studioFilterProvider(id));
 
-            final sortItems = <String, int>{};
-            for (int i = 0; i < MediaSort.values.length; i += 2) {
-              String key = MediaSort.values[i].name.noScreamingSnakeCase;
-              sortItems[key] = i ~/ 2;
-            }
-
             final onDone = (_) =>
                 ref.read(studioFilterProvider(id).notifier).state = filter;
 
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 5,
+                initialHeight: Theming.tapTargetSize * 5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 10,
                     vertical: 20,

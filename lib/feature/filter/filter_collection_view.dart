@@ -47,7 +47,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
           ),
           ChipMultiSelector(
             title: 'Statuses',
-            items: MediaStatus.values.map((v) => (v.label, v)).toList(),
+            items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
             values: filter.statuses,
           ),
           ChipMultiSelector(

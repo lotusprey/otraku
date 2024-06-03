@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -145,17 +144,7 @@ class EntrySortChipSelector extends StatefulWidget {
 
 class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
   late var _current = widget.current;
-  final _options = <String>[];
-
-  @override
-  void initState() {
-    super.initState();
-    for (int i = 0; i < EntrySort.values.length; i += 2) {
-      _options.add(
-        EntrySort.values.elementAt(i).name.noScreamingSnakeCase,
-      );
-    }
-  }
+  final _labels = EntrySort.values.map((s) => s.label).toList();
 
   @override
   void didUpdateWidget(covariant EntrySortChipSelector oldWidget) {
@@ -170,13 +159,13 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
 
     return _ChipSelector(
       title: widget.title,
-      length: _options.length,
+      length: _labels.length,
       itemBuilder: (context, index) => FilterChip(
         backgroundColor: Theme.of(context).colorScheme.surface,
         labelStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSecondaryContainer,
         ),
-        label: Text(_options[index]),
+        label: Text(_labels[index]),
         showCheckmark: false,
         avatar: current == index
             ? Icon(

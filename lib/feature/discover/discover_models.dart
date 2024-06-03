@@ -1,3 +1,4 @@
+import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/model/tile_item.dart';
 import 'package:otraku/util/extensions.dart';
@@ -127,7 +128,7 @@ class DiscoverMediaItem extends TileItem {
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Persistence().imageQuality.value],
         format: StringUtil.tryNoScreamingSnakeCase(map['format']),
-        releaseStatus: StringUtil.tryNoScreamingSnakeCase(map['status']),
+        releaseStatus: ReleaseStatus.from(map['status']),
         entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
@@ -136,7 +137,7 @@ class DiscoverMediaItem extends TileItem {
       );
 
   final String? format;
-  final String? releaseStatus;
+  final ReleaseStatus? releaseStatus;
   final EntryStatus? entryStatus;
   final int? releaseYear;
   final int averageScore;

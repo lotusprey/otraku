@@ -46,7 +46,7 @@ class _FilterDiscoverViewState extends State<FilterDiscoverView> {
           ),
           ChipMultiSelector(
             title: 'Statuses',
-            items: MediaStatus.values.map((v) => (v.label, v)).toList(),
+            items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
             values: filter.statuses,
           ),
           if (widget.ofAnime)

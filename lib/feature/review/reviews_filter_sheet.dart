@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -13,10 +13,10 @@ Future<void> showReviewsFilterSheet({
     showSheet(
       context,
       OpaqueSheet(
-        initialHeight: Consts.tapTargetSize * 5,
+        initialHeight: Theming.tapTargetSize * 5,
         builder: (context, scrollCtrl) => ListView(
           controller: scrollCtrl,
-          physics: Consts.physics,
+          physics: Theming.bouncyPhysics,
           padding: const EdgeInsets.symmetric(
             horizontal: 10,
             vertical: 20,

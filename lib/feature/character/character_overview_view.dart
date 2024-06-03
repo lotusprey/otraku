@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/character/character_provider.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
@@ -26,7 +26,7 @@ class CharacterOverviewSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.sizeOf(context);
     final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
-    final imageHeight = imageWidth * Consts.coverHtoWRatio;
+    final imageHeight = imageWidth * Theming.coverHtoWRatio;
 
     return Consumer(
       builder: (context, ref, _) {
@@ -45,7 +45,7 @@ class CharacterOverviewSubview extends StatelessWidget {
                     child: Hero(
                       tag: id,
                       child: ClipRRect(
-                        borderRadius: Consts.borderRadiusMin,
+                        borderRadius: Theming.borderRadiusSmall,
                         child: Container(
                           width: imageWidth,
                           height: imageHeight,
@@ -110,7 +110,7 @@ class CharacterOverviewSubview extends StatelessWidget {
         return ConstrainedView(
           child: character.unwrapPrevious().when(
                 loading: () => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,
@@ -120,7 +120,7 @@ class CharacterOverviewSubview extends StatelessWidget {
                   ],
                 ),
                 error: (_, __) => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,
@@ -132,7 +132,7 @@ class CharacterOverviewSubview extends StatelessWidget {
                   ],
                 ),
                 data: (data) => CustomScrollView(
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   controller: scrollCtrl,
                   slivers: [
                     refreshControl,

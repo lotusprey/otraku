@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -10,11 +10,11 @@ import 'package:otraku/feature/activity/activities_filter_provider.dart';
 void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
   ActivitiesFilter filter = ref.read(activitiesFilterProvider(id));
   double initialHeight = MediaQuery.paddingOf(context).bottom +
-      Consts.tapTargetSize * ActivityType.values.length +
-      40;
+      Theming.tapTargetSize * ActivityType.values.length +
+      50;
 
   if (filter is HomeActivitiesFilter) {
-    initialHeight += Consts.tapTargetSize * 1.5;
+    initialHeight += Theming.tapTargetSize * 1.5;
   }
 
   showSheet(
@@ -58,7 +58,7 @@ class _FilterListState extends State<_FilterList> {
       color: Colors.transparent,
       child: ListView(
         controller: widget.scrollCtrl,
-        physics: Consts.physics,
+        physics: Theming.bouncyPhysics,
         padding: const EdgeInsets.symmetric(vertical: 10),
         children: [
           for (final a in ActivityType.values)

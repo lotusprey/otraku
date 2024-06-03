@@ -4,8 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -69,7 +69,7 @@ class ActivityCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
                         activity.authorAvatarUrl,
                         height: 50,
@@ -104,7 +104,7 @@ class ActivityCard extends StatelessWidget {
                     info: message.recipientAvatarUrl,
                     discoverType: DiscoverType.user,
                     child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
                         message.recipientAvatarUrl,
                         height: 50,
@@ -146,12 +146,12 @@ class _ActivityMediaBox extends StatelessWidget {
         child: Row(
           children: [
             ClipRRect(
-              borderRadius: Consts.borderRadiusMin,
+              borderRadius: Theming.borderRadiusSmall,
               child: CachedImage(item.coverUrl, width: 70),
             ),
             Expanded(
               child: Padding(
-                padding: Consts.padding,
+                padding: Theming.paddingAll,
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +230,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
               onTap: _showMoreSheet,
               child: const Icon(
                 Ionicons.ellipsis_horizontal,
-                size: Consts.iconSmall,
+                size: Theming.iconSmall,
               ),
             ),
           ),
@@ -250,7 +250,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 5),
-                  const Icon(Ionicons.chatbox, size: Consts.iconSmall),
+                  const Icon(Ionicons.chatbox, size: Theming.iconSmall),
                 ],
               ),
             ),
@@ -276,7 +276,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   const SizedBox(width: 5),
                   Icon(
                     Icons.favorite,
-                    size: Consts.iconSmall,
+                    size: Theming.iconSmall,
                     color: activity.isLiked
                         ? Theme.of(context).colorScheme.error
                         : null,

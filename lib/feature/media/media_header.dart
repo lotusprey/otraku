@@ -5,7 +5,7 @@ import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -129,7 +129,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         Hero(
           tag: id,
           child: ClipRRect(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Theming.borderRadiusSmall,
             child: Container(
               height: imageHeight,
               width: imageWidth,
@@ -219,7 +219,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       child: Column(
         children: [
           Flexible(
-            flex: (height - Consts.tapTargetSize).floor(),
+            flex: (height - Theming.tapTargetSize).floor(),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -275,7 +275,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: topOffset + Consts.tapTargetSize,
+                    height: topOffset + Theming.tapTargetSize,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -294,7 +294,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: topOffset + Consts.tapTargetSize,
+                    height: topOffset + Theming.tapTargetSize,
                     child: Opacity(
                       opacity: transition,
                       child: DecoratedBox(
@@ -309,7 +309,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   left: 0,
                   right: 0,
                   top: topOffset,
-                  height: Consts.tapTargetSize,
+                  height: Theming.tapTargetSize,
                   child: topRow,
                 ),
               ],
@@ -319,7 +319,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             color: Colors.transparent,
             child: TabBar(
               tabAlignment: TabAlignment.center,
-              splashBorderRadius: Consts.borderRadiusMin,
+              splashBorderRadius: Theming.borderRadiusSmall,
               controller: tabCtrl,
               isScrollable: true,
               tabs: const [
@@ -347,7 +347,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ? body
         : ClipRect(
             child: BackdropFilter(
-              filter: Consts.blurFilter,
+              filter: Theming.blurFilter,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: Theme.of(context).navigationBarTheme.backgroundColor,
@@ -360,14 +360,14 @@ class _Delegate extends SliverPersistentHeaderDelegate {
 
   static const _bannerBaseHeight = 200.0;
 
-  double get imageHeight => imageWidth * Consts.coverHtoWRatio;
+  double get imageHeight => imageWidth * Theming.coverHtoWRatio;
 
   @override
-  double get minExtent => topOffset + Consts.tapTargetSize * 2;
+  double get minExtent => topOffset + Theming.tapTargetSize * 2;
 
   @override
   double get maxExtent =>
-      topOffset + Consts.tapTargetSize + _bannerBaseHeight + imageHeight / 2;
+      topOffset + Theming.tapTargetSize + _bannerBaseHeight + imageHeight / 2;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>

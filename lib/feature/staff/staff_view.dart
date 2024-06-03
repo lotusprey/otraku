@@ -104,7 +104,7 @@ class _StaffViewState extends ConsumerState<StaffView>
                 staff.valueOrNull!,
                 ref.read(staffProvider(widget.id).notifier).toggleFavorite,
               ),
-            if (_tabCtrl.index > 0) StaffFilterButton(widget.id, true),
+            if (_tabCtrl.index > 0) StaffFilterButton(widget.id),
           ],
         ),
         child: TabBarView(

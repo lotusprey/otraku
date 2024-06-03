@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/persistence.dart';
@@ -44,8 +43,8 @@ class _ThemePreviewState extends State<ThemePreview> {
           ));
         }
 
-        for (int i = 0; i < colorSeeds.length; i++) {
-          final e = colorSeeds.entries.elementAt(i);
+        for (int i = 0; i < Theming.colorSeeds.length; i++) {
+          final e = Theming.colorSeeds.entries.elementAt(i);
           children.add(_ThemeCard(
             name: e.key,
             scheme: ColorScheme.fromSeed(
@@ -99,7 +98,7 @@ class _ThemeCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: scheme.surface,
               border: Border.all(color: borderColor, width: borderWidth),
-              borderRadius: Consts.borderRadiusMin,
+              borderRadius: Theming.borderRadiusSmall,
             ),
             child: Column(
               children: [
@@ -111,7 +110,7 @@ class _ThemeCard extends StatelessWidget {
                       width: 60,
                       decoration: BoxDecoration(
                         color: scheme.onSurface,
-                        borderRadius: Consts.borderRadiusMax,
+                        borderRadius: Theming.borderRadiusBig,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -120,7 +119,7 @@ class _ThemeCard extends StatelessWidget {
                       padding: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         color: scheme.surfaceContainerHighest,
-                        borderRadius: Consts.borderRadiusMin,
+                        borderRadius: Theming.borderRadiusSmall,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +129,7 @@ class _ThemeCard extends StatelessWidget {
                             width: 40,
                             decoration: BoxDecoration(
                               color: scheme.surfaceContainerHighest,
-                              borderRadius: Consts.borderRadiusMax,
+                              borderRadius: Theming.borderRadiusBig,
                             ),
                           ),
                           const SizedBox(height: 5),
@@ -139,7 +138,7 @@ class _ThemeCard extends StatelessWidget {
                             width: 110,
                             decoration: BoxDecoration(
                               color: scheme.onSurfaceVariant,
-                              borderRadius: Consts.borderRadiusMax,
+                              borderRadius: Theming.borderRadiusBig,
                             ),
                           ),
                         ],
@@ -165,7 +164,7 @@ class _ThemeCard extends StatelessWidget {
                           height: 2,
                           decoration: BoxDecoration(
                             shape: BoxShape.rectangle,
-                            borderRadius: Consts.borderRadiusMin,
+                            borderRadius: Theming.borderRadiusSmall,
                             color: scheme.onPrimary,
                           ),
                         ),

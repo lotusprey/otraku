@@ -3,7 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -22,7 +22,7 @@ class CollectionGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 70,
-        rawHWRatio: Consts.coverHtoWRatio,
+        rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
@@ -37,7 +37,7 @@ class CollectionGrid extends StatelessWidget {
                   child: Hero(
                     tag: items[i].mediaId,
                     child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: Container(
                         color: Theme.of(context)
                             .colorScheme
@@ -157,10 +157,10 @@ class _IncrementButtonState extends State<_IncrementButton> {
           children: [
             Text(
               '${item.progress}/${item.progressMax ?? "?"}',
-              style: const TextStyle(fontSize: Consts.fontSmall),
+              style: const TextStyle(fontSize: Theming.fontSmall),
             ),
             const SizedBox(width: 3),
-            const Icon(Ionicons.add_outline, size: Consts.iconSmall),
+            const Icon(Ionicons.add_outline, size: Theming.iconSmall),
           ],
         ),
       ),

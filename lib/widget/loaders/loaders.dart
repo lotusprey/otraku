@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/shimmer.dart';
 
@@ -13,7 +13,7 @@ class Loader extends StatelessWidget {
           width: 60,
           height: 15,
           decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Theming.borderRadiusSmall,
             color: Theme.of(context).colorScheme.surfaceContainerHighest,
           ),
         ),

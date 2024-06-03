@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/extensions.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/entry_labels.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -62,10 +62,10 @@ class _Tile extends StatelessWidget {
               tag: entry.mediaId,
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(
-                  left: Consts.radiusMin,
+                  left: Theming.radiusSmall,
                 ),
                 child: Container(
-                  width: _TILE_HEIGHT / Consts.coverHtoWRatio,
+                  width: _TILE_HEIGHT / Theming.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(entry.imageUrl),
                 ),
@@ -153,7 +153,7 @@ class __TileContentState extends State<_TileContent> {
           height: 5,
           margin: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Theming.borderRadiusSmall,
             gradient: LinearGradient(
               colors: [
                 Theme.of(context).colorScheme.onSurfaceVariant,
@@ -175,7 +175,7 @@ class __TileContentState extends State<_TileContent> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Ionicons.repeat, size: Consts.iconSmall),
+                    const Icon(Ionicons.repeat, size: Theming.iconSmall),
                     const SizedBox(width: 3),
                     Text(
                       widget.item.repeat.toString(),
@@ -242,7 +242,7 @@ class __TileContentState extends State<_TileContent> {
           children: [
             text,
             const SizedBox(width: 3),
-            const Icon(Ionicons.add_outline, size: Consts.iconSmall),
+            const Icon(Ionicons.add_outline, size: Theming.iconSmall),
           ],
         ),
       ),

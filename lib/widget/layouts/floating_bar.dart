@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/drag_detector.dart';
 
 /// Hides the [child] on scroll-down and reveals it on scroll-up.
@@ -127,7 +127,7 @@ class ActionButton extends StatelessWidget {
         message: tooltip,
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMax,
+            borderRadius: Theming.borderRadiusBig,
             boxShadow: [
               BoxShadow(
                 blurRadius: 5,
@@ -141,11 +141,11 @@ class ActionButton extends StatelessWidget {
           child: Material(
             color: Theme.of(context).colorScheme.primary,
             shape: const RoundedRectangleBorder(
-              borderRadius: Consts.borderRadiusMax,
+              borderRadius: Theming.borderRadiusBig,
             ),
             child: InkWell(
               onTap: onTap,
-              borderRadius: Consts.borderRadiusMax,
+              borderRadius: Theming.borderRadiusBig,
               splashColor:
                   Theme.of(context).colorScheme.onPrimary.withAlpha(50),
               child: onSwipe == null

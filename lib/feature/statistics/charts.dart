@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class BarChart extends StatelessWidget {
@@ -100,9 +100,9 @@ class PieChart extends StatelessWidget {
         const SizedBox(height: 5),
         Container(
           height: 225,
-          padding: Consts.padding,
+          padding: Theming.paddingAll,
           decoration: BoxDecoration(
-            borderRadius: Consts.borderRadiusMin,
+            borderRadius: Theming.borderRadiusSmall,
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,

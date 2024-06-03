@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/grids/chip_grids.dart';
@@ -280,9 +280,9 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
         else
           const Center(child: Text('No Results')),
         ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Consts.radiusMax),
+          borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           child: BackdropFilter(
-            filter: Consts.blurFilter,
+            filter: Theming.blurFilter,
             child: Container(
               height: 110,
               color: Theme.of(context).navigationBarTheme.backgroundColor,

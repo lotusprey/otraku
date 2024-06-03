@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -9,7 +10,6 @@ import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/reply_card.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
@@ -101,7 +101,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                   data: (data) {
                     return ConstrainedView(
                       child: CustomScrollView(
-                        physics: Consts.physics,
+                        physics: Theming.bouncyPhysics,
                         controller: _ctrl,
                         slivers: [
                           refreshControl!,
@@ -224,7 +224,7 @@ class _TopBarContent extends StatelessWidget {
                   Hero(
                     tag: activity.authorId,
                     child: ClipRRect(
-                      borderRadius: Consts.borderRadiusMin,
+                      borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
                         activity.authorAvatarUrl,
                         height: 40,
@@ -260,7 +260,7 @@ class _TopBarContent extends StatelessWidget {
                   info: message.recipientAvatarUrl,
                   discoverType: DiscoverType.user,
                   child: ClipRRect(
-                    borderRadius: Consts.borderRadiusMin,
+                    borderRadius: Theming.borderRadiusSmall,
                     child: CachedImage(
                       message.recipientAvatarUrl,
                       height: 40,

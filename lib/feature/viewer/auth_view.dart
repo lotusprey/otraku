@@ -5,10 +5,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -100,7 +100,7 @@ class AuthViewState extends ConsumerState<AuthView> {
               return Card(
                 margin: const EdgeInsets.only(top: 10),
                 child: ListTile(
-                  contentPadding: Consts.padding,
+                  contentPadding: Theming.paddingAll,
                   title: const Text('Add an account'),
                   subtitle: const Text(
                     'To add more accounts, you must be logged out in the browser.',
@@ -132,7 +132,7 @@ class AuthViewState extends ConsumerState<AuthView> {
                   children: [
                     ClipRRect(
                       borderRadius: const BorderRadius.horizontal(
-                        left: Consts.radiusMin,
+                        left: Theming.radiusSmall,
                       ),
                       child: CachedImage(accounts[i].avatarUrl, width: 70),
                     ),

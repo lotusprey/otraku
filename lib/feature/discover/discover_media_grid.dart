@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -39,7 +39,9 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textRailItems = <String, bool>{};
     if (item.format != null) textRailItems[item.format!] = false;
-    if (item.releaseStatus != null) textRailItems[item.releaseStatus!] = false;
+    if (item.releaseStatus != null) {
+      textRailItems[item.releaseStatus!.label] = false;
+    }
     if (item.releaseYear != null) {
       textRailItems[item.releaseYear!.toString()] = false;
     }
@@ -65,10 +67,10 @@ class _Tile extends StatelessWidget {
               tag: item.id,
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(
-                  left: Consts.radiusMin,
+                  left: Theming.radiusSmall,
                 ),
                 child: Container(
-                  width: 120 / Consts.coverHtoWRatio,
+                  width: 120 / Theming.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(item.imageUrl),
                 ),
@@ -76,7 +78,7 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: Consts.padding,
+                padding: Theming.paddingAll,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -61,22 +60,17 @@ class CharacterMediaFilterButton extends StatelessWidget {
           onTap: () {
             var filter = ref.read(characterFilterProvider(id));
 
-            final sortItems = <String, int>{};
-            for (int i = 0; i < MediaSort.values.length; i += 2) {
-              String key = MediaSort.values[i].name.noScreamingSnakeCase;
-              sortItems[key] = i ~/ 2;
-            }
-
             final onDone = (_) =>
                 ref.read(characterFilterProvider(id).notifier).state = filter;
 
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * 4,
+                initialHeight: MediaQuery.paddingOf(context).bottom +
+                    Theming.tapTargetSize * 2.5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
                     ChipSelector.ensureSelected(

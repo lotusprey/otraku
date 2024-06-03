@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -20,17 +20,17 @@ class ScoreLabel extends StatelessWidget {
         if (score == 3) {
           content = const Icon(
             Icons.sentiment_very_satisfied,
-            size: Consts.iconSmall,
+            size: Theming.iconSmall,
           );
         } else if (score == 2) {
           content = const Icon(
             Icons.sentiment_neutral,
-            size: Consts.iconSmall,
+            size: Theming.iconSmall,
           );
         } else {
           content = const Icon(
             Icons.sentiment_very_dissatisfied,
-            size: Consts.iconSmall,
+            size: Theming.iconSmall,
           );
         }
       case ScoreFormat.point5:
@@ -42,14 +42,14 @@ class ScoreLabel extends StatelessWidget {
               style: Theme.of(context).textTheme.labelSmall,
             ),
             const SizedBox(width: 3),
-            const Icon(Icons.star_rounded, size: Consts.iconSmall),
+            const Icon(Icons.star_rounded, size: Theming.iconSmall),
           ],
         );
       case ScoreFormat.point10Decimal:
         content = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
+            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
             const SizedBox(width: 3),
             Text(
               score.toStringAsFixed(1),
@@ -61,7 +61,7 @@ class ScoreLabel extends StatelessWidget {
         content = Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.star_half_rounded, size: Consts.iconSmall),
+            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
             const SizedBox(width: 3),
             Text(
               score.toStringAsFixed(0),
@@ -90,7 +90,7 @@ class NotesLabel extends StatelessWidget {
         message: 'Comment',
         child: InkResponse(
           radius: 10,
-          child: const Icon(Ionicons.chatbox, size: Consts.iconSmall),
+          child: const Icon(Ionicons.chatbox, size: Theming.iconSmall),
           onTap: () => showDialog(
             context: context,
             builder: (context) => TextDialog(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/review/review_header.dart';
-import 'package:otraku/util/consts.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/review_provider.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -86,17 +86,17 @@ class ReviewView extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Center(
                   child: Container(
-                    margin: Consts.padding,
-                    padding: Consts.padding,
+                    margin: Theming.paddingAll,
+                    padding: Theming.paddingAll,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
-                      borderRadius: Consts.borderRadiusMax,
+                      borderRadius: Theming.borderRadiusBig,
                     ),
                     child: Text(
                       '${data.score}/100',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: Theme.of(context).colorScheme.onPrimary,
-                            fontSize: Consts.fontBig,
+                            fontSize: Theming.fontBig,
                             fontWeight: FontWeight.w500,
                           ),
                     ),

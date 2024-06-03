@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
-import 'package:otraku/util/consts.dart';
-import 'package:otraku/util/routing.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
@@ -12,6 +11,7 @@ import 'package:otraku/feature/notification/notifications_provider.dart';
 import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -152,7 +152,7 @@ class _NotificationItem extends StatelessWidget {
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.horizontal(
-                        left: Consts.radiusMin,
+                        left: Theming.radiusSmall,
                       ),
                       child: CachedImage(item.imageUrl!, width: 70),
                     ),
@@ -212,7 +212,7 @@ class _NotificationItem extends StatelessWidget {
                       }
                     },
                     child: Padding(
-                      padding: Consts.padding,
+                      padding: Theming.paddingAll,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -253,7 +253,7 @@ class _NotificationItem extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
                       borderRadius: const BorderRadius.horizontal(
-                        right: Consts.radiusMin,
+                        right: Theming.radiusSmall,
                       ),
                     ),
                   ),
@@ -293,16 +293,16 @@ class _NotificationDialog extends StatelessWidget {
 
     return DialogBox(
       Padding(
-        padding: Consts.padding,
+        padding: Theming.paddingAll,
         child: Row(
           children: [
             if (item.imageUrl != null) ...[
               ClipRRect(
-                borderRadius: Consts.borderRadiusMin,
+                borderRadius: Theming.borderRadiusSmall,
                 child: CachedImage(
                   item.imageUrl!,
                   width: imageWidth,
-                  height: imageWidth * Consts.coverHtoWRatio,
+                  height: imageWidth * Theming.coverHtoWRatio,
                 ),
               ),
               const SizedBox(width: 10),

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
-import 'package:otraku/util/consts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -41,10 +40,9 @@ class _StaffFavoriteButtonState extends State<StaffFavoriteButton> {
 }
 
 class StaffFilterButton extends StatelessWidget {
-  const StaffFilterButton(this.id, this.full);
+  const StaffFilterButton(this.id);
 
   final int id;
-  final bool full;
 
   @override
   Widget build(BuildContext context) {
@@ -56,22 +54,17 @@ class StaffFilterButton extends StatelessWidget {
           onTap: () {
             var filter = ref.read(staffFilterProvider(id));
 
-            final sortItems = <String, int>{};
-            for (int i = 0; i < MediaSort.values.length; i += 2) {
-              String key = MediaSort.values[i].name.noScreamingSnakeCase;
-              sortItems[key] = i ~/ 2;
-            }
-
             final onDone = (_) =>
                 ref.read(staffFilterProvider(id).notifier).state = filter;
 
             showSheet(
               context,
               OpaqueSheet(
-                initialHeight: Consts.tapTargetSize * (full ? 5.5 : 4),
+                initialHeight: MediaQuery.paddingOf(context).bottom +
+                    Theming.tapTargetSize * 4,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
-                  physics: Consts.physics,
+                  physics: Theming.bouncyPhysics,
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   children: [
                     ChipSelector.ensureSelected(
@@ -80,17 +73,15 @@ class StaffFilterButton extends StatelessWidget {
                       value: filter.sort,
                       onChanged: (v) => filter = filter.copyWith(sort: v),
                     ),
-                    if (full) ...[
-                      ChipSelector(
-                        title: 'Type',
-                        items: const [('Anime', true), ('Manga', false)],
-                        value: filter.ofAnime,
-                        onChanged: (v) => filter = filter.copyWith(
-                          ofAnime: () => v,
-                        ),
+                    ChipSelector(
+                      title: 'Type',
+                      items: const [('Anime', true), ('Manga', false)],
+                      value: filter.ofAnime,
+                      onChanged: (v) => filter = filter.copyWith(
+                        ofAnime: () => v,
                       ),
-                      const SizedBox(height: 10),
-                    ],
+                    ),
+                    const SizedBox(height: 10),
                     ChipSelector(
                       title: 'List Presence',
                       items: const [

@@ -329,7 +329,7 @@ class Persistence extends ChangeNotifier {
       return;
     }
 
-    if (v < 0 || v >= colorSeeds.length) return;
+    if (v < 0 || v >= Theming.colorSeeds.length) return;
     _theme = v;
     _optionBox.put(_OptionKey.themeIndex.name, v);
     notifyListeners();

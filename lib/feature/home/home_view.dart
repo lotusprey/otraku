@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -16,11 +17,12 @@ import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
 import 'package:otraku/feature/feed/feed_view.dart';
 import 'package:otraku/feature/user/user_view.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 
 class HomeView extends ConsumerStatefulWidget {
-  const HomeView({this.tab});
+  const HomeView({super.key, this.tab});
 
   final HomeTab? tab;
 
@@ -59,8 +61,8 @@ class _HomeViewState extends ConsumerState<HomeView>
 
   @override
   void didUpdateWidget(covariant HomeView oldWidget) {
-    if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
     super.didUpdateWidget(oldWidget);
+    if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
   }
 
   @override
@@ -104,7 +106,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     return PageScaffold(
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
+        onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
         items: {
           for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
         },
@@ -149,14 +151,12 @@ class _HomeViewState extends ConsumerState<HomeView>
             scrollCtrl: _animeScrollCtrl,
             tag: _animeCollectionTag,
             focusNode: _searchFocusNode,
-            tabCtrl: _tabCtrl,
             key: Key(true.toString()),
           ),
           CollectionSubview(
             scrollCtrl: _mangaScrollCtrl,
             tag: _mangaCollectionTag,
             focusNode: _searchFocusNode,
-            tabCtrl: _tabCtrl,
             key: Key(false.toString()),
           ),
           DiscoverSubview(_searchFocusNode, _discoverScrollCtrl),

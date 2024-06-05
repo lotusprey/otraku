@@ -127,8 +127,8 @@ class Routes {
         builder: (context, state) {
           final tab = state.uri.queryParameters['tab'];
           return tab != null
-              ? HomeView(tab: HomeTab.values.byName(tab))
-              : const HomeView();
+              ? HomeView(key: state.pageKey, tab: HomeTab.values.byName(tab))
+              : HomeView(key: state.pageKey);
         },
       ),
       GoRoute(

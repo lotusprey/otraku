@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
@@ -202,23 +203,35 @@ class _EditView extends StatelessWidget {
           )
         : null;
 
-    final progressFields = volumeProgressField == null
-        ? SliverPadding(
-            padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            sliver: SliverToBoxAdapter(child: progressField),
-          )
-        : _FieldGrid(
-            minWidth: 140,
-            children: [
-              if (Persistence().leftHanded) ...[
-                progressField,
-                volumeProgressField,
-              ] else ...[
-                volumeProgressField,
-                progressField,
-              ],
-            ],
-          );
+    final progressFields = SliverPadding(
+      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      sliver: SliverToBoxAdapter(
+        child: volumeProgressField == null
+            ? progressField
+            : MediaQuery.sizeOf(context).width <= Theming.compactWidth
+                ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      progressField,
+                      const SizedBox(height: 20),
+                      volumeProgressField,
+                    ],
+                  )
+                : Row(
+                    children: Persistence().leftHanded
+                        ? [
+                            Expanded(child: progressField),
+                            const SizedBox(width: 10),
+                            Expanded(child: volumeProgressField),
+                          ]
+                        : [
+                            Expanded(child: volumeProgressField),
+                            const SizedBox(width: 10),
+                            Expanded(child: progressField),
+                          ],
+                  ),
+      ),
+    );
 
     final timelineFields = _FieldGrid(
       minWidth: 195,
@@ -230,7 +243,7 @@ class _EditView extends StatelessWidget {
             return DateField(
               label: 'Started',
               value: startedAt,
-              onChanged: (value) => (startedAt) {
+              onChanged: (startedAt) {
                 ref.read(provider.notifier).update((s) {
                   var status = s.status;
 

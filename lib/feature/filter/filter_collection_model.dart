@@ -22,6 +22,19 @@ class CollectionMediaFilter {
   bool? isPrivate;
   bool? hasNotes;
 
+  bool get isActive =>
+      statuses.isNotEmpty ||
+      formats.isNotEmpty ||
+      genreIn.isNotEmpty ||
+      genreNotIn.isNotEmpty ||
+      tagIn.isNotEmpty ||
+      tagNotIn.isNotEmpty ||
+      startYearFrom != null ||
+      startYearTo != null ||
+      country != null ||
+      isPrivate != null ||
+      hasNotes != null;
+
   CollectionMediaFilter copy() => CollectionMediaFilter(true)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)

@@ -21,6 +21,22 @@ class DiscoverMediaFilter {
   bool? inLists;
   bool? isAdult;
 
+  bool get isActive =>
+      statuses.isNotEmpty ||
+      animeFormats.isNotEmpty ||
+      mangaFormats.isNotEmpty ||
+      genreIn.isNotEmpty ||
+      genreNotIn.isNotEmpty ||
+      tagIn.isNotEmpty ||
+      tagNotIn.isNotEmpty ||
+      sources.isNotEmpty ||
+      season != null ||
+      startYearFrom != null ||
+      startYearTo != null ||
+      country != null ||
+      inLists != null ||
+      isAdult != null;
+
   DiscoverMediaFilter copy() => DiscoverMediaFilter()
     ..statuses.addAll(statuses)
     ..animeFormats.addAll(animeFormats)

@@ -94,6 +94,7 @@ class ActivitiesNotifier
     for (int i = 0; i < value.items.length; i++) {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
+
         state = AsyncValue.data(Paged(
           items: value.items,
           hasNext: value.hasNext,
@@ -104,18 +105,28 @@ class ActivitiesNotifier
     }
   }
 
-  Future<Object?> toggleLike(Activity activity) {
-    return ref.read(repositoryProvider).request(
+  Future<Object?> toggleLike(Activity activity) async {
+    final err = await ref.read(repositoryProvider).request(
       GqlMutation.toggleLike,
       {'id': activity.id, 'type': 'ACTIVITY'},
     ).then((_) => null, onError: (e) => e);
+
+    if (err != null) return err;
+
+    replace(activity);
+    return null;
   }
 
-  Future<Object?> toggleSubscription(Activity activity) {
-    return ref.read(repositoryProvider).request(
+  Future<Object?> toggleSubscription(Activity activity) async {
+    final err = await ref.read(repositoryProvider).request(
       GqlMutation.toggleActivitySubscription,
       {'id': activity.id, 'subscribe': activity.isSubscribed},
     ).then((_) => null, onError: (e) => e);
+
+    if (err != null) return err;
+
+    replace(activity);
+    return null;
   }
 
   Future<Object?> togglePin(Activity activity) async {

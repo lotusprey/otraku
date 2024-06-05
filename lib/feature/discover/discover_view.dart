@@ -49,20 +49,18 @@ class _TopBarContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final type = ref.watch(discoverFilterProvider.select((s) => s.type));
+        final filter = ref.watch(discoverFilterProvider);
 
         return Expanded(
           child: Row(
             children: [
-              if (type != DiscoverType.review)
+              if (filter.type != DiscoverType.review)
                 Expanded(
                   child: SearchField(
                     debounce: Debounce(),
                     focusNode: focusNode,
-                    hint: type.label,
-                    value: ref.watch(
-                      discoverFilterProvider.select((s) => s.search),
-                    ),
+                    hint: filter.type.label,
+                    value: filter.search,
                     onChanged: (search) => ref
                         .read(discoverFilterProvider.notifier)
                         .update((s) => s.copyWith(search: search)),
@@ -77,37 +75,33 @@ class _TopBarContent extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-              if (type == DiscoverType.anime)
+              if (filter.type == DiscoverType.anime)
                 TopBarIcon(
                   tooltip: 'Calendar',
                   icon: Ionicons.calendar_outline,
                   onTap: () => context.push(Routes.calendar),
                 ),
-              if (type == DiscoverType.anime || type == DiscoverType.manga)
-                TopBarIcon(
-                  tooltip: 'Filter',
-                  icon: Ionicons.funnel_outline,
-                  onTap: () => showSheet(
-                    context,
-                    FilterDiscoverView(
-                      ofAnime: type == DiscoverType.anime,
-                      filter: ref.read(discoverFilterProvider).mediaFilter,
-                      onChanged: (mediaFilter) => ref
-                          .read(discoverFilterProvider.notifier)
-                          .update((s) => s.copyWith(mediaFilter: mediaFilter)),
-                    ),
-                  ),
-                )
-              else if (type == DiscoverType.character ||
-                  type == DiscoverType.staff)
+              if (filter.type == DiscoverType.anime ||
+                  filter.type == DiscoverType.manga)
+                if (filter.mediaFilter.isActive)
+                  Badge(
+                    smallSize: 10,
+                    alignment: Alignment.topLeft,
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: _filterIcon(context, ref, filter),
+                  )
+                else
+                  _filterIcon(context, ref, filter)
+              else if (filter.type == DiscoverType.character ||
+                  filter.type == DiscoverType.staff)
                 _BirthdayFilter(ref)
-              else if (type == DiscoverType.review)
+              else if (filter.type == DiscoverType.review)
                 TopBarIcon(
                   tooltip: 'Sort',
                   icon: Ionicons.funnel_outline,
                   onTap: () => showReviewsFilterSheet(
                     context: context,
-                    filter: ref.read(discoverFilterProvider).reviewsFilter,
+                    filter: filter.reviewsFilter,
                     onDone: (filter) => ref
                         .read(discoverFilterProvider.notifier)
                         .update((s) => s.copyWith(reviewsFilter: filter)),
@@ -119,6 +113,27 @@ class _TopBarContent extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _filterIcon(
+    BuildContext context,
+    WidgetRef ref,
+    DiscoverFilter filter,
+  ) {
+    return TopBarIcon(
+      tooltip: 'Filter',
+      icon: Ionicons.funnel_outline,
+      onTap: () => showSheet(
+        context,
+        FilterDiscoverView(
+          ofAnime: filter.type == DiscoverType.anime,
+          filter: filter.mediaFilter,
+          onChanged: (mediaFilter) => ref
+              .read(discoverFilterProvider.notifier)
+              .update((s) => s.copyWith(mediaFilter: mediaFilter)),
+        ),
+      ),
     );
   }
 }

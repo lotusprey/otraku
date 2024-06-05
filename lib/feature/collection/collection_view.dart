@@ -55,7 +55,6 @@ class _CollectionViewState extends State<CollectionView> {
         tag: (userId: widget.userId, ofAnime: widget.ofAnime),
         scrollCtrl: _ctrl,
         focusNode: null,
-        tabCtrl: null,
       ),
     );
   }
@@ -66,13 +65,11 @@ class CollectionSubview extends StatelessWidget {
     required this.tag,
     required this.scrollCtrl,
     required this.focusNode,
-    required this.tabCtrl,
     super.key,
   });
 
   final CollectionTag tag;
   final ScrollController scrollCtrl;
-  final TabController? tabCtrl;
   final FocusNode? focusNode;
 
   @override
@@ -98,7 +95,7 @@ class CollectionSubview extends StatelessWidget {
                   SliverRefreshControl(
                     onRefresh: () => ref.invalidate(collectionProvider(tag)),
                   ),
-                  _Content(tag, tabCtrl),
+                  _Content(tag),
                   const SliverFooter(),
                 ],
               ),
@@ -120,6 +117,24 @@ class _TopBarContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final filter = ref.watch(collectionFilterProvider(tag));
+
+        final filterIcon = TopBarIcon(
+          tooltip: 'Filter',
+          icon: Ionicons.funnel_outline,
+          onTap: () => showSheet(
+            context,
+            FilterCollectionView(
+              ofAnime: tag.ofAnime,
+              ofViewer: tag.userId == Persistence().id,
+              filter: filter.mediaFilter,
+              onChanged: (mediaFilter) => ref
+                  .read(collectionFilterProvider(tag).notifier)
+                  .update((s) => s.copyWith(mediaFilter: mediaFilter)),
+            ),
+          ),
+        );
+
         return Expanded(
           child: Row(
             children: [
@@ -130,9 +145,7 @@ class _TopBarContent extends StatelessWidget {
                   hint: ref.watch(collectionProvider(tag).select(
                     (s) => s.valueOrNull?.listName ?? '',
                   )),
-                  value: ref.watch(
-                    collectionFilterProvider(tag).select((s) => s.search),
-                  ),
+                  value: filter.search,
                   onChanged: (search) => ref
                       .read(collectionFilterProvider(tag).notifier)
                       .update((s) => s.copyWith(search: search)),
@@ -160,21 +173,15 @@ class _TopBarContent extends StatelessWidget {
                   context.push(Routes.media(e.mediaId, e.imageUrl));
                 },
               ),
-              TopBarIcon(
-                tooltip: 'Filter',
-                icon: Ionicons.funnel_outline,
-                onTap: () => showSheet(
-                  context,
-                  FilterCollectionView(
-                    ofAnime: tag.ofAnime,
-                    ofViewer: tag.userId == Persistence().id,
-                    filter: ref.read(collectionFilterProvider(tag)).mediaFilter,
-                    onChanged: (mediaFilter) => ref
-                        .read(collectionFilterProvider(tag).notifier)
-                        .update((s) => s.copyWith(mediaFilter: mediaFilter)),
-                  ),
-                ),
-              ),
+              if (filter.mediaFilter.isActive)
+                Badge(
+                  smallSize: 10,
+                  alignment: Alignment.topLeft,
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  child: filterIcon,
+                )
+              else
+                filterIcon,
             ],
           ),
         );
@@ -283,10 +290,9 @@ class _ActionButton extends StatelessWidget {
 }
 
 class _Content extends StatefulWidget {
-  const _Content(this.tag, this.tabCtrl);
+  const _Content(this.tag);
 
   final CollectionTag tag;
-  final TabController? tabCtrl;
 
   @override
   State<_Content> createState() => _ContentState();
@@ -321,8 +327,10 @@ class _ContentState extends State<_Content> {
                 child: Center(child: Text('No results')),
               ),
               data: (data) {
+                final isViewer = widget.tag.userId == Persistence().id;
+
                 if (data.isEmpty) {
-                  if (widget.tabCtrl == null) {
+                  if (!isViewer) {
                     return const SliverFillRemaining(
                       child: Center(child: Text('No results')),
                     );
@@ -344,13 +352,13 @@ class _ContentState extends State<_Content> {
                   );
                 }
 
-                final onProgressUpdated = widget.tabCtrl != null
+                final onProgressUpdated = isViewer
                     ? ref
                         .read(collectionProvider(widget.tag).notifier)
                         .saveEntryProgress
                     : null;
 
-                final collectionIsExpanded = widget.tabCtrl == null ||
+                final collectionIsExpanded = !isViewer ||
                     ref.watch(homeProvider.select(
                       (s) => widget.tag.ofAnime
                           ? s.didExpandAnimeCollection
@@ -397,7 +405,7 @@ class _ContentState extends State<_Content> {
           ),
         ));
 
-    widget.tabCtrl!.index = HomeTab.discover.index;
+    context.go(Routes.home(HomeTab.discover));
 
     ref
         .read(collectionFilterProvider(tag).notifier)

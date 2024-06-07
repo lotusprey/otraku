@@ -7,6 +7,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
+import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
@@ -17,10 +18,15 @@ import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/util/toast.dart';
 
 class MediaOverviewSubview extends StatelessWidget {
-  const MediaOverviewSubview(this.info, this.scrollCtrl);
+  const MediaOverviewSubview({
+    required this.info,
+    required this.scrollCtrl,
+    required this.invalidate,
+  });
 
   final MediaInfo info;
   final ScrollController scrollCtrl;
+  final void Function() invalidate;
 
   @override
   Widget build(BuildContext context) {
@@ -63,11 +69,10 @@ class MediaOverviewSubview extends StatelessWidget {
       child: Consumer(
         builder: (context, ref, _) => CustomScrollView(
           controller: scrollCtrl,
+          physics: Theming.bouncyPhysics,
           slivers: [
-            if (info.description.isNotEmpty)
-              _Description(info.description)
-            else
-              spacing,
+            SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
+            if (info.description.isNotEmpty) _Description(info.description),
             SliverToBoxAdapter(
               child: Card.outlined(
                 child: Padding(
@@ -190,7 +195,7 @@ class _DescriptionState extends State<_Description> {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.only(bottom: 10),
         child: Card.outlined(
           child: InkWell(
             borderRadius: Theming.borderRadiusSmall,

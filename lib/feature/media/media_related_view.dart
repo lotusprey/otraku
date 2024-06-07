@@ -13,18 +13,21 @@ class MediaRelatedSubview extends StatelessWidget {
   const MediaRelatedSubview({
     required this.relations,
     required this.scrollCtrl,
+    required this.invalidate,
   });
 
   final List<RelatedMedia> relations;
   final ScrollController scrollCtrl;
+  final void Function() invalidate;
 
   @override
   Widget build(BuildContext context) {
     return ConstrainedView(
       child: CustomScrollView(
         controller: scrollCtrl,
+        physics: Theming.bouncyPhysics,
         slivers: [
-          const SliverToBoxAdapter(child: SizedBox(height: 10)),
+          SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
           _MediaRelatedGrid(relations),
           const SliverFooter(),
         ],

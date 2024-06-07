@@ -77,7 +77,7 @@ class _MediaViewState extends State<MediaView>
                 .findAncestorStateOfType<NestedScrollViewState>()!
                 .innerController;
 
-            return ref.watch(mediaProvider(widget.id)).when(
+            return ref.watch(mediaProvider(widget.id)).unwrapPrevious().when(
                   loading: () => const Center(child: Loader()),
                   error: (_, __) => const Center(
                     child: Text('Failed to load media'),
@@ -188,10 +188,15 @@ class __MediaSubViewState extends ConsumerState<_MediaViewContent> {
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
-        MediaOverviewSubview(widget.media.info, _scrollCtrl),
+        MediaOverviewSubview(
+          info: widget.media.info,
+          scrollCtrl: _scrollCtrl,
+          invalidate: () => ref.invalidate(mediaProvider(widget.id)),
+        ),
         MediaRelatedSubview(
           relations: widget.media.related,
           scrollCtrl: _scrollCtrl,
+          invalidate: () => ref.invalidate(mediaProvider(widget.id)),
         ),
         MediaCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
         MediaStaffSubview(id: widget.id, scrollCtrl: _scrollCtrl),

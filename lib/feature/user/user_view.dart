@@ -4,6 +4,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -66,44 +67,54 @@ class UserSubview extends StatelessWidget {
           user: user.valueOrNull,
           isViewer: homeScrollCtrl != null,
           imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
-          toggleFollow: ref.read(userProvider(tag).notifier).toggleFollow,
+          toggleFollow: () {
+            final userId = user.valueOrNull?.id;
+            if (userId == null) return Future.value(false);
+
+            return ref.read(userProvider(tag).notifier).toggleFollow(userId);
+          },
         );
 
-        return user.when(
-          error: (_, __) => CustomScrollView(
-            controller: homeScrollCtrl,
-            slivers: [
-              header,
-              const SliverFillRemaining(
-                child: Center(child: Text('Failed to load user')),
-              )
-            ],
-          ),
-          loading: () => CustomScrollView(
-            controller: homeScrollCtrl,
-            slivers: [
-              header,
-              const SliverFillRemaining(child: Center(child: Loader()))
-            ],
-          ),
-          data: (data) => CustomScrollView(
-            controller: homeScrollCtrl,
-            slivers: [
-              header,
-              _ButtonRow(data.id),
-              if (data.description.isNotEmpty) ...[
-                const SliverToBoxAdapter(child: SizedBox(height: 10)),
-                SliverConstrainedView(
-                  sliver: HtmlContent(
-                    data.description,
-                    renderMode: RenderMode.sliverList,
+        return user.unwrapPrevious().when(
+              error: (_, __) => CustomScrollView(
+                controller: homeScrollCtrl,
+                slivers: [
+                  header,
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load user')),
+                  )
+                ],
+              ),
+              loading: () => CustomScrollView(
+                controller: homeScrollCtrl,
+                slivers: [
+                  header,
+                  const SliverFillRemaining(child: Center(child: Loader()))
+                ],
+              ),
+              data: (data) => CustomScrollView(
+                controller: homeScrollCtrl,
+                physics: Theming.bouncyPhysics,
+                slivers: [
+                  header,
+                  SliverRefreshControl(
+                    onRefresh: () => ref.invalidate(userProvider(tag)),
+                    withTopOffset: false,
                   ),
-                ),
-              ],
-              const SliverFooter(),
-            ],
-          ),
-        );
+                  _ButtonRow(data.id),
+                  if (data.description.isNotEmpty) ...[
+                    const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                    SliverConstrainedView(
+                      sliver: HtmlContent(
+                        data.description,
+                        renderMode: RenderMode.sliverList,
+                      ),
+                    ),
+                  ],
+                  const SliverFooter(),
+                ],
+              ),
+            );
       },
     );
   }

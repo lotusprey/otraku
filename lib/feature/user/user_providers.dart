@@ -26,10 +26,10 @@ class UserNotifier extends AutoDisposeFamilyAsyncNotifier<User, UserTag> {
     return User(data['User']);
   }
 
-  Future<bool> toggleFollow() async {
+  Future<bool> toggleFollow(int userId) {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFollow,
-      {'userId': arg},
+      {'userId': userId},
     ).then((_) => true, onError: (_) => false);
   }
 }

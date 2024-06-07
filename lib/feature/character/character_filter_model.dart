@@ -1,0 +1,14 @@
+import 'package:otraku/feature/media/media_models.dart';
+
+class CharacterFilter {
+  CharacterFilter({this.sort = MediaSort.trendingDesc, this.inLists});
+
+  final MediaSort sort;
+  final bool? inLists;
+
+  CharacterFilter copyWith({MediaSort? sort, bool? Function()? inLists}) =>
+      CharacterFilter(
+        sort: sort ?? this.sort,
+        inLists: inLists == null ? this.inLists : inLists(),
+      );
+}

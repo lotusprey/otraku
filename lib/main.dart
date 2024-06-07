@@ -4,19 +4,20 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:otraku/modules/viewer/api.dart';
-import 'package:otraku/common/utils/routing.dart';
-import 'package:otraku/modules/home/home_provider.dart';
-import 'package:otraku/common/utils/background_handler.dart';
-import 'package:otraku/common/utils/options.dart';
-import 'package:otraku/common/utils/theming.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/feature/home/home_provider.dart';
+import 'package:otraku/util/background_handler.dart';
+import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
-  await Options.init();
-  await Api.init();
+  final container = ProviderContainer();
+  await Persistence.init();
+  await container.read(repositoryProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
-  runApp(const ProviderScope(child: App()));
+
+  runApp(UncontrolledProviderScope(container: container, child: const App()));
 }
 
 final _notificationCtrl = StreamController<String>.broadcast();
@@ -29,31 +30,25 @@ class App extends ConsumerStatefulWidget {
 }
 
 class AppState extends ConsumerState<App> {
-  late final GoRouter _router;
+  final _router = Routes.buildRouter(Persistence());
   late final StreamSubscription<String> _notificationSubscription;
 
   @override
   void initState() {
     super.initState();
-    _router = GoRouter(
-      initialLocation: Api.hasActiveAccount() ? Routes.home() : Routes.auth,
-      routes: buildRoutes(() => Options().confirmExit),
-      errorBuilder: (context, state) => const NotFoundView(canPop: false),
-    );
-
-    if (Options().lastVersionCode != versionCode) {
-      Options().updateVersionCodeToLatestVersion();
+    if (Persistence().lastVersionCode != versionCode) {
+      Persistence().updateVersionCodeToLatestVersion();
       BackgroundHandler.requestPermissionForNotifications();
     }
 
-    Options().addListener(() => setState(() {}));
+    Persistence().addListener(() => setState(() {}));
     _notificationSubscription = _notificationCtrl.stream.listen(_router.push);
   }
 
   @override
   void dispose() {
     _notificationSubscription.cancel();
-    Options().dispose();
+    Persistence().dispose();
     super.dispose();
   }
 
@@ -61,60 +56,60 @@ class AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        ColorScheme lightScheme;
-        ColorScheme darkScheme;
-        var theme = Options().theme;
+        Color? systemLightPrimaryColor = lightDynamic?.primary;
+        Color? systemDarkPrimaryColor = darkDynamic?.primary;
 
         // The system schemes must be cached, so
         // they can later be used in the settings.
         final notifier = ref.watch(homeProvider.notifier);
-        final hasDynamic = lightDynamic != null && darkDynamic != null;
+        Future(
+          () => notifier.cacheSystemColorSchemes(
+            systemLightPrimaryColor,
+            systemDarkPrimaryColor,
+          ),
+        );
 
         Color? lightBackground;
         Color? darkBackground;
-        if (Options().pureWhiteOrBlackTheme) {
+        if (Persistence().pureWhiteOrBlackTheme) {
           lightBackground = Colors.white;
           darkBackground = Colors.black;
         }
 
-        if (hasDynamic) {
-          lightDynamic = lightDynamic.harmonized().copyWith(
-                background: lightBackground,
-              );
-          darkDynamic = darkDynamic.harmonized().copyWith(
-                background: darkBackground,
-              );
+        Color lightSeed;
+        Color darkSeed;
+        var theme = Persistence().theme;
 
-          Future(
-            () => notifier.cacheSystemColorSchemes(lightDynamic, darkDynamic),
-          );
-        }
-
-        if (theme == null && hasDynamic) {
-          lightScheme = lightDynamic!;
-          darkScheme = darkDynamic!;
+        if (theme == null &&
+            systemLightPrimaryColor != null &&
+            systemDarkPrimaryColor != null) {
+          lightSeed = systemLightPrimaryColor;
+          darkSeed = systemDarkPrimaryColor;
         } else {
           theme ??= 0;
-          if (theme >= colorSeeds.length) {
-            theme = colorSeeds.length - 1;
+          if (theme >= Theming.colorSeeds.length) {
+            theme = Theming.colorSeeds.length - 1;
           }
 
-          final seed = colorSeeds.values.elementAt(theme);
-          lightScheme = seed.scheme(Brightness.light).copyWith(
-                background: lightBackground,
-              );
-          darkScheme = seed.scheme(Brightness.dark).copyWith(
-                background: darkBackground,
-              );
+          lightSeed = Theming.colorSeeds.values.elementAt(theme);
+          darkSeed = lightSeed;
         }
 
-        final mode = Options().themeMode;
-        final platformBrightness =
-            View.of(context).platformDispatcher.platformBrightness;
+        final lightScheme = ColorScheme.fromSeed(
+          seedColor: lightSeed,
+          brightness: Brightness.light,
+        ).copyWith(surface: lightBackground);
+        final darkScheme = ColorScheme.fromSeed(
+          seedColor: darkSeed,
+          brightness: Brightness.dark,
+        ).copyWith(surface: darkBackground);
 
-        final isDark = mode == ThemeMode.system
+        final themeMode = Persistence().themeMode;
+        final platformBrightness = MediaQuery.platformBrightnessOf(context);
+
+        final isDark = themeMode == ThemeMode.system
             ? platformBrightness == Brightness.dark
-            : mode == ThemeMode.dark;
+            : themeMode == ThemeMode.dark;
 
         final ColorScheme scheme;
         final Brightness overlayBrightness;
@@ -135,13 +130,13 @@ class AppState extends ConsumerState<App> {
           systemNavigationBarContrastEnforced: false,
           systemNavigationBarIconBrightness: overlayBrightness,
         ));
-        final data = themeDataFrom(scheme);
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Otraku',
-          theme: data,
-          darkTheme: data,
+          theme: Theming.schemeToThemeData(lightScheme),
+          darkTheme: Theming.schemeToThemeData(darkScheme),
+          themeMode: themeMode,
           routerConfig: _router,
           builder: (context, child) {
             // Override the [textScaleFactor], because some devices apply

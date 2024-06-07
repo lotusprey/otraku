@@ -1,6 +1,0 @@
-- If filtering your collections yields no results, there is a button that redirects you to discover and copies over the filters from the collection
-- Tag categories in the tag sheet are sorted alphabetically
-- Separate synonym titles on media pages
-- Reordered fields in the entry sheet and chapter/volume fields switch based on left-handed mode
-- Fixed emojis, calendar filters, wrong tiles being used in the collections of other people
-- Visual tweaks and slightly darker dark mode

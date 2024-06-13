@@ -46,7 +46,7 @@ class SettingsAppSubview extends StatelessWidget {
               padding: tilePadding,
               child: EntrySortChipSelector(
                 title: 'Collection Anime Sorting',
-                current: Persistence().defaultAnimeSort,
+                value: Persistence().defaultAnimeSort,
                 onChanged: (v) => Persistence().defaultAnimeSort = v,
               ),
             ),
@@ -54,7 +54,7 @@ class SettingsAppSubview extends StatelessWidget {
               padding: tilePadding,
               child: EntrySortChipSelector(
                 title: 'Collection Manga Sorting',
-                current: Persistence().defaultMangaSort,
+                value: Persistence().defaultMangaSort,
                 onChanged: (v) => Persistence().defaultMangaSort = v,
               ),
             ),

@@ -56,7 +56,12 @@ class _HomeViewState extends ConsumerState<HomeView>
     super.initState();
     _tabCtrl.index = Persistence().defaultHomeTab.index;
     if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
-    _tabCtrl.addListener(() => setState(() {}));
+
+    _tabCtrl.addListener(
+      () => WidgetsBinding.instance.addPostFrameCallback(
+        (_) => context.go(Routes.home(HomeTab.values[_tabCtrl.index])),
+      ),
+    );
   }
 
   @override

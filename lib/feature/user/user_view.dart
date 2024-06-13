@@ -77,7 +77,6 @@ class UserSubview extends StatelessWidget {
 
         return user.unwrapPrevious().when(
               error: (_, __) => CustomScrollView(
-                controller: homeScrollCtrl,
                 slivers: [
                   header,
                   const SliverFillRemaining(
@@ -86,7 +85,6 @@ class UserSubview extends StatelessWidget {
                 ],
               ),
               loading: () => CustomScrollView(
-                controller: homeScrollCtrl,
                 slivers: [
                   header,
                   const SliverFillRemaining(child: Center(child: Loader()))

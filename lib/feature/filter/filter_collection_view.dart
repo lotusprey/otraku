@@ -42,7 +42,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
         children: [
           EntrySortChipSelector(
             title: 'Sorting',
-            current: filter.sort,
+            value: filter.sort,
             onChanged: (v) => filter.sort = v,
           ),
           ChipMultiSelector(

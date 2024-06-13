@@ -130,12 +130,12 @@ class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
 class EntrySortChipSelector extends StatefulWidget {
   const EntrySortChipSelector({
     required this.title,
-    required this.current,
+    required this.value,
     required this.onChanged,
   });
 
   final String title;
-  final EntrySort current;
+  final EntrySort value;
   final void Function(EntrySort) onChanged;
 
   @override
@@ -143,19 +143,27 @@ class EntrySortChipSelector extends StatefulWidget {
 }
 
 class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
-  late var _current = widget.current;
-  final _labels = EntrySort.values.map((s) => s.label).toList();
+  late var _value = widget.value;
+  final _labels = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < EntrySort.values.length; i += 2) {
+      _labels.add(EntrySort.values[i].label);
+    }
+  }
 
   @override
   void didUpdateWidget(covariant EntrySortChipSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _current = widget.current;
+    _value = widget.value;
   }
 
   @override
   Widget build(BuildContext context) {
-    final current = _current.index ~/ 2;
-    final descending = _current.index % 2 != 0;
+    final unorderedValue = _value.index ~/ 2;
+    final isDescending = _value.index % 2 != 0;
 
     return _ChipSelector(
       title: widget.title,
@@ -167,28 +175,28 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
         ),
         label: Text(_labels[index]),
         showCheckmark: false,
-        avatar: current == index
+        avatar: unorderedValue == index
             ? Icon(
-                descending
+                isDescending
                     ? Icons.arrow_downward_rounded
                     : Icons.arrow_upward_rounded,
                 color: Theme.of(context).colorScheme.onPrimaryContainer,
               )
             : null,
-        selected: current == index,
+        selected: unorderedValue == index,
         onSelected: (_) {
           setState(
             () {
               int i = index * 2;
-              if (current == index) {
-                if (!descending) i++;
+              if (unorderedValue == index) {
+                if (!isDescending) i++;
               } else {
-                if (descending) i++;
+                if (isDescending) i++;
               }
-              _current = EntrySort.values.elementAt(i);
+              _value = EntrySort.values.elementAt(i);
             },
           );
-          widget.onChanged(_current);
+          widget.onChanged(_value);
         },
       ),
     );

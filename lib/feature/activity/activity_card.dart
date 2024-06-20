@@ -250,7 +250,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 5),
-                  const Icon(Ionicons.chatbox, size: Theming.iconSmall),
+                  const Icon(Ionicons.chatbox_outline, size: Theming.iconSmall),
                 ],
               ),
             ),
@@ -275,7 +275,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   ),
                   const SizedBox(width: 5),
                   Icon(
-                    Icons.favorite,
+                    !activity.isLiked
+                        ? Icons.favorite_outline_rounded
+                        : Icons.favorite_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
                         ? Theme.of(context).colorScheme.error

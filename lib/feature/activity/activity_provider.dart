@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/util/persistence.dart';
@@ -111,7 +112,7 @@ class ActivityNotifier
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleLike,
       {'id': arg, 'type': 'ACTIVITY'},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
   }
 
   Future<Object?> toggleSubscription() {
@@ -121,7 +122,7 @@ class ActivityNotifier
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleActivitySubscription,
       {'id': arg, 'subscribe': isSubscribed},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
   }
 
   Future<Object?> togglePin() {
@@ -131,21 +132,21 @@ class ActivityNotifier
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleActivityPin,
       {'id': arg, 'pinned': isPinned},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
   }
 
   Future<Object?> toggleReplyLike(int replyId) {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleLike,
       {'id': replyId, 'type': 'ACTIVITY_REPLY'},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
   }
 
   Future<Object?> remove() {
     return ref.read(repositoryProvider).request(
       GqlMutation.deleteActivity,
       {'id': arg},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
   }
 
   Future<Object?> removeReply(int replyId) async {
@@ -155,7 +156,7 @@ class ActivityNotifier
     final err = await ref.read(repositoryProvider).request(
       GqlMutation.deleteActivityReply,
       {'id': replyId},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
 
     if (err != null) return err;
 

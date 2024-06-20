@@ -224,16 +224,14 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                     : Theme.of(context)
                         .textTheme
                         .labelSmall!
-                        .copyWith(color: Theme.of(context).colorScheme.error),
+                        .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(width: 5),
               Icon(
-                !widget.reply.isLiked
-                    ? Icons.favorite_outline_rounded
-                    : Icons.favorite_rounded,
+                Icons.favorite_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
-                    ? Theme.of(context).colorScheme.error
+                    ? Theme.of(context).colorScheme.primary
                     : null,
               ),
             ],

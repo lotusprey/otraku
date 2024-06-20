@@ -11,6 +11,7 @@ import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
@@ -306,13 +307,7 @@ class _ContentState extends State<_Content> {
         ref.listen<AsyncValue>(
           collectionEntriesProvider(widget.tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Failed to load',
-                content: error.toString(),
-              ),
-            ),
+            error: (error, _) => Toast.show(context, error.toString()),
           ),
         );
 

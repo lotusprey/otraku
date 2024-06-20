@@ -250,7 +250,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
                   const SizedBox(width: 5),
-                  const Icon(Ionicons.chatbox_outline, size: Theming.iconSmall),
+                  const Icon(Ionicons.chatbox, size: Theming.iconSmall),
                 ],
               ),
             ),
@@ -271,16 +271,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     style: !activity.isLiked
                         ? Theme.of(context).textTheme.labelSmall
                         : Theme.of(context).textTheme.labelSmall!.copyWith(
-                            color: Theme.of(context).colorScheme.error),
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                   ),
                   const SizedBox(width: 5),
                   Icon(
-                    !activity.isLiked
-                        ? Icons.favorite_outline_rounded
-                        : Icons.favorite_rounded,
+                    Icons.favorite_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
-                        ? Theme.of(context).colorScheme.error
+                        ? Theme.of(context).colorScheme.primary
                         : null,
                   ),
                 ],

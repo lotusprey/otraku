@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -14,7 +15,6 @@ import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 
 class UserView extends StatelessWidget {
   const UserView(this.tag, this.avatarUrl);
@@ -50,13 +50,7 @@ class UserSubview extends StatelessWidget {
                 );
               }
             },
-            error: (error, _) => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Failed to load user',
-                content: error.toString(),
-              ),
-            ),
+            error: (error, _) => Toast.show(context, error.toString()),
           ),
         );
 
@@ -77,8 +71,13 @@ class UserSubview extends StatelessWidget {
 
         return user.unwrapPrevious().when(
               error: (_, __) => CustomScrollView(
+                physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
+                  SliverRefreshControl(
+                    onRefresh: () => ref.invalidate(userProvider(tag)),
+                    withTopOffset: false,
+                  ),
                   const SliverFillRemaining(
                     child: Center(child: Text('Failed to load user')),
                   )

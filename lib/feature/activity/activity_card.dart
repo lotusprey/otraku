@@ -6,6 +6,7 @@ import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -377,7 +378,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     );
   }
 
-  void _toggleLike() {
+  void _toggleLike() async {
     final activity = widget.activity;
     final isLiked = activity.isLiked;
 
@@ -386,24 +387,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.likeCount += isLiked ? -1 : 1;
     });
 
-    widget.toggleLike().then((err) {
-      if (err == null) return;
+    final err = await widget.toggleLike();
+    if (err == null) return;
 
-      setState(() {
-        activity.isLiked = isLiked;
-        activity.likeCount += isLiked ? 1 : -1;
-      });
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle like',
-            content: err.toString(),
-          ),
-        );
-      }
+    setState(() {
+      activity.isLiked = isLiked;
+      activity.likeCount += isLiked ? 1 : -1;
     });
+
+    if (mounted) Toast.show(context, err.toString());
   }
 
   void _toggleSubscription() {
@@ -414,16 +406,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       if (err == null) return;
 
       activity.isSubscribed = !activity.isSubscribed;
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle subscription',
-            content: err.toString(),
-          ),
-        );
-      }
+      if (mounted) Toast.show(context, err.toString());
     });
   }
 
@@ -435,16 +418,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       if (err == null) return;
 
       activity.isPinned = !activity.isPinned;
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle pin',
-            content: err.toString(),
-          ),
-        );
-      }
+      if (mounted) Toast.show(context, err.toString());
     });
   }
 
@@ -452,15 +426,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     widget.remove().then((err) {
       if (err == null) return;
 
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not delete activity',
-            content: err.toString(),
-          ),
-        );
-      }
+      if (mounted) Toast.show(context, err.toString());
     });
   }
 }

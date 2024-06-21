@@ -25,7 +25,7 @@ class UserHeader extends StatelessWidget {
   final bool isViewer;
   final User? user;
   final String? imageUrl;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final double topOffset;
   final double imageWidth;
   final Map<String, bool> textRailItems;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   Widget build(
@@ -327,7 +327,7 @@ class _FollowButton extends StatefulWidget {
   const _FollowButton(this.user, this.toggleFollow);
 
   final User user;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   State<_FollowButton> createState() => __FollowButtonState();
@@ -359,8 +359,13 @@ class __FollowButtonState extends State<_FollowButton> {
         onPressed: () {
           final isFollowed = user.isFollowed;
           setState(() => user.isFollowed = !isFollowed);
-          widget.toggleFollow().then((ok) {
-            if (!ok) setState(() => user.isFollowed = isFollowed);
+
+          widget.toggleFollow().then((err) {
+            if (err == null) return;
+
+            setState(() => user.isFollowed = isFollowed);
+
+            if (context.mounted) Toast.show(context, err.toString());
           });
         },
       ),

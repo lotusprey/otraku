@@ -14,29 +14,28 @@ class Toast {
     _busy = true;
     _entry?.remove();
 
-    final bottomOffset = 70 +
-        MediaQuery.viewPaddingOf(context).bottom +
-        MediaQuery.viewInsetsOf(context).bottom;
+    final theme = Theme.of(context);
 
     _entry = OverlayEntry(
       builder: (context) => Align(
         alignment: Alignment.bottomCenter,
-        child: Container(
+        child: Card(
+          elevation: 3,
+          color: theme.colorScheme.inverseSurface,
           margin: EdgeInsets.only(
-            bottom: bottomOffset,
+            bottom: MediaQuery.paddingOf(context).bottom + 20,
+            left: 20,
+            right: 20,
           ),
-          padding: Theming.paddingAll,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
-            borderRadius: Theming.borderRadiusSmall,
-            boxShadow: [
-              BoxShadow(
-                color: Theme.of(context).colorScheme.surface,
-                blurRadius: 10,
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text(
+              text,
+              style: theme.textTheme.bodyMedium!.copyWith(
+                color: theme.colorScheme.onInverseSurface,
               ),
-            ],
+            ),
           ),
-          child: Text(text, style: Theme.of(context).textTheme.labelLarge),
         ),
       ),
     );

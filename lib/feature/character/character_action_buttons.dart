@@ -7,6 +7,7 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -14,7 +15,7 @@ class CharacterFavoriteButton extends StatefulWidget {
   const CharacterFavoriteButton(this.character, this.toggleFavorite);
 
   final Character character;
-  final Future<bool> Function() toggleFavorite;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   State<CharacterFavoriteButton> createState() =>
@@ -29,17 +30,14 @@ class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
     return ActionButton(
       icon: character.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () {
-        setState(
-          () => character.isFavorite = !character.isFavorite,
-        );
-        widget.toggleFavorite().then((ok) {
-          if (!ok) {
-            setState(
-              () => character.isFavorite = !character.isFavorite,
-            );
-          }
-        });
+      onTap: () async {
+        setState(() => character.isFavorite = !character.isFavorite);
+
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => character.isFavorite = !character.isFavorite);
+        if (context.mounted) Toast.show(context, err.toString());
       },
     );
   }

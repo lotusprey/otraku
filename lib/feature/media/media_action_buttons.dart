@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -38,7 +39,7 @@ class MediaFavoriteButton extends StatefulWidget {
   const MediaFavoriteButton(this.info, this.toggleFavorite);
 
   final MediaInfo info;
-  final Future<bool> Function() toggleFavorite;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   State<MediaFavoriteButton> createState() => _MediaFavoriteButtonState();
@@ -52,13 +53,14 @@ class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
     return ActionButton(
       icon: info.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () {
+      onTap: () async {
         setState(() => info.isFavorite = !info.isFavorite);
-        widget.toggleFavorite().then((ok) {
-          if (!ok) {
-            setState(() => info.isFavorite = !info.isFavorite);
-          }
-        });
+
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => info.isFavorite = !info.isFavorite);
+        if (context.mounted) Toast.show(context, err.toString());
       },
     );
   }

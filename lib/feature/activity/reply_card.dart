@@ -8,6 +8,7 @@ import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -241,7 +242,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
     );
   }
 
-  void _toggleLike() {
+  void _toggleLike() async {
     final reply = widget.reply;
     final isLiked = reply.isLiked;
 
@@ -250,21 +251,14 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? -1 : 1;
     });
 
-    widget.toggleLike().then((err) {
-      if (err == null) return;
+    final err = await widget.toggleLike();
+    if (err == null) return;
 
-      setState(() {
-        reply.isLiked = isLiked;
-        reply.likeCount += isLiked ? 1 : -1;
-      });
-
-      showDialog(
-        context: context,
-        builder: (context) => ConfirmationDialog(
-          title: 'Could not toggle reply like',
-          content: err.toString(),
-        ),
-      );
+    setState(() {
+      reply.isLiked = isLiked;
+      reply.likeCount += isLiked ? 1 : -1;
     });
+
+    if (mounted) Toast.show(context, err.toString());
   }
 }

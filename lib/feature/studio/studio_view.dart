@@ -196,7 +196,7 @@ class _FavoriteButton extends StatefulWidget {
   const _FavoriteButton(this.studio, this.toggleFavorite);
 
   final Studio studio;
-  final Future<bool> Function() toggleFavorite;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -210,18 +210,14 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     return ActionButton(
       icon: studio.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: studio.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () {
-        setState(
-          () => studio.isFavorite = !studio.isFavorite,
-        );
+      onTap: () async {
+        setState(() => studio.isFavorite = !studio.isFavorite);
 
-        widget.toggleFavorite().then((ok) {
-          if (!ok) {
-            setState(
-              () => studio.isFavorite = !studio.isFavorite,
-            );
-          }
-        });
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => studio.isFavorite = !studio.isFavorite);
+        if (context.mounted) Toast.show(context, err.toString());
       },
     );
   }

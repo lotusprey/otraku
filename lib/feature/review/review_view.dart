@@ -4,8 +4,8 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/review/review_header.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/review_provider.dart';
@@ -129,7 +129,7 @@ class _RateButtons extends StatefulWidget {
   const _RateButtons(this.review, this.rate);
 
   final Review review;
-  final Future<bool> Function(bool?) rate;
+  final Future<Object?> Function(bool?) rate;
 
   @override
   _RateButtonsState createState() => _RateButtonsState();
@@ -185,7 +185,7 @@ class _RateButtonsState extends State<_RateButtons> {
     );
   }
 
-  void _rate(bool? rating) {
+  void _rate(bool? rating) async {
     final review = widget.review;
     final oldRating = review.rating;
     final oldTotalRating = review.totalRating;
@@ -213,23 +213,14 @@ class _RateButtonsState extends State<_RateButtons> {
       review.viewerRating = rating;
     });
 
-    widget.rate(rating).then((ok) {
-      if (ok) return;
+    final err = await widget.rate(rating);
+    if (err == null) return;
 
-      setState(() {
-        review.rating = oldRating;
-        review.totalRating = oldTotalRating;
-        review.viewerRating = oldViewerRating;
-      });
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => const ConfirmationDialog(
-            title: 'Could not rate review',
-          ),
-        );
-      }
+    setState(() {
+      review.rating = oldRating;
+      review.totalRating = oldTotalRating;
+      review.viewerRating = oldViewerRating;
     });
+    if (mounted) Toast.show(context, err.toString());
   }
 }

@@ -32,11 +32,11 @@ class CharacterNotifier extends AutoDisposeFamilyAsyncNotifier<Character, int> {
     return Character(data['Character'], personNaming);
   }
 
-  Future<bool> toggleFavorite() {
+  Future<Object?> toggleFavorite() {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFavorite,
       {'character': arg},
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }
 

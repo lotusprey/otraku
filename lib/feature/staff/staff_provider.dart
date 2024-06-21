@@ -37,11 +37,11 @@ class StaffNotifier extends AutoDisposeFamilyAsyncNotifier<Staff, int> {
     return Staff(data['Staff'], personNaming);
   }
 
-  Future<bool> toggleFavorite() {
+  Future<Object?> toggleFavorite() {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFavorite,
       {'staff': arg},
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }
 

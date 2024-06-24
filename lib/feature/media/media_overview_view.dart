@@ -63,7 +63,7 @@ class MediaOverviewSubview extends StatelessWidget {
       ...info.synonyms.map((s) => ('Synonym', s)),
     ];
 
-    const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));
+    const spacing = SliverToBoxAdapter(child: SizedBox(height: Theming.offset));
 
     return ConstrainedView(
       child: Consumer(
@@ -195,7 +195,7 @@ class _DescriptionState extends State<_Description> {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.only(bottom: Theming.offset),
         child: Card.outlined(
           child: InkWell(
             borderRadius: Theming.borderRadiusSmall,
@@ -205,7 +205,7 @@ class _DescriptionState extends State<_Description> {
               Toast.copy(context, text);
             },
             child: Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(Theming.offset),
               child: content,
             ),
           ),
@@ -431,7 +431,7 @@ class _ExternalLinkScrollCards extends StatelessWidget {
               child: Container(
                 width: 15,
                 height: 15,
-                margin: const EdgeInsets.only(right: 10),
+                margin: const EdgeInsets.only(right: Theming.offset),
                 decoration: BoxDecoration(
                   borderRadius: Theming.borderRadiusSmall,
                   color: items[i].color,

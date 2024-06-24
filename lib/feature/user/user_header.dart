@@ -111,7 +111,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         id != null ? Hero(tag: id!, child: avatar) : avatar,
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -163,7 +163,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     final topRow = Row(
       children: [
         isViewer
-            ? const SizedBox(width: 10)
+            ? const SizedBox(width: Theming.offset)
             : TopBarIcon(
                 tooltip: 'Close',
                 icon: Icons.arrow_back_ios_new_rounded,
@@ -247,8 +247,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           ),
           Positioned(
             bottom: 0,
-            left: 10,
-            right: 10,
+            left: Theming.offset,
+            right: Theming.offset,
             child: infoContent,
           ),
           Positioned(
@@ -339,7 +339,7 @@ class __FollowButtonState extends State<_FollowButton> {
     final user = widget.user;
 
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(Theming.offset),
       child: ElevatedButton.icon(
         icon: Icon(
           user.isFollowed

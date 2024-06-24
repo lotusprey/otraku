@@ -6,6 +6,7 @@ import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/statistics/charts.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
@@ -135,14 +136,16 @@ class _StatisticsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const spacing = SliverToBoxAdapter(child: SizedBox(height: 10));
+    const spacing = SliverToBoxAdapter(child: SizedBox(height: Theming.offset));
 
     return CustomScrollView(
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-            height: MediaQuery.paddingOf(context).top + TopBar.height + 10,
+            height: MediaQuery.paddingOf(context).top +
+                TopBar.height +
+                Theming.offset,
           ),
         ),
         _Details(statistics, ofAnime),
@@ -238,7 +241,7 @@ class _Details extends StatelessWidget {
               icons[i],
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: Theming.offset),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,

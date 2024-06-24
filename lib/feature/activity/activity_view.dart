@@ -226,7 +226,7 @@ class _TopBarContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: Theming.offset),
                   Flexible(
                     child: Text(
                       activity.authorName,
@@ -242,11 +242,11 @@ class _TopBarContent extends StatelessWidget {
             MessageActivity message => [
                 if (message.isPrivate)
                   const Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: EdgeInsets.only(left: Theming.offset),
                     child: Icon(Ionicons.eye_off_outline),
                   ),
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                   child: Icon(Icons.arrow_right_alt),
                 ),
                 LinkTile(
@@ -265,7 +265,7 @@ class _TopBarContent extends StatelessWidget {
               ],
             _ when activity.isPinned => const [
                 Padding(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.only(left: Theming.offset),
                   child: Icon(Icons.push_pin_outlined),
                 ),
               ],

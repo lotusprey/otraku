@@ -86,7 +86,7 @@ class FloatingBarState extends State<FloatingBar>
                 : MainAxisAlignment.end,
             children: [
               for (int i = 0; i < children.length; i++) ...[
-                const SizedBox(width: 10),
+                const SizedBox(width: Theming.offset),
                 children[i],
               ]
             ],
@@ -226,7 +226,7 @@ class _DraggableIconState extends State<_DraggableIcon>
   @override
   Widget build(BuildContext context) {
     return DragDetector(
-      triggerOffset: 10,
+      triggerOffset: Theming.offset,
       onSwipe: (goRight) {
         // The previous transition must have finished.
         if (_ctrl.isAnimating) return;

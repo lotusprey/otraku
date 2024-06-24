@@ -39,7 +39,7 @@ class OpaqueSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
             constraints: const BoxConstraints(maxWidth: Theming.compactWidth),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
@@ -157,8 +157,8 @@ class GradientSheet extends StatelessWidget {
             controller: scrollCtrl,
             padding: EdgeInsets.only(
               top: 50,
-              left: 10,
-              right: 10,
+              left: Theming.offset,
+              right: Theming.offset,
               bottom: MediaQuery.paddingOf(context).bottom,
             ),
             itemExtent: Theming.tapTargetSize,
@@ -203,7 +203,7 @@ class GradientSheetButton extends StatelessWidget {
                   ? theme.colorScheme.primary
                   : theme.colorScheme.onSurface,
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: Theming.offset),
           ],
           Text(
             text,

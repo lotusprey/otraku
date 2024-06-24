@@ -248,7 +248,7 @@ class _NotificationItem extends StatelessWidget {
                 ),
                 if (unread)
                   Container(
-                    width: 10,
+                    width: Theming.offset,
                     height: double.infinity,
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.primary,
@@ -305,7 +305,7 @@ class _NotificationDialog extends StatelessWidget {
                   height: imageWidth * Theming.coverHtoWRatio,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
             ],
             Expanded(
               child: Column(
@@ -313,7 +313,7 @@ class _NotificationDialog extends StatelessWidget {
                 children: [
                   Flexible(child: title),
                   if (item.details != null) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: Theming.offset),
                     HtmlContent(item.details!),
                   ],
                 ],

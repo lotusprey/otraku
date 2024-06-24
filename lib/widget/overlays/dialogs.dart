@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 
@@ -22,7 +23,7 @@ class InputDialog extends StatelessWidget {
           style: Theme.of(context).textTheme.titleLarge,
           decoration: const InputDecoration(
             filled: false,
-            contentPadding: EdgeInsets.symmetric(horizontal: 10),
+            contentPadding: EdgeInsets.symmetric(horizontal: Theming.offset),
           ),
           keyboardType: TextInputType.name,
           initialValue: initial,
@@ -232,7 +233,7 @@ class _DialogColumn extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: Theming.offset),
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.titleMedium,
@@ -243,7 +244,7 @@ class _DialogColumn extends StatelessWidget {
               fit: FlexFit.loose,
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  padding: const EdgeInsets.symmetric(vertical: Theming.offset),
                   child: child,
                 ),
               ),

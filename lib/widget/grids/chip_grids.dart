@@ -36,7 +36,9 @@ class ChipGridTemplate extends StatelessWidget {
                   tooltip: 'Clear',
                   onPressed: onClear!,
                   color: Theme.of(context).colorScheme.onSurface,
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Theming.offset,
+                  ),
                 ),
               ),
             SizedBox(
@@ -46,7 +48,7 @@ class ChipGridTemplate extends StatelessWidget {
                 tooltip: 'Edit',
                 onPressed: onEdit,
                 color: Theme.of(context).colorScheme.onSurface,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
               ),
             ),
           ],

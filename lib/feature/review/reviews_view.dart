@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -45,7 +46,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           trailing: [
             if (count > 0)
               Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.only(right: Theming.offset),
                 child: Text(
                   count.toString(),
                   style: Theme.of(context).textTheme.titleSmall,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otraku/util/theming.dart';
 
 class NumberField extends StatefulWidget {
   const NumberField._({
@@ -105,7 +106,7 @@ class _NumberFieldState extends State<NumberField> {
             color: Colors.transparent,
             child: InkResponse(
               onTap: () => _validateInput(_ctrl.text, -widget.stepValue),
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               child: Tooltip(
                 message: 'Decrement',
                 onTriggered: () => _validateInput(
@@ -123,7 +124,7 @@ class _NumberFieldState extends State<NumberField> {
             color: Colors.transparent,
             child: InkResponse(
               onTap: () => _validateInput(_ctrl.text, widget.stepValue),
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               child: Tooltip(
                 message: 'Increment',
                 onTriggered: () {

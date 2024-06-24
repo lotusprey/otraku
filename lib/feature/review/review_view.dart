@@ -68,7 +68,7 @@ class ReviewView extends StatelessWidget {
                 ),
               ),
               SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: Theming.offset),
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     data.summary,
@@ -107,7 +107,8 @@ class ReviewView extends StatelessWidget {
               SliverPadding(
                 padding: EdgeInsets.only(
                   top: 20,
-                  bottom: MediaQuery.viewPaddingOf(context).bottom + 10,
+                  bottom:
+                      MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: Text(

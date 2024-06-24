@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
 
 class TableList extends StatelessWidget {
@@ -10,21 +11,21 @@ class TableList extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedSliver(
       decoration: BoxDecoration(
+        borderRadius: Theming.borderRadiusSmall,
         border: Border.all(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          color: Theme.of(context).colorScheme.outlineVariant,
         ),
-        borderRadius: BorderRadius.circular(12),
       ),
       sliver: SliverPadding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: Theming.offset),
         sliver: SliverList.separated(
           itemCount: items.length,
           separatorBuilder: (context, _) => const Divider(),
           itemBuilder: (context, i) => Row(
             children: [
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
               Text(items[i].$1),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
@@ -32,7 +33,7 @@ class TableList extends StatelessWidget {
                   child: Text(items[i].$2, textAlign: TextAlign.end),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
             ],
           ),
         ),

@@ -46,16 +46,20 @@ class ReplyCard extends StatelessWidget {
                   width: 50,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
               Text(reply.authorName),
             ],
           ),
         ),
         const SizedBox(height: 5),
         Card(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: Theming.offset),
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            padding: const EdgeInsets.only(
+              top: Theming.offset,
+              left: Theming.offset,
+              right: Theming.offset,
+            ),
             child: Column(
               children: [
                 UnconstrainedBox(
@@ -77,7 +81,7 @@ class ReplyCard extends StatelessWidget {
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(
-                                  radius: 10,
+                                  radius: Theming.radiusSmall.x,
                                   onTap: () => _showMoreSheet(context, ref),
                                   child: const Icon(
                                     Ionicons.ellipsis_horizontal,
@@ -92,7 +96,7 @@ class ReplyCard extends StatelessWidget {
                               ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: Theming.offset),
                     _ReplyLikeButton(reply: reply, toggleLike: toggleLike),
                   ],
                 ),
@@ -172,7 +176,7 @@ class _ReplyMentionButton extends StatelessWidget {
       child: Tooltip(
         message: 'Reply',
         child: InkResponse(
-          radius: 10,
+          radius: Theming.radiusSmall.x,
           onTap: () => showSheet(
             context,
             CompositionView(
@@ -214,7 +218,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       child: Tooltip(
         message: !widget.reply.isLiked ? 'Like' : 'Unlike',
         child: InkResponse(
-          radius: 10,
+          radius: Theming.radiusSmall.x,
           onTap: _toggleLike,
           child: Row(
             children: [

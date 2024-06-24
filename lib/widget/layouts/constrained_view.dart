@@ -5,7 +5,7 @@ import 'package:otraku/util/theming.dart';
 class ConstrainedView extends StatelessWidget {
   const ConstrainedView({
     required this.child,
-    this.padding = const EdgeInsets.symmetric(horizontal: 10),
+    this.padding = const EdgeInsets.symmetric(horizontal: Theming.offset),
   });
 
   final Widget child;
@@ -36,7 +36,9 @@ class SliverConstrainedView extends StatelessWidget {
       builder: (context, constraints) {
         final side = (constraints.crossAxisExtent - Theming.compactWidth) / 2;
         return SliverPadding(
-          padding: EdgeInsets.symmetric(horizontal: side < 10 ? 10 : side),
+          padding: EdgeInsets.symmetric(
+            horizontal: side < Theming.offset ? Theming.offset : side,
+          ),
           sliver: sliver,
         );
       },

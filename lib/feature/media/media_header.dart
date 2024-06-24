@@ -147,7 +147,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -267,8 +267,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   ),
                   Positioned(
                     bottom: 5,
-                    left: 10,
-                    right: 10,
+                    left: Theming.offset,
+                    right: Theming.offset,
                     child: infoContent,
                   ),
                   Positioned(

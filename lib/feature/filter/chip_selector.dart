@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -221,7 +222,11 @@ class _ChipSelector extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5, right: 10),
+          padding: const EdgeInsets.only(
+            top: Theming.offset / 2,
+            bottom: Theming.offset / 2,
+            right: Theming.offset,
+          ),
           child: Text(title),
         ),
         SizedBox(

@@ -7,6 +7,7 @@ import 'package:otraku/feature/filter/tag_selector.dart';
 import 'package:otraku/feature/filter/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 
@@ -85,7 +86,7 @@ class _FilterDiscoverViewState extends State<FilterDiscoverView> {
                 ),
           ),
           const Divider(),
-          const SizedBox(height: 10),
+          const SizedBox(height: Theming.offset),
           YearRangePicker(
             title: 'Release Year Range',
             from: filter.startYearFrom,
@@ -95,7 +96,7 @@ class _FilterDiscoverViewState extends State<FilterDiscoverView> {
               filter.startYearTo = to;
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Theming.offset),
           const Divider(),
           ChipSelector(
             title: 'Country',
@@ -124,8 +125,9 @@ class _FilterDiscoverViewState extends State<FilterDiscoverView> {
             onChanged: (v) => filter.isAdult = v,
           ),
           SizedBox(
-            height:
-                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
+            height: MediaQuery.paddingOf(context).bottom +
+                BottomBar.height +
+                Theming.offset,
           ),
         ],
       ),

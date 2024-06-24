@@ -286,14 +286,14 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
             child: Container(
               height: 110,
               color: Theme.of(context).navigationBarTheme.backgroundColor,
-              padding: const EdgeInsets.only(top: 10, bottom: 10),
+              padding: const EdgeInsets.symmetric(vertical: Theming.offset),
               child: Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                      left: 10,
-                      right: 10,
-                      bottom: 10,
+                      left: Theming.offset,
+                      right: Theming.offset,
+                      bottom: Theming.offset,
                     ),
                     child: SearchField(
                       hint: 'Tag',

@@ -106,14 +106,14 @@ class _ThemeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      height: 10,
+                      height: Theming.offset,
                       width: 60,
                       decoration: BoxDecoration(
                         color: scheme.onSurface,
                         borderRadius: Theming.borderRadiusBig,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: Theming.offset),
                     Container(
                       height: 40,
                       padding: const EdgeInsets.all(5),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
@@ -16,8 +17,8 @@ class SettingsNotificationsSubview extends StatelessWidget {
     return ListView.builder(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: listPadding.top + TopBar.height + 10,
-        bottom: listPadding.bottom + 10,
+        top: listPadding.top + TopBar.height + Theming.offset,
+        bottom: listPadding.bottom + Theming.offset,
       ),
       itemCount: settings.notificationOptions.length,
       itemBuilder: (context, i) {

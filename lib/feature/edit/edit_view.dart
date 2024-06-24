@@ -79,7 +79,7 @@ class _EditView extends StatelessWidget {
 
     final statusField = SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
         child: Consumer(
           builder: (context, ref, _) {
             final status = ref.watch(provider.select((s) => s.status));
@@ -204,7 +204,11 @@ class _EditView extends StatelessWidget {
         : null;
 
     final progressFields = SliverPadding(
-      padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
+      padding: const EdgeInsets.only(
+        left: Theming.offset,
+        right: Theming.offset,
+        bottom: Theming.offset,
+      ),
       sliver: SliverToBoxAdapter(
         child: volumeProgressField == null
             ? progressField
@@ -221,12 +225,12 @@ class _EditView extends StatelessWidget {
                     children: Persistence().leftHanded
                         ? [
                             Expanded(child: progressField),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: Theming.offset),
                             Expanded(child: volumeProgressField),
                           ]
                         : [
                             Expanded(child: volumeProgressField),
-                            const SizedBox(width: 10),
+                            const SizedBox(width: Theming.offset),
                             Expanded(child: progressField),
                           ],
                   ),
@@ -388,9 +392,9 @@ class _EditView extends StatelessWidget {
               const SliverToBoxAdapter(child: SizedBox(height: 15)),
               progressFields,
               SliverToBoxAdapter(child: ScoreField(tag)),
-              const SliverToBoxAdapter(child: SizedBox(height: 10)),
+              const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
               advancedScoring,
-              const SliverToBoxAdapter(child: SizedBox(height: 10)),
+              const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
               _Notes(
                 value: notifier.state.notes,
                 onChanged: (notes) => notifier.state.notes = notes,
@@ -455,7 +459,7 @@ class _FieldGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
       sliver: SliverGrid(
         delegate: SliverChildListDelegate.fixed(children),
         gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
@@ -489,7 +493,7 @@ class _NotesState extends State<_Notes> {
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
           child: TextField(
             minLines: 1,
             maxLines: 10,

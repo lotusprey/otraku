@@ -83,7 +83,7 @@ class StaffFilterButton extends StatelessWidget {
                         ofAnime: () => v,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: Theming.offset),
                     ChipSelector(
                       title: 'List Presence',
                       items: const [

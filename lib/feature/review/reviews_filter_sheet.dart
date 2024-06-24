@@ -18,7 +18,7 @@ Future<void> showReviewsFilterSheet({
           controller: scrollCtrl,
           physics: Theming.bouncyPhysics,
           padding: const EdgeInsets.symmetric(
-            horizontal: 10,
+            horizontal: Theming.offset,
             vertical: 20,
           ),
           children: [

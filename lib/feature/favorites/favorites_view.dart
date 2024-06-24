@@ -7,6 +7,7 @@ import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/favorites/favorites_provider.dart';
 import 'package:otraku/feature/studio/studio_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
@@ -78,7 +79,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           trailing: [
             if (count > 0)
               Padding(
-                padding: const EdgeInsets.only(right: 10),
+                padding: const EdgeInsets.only(right: Theming.offset),
                 child: Text(
                   count.toString(),
                   style: Theme.of(context).textTheme.titleSmall,

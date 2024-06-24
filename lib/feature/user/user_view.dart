@@ -100,7 +100,9 @@ class UserSubview extends StatelessWidget {
                   ),
                   _ButtonRow(data.id),
                   if (data.description.isNotEmpty) ...[
-                    const SliverToBoxAdapter(child: SizedBox(height: 10)),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: Theming.offset),
+                    ),
                     SliverConstrainedView(
                       sliver: HtmlContent(
                         data.description,
@@ -168,7 +170,7 @@ class _ButtonRow extends StatelessWidget {
       child: ConstrainedView(
         child: Container(
           height: 60,
-          margin: const EdgeInsets.symmetric(vertical: 10),
+          margin: const EdgeInsets.symmetric(vertical: Theming.offset),
           alignment: Alignment.center,
           child: ShadowedOverflowList(
             itemCount: buttons.length,

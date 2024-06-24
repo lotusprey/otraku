@@ -27,9 +27,13 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: Theming.offset),
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        padding: const EdgeInsets.only(
+          top: Theming.offset,
+          left: Theming.offset,
+          right: Theming.offset,
+        ),
         child: Column(
           children: [
             if (activity is MediaActivity)
@@ -77,7 +81,7 @@ class ActivityCard extends StatelessWidget {
                         width: 50,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: Theming.offset),
                     Flexible(
                       child: Text(
                         activity.authorName,
@@ -93,11 +97,11 @@ class ActivityCard extends StatelessWidget {
               MessageActivity message => [
                   if (message.isPrivate)
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: Theming.offset),
                       child: Icon(Ionicons.eye_off_outline),
                     ),
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                     child: Icon(Icons.arrow_right_alt),
                   ),
                   LinkTile(
@@ -116,7 +120,7 @@ class ActivityCard extends StatelessWidget {
                 ],
               _ when activity.isPinned => const [
                   Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: EdgeInsets.only(left: Theming.offset),
                     child: Icon(Icons.push_pin_outlined),
                   ),
                 ],
@@ -227,7 +231,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           child: Tooltip(
             message: 'More',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: _showMoreSheet,
               child: const Icon(
                 Ionicons.ellipsis_horizontal,
@@ -236,13 +240,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         SizedBox(
           height: 40,
           child: Tooltip(
             message: 'Replies',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: widget.openReplies,
               child: Row(
                 children: [
@@ -257,13 +261,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         SizedBox(
           height: 40,
           child: Tooltip(
             message: !activity.isLiked ? 'Like' : 'Unlike',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: _toggleLike,
               child: Row(
                 children: [

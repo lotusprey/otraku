@@ -59,7 +59,7 @@ class _FilterListState extends State<_FilterList> {
       child: ListView(
         controller: widget.scrollCtrl,
         physics: Theming.bouncyPhysics,
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: Theming.offset),
         children: [
           for (final a in ActivityType.values)
             StatefulCheckboxListTile(
@@ -88,7 +88,11 @@ class _FilterListState extends State<_FilterList> {
                   },
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                  padding: const EdgeInsets.only(
+                    top: Theming.offset,
+                    left: Theming.offset,
+                    right: Theming.offset,
+                  ),
                   child: SegmentedButton(
                     segments: const [
                       ButtonSegment(

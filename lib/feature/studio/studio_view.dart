@@ -67,7 +67,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    top: 10,
+                    top: Theming.offset,
                     bottom: 20,
                   ),
                   child: Text(
@@ -114,7 +114,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
 
                     items.add(
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Theming.offset,
+                        ),
                         sliver: TileItemGrid(
                           data.media.items.sublist(beg, end),
                         ),
@@ -249,7 +251,7 @@ class _FilterButton extends StatelessWidget {
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
+                    horizontal: Theming.offset,
                     vertical: 20,
                   ),
                   children: [

@@ -153,7 +153,9 @@ class _CompositionBody extends StatelessWidget {
       left: 20,
       right: 20,
       top: 60,
-      bottom: MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
+      bottom: MediaQuery.paddingOf(context).bottom +
+          BottomBar.height +
+          Theming.offset,
     );
 
     return Stack(

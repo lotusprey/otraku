@@ -50,7 +50,7 @@ class MediaStatsSubview extends StatelessWidget {
           if (stats.statusNames.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.only(top: 10),
+                padding: const EdgeInsets.only(top: Theming.offset),
                 child: PieChart(
                   title: 'Status Distribution',
                   names: stats.statusNames,
@@ -79,7 +79,7 @@ class _MediaRankGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      padding: const EdgeInsets.symmetric(vertical: Theming.offset),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
           height: Theming.tapTargetSize,
@@ -116,7 +116,7 @@ class _MediaRankGrid extends StatelessWidget {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
+                    horizontal: Theming.offset,
                     vertical: 5,
                   ),
                   child: Row(

@@ -41,7 +41,7 @@ class StaffOverviewSubview extends StatelessWidget {
               children: [
                 if (imageUrl != null)
                   Padding(
-                    padding: const EdgeInsets.only(right: 10),
+                    padding: const EdgeInsets.only(right: Theming.offset),
                     child: Hero(
                       tag: id,
                       child: ClipRRect(

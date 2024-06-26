@@ -122,14 +122,17 @@ class _MediaLanguageButtonState extends State<MediaLanguageButton> {
           icon: Ionicons.globe_outline,
           onTap: () => showSheet(
             context,
-            GradientSheet([
+            SimpleSheet.list([
               for (int i = 0; i < languages.length; i++)
-                GradientSheetButton(
-                  text: languages.elementAt(i),
+                ListTile(
+                  title: Text(languages.elementAt(i)),
                   selected: languages.elementAt(i) == language,
-                  onTap: () => ref
-                      .read(mediaRelationsProvider(widget.id).notifier)
-                      .changeLanguage(languages.elementAt(i)),
+                  onTap: () {
+                    ref
+                        .read(mediaRelationsProvider(widget.id).notifier)
+                        .changeLanguage(languages.elementAt(i));
+                    Navigator.pop(context);
+                  },
                 ),
             ]),
           ),

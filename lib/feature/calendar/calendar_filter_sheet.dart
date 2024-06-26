@@ -13,9 +13,8 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
 
   showSheet(
     context,
-    OpaqueSheet(
-      initialHeight:
-          MediaQuery.paddingOf(context).bottom + Theming.tapTargetSize * 3 + 20,
+    SimpleSheet(
+      initialHeight: Theming.minTapTarget * 3.5,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,

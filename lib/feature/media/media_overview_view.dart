@@ -271,7 +271,7 @@ class _ScrollCards extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
-            height: Theming.tapTargetSize,
+            height: Theming.minTapTarget,
             child: Row(
               children: [
                 Expanded(child: Text(title)),

@@ -135,7 +135,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                       icon: Ionicons.ellipsis_horizontal,
                       onTap: () => showSheet(
                         context,
-                        GradientSheet.link(context, studio.siteUrl),
+                        SimpleSheet.link(context, studio.siteUrl),
                       ),
                     ),
                   ],
@@ -245,8 +245,8 @@ class _FilterButton extends StatelessWidget {
 
             showSheet(
               context,
-              OpaqueSheet(
-                initialHeight: Theming.tapTargetSize * 5,
+              SimpleSheet(
+                initialHeight: Theming.minTapTarget * 5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,

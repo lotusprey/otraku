@@ -128,7 +128,7 @@ class HtmlContent extends StatelessWidget {
                 icon: const Icon(Ionicons.videocam, size: 50),
                 onPressed: () => showSheet(
                   context,
-                  GradientSheet.link(context, url),
+                  SimpleSheet.link(context, url),
                 ),
               ),
             ),

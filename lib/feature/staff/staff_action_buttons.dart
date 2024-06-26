@@ -61,9 +61,8 @@ class StaffFilterButton extends StatelessWidget {
 
             showSheet(
               context,
-              OpaqueSheet(
-                initialHeight: MediaQuery.paddingOf(context).bottom +
-                    Theming.tapTargetSize * 4,
+              SimpleSheet(
+                initialHeight: Theming.minTapTarget * 3.5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,

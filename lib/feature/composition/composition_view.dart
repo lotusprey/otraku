@@ -34,10 +34,10 @@ class CompositionView extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return ref.watch(compositionProvider(tag)).when(
-              loading: () => OpaqueSheetView(
+              loading: () => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
-              error: (_, __) => OpaqueSheetView(
+              error: (_, __) => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(
                   child: Text('Failed Loading'),
                 ),
@@ -114,7 +114,7 @@ class __CompositionViewState extends State<_CompositionView>
 
   @override
   Widget build(BuildContext context) {
-    return OpaqueSheetView(
+    return SheetWithButtonRow(
       builder: (context, scrollCtrl) => _CompositionBody(
         focus: _focus,
         tabCtrl: _tabCtrl,

@@ -82,7 +82,7 @@ class _MediaRankGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: Theming.offset),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Theming.tapTargetSize,
+          height: Theming.minTapTarget,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(

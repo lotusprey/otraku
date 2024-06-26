@@ -154,17 +154,22 @@ class _ActionButton extends StatelessWidget {
           onTap: () {
             showSheet(
               context,
-              GradientSheet([
-                for (final discoverType in DiscoverType.values)
-                  GradientSheetButton(
-                    text: discoverType.label,
-                    icon: _typeIcon(discoverType),
-                    selected: discoverType == type,
-                    onTap: () => ref
-                        .read(discoverFilterProvider.notifier)
-                        .update((s) => s.copyWith(type: discoverType)),
-                  ),
-              ]),
+              SimpleSheet.list(
+                [
+                  for (final discoverType in DiscoverType.values)
+                    ListTile(
+                      title: Text(discoverType.label),
+                      leading: Icon(_typeIcon(discoverType)),
+                      selected: discoverType == type,
+                      onTap: () {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(type: discoverType));
+                        Navigator.pop(context);
+                      },
+                    ),
+                ],
+              ),
             );
           },
           onSwipe: (goRight) {

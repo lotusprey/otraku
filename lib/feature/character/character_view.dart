@@ -76,7 +76,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
                 icon: Ionicons.ellipsis_horizontal,
                 onTap: () => showSheet(
                   context,
-                  GradientSheet.link(context, character.valueOrNull!.siteUrl!),
+                  SimpleSheet.link(context, character.valueOrNull!.siteUrl!),
                 ),
               ),
             ],

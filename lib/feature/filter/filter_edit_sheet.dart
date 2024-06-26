@@ -38,7 +38,7 @@ class FilterEditSheet<T> extends StatelessWidget {
       },
     );
 
-    return OpaqueSheetView(
+    return SheetWithButtonRow(
       buttons: BottomBar(
         Persistence().leftHanded
             ? [applyButton, clearButton]

@@ -112,52 +112,55 @@ class ReplyCard extends StatelessWidget {
   void _showMoreSheet(BuildContext context, WidgetRef ref) {
     showSheet(
       context,
-      GradientSheet([
-        GradientSheetButton(
-          text: 'Edit',
-          icon: Icons.edit_outlined,
-          onTap: () => showSheet(
-            context,
-            CompositionView(
-              tag: ActivityReplyCompositionTag(
-                id: reply.id,
-                activityId: activityId,
+      SimpleSheet.list(
+        [
+          ListTile(
+            title: const Text('Edit'),
+            leading: const Icon(Icons.edit_outlined),
+            onTap: () => showSheet(
+              context,
+              CompositionView(
+                tag: ActivityReplyCompositionTag(
+                  id: reply.id,
+                  activityId: activityId,
+                ),
+                onSaved: (map) {
+                  ref
+                      .read(activityProvider(activityId).notifier)
+                      .replaceReply(map);
+                  Navigator.pop(context);
+                },
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(activityId).notifier)
-                  .replaceReply(map),
             ),
           ),
-        ),
-        GradientSheetButton(
-          text: 'Delete',
-          icon: Ionicons.trash_outline,
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) => ConfirmationDialog(
-              title: 'Delete?',
-              mainAction: 'Yes',
-              secondaryAction: 'No',
-              onConfirm: () {
-                ref
-                    .read(activityProvider(activityId).notifier)
-                    .removeReply(reply.id)
-                    .then((err) {
-                  if (err == null) return;
+          ListTile(
+            title: const Text('Delete'),
+            leading: const Icon(Ionicons.trash_outline),
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
+                title: 'Delete?',
+                mainAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: () {
+                  ref
+                      .read(activityProvider(activityId).notifier)
+                      .removeReply(reply.id)
+                      .then((err) {
+                    if (err == null) {
+                      Navigator.pop(context);
+                      return;
+                    }
 
-                  showDialog(
-                    context: context,
-                    builder: (context) => ConfirmationDialog(
-                      title: 'Could not delete reply',
-                      content: err.toString(),
-                    ),
-                  );
-                });
-              },
+                    Toast.show(context, err.toString());
+                    Navigator.pop(context);
+                  });
+                },
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }

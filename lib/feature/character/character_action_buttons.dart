@@ -63,9 +63,8 @@ class CharacterMediaFilterButton extends StatelessWidget {
 
             showSheet(
               context,
-              OpaqueSheet(
-                initialHeight: MediaQuery.paddingOf(context).bottom +
-                    Theming.tapTargetSize * 2.5,
+              SimpleSheet(
+                initialHeight: Theming.minTapTarget * 3.5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,
@@ -121,14 +120,17 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
 
                     showSheet(
                       context,
-                      GradientSheet([
+                      SimpleSheet.list([
                         for (int i = 0; i < languages.length; i++)
-                          GradientSheetButton(
-                            text: languages.elementAt(i),
+                          ListTile(
+                            title: Text(languages.elementAt(i)),
                             selected: languages.elementAt(i) == language,
-                            onTap: () => ref
-                                .read(characterMediaProvider(id).notifier)
-                                .changeLanguage(languages.elementAt(i)),
+                            onTap: () {
+                              ref
+                                  .read(characterMediaProvider(id).notifier)
+                                  .changeLanguage(languages.elementAt(i));
+                              Navigator.pop(context);
+                            },
                           ),
                       ]),
                     );

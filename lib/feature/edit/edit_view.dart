@@ -48,7 +48,7 @@ class EditView extends StatelessWidget {
         );
 
         return ref.watch(oldEditProvider(tag)).maybeWhen(
-              data: (oldEdit) => OpaqueSheetView(
+              data: (oldEdit) => SheetWithButtonRow(
                 buttons: EditButtons(tag, oldEdit, callback),
                 builder: (context, scrollCtrl) => _EditView(
                   scrollCtrl,
@@ -56,7 +56,7 @@ class EditView extends StatelessWidget {
                   oldEdit,
                 ),
               ),
-              orElse: () => OpaqueSheetView(
+              orElse: () => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
             );

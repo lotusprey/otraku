@@ -88,7 +88,7 @@ class TagSelectorState extends State<TagSelector> {
       children: children,
       onEdit: () => showSheet(
         context,
-        OpaqueSheet(
+        SimpleSheet(
           builder: (context, scrollCtrl) => _FilterTagSheet(
             inclusiveGenres: widget.inclusiveGenres,
             exclusiveGenres: widget.exclusiveGenres,

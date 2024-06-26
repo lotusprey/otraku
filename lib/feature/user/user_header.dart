@@ -188,7 +188,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
               context,
-              GradientSheet.link(context, user!.siteUrl!),
+              SimpleSheet.link(context, user!.siteUrl!),
             ),
           ),
         if (isViewer)
@@ -255,7 +255,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -274,7 +274,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -289,7 +289,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           left: 0,
           right: 0,
           top: topOffset,
-          height: Theming.tapTargetSize,
+          height: Theming.minTapTarget,
           child: topRow,
         ),
       ],
@@ -313,7 +313,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   static const _bannerBaseHeight = 200.0;
 
   @override
-  double get minExtent => topOffset + Theming.tapTargetSize;
+  double get minExtent => topOffset + Theming.minTapTarget;
 
   @override
   double get maxExtent => topOffset + _bannerBaseHeight + imageWidth / 2;

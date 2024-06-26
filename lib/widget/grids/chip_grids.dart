@@ -56,7 +56,7 @@ class ChipGridTemplate extends StatelessWidget {
         children.isNotEmpty
             ? Wrap(spacing: 5, children: children)
             : SizedBox(
-                height: Theming.tapTargetSize,
+                height: Theming.minTapTarget,
                 child: Center(
                   child: Text(
                     'No $placeholder',

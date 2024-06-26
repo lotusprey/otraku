@@ -99,14 +99,16 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           final index =
               ref.read(notificationsFilterProvider.notifier).state.index;
 
-          return GradientSheet([
+          return SimpleSheet.list([
             for (int i = 0; i < NotificationsFilter.values.length; i++)
-              GradientSheetButton(
-                text: NotificationsFilter.values.elementAt(i).label,
+              ListTile(
+                title: Text(NotificationsFilter.values.elementAt(i).label),
                 selected: index == i,
-                onTap: () => ref
-                    .read(notificationsFilterProvider.notifier)
-                    .state = NotificationsFilter.values.elementAt(i),
+                onTap: () {
+                  ref.read(notificationsFilterProvider.notifier).state =
+                      NotificationsFilter.values.elementAt(i);
+                  Navigator.pop(context);
+                },
               ),
           ]);
         },

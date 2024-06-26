@@ -7,7 +7,8 @@ class Theming {
   static const compactWidth = 600.0;
 
   static const offset = 10.0;
-  static const tapTargetSize = 48.0;
+  static const minTapTarget = 48.0;
+  static const normalTapTarget = 56.0;
   static const coverHtoWRatio = 1.53;
 
   static const fontBig = 20.0;

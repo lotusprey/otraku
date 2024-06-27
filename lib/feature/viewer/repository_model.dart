@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 
@@ -41,6 +42,8 @@ class Repository {
       }
 
       return body['data'];
+    } on SocketException {
+      throw Exception('Failed to connect');
     } on TimeoutException {
       throw Exception('Request took too long');
     }

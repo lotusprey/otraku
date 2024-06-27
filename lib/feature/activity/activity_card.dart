@@ -6,6 +6,7 @@ import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -26,9 +27,13 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: Theming.offset),
       child: Padding(
-        padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+        padding: const EdgeInsets.only(
+          top: Theming.offset,
+          left: Theming.offset,
+          right: Theming.offset,
+        ),
         child: Column(
           children: [
             if (activity is MediaActivity)
@@ -76,7 +81,7 @@ class ActivityCard extends StatelessWidget {
                         width: 50,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: Theming.offset),
                     Flexible(
                       child: Text(
                         activity.authorName,
@@ -92,11 +97,11 @@ class ActivityCard extends StatelessWidget {
               MessageActivity message => [
                   if (message.isPrivate)
                     const Padding(
-                      padding: EdgeInsets.only(left: 10),
+                      padding: EdgeInsets.only(left: Theming.offset),
                       child: Icon(Ionicons.eye_off_outline),
                     ),
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                     child: Icon(Icons.arrow_right_alt),
                   ),
                   LinkTile(
@@ -115,7 +120,7 @@ class ActivityCard extends StatelessWidget {
                 ],
               _ when activity.isPinned => const [
                   Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: EdgeInsets.only(left: Theming.offset),
                     child: Icon(Icons.push_pin_outlined),
                   ),
                 ],
@@ -226,7 +231,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           child: Tooltip(
             message: 'More',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: _showMoreSheet,
               child: const Icon(
                 Ionicons.ellipsis_horizontal,
@@ -235,13 +240,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         SizedBox(
           height: 40,
           child: Tooltip(
             message: 'Replies',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: widget.openReplies,
               child: Row(
                 children: [
@@ -256,13 +261,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         SizedBox(
           height: 40,
           child: Tooltip(
             message: !activity.isLiked ? 'Like' : 'Unlike',
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               onTap: _toggleLike,
               child: Row(
                 children: [
@@ -271,14 +276,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     style: !activity.isLiked
                         ? Theme.of(context).textTheme.labelSmall
                         : Theme.of(context).textTheme.labelSmall!.copyWith(
-                            color: Theme.of(context).colorScheme.error),
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                   ),
                   const SizedBox(width: 5),
                   Icon(
-                    Icons.favorite,
+                    Icons.favorite_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
-                        ? Theme.of(context).colorScheme.error
+                        ? Theme.of(context).colorScheme.primary
                         : null,
                   ),
                 ],
@@ -302,21 +308,24 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (activity.isOwned) {
             switch (activity) {
               case StatusActivity _:
-                ownershipButtons.add(GradientSheetButton(
-                  text: 'Edit',
-                  icon: Icons.edit_outlined,
+                ownershipButtons.add(ListTile(
+                  title: const Text('Edit'),
+                  leading: const Icon(Icons.edit_outlined),
                   onTap: () => showSheet(
                     context,
                     CompositionView(
                       tag: StatusActivityCompositionTag(id: activity.id),
-                      onSaved: (map) => widget.onEdited?.call(map),
+                      onSaved: (map) {
+                        widget.onEdited?.call(map);
+                        Navigator.pop(context);
+                      },
                     ),
                   ),
                 ));
               case MessageActivity _:
-                ownershipButtons.add(GradientSheetButton(
-                  text: 'Edit',
-                  icon: Icons.edit_outlined,
+                ownershipButtons.add(ListTile(
+                  title: const Text('Edit'),
+                  leading: const Icon(Icons.edit_outlined),
                   onTap: () => showSheet(
                     context,
                     CompositionView(
@@ -324,7 +333,10 @@ class _ActivityFooterState extends State<ActivityFooter> {
                         id: activity.id,
                         recipientId: activity.recipientId,
                       ),
-                      onSaved: (map) => widget.onEdited?.call(map),
+                      onSaved: (map) {
+                        widget.onEdited?.call(map);
+                        Navigator.pop(context);
+                      },
                     ),
                   ),
                 ));
@@ -332,9 +344,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 break;
             }
 
-            ownershipButtons.add(GradientSheetButton(
-              text: 'Delete',
-              icon: Ionicons.trash_outline,
+            ownershipButtons.add(ListTile(
+              title: const Text('Delete'),
+              leading: const Icon(Ionicons.trash_outline),
               onTap: () => showDialog(
                 context: context,
                 builder: (context) => ConfirmationDialog(
@@ -347,7 +359,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ));
           }
 
-          return GradientSheet.link(
+          return SimpleSheet.link(
             context,
             activity.siteUrl,
             [
@@ -355,18 +367,22 @@ class _ActivityFooterState extends State<ActivityFooter> {
               if (widget.togglePin != null &&
                   activity.isOwned &&
                   activity is! MessageActivity)
-                GradientSheetButton(
-                  text: activity.isPinned ? 'Unpin' : 'Pin',
-                  icon: activity.isPinned
-                      ? Icons.push_pin
-                      : Icons.push_pin_outlined,
+                ListTile(
+                  title: activity.isPinned
+                      ? const Text('Unpin')
+                      : const Text('Pin'),
+                  leading: activity.isPinned
+                      ? const Icon(Icons.push_pin)
+                      : const Icon(Icons.push_pin_outlined),
                   onTap: _togglePin,
                 ),
-              GradientSheetButton(
-                text: !activity.isSubscribed ? 'Subscribe' : 'Unsubscribe',
-                icon: !activity.isSubscribed
-                    ? Ionicons.notifications_outline
-                    : Ionicons.notifications_off_outline,
+              ListTile(
+                title: !activity.isSubscribed
+                    ? const Text('Subscribe')
+                    : const Text('Unsubscribe'),
+                leading: !activity.isSubscribed
+                    ? const Icon(Ionicons.notifications_outline)
+                    : const Icon(Ionicons.notifications_off_outline),
                 onTap: _toggleSubscription,
               ),
             ],
@@ -376,7 +392,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     );
   }
 
-  void _toggleLike() {
+  void _toggleLike() async {
     final activity = widget.activity;
     final isLiked = activity.isLiked;
 
@@ -385,24 +401,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.likeCount += isLiked ? -1 : 1;
     });
 
-    widget.toggleLike().then((err) {
-      if (err == null) return;
+    final err = await widget.toggleLike();
+    if (err == null) return;
 
-      setState(() {
-        activity.isLiked = isLiked;
-        activity.likeCount += isLiked ? 1 : -1;
-      });
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle like',
-            content: err.toString(),
-          ),
-        );
-      }
+    setState(() {
+      activity.isLiked = isLiked;
+      activity.likeCount += isLiked ? 1 : -1;
     });
+
+    if (mounted) Toast.show(context, err.toString());
   }
 
   void _toggleSubscription() {
@@ -410,18 +417,15 @@ class _ActivityFooterState extends State<ActivityFooter> {
     activity.isSubscribed = !activity.isSubscribed;
 
     widget.toggleSubscription().then((err) {
-      if (err == null) return;
+      if (err == null) {
+        Navigator.pop(context);
+        return;
+      }
 
       activity.isSubscribed = !activity.isSubscribed;
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle subscription',
-            content: err.toString(),
-          ),
-        );
+      if (mounted) {
+        Toast.show(context, err.toString());
+        Navigator.pop(context);
       }
     });
   }
@@ -431,34 +435,29 @@ class _ActivityFooterState extends State<ActivityFooter> {
     activity.isPinned = !activity.isPinned;
 
     widget.togglePin!().then((err) {
-      if (err == null) return;
+      if (err == null) {
+        Navigator.pop(context);
+        return;
+      }
 
       activity.isPinned = !activity.isPinned;
-
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not toggle pin',
-            content: err.toString(),
-          ),
-        );
+      if (mounted) {
+        Toast.show(context, err.toString());
+        Navigator.pop(context);
       }
     });
   }
 
   void _remove() {
     widget.remove().then((err) {
-      if (err == null) return;
+      if (err == null) {
+        Navigator.pop(context);
+        return;
+      }
 
-      if (context.mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Could not delete activity',
-            content: err.toString(),
-          ),
-        );
+      if (mounted) {
+        Toast.show(context, err.toString());
+        Navigator.pop(context);
       }
     });
   }

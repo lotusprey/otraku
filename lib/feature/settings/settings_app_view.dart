@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
@@ -15,14 +16,18 @@ class SettingsAppSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tilePadding = EdgeInsets.only(bottom: 10, left: 10, right: 10);
     final listPadding = MediaQuery.paddingOf(context);
+    const tilePadding = EdgeInsets.only(
+      bottom: Theming.offset,
+      left: Theming.offset,
+      right: Theming.offset,
+    );
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: listPadding.top + TopBar.height + 10,
-        bottom: listPadding.bottom + 10,
+        top: listPadding.top + TopBar.height + Theming.offset,
+        bottom: listPadding.bottom + Theming.offset,
       ),
       children: [
         ExpansionTile(
@@ -46,7 +51,7 @@ class SettingsAppSubview extends StatelessWidget {
               padding: tilePadding,
               child: EntrySortChipSelector(
                 title: 'Collection Anime Sorting',
-                current: Persistence().defaultAnimeSort,
+                value: Persistence().defaultAnimeSort,
                 onChanged: (v) => Persistence().defaultAnimeSort = v,
               ),
             ),
@@ -54,7 +59,7 @@ class SettingsAppSubview extends StatelessWidget {
               padding: tilePadding,
               child: EntrySortChipSelector(
                 title: 'Collection Manga Sorting',
-                current: Persistence().defaultMangaSort,
+                value: Persistence().defaultMangaSort,
                 onChanged: (v) => Persistence().defaultMangaSort = v,
               ),
             ),
@@ -197,7 +202,11 @@ class __ThemeModeSelectionState extends State<_ThemeModeSelection> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10, left: 10, right: 10),
+      padding: const EdgeInsets.only(
+        bottom: Theming.offset,
+        left: Theming.offset,
+        right: Theming.offset,
+      ),
       child: SegmentedButton(
         segments: const [
           ButtonSegment(

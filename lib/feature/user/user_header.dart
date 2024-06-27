@@ -25,7 +25,7 @@ class UserHeader extends StatelessWidget {
   final bool isViewer;
   final User? user;
   final String? imageUrl;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +71,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final double topOffset;
   final double imageWidth;
   final Map<String, bool> textRailItems;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   Widget build(
@@ -111,7 +111,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         id != null ? Hero(tag: id!, child: avatar) : avatar,
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -163,7 +163,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     final topRow = Row(
       children: [
         isViewer
-            ? const SizedBox(width: 10)
+            ? const SizedBox(width: Theming.offset)
             : TopBarIcon(
                 tooltip: 'Close',
                 icon: Icons.arrow_back_ios_new_rounded,
@@ -188,7 +188,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
               context,
-              GradientSheet.link(context, user!.siteUrl!),
+              SimpleSheet.link(context, user!.siteUrl!),
             ),
           ),
         if (isViewer)
@@ -247,15 +247,15 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           ),
           Positioned(
             bottom: 0,
-            left: 10,
-            right: 10,
+            left: Theming.offset,
+            right: Theming.offset,
             child: infoContent,
           ),
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -274,7 +274,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -289,7 +289,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           left: 0,
           right: 0,
           top: topOffset,
-          height: Theming.tapTargetSize,
+          height: Theming.minTapTarget,
           child: topRow,
         ),
       ],
@@ -313,7 +313,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   static const _bannerBaseHeight = 200.0;
 
   @override
-  double get minExtent => topOffset + Theming.tapTargetSize;
+  double get minExtent => topOffset + Theming.minTapTarget;
 
   @override
   double get maxExtent => topOffset + _bannerBaseHeight + imageWidth / 2;
@@ -327,7 +327,7 @@ class _FollowButton extends StatefulWidget {
   const _FollowButton(this.user, this.toggleFollow);
 
   final User user;
-  final Future<bool> Function() toggleFollow;
+  final Future<Object?> Function() toggleFollow;
 
   @override
   State<_FollowButton> createState() => __FollowButtonState();
@@ -339,7 +339,7 @@ class __FollowButtonState extends State<_FollowButton> {
     final user = widget.user;
 
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(Theming.offset),
       child: ElevatedButton.icon(
         icon: Icon(
           user.isFollowed
@@ -359,8 +359,13 @@ class __FollowButtonState extends State<_FollowButton> {
         onPressed: () {
           final isFollowed = user.isFollowed;
           setState(() => user.isFollowed = !isFollowed);
-          widget.toggleFollow().then((ok) {
-            if (!ok) setState(() => user.isFollowed = isFollowed);
+
+          widget.toggleFollow().then((err) {
+            if (err == null) return;
+
+            setState(() => user.isFollowed = isFollowed);
+
+            if (context.mounted) Toast.show(context, err.toString());
           });
         },
       ),

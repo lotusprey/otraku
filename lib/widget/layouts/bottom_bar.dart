@@ -104,7 +104,7 @@ class BottomBarButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
         child: TextButton.icon(
           label: Text(text),
           icon: Icon(icon),

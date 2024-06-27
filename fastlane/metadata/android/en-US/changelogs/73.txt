@@ -1,0 +1,7 @@
+- Toggled activity/reply like buttons use the primary color
+- Cleaner error messages for failed connection/requests that now appear as toasts
+- Replaced "gradient" sheets for activity menus, discover type selection and the like with normal sheets (may still need polishing)
+- Fixed collection sorting
+- Fixed activity/reply like timeout message
+- Fixed home tab switching
+- Fixed user refresh retrying multiple times

@@ -35,7 +35,7 @@ class SliverRefreshControl extends StatelessWidget {
         withTopOffset ? MediaQuery.paddingOf(context).top + TopBar.height : 0.0;
 
     return SliverPadding(
-      padding: EdgeInsets.only(top: topOffset + 10),
+      padding: EdgeInsets.only(top: topOffset + Theming.offset),
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,
@@ -82,8 +82,8 @@ class SliverFooter extends StatelessWidget {
       child: Center(
         child: Padding(
           padding: EdgeInsets.only(
-            top: 10,
-            bottom: MediaQuery.paddingOf(context).bottom + 10,
+            top: Theming.offset,
+            bottom: MediaQuery.paddingOf(context).bottom + Theming.offset,
           ),
           child: loading ? const Loader() : null,
         ),

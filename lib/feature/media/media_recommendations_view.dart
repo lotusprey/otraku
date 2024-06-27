@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -17,7 +18,7 @@ class MediaRecommendationsSubview extends StatelessWidget {
 
   final int id;
   final ScrollController scrollCtrl;
-  final Future<bool> Function(int, bool?) rateRecommendation;
+  final Future<Object?> Function(int, bool?) rateRecommendation;
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,7 @@ class _MediaRecommendationsGrid extends StatelessWidget {
 
   final int mediaId;
   final List<Recommendation> items;
-  final Future<bool> Function(int, bool?) rateRecommendation;
+  final Future<Object?> Function(int, bool?) rateRecommendation;
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +120,7 @@ class _RecommendationRating extends StatefulWidget {
 
   final int mediaId;
   final Recommendation item;
-  final Future<bool> Function(int, bool?) rateRecommendation;
+  final Future<Object?> Function(int, bool?) rateRecommendation;
 
   @override
   State<_RecommendationRating> createState() => _RecommendationRatingState();
@@ -138,7 +139,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
           Tooltip(
             message: 'Agree',
             child: InkResponse(
-              onTap: () {
+              onTap: () async {
                 final oldRating = item.rating;
                 final oldUserRating = item.userRating;
 
@@ -159,14 +160,17 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   }
                 });
 
-                widget.rateRecommendation(item.id, item.userRating).then((ok) {
-                  if (!ok) {
-                    setState(() {
-                      item.rating = oldRating;
-                      item.userRating = oldUserRating;
-                    });
-                  }
+                final err = await widget.rateRecommendation(
+                  item.id,
+                  item.userRating,
+                );
+                if (err == null) return;
+
+                setState(() {
+                  item.rating = oldRating;
+                  item.userRating = oldUserRating;
                 });
+                if (context.mounted) Toast.show(context, err.toString());
               },
               child: item.userRating == true
                   ? Icon(
@@ -187,7 +191,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
           Tooltip(
             message: 'Disagree',
             child: InkResponse(
-              onTap: () {
+              onTap: () async {
                 final oldRating = item.rating;
                 final oldUserRating = item.userRating;
 
@@ -208,14 +212,17 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   }
                 });
 
-                widget.rateRecommendation(item.id, item.userRating).then((ok) {
-                  if (!ok) {
-                    setState(() {
-                      item.rating = oldRating;
-                      item.userRating = oldUserRating;
-                    });
-                  }
+                final err = await widget.rateRecommendation(
+                  item.id,
+                  item.userRating,
+                );
+                if (err == null) return;
+
+                setState(() {
+                  item.rating = oldRating;
+                  item.userRating = oldUserRating;
                 });
+                if (context.mounted) Toast.show(context, err.toString());
               },
               child: item.userRating == false
                   ? Icon(

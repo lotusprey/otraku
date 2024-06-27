@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -19,7 +20,6 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class ActivityView extends ConsumerStatefulWidget {
@@ -83,13 +83,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             ref.listen<AsyncValue>(
               activityProvider(widget.id),
               (_, s) => s.whenOrNull(
-                error: (error, _) => showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: 'Failed to load activity',
-                    content: error.toString(),
-                  ),
-                ),
+                error: (error, _) => Toast.show(context, error.toString()),
               ),
             );
 
@@ -232,7 +226,7 @@ class _TopBarContent extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: Theming.offset),
                   Flexible(
                     child: Text(
                       activity.authorName,
@@ -248,11 +242,11 @@ class _TopBarContent extends StatelessWidget {
             MessageActivity message => [
                 if (message.isPrivate)
                   const Padding(
-                    padding: EdgeInsets.only(left: 10),
+                    padding: EdgeInsets.only(left: Theming.offset),
                     child: Icon(Ionicons.eye_off_outline),
                   ),
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                   child: Icon(Icons.arrow_right_alt),
                 ),
                 LinkTile(
@@ -271,7 +265,7 @@ class _TopBarContent extends StatelessWidget {
               ],
             _ when activity.isPinned => const [
                 Padding(
-                  padding: EdgeInsets.only(left: 10),
+                  padding: EdgeInsets.only(left: Theming.offset),
                   child: Icon(Icons.push_pin_outlined),
                 ),
               ],

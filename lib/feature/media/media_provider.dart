@@ -51,14 +51,14 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
     );
   }
 
-  Future<bool> toggleFavorite() {
+  Future<Object?> toggleFavorite() {
     final type = state.valueOrNull?.info.type;
-    if (type == null) return Future.value(false);
+    if (type == null) return Future.value('User not yet loaded');
 
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFavorite,
       {(type == DiscoverType.anime ? 'anime' : 'manga'): arg},
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }
 
@@ -236,7 +236,7 @@ class MediaRelationsNotifier
         ),
       );
 
-  Future<bool> rateRecommendation(int recId, bool? rating) {
+  Future<Object?> rateRecommendation(int recId, bool? rating) {
     return ref.read(repositoryProvider).request(
       GqlMutation.rateRecommendation,
       {
@@ -248,7 +248,7 @@ class MediaRelationsNotifier
                 ? 'RATE_UP'
                 : 'RATE_DOWN',
       },
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }
 

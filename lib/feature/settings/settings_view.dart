@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
@@ -45,16 +45,9 @@ class _SettingsViewState extends ConsumerState<SettingsView>
   Widget build(BuildContext context) {
     ref.listen(
       settingsProvider,
-      (_, next) => next.when(
+      (_, s) => s.whenOrNull(
         data: (data) => _settings = data.copy(),
-        error: (error, _) => showDialog(
-          context: context,
-          builder: (context) => ConfirmationDialog(
-            title: 'Failed to load settings',
-            content: error.toString(),
-          ),
-        ),
-        loading: () {},
+        error: (error, _) => Toast.show(context, error.toString()),
       ),
     );
 

@@ -7,6 +7,7 @@ import 'package:otraku/feature/filter/tag_selector.dart';
 import 'package:otraku/feature/filter/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 
@@ -42,7 +43,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
         children: [
           EntrySortChipSelector(
             title: 'Sorting',
-            current: filter.sort,
+            value: filter.sort,
             onChanged: (v) => filter.sort = v,
           ),
           ChipMultiSelector(
@@ -77,7 +78,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
                 ),
           ),
           const Divider(),
-          const SizedBox(height: 10),
+          const SizedBox(height: Theming.offset),
           YearRangePicker(
             title: 'Release Year Range',
             from: filter.startYearFrom,
@@ -87,7 +88,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
               filter.startYearTo = to;
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: Theming.offset),
           const Divider(),
           ChipSelector(
             title: 'Country',
@@ -109,8 +110,9 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
             onChanged: (v) => filter.hasNotes = v,
           ),
           SizedBox(
-            height:
-                MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
+            height: MediaQuery.paddingOf(context).bottom +
+                BottomBar.height +
+                Theming.offset,
           ),
         ],
       ),

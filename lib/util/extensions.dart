@@ -12,6 +12,11 @@ extension IterableUtil<E> on Iterable<E> {
   }
 }
 
+extension FutureUtil on Future {
+  Future<Object?> getErrorOrNull() =>
+      then<Object?>((_) => null, onError: (e) => e);
+}
+
 extension StringUtil on String {
   static String? languageToCode(String? language) => switch (language) {
         'Japanese' => 'JP',

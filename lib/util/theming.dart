@@ -6,8 +6,9 @@ class Theming {
   static const mediumWidth = 840.0;
   static const compactWidth = 600.0;
 
-  static const tapTargetSize = 48.0;
-
+  static const offset = 10.0;
+  static const minTapTarget = 48.0;
+  static const normalTapTarget = 56.0;
   static const coverHtoWRatio = 1.53;
 
   static const fontBig = 20.0;
@@ -17,7 +18,7 @@ class Theming {
   static const iconBig = 25.0;
   static const iconSmall = 20.0;
 
-  static const paddingAll = EdgeInsets.all(10);
+  static const paddingAll = EdgeInsets.all(offset);
   static const radiusSmall = Radius.circular(10);
   static const radiusBig = Radius.circular(20);
   static const borderRadiusSmall = BorderRadius.all(radiusSmall);
@@ -74,7 +75,7 @@ class Theming {
           style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
         ),
         listTileTheme: const ListTileThemeData(
-          contentPadding: EdgeInsets.symmetric(horizontal: 10),
+          contentPadding: EdgeInsets.symmetric(horizontal: offset),
         ),
         typography: Typography.material2014(),
         textTheme: TextTheme(

@@ -67,7 +67,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.only(
-                    top: 10,
+                    top: Theming.offset,
                     bottom: 20,
                   ),
                   child: Text(
@@ -114,7 +114,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
 
                     items.add(
                       SliverPadding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: Theming.offset,
+                        ),
                         sliver: TileItemGrid(
                           data.media.items.sublist(beg, end),
                         ),
@@ -133,7 +135,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                       icon: Ionicons.ellipsis_horizontal,
                       onTap: () => showSheet(
                         context,
-                        GradientSheet.link(context, studio.siteUrl),
+                        SimpleSheet.link(context, studio.siteUrl),
                       ),
                     ),
                   ],
@@ -196,7 +198,7 @@ class _FavoriteButton extends StatefulWidget {
   const _FavoriteButton(this.studio, this.toggleFavorite);
 
   final Studio studio;
-  final Future<bool> Function() toggleFavorite;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -210,18 +212,14 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     return ActionButton(
       icon: studio.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: studio.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () {
-        setState(
-          () => studio.isFavorite = !studio.isFavorite,
-        );
+      onTap: () async {
+        setState(() => studio.isFavorite = !studio.isFavorite);
 
-        widget.toggleFavorite().then((ok) {
-          if (!ok) {
-            setState(
-              () => studio.isFavorite = !studio.isFavorite,
-            );
-          }
-        });
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => studio.isFavorite = !studio.isFavorite);
+        if (context.mounted) Toast.show(context, err.toString());
       },
     );
   }
@@ -247,13 +245,13 @@ class _FilterButton extends StatelessWidget {
 
             showSheet(
               context,
-              OpaqueSheet(
-                initialHeight: Theming.tapTargetSize * 5,
+              SimpleSheet(
+                initialHeight: Theming.minTapTarget * 5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
+                    horizontal: Theming.offset,
                     vertical: 20,
                   ),
                   children: [

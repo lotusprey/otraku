@@ -89,7 +89,7 @@ class NotesLabel extends StatelessWidget {
       child: Tooltip(
         message: 'Comment',
         child: InkResponse(
-          radius: 10,
+          radius: Theming.radiusSmall.x,
           child: const Icon(Ionicons.chatbox, size: Theming.iconSmall),
           onTap: () => showDialog(
             context: context,

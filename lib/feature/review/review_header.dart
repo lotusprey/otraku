@@ -105,7 +105,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -124,7 +124,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.tapTargetSize,
+            height: topOffset + Theming.minTapTarget,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -137,7 +137,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           left: 0,
           right: 0,
           top: topOffset,
-          height: Theming.tapTargetSize,
+          height: Theming.minTapTarget,
           child: Row(
             children: [
               TopBarIcon(
@@ -163,7 +163,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   icon: Ionicons.ellipsis_horizontal,
                   onTap: () => showSheet(
                     context,
-                    GradientSheet.link(context, siteUrl!),
+                    SimpleSheet.link(context, siteUrl!),
                   ),
                 ),
             ],
@@ -190,10 +190,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   static const _bannerBaseHeight = 80.0;
 
   @override
-  double get minExtent => topOffset + Theming.tapTargetSize;
+  double get minExtent => topOffset + Theming.minTapTarget;
 
   @override
-  double get maxExtent => topOffset + Theming.tapTargetSize + _bannerBaseHeight;
+  double get maxExtent => topOffset + Theming.minTapTarget + _bannerBaseHeight;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>

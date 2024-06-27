@@ -34,7 +34,7 @@ class CollectionList extends StatelessWidget {
         childCount: items.length,
       ),
       // The added pixels are for the bottom margin.
-      itemExtent: _TILE_HEIGHT + 10,
+      itemExtent: _TILE_HEIGHT + Theming.offset,
     );
   }
 }
@@ -49,7 +49,7 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: Theming.offset),
       child: LinkTile(
         key: ValueKey(entry.mediaId),
         id: entry.mediaId,
@@ -73,7 +73,11 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+                padding: const EdgeInsets.only(
+                  top: Theming.offset,
+                  left: Theming.offset,
+                  right: Theming.offset,
+                ),
                 child: _TileContent(entry, scoreFormat, onProgressUpdated),
               ),
             ),

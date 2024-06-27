@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/extensions.dart';
+import 'package:otraku/util/theming.dart';
 
 class DateField extends StatefulWidget {
   const DateField({
@@ -49,7 +50,7 @@ class _DateFieldState extends State<DateField> {
           child: Material(
             color: Colors.transparent,
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               child: const Tooltip(
                 message: 'Pick Date',
                 child: Icon(Ionicons.calendar_clear_outline),
@@ -80,7 +81,7 @@ class _DateFieldState extends State<DateField> {
           child: Material(
             color: Colors.transparent,
             child: InkResponse(
-              radius: 10,
+              radius: Theming.radiusSmall.x,
               child: const Tooltip(
                 message: 'Clear',
                 child: Icon(Ionicons.close_outline),

@@ -662,27 +662,27 @@ enum MediaSort {
 
 enum EntrySort {
   title('Title'),
-  titleDesc('Title Z-A'),
-  score('Worst Score'),
-  scoreDesc('Best Score'),
+  titleDesc('Title'),
+  score('Score'),
+  scoreDesc('Score'),
   updated('Updated'),
-  updatedDesc('Last Updated'),
+  updatedDesc('Updated'),
   added('Added'),
-  addedDesc('Last Added'),
+  addedDesc('Added'),
   airing('Airing'),
-  airingDesc('Last Airing'),
+  airingDesc('Airing'),
   startedOn('Started'),
-  startedOnDesc('Last Started'),
+  startedOnDesc('Started'),
   completedOn('Completed'),
-  completedOnDesc('Last Completed'),
-  releasedOn('Release'),
-  releasedOnDesc('Last Release'),
-  progress('Least Progress'),
-  progressDesc('Most Progress'),
-  avgScore('Lowest Rated'),
-  avgScoreDesc('Highest Rated'),
-  repeated('Least Repeated'),
-  repeatedDesc('Most Repeated');
+  completedOnDesc('Completed'),
+  releasedOn('Released'),
+  releasedOnDesc('Released'),
+  progress('Progress'),
+  progressDesc('Progress'),
+  avgScore('Rating'),
+  avgScoreDesc('Rating'),
+  repeated('Repeats'),
+  repeatedDesc('Repeats');
 
   const EntrySort(this.label);
 

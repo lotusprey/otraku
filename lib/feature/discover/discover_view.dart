@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/filter/filter_discover_view.dart';
 import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_media_grid.dart';
@@ -108,7 +109,7 @@ class _TopBarContent extends StatelessWidget {
                   ),
                 )
               else
-                const SizedBox(width: 10),
+                const SizedBox(width: Theming.offset),
             ],
           ),
         );
@@ -153,17 +154,22 @@ class _ActionButton extends StatelessWidget {
           onTap: () {
             showSheet(
               context,
-              GradientSheet([
-                for (final discoverType in DiscoverType.values)
-                  GradientSheetButton(
-                    text: discoverType.label,
-                    icon: _typeIcon(discoverType),
-                    selected: discoverType == type,
-                    onTap: () => ref
-                        .read(discoverFilterProvider.notifier)
-                        .update((s) => s.copyWith(type: discoverType)),
-                  ),
-              ]),
+              SimpleSheet.list(
+                [
+                  for (final discoverType in DiscoverType.values)
+                    ListTile(
+                      title: Text(discoverType.label),
+                      leading: Icon(_typeIcon(discoverType)),
+                      selected: discoverType == type,
+                      onTap: () {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(type: discoverType));
+                        Navigator.pop(context);
+                      },
+                    ),
+                ],
+              ),
             );
           },
           onSwipe: (goRight) {

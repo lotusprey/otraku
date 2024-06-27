@@ -73,7 +73,7 @@ class AuthViewState extends ConsumerState<AuthView> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Center(child: Loader()),
-            const SizedBox(height: 10),
+            const SizedBox(height: Theming.offset),
             Center(
               child: TextButton(
                 child: const Text('Cancel'),
@@ -98,7 +98,7 @@ class AuthViewState extends ConsumerState<AuthView> {
           itemBuilder: (context, i) {
             if (i == 0) {
               return Card(
-                margin: const EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.only(top: Theming.offset),
                 child: ListTile(
                   contentPadding: Theming.paddingAll,
                   title: const Text('Add an account'),
@@ -112,7 +112,7 @@ class AuthViewState extends ConsumerState<AuthView> {
 
             i--;
             return Card(
-              margin: const EdgeInsets.only(top: 10),
+              margin: const EdgeInsets.only(top: Theming.offset),
               child: InkWell(
                 onTap: () {
                   if (DateTime.now().compareTo(accounts[i].expiration) < 0) {
@@ -136,7 +136,7 @@ class AuthViewState extends ConsumerState<AuthView> {
                       ),
                       child: CachedImage(accounts[i].avatarUrl, width: 70),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: Theming.offset),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,

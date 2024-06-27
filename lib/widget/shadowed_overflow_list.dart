@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 
 /// A horizontal list with inner shadow
 /// on the left and right that indicates overflow.
@@ -21,12 +22,16 @@ class ShadowedOverflowList extends StatelessWidget {
       children: [
         ListView.builder(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.only(left: 10, right: 5, bottom: 2),
+          padding: const EdgeInsets.only(
+            left: Theming.offset,
+            right: Theming.offset / 2,
+            bottom: 2,
+          ),
           itemExtent: itemExtent,
           itemCount: itemCount,
           shrinkWrap: shrinkWrap,
           itemBuilder: (context, i) => Padding(
-            padding: const EdgeInsets.only(right: 5),
+            padding: const EdgeInsets.only(right: Theming.offset / 2),
             child: itemBuilder(context, i),
           ),
         ),
@@ -35,7 +40,7 @@ class ShadowedOverflowList extends StatelessWidget {
           left: 0,
           bottom: 0,
           child: SizedBox(
-            width: 10,
+            width: Theming.offset,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -55,7 +60,7 @@ class ShadowedOverflowList extends StatelessWidget {
           right: 0,
           bottom: 0,
           child: SizedBox(
-            width: 10,
+            width: Theming.offset,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

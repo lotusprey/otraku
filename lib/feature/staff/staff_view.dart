@@ -76,7 +76,7 @@ class _StaffViewState extends ConsumerState<StaffView>
                 icon: Ionicons.ellipsis_horizontal,
                 onTap: () => showSheet(
                   context,
-                  GradientSheet.link(context, staff.valueOrNull!.siteUrl!),
+                  SimpleSheet.link(context, staff.valueOrNull!.siteUrl!),
                 ),
               ),
             ],

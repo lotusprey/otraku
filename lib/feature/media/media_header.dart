@@ -147,7 +147,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             ),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: Theming.offset),
         Expanded(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -208,7 +208,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             icon: Ionicons.ellipsis_horizontal,
             onTap: () => showSheet(
               context,
-              GradientSheet.link(context, info!.siteUrl!),
+              SimpleSheet.link(context, info!.siteUrl!),
             ),
           ),
       ],
@@ -219,7 +219,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       child: Column(
         children: [
           Flexible(
-            flex: (height - Theming.tapTargetSize).floor(),
+            flex: (height - Theming.minTapTarget).floor(),
             child: Stack(
               fit: StackFit.expand,
               children: [
@@ -267,15 +267,15 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   ),
                   Positioned(
                     bottom: 5,
-                    left: 10,
-                    right: 10,
+                    left: Theming.offset,
+                    right: Theming.offset,
                     child: infoContent,
                   ),
                   Positioned(
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: topOffset + Theming.tapTargetSize,
+                    height: topOffset + Theming.minTapTarget,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
@@ -294,7 +294,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     top: 0,
                     left: 0,
                     right: 0,
-                    height: topOffset + Theming.tapTargetSize,
+                    height: topOffset + Theming.minTapTarget,
                     child: Opacity(
                       opacity: transition,
                       child: DecoratedBox(
@@ -309,7 +309,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                   left: 0,
                   right: 0,
                   top: topOffset,
-                  height: Theming.tapTargetSize,
+                  height: Theming.minTapTarget,
                   child: topRow,
                 ),
               ],
@@ -363,11 +363,11 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   double get imageHeight => imageWidth * Theming.coverHtoWRatio;
 
   @override
-  double get minExtent => topOffset + Theming.tapTargetSize * 2;
+  double get minExtent => topOffset + Theming.minTapTarget * 2;
 
   @override
   double get maxExtent =>
-      topOffset + Theming.tapTargetSize + _bannerBaseHeight + imageHeight / 2;
+      topOffset + Theming.minTapTarget + _bannerBaseHeight + imageHeight / 2;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>

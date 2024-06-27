@@ -11,6 +11,7 @@ import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
@@ -230,39 +231,18 @@ class _ActionButton extends StatelessWidget {
       tooltip: 'Lists',
       icon: Ionicons.menu_outline,
       onTap: () {
-        final theme = Theme.of(context);
-
         showSheet(
           context,
-          GradientSheet([
+          SimpleSheet.list([
             for (int i = 0; i < lists.length; i++)
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
+              ListTile(
+                title: Text(lists[i].name),
+                selected: i == index,
+                trailing: Text(lists[i].entries.length.toString()),
                 onTap: () {
-                  Navigator.pop(context);
                   ref.read(collectionProvider(tag).notifier).changeIndex(i);
+                  Navigator.pop(context);
                 },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        lists[i].name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: i != index
-                            ? theme.textTheme.titleLarge
-                            : theme.textTheme.titleLarge?.copyWith(
-                                color: theme.colorScheme.primary,
-                              ),
-                      ),
-                    ),
-                    Text(
-                      ' ${lists[i].entries.length}',
-                      style: theme.textTheme.titleSmall,
-                    ),
-                  ],
-                ),
               ),
           ]),
         );
@@ -306,13 +286,7 @@ class _ContentState extends State<_Content> {
         ref.listen<AsyncValue>(
           collectionEntriesProvider(widget.tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Failed to load',
-                content: error.toString(),
-              ),
-            ),
+            error: (error, _) => Toast.show(context, error.toString()),
           ),
         );
 

@@ -1,4 +1,5 @@
 import 'package:flutter/rendering.dart';
+import 'package:otraku/util/theming.dart';
 
 /// Places as many items on the cross axis as possible, without making them
 /// narrower than [minWidth]. The item height is fixed.
@@ -6,8 +7,8 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   const SliverGridDelegateWithMinWidthAndFixedHeight({
     required this.minWidth,
     required this.height,
-    this.mainAxisSpacing = 10.0,
-    this.crossAxisSpacing = 10.0,
+    this.mainAxisSpacing = Theming.offset,
+    this.crossAxisSpacing = Theming.offset,
   })  : assert(minWidth > 0),
         assert(height > 0),
         assert(mainAxisSpacing >= 0),
@@ -67,8 +68,8 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
 class SliverGridDelegateWithMinWidthAndExtraHeight extends SliverGridDelegate {
   const SliverGridDelegateWithMinWidthAndExtraHeight({
     required this.minWidth,
-    this.mainAxisSpacing = 10.0,
-    this.crossAxisSpacing = 10.0,
+    this.mainAxisSpacing = Theming.offset,
+    this.crossAxisSpacing = Theming.offset,
     this.extraHeight = 0.0,
     this.rawHWRatio = 1.0,
   })  : assert(minWidth >= 0),

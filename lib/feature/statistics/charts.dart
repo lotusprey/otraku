@@ -51,7 +51,7 @@ class BarChart extends StatelessWidget {
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight + 10,
+                  height: values[i] * maxHeight + Theming.offset,
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
@@ -150,7 +150,7 @@ class PieChart extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
               SizedBox(
                 width: 140,
                 child: Column(

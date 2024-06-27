@@ -6,6 +6,7 @@ import 'package:otraku/feature/activity/activities_filter_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/model/paged.dart';
+import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
 
@@ -109,7 +110,7 @@ class ActivitiesNotifier
     final err = await ref.read(repositoryProvider).request(
       GqlMutation.toggleLike,
       {'id': activity.id, 'type': 'ACTIVITY'},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -121,7 +122,7 @@ class ActivitiesNotifier
     final err = await ref.read(repositoryProvider).request(
       GqlMutation.toggleActivitySubscription,
       {'id': activity.id, 'subscribe': activity.isSubscribed},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -133,7 +134,7 @@ class ActivitiesNotifier
     final err = await ref.read(repositoryProvider).request(
       GqlMutation.toggleActivityPin,
       {'id': activity.id, 'pinned': activity.isPinned},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -169,7 +170,7 @@ class ActivitiesNotifier
     final err = await ref.read(repositoryProvider).request(
       GqlMutation.deleteActivity,
       {'id': activity.id},
-    ).then((_) => null, onError: (e) => e);
+    ).getErrorOrNull();
 
     if (err != null) return err;
 

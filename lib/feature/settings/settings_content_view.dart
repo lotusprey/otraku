@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
@@ -14,14 +15,18 @@ class SettingsContentSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const tilePadding = EdgeInsets.only(bottom: 10, left: 10, right: 10);
     final listPadding = MediaQuery.paddingOf(context);
+    const tilePadding = EdgeInsets.only(
+      bottom: Theming.offset,
+      left: Theming.offset,
+      right: Theming.offset,
+    );
 
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: listPadding.top + TopBar.height + 10,
-        bottom: listPadding.bottom + 10,
+        top: listPadding.top + TopBar.height + Theming.offset,
+        bottom: listPadding.bottom + Theming.offset,
       ),
       children: [
         ExpansionTile(
@@ -134,13 +139,9 @@ class SettingsContentSubview extends StatelessWidget {
           initiallyExpanded: true,
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: Text('List Activity Creation'),
-            ),
             for (final e in settings.disabledListActivity.entries)
               StatefulCheckboxListTile(
-                title: Text(e.key.label(null)),
+                title: Text('Create ${e.key.label(null)} Activities'),
                 value: !e.value,
                 onChanged: (val) =>
                     settings.disabledListActivity[e.key] = !val!,

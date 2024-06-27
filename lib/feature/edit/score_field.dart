@@ -4,6 +4,7 @@ import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
+import 'package:otraku/util/theming.dart';
 
 /// Score picker.
 class ScoreField extends StatelessWidget {
@@ -14,7 +15,7 @@ class ScoreField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      padding: const EdgeInsets.all(Theming.offset),
       child: InputDecorator(
         decoration: const InputDecoration(
           labelText: 'Score',

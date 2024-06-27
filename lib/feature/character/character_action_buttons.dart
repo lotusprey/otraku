@@ -7,6 +7,7 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -14,7 +15,7 @@ class CharacterFavoriteButton extends StatefulWidget {
   const CharacterFavoriteButton(this.character, this.toggleFavorite);
 
   final Character character;
-  final Future<bool> Function() toggleFavorite;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   State<CharacterFavoriteButton> createState() =>
@@ -29,17 +30,14 @@ class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
     return ActionButton(
       icon: character.isFavorite ? Icons.favorite : Icons.favorite_border,
       tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () {
-        setState(
-          () => character.isFavorite = !character.isFavorite,
-        );
-        widget.toggleFavorite().then((ok) {
-          if (!ok) {
-            setState(
-              () => character.isFavorite = !character.isFavorite,
-            );
-          }
-        });
+      onTap: () async {
+        setState(() => character.isFavorite = !character.isFavorite);
+
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => character.isFavorite = !character.isFavorite);
+        if (context.mounted) Toast.show(context, err.toString());
       },
     );
   }
@@ -65,9 +63,8 @@ class CharacterMediaFilterButton extends StatelessWidget {
 
             showSheet(
               context,
-              OpaqueSheet(
-                initialHeight: MediaQuery.paddingOf(context).bottom +
-                    Theming.tapTargetSize * 2.5,
+              SimpleSheet(
+                initialHeight: Theming.minTapTarget * 3.5,
                 builder: (context, scrollCtrl) => ListView(
                   controller: scrollCtrl,
                   physics: Theming.bouncyPhysics,
@@ -123,14 +120,17 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
 
                     showSheet(
                       context,
-                      GradientSheet([
+                      SimpleSheet.list([
                         for (int i = 0; i < languages.length; i++)
-                          GradientSheetButton(
-                            text: languages.elementAt(i),
+                          ListTile(
+                            title: Text(languages.elementAt(i)),
                             selected: languages.elementAt(i) == language,
-                            onTap: () => ref
-                                .read(characterMediaProvider(id).notifier)
-                                .changeLanguage(languages.elementAt(i)),
+                            onTap: () {
+                              ref
+                                  .read(characterMediaProvider(id).notifier)
+                                  .changeLanguage(languages.elementAt(i));
+                              Navigator.pop(context);
+                            },
                           ),
                       ]),
                     );

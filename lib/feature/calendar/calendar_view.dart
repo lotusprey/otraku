@@ -46,7 +46,7 @@ class _CalendarViewState extends State<CalendarView> {
 
         return PageScaffold(
           bottomBar: BottomBar([
-            const SizedBox(width: 10),
+            const SizedBox(width: Theming.offset),
             SizedBox(
               width: 60,
               child: isBeforeToday
@@ -84,7 +84,7 @@ class _CalendarViewState extends State<CalendarView> {
                 ),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: Theming.offset),
           ]),
           child: TabScaffold(
             topBar: const TopBar(title: 'Calendar'),
@@ -110,8 +110,8 @@ class _CalendarViewState extends State<CalendarView> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 1,
                   mainAxisExtent: 120,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
+                  mainAxisSpacing: Theming.offset,
+                  crossAxisSpacing: Theming.offset,
                 ),
               ),
             ),
@@ -148,7 +148,7 @@ class _Tile extends StatelessWidget {
       textRailItems[item.entryStatus!.label(true)] = true;
     }
 
-    const contentPadding = EdgeInsets.symmetric(horizontal: 10);
+    const contentPadding = EdgeInsets.symmetric(horizontal: Theming.offset);
 
     return Card(
       child: LinkTile(
@@ -218,11 +218,14 @@ class _ExternalLinkList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.only(left: 10, right: 5),
+      padding: const EdgeInsets.only(
+        left: Theming.offset,
+        right: Theming.offset / 2,
+      ),
       itemCount: links.length,
       itemBuilder: (context, i) {
         return Padding(
-          padding: const EdgeInsets.only(right: 5),
+          padding: const EdgeInsets.only(right: Theming.offset / 2),
           child: ActionChip(
             onPressed: () => Toast.launch(context, links[i].url),
             label: Text(links[i].site),

@@ -27,11 +27,14 @@ The iOS .ipa and the android .apk are bundled with each Github release.
 <img width=18% src='https://github.com/lotusprey/otraku/assets/35681808/5bcd8eff-2cd7-4f35-90a3-145156a83e2a'>
 
 </p></details>
-</br>
-<details><summary>Building for ios</summary>
+<details><summary>Building for android</summary>
 
-1. Make an unsigned build by going into the `ios` directory and running `xcodebuild -scheme Runner -workspace Runner.xcworkspace -configuration Release clean archive -archivePath "build/Otraku.xcarchive" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGNING_ALLOWED=NO`
-2. In the `build` directory, open package contents and go into `Products/Applications`
-3. Copy the `.app` file into a `Payload` folder
-4. Compress the `Payload` folder and change the extension to `.ipa`
+1. Run `flutter build apk --split-per-abi`
+2. Grab the apk release build file with your required ABI
+</details>
+<details><summary>Building for iOS</summary>
+
+1. Run `flutter build ios --no-codesign`
+2. Copy `./build/ios/iphoneos/Runner.app` into a `Payload` directory
+3. Compress `Payload` and change extension to `.ipa`
 </details>

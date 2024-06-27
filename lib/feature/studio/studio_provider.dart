@@ -7,6 +7,7 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 
 final studioProvider =
@@ -28,11 +29,11 @@ class StudioNotifier extends AutoDisposeFamilyAsyncNotifier<Studio, int> {
     return Studio(data['Studio']);
   }
 
-  Future<bool> toggleFavorite() {
+  Future<Object?> toggleFavorite() {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFavorite,
       {'studio': arg},
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }
 

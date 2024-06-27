@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -37,14 +38,14 @@ class FilterEditSheet<T> extends StatelessWidget {
       },
     );
 
-    return OpaqueSheetView(
+    return SheetWithButtonRow(
       buttons: BottomBar(
         Persistence().leftHanded
             ? [applyButton, clearButton]
             : [clearButton, applyButton],
       ),
       builder: (context, scrollCtrl) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
         child: builder(context, scrollCtrl, filter),
       ),
     );

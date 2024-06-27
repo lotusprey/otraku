@@ -75,11 +75,11 @@ class _MediaReviewGrid extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: Theming.offset),
                   Text(items[i].username),
                   const Spacer(),
                   const Icon(Icons.thumb_up_outlined, size: Theming.iconSmall),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: Theming.offset),
                   Text(
                     items[i].rating,
                     style: Theme.of(context).textTheme.labelMedium,

@@ -42,7 +42,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   onTap: context.back,
                 )
               else
-                const SizedBox(width: 10),
+                const SizedBox(width: Theming.offset),
               if (title != null)
                 Expanded(
                   child: Text(

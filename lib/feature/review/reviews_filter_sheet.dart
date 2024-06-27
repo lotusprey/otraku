@@ -12,13 +12,13 @@ Future<void> showReviewsFilterSheet({
 }) =>
     showSheet(
       context,
-      OpaqueSheet(
-        initialHeight: Theming.tapTargetSize * 5,
+      SimpleSheet(
+        initialHeight: Theming.minTapTarget * 3.5,
         builder: (context, scrollCtrl) => ListView(
           controller: scrollCtrl,
           physics: Theming.bouncyPhysics,
           padding: const EdgeInsets.symmetric(
-            horizontal: 10,
+            horizontal: Theming.offset,
             vertical: 20,
           ),
           children: [

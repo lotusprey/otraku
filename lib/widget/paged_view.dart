@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 
 /// A wrapper around [PagedSelectionView] to reduce boilerplate,
 /// for the cases where [PagedSelectionView.select] is redundant.
@@ -64,13 +64,7 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         ref.listen<AsyncValue>(
           provider,
           (_, s) => s.whenOrNull(
-            error: (error, _) => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Failed to load',
-                content: error.toString(),
-              ),
-            ),
+            error: (error, _) => Toast.show(context, error.toString()),
           ),
         );
 

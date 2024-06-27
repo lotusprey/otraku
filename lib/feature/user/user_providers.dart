@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 
 typedef UserTag = ({int? id, String? name});
@@ -26,10 +27,10 @@ class UserNotifier extends AutoDisposeFamilyAsyncNotifier<User, UserTag> {
     return User(data['User']);
   }
 
-  Future<bool> toggleFollow(int userId) {
+  Future<Object?> toggleFollow(int userId) {
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFollow,
       {'userId': userId},
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }

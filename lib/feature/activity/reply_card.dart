@@ -8,6 +8,7 @@ import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -45,16 +46,20 @@ class ReplyCard extends StatelessWidget {
                   width: 50,
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: Theming.offset),
               Text(reply.authorName),
             ],
           ),
         ),
         const SizedBox(height: 5),
         Card(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: Theming.offset),
           child: Padding(
-            padding: const EdgeInsets.only(top: 10, left: 10, right: 10),
+            padding: const EdgeInsets.only(
+              top: Theming.offset,
+              left: Theming.offset,
+              right: Theming.offset,
+            ),
             child: Column(
               children: [
                 UnconstrainedBox(
@@ -76,7 +81,7 @@ class ReplyCard extends StatelessWidget {
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(
-                                  radius: 10,
+                                  radius: Theming.radiusSmall.x,
                                   onTap: () => _showMoreSheet(context, ref),
                                   child: const Icon(
                                     Ionicons.ellipsis_horizontal,
@@ -91,7 +96,7 @@ class ReplyCard extends StatelessWidget {
                               ),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: Theming.offset),
                     _ReplyLikeButton(reply: reply, toggleLike: toggleLike),
                   ],
                 ),
@@ -107,52 +112,55 @@ class ReplyCard extends StatelessWidget {
   void _showMoreSheet(BuildContext context, WidgetRef ref) {
     showSheet(
       context,
-      GradientSheet([
-        GradientSheetButton(
-          text: 'Edit',
-          icon: Icons.edit_outlined,
-          onTap: () => showSheet(
-            context,
-            CompositionView(
-              tag: ActivityReplyCompositionTag(
-                id: reply.id,
-                activityId: activityId,
+      SimpleSheet.list(
+        [
+          ListTile(
+            title: const Text('Edit'),
+            leading: const Icon(Icons.edit_outlined),
+            onTap: () => showSheet(
+              context,
+              CompositionView(
+                tag: ActivityReplyCompositionTag(
+                  id: reply.id,
+                  activityId: activityId,
+                ),
+                onSaved: (map) {
+                  ref
+                      .read(activityProvider(activityId).notifier)
+                      .replaceReply(map);
+                  Navigator.pop(context);
+                },
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(activityId).notifier)
-                  .replaceReply(map),
             ),
           ),
-        ),
-        GradientSheetButton(
-          text: 'Delete',
-          icon: Ionicons.trash_outline,
-          onTap: () => showDialog(
-            context: context,
-            builder: (context) => ConfirmationDialog(
-              title: 'Delete?',
-              mainAction: 'Yes',
-              secondaryAction: 'No',
-              onConfirm: () {
-                ref
-                    .read(activityProvider(activityId).notifier)
-                    .removeReply(reply.id)
-                    .then((err) {
-                  if (err == null) return;
+          ListTile(
+            title: const Text('Delete'),
+            leading: const Icon(Ionicons.trash_outline),
+            onTap: () => showDialog(
+              context: context,
+              builder: (context) => ConfirmationDialog(
+                title: 'Delete?',
+                mainAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: () {
+                  ref
+                      .read(activityProvider(activityId).notifier)
+                      .removeReply(reply.id)
+                      .then((err) {
+                    if (err == null) {
+                      Navigator.pop(context);
+                      return;
+                    }
 
-                  showDialog(
-                    context: context,
-                    builder: (context) => ConfirmationDialog(
-                      title: 'Could not delete reply',
-                      content: err.toString(),
-                    ),
-                  );
-                });
-              },
+                    Toast.show(context, err.toString());
+                    Navigator.pop(context);
+                  });
+                },
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -171,7 +179,7 @@ class _ReplyMentionButton extends StatelessWidget {
       child: Tooltip(
         message: 'Reply',
         child: InkResponse(
-          radius: 10,
+          radius: Theming.radiusSmall.x,
           onTap: () => showSheet(
             context,
             CompositionView(
@@ -186,7 +194,7 @@ class _ReplyMentionButton extends StatelessWidget {
             ),
           ),
           child: const Icon(
-            Icons.reply,
+            Icons.reply_outlined,
             size: Theming.iconSmall,
           ),
         ),
@@ -213,7 +221,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       child: Tooltip(
         message: !widget.reply.isLiked ? 'Like' : 'Unlike',
         child: InkResponse(
-          radius: 10,
+          radius: Theming.radiusSmall.x,
           onTap: _toggleLike,
           child: Row(
             children: [
@@ -224,14 +232,14 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                     : Theme.of(context)
                         .textTheme
                         .labelSmall!
-                        .copyWith(color: Theme.of(context).colorScheme.error),
+                        .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(width: 5),
               Icon(
-                Icons.favorite,
+                Icons.favorite_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
-                    ? Theme.of(context).colorScheme.error
+                    ? Theme.of(context).colorScheme.primary
                     : null,
               ),
             ],
@@ -241,7 +249,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
     );
   }
 
-  void _toggleLike() {
+  void _toggleLike() async {
     final reply = widget.reply;
     final isLiked = reply.isLiked;
 
@@ -250,21 +258,14 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? -1 : 1;
     });
 
-    widget.toggleLike().then((err) {
-      if (err == null) return;
+    final err = await widget.toggleLike();
+    if (err == null) return;
 
-      setState(() {
-        reply.isLiked = isLiked;
-        reply.likeCount += isLiked ? 1 : -1;
-      });
-
-      showDialog(
-        context: context,
-        builder: (context) => ConfirmationDialog(
-          title: 'Could not toggle reply like',
-          content: err.toString(),
-        ),
-      );
+    setState(() {
+      reply.isLiked = isLiked;
+      reply.likeCount += isLiked ? 1 : -1;
     });
+
+    if (mounted) Toast.show(context, err.toString());
   }
 }

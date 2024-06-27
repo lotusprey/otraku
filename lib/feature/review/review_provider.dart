@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 
 final reviewProvider =
@@ -19,7 +20,7 @@ class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
     return Review(data['Review']);
   }
 
-  Future<bool> rate(bool? rating) {
+  Future<Object?> rate(bool? rating) {
     return ref.read(repositoryProvider).request(
       GqlMutation.rateReview,
       {
@@ -30,6 +31,6 @@ class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
                 ? 'UP_VOTE'
                 : 'DOWN_VOTE',
       },
-    ).then((_) => true, onError: (_) => false);
+    ).getErrorOrNull();
   }
 }

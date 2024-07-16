@@ -5,6 +5,7 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -281,7 +282,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   ),
                   const SizedBox(width: 5),
                   Icon(
-                    Icons.favorite_rounded,
+                    !widget.activity.isLiked
+                        ? Icons.favorite_rounded
+                        : Icons.heart_broken_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
                         ? Theme.of(context).colorScheme.primary
@@ -305,43 +308,46 @@ class _ActivityFooterState extends State<ActivityFooter> {
       Consumer(
         builder: (context, ref, __) {
           final ownershipButtons = <Widget>[];
+
           if (activity.isOwned) {
-            switch (activity) {
-              case StatusActivity _:
-                ownershipButtons.add(ListTile(
-                  title: const Text('Edit'),
-                  leading: const Icon(Icons.edit_outlined),
-                  onTap: () => showSheet(
-                    context,
-                    CompositionView(
-                      tag: StatusActivityCompositionTag(id: activity.id),
-                      onSaved: (map) {
-                        widget.onEdited?.call(map);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ));
-              case MessageActivity _:
-                ownershipButtons.add(ListTile(
-                  title: const Text('Edit'),
-                  leading: const Icon(Icons.edit_outlined),
-                  onTap: () => showSheet(
-                    context,
-                    CompositionView(
-                      tag: MessageActivityCompositionTag(
-                        id: activity.id,
-                        recipientId: activity.recipientId,
+            if (activity.authorId == Persistence().id) {
+              switch (activity) {
+                case StatusActivity _:
+                  ownershipButtons.add(ListTile(
+                    title: const Text('Edit'),
+                    leading: const Icon(Icons.edit_outlined),
+                    onTap: () => showSheet(
+                      context,
+                      CompositionView(
+                        tag: StatusActivityCompositionTag(id: activity.id),
+                        onSaved: (map) {
+                          widget.onEdited?.call(map);
+                          Navigator.pop(context);
+                        },
                       ),
-                      onSaved: (map) {
-                        widget.onEdited?.call(map);
-                        Navigator.pop(context);
-                      },
                     ),
-                  ),
-                ));
-              case MediaActivity _:
-                break;
+                  ));
+                case MessageActivity _:
+                  ownershipButtons.add(ListTile(
+                    title: const Text('Edit'),
+                    leading: const Icon(Icons.edit_outlined),
+                    onTap: () => showSheet(
+                      context,
+                      CompositionView(
+                        tag: MessageActivityCompositionTag(
+                          id: activity.id,
+                          recipientId: activity.recipientId,
+                        ),
+                        onSaved: (map) {
+                          widget.onEdited?.call(map);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ));
+                case MediaActivity _:
+                  break;
+              }
             }
 
             ownershipButtons.add(ListTile(

@@ -98,7 +98,7 @@ class SettingsAppSubview extends StatelessWidget {
             StatefulSwitchListTile(
               title: const Text('Exclusive Airing Sort for Anime Preview'),
               subtitle: const Text(
-                'Sort by airing time, instead of the default',
+                'Sort by soonest airing, instead of the default',
               ),
               value: Persistence().airingSortForPreview,
               onChanged: (v) => Persistence().airingSortForPreview = v,

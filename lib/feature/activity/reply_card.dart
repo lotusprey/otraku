@@ -236,7 +236,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               ),
               const SizedBox(width: 5),
               Icon(
-                Icons.favorite_rounded,
+                !widget.reply.isLiked
+                    ? Icons.favorite_rounded
+                    : Icons.heart_broken_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
                     ? Theme.of(context).colorScheme.primary

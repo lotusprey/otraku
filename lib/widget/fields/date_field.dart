@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 class DateField extends StatefulWidget {

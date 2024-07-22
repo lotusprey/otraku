@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/color_extension.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/model/relation.dart';
@@ -108,10 +111,11 @@ class RelatedMedia {
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
         imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
-        relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
+        relationType:
+            StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
         entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
-        releaseStatus: StringUtil.tryNoScreamingSnakeCase(
+        releaseStatus: StringExtension.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
         type: map['node']['type'] == 'ANIME'
@@ -333,15 +337,15 @@ class MediaInfo {
       format: MediaFormat.from(map['format']),
       status: ReleaseStatus.from(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
+      airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(
         map['nextAiringEpisode']?['airingAt'],
       ),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: StringUtil.fromFuzzyDate(map['startDate']),
-      endDate: StringUtil.fromFuzzyDate(map['endDate']),
+      startDate: StringExtension.fromFuzzyDate(map['startDate']),
+      endDate: StringExtension.fromFuzzyDate(map['endDate']),
       season: season,
       averageScore: map['averageScore'] ?? 0,
       meanScore: map['meanScore'] ?? 0,
@@ -380,9 +384,9 @@ class MediaInfo {
           site: link['site'],
           type: ExternalLinkType.fromString(link['type']),
           color: link['color'] != null
-              ? ColorUtil.fromHexString(link['color'])
+              ? ColorExtension.fromHexString(link['color'])
               : null,
-          countryCode: StringUtil.languageToCode(link['language']),
+          countryCode: StringExtension.languageToCode(link['language']),
         ));
       }
       model.externalLinks.sort(

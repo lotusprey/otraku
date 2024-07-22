@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
+import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
+import 'package:otraku/feature/discover/discover_floating_action.dart';
 import 'package:otraku/feature/discover/discover_provider.dart';
+import 'package:otraku/feature/feed/feed_floating_action.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
@@ -19,7 +23,6 @@ import 'package:otraku/feature/feed/feed_view.dart';
 import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key, this.tab});
@@ -108,7 +111,28 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
-    return PageScaffold(
+    final FloatingActionConfig floatingActionConfig = switch (_tabCtrl.index) {
+      0 => (
+          scrollCtrl: _feedScrollCtrl,
+          actions: [FeedFloatingAction(ref)],
+        ),
+      1 => (
+          scrollCtrl: _animeScrollCtrl,
+          actions: [CollectionFloatingAction(_animeCollectionTag)],
+        ),
+      2 => (
+          scrollCtrl: _mangaScrollCtrl,
+          actions: [CollectionFloatingAction(_mangaCollectionTag)],
+        ),
+      3 => (
+          scrollCtrl: _discoverScrollCtrl,
+          actions: [const DiscoverFloatingAction()],
+        ),
+      _ => (scrollCtrl: primaryScrollCtrl, actions: []),
+    };
+
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: floatingActionConfig,
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),

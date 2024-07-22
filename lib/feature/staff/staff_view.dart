@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/feature/staff/staff_action_buttons.dart';
+import 'package:otraku/feature/staff/staff_floating_actions.dart';
 import 'package:otraku/feature/staff/staff_characters_view.dart';
 import 'package:otraku/feature/staff/staff_overview_view.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -83,7 +83,18 @@ class _StaffViewState extends ConsumerState<StaffView>
           )
         : const TopBar();
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _scrollCtrl,
+        actions: [
+          if (_tabCtrl.index == 0 && staff.hasValue)
+            StaffFavoriteButton(
+              staff.valueOrNull!,
+              ref.read(staffProvider(widget.id).notifier).toggleFavorite,
+            ),
+          if (_tabCtrl.index > 0) StaffFilterButton(widget.id, ref),
+        ],
+      ),
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
@@ -96,17 +107,6 @@ class _StaffViewState extends ConsumerState<StaffView>
       ),
       child: TabScaffold(
         topBar: topBar,
-        floatingBar: FloatingBar(
-          scrollCtrl: _scrollCtrl,
-          children: [
-            if (_tabCtrl.index == 0 && staff.hasValue)
-              StaffFavoriteButton(
-                staff.valueOrNull!,
-                ref.read(staffProvider(widget.id).notifier).toggleFavorite,
-              ),
-            if (_tabCtrl.index > 0) StaffFilterButton(widget.id),
-          ],
-        ),
         child: TabBarView(
           controller: _tabCtrl,
           children: [

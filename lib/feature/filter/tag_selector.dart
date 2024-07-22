@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/search_field.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';

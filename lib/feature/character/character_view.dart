@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/feature/character/character_action_buttons.dart';
+import 'package:otraku/feature/character/character_floating_actions.dart';
 import 'package:otraku/feature/character/character_anime_view.dart';
 import 'package:otraku/feature/character/character_manga_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/character/character_overview_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -83,7 +83,19 @@ class _CharacterViewState extends ConsumerState<CharacterView>
           )
         : const TopBar();
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _scrollCtrl,
+        actions: [
+          if (_tabCtrl.index == 0 && character.hasValue)
+            CharacterFavoriteButton(
+              character.valueOrNull!,
+              ref.read(characterProvider(widget.id).notifier).toggleFavorite,
+            ),
+          if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id, ref),
+          if (_tabCtrl.index == 1) CharacterLanguageSelectionButton(widget.id),
+        ],
+      ),
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
@@ -96,19 +108,6 @@ class _CharacterViewState extends ConsumerState<CharacterView>
       ),
       child: TabScaffold(
         topBar: topBar,
-        floatingBar: FloatingBar(
-          scrollCtrl: _scrollCtrl,
-          children: [
-            if (_tabCtrl.index == 0 && character.hasValue)
-              CharacterFavoriteButton(
-                character.valueOrNull!,
-                ref.read(characterProvider(widget.id).notifier).toggleFavorite,
-              ),
-            if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id),
-            if (_tabCtrl.index == 1)
-              CharacterLanguageSelectionButton(widget.id),
-          ],
-        ),
         child: TabBarView(
           controller: _tabCtrl,
           children: [

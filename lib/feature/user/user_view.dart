@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
@@ -13,7 +14,6 @@ import 'package:otraku/feature/user/user_header.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 
 class UserView extends StatelessWidget {
@@ -24,7 +24,7 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      PageScaffold(child: UserSubview(tag, avatarUrl));
+      ScaffoldExtension.expanded(child: UserSubview(tag, avatarUrl));
 }
 
 class UserSubview extends StatelessWidget {

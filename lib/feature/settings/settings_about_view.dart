@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/util/toast.dart';
 
 class SettingsAboutSubview extends StatelessWidget {
@@ -29,7 +28,7 @@ class SettingsAboutSubview extends StatelessWidget {
           child: ListView(
             controller: scrollCtrl,
             padding: EdgeInsets.only(
-              top: padding.top + TopBar.height + Theming.offset,
+              top: padding.top + Theming.normalTapTarget + Theming.offset,
               bottom: padding.bottom + Theming.offset,
             ),
             children: [
@@ -104,7 +103,7 @@ class SettingsAboutSubview extends StatelessWidget {
                     top: 20,
                   ),
                   child: Text(
-                    'Performed a notification check around ${DateTimeUtil.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+                    'Performed a notification check around ${DateTimeExtension.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),

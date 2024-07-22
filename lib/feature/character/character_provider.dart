@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/character/character_filter_model.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
@@ -101,13 +102,13 @@ class CharacterMediaNotifier
           id: a['node']['id'],
           title: a['node']['title']['userPreferred'],
           imageUrl: a['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
+          subtitle: StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
           type: DiscoverType.anime,
         ));
 
         if (a['voiceActors'] != null) {
           for (final va in a['voiceActors']) {
-            final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
+            final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
             if (l == null) continue;
 
             final currentLanguage = languageToVoiceActors.putIfAbsent(
@@ -146,7 +147,7 @@ class CharacterMediaNotifier
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
           imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
+          subtitle: StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
           type: DiscoverType.manga,
         ));
       }

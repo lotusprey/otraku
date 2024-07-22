@@ -1,4 +1,4 @@
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
 

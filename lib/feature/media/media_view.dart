@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/media/media_action_buttons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
+import 'package:otraku/feature/media/media_floating_actions.dart';
 import 'package:otraku/feature/media/media_characters_view.dart';
 import 'package:otraku/feature/media/media_following_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -12,8 +13,6 @@ import 'package:otraku/feature/media/media_staff_view.dart';
 import 'package:otraku/feature/media/media_stats_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/feature/media/media_header.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -45,63 +44,66 @@ class _MediaViewState extends State<MediaView>
 
   @override
   Widget build(BuildContext context) {
-    return PageScaffold(
-      child: NestedScrollView(
-        controller: _scrollCtrl,
-        headerSliverBuilder: (context, _) => [
-          MediaHeader(
-            id: widget.id,
-            coverUrl: widget.coverUrl,
-            tabCtrl: _tabCtrl,
-            scrollToTop: _scrollCtrl.scrollToTop,
-          ),
-        ],
-        body: Consumer(
-          builder: (context, ref, _) {
-            ref.listen<AsyncValue>(
-              mediaProvider(widget.id),
-              (_, s) {
-                if (s.hasError) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => ConfirmationDialog(
-                      title: 'Failed to load media',
-                      content: s.error.toString(),
+    return Consumer(
+      builder: (context, ref, _) {
+        ref.listen<AsyncValue>(
+          mediaProvider(widget.id),
+          (_, s) {
+            if (s.hasError) {
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  title: 'Failed to load media',
+                  content: s.error.toString(),
+                ),
+              );
+            }
+          },
+        );
+
+        final media = ref.watch(mediaProvider(widget.id));
+
+        return ScaffoldExtension.expanded(
+          floatingActionConfig: (
+            scrollCtrl: _scrollCtrl,
+            actions: media.valueOrNull != null
+                ? [
+                    MediaEditButton(media.value!),
+                    MediaFavoriteButton(
+                      media.value!.info,
+                      ref
+                          .read(mediaProvider(widget.id).notifier)
+                          .toggleFavorite,
                     ),
-                  );
-                }
-              },
-            );
-
-            final innerScrollCtrl = context
-                .findAncestorStateOfType<NestedScrollViewState>()!
-                .innerController;
-
-            return ref.watch(mediaProvider(widget.id)).unwrapPrevious().when(
+                    MediaLanguageButton(widget.id, _tabCtrl),
+                  ]
+                : const [],
+          ),
+          child: NestedScrollView(
+            controller: _scrollCtrl,
+            headerSliverBuilder: (context, _) => [
+              MediaHeader(
+                id: widget.id,
+                coverUrl: widget.coverUrl,
+                media: media.valueOrNull,
+                tabCtrl: _tabCtrl,
+                scrollToTop: _scrollCtrl.scrollToTop,
+              ),
+            ],
+            body: media.unwrapPrevious().when(
                   loading: () => const Center(child: Loader()),
                   error: (_, __) => const Center(
                     child: Text('Failed to load media'),
                   ),
-                  data: (media) => TabScaffold(
-                    floatingBar: FloatingBar(
-                      scrollCtrl: innerScrollCtrl,
-                      children: [
-                        MediaEditButton(media),
-                        MediaFavoriteButton(
-                          media.info,
-                          ref
-                              .read(mediaProvider(widget.id).notifier)
-                              .toggleFavorite,
-                        ),
-                        MediaLanguageButton(widget.id, _tabCtrl),
-                      ],
-                    ),
-                    child: _MediaViewContent(widget.id, media, _tabCtrl),
+                  data: (media) => _MediaViewContent(
+                    widget.id,
+                    media,
+                    _tabCtrl,
                   ),
-                );
-          },
-        ),
-      ),
+                ),
+          ),
+        );
+      },
     );
   }
 }

@@ -6,7 +6,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/table_list.dart';
@@ -154,7 +153,7 @@ class MediaOverviewSubview extends StatelessWidget {
             SliverToBoxAdapter(
               child: SizedBox(
                 height: MediaQuery.paddingOf(context).bottom +
-                    floatingBarItemHeight +
+                    Theming.normalTapTarget +
                     26,
               ),
             ),

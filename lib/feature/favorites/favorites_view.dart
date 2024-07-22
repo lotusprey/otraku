@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/model/tile_item.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
@@ -60,7 +61,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
 
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,

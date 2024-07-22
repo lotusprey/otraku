@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -39,7 +39,23 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       reviewsProvider(widget.id).select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _ctrl,
+        actions: [
+          FloatingActionButton(
+            tooltip: 'Filter',
+            child: const Icon(Ionicons.funnel_outline),
+            onPressed: () => showReviewsFilterSheet(
+              context: context,
+              filter: ref.read(reviewsFilterProvider(widget.id)),
+              onDone: (filter) => ref
+                  .read(reviewsFilterProvider(widget.id).notifier)
+                  .state = filter,
+            ),
+          ),
+        ],
+      ),
       child: TabScaffold(
         topBar: TopBar(
           title: 'Reviews',
@@ -52,22 +68,6 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
-          ],
-        ),
-        floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              icon: Ionicons.funnel_outline,
-              tooltip: 'Filter',
-              onTap: () => showReviewsFilterSheet(
-                context: context,
-                filter: ref.read(reviewsFilterProvider(widget.id)),
-                onDone: (filter) => ref
-                    .read(reviewsFilterProvider(widget.id).notifier)
-                    .state = filter,
-              ),
-            ),
           ],
         ),
         child: PagedView<ReviewItem>(

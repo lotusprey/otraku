@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -44,7 +44,17 @@ class _CalendarViewState extends State<CalendarView> {
             date.month == today.month &&
             date.year == today.year;
 
-        return PageScaffold(
+        return ScaffoldExtension.expanded(
+          floatingActionConfig: (
+            scrollCtrl: _scrollCtrl,
+            actions: [
+              FloatingActionButton(
+                tooltip: 'Filter',
+                onPressed: () => showCalendarFilterSheet(context, ref),
+                child: const Icon(Ionicons.funnel_outline),
+              ),
+            ],
+          ),
           bottomBar: BottomBar([
             const SizedBox(width: Theming.offset),
             SizedBox(
@@ -88,16 +98,6 @@ class _CalendarViewState extends State<CalendarView> {
           ]),
           child: TabScaffold(
             topBar: const TopBar(title: 'Calendar'),
-            floatingBar: FloatingBar(
-              scrollCtrl: _scrollCtrl,
-              children: [
-                ActionButton(
-                  tooltip: 'Filter',
-                  icon: Ionicons.funnel_outline,
-                  onTap: () => showCalendarFilterSheet(context, ref),
-                ),
-              ],
-            ),
             child: PagedView(
               provider: calendarProvider,
               scrollCtrl: _scrollCtrl,

@@ -1,4 +1,4 @@
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -62,7 +62,8 @@ class Review {
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),
-        createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
+        createdAt:
+            DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

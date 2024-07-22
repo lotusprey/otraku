@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/color_extension.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 
@@ -23,7 +24,7 @@ class CalendarItem {
             url: link['url'],
             site: link['site'],
             color: link['color'] != null
-                ? ColorUtil.fromHexString(link['color'])
+                ? ColorExtension.fromHexString(link['color'])
                 : null,
           ));
         }
@@ -35,7 +36,7 @@ class CalendarItem {
       title: map['media']['title']['userPreferred'],
       cover: map['media']['coverImage'][Persistence().imageQuality.value],
       episode: map['episode'],
-      airingAt: DateTimeUtil.fromSecondsSinceEpoch(map['airingAt']),
+      airingAt: DateTimeExtension.fromSecondsSinceEpoch(map['airingAt']),
       entryStatus: EntryStatus.from(map['media']['mediaListEntry']?['status']),
       streamingServices: streamingServices,
     );

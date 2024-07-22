@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/util/persistence.dart';

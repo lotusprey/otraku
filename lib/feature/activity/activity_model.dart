@@ -1,5 +1,6 @@
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/model/paged.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/util/persistence.dart';
 
@@ -33,7 +34,8 @@ class ActivityReply {
       authorName: map['user']['name'],
       authorAvatarUrl: map['user']['avatar']['large'],
       text: parseMarkdown(map['text'] ?? ''),
-      createdAt: DateTimeUtil.formattedDateTimeFromSeconds(map['createdAt']),
+      createdAt:
+          DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
       likeCount: map['likeCount'] ?? 0,
       isLiked: map['isLiked'] ?? false,
     );
@@ -83,7 +85,7 @@ sealed class Activity {
             authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['text'] ?? ''),
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -106,7 +108,7 @@ sealed class Activity {
             recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['message'] ?? ''),
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['messenger']['id'] == viewerId ||
@@ -135,11 +137,12 @@ sealed class Activity {
             mediaId: map['media']['id'],
             title: map['media']['title']['userPreferred'],
             coverUrl: map['media']['coverImage'][imageQuality.value],
-            format: StringUtil.tryNoScreamingSnakeCase(map['media']['format']),
+            format:
+                StringExtension.tryNoScreamingSnakeCase(map['media']['format']),
             isAnime: map['type'] == 'ANIME_LIST',
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,

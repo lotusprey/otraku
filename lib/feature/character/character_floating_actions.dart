@@ -8,11 +8,11 @@ import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class CharacterFavoriteButton extends StatefulWidget {
-  const CharacterFavoriteButton(this.character, this.toggleFavorite);
+  const CharacterFavoriteButton(this.character, this.toggleFavorite)
+      : super(key: const Key('favoriteCharacter'));
 
   final Character character;
   final Future<Object?> Function() toggleFavorite;
@@ -27,10 +27,13 @@ class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
   Widget build(BuildContext context) {
     final character = widget.character;
 
-    return ActionButton(
-      icon: character.isFavorite ? Icons.favorite : Icons.favorite_border,
+    return FloatingActionButton(
       tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () async {
+      heroTag: 'favorite',
+      child: character.isFavorite
+          ? const Icon(Icons.favorite)
+          : const Icon(Icons.favorite_border),
+      onPressed: () async {
         setState(() => character.isFavorite = !character.isFavorite);
 
         final err = await widget.toggleFavorite();
@@ -44,62 +47,62 @@ class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
 }
 
 class CharacterMediaFilterButton extends StatelessWidget {
-  const CharacterMediaFilterButton(this.id);
+  const CharacterMediaFilterButton(this.id, this.ref)
+      : super(key: const Key('filterCharacter'));
 
   final int id;
+  final WidgetRef ref;
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        return ActionButton(
-          icon: Ionicons.funnel_outline,
-          tooltip: 'Filter',
-          onTap: () {
-            var filter = ref.read(characterFilterProvider(id));
+    return FloatingActionButton(
+      tooltip: 'Filter',
+      heroTag: 'filter',
+      child: const Icon(Ionicons.funnel_outline),
+      onPressed: () {
+        var filter = ref.read(characterFilterProvider(id));
 
-            final onDone = (_) =>
-                ref.read(characterFilterProvider(id).notifier).state = filter;
+        final onDone = (_) =>
+            ref.read(characterFilterProvider(id).notifier).state = filter;
 
-            showSheet(
-              context,
-              SimpleSheet(
-                initialHeight: Theming.minTapTarget * 3.5,
-                builder: (context, scrollCtrl) => ListView(
-                  controller: scrollCtrl,
-                  physics: Theming.bouncyPhysics,
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  children: [
-                    ChipSelector.ensureSelected(
-                      title: 'Sort',
-                      items: MediaSort.values.map((v) => (v.label, v)).toList(),
-                      value: filter.sort,
-                      onChanged: (v) => filter = filter.copyWith(sort: v),
-                    ),
-                    ChipSelector(
-                      title: 'List Presence',
-                      items: const [
-                        ('In Lists', true),
-                        ('Not in Lists', false),
-                      ],
-                      value: filter.inLists,
-                      onChanged: (v) => filter = filter.copyWith(
-                        inLists: () => v,
-                      ),
-                    ),
-                  ],
+        showSheet(
+          context,
+          SimpleSheet(
+            initialHeight: Theming.minTapTarget * 3.5,
+            builder: (context, scrollCtrl) => ListView(
+              controller: scrollCtrl,
+              physics: Theming.bouncyPhysics,
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              children: [
+                ChipSelector.ensureSelected(
+                  title: 'Sort',
+                  items: MediaSort.values.map((v) => (v.label, v)).toList(),
+                  value: filter.sort,
+                  onChanged: (v) => filter = filter.copyWith(sort: v),
                 ),
-              ),
-            ).then(onDone);
-          },
-        );
+                ChipSelector(
+                  title: 'List Presence',
+                  items: const [
+                    ('In Lists', true),
+                    ('Not in Lists', false),
+                  ],
+                  value: filter.inLists,
+                  onChanged: (v) => filter = filter.copyWith(
+                    inLists: () => v,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ).then(onDone);
       },
     );
   }
 }
 
 class CharacterLanguageSelectionButton extends StatelessWidget {
-  const CharacterLanguageSelectionButton(this.id);
+  const CharacterLanguageSelectionButton(this.id)
+      : super(key: const Key('languageCharacter'));
 
   final int id;
 
@@ -111,10 +114,11 @@ class CharacterLanguageSelectionButton extends StatelessWidget {
               data: (data) {
                 if (data.languages.length < 2) return const SizedBox();
 
-                return ActionButton(
+                return FloatingActionButton(
                   tooltip: 'Language',
-                  icon: Ionicons.globe_outline,
-                  onTap: () {
+                  heroTag: 'language',
+                  child: const Icon(Ionicons.globe_outline),
+                  onPressed: () {
                     final languages = data.languages;
                     final language = data.language;
 

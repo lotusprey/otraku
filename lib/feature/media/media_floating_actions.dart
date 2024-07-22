@@ -5,7 +5,6 @@ import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class MediaEditButton extends StatefulWidget {
@@ -21,10 +20,13 @@ class _MediaEditButtonState extends State<MediaEditButton> {
   @override
   Widget build(BuildContext context) {
     final media = widget.media;
-    return ActionButton(
-      icon: media.edit.status == null ? Icons.add : Icons.edit_outlined,
+    return FloatingActionButton(
       tooltip: media.edit.status == null ? 'Add' : 'Edit',
-      onTap: () => showSheet(
+      heroTag: 'edit',
+      child: media.edit.status == null
+          ? const Icon(Icons.add)
+          : const Icon(Icons.edit_outlined),
+      onPressed: () => showSheet(
         context,
         EditView(
           (id: media.info.id, setComplete: false),
@@ -50,10 +52,13 @@ class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
   Widget build(BuildContext context) {
     final info = widget.info;
 
-    return ActionButton(
-      icon: info.isFavorite ? Icons.favorite : Icons.favorite_border,
+    return FloatingActionButton(
       tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
-      onTap: () async {
+      heroTag: 'favorite',
+      child: info.isFavorite
+          ? const Icon(Icons.favorite)
+          : const Icon(Icons.favorite_border),
+      onPressed: () async {
         setState(() => info.isFavorite = !info.isFavorite);
 
         final err = await widget.toggleFavorite();
@@ -117,10 +122,11 @@ class _MediaLanguageButtonState extends State<MediaLanguageButton> {
           return const SizedBox();
         }
 
-        return ActionButton(
+        return FloatingActionButton(
           tooltip: 'Language',
-          icon: Ionicons.globe_outline,
-          onTap: () => showSheet(
+          heroTag: 'language',
+          child: const Icon(Ionicons.globe_outline),
+          onPressed: () => showSheet(
             context,
             SimpleSheet.list([
               for (int i = 0; i < languages.length; i++)

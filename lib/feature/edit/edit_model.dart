@@ -1,4 +1,4 @@
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 
@@ -79,8 +79,9 @@ class Edit {
       score: (map['mediaListEntry']['score'] ?? 0).toDouble(),
       repeat: map['mediaListEntry']['repeat'] ?? 0,
       notes: map['mediaListEntry']['notes'] ?? '',
-      startedAt: DateTimeUtil.fromFuzzyDate(map['mediaListEntry']['startedAt']),
-      completedAt: DateTimeUtil.fromFuzzyDate(
+      startedAt:
+          DateTimeExtension.fromFuzzyDate(map['mediaListEntry']['startedAt']),
+      completedAt: DateTimeExtension.fromFuzzyDate(
         map['mediaListEntry']['completedAt'],
       ),
       private: map['mediaListEntry']['private'] ?? false,

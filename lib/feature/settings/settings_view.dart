@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
@@ -51,16 +51,6 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ),
     );
 
-    final floatingBar = FloatingBar(
-      scrollCtrl: _scrollCtrl,
-      children: [
-        _SaveButton(() {
-          if (_settings == null) return Future.value();
-          return ref.read(settingsProvider.notifier).updateSettings(_settings!);
-        }),
-      ],
-    );
-
     final tabs = [
       TabScaffold(
         topBar: const TopBar(title: 'App'),
@@ -72,7 +62,6 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       if (_settings != null) ...[
         TabScaffold(
           topBar: const TopBar(title: 'Content'),
-          floatingBar: floatingBar,
           child: ConstrainedView(
             padding: EdgeInsets.zero,
             child: SettingsContentSubview(_scrollCtrl, _settings!),
@@ -80,7 +69,6 @@ class _SettingsViewState extends ConsumerState<SettingsView>
         ),
         TabScaffold(
           topBar: const TopBar(title: 'Notifications'),
-          floatingBar: floatingBar,
           child: ConstrainedView(
             padding: EdgeInsets.zero,
             child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
@@ -99,7 +87,20 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ),
     ];
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _scrollCtrl,
+        actions: _tabCtrl.index == 1 || _tabCtrl.index == 2
+            ? [
+                _SaveButton(() {
+                  if (_settings == null) return Future.value();
+                  return ref
+                      .read(settingsProvider.notifier)
+                      .updateSettings(_settings!);
+                }),
+              ]
+            : const [],
+      ),
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onSame: (_) => _scrollCtrl.scrollToTop(),
@@ -117,7 +118,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
 }
 
 class _SaveButton extends StatefulWidget {
-  const _SaveButton(this.onTap);
+  const _SaveButton(this.onTap) : super(key: const Key('saveSettings'));
 
   final Future<void> Function() onTap;
 
@@ -126,20 +127,22 @@ class _SaveButton extends StatefulWidget {
 }
 
 class __SaveButtonState extends State<_SaveButton> {
-  bool _hidden = false;
+  var _hidden = false;
 
   @override
   Widget build(BuildContext context) {
-    if (_hidden) return const SizedBox();
-
-    return ActionButton(
+    return FloatingActionButton(
       tooltip: 'Save Settings',
-      icon: Ionicons.save_outline,
-      onTap: () async {
-        setState(() => _hidden = true);
-        await widget.onTap();
-        setState(() => _hidden = false);
-      },
+      onPressed: _hidden
+          ? null
+          : () async {
+              setState(() => _hidden = true);
+              await widget.onTap();
+              setState(() => _hidden = false);
+            },
+      child: _hidden
+          ? const Icon(Ionicons.time_outline)
+          : const Icon(Ionicons.save_outline),
     );
   }
 }

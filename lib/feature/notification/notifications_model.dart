@@ -1,4 +1,5 @@
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
 
@@ -37,7 +38,7 @@ class SiteNotification {
             bodyId: map['user']['id'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' followed you'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: DiscoverType.user,
@@ -50,7 +51,7 @@ class SiteNotification {
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' mentioned you in an activity'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -62,7 +63,7 @@ class SiteNotification {
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' sent you a message'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -74,7 +75,7 @@ class SiteNotification {
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' replied to your activity'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -86,7 +87,7 @@ class SiteNotification {
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your activity'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -98,7 +99,7 @@ class SiteNotification {
             bodyId: map['activityId'],
             imageUrl: map['user']['avatar']['large'],
             texts: [map['user']['name'], ' liked your reply'],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -113,7 +114,7 @@ class SiteNotification {
               map['user']['name'],
               ' replied to a subscribed activity',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -129,7 +130,7 @@ class SiteNotification {
               ' liked your thread ',
               if (map['thread'] != null) map['thread']['title'],
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -148,7 +149,7 @@ class SiteNotification {
               ] else
                 ' commented in a subscribed thread',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -167,7 +168,7 @@ class SiteNotification {
               ] else
                 ' liked your comment in a subscribed thread',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -186,7 +187,7 @@ class SiteNotification {
               ] else
                 ' replied to your comment in a subscribed thread',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -205,7 +206,7 @@ class SiteNotification {
               ] else
                 ' mentioned you in a subscribed thread',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );
@@ -223,7 +224,7 @@ class SiteNotification {
               map['episode'].toString(),
               ' aired',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -242,7 +243,7 @@ class SiteNotification {
               map['media']['title']['userPreferred'],
               ' got added to the site',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -261,7 +262,7 @@ class SiteNotification {
               map['media']['title']['userPreferred'],
               ' got site data changes',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -287,7 +288,7 @@ class SiteNotification {
               ' got merged into ',
               map['media']['title']['userPreferred'],
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
             discoverType: map['media']['type'] == 'ANIME'
@@ -303,7 +304,7 @@ class SiteNotification {
               map['deletedMediaTitle'],
               ' got deleted from the site',
             ],
-            createdAt: DateTimeUtil.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
               map['createdAt'],
             ),
           );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
@@ -15,7 +16,6 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
@@ -52,7 +52,17 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _ctrl,
+        actions: [
+          FloatingActionButton(
+            tooltip: 'Filter',
+            onPressed: _showFilterSheet,
+            child: const Icon(Ionicons.funnel_outline),
+          ),
+        ],
+      ),
       child: TabScaffold(
         topBar: TopBar(
           trailing: [
@@ -63,16 +73,6 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
-            ),
-          ],
-        ),
-        floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              tooltip: 'Filter',
-              icon: Ionicons.funnel_outline,
-              onTap: _showFilterSheet,
             ),
           ],
         ),

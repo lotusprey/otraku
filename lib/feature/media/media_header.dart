@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -17,69 +16,65 @@ class MediaHeader extends StatelessWidget {
   const MediaHeader({
     required this.id,
     required this.coverUrl,
+    required this.media,
     required this.tabCtrl,
     required this.scrollToTop,
   });
 
   final int id;
   final String? coverUrl;
+  final Media? media;
   final TabController tabCtrl;
   final void Function() scrollToTop;
 
   @override
   Widget build(BuildContext context) {
     final topOffset = MediaQuery.paddingOf(context).top;
+    final textRailItems = <String, bool>{};
 
-    return Consumer(
-      builder: (context, ref, _) {
-        final media = ref.watch(mediaProvider(id).select((s) => s.valueOrNull));
-        final textRailItems = <String, bool>{};
+    if (media != null) {
+      final info = media!.info;
 
-        if (media != null) {
-          final info = media.info;
+      if (info.isAdult) textRailItems['Adult'] = true;
 
-          if (info.isAdult) textRailItems['Adult'] = true;
+      if (info.format != null) {
+        textRailItems[info.format!.label] = false;
+      }
 
-          if (info.format != null) {
-            textRailItems[info.format!.label] = false;
-          }
+      if (media!.edit.status != null) {
+        textRailItems[media!.edit.status!.label(
+          info.type == DiscoverType.anime,
+        )] = false;
+      }
 
-          if (media.edit.status != null) {
-            textRailItems[media.edit.status!.label(
-              info.type == DiscoverType.anime,
-            )] = false;
-          }
+      if (info.airingAt != null) {
+        textRailItems['Ep ${info.nextEpisode} in '
+            '${info.airingAt!.timeUntil}'] = true;
+      }
 
-          if (info.airingAt != null) {
-            textRailItems['Ep ${info.nextEpisode} in '
-                '${info.airingAt!.timeUntil}'] = true;
-          }
-
-          if (media.edit.status != null) {
-            final progress = media.edit.progress;
-            if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
-              textRailItems['${info.nextEpisode! - 1 - progress}'
-                  ' ep behind'] = true;
-            }
-          }
+      if (media!.edit.status != null) {
+        final progress = media!.edit.progress;
+        if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
+          textRailItems['${info.nextEpisode! - 1 - progress}'
+              ' ep behind'] = true;
         }
+      }
+    }
 
-        final size = MediaQuery.sizeOf(context);
+    final size = MediaQuery.sizeOf(context);
 
-        return SliverPersistentHeader(
-          pinned: true,
-          delegate: _Delegate(
-            id: id,
-            tabCtrl: tabCtrl,
-            info: media?.info,
-            coverUrl: coverUrl,
-            topOffset: topOffset,
-            scrollToTop: scrollToTop,
-            textRailItems: textRailItems,
-            imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
-          ),
-        );
-      },
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _Delegate(
+        id: id,
+        tabCtrl: tabCtrl,
+        info: media?.info,
+        coverUrl: coverUrl,
+        topOffset: topOffset,
+        scrollToTop: scrollToTop,
+        textRailItems: textRailItems,
+        imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
+      ),
     );
   }
 }

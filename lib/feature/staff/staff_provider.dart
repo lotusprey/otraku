@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/staff/staff_filter_model.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
@@ -104,7 +105,8 @@ class StaffRelationsNotifier
           id: m['node']['id'],
           title: m['node']['title']['userPreferred'],
           imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
+          subtitle:
+              StringExtension.tryNoScreamingSnakeCase(m['node']['format']),
           type: m['node']['type'] == 'ANIME'
               ? DiscoverType.anime
               : DiscoverType.manga,
@@ -119,7 +121,7 @@ class StaffRelationsNotifier
               title: c['name']['userPreferred'],
               imageUrl: c['image']['large'],
               type: DiscoverType.character,
-              subtitle: StringUtil.tryNoScreamingSnakeCase(
+              subtitle: StringExtension.tryNoScreamingSnakeCase(
                 m['characterRole'],
               ),
             ),

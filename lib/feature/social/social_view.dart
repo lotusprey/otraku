@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/social/social_model.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/social/social_provider.dart';
@@ -55,7 +56,7 @@ class _SocialViewState extends ConsumerState<SocialView>
 
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,

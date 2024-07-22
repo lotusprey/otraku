@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
@@ -17,7 +18,6 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
@@ -49,31 +49,31 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
     );
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
+        scrollCtrl: _ctrl,
+        actions: [
+          FloatingActionButton(
+            tooltip: 'New Reply',
+            child: const Icon(Icons.edit_outlined),
+            onPressed: () => showSheet(
+              context,
+              CompositionView(
+                tag: ActivityReplyCompositionTag(
+                  id: null,
+                  activityId: widget.id,
+                ),
+                onSaved: (map) => ref
+                    .read(activityProvider(widget.id).notifier)
+                    .appendReply(map),
+              ),
+            ),
+          ),
+        ],
+      ),
       child: TabScaffold(
         topBar: TopBar(
           trailing: [if (activity != null) _TopBarContent(activity)],
-        ),
-        floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              tooltip: 'New Reply',
-              icon: Icons.edit_outlined,
-              onTap: () => showSheet(
-                context,
-                CompositionView(
-                  tag: ActivityReplyCompositionTag(
-                    id: null,
-                    activityId: widget.id,
-                  ),
-                  onSaved: (map) => ref
-                      .read(activityProvider(widget.id).notifier)
-                      .appendReply(map),
-                ),
-              ),
-            ),
-          ],
         ),
         child: Consumer(
           child: SliverRefreshControl(

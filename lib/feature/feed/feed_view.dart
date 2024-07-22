@@ -4,16 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/activity/activity_filter_sheet.dart';
-import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
-import 'package:otraku/feature/composition/composition_model.dart';
-import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
 
 class FeedSubview extends StatelessWidget {
   const FeedSubview(this.scrollCtrl);
@@ -56,24 +51,6 @@ class FeedSubview extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         return TabScaffold(
-          floatingBar: FloatingBar(
-            scrollCtrl: scrollCtrl,
-            children: [
-              ActionButton(
-                tooltip: 'New Post',
-                icon: Icons.edit_outlined,
-                onTap: () => showSheet(
-                  context,
-                  CompositionView(
-                    tag: const StatusActivityCompositionTag(id: null),
-                    onSaved: (map) => ref
-                        .read(activitiesProvider(homeFeedId).notifier)
-                        .prepend(map),
-                  ),
-                ),
-              ),
-            ],
-          ),
           topBar: TopBar(
             canPop: false,
             title: 'Feed',

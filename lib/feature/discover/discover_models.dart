@@ -1,7 +1,7 @@
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
@@ -127,7 +127,7 @@ class DiscoverMediaItem extends TileItem {
         type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
         title: map['title']['userPreferred'],
         imageUrl: map['coverImage'][Persistence().imageQuality.value],
-        format: StringUtil.tryNoScreamingSnakeCase(map['format']),
+        format: StringExtension.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
         entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],

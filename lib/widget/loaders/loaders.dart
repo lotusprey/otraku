@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/shimmer.dart';
 
 class Loader extends StatelessWidget {
@@ -31,8 +30,9 @@ class SliverRefreshControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topOffset =
-        withTopOffset ? MediaQuery.paddingOf(context).top + TopBar.height : 0.0;
+    final topOffset = withTopOffset
+        ? MediaQuery.paddingOf(context).top + Theming.normalTapTarget
+        : 0.0;
 
     return SliverPadding(
       padding: EdgeInsets.only(top: topOffset + Theming.offset),

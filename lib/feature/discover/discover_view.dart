@@ -16,7 +16,6 @@ import 'package:otraku/feature/user/user_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
@@ -32,10 +31,6 @@ class DiscoverSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabScaffold(
       topBar: TopBar(canPop: false, trailing: [_TopBarContent(focusNode)]),
-      floatingBar: FloatingBar(
-        scrollCtrl: scrollCtrl,
-        children: const [_ActionButton()],
-      ),
       child: _Grid(scrollCtrl),
     );
   }
@@ -137,77 +132,6 @@ class _TopBarContent extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final type = ref.watch(discoverFilterProvider.select((s) => s.type));
-
-        return ActionButton(
-          tooltip: 'Types',
-          icon: _typeIcon(type),
-          onTap: () {
-            showSheet(
-              context,
-              SimpleSheet.list(
-                [
-                  for (final discoverType in DiscoverType.values)
-                    ListTile(
-                      title: Text(discoverType.label),
-                      leading: Icon(_typeIcon(discoverType)),
-                      selected: discoverType == type,
-                      onTap: () {
-                        ref
-                            .read(discoverFilterProvider.notifier)
-                            .update((s) => s.copyWith(type: discoverType));
-                        Navigator.pop(context);
-                      },
-                    ),
-                ],
-              ),
-            );
-          },
-          onSwipe: (goRight) {
-            var type = ref.read(discoverFilterProvider).type;
-
-            if (goRight) {
-              if (type.index < DiscoverType.values.length - 1) {
-                type = DiscoverType.values.elementAt(type.index + 1);
-              } else {
-                type = DiscoverType.values.first;
-              }
-            } else {
-              if (type.index > 0) {
-                type = DiscoverType.values.elementAt(type.index - 1);
-              } else {
-                type = DiscoverType.values.last;
-              }
-            }
-
-            ref
-                .read(discoverFilterProvider.notifier)
-                .update((s) => s.copyWith(type: type));
-            return _typeIcon(type);
-          },
-        );
-      },
-    );
-  }
-
-  static IconData _typeIcon(DiscoverType type) => switch (type) {
-        DiscoverType.anime => Ionicons.film_outline,
-        DiscoverType.manga => Ionicons.book_outline,
-        DiscoverType.character => Ionicons.man_outline,
-        DiscoverType.staff => Ionicons.mic_outline,
-        DiscoverType.studio => Ionicons.business_outline,
-        DiscoverType.user => Ionicons.person_outline,
-        DiscoverType.review => Icons.rate_review_outlined,
-      };
 }
 
 class _BirthdayFilter extends StatelessWidget {

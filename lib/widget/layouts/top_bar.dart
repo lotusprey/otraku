@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
@@ -14,10 +14,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final String? title;
   final List<Widget> trailing;
 
-  static const height = 55.0;
-
   @override
-  Size get preferredSize => const Size.fromHeight(height);
+  Size get preferredSize => const Size.fromHeight(Theming.normalTapTarget);
 
   @override
   Widget build(BuildContext context) {

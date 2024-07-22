@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
+import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/filter/filter_collection_view.dart';
@@ -20,7 +22,6 @@ import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -51,12 +52,13 @@ class _CollectionViewState extends State<CollectionView> {
 
   @override
   Widget build(BuildContext context) {
-    return PageScaffold(
-      child: CollectionSubview(
-        tag: (userId: widget.userId, ofAnime: widget.ofAnime),
+    final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
+    return ScaffoldExtension.expanded(
+      floatingActionConfig: (
         scrollCtrl: _ctrl,
-        focusNode: null,
+        actions: [CollectionFloatingAction(tag)],
       ),
+      child: CollectionSubview(tag: tag, scrollCtrl: _ctrl, focusNode: null),
     );
   }
 }
@@ -79,10 +81,6 @@ class CollectionSubview extends StatelessWidget {
       topBar: TopBar(
         canPop: tag.userId != Persistence().id,
         trailing: [_TopBarContent(tag, focusNode)],
-      ),
-      floatingBar: FloatingBar(
-        scrollCtrl: scrollCtrl,
-        children: [_ActionButton(tag)],
       ),
       child: Scrollbar(
         controller: scrollCtrl,
@@ -186,84 +184,6 @@ class _TopBarContent extends StatelessWidget {
             ],
           ),
         );
-      },
-    );
-  }
-}
-
-class _ActionButton extends StatelessWidget {
-  const _ActionButton(this.tag);
-
-  final CollectionTag tag;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final collection = ref.watch(
-          collectionProvider(tag).select((s) => s.unwrapPrevious().valueOrNull),
-        );
-
-        return switch (collection) {
-          null => const SizedBox(),
-          PreviewCollection _ => ActionButton(
-              tooltip: 'Load Entire Collection',
-              icon: Ionicons.enter_outline,
-              onTap: () => ref.read(homeProvider.notifier).expandCollection(
-                    tag.ofAnime,
-                  ),
-            ),
-          FullCollection c => c.lists.length < 2
-              ? const SizedBox()
-              : _fullCollectionActionButton(context, ref, c.lists, c.index),
-        };
-      },
-    );
-  }
-
-  Widget _fullCollectionActionButton(
-    BuildContext context,
-    WidgetRef ref,
-    List<EntryList> lists,
-    int index,
-  ) {
-    return ActionButton(
-      tooltip: 'Lists',
-      icon: Ionicons.menu_outline,
-      onTap: () {
-        showSheet(
-          context,
-          SimpleSheet.list([
-            for (int i = 0; i < lists.length; i++)
-              ListTile(
-                title: Text(lists[i].name),
-                selected: i == index,
-                trailing: Text(lists[i].entries.length.toString()),
-                onTap: () {
-                  ref.read(collectionProvider(tag).notifier).changeIndex(i);
-                  Navigator.pop(context);
-                },
-              ),
-          ]),
-        );
-      },
-      onSwipe: (goRight) {
-        if (goRight) {
-          if (index < lists.length - 1) {
-            index++;
-          } else {
-            index = 0;
-          }
-        } else {
-          if (index > 0) {
-            index--;
-          } else {
-            index = lists.length - 1;
-          }
-        }
-
-        ref.read(collectionProvider(tag).notifier).changeIndex(index);
-        return null;
       },
     );
   }

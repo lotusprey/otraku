@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -95,7 +96,7 @@ class _StatisticsViewState extends State<StatisticsView>
       },
     );
 
-    return PageScaffold(
+    return ScaffoldExtension.expanded(
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
@@ -144,7 +145,7 @@ class _StatisticsView extends StatelessWidget {
         SliverToBoxAdapter(
           child: SizedBox(
             height: MediaQuery.paddingOf(context).top +
-                TopBar.height +
+                Theming.normalTapTarget +
                 Theming.offset,
           ),
         ),

@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -132,14 +133,14 @@ class MediaRelationsNotifier
           id: c['node']['id'],
           title: c['node']['name']['userPreferred'],
           imageUrl: c['node']['image']['large'],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(c['role']),
+          subtitle: StringExtension.tryNoScreamingSnakeCase(c['role']),
           type: DiscoverType.character,
         ));
 
         if (c['voiceActors'] == null) continue;
 
         for (final va in c['voiceActors']) {
-          final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
+          final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
           if (l == null) continue;
 
           final currentLanguage = languageToVoiceActors.putIfAbsent(

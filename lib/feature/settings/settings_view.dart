@@ -10,6 +10,7 @@ import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
@@ -112,7 +113,11 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           'About': Ionicons.information_outline,
         },
       ),
-      child: TabBarView(controller: _tabCtrl, children: tabs),
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
+        children: tabs,
+      ),
     );
   }
 }

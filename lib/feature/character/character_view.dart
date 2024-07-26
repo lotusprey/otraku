@@ -13,6 +13,7 @@ import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class CharacterView extends ConsumerStatefulWidget {
   const CharacterView(this.id, this.imageUrl);
@@ -108,8 +109,9 @@ class _CharacterViewState extends ConsumerState<CharacterView>
       ),
       child: TabScaffold(
         topBar: topBar,
-        child: TabBarView(
-          controller: _tabCtrl,
+        child: SwipeSwitcher(
+          index: _tabCtrl.index,
+          onChanged: (index) => _tabCtrl.index = index,
           children: [
             CharacterOverviewSubview(
               id: widget.id,

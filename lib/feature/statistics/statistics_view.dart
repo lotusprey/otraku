@@ -15,6 +15,7 @@ import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class StatisticsView extends StatefulWidget {
   const StatisticsView(this.id);
@@ -64,8 +65,9 @@ class _StatisticsViewState extends State<StatisticsView>
                 child: Text('Failed to load statistics'),
               ),
               data: (data) {
-                return TabBarView(
-                  controller: _tabCtrl,
+                return SwipeSwitcher(
+                  index: _tabCtrl.index,
+                  onChanged: (index) => _tabCtrl.index = index,
                   children: [
                     ConstrainedView(
                       child: _StatisticsView(

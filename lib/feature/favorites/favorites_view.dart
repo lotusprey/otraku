@@ -14,6 +14,7 @@ import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class FavoritesView extends ConsumerStatefulWidget {
   const FavoritesView(this.id);
@@ -88,8 +89,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
               ),
           ],
         ),
-        child: TabBarView(
-          controller: _tabCtrl,
+        child: SwipeSwitcher(
+          index: _tabCtrl.index,
+          onChanged: (index) => _tabCtrl.index = index,
           children: [
             PagedView<TileItem>(
               provider: favoritesProvider(widget.id).select(

@@ -34,7 +34,7 @@ dependencies:
   markdown: ^7.2.2
 
   # Used for configuring [cached_network_image], which already imports it.
-  flutter_cache_manager: ^3.3.2
+  flutter_cache_manager: ^3.3.3
 
   # Image caching.
   cached_network_image: ^3.3.1

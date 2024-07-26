@@ -13,6 +13,7 @@ import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/staff/staff_roles_view.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class StaffView extends ConsumerStatefulWidget {
   const StaffView(this.id, this.imageUrl);
@@ -107,8 +108,9 @@ class _StaffViewState extends ConsumerState<StaffView>
       ),
       child: TabScaffold(
         topBar: topBar,
-        child: TabBarView(
-          controller: _tabCtrl,
+        child: SwipeSwitcher(
+          index: _tabCtrl.index,
+          onChanged: (index) => _tabCtrl.index = index,
           children: [
             StaffOverviewSubview(
               id: widget.id,

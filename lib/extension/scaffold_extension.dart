@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/drag_detector.dart';
 
 extension ScaffoldExtension on Scaffold {
   static Widget expanded({
@@ -189,96 +188,6 @@ class _FloatingActionGroupState extends State<_FloatingActionGroup>
               _children[i],
             ],
           ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Detects swiping and animates the icon switching.
-class DraggableIcon extends StatefulWidget {
-  const DraggableIcon({required this.icon, required this.onSwipe});
-
-  final IconData icon;
-  final IconData? Function(bool) onSwipe;
-
-  @override
-  State<DraggableIcon> createState() => _DraggableIconState();
-}
-
-class _DraggableIconState extends State<DraggableIcon>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
-  late IconData _icon;
-
-  // The icon fades out on exit and fades in on entrance.
-  late Animation<double> _opacity;
-
-  // For when the icon exits/enters from the left.
-  late Animation<Offset> _left;
-
-  // For when the icon exits/enters from the right.
-  late Animation<Offset> _right;
-
-  bool _onRight = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _icon = widget.icon;
-    _ctrl = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-
-    _opacity = Tween(begin: 1.0, end: 0.0).animate(_ctrl);
-
-    _left = Tween(
-      begin: Offset.zero,
-      end: const Offset(-0.25, 0),
-    ).animate(_ctrl);
-
-    _right = Tween(
-      begin: Offset.zero,
-      end: const Offset(0.25, 0),
-    ).animate(_ctrl);
-  }
-
-  @override
-  void didUpdateWidget(covariant DraggableIcon oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _icon = widget.icon;
-  }
-
-  @override
-  void dispose() {
-    _ctrl.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return DragDetector(
-      triggerOffset: Theming.offset,
-      onSwipe: (goRight) {
-        // The previous transition must have finished.
-        if (_ctrl.isAnimating) return;
-
-        if (_onRight == goRight) setState(() => _onRight = !goRight);
-
-        _ctrl.forward().then((_) {
-          setState(() {
-            _icon = widget.onSwipe(goRight) ?? _icon;
-            _onRight = goRight;
-          });
-          _ctrl.reverse();
-        });
-      },
-      child: SlideTransition(
-        position: _onRight ? _right : _left,
-        child: FadeTransition(
-          opacity: _opacity,
-          child: Icon(_icon),
         ),
       ),
     );

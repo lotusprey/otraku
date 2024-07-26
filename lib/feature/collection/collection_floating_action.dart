@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/home/home_provider.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class CollectionFloatingAction extends StatelessWidget {
@@ -63,26 +63,12 @@ class CollectionFloatingAction extends StatelessWidget {
           ]),
         );
       },
-      child: DraggableIcon(
-        icon: Ionicons.menu_outline,
-        onSwipe: (goRight) {
-          if (goRight) {
-            if (index < lists.length - 1) {
-              index++;
-            } else {
-              index = 0;
-            }
-          } else {
-            if (index > 0) {
-              index--;
-            } else {
-              index = lists.length - 1;
-            }
-          }
-
-          ref.read(collectionProvider(tag).notifier).changeIndex(index);
-          return null;
-        },
+      child: SwipeSwitcher(
+        circular: true,
+        index: index,
+        children: List.filled(lists.length, const Icon(Ionicons.menu_outline)),
+        onChanged: (index) =>
+            ref.read(collectionProvider(tag).notifier).changeIndex(index),
       ),
     );
   }

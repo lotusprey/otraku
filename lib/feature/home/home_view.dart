@@ -23,6 +23,7 @@ import 'package:otraku/feature/feed/feed_view.dart';
 import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key, this.tab});
@@ -172,8 +173,9 @@ class _HomeViewState extends ConsumerState<HomeView>
           }
         },
       ),
-      child: TabBarView(
-        controller: _tabCtrl,
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
         children: [
           FeedSubview(_feedScrollCtrl),
           CollectionSubview(

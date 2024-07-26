@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class DiscoverFloatingAction extends StatelessWidget {
@@ -38,30 +38,14 @@ class DiscoverFloatingAction extends StatelessWidget {
               ),
             );
           },
-          child: DraggableIcon(
-            icon: _typeIcon(type),
-            onSwipe: (goRight) {
-              var type = ref.read(discoverFilterProvider).type;
-
-              if (goRight) {
-                if (type.index < DiscoverType.values.length - 1) {
-                  type = DiscoverType.values.elementAt(type.index + 1);
-                } else {
-                  type = DiscoverType.values.first;
-                }
-              } else {
-                if (type.index > 0) {
-                  type = DiscoverType.values.elementAt(type.index - 1);
-                } else {
-                  type = DiscoverType.values.last;
-                }
-              }
-
-              ref
-                  .read(discoverFilterProvider.notifier)
-                  .update((s) => s.copyWith(type: type));
-              return _typeIcon(type);
-            },
+          child: SwipeSwitcher(
+            circular: true,
+            index: type.index,
+            onChanged: (index) => ref
+                .read(discoverFilterProvider.notifier)
+                .update((s) => s.copyWith(type: DiscoverType.values[index])),
+            children:
+                DiscoverType.values.map((v) => Icon(_typeIcon(v))).toList(),
           ),
         );
       },

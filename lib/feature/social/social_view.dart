@@ -12,6 +12,7 @@ import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
+import 'package:otraku/widget/swipe_switcher.dart';
 
 class SocialView extends ConsumerStatefulWidget {
   const SocialView(this.id);
@@ -80,8 +81,9 @@ class _SocialViewState extends ConsumerState<SocialView>
               ),
           ],
         ),
-        child: TabBarView(
-          controller: _tabCtrl,
+        child: SwipeSwitcher(
+          index: _tabCtrl.index,
+          onChanged: (index) => _tabCtrl.index = index,
           children: [
             PagedView<UserItem>(
               scrollCtrl: _scrollCtrl,

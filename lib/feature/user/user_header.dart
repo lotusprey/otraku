@@ -6,7 +6,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/util/toast.dart';
@@ -164,10 +163,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       children: [
         isViewer
             ? const SizedBox(width: Theming.offset)
-            : TopBarIcon(
+            : IconButton(
                 tooltip: 'Close',
-                icon: Icons.arrow_back_ios_new_rounded,
-                onTap: context.back,
+                icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                onPressed: context.back,
               ),
         Expanded(
           child: user?.name == null
@@ -183,19 +182,19 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ),
         if (!isViewer && user != null) _FollowButton(user!, toggleFollow),
         if (user?.siteUrl != null)
-          TopBarIcon(
+          IconButton(
             tooltip: 'More',
-            icon: Ionicons.ellipsis_horizontal,
-            onTap: () => showSheet(
+            icon: const Icon(Ionicons.ellipsis_horizontal),
+            onPressed: () => showSheet(
               context,
               SimpleSheet.link(context, user!.siteUrl!),
             ),
           ),
         if (isViewer)
-          TopBarIcon(
+          IconButton(
             tooltip: 'Settings',
-            icon: Ionicons.cog_outline,
-            onTap: () => context.push(Routes.settings),
+            icon: const Icon(Ionicons.cog_outline),
+            onPressed: () => context.push(Routes.settings),
           ),
       ],
     );

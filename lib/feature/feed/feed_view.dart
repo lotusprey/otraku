@@ -30,10 +30,10 @@ class FeedSubview extends StatelessWidget {
           context.push(Routes.notifications);
         };
 
-        Widget result = TopBarIcon(
+        Widget result = IconButton(
           tooltip: 'Notifications',
-          icon: Ionicons.notifications_outline,
-          onTap: openNotifications,
+          icon: const Icon(Ionicons.notifications_outline),
+          onPressed: openNotifications,
         );
 
         if (count > 0) {
@@ -52,13 +52,16 @@ class FeedSubview extends StatelessWidget {
       builder: (context, ref, _) {
         return TabScaffold(
           topBar: TopBar(
-            canPop: false,
             title: 'Feed',
             trailing: [
-              TopBarIcon(
+              IconButton(
                 tooltip: 'Filter',
-                icon: Ionicons.funnel_outline,
-                onTap: () => showActivityFilterSheet(context, ref, homeFeedId),
+                icon: const Icon(Ionicons.funnel_outline),
+                onPressed: () => showActivityFilterSheet(
+                  context,
+                  ref,
+                  homeFeedId,
+                ),
               ),
               notificationIcon,
             ],

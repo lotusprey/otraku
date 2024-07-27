@@ -72,10 +72,10 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         ? TopBar(
             title: character.valueOrNull!.name,
             trailing: [
-              TopBarIcon(
+              IconButton(
                 tooltip: 'More',
-                icon: Ionicons.ellipsis_horizontal,
-                onTap: () => showSheet(
+                icon: const Icon(Ionicons.ellipsis_horizontal),
+                onPressed: () => showSheet(
                   context,
                   SimpleSheet.link(context, character.valueOrNull!.siteUrl!),
                 ),

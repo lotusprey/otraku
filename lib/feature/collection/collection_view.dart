@@ -79,7 +79,6 @@ class CollectionSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return TabScaffold(
       topBar: TopBar(
-        canPop: tag.userId != Persistence().id,
         trailing: [_TopBarContent(tag, focusNode)],
       ),
       child: Scrollbar(
@@ -118,10 +117,10 @@ class _TopBarContent extends StatelessWidget {
       builder: (context, ref, _) {
         final filter = ref.watch(collectionFilterProvider(tag));
 
-        final filterIcon = TopBarIcon(
+        final filterIcon = IconButton(
           tooltip: 'Filter',
-          icon: Ionicons.funnel_outline,
-          onTap: () => showSheet(
+          icon: const Icon(Ionicons.funnel_outline),
+          onPressed: () => showSheet(
             context,
             FilterCollectionView(
               ofAnime: tag.ofAnime,
@@ -150,10 +149,10 @@ class _TopBarContent extends StatelessWidget {
                       .update((s) => s.copyWith(search: search)),
                 ),
               ),
-              TopBarIcon(
+              IconButton(
                 tooltip: 'Random',
-                icon: Ionicons.shuffle_outline,
-                onTap: () {
+                icon: const Icon(Ionicons.shuffle_outline),
+                onPressed: () {
                   final entries =
                       ref.read(collectionEntriesProvider(tag)).valueOrNull ??
                           const [];

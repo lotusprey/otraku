@@ -11,7 +11,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/util/toast.dart';
@@ -152,10 +151,10 @@ class AuthViewState extends ConsumerState<AuthView> {
                       ],
                     ),
                     const Spacer(),
-                    TopBarIcon(
-                      icon: Ionicons.close_circle_outline,
+                    IconButton(
                       tooltip: 'Remove Account',
-                      onTap: () => showDialog(
+                      icon: const Icon(Ionicons.close_circle_outline),
+                      onPressed: () => showDialog(
                         context: context,
                         builder: (context) => ConfirmationDialog(
                           title: 'Remove Account?',

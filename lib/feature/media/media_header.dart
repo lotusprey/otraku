@@ -6,7 +6,6 @@ import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/util/toast.dart';
@@ -180,10 +179,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
 
     final topRow = Row(
       children: [
-        TopBarIcon(
+        IconButton(
           tooltip: 'Close',
-          icon: Icons.arrow_back_ios_rounded,
-          onTap: context.back,
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          onPressed: context.back,
         ),
         Expanded(
           child: info?.preferredTitle == null
@@ -198,10 +197,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                 ),
         ),
         if (info?.siteUrl != null)
-          TopBarIcon(
+          IconButton(
             tooltip: 'More',
-            icon: Ionicons.ellipsis_horizontal,
-            onTap: () => showSheet(
+            icon: const Icon(Ionicons.ellipsis_horizontal),
+            onPressed: () => showSheet(
               context,
               SimpleSheet.link(context, info!.siteUrl!),
             ),

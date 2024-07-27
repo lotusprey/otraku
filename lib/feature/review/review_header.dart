@@ -3,7 +3,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -140,10 +139,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           height: Theming.minTapTarget,
           child: Row(
             children: [
-              TopBarIcon(
+              IconButton(
                 tooltip: 'Close',
-                icon: Ionicons.chevron_back_outline,
-                onTap: context.back,
+                icon: const Icon(Ionicons.chevron_back_outline),
+                onPressed: context.back,
               ),
               Expanded(
                 child: title != null
@@ -158,10 +157,10 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                     : const SizedBox(),
               ),
               if (siteUrl != null)
-                TopBarIcon(
+                IconButton(
                   tooltip: 'More',
-                  icon: Ionicons.ellipsis_horizontal,
-                  onTap: () => showSheet(
+                  icon: const Icon(Ionicons.ellipsis_horizontal),
+                  onPressed: () => showSheet(
                     context,
                     SimpleSheet.link(context, siteUrl!),
                   ),

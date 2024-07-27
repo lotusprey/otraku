@@ -101,7 +101,7 @@ class Routes {
       GoRoute(path: '/', redirect: (context, state) => '/home'),
       GoRoute(
         path: '/404',
-        builder: (context, state) => const NotFoundView(canPop: true),
+        builder: (context, state) => const NotFoundView(),
       ),
       GoRoute(
         path: '/auth',
@@ -296,7 +296,7 @@ class Routes {
       routes: routes,
       initialLocation:
           persistence.selectedAccount != null ? Routes.home() : Routes.auth,
-      errorBuilder: (context, state) => const NotFoundView(canPop: false),
+      errorBuilder: (context, state) => const NotFoundView(),
     );
   }
 }
@@ -305,14 +305,12 @@ String? _parseIdOr404(BuildContext context, GoRouterState state) =>
     int.tryParse(state.pathParameters['id'] ?? '') == null ? '404' : null;
 
 class NotFoundView extends StatelessWidget {
-  const NotFoundView({required this.canPop});
-
-  final bool canPop;
+  const NotFoundView();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopBar(title: 'Not Found', canPop: canPop),
+      appBar: const TopBar(title: 'Not Found'),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

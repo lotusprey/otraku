@@ -30,7 +30,7 @@ class DiscoverSubview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TabScaffold(
-      topBar: TopBar(canPop: false, trailing: [_TopBarContent(focusNode)]),
+      topBar: TopBar(trailing: [_TopBarContent(focusNode)]),
       child: _Grid(scrollCtrl),
     );
   }
@@ -72,10 +72,10 @@ class _TopBarContent extends StatelessWidget {
                   ),
                 ),
               if (filter.type == DiscoverType.anime)
-                TopBarIcon(
+                IconButton(
                   tooltip: 'Calendar',
-                  icon: Ionicons.calendar_outline,
-                  onTap: () => context.push(Routes.calendar),
+                  icon: const Icon(Ionicons.calendar_outline),
+                  onPressed: () => context.push(Routes.calendar),
                 ),
               if (filter.type == DiscoverType.anime ||
                   filter.type == DiscoverType.manga)
@@ -92,10 +92,10 @@ class _TopBarContent extends StatelessWidget {
                   filter.type == DiscoverType.staff)
                 _BirthdayFilter(ref)
               else if (filter.type == DiscoverType.review)
-                TopBarIcon(
+                IconButton(
                   tooltip: 'Sort',
-                  icon: Ionicons.funnel_outline,
-                  onTap: () => showReviewsFilterSheet(
+                  icon: const Icon(Ionicons.funnel_outline),
+                  onPressed: () => showReviewsFilterSheet(
                     context: context,
                     filter: filter.reviewsFilter,
                     onDone: (filter) => ref
@@ -117,10 +117,10 @@ class _TopBarContent extends StatelessWidget {
     WidgetRef ref,
     DiscoverFilter filter,
   ) {
-    return TopBarIcon(
+    return IconButton(
       tooltip: 'Filter',
-      icon: Ionicons.funnel_outline,
-      onTap: () => showSheet(
+      icon: const Icon(Ionicons.funnel_outline),
+      onPressed: () => showSheet(
         context,
         FilterDiscoverView(
           ofAnime: filter.type == DiscoverType.anime,
@@ -144,14 +144,22 @@ class _BirthdayFilter extends StatelessWidget {
     final hasBirthday =
         ref.watch(discoverFilterProvider.select((s) => s.hasBirthday));
 
-    return TopBarIcon(
-      icon: Icons.cake_outlined,
+    final icon = IconButton(
       tooltip: 'Birthday Filter',
-      accented: hasBirthday,
-      onTap: () => ref
+      icon: const Icon(Icons.cake_outlined),
+      onPressed: () => ref
           .read(discoverFilterProvider.notifier)
           .update((s) => s.copyWith(hasBirthday: !hasBirthday)),
     );
+
+    return hasBirthday
+        ? Badge(
+            smallSize: 10,
+            alignment: Alignment.topLeft,
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: icon,
+          )
+        : icon;
   }
 }
 

@@ -696,7 +696,7 @@ abstract class GqlQuery {
   static const genresAndTags = '''
     query Filters {
       GenreCollection
-      MediaTagCollection {id name description category isGeneralSpoiler}
+      MediaTagCollection {id name description category}
     }
   ''';
 }

@@ -16,7 +16,6 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/util/toast.dart';
@@ -53,6 +52,18 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     );
 
     return ScaffoldExtension.expanded(
+      topBar: TopBar(
+        trailing: [
+          Expanded(
+            child: Text(
+              '${ref.watch(notificationsFilterProvider).label} Notifications',
+              style: Theme.of(context).textTheme.titleLarge,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+          ),
+        ],
+      ),
       floatingActionConfig: (
         scrollCtrl: _ctrl,
         actions: [
@@ -63,28 +74,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ),
         ],
       ),
-      child: TabScaffold(
-        topBar: TopBar(
-          trailing: [
-            Expanded(
-              child: Text(
-                '${ref.watch(notificationsFilterProvider).label} Notifications',
-                style: Theme.of(context).textTheme.titleLarge,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-              ),
-            ),
-          ],
-        ),
-        child: PagedView<SiteNotification>(
-          scrollCtrl: _ctrl,
-          onRefresh: (invalidate) => invalidate(notificationsProvider),
-          provider: notificationsProvider,
-          onData: (data) => SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, i) => _NotificationItem(data.items[i], i < unreadCount),
-              childCount: data.items.length,
-            ),
+      child: PagedView<SiteNotification>(
+        scrollCtrl: _ctrl,
+        onRefresh: (invalidate) => invalidate(notificationsProvider),
+        provider: notificationsProvider,
+        onData: (data) => SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, i) => _NotificationItem(data.items[i], i < unreadCount),
+            childCount: data.items.length,
           ),
         ),
       ),

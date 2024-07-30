@@ -9,7 +9,6 @@ import 'package:otraku/feature/user/user_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
@@ -58,17 +57,9 @@ class _SocialViewState extends ConsumerState<SocialView>
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
     return ScaffoldExtension.expanded(
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Following': Ionicons.people_circle,
-          'Followers': Ionicons.person_circle,
-        },
-      ),
-      child: TabScaffold(
-        topBar: TopBar(
+      topBar: TopBarAnimatedSwitcher(
+        TopBar(
+          key: Key('${tab.title}TopBar'),
           title: tab.title,
           trailing: [
             if (count > 0)
@@ -81,28 +72,37 @@ class _SocialViewState extends ConsumerState<SocialView>
               ),
           ],
         ),
-        child: SwipeSwitcher(
-          index: _tabCtrl.index,
-          onChanged: (index) => _tabCtrl.index = index,
-          children: [
-            PagedView<UserItem>(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.following),
-              ),
-              onData: (data) => UserGrid(data.items),
+      ),
+      bottomBar: BottomNavBar(
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
+        items: const {
+          'Following': Ionicons.people_circle,
+          'Followers': Ionicons.person_circle,
+        },
+      ),
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
+        children: [
+          PagedView<UserItem>(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.following),
             ),
-            PagedView<UserItem>(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.followers),
-              ),
-              onData: (data) => UserGrid(data.items),
+            onData: (data) => UserGrid(data.items),
+          ),
+          PagedView<UserItem>(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.followers),
             ),
-          ],
-        ),
+            onData: (data) => UserGrid(data.items),
+          ),
+        ],
       ),
     );
   }

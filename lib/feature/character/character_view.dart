@@ -10,7 +10,6 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/character/character_overview_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
@@ -85,6 +84,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
         : const TopBar();
 
     return ScaffoldExtension.expanded(
+      topBar: topBar,
       floatingActionConfig: (
         scrollCtrl: _scrollCtrl,
         actions: [
@@ -107,21 +107,18 @@ class _CharacterViewState extends ConsumerState<CharacterView>
           'Manga': Ionicons.book_outline,
         },
       ),
-      child: TabScaffold(
-        topBar: topBar,
-        child: SwipeSwitcher(
-          index: _tabCtrl.index,
-          onChanged: (index) => _tabCtrl.index = index,
-          children: [
-            CharacterOverviewSubview(
-              id: widget.id,
-              scrollCtrl: _scrollCtrl,
-              imageUrl: widget.imageUrl,
-            ),
-            CharacterAnimeSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-            CharacterMangaSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-          ],
-        ),
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
+        children: [
+          CharacterOverviewSubview(
+            id: widget.id,
+            scrollCtrl: _scrollCtrl,
+            imageUrl: widget.imageUrl,
+          ),
+          CharacterAnimeSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+          CharacterMangaSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        ],
       ),
     );
   }

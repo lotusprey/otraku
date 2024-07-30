@@ -23,7 +23,6 @@ class MediaReviewsSubview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PagedView<RelatedReview>(
-      withTopOffset: false,
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
       provider: mediaRelationsProvider(id).select(

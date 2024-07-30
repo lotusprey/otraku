@@ -62,6 +62,7 @@ class _MediaViewState extends State<MediaView>
         );
 
         final media = ref.watch(mediaProvider(widget.id));
+        final mediaQuery = MediaQuery.of(context);
 
         return ScaffoldExtension.expanded(
           floatingActionConfig: (
@@ -90,17 +91,22 @@ class _MediaViewState extends State<MediaView>
                 scrollToTop: _scrollCtrl.scrollToTop,
               ),
             ],
-            body: media.unwrapPrevious().when(
-                  loading: () => const Center(child: Loader()),
-                  error: (_, __) => const Center(
-                    child: Text('Failed to load media'),
+            body: MediaQuery(
+              data: mediaQuery.copyWith(
+                padding: mediaQuery.padding.copyWith(top: 0),
+              ),
+              child: media.unwrapPrevious().when(
+                    loading: () => const Center(child: Loader()),
+                    error: (_, __) => const Center(
+                      child: Text('Failed to load media'),
+                    ),
+                    data: (media) => _MediaViewContent(
+                      widget.id,
+                      media,
+                      _tabCtrl,
+                    ),
                   ),
-                  data: (media) => _MediaViewContent(
-                    widget.id,
-                    media,
-                    _tabCtrl,
-                  ),
-                ),
+            ),
           ),
         );
       },

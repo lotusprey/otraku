@@ -6,7 +6,6 @@ import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/util/toast.dart';
@@ -45,6 +44,7 @@ class _CalendarViewState extends State<CalendarView> {
             date.year == today.year;
 
         return ScaffoldExtension.expanded(
+          topBar: const TopBar(title: 'Calendar'),
           floatingActionConfig: (
             scrollCtrl: _scrollCtrl,
             actions: [
@@ -96,23 +96,20 @@ class _CalendarViewState extends State<CalendarView> {
             ),
             const SizedBox(width: Theming.offset),
           ]),
-          child: TabScaffold(
-            topBar: const TopBar(title: 'Calendar'),
-            child: PagedView(
-              provider: calendarProvider,
-              scrollCtrl: _scrollCtrl,
-              onRefresh: (invalidate) => invalidate(calendarProvider),
-              onData: (data) => SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => _Tile(data.items[i]),
-                  childCount: data.items.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisExtent: 120,
-                  mainAxisSpacing: Theming.offset,
-                  crossAxisSpacing: Theming.offset,
-                ),
+          child: PagedView(
+            provider: calendarProvider,
+            scrollCtrl: _scrollCtrl,
+            onRefresh: (invalidate) => invalidate(calendarProvider),
+            onData: (data) => SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (context, i) => _Tile(data.items[i]),
+                childCount: data.items.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisExtent: 120,
+                mainAxisSpacing: Theming.offset,
+                crossAxisSpacing: Theming.offset,
               ),
             ),
           ),

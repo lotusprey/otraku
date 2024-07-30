@@ -4,13 +4,17 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
+import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_floating_action.dart';
+import 'package:otraku/feature/collection/collection_top_bar.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_floating_action.dart';
 import 'package:otraku/feature/discover/discover_provider.dart';
+import 'package:otraku/feature/discover/discover_top_bar.dart';
 import 'package:otraku/feature/feed/feed_floating_action.dart';
+import 'package:otraku/feature/feed/feed_top_bar.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
@@ -19,10 +23,10 @@ import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
-import 'package:otraku/feature/feed/feed_view.dart';
 import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -112,6 +116,43 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
+    final topBar = TopBarAnimatedSwitcher(
+      switch (_tabCtrl.index) {
+        0 => const TopBar(
+            key: Key('feedTopBar'),
+            title: 'Feed',
+            trailing: [
+              FeedTopBarTrailingContent(),
+            ],
+          ),
+        1 => TopBar(
+            key: const Key('animeCollectionTopBar'),
+            trailing: [
+              CollectionTopBarTrailingContent(
+                _animeCollectionTag,
+                _searchFocusNode,
+              ),
+            ],
+          ),
+        2 => TopBar(
+            key: const Key('mangaCollectionTopBar'),
+            trailing: [
+              CollectionTopBarTrailingContent(
+                _mangaCollectionTag,
+                _searchFocusNode,
+              ),
+            ],
+          ),
+        3 => TopBar(
+            key: const Key('discoverTobBar'),
+            trailing: [
+              DiscoverTopBarTrailingContent(_searchFocusNode),
+            ],
+          ),
+        _ => null,
+      },
+    );
+
     final FloatingActionConfig floatingActionConfig = switch (_tabCtrl.index) {
       0 => (
           scrollCtrl: _feedScrollCtrl,
@@ -133,6 +174,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     };
 
     return ScaffoldExtension.expanded(
+      topBar: topBar,
       floatingActionConfig: floatingActionConfig,
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
@@ -177,20 +219,18 @@ class _HomeViewState extends ConsumerState<HomeView>
         index: _tabCtrl.index,
         onChanged: (index) => _tabCtrl.index = index,
         children: [
-          FeedSubview(_feedScrollCtrl),
+          ActivitiesSubView(homeFeedId, _feedScrollCtrl),
           CollectionSubview(
             scrollCtrl: _animeScrollCtrl,
             tag: _animeCollectionTag,
-            focusNode: _searchFocusNode,
             key: Key(true.toString()),
           ),
           CollectionSubview(
             scrollCtrl: _mangaScrollCtrl,
             tag: _mangaCollectionTag,
-            focusNode: _searchFocusNode,
             key: Key(false.toString()),
           ),
-          DiscoverSubview(_searchFocusNode, _discoverScrollCtrl),
+          DiscoverSubview(_discoverScrollCtrl),
           UserSubview(_userTag, null, primaryScrollCtrl),
         ],
       ),

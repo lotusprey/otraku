@@ -129,7 +129,8 @@ class _SwipeSwitcherState extends State<SwipeSwitcher>
             final delta = (diff / halfAvailableWidth).clamp(-1.0, 1.0);
             _animationCtrl.value = delta < 0 ? 1 + delta : delta;
 
-            if (delta >= 0.5 && _lastDelta < 0.5) {
+            if (delta >= 0.5 && _lastDelta < 0.5 ||
+                delta >= -0.5 && _lastDelta < -0.5) {
               setState(() {
                 _index++;
 
@@ -137,7 +138,8 @@ class _SwipeSwitcherState extends State<SwipeSwitcher>
               });
 
               widget.onChanged(_index);
-            } else if (delta <= -0.5 && _lastDelta > -0.5) {
+            } else if (delta <= -0.5 && _lastDelta > -0.5 ||
+                delta <= 0.5 && _lastDelta > 0.5) {
               setState(() {
                 _index--;
 

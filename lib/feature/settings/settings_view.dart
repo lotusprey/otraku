@@ -13,7 +13,6 @@ import 'package:otraku/feature/settings/settings_about_view.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
@@ -53,42 +52,38 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     );
 
     final tabs = [
-      TabScaffold(
-        topBar: const TopBar(title: 'App'),
-        child: ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsAppSubview(_scrollCtrl),
-        ),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAppSubview(_scrollCtrl),
       ),
       if (_settings != null) ...[
-        TabScaffold(
-          topBar: const TopBar(title: 'Content'),
-          child: ConstrainedView(
-            padding: EdgeInsets.zero,
-            child: SettingsContentSubview(_scrollCtrl, _settings!),
-          ),
+        ConstrainedView(
+          padding: EdgeInsets.zero,
+          child: SettingsContentSubview(_scrollCtrl, _settings!),
         ),
-        TabScaffold(
-          topBar: const TopBar(title: 'Notifications'),
-          child: ConstrainedView(
-            padding: EdgeInsets.zero,
-            child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
-          ),
+        ConstrainedView(
+          padding: EdgeInsets.zero,
+          child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
         ),
       ] else ...[
         const SizedBox(),
         const SizedBox(),
       ],
-      TabScaffold(
-        topBar: const TopBar(title: 'About'),
-        child: ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsAboutSubview(_scrollCtrl),
-        ),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAboutSubview(_scrollCtrl),
       ),
     ];
 
     return ScaffoldExtension.expanded(
+      topBar: TopBarAnimatedSwitcher(
+        switch (_tabCtrl.index) {
+          0 => const TopBar(key: Key('0'), title: 'App'),
+          1 => const TopBar(key: Key('1'), title: 'Content'),
+          2 => const TopBar(key: Key('2'), title: 'Notifications'),
+          _ => const TopBar(key: Key('3'), title: 'About'),
+        },
+      ),
       floatingActionConfig: (
         scrollCtrl: _scrollCtrl,
         actions: _tabCtrl.index == 1 || _tabCtrl.index == 2

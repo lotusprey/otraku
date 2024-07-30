@@ -28,7 +28,7 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
+    final screenWidth = MediaQuery.sizeOf(context).width;
     final textRailItems = <String, bool>{};
     if (user != null) {
       if (user!.modRoles.isNotEmpty) textRailItems[user!.modRoles[0]] = false;
@@ -43,8 +43,8 @@ class UserHeader extends StatelessWidget {
         user: user,
         imageUrl: imageUrl,
         textRailItems: textRailItems,
-        topOffset: MediaQuery.paddingOf(context).top,
-        imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
+        topPadding: MediaQuery.paddingOf(context).top,
+        imageWidth: screenWidth < 430.0 ? screenWidth * 0.30 : 100.0,
         toggleFollow: toggleFollow,
       ),
     );
@@ -57,7 +57,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.isViewer,
     required this.user,
     required this.imageUrl,
-    required this.topOffset,
+    required this.topPadding,
     required this.imageWidth,
     required this.textRailItems,
     required this.toggleFollow,
@@ -67,10 +67,22 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final bool isViewer;
   final User? user;
   final String? imageUrl;
-  final double topOffset;
+  final double topPadding;
   final double imageWidth;
   final Map<String, bool> textRailItems;
   final Future<Object?> Function() toggleFollow;
+
+  static const _bannerBaseHeight = 200.0;
+
+  @override
+  double get minExtent => topPadding + Theming.normalTapTarget;
+
+  @override
+  double get maxExtent => topPadding + _bannerBaseHeight + imageWidth / 2;
+
+  @override
+  bool shouldRebuild(covariant _Delegate oldDelegate) =>
+      user != oldDelegate.user || topPadding != oldDelegate.topPadding;
 
   @override
   Widget build(
@@ -79,7 +91,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final height = maxExtent;
-    final bannerOffset = height - _bannerBaseHeight - topOffset;
+    final bannerOffset = height - _bannerBaseHeight - topPadding;
 
     var transition = shrinkOffset > _bannerBaseHeight
         ? (shrinkOffset - _bannerBaseHeight) / (imageWidth / 4)
@@ -254,7 +266,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.minTapTarget,
+            height: topPadding + Theming.minTapTarget,
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -273,7 +285,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             top: 0,
             left: 0,
             right: 0,
-            height: topOffset + Theming.minTapTarget,
+            height: topPadding + Theming.minTapTarget,
             child: Opacity(
               opacity: transition,
               child: DecoratedBox(
@@ -287,7 +299,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         Positioned(
           left: 0,
           right: 0,
-          top: topOffset,
+          top: topPadding,
           height: Theming.minTapTarget,
           child: topRow,
         ),
@@ -308,18 +320,6 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             ),
           );
   }
-
-  static const _bannerBaseHeight = 200.0;
-
-  @override
-  double get minExtent => topOffset + Theming.minTapTarget;
-
-  @override
-  double get maxExtent => topOffset + _bannerBaseHeight + imageWidth / 2;
-
-  @override
-  bool shouldRebuild(covariant _Delegate oldDelegate) =>
-      user != oldDelegate.user;
 }
 
 class _FollowButton extends StatefulWidget {

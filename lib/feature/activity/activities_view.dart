@@ -13,7 +13,6 @@ import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -41,6 +40,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldExtension.expanded(
+      topBar: const TopBar(title: 'Activities'),
       floatingActionConfig: (
         scrollCtrl: _ctrl,
         actions: [
@@ -71,10 +71,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
           ),
         ],
       ),
-      child: TabScaffold(
-        topBar: const TopBar(title: 'Activities'),
-        child: ActivitiesSubView(widget.id, _ctrl),
-      ),
+      child: ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }

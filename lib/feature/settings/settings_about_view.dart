@@ -28,7 +28,7 @@ class SettingsAboutSubview extends StatelessWidget {
           child: ListView(
             controller: scrollCtrl,
             padding: EdgeInsets.only(
-              top: padding.top + Theming.normalTapTarget + Theming.offset,
+              top: padding.top + Theming.offset,
               bottom: padding.bottom + Theming.offset,
             ),
             children: [

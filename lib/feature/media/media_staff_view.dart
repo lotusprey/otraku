@@ -14,7 +14,6 @@ class MediaStaffSubview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PagedView<Relation>(
-      withTopOffset: false,
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
       provider: mediaRelationsProvider(id).select(

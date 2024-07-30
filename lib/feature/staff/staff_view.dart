@@ -9,7 +9,6 @@ import 'package:otraku/feature/staff/staff_overview_view.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/staff/staff_roles_view.dart';
@@ -85,6 +84,7 @@ class _StaffViewState extends ConsumerState<StaffView>
         : const TopBar();
 
     return ScaffoldExtension.expanded(
+      topBar: topBar,
       floatingActionConfig: (
         scrollCtrl: _scrollCtrl,
         actions: [
@@ -106,21 +106,18 @@ class _StaffViewState extends ConsumerState<StaffView>
           'Roles': Ionicons.briefcase_outline,
         },
       ),
-      child: TabScaffold(
-        topBar: topBar,
-        child: SwipeSwitcher(
-          index: _tabCtrl.index,
-          onChanged: (index) => _tabCtrl.index = index,
-          children: [
-            StaffOverviewSubview(
-              id: widget.id,
-              scrollCtrl: _scrollCtrl,
-              imageUrl: widget.imageUrl,
-            ),
-            StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-            StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-          ],
-        ),
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
+        children: [
+          StaffOverviewSubview(
+            id: widget.id,
+            scrollCtrl: _scrollCtrl,
+            imageUrl: widget.imageUrl,
+          ),
+          StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+          StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        ],
       ),
     );
   }

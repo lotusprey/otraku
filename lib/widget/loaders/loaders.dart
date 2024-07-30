@@ -20,22 +20,16 @@ class Loader extends StatelessWidget {
 }
 
 class SliverRefreshControl extends StatelessWidget {
-  const SliverRefreshControl({
-    required this.onRefresh,
-    this.withTopOffset = true,
-  });
+  const SliverRefreshControl({required this.onRefresh});
 
   final void Function() onRefresh;
-  final bool withTopOffset;
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = withTopOffset
-        ? MediaQuery.paddingOf(context).top + Theming.normalTapTarget
-        : 0.0;
-
     return SliverPadding(
-      padding: EdgeInsets.only(top: topOffset + Theming.offset),
+      padding: EdgeInsets.only(
+        top: MediaQuery.paddingOf(context).top + Theming.offset,
+      ),
       sliver: CupertinoSliverRefreshControl(
         refreshIndicatorExtent: 15,
         refreshTriggerPullDistance: 160,

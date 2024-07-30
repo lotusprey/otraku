@@ -11,7 +11,6 @@ import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
@@ -63,20 +62,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
     return ScaffoldExtension.expanded(
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.book_outline,
-          'Characters': Ionicons.man_outline,
-          'Staff': Ionicons.briefcase_outline,
-          'Studios': Ionicons.business_outline,
-        },
-      ),
-      child: TabScaffold(
-        topBar: TopBar(
+      topBar: TopBarAnimatedSwitcher(
+        TopBar(
+          key: Key('${tab.title}TopBar'),
           title: tab.title,
           trailing: [
             if (count > 0)
@@ -89,52 +77,64 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
               ),
           ],
         ),
-        child: SwipeSwitcher(
-          index: _tabCtrl.index,
-          onChanged: (index) => _tabCtrl.index = index,
-          children: [
-            PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.anime),
-              ),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+      ),
+      bottomBar: BottomNavBar(
+        current: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
+        items: const {
+          'Anime': Ionicons.film_outline,
+          'Manga': Ionicons.book_outline,
+          'Characters': Ionicons.man_outline,
+          'Staff': Ionicons.briefcase_outline,
+          'Studios': Ionicons.business_outline,
+        },
+      ),
+      child: SwipeSwitcher(
+        index: _tabCtrl.index,
+        onChanged: (index) => _tabCtrl.index = index,
+        children: [
+          PagedView<TileItem>(
+            provider: favoritesProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.anime),
             ),
-            PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.manga),
-              ),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+            onData: (data) => TileItemGrid(data.items),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+          ),
+          PagedView<TileItem>(
+            provider: favoritesProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.manga),
             ),
-            PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.characters),
-              ),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+            onData: (data) => TileItemGrid(data.items),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+          ),
+          PagedView<TileItem>(
+            provider: favoritesProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.characters),
             ),
-            PagedView<TileItem>(
-              provider: favoritesProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.staff),
-              ),
-              onData: (data) => TileItemGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+            onData: (data) => TileItemGrid(data.items),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+          ),
+          PagedView<TileItem>(
+            provider: favoritesProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.staff),
             ),
-            PagedView<StudioItem>(
-              provider: favoritesProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.studios),
-              ),
-              onData: (data) => StudioGrid(data.items),
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
+            onData: (data) => TileItemGrid(data.items),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+          ),
+          PagedView<StudioItem>(
+            provider: favoritesProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.studios),
             ),
-          ],
-        ),
+            onData: (data) => StudioGrid(data.items),
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+          ),
+        ],
       ),
     );
   }

@@ -69,15 +69,23 @@ class UserSubview extends StatelessWidget {
           },
         );
 
+        final mediaQuery = MediaQuery.of(context);
+
+        final refreshControl = MediaQuery(
+          data: mediaQuery.copyWith(
+            padding: mediaQuery.padding.copyWith(top: 0),
+          ),
+          child: SliverRefreshControl(
+            onRefresh: () => ref.invalidate(userProvider(tag)),
+          ),
+        );
+
         return user.unwrapPrevious().when(
               error: (_, __) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(userProvider(tag)),
-                    withTopOffset: false,
-                  ),
+                  refreshControl,
                   const SliverFillRemaining(
                     child: Center(child: Text('Failed to load user')),
                   )
@@ -94,10 +102,7 @@ class UserSubview extends StatelessWidget {
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(userProvider(tag)),
-                    withTopOffset: false,
-                  ),
+                  refreshControl,
                   _ButtonRow(data.id),
                   if (data.description.isNotEmpty) ...[
                     const SliverToBoxAdapter(

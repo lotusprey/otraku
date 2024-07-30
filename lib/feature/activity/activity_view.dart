@@ -18,7 +18,6 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -50,6 +49,9 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     );
 
     return ScaffoldExtension.expanded(
+      topBar: TopBar(
+        trailing: [if (activity != null) _TopBarContent(activity)],
+      ),
       floatingActionConfig: (
         scrollCtrl: _ctrl,
         actions: [
@@ -71,70 +73,65 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
           ),
         ],
       ),
-      child: TabScaffold(
-        topBar: TopBar(
-          trailing: [if (activity != null) _TopBarContent(activity)],
+      child: Consumer(
+        child: SliverRefreshControl(
+          onRefresh: () => ref.invalidate(activityProvider(widget.id)),
         ),
-        child: Consumer(
-          child: SliverRefreshControl(
-            onRefresh: () => ref.invalidate(activityProvider(widget.id)),
-          ),
-          builder: (context, ref, refreshControl) {
-            ref.listen<AsyncValue>(
-              activityProvider(widget.id),
-              (_, s) => s.whenOrNull(
-                error: (error, _) => Toast.show(context, error.toString()),
-              ),
-            );
+        builder: (context, ref, refreshControl) {
+          ref.listen<AsyncValue>(
+            activityProvider(widget.id),
+            (_, s) => s.whenOrNull(
+              error: (error, _) => Toast.show(context, error.toString()),
+            ),
+          );
 
-            return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
-                  loading: () => const Center(child: Loader()),
-                  error: (_, __) => const Center(
-                    child: Text('Failed to load activity'),
-                  ),
-                  data: (data) {
-                    return ConstrainedView(
-                      child: CustomScrollView(
-                        physics: Theming.bouncyPhysics,
-                        controller: _ctrl,
-                        slivers: [
-                          refreshControl!,
-                          SliverToBoxAdapter(
-                            child: ActivityCard(
-                              withHeader: false,
+          return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
+                loading: () => const Center(child: Loader()),
+                error: (_, __) => const Center(
+                  child: Text('Failed to load activity'),
+                ),
+                data: (data) {
+                  return ConstrainedView(
+                    child: CustomScrollView(
+                      physics: Theming.bouncyPhysics,
+                      controller: _ctrl,
+                      slivers: [
+                        refreshControl!,
+                        SliverToBoxAdapter(
+                          child: ActivityCard(
+                            withHeader: false,
+                            activity: data.activity,
+                            footer: ActivityFooter(
                               activity: data.activity,
-                              footer: ActivityFooter(
-                                activity: data.activity,
-                                toggleLike: () => _toggleLike(data.activity),
-                                toggleSubscription: () =>
-                                    _toggleSubscription(data.activity),
-                                togglePin: () => _togglePin(data.activity),
-                                remove: () => _remove(data.activity),
-                                onEdited: _onEdited,
-                                openReplies: null,
-                              ),
+                              toggleLike: () => _toggleLike(data.activity),
+                              toggleSubscription: () =>
+                                  _toggleSubscription(data.activity),
+                              togglePin: () => _togglePin(data.activity),
+                              remove: () => _remove(data.activity),
+                              onEdited: _onEdited,
+                              openReplies: null,
                             ),
                           ),
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              childCount: data.replies.items.length,
-                              (context, i) => ReplyCard(
-                                activityId: widget.id,
-                                reply: data.replies.items[i],
-                                toggleLike: () => ref
-                                    .read(activityProvider(widget.id).notifier)
-                                    .toggleReplyLike(data.replies.items[i].id),
-                              ),
+                        ),
+                        SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            childCount: data.replies.items.length,
+                            (context, i) => ReplyCard(
+                              activityId: widget.id,
+                              reply: data.replies.items[i],
+                              toggleLike: () => ref
+                                  .read(activityProvider(widget.id).notifier)
+                                  .toggleReplyLike(data.replies.items[i].id),
                             ),
                           ),
-                          SliverFooter(loading: data.replies.hasNext),
-                        ],
-                      ),
-                    );
-                  },
-                );
-          },
-        ),
+                        ),
+                        SliverFooter(loading: data.replies.hasNext),
+                      ],
+                    ),
+                  );
+                },
+              );
+        },
       ),
     );
   }

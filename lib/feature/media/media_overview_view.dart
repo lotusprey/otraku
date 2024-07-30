@@ -70,7 +70,7 @@ class MediaOverviewSubview extends StatelessWidget {
           controller: scrollCtrl,
           physics: Theming.bouncyPhysics,
           slivers: [
-            SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
+            SliverRefreshControl(onRefresh: invalidate),
             if (info.description.isNotEmpty) _Description(info.description),
             SliverToBoxAdapter(
               child: Card.outlined(

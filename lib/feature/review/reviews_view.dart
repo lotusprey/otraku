@@ -6,7 +6,6 @@ import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
@@ -40,6 +39,19 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
     );
 
     return ScaffoldExtension.expanded(
+      topBar: TopBar(
+        title: 'Reviews',
+        trailing: [
+          if (count > 0)
+            Padding(
+              padding: const EdgeInsets.only(right: Theming.offset),
+              child: Text(
+                count.toString(),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+            ),
+        ],
+      ),
       floatingActionConfig: (
         scrollCtrl: _ctrl,
         actions: [
@@ -56,26 +68,11 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           ),
         ],
       ),
-      child: TabScaffold(
-        topBar: TopBar(
-          title: 'Reviews',
-          trailing: [
-            if (count > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-              ),
-          ],
-        ),
-        child: PagedView<ReviewItem>(
-          scrollCtrl: _ctrl,
-          onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
-          provider: reviewsProvider(widget.id),
-          onData: (data) => ReviewGrid(data.items),
-        ),
+      child: PagedView<ReviewItem>(
+        scrollCtrl: _ctrl,
+        onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
+        provider: reviewsProvider(widget.id),
+        onData: (data) => ReviewGrid(data.items),
       ),
     );
   }

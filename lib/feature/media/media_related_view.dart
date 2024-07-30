@@ -27,7 +27,7 @@ class MediaRelatedSubview extends StatelessWidget {
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
         slivers: [
-          SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
+          SliverRefreshControl(onRefresh: invalidate),
           _MediaRelatedGrid(relations),
           const SliverFooter(),
         ],

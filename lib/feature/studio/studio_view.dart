@@ -10,7 +10,6 @@ import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -141,6 +140,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
             : const TopBar();
 
         return ScaffoldExtension.expanded(
+          topBar: topBar,
           floatingActionConfig: (
             scrollCtrl: _ctrl,
             actions: studio != null
@@ -155,36 +155,33 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   ]
                 : const [],
           ),
-          child: TabScaffold(
-            topBar: topBar,
-            child: ConstrainedView(
-              child: CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                controller: hasNext != null ? _ctrl : null,
-                slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () {
-                      ref.invalidate(studioProvider(widget.id));
-                      ref.invalidate(studioMediaProvider(widget.id));
-                    },
-                  ),
-                  if (name != null)
-                    SliverToBoxAdapter(
-                      child: GestureDetector(
-                        onTap: () => Toast.copy(context, name),
-                        child: Hero(
-                          tag: widget.id,
-                          child: Text(
-                            name,
-                            style: Theme.of(context).textTheme.titleLarge,
-                          ),
+          child: ConstrainedView(
+            child: CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              controller: hasNext != null ? _ctrl : null,
+              slivers: [
+                SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(studioProvider(widget.id));
+                    ref.invalidate(studioMediaProvider(widget.id));
+                  },
+                ),
+                if (name != null)
+                  SliverToBoxAdapter(
+                    child: GestureDetector(
+                      onTap: () => Toast.copy(context, name),
+                      child: Hero(
+                        tag: widget.id,
+                        child: Text(
+                          name,
+                          style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
                     ),
-                  ...items,
-                  SliverFooter(loading: hasNext ?? false),
-                ],
-              ),
+                  ),
+                ...items,
+                SliverFooter(loading: hasNext ?? false),
+              ],
             ),
           ),
         );

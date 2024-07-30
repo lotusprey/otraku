@@ -12,7 +12,6 @@ import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
@@ -50,7 +49,7 @@ class _StatisticsViewState extends State<StatisticsView>
 
   @override
   Widget build(BuildContext context) {
-    final content = Consumer(
+    final child = Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
@@ -99,6 +98,9 @@ class _StatisticsViewState extends State<StatisticsView>
     );
 
     return ScaffoldExtension.expanded(
+      topBar: _tabCtrl.index == 0
+          ? const TopBar(key: Key('0'), title: 'Anime Statistics')
+          : const TopBar(key: Key('1'), title: 'Manga Statistics'),
       bottomBar: BottomNavBar(
         current: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
@@ -108,12 +110,7 @@ class _StatisticsViewState extends State<StatisticsView>
           'Manga': Ionicons.book_outline,
         },
       ),
-      child: TabScaffold(
-        topBar: TopBar(
-          title: _tabCtrl.index == 0 ? 'Anime Statistics' : 'Manga Statistics',
-        ),
-        child: content,
-      ),
+      child: child,
     );
   }
 }
@@ -146,9 +143,7 @@ class _StatisticsView extends StatelessWidget {
       slivers: [
         SliverToBoxAdapter(
           child: SizedBox(
-            height: MediaQuery.paddingOf(context).top +
-                Theming.normalTapTarget +
-                Theming.offset,
+            height: MediaQuery.paddingOf(context).top + Theming.offset,
           ),
         ),
         _Details(statistics, ofAnime),

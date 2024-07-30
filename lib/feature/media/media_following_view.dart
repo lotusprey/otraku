@@ -18,7 +18,6 @@ class MediaFollowingSubview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PagedView<MediaFollowing>(
-      withTopOffset: false,
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaFollowingProvider(id)),
       provider: mediaFollowingProvider(id),

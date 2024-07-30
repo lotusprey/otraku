@@ -15,7 +15,6 @@ class MediaCharactersSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) => PagedView<Relation>(
-        withTopOffset: false,
         scrollCtrl: scrollCtrl,
         onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
         provider: mediaRelationsProvider(id).select(

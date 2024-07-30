@@ -5,7 +5,7 @@ import 'package:otraku/util/theming.dart';
 
 /// A top app bar implementation that uses a blurred, translucent background.
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
-  const TopBar({this.title, this.trailing = const []});
+  const TopBar({super.key, this.title, this.trailing = const []});
 
   final String? title;
   final List<Widget> trailing;
@@ -49,6 +49,26 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// An [AnimatedSwitcher] wrapper around any [PreferredSizeWidget].
+/// Used for app bars that change depending on the current page tab.
+class TopBarAnimatedSwitcher extends StatelessWidget
+    implements PreferredSizeWidget {
+  const TopBarAnimatedSwitcher(this.child);
+
+  final PreferredSizeWidget? child;
+
+  @override
+  Size get preferredSize => child?.preferredSize ?? const Size.fromHeight(0);
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 200),
+      child: child,
     );
   }
 }

@@ -134,9 +134,9 @@ class CharacterMediaNotifier
         if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
           language = languageToVoiceActors.keys.first;
         }
-
-        anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
       }
+
+      anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
     if (onAnime == null || !onAnime) {

@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scaffold_extension.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/feature/staff/staff_header.dart';
+import 'package:otraku/feature/staff/staff_model.dart';
+import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/feature/staff/staff_floating_actions.dart';
 import 'package:otraku/feature/staff/staff_characters_view.dart';
 import 'package:otraku/feature/staff/staff_overview_view.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/feature/staff/staff_roles_view.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
 
 class StaffView extends ConsumerStatefulWidget {
   const StaffView(this.id, this.imageUrl);
@@ -65,26 +63,9 @@ class _StaffViewState extends ConsumerState<StaffView>
     );
 
     final staff = ref.watch(staffProvider(widget.id));
-    ref.watch(staffRelationsProvider(widget.id).select((_) => null));
-
-    final topBar = staff.valueOrNull != null
-        ? TopBar(
-            title: staff.valueOrNull!.name,
-            trailing: [
-              IconButton(
-                tooltip: 'More',
-                icon: const Icon(Ionicons.ellipsis_horizontal),
-                onPressed: () => showSheet(
-                  context,
-                  SimpleSheet.link(context, staff.valueOrNull!.siteUrl!),
-                ),
-              ),
-            ],
-          )
-        : const TopBar();
+    final mediaQuery = MediaQuery.of(context);
 
     return ScaffoldExtension.expanded(
-      topBar: topBar,
       floatingActionConfig: (
         scrollCtrl: _scrollCtrl,
         actions: [
@@ -96,29 +77,115 @@ class _StaffViewState extends ConsumerState<StaffView>
           if (_tabCtrl.index > 0) StaffFilterButton(widget.id, ref),
         ],
       ),
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Overview': Ionicons.information_outline,
-          'Characters': Ionicons.mic_outline,
-          'Roles': Ionicons.briefcase_outline,
-        },
-      ),
-      child: SwipeSwitcher(
-        index: _tabCtrl.index,
-        onChanged: (index) => _tabCtrl.index = index,
-        children: [
-          StaffOverviewSubview(
+      child: NestedScrollView(
+        controller: _scrollCtrl,
+        headerSliverBuilder: (context, _) => [
+          StaffHeader(
             id: widget.id,
-            scrollCtrl: _scrollCtrl,
             imageUrl: widget.imageUrl,
+            staff: staff.valueOrNull,
+            tabCtrl: _tabCtrl,
+            scrollToTop: _scrollCtrl.scrollToTop,
           ),
-          StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-          StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
         ],
+        body: MediaQuery(
+          data: mediaQuery.copyWith(
+            padding: mediaQuery.padding.copyWith(top: 0),
+          ),
+          child: staff.unwrapPrevious().when(
+                loading: () => const Center(child: Loader()),
+                error: (_, __) => const Center(
+                  child: Text('Failed to load staff'),
+                ),
+                data: (staff) => _StaffViewContent(
+                  widget.id,
+                  staff,
+                  _tabCtrl,
+                ),
+              ),
+        ),
       ),
+    );
+  }
+}
+
+class _StaffViewContent extends ConsumerStatefulWidget {
+  const _StaffViewContent(this.id, this.staff, this.tabCtrl);
+
+  final int id;
+  final Staff staff;
+  final TabController tabCtrl;
+
+  @override
+  ConsumerState<_StaffViewContent> createState() => __StaffViewContentState();
+}
+
+class __StaffViewContentState extends ConsumerState<_StaffViewContent> {
+  late final ScrollController _scrollCtrl;
+  double _lastMaxExtent = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollCtrl = context
+        .findAncestorStateOfType<NestedScrollViewState>()!
+        .innerController;
+    _scrollCtrl.addListener(_scrollListener);
+    widget.tabCtrl.addListener(_tabListener);
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.removeListener(_scrollListener);
+    widget.tabCtrl.removeListener(_tabListener);
+    super.dispose();
+  }
+
+  void _tabListener() {
+    _lastMaxExtent = 0;
+
+    // This is a workaround for an issue with [NestedScrollView].
+    // If you switch to a tab with pagination, where the content
+    // doesn't fill the view, the scroll controller has it's maximum
+    // extent set to 0 and the loading of a next page of items is not triggered.
+    // This is why we need to manually load the second page.
+    if (!widget.tabCtrl.indexIsChanging && _scrollCtrl.hasClients) {
+      final pos = _scrollCtrl.positions.last;
+      if (pos.minScrollExtent == pos.maxScrollExtent) _loadNextPage();
+    }
+  }
+
+  void _scrollListener() {
+    final pos = _scrollCtrl.positions.last;
+    if (pos.pixels < pos.maxScrollExtent - 100) return;
+    if (_lastMaxExtent == pos.maxScrollExtent) return;
+
+    _lastMaxExtent = pos.maxScrollExtent;
+    _loadNextPage();
+  }
+
+  void _loadNextPage() {
+    if (widget.tabCtrl.index < 1) return;
+    ref
+        .read(staffRelationsProvider(widget.id).notifier)
+        .fetch(widget.tabCtrl.index == 1);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ref.watch(staffRelationsProvider(widget.id).select((_) => null));
+
+    return TabBarView(
+      controller: widget.tabCtrl,
+      children: [
+        StaffOverviewSubview(
+          staff: widget.staff,
+          scrollCtrl: _scrollCtrl,
+          invalidate: () => ref.invalidate(staffProvider(widget.id)),
+        ),
+        StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+      ],
     );
   }
 }

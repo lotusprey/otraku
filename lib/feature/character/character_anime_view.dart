@@ -13,22 +13,15 @@ class CharacterAnimeSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) => PagedView<Relation>(
-        scrollCtrl: scrollCtrl,
-        onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
-        provider: characterMediaProvider(id).select(
-          (s) => s.unwrapPrevious().whenData((data) => data.anime),
-        ),
-        onData: (data) {
-          return RelationGrid(
-            ref
-                .watch(characterMediaProvider(id))
-                .requireValue
-                .getAnimeAndVoiceActors(),
-          );
-        },
+    return PagedView<(Relation, Relation?)>(
+      scrollCtrl: scrollCtrl,
+      onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
+      provider: characterMediaProvider(id).select(
+        (s) => s
+            .unwrapPrevious()
+            .whenData((data) => data.assembleAnimeWithVoiceActors()),
       ),
+      onData: (data) => RelationGrid(data.items),
     );
   }
 }

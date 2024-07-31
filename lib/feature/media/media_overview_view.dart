@@ -105,7 +105,7 @@ class MediaOverviewSubview extends StatelessWidget {
               ),
             ),
             spacing,
-            TableList(details),
+            SliverTableList(details),
             if (info.genres.isNotEmpty)
               _PlainScrollCards(
                 title: 'Genres',
@@ -149,7 +149,7 @@ class MediaOverviewSubview extends StatelessWidget {
               _ExternalLinkScrollCards(info.externalLinks),
             spacing,
             spacing,
-            TableList(titles),
+            SliverTableList(titles),
             SliverToBoxAdapter(
               child: SizedBox(
                 height: MediaQuery.paddingOf(context).bottom +

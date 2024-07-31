@@ -16,10 +16,12 @@ TileItem staffItem(Map<String, dynamic> map) => TileItem(
 class Staff {
   Staff._({
     required this.id,
-    required this.name,
+    required this.preferredName,
+    required this.fullName,
+    required this.nativeName,
+    required this.altNames,
     required this.imageUrl,
     required this.description,
-    required this.altNames,
     required this.dateOfBirth,
     required this.dateOfDeath,
     required this.bloodType,
@@ -48,24 +50,19 @@ class Staff {
 
     final altNames = List<String>.from(names['alternative'] ?? []);
 
-    String name;
-    if (nativeName != null) {
-      if (personNaming != PersonNaming.native) {
-        name = fullName;
-        altNames.insert(0, nativeName);
-      } else {
-        name = nativeName;
-        altNames.insert(0, fullName);
-      }
-    } else {
-      name = fullName;
-    }
+    final preferredName = nativeName != null
+        ? personNaming != PersonNaming.native
+            ? fullName
+            : nativeName
+        : fullName;
 
     final yearsActive = map['yearsActive'] as List?;
 
     return Staff._(
       id: map['id'],
-      name: name,
+      preferredName: preferredName,
+      fullName: fullName,
+      nativeName: nativeName,
       altNames: altNames,
       imageUrl: map['image']['large'],
       description: parseMarkdown(map['description'] ?? ''),
@@ -88,10 +85,12 @@ class Staff {
   }
 
   final int id;
-  final String name;
+  final String preferredName;
+  final String fullName;
+  final String? nativeName;
+  final List<String> altNames;
   final String imageUrl;
   final String description;
-  final List<String> altNames;
   final String? dateOfBirth;
   final String? dateOfDeath;
   final String? bloodType;

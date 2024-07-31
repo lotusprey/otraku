@@ -16,11 +16,13 @@ TileItem characterItem(Map<String, dynamic> map) => TileItem(
 class Character {
   Character._({
     required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.description,
+    required this.preferredName,
+    required this.fullName,
+    required this.nativeName,
     required this.altNames,
     required this.altNamesSpoilers,
+    required this.imageUrl,
+    required this.description,
     required this.dateOfBirth,
     required this.bloodType,
     required this.gender,
@@ -49,22 +51,17 @@ class Character {
       growable: false,
     );
 
-    String name;
-    if (nativeName != null) {
-      if (personNaming != PersonNaming.native) {
-        name = fullName;
-        altNames.insert(0, nativeName);
-      } else {
-        name = nativeName;
-        altNames.insert(0, fullName);
-      }
-    } else {
-      name = fullName;
-    }
+    final preferredName = nativeName != null
+        ? personNaming != PersonNaming.native
+            ? fullName
+            : nativeName
+        : fullName;
 
     return Character._(
       id: map['id'],
-      name: name,
+      preferredName: preferredName,
+      fullName: fullName,
+      nativeName: nativeName,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
       description: parseMarkdown(map['description'] ?? ''),
@@ -80,11 +77,13 @@ class Character {
   }
 
   final int id;
-  final String name;
-  final String imageUrl;
-  final String description;
+  final String preferredName;
+  final String fullName;
+  final String? nativeName;
   final List<String> altNames;
   final List<String> altNamesSpoilers;
+  final String imageUrl;
+  final String description;
   final String? dateOfBirth;
   final String? bloodType;
   final String? gender;
@@ -117,15 +116,20 @@ class CharacterMedia {
   /// Returns the media, in which the character has participated,
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
-  List<(Relation, Relation?)> getAnimeAndVoiceActors() {
-    final anime = this.anime.items;
-    if (anime.isEmpty) return [];
+  Paged<(Relation, Relation?)> assembleAnimeWithVoiceActors() {
+    if (anime.items.isEmpty) return const Paged();
 
     final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) return [for (final a in anime) (a, null)];
+    if (actorsPerMedia == null) {
+      return Paged(
+        items: [for (final a in anime.items) (a, null)],
+        hasNext: anime.hasNext,
+        next: anime.next,
+      );
+    }
 
     final animeAndVoiceActors = <(Relation, Relation?)>[];
-    for (final a in anime) {
+    for (final a in anime.items) {
       final actors = actorsPerMedia[a.id];
       if (actors == null || actors.isEmpty) {
         animeAndVoiceActors.add((a, null));
@@ -137,6 +141,10 @@ class CharacterMedia {
       }
     }
 
-    return animeAndVoiceActors;
+    return Paged(
+      items: animeAndVoiceActors,
+      hasNext: anime.hasNext,
+      next: anime.next,
+    );
   }
 }

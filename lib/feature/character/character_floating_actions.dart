@@ -7,7 +7,7 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class CharacterFavoriteButton extends StatefulWidget {
@@ -40,7 +40,7 @@ class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
         if (err == null) return;
 
         setState(() => character.isFavorite = !character.isFavorite);
-        if (context.mounted) Toast.show(context, err.toString());
+        if (context.mounted) SnackBarExtension.show(context, err.toString());
       },
     );
   }

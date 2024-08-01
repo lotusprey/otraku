@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -169,7 +169,10 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   item.rating = oldRating;
                   item.userRating = oldUserRating;
                 });
-                if (context.mounted) Toast.show(context, err.toString());
+
+                if (context.mounted) {
+                  SnackBarExtension.show(context, err.toString());
+                }
               },
               child: item.userRating == true
                   ? Icon(
@@ -221,7 +224,10 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   item.rating = oldRating;
                   item.userRating = oldUserRating;
                 });
-                if (context.mounted) Toast.show(context, err.toString());
+
+                if (context.mounted) {
+                  SnackBarExtension.show(context, err.toString());
+                }
               },
               child: item.userRating == false
                   ? Icon(

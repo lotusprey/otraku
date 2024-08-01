@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -81,7 +81,8 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
           ref.listen<AsyncValue>(
             activityProvider(widget.id),
             (_, s) => s.whenOrNull(
-              error: (error, _) => Toast.show(context, error.toString()),
+              error: (error, _) =>
+                  SnackBarExtension.show(context, error.toString()),
             ),
           );
 

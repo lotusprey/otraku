@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
@@ -16,6 +16,7 @@ class ContentHeader extends StatelessWidget {
     required this.title,
     required this.details,
     required this.siteUrl,
+    this.imageFit = BoxFit.cover,
     this.trailingTopButtons = const [],
     this.imageLargeUrl,
     this.bannerUrl,
@@ -26,6 +27,7 @@ class ContentHeader extends StatelessWidget {
   final String? imageLargeUrl;
   final Object imageHeroTag;
   final double imageHeightToWidthRatio;
+  final BoxFit imageFit;
   final String? title;
   final Widget? details;
   final List<Widget> trailingTopButtons;
@@ -44,10 +46,11 @@ class ContentHeader extends StatelessWidget {
       delegate: _Delegate(
         topPadding: MediaQuery.paddingOf(context).top,
         imageUrl: imageUrl,
+        imageLargeUrl: imageLargeUrl,
         imageHeroTag: imageHeroTag,
         imageWidth: imageWidth,
         imageHeight: imageHeightToWidthRatio * imageWidth,
-        imageLargeUrl: imageLargeUrl,
+        imageFit: imageFit,
         title: title,
         details: details,
         siteUrl: siteUrl,
@@ -72,6 +75,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
     required this.imageHeroTag,
     required this.imageWidth,
     required this.imageHeight,
+    required this.imageFit,
     required this.title,
     required this.details,
     required this.siteUrl,
@@ -87,6 +91,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
   final Object imageHeroTag;
   final double imageWidth;
   final double imageHeight;
+  final BoxFit imageFit;
   final String? title;
   final Widget? details;
   final List<Widget> trailingTopButtons;
@@ -171,7 +176,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                           imageLargeUrl ?? imageUrl!,
                         ),
                       ),
-                      child: CachedImage(imageUrl!),
+                      child: CachedImage(imageUrl!, fit: imageFit),
                     )
                   : null,
             ),
@@ -179,27 +184,27 @@ class _Delegate extends SliverPersistentHeaderDelegate {
         ),
         const SizedBox(width: Theming.offset),
         Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (title != null)
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => Toast.copy(context, title!),
-                    child: Text(
-                      title!,
-                      maxLines: 8,
-                      overflow: TextOverflow.fade,
-                      style: theme.textTheme.titleLarge,
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (title != null)
+                    GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () => SnackBarExtension.copy(context, title!),
+                      child: Text(
+                        title!,
+                        overflow: TextOverflow.fade,
+                        style: theme.textTheme.titleLarge,
+                      ),
                     ),
-                  ),
-                if (details != null) ...[
-                  const SizedBox(height: 5),
-                  details!,
+                  if (details != null) ...[
+                    const SizedBox(height: 5),
+                    details!,
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),

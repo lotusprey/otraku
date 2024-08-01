@@ -14,7 +14,7 @@ import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class StudioView extends ConsumerStatefulWidget {
   const StudioView(this.id, this.name);
@@ -169,7 +169,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                 if (name != null)
                   SliverToBoxAdapter(
                     child: GestureDetector(
-                      onTap: () => Toast.copy(context, name),
+                      onTap: () => SnackBarExtension.copy(context, name),
                       child: Hero(
                         tag: widget.id,
                         child: Text(

@@ -4,7 +4,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/feature/review/review_header.dart';
 import 'package:otraku/feature/review/review_models.dart';
@@ -222,6 +222,6 @@ class _RateButtonsState extends State<_RateButtons> {
       review.totalRating = oldTotalRating;
       review.viewerRating = oldViewerRating;
     });
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 }

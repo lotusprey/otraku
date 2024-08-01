@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scaffold_extension.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
@@ -47,7 +47,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       settingsProvider,
       (_, s) => s.whenOrNull(
         data: (data) => _settings = data.copy(),
-        error: (error, _) => Toast.show(context, error.toString()),
+        error: (error, _) => SnackBarExtension.show(context, error.toString()),
       ),
     );
 

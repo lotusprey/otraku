@@ -8,7 +8,7 @@ import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/statistics/charts.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
@@ -54,7 +54,8 @@ class _StatisticsViewState extends State<StatisticsView>
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) => Toast.show(context, error.toString()),
+            error: (error, _) =>
+                SnackBarExtension.show(context, error.toString()),
           ),
         );
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/model/paged.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 
@@ -59,7 +59,8 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         ref.listen<AsyncValue>(
           provider,
           (_, s) => s.whenOrNull(
-            error: (error, _) => Toast.show(context, error.toString()),
+            error: (error, _) =>
+                SnackBarExtension.show(context, error.toString()),
           ),
         );
 

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
@@ -41,7 +42,7 @@ class SimpleSheet extends StatelessWidget {
           title: const Text('Copy Link'),
           leading: const Icon(Ionicons.clipboard_outline),
           onTap: () {
-            Toast.copy(context, link);
+            SnackBarExtension.copy(context, link);
             Navigator.pop(context);
           },
         ),
@@ -49,7 +50,7 @@ class SimpleSheet extends StatelessWidget {
           title: const Text('Open in Browser'),
           leading: const Icon(Ionicons.link_outline),
           onTap: () {
-            Toast.launch(context, link);
+            SnackBarExtension.launch(context, link);
             Navigator.pop(context);
           },
         ),
@@ -128,12 +129,13 @@ class SheetWithButtonRow extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
-          child: Stack(
-            children: [
-              builder(context, scrollCtrl),
-              if (buttons != null)
-                Align(alignment: Alignment.bottomCenter, child: buttons!),
-            ],
+          child: ScaffoldMessenger(
+            child: ScaffoldExtension.expanded(
+              backgroundColor: Colors.transparent,
+              resizeToAvoidBottomInsets: false,
+              bottomBar: buttons,
+              child: builder(context, scrollCtrl),
+            ),
           ),
         ),
       );

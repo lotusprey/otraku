@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class TableList extends StatelessWidget {
   const TableList(this.items);
@@ -32,7 +32,7 @@ class TableList extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => Toast.copy(context, items[i].$2),
+                  onTap: () => SnackBarExtension.copy(context, items[i].$2),
                   child: Text(items[i].$2, textAlign: TextAlign.end),
                 ),
               ),
@@ -72,7 +72,7 @@ class SliverTableList extends StatelessWidget {
               Expanded(
                 child: GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => Toast.copy(context, items[i].$2),
+                  onTap: () => SnackBarExtension.copy(context, items[i].$2),
                   child: Text(items[i].$2, textAlign: TextAlign.end),
                 ),
               ),

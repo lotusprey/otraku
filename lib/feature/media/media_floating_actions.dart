@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class MediaEditButton extends StatefulWidget {
@@ -65,7 +65,7 @@ class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
         if (err == null) return;
 
         setState(() => info.isFavorite = !info.isFavorite);
-        if (context.mounted) Toast.show(context, err.toString());
+        if (context.mounted) SnackBarExtension.show(context, err.toString());
       },
     );
   }

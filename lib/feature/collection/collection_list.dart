@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/debounce.dart';
 import 'package:otraku/widget/entry_labels.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
@@ -245,7 +245,7 @@ class __TileContentState extends State<_TileContent> {
 
           _resetProgress();
           if (context.mounted) {
-            Toast.show(context, 'Failed updating progress: $err');
+            SnackBarExtension.show(context, 'Failed updating progress: $err');
           }
         });
       },

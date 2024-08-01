@@ -18,7 +18,7 @@ import 'package:otraku/widget/fields/number_field.dart';
 import 'package:otraku/feature/edit/score_field.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
@@ -99,7 +99,7 @@ class _EditView extends StatelessWidget {
                       status == EntryStatus.current &&
                       startedAt == null) {
                     startedAt = DateTime.now();
-                    Toast.show(context, 'Start date changed');
+                    SnackBarExtension.show(context, 'Start date changed');
                   } else if (oldEdit.status != status &&
                       status == EntryStatus.completed &&
                       completedAt == null) {
@@ -111,7 +111,7 @@ class _EditView extends StatelessWidget {
                       text = 'Completed date & progress changed';
                     }
 
-                    Toast.show(context, text);
+                    SnackBarExtension.show(context, text);
                   }
 
                   return s.copyWith(
@@ -157,7 +157,7 @@ class _EditView extends StatelessWidget {
                       : 'Status & Completed date changed';
                 }
 
-                if (text != null) Toast.show(context, text);
+                if (text != null) SnackBarExtension.show(context, text);
               } else if (oldEdit.progress == 0 &&
                   oldEdit.progress != progress) {
                 if (oldEdit.status == status &&
@@ -173,7 +173,7 @@ class _EditView extends StatelessWidget {
                       : 'Status & start date changed';
                 }
               }
-              if (text != null) Toast.show(context, text);
+              if (text != null) SnackBarExtension.show(context, text);
 
               return s.copyWith(
                 progress: progress.toInt(),
@@ -255,7 +255,7 @@ class _EditView extends StatelessWidget {
                       oldEdit.status == null &&
                       status == null) {
                     status = EntryStatus.current;
-                    Toast.show(context, 'Status changed');
+                    SnackBarExtension.show(context, 'Status changed');
                   }
 
                   return s.copyWith(
@@ -292,7 +292,7 @@ class _EditView extends StatelessWidget {
                       text = 'Status & progress changed';
                     }
 
-                    Toast.show(context, text);
+                    SnackBarExtension.show(context, text);
                   }
 
                   return s.copyWith(

@@ -4,7 +4,7 @@ import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/debounce.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
@@ -155,7 +155,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
           _resetProgress();
           if (context.mounted) {
-            Toast.show(context, 'Failed updating progress: $err');
+            SnackBarExtension.show(context, 'Failed updating progress: $err');
           }
         });
       },

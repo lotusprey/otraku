@@ -6,7 +6,7 @@ import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/content_header.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class UserHeader extends StatelessWidget {
@@ -36,6 +36,7 @@ class UserHeader extends StatelessWidget {
       imageUrl: user?.imageUrl ?? imageUrl,
       imageHeightToWidthRatio: 1,
       imageHeroTag: id ?? '',
+      imageFit: BoxFit.contain,
       bannerUrl: user?.bannerUrl,
       siteUrl: user?.siteUrl,
       title: user?.name,
@@ -113,7 +114,9 @@ class __FollowButtonState extends State<_FollowButton> {
 
             setState(() => user.isFollowed = isFollowed);
 
-            if (context.mounted) Toast.show(context, err.toString());
+            if (context.mounted) {
+              SnackBarExtension.show(context, err.toString());
+            }
           });
         },
       ),

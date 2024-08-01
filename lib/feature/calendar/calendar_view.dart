@@ -8,7 +8,7 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
@@ -224,7 +224,7 @@ class _ExternalLinkList extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(right: Theming.offset / 2),
           child: ActionChip(
-            onPressed: () => Toast.launch(context, links[i].url),
+            onPressed: () => SnackBarExtension.launch(context, links[i].url),
             label: Text(links[i].site),
             avatar: links[i].color != null
                 ? Container(

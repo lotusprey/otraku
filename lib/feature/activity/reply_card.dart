@@ -8,7 +8,7 @@ import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -152,7 +152,7 @@ class ReplyCard extends StatelessWidget {
                       return;
                     }
 
-                    Toast.show(context, err.toString());
+                    SnackBarExtension.show(context, err.toString());
                     Navigator.pop(context);
                   });
                 },
@@ -268,6 +268,6 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? 1 : -1;
     });
 
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 }

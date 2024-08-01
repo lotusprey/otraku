@@ -9,11 +9,15 @@ extension ScaffoldExtension on Scaffold {
     PreferredSizeWidget? topBar,
     FloatingActionConfig? floatingActionConfig,
     Widget? bottomBar,
+    Color? backgroundColor,
+    bool? resizeToAvoidBottomInsets,
   }) {
     if (floatingActionConfig == null) {
       return Scaffold(
         extendBody: true,
         extendBodyBehindAppBar: true,
+        backgroundColor: backgroundColor,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInsets,
         appBar: topBar,
         bottomNavigationBar: bottomBar,
         body: SafeArea(top: false, bottom: false, child: child),
@@ -27,6 +31,8 @@ extension ScaffoldExtension on Scaffold {
         return Scaffold(
           extendBody: true,
           extendBodyBehindAppBar: true,
+          backgroundColor: backgroundColor,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInsets,
           appBar: topBar,
           bottomNavigationBar: bottomBar,
           floatingActionButton: _FloatingActionGroup(

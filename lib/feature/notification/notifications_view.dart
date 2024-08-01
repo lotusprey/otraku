@@ -18,7 +18,7 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
@@ -193,10 +193,10 @@ class _NotificationItem extends StatelessWidget {
                             secondaryAction: 'Cancel',
                             onConfirm: () {
                               if (item.details == null) {
-                                Toast.show(context, 'Invalid Link');
+                                SnackBarExtension.show(context, 'Invalid Link');
                                 return;
                               }
-                              Toast.launch(context, item.details!);
+                              SnackBarExtension.launch(context, item.details!);
                             },
                           ),
                         ),

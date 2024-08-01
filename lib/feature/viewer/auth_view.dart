@@ -13,7 +13,7 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class AuthView extends ConsumerStatefulWidget {
   const AuthView([this.credentials]);
@@ -49,7 +49,7 @@ class AuthViewState extends ConsumerState<AuthView> {
 
   Future<void> _triggerAccountSetup() async {
     setState(() => _loading = true);
-    final ok = await Toast.launch(
+    final ok = await SnackBarExtension.launch(
       context,
       'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
     );

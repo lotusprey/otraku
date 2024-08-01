@@ -14,7 +14,7 @@ import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class MediaOverviewSubview extends StatelessWidget {
   const MediaOverviewSubview({
@@ -201,7 +201,7 @@ class _DescriptionState extends State<_Description> {
             onTap: () => setState(() => _expanded = !_expanded),
             onLongPress: () {
               final text = widget.text.replaceAll(RegExp(r'<br>'), '');
-              Toast.copy(context, text);
+              SnackBarExtension.copy(context, text);
             },
             child: Padding(
               padding: const EdgeInsets.all(Theming.offset),
@@ -321,7 +321,7 @@ class _PlainScrollCards extends StatelessWidget {
       title: title,
       itemCount: items.length,
       onTap: onTap,
-      onLongPress: (i) => Toast.copy(context, items[i]),
+      onLongPress: (i) => SnackBarExtension.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
     );
   }
@@ -420,8 +420,8 @@ class _ExternalLinkScrollCards extends StatelessWidget {
     return _ScrollCards(
       title: "External Links",
       itemCount: items.length,
-      onTap: (i) => Toast.launch(context, items[i].url),
-      onLongPress: (i) => Toast.copy(context, items[i].url),
+      onTap: (i) => SnackBarExtension.launch(context, items[i].url),
+      onLongPress: (i) => SnackBarExtension.copy(context, items[i].url),
       builder: (context, i) => Row(
         children: [
           if (items[i].color != null)

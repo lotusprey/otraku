@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -415,7 +415,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.likeCount += isLiked ? 1 : -1;
     });
 
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 
   void _toggleSubscription() {
@@ -430,7 +430,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
       activity.isSubscribed = !activity.isSubscribed;
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });
@@ -448,7 +448,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
       activity.isPinned = !activity.isPinned;
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });
@@ -462,7 +462,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       }
 
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });

@@ -6,7 +6,7 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class StudioFavoriteButton extends StatefulWidget {
@@ -37,7 +37,7 @@ class _StudioFavoriteButtonState extends State<StudioFavoriteButton> {
         if (err == null) return;
 
         setState(() => studio.isFavorite = !studio.isFavorite);
-        if (context.mounted) Toast.show(context, err.toString());
+        if (context.mounted) SnackBarExtension.show(context, err.toString());
       },
     );
   }

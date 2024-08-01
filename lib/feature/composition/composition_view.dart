@@ -9,7 +9,7 @@ import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/composition/composition_provider.dart';
 
 class CompositionView extends StatelessWidget {
@@ -153,9 +153,7 @@ class _CompositionBody extends StatelessWidget {
       left: 20,
       right: 20,
       top: 60,
-      bottom: MediaQuery.paddingOf(context).bottom +
-          BottomBar.height +
-          Theming.offset,
+      bottom: MediaQuery.paddingOf(context).bottom + Theming.offset,
     );
 
     return Stack(
@@ -446,7 +444,7 @@ class __PrivateButtonState extends State<_PrivateButton> {
             () => widget.composition.isPrivate = !widget.composition.isPrivate,
           );
 
-          Toast.show(
+          SnackBarExtension.show(
             context,
             widget.composition.isPrivate
                 ? 'Message is now private'

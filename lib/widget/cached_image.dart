@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// A custom cache manager is needed to define exact image cap and stale period.
 final _cacheManager = CacheManager(
@@ -43,7 +43,8 @@ class CachedImage extends StatelessWidget {
       errorWidget: (context, _, __) => IconButton(
         tooltip: 'Error',
         icon: const Icon(Icons.close_outlined),
-        onPressed: () => Toast.show(context, 'Failed to load image'),
+        onPressed: () =>
+            SnackBarExtension.show(context, 'Failed to load image'),
       ),
     );
   }

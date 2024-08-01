@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/debounce.dart';
 import 'package:otraku/widget/entry_labels.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -102,6 +103,9 @@ class _TileContent extends StatefulWidget {
 }
 
 class __TileContentState extends State<_TileContent> {
+  final _debounce = Debounce();
+  int? _lastProgress;
+
   @override
   Widget build(BuildContext context) {
     final item = widget.item;
@@ -218,27 +222,32 @@ class __TileContentState extends State<_TileContent> {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
-      onPressed: () async {
+      onPressed: () {
         if (item.progressMax != null &&
             item.progress >= item.progressMax! - 1) {
+          _debounce.cancel();
+          _resetProgress();
+
           showSheet(context, EditView((id: item.mediaId, setComplete: true)));
           return;
         }
 
+        _debounce.cancel();
+        _lastProgress ??= item.progress;
         setState(() => item.progress++);
-        final err = await widget.onProgressUpdated!(item);
-        if (err == null) return;
 
-        setState(() => item.progress--);
-        if (context.mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => ConfirmationDialog(
-              title: 'Could not update progress',
-              content: err,
-            ),
-          );
-        }
+        _debounce.run(() async {
+          final err = await widget.onProgressUpdated!(item);
+          if (err == null) {
+            _lastProgress = null;
+            return;
+          }
+
+          _resetProgress();
+          if (context.mounted) {
+            Toast.show(context, 'Failed updating progress: $err');
+          }
+        });
       },
       child: Tooltip(
         message: 'Increment Progress',
@@ -251,5 +260,12 @@ class __TileContentState extends State<_TileContent> {
         ),
       ),
     );
+  }
+
+  void _resetProgress() {
+    if (_lastProgress == null) return;
+
+    setState(() => widget.item.progress = _lastProgress!);
+    _lastProgress = null;
   }
 }

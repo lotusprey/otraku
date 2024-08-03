@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/navigation_tool.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_buttons.dart';
 import 'package:otraku/feature/edit/edit_model.dart';

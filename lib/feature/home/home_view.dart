@@ -19,15 +19,14 @@ import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/feature/user/user_providers.dart';
+import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
-import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
 
 class HomeView extends ConsumerStatefulWidget {
   const HomeView({super.key, this.tab});
@@ -149,7 +148,7 @@ class _HomeViewState extends ConsumerState<HomeView>
               DiscoverTopBarTrailingContent(_searchFocusNode),
             ],
           ),
-        _ => null,
+        _ => const EmptyTopBar() as PreferredSizeWidget,
       },
     );
 
@@ -174,10 +173,11 @@ class _HomeViewState extends ConsumerState<HomeView>
     };
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: topBar,
       floatingActionConfig: floatingActionConfig,
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
+      navigationConfig: (
+        selected: _tabCtrl.index,
         onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
         items: {
           for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
@@ -215,9 +215,9 @@ class _HomeViewState extends ConsumerState<HomeView>
           }
         },
       ),
-      child: SwipeSwitcher(
-        index: _tabCtrl.index,
-        onChanged: (index) => _tabCtrl.index = index,
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
         children: [
           ActivitiesSubView(homeFeedId, _feedScrollCtrl),
           CollectionSubview(
@@ -231,7 +231,12 @@ class _HomeViewState extends ConsumerState<HomeView>
             key: Key(false.toString()),
           ),
           DiscoverSubview(_discoverScrollCtrl),
-          UserSubview(_userTag, null, primaryScrollCtrl),
+          UserHomeView(
+            _userTag,
+            null,
+            homeScrollCtrl: primaryScrollCtrl,
+            removableTopPadding: topBar.preferredSize.height,
+          ),
         ],
       ),
     );

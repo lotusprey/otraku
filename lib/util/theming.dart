@@ -58,6 +58,10 @@ class Theming {
           backgroundColor: scheme.surface.withAlpha(190),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
         ),
+        navigationRailTheme: const NavigationRailThemeData(
+          labelType: NavigationRailLabelType.all,
+          groupAlignment: 0,
+        ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             backgroundColor: scheme.primary,

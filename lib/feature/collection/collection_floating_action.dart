@@ -64,7 +64,6 @@ class CollectionFloatingAction extends StatelessWidget {
         );
       },
       child: SwipeSwitcher(
-        circular: true,
         index: index,
         children: List.filled(lists.length, const Icon(Ionicons.menu_outline)),
         onChanged: (index) =>

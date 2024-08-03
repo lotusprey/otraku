@@ -23,12 +23,44 @@ class UserView extends StatelessWidget {
   final String? avatarUrl;
 
   @override
-  Widget build(BuildContext context) =>
-      ScaffoldExtension.expanded(child: UserSubview(tag, avatarUrl));
+  Widget build(BuildContext context) => ScaffoldExtension.expanded(
+        context: context,
+        child: _UserView(tag, avatarUrl),
+      );
 }
 
-class UserSubview extends StatelessWidget {
-  const UserSubview(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
+/// The home page has app bars,
+/// but the one on the user tab should be transparent
+/// and the padding should be removed.
+class UserHomeView extends StatelessWidget {
+  const UserHomeView(
+    this.tag,
+    this.avatarUrl, {
+    this.homeScrollCtrl,
+    required this.removableTopPadding,
+  });
+
+  final UserTag tag;
+  final String? avatarUrl;
+  final ScrollController? homeScrollCtrl;
+  final double removableTopPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return MediaQuery(
+      data: mediaQuery.copyWith(
+        padding: mediaQuery.padding.copyWith(
+          top: mediaQuery.padding.top - removableTopPadding,
+        ),
+      ),
+      child: _UserView(tag, avatarUrl, homeScrollCtrl),
+    );
+  }
+}
+
+class _UserView extends StatelessWidget {
+  const _UserView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
 
   final UserTag tag;
   final String? avatarUrl;

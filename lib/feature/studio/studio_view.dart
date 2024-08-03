@@ -140,6 +140,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
             : const TopBar();
 
         return ScaffoldExtension.expanded(
+          context: context,
           topBar: topBar,
           floatingActionConfig: (
             scrollCtrl: _ctrl,

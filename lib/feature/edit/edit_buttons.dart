@@ -5,7 +5,7 @@ import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/navigation_tool.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 

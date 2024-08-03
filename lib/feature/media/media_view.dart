@@ -65,6 +65,7 @@ class _MediaViewState extends State<MediaView>
         final mediaQuery = MediaQuery.of(context);
 
         return ScaffoldExtension.expanded(
+          context: context,
           floatingActionConfig: (
             scrollCtrl: _scrollCtrl,
             actions: media.valueOrNull != null

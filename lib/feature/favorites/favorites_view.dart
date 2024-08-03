@@ -10,10 +10,9 @@ import 'package:otraku/feature/studio/studio_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
 
 class FavoritesView extends ConsumerStatefulWidget {
   const FavoritesView(this.id);
@@ -62,6 +61,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBarAnimatedSwitcher(
         TopBar(
           key: Key('${tab.title}TopBar'),
@@ -78,8 +78,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           ],
         ),
       ),
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
+      navigationConfig: (
+        selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
@@ -90,9 +90,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           'Studios': Ionicons.business_outline,
         },
       ),
-      child: SwipeSwitcher(
-        index: _tabCtrl.index,
-        onChanged: (index) => _tabCtrl.index = index,
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
         children: [
           PagedView<TileItem>(
             provider: favoritesProvider(widget.id).select(

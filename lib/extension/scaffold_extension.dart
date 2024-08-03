@@ -2,52 +2,101 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/widget/layouts/navigation_tool.dart';
 
 extension ScaffoldExtension on Scaffold {
+  /// Tailored to the specific configuration
+  /// most scaffolds throughout the app need.
   static Widget expanded({
+    required BuildContext context,
+    required Widget child,
+    PreferredSizeWidget? topBar,
+    FloatingActionConfig? floatingActionConfig,
+    NavigationConfig? navigationConfig,
+  }) {
+    Widget? bottomNavigationBar;
+    if (navigationConfig != null) {
+      if (MediaQuery.sizeOf(context).width < Theming.mediumWidth) {
+        bottomNavigationBar = BottomNavigation(
+          selected: navigationConfig.selected,
+          items: navigationConfig.items,
+          onChanged: navigationConfig.onChanged,
+          onSame: navigationConfig.onSame,
+        );
+      } else {
+        final sideNavigation = SideNavigation(
+          selected: navigationConfig.selected,
+          items: navigationConfig.items,
+          onChanged: navigationConfig.onChanged,
+          onSame: navigationConfig.onSame,
+        );
+
+        child = Expanded(child: child);
+        child = Row(
+          children: Directionality.of(context) == TextDirection.ltr
+              ? [sideNavigation, child]
+              : [child, sideNavigation],
+        );
+      }
+    }
+
+    return expandedWithBottomBar(
+      context: context,
+      child: child,
+      topBar: topBar,
+      floatingActionConfig: floatingActionConfig,
+      bottomBar: bottomNavigationBar,
+    );
+  }
+
+  static Widget expandedWithBottomBar({
+    required BuildContext context,
     required Widget child,
     PreferredSizeWidget? topBar,
     FloatingActionConfig? floatingActionConfig,
     Widget? bottomBar,
-    Color? backgroundColor,
-    bool? resizeToAvoidBottomInsets,
   }) {
-    if (floatingActionConfig == null) {
-      return Scaffold(
-        extendBody: true,
-        extendBodyBehindAppBar: true,
-        backgroundColor: backgroundColor,
-        resizeToAvoidBottomInset: resizeToAvoidBottomInsets,
-        appBar: topBar,
-        bottomNavigationBar: bottomBar,
-        body: SafeArea(top: false, bottom: false, child: child),
-      );
-    }
-
     return Consumer(
       builder: (context, ref, child) {
-        final leftHanded = Persistence().leftHanded;
+        Widget? floatingActionButton;
+        FloatingActionButtonLocation? floatingActionButtonLocation;
+        if (floatingActionConfig != null) {
+          final leftHanded = Persistence().leftHanded;
 
-        return Scaffold(
-          extendBody: true,
-          extendBodyBehindAppBar: true,
-          backgroundColor: backgroundColor,
-          resizeToAvoidBottomInset: resizeToAvoidBottomInsets,
-          appBar: topBar,
-          bottomNavigationBar: bottomBar,
-          floatingActionButton: _FloatingActionGroup(
+          floatingActionButton = _FloatingActionGroup(
             scrollCtrl: floatingActionConfig.scrollCtrl,
             children: leftHanded
                 ? floatingActionConfig.actions
                 : floatingActionConfig.actions.reversed.toList(),
-          ),
-          floatingActionButtonLocation: leftHanded
+          );
+          floatingActionButtonLocation = leftHanded
               ? FloatingActionButtonLocation.startFloat
-              : FloatingActionButtonLocation.endFloat,
+              : FloatingActionButtonLocation.endFloat;
+        }
+
+        return Scaffold(
+          extendBody: true,
+          extendBodyBehindAppBar: true,
+          appBar: topBar,
+          bottomNavigationBar: bottomBar,
+          floatingActionButton: floatingActionButton,
+          floatingActionButtonLocation: floatingActionButtonLocation,
           body: child,
         );
       },
       child: SafeArea(top: false, bottom: false, child: child),
+    );
+  }
+
+  /// To display snackbars, sheets need their own scaffold
+  /// with extra tweaks applied to it.
+  static Widget sheet({required Widget child, Widget? bottomBar}) {
+    return Scaffold(
+      extendBody: true,
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.transparent,
+      bottomNavigationBar: bottomBar,
+      body: SafeArea(top: false, bottom: false, child: child),
     );
   }
 }
@@ -55,6 +104,13 @@ extension ScaffoldExtension on Scaffold {
 typedef FloatingActionConfig = ({
   ScrollController scrollCtrl,
   List<Widget> actions,
+});
+
+typedef NavigationConfig = ({
+  int selected,
+  Map<String, IconData> items,
+  void Function(int) onChanged,
+  void Function(int) onSame,
 });
 
 /// A row that hides/shows actions on scroll and animates their replacement.

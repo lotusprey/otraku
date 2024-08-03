@@ -40,6 +40,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: const TopBar(title: 'Activities'),
       floatingActionConfig: (
         scrollCtrl: _ctrl,

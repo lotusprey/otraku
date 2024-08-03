@@ -39,7 +39,6 @@ class DiscoverFloatingAction extends StatelessWidget {
             );
           },
           child: SwipeSwitcher(
-            circular: true,
             index: type.index,
             onChanged: (index) => ref
                 .read(discoverFilterProvider.notifier)

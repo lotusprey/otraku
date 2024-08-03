@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/util/theming.dart';
 
+const _preferredSize = Size.fromHeight(Theming.normalTapTarget);
+
 /// A top app bar implementation that uses a blurred, translucent background.
 class TopBar extends StatelessWidget implements PreferredSizeWidget {
   const TopBar({super.key, this.title, this.trailing = const []});
@@ -11,7 +13,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
   final List<Widget> trailing;
 
   @override
-  Size get preferredSize => const Size.fromHeight(Theming.normalTapTarget);
+  Size get preferredSize => _preferredSize;
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +51,22 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Dummy widget for when the app bar changes depending on the current tab
+/// and a tab doesn't have an associated app bar.
+class EmptyTopBar extends StatelessWidget implements PreferredSizeWidget {
+  const EmptyTopBar();
+
+  @override
+  Size get preferredSize => _preferredSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.paddingOf(context).top + _preferredSize.height,
     );
   }
 }

@@ -10,11 +10,10 @@ import 'package:otraku/feature/statistics/charts.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
 
 class StatisticsView extends StatefulWidget {
   const StatisticsView(this.id);
@@ -65,9 +64,9 @@ class _StatisticsViewState extends State<StatisticsView>
                 child: Text('Failed to load statistics'),
               ),
               data: (data) {
-                return SwipeSwitcher(
-                  index: _tabCtrl.index,
-                  onChanged: (index) => _tabCtrl.index = index,
+                return TabBarView(
+                  controller: _tabCtrl,
+                  physics: const FastTabBarViewScrollPhysics(),
                   children: [
                     ConstrainedView(
                       child: _StatisticsView(
@@ -99,11 +98,12 @@ class _StatisticsViewState extends State<StatisticsView>
     );
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: _tabCtrl.index == 0
           ? const TopBar(key: Key('0'), title: 'Anime Statistics')
           : const TopBar(key: Key('1'), title: 'Manga Statistics'),
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
+      navigationConfig: (
+        selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {

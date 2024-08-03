@@ -39,6 +39,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
     );
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBar(
         title: 'Reviews',
         trailing: [

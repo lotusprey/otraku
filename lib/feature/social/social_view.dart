@@ -8,10 +8,9 @@ import 'package:otraku/feature/social/social_provider.dart';
 import 'package:otraku/feature/user/user_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
 
 class SocialView extends ConsumerStatefulWidget {
   const SocialView(this.id);
@@ -57,6 +56,7 @@ class _SocialViewState extends ConsumerState<SocialView>
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBarAnimatedSwitcher(
         TopBar(
           key: Key('${tab.title}TopBar'),
@@ -73,8 +73,8 @@ class _SocialViewState extends ConsumerState<SocialView>
           ],
         ),
       ),
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
+      navigationConfig: (
+        selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         items: const {
@@ -82,9 +82,9 @@ class _SocialViewState extends ConsumerState<SocialView>
           'Followers': Ionicons.person_circle,
         },
       ),
-      child: SwipeSwitcher(
-        index: _tabCtrl.index,
-        onChanged: (index) => _tabCtrl.index = index,
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
         children: [
           PagedView<UserItem>(
             scrollCtrl: _scrollCtrl,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/navigation_tool.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class FilterEditSheet<T> extends StatelessWidget {

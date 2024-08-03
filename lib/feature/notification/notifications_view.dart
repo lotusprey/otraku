@@ -52,6 +52,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     );
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBar(
         trailing: [
           Expanded(

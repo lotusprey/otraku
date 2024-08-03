@@ -49,6 +49,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     );
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBar(
         trailing: [if (activity != null) _TopBarContent(activity)],
       ),

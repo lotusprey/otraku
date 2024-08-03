@@ -130,9 +130,7 @@ class SheetWithButtonRow extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
           child: ScaffoldMessenger(
-            child: ScaffoldExtension.expanded(
-              backgroundColor: Colors.transparent,
-              resizeToAvoidBottomInsets: false,
+            child: ScaffoldExtension.sheet(
               bottomBar: buttons,
               child: builder(context, scrollCtrl),
             ),

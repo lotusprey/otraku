@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
 
-class BottomNavBar extends StatefulWidget {
-  const BottomNavBar({
-    required this.current,
+class BottomNavigation extends StatefulWidget {
+  const BottomNavigation({
+    required this.selected,
     required this.items,
     required this.onChanged,
     required this.onSame,
   });
 
-  final int current;
+  final int selected;
   final Map<String, IconData> items;
   final void Function(int) onChanged;
   final void Function(int) onSame;
 
   @override
-  State<BottomNavBar> createState() => _BottomNavBarState();
+  State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
-class _BottomNavBarState extends State<BottomNavBar> {
-  late int _selected = widget.current;
+class _BottomNavigationState extends State<BottomNavigation> {
+  late int _selected = widget.selected;
 
   @override
-  void didUpdateWidget(covariant BottomNavBar oldWidget) {
+  void didUpdateWidget(covariant BottomNavigation oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _selected = widget.current;
+    _selected = widget.selected;
   }
 
   @override
@@ -44,8 +44,59 @@ class _BottomNavBarState extends State<BottomNavBar> {
             }
           },
           destinations: [
-            for (final t in widget.items.entries)
-              NavigationDestination(label: t.key, icon: Icon(t.value))
+            for (final e in widget.items.entries)
+              NavigationDestination(label: e.key, icon: Icon(e.value))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SideNavigation extends StatefulWidget {
+  const SideNavigation({
+    required this.selected,
+    required this.items,
+    required this.onChanged,
+    required this.onSame,
+  });
+
+  final int selected;
+  final Map<String, IconData> items;
+  final void Function(int) onChanged;
+  final void Function(int) onSame;
+
+  @override
+  State<SideNavigation> createState() => _SideNavigationState();
+}
+
+class _SideNavigationState extends State<SideNavigation> {
+  late int _selected = widget.selected;
+
+  @override
+  void didUpdateWidget(covariant SideNavigation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _selected = widget.selected;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: BackdropFilter(
+        filter: Theming.blurFilter,
+        child: NavigationRail(
+          selectedIndex: _selected,
+          onDestinationSelected: (i) {
+            if (_selected == i) {
+              widget.onSame(i);
+            } else {
+              _selected = i;
+              widget.onChanged(_selected);
+            }
+          },
+          destinations: [
+            for (final e in widget.items.entries)
+              NavigationRailDestination(label: Text(e.key), icon: Icon(e.value))
           ],
         ),
       ),

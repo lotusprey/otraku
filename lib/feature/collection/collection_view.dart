@@ -47,6 +47,7 @@ class _CollectionViewState extends State<CollectionView> {
   Widget build(BuildContext context) {
     final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
       floatingActionConfig: (
         scrollCtrl: _ctrl,

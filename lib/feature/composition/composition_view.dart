@@ -5,7 +5,7 @@ import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/navigation_tool.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 import 'package:otraku/widget/overlays/sheets.dart';

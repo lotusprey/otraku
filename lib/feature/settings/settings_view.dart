@@ -10,8 +10,7 @@ import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
-import 'package:otraku/widget/swipe_switcher.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 
@@ -76,6 +75,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     ];
 
     return ScaffoldExtension.expanded(
+      context: context,
       topBar: TopBarAnimatedSwitcher(
         switch (_tabCtrl.index) {
           0 => const TopBar(key: Key('0'), title: 'App'),
@@ -97,8 +97,8 @@ class _SettingsViewState extends ConsumerState<SettingsView>
               ]
             : const [],
       ),
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
+      navigationConfig: (
+        selected: _tabCtrl.index,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         onChanged: (i) => _tabCtrl.index = i,
         items: const {
@@ -108,9 +108,9 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           'About': Ionicons.information_outline,
         },
       ),
-      child: SwipeSwitcher(
-        index: _tabCtrl.index,
-        onChanged: (index) => _tabCtrl.index = index,
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
         children: tabs,
       ),
     );

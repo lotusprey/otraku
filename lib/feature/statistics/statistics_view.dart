@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/feature/statistics/charts.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -97,12 +97,11 @@ class _StatisticsViewState extends State<StatisticsView>
       },
     );
 
-    return ScaffoldExtension.expandedTabbed(
-      context: context,
+    return AdaptiveScaffold(
       topBar: _tabCtrl.index == 0
           ? const TopBar(key: Key('0'), title: 'Anime Statistics')
           : const TopBar(key: Key('1'), title: 'Manga Statistics'),
-      navigationConfig: (
+      navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
@@ -111,7 +110,7 @@ class _StatisticsViewState extends State<StatisticsView>
           'Manga': Ionicons.book_outline,
         },
       ),
-      child: child,
+      builder: (context, _) => child,
     );
   }
 }

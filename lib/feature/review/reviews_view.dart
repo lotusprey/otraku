@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
@@ -38,8 +38,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       reviewsProvider(widget.id).select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return ScaffoldExtension.expanded(
-      context: context,
+    return AdaptiveScaffold(
       topBar: TopBar(
         title: 'Reviews',
         trailing: [
@@ -53,7 +52,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
             ),
         ],
       ),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _ctrl,
         actions: [
           FloatingActionButton(
@@ -69,7 +68,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           ),
         ],
       ),
-      child: PagedView<ReviewItem>(
+      builder: (context, _) => PagedView<ReviewItem>(
         scrollCtrl: _ctrl,
         onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
         provider: reviewsProvider(widget.id),

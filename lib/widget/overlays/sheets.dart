@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
@@ -132,9 +132,10 @@ class SheetWithButtonRow extends StatelessWidget {
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
           child: ScaffoldMessenger(
-            child: ScaffoldExtension.sheet(
+            child: AdaptiveScaffold(
+              sheetMode: true,
               bottomBar: buttons,
-              child: builder(context, scrollCtrl),
+              builder: (context, _) => builder(context, scrollCtrl),
             ),
           ),
         ),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -25,6 +24,7 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
 import 'package:otraku/util/routes.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 
@@ -153,30 +153,29 @@ class _HomeViewState extends ConsumerState<HomeView>
     );
 
     final FloatingActionConfig floatingActionConfig = switch (_tabCtrl.index) {
-      0 => (
+      0 => FloatingActionConfig(
           scrollCtrl: _feedScrollCtrl,
           actions: [FeedFloatingAction(ref)],
         ),
-      1 => (
+      1 => FloatingActionConfig(
           scrollCtrl: _animeScrollCtrl,
           actions: [CollectionFloatingAction(_animeCollectionTag)],
         ),
-      2 => (
+      2 => FloatingActionConfig(
           scrollCtrl: _mangaScrollCtrl,
           actions: [CollectionFloatingAction(_mangaCollectionTag)],
         ),
-      3 => (
+      3 => FloatingActionConfig(
           scrollCtrl: _discoverScrollCtrl,
           actions: [const DiscoverFloatingAction()],
         ),
-      _ => (scrollCtrl: primaryScrollCtrl, actions: []),
+      _ => FloatingActionConfig(scrollCtrl: primaryScrollCtrl, actions: []),
     };
 
-    return ScaffoldExtension.expandedTabbed(
-      context: context,
+    return AdaptiveScaffold(
       topBar: topBar,
       floatingActionConfig: floatingActionConfig,
-      navigationConfig: (
+      navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
         items: {
@@ -215,7 +214,7 @@ class _HomeViewState extends ConsumerState<HomeView>
           }
         },
       ),
-      child: TabBarView(
+      builder: (context, _) => TabBarView(
         controller: _tabCtrl,
         physics: const FastTabBarViewScrollPhysics(),
         children: [

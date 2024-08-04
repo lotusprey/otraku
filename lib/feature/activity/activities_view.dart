@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/activity/activity_filter_sheet.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
@@ -13,6 +12,7 @@ import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -39,10 +39,9 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldExtension.expanded(
-      context: context,
+    return AdaptiveScaffold(
       topBar: const TopBar(title: 'Activities'),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _ctrl,
         actions: [
           FloatingActionButton(
@@ -72,7 +71,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
           ),
         ],
       ),
-      child: ActivitiesSubView(widget.id, _ctrl),
+      builder: (context, _) => ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }

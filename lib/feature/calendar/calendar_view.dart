@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/navigation_tool.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
@@ -43,10 +43,9 @@ class _CalendarViewState extends State<CalendarView> {
             date.month == today.month &&
             date.year == today.year;
 
-        return ScaffoldExtension.expanded(
-          context: context,
+        return AdaptiveScaffold(
           topBar: const TopBar(title: 'Calendar'),
-          floatingActionConfig: (
+          floatingActionConfig: FloatingActionConfig(
             scrollCtrl: _scrollCtrl,
             actions: [
               FloatingActionButton(
@@ -97,7 +96,7 @@ class _CalendarViewState extends State<CalendarView> {
             ),
             const SizedBox(width: Theming.offset),
           ]),
-          child: PagedView(
+          builder: (context, _) => PagedView(
             provider: calendarProvider,
             scrollCtrl: _scrollCtrl,
             onRefresh: (invalidate) => invalidate(calendarProvider),

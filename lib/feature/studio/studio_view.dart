@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
@@ -9,6 +8,7 @@ import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -139,10 +139,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
               )
             : const TopBar();
 
-        return ScaffoldExtension.expanded(
-          context: context,
+        return AdaptiveScaffold(
           topBar: topBar,
-          floatingActionConfig: (
+          floatingActionConfig: FloatingActionConfig(
             scrollCtrl: _ctrl,
             actions: studio != null
                 ? [
@@ -156,7 +155,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   ]
                 : const [],
           ),
-          child: ConstrainedView(
+          builder: (context, _) => ConstrainedView(
             child: CustomScrollView(
               physics: Theming.bouncyPhysics,
               controller: hasNext != null ? _ctrl : null,

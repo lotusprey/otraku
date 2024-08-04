@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/media/media_floating_actions.dart';
 import 'package:otraku/feature/media/media_characters_view.dart';
 import 'package:otraku/feature/media/media_following_view.dart';
@@ -13,6 +12,7 @@ import 'package:otraku/feature/media/media_staff_view.dart';
 import 'package:otraku/feature/media/media_stats_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/feature/media/media_header.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
@@ -64,9 +64,8 @@ class _MediaViewState extends State<MediaView>
         final media = ref.watch(mediaProvider(widget.id));
         final mediaQuery = MediaQuery.of(context);
 
-        return ScaffoldExtension.expanded(
-          context: context,
-          floatingActionConfig: (
+        return AdaptiveScaffold(
+          floatingActionConfig: FloatingActionConfig(
             scrollCtrl: _scrollCtrl,
             actions: media.valueOrNull != null
                 ? [
@@ -81,7 +80,7 @@ class _MediaViewState extends State<MediaView>
                   ]
                 : const [],
           ),
-          child: NestedScrollView(
+          builder: (context, _) => NestedScrollView(
             controller: _scrollCtrl,
             headerSliverBuilder: (context, _) => [
               MediaHeader(

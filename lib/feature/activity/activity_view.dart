@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -48,12 +48,11 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
     );
 
-    return ScaffoldExtension.expanded(
-      context: context,
+    return AdaptiveScaffold(
       topBar: TopBar(
         trailing: [if (activity != null) _TopBarContent(activity)],
       ),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _ctrl,
         actions: [
           FloatingActionButton(
@@ -74,7 +73,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
           ),
         ],
       ),
-      child: Consumer(
+      builder: (context, _) => Consumer(
         child: SliverRefreshControl(
           onRefresh: () => ref.invalidate(activityProvider(widget.id)),
         ),

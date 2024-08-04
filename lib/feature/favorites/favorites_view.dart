@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/model/tile_item.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/feature/studio/studio_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -60,8 +60,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
 
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
-    return ScaffoldExtension.expandedTabbed(
-      context: context,
+    return AdaptiveScaffold(
       topBar: TopBarAnimatedSwitcher(
         TopBar(
           key: Key('${tab.title}TopBar'),
@@ -78,7 +77,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           ],
         ),
       ),
-      navigationConfig: (
+      navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
@@ -90,7 +89,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           'Studios': Ionicons.business_outline,
         },
       ),
-      child: TabBarView(
+      builder: (context, _) => TabBarView(
         controller: _tabCtrl,
         physics: const FastTabBarViewScrollPhysics(),
         children: [

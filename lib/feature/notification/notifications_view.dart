@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
@@ -13,6 +12,7 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -51,8 +51,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return ScaffoldExtension.expanded(
-      context: context,
+    return AdaptiveScaffold(
       topBar: TopBar(
         trailing: [
           Expanded(
@@ -65,7 +64,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ),
         ],
       ),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _ctrl,
         actions: [
           FloatingActionButton(
@@ -75,7 +74,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ),
         ],
       ),
-      child: PagedView<SiteNotification>(
+      builder: (context, _) => PagedView<SiteNotification>(
         scrollCtrl: _ctrl,
         onRefresh: (invalidate) => invalidate(notificationsProvider),
         provider: notificationsProvider,

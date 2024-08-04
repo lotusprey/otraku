@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -23,9 +23,8 @@ class UserView extends StatelessWidget {
   final String? avatarUrl;
 
   @override
-  Widget build(BuildContext context) => ScaffoldExtension.expanded(
-        context: context,
-        child: _UserView(tag, avatarUrl),
+  Widget build(BuildContext context) => AdaptiveScaffold(
+        builder: (context, _) => _UserView(tag, avatarUrl),
       );
 }
 

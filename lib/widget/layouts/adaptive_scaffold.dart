@@ -4,68 +4,78 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layouts/navigation_tool.dart';
 
-extension ScaffoldExtension on Scaffold {
-  /// Tailored to the specific configuration
-  /// most scaffolds throughout the app need.
-  static Widget expandedTabbed({
-    required BuildContext context,
-    required Widget child,
-    required PreferredSizeWidget topBar,
-    required NavigationConfig navigationConfig,
-    FloatingActionConfig? floatingActionConfig,
-  }) {
-    Widget? bottomNavigationBar;
-    if (MediaQuery.sizeOf(context).width < Theming.windowWidthMedium) {
-      bottomNavigationBar = BottomNavigation(
-        selected: navigationConfig.selected,
-        items: navigationConfig.items,
-        onChanged: navigationConfig.onChanged,
-        onSame: navigationConfig.onSame,
-      );
-    } else {
-      final sideNavigation = SideNavigation(
-        selected: navigationConfig.selected,
-        items: navigationConfig.items,
-        onChanged: navigationConfig.onChanged,
-        onSame: navigationConfig.onSame,
-      );
+class AdaptiveScaffold extends StatelessWidget {
+  const AdaptiveScaffold({
+    required this.builder,
+    this.topBar,
+    this.floatingActionConfig,
+    this.navigationConfig,
+    this.bottomBar,
+    this.sheetMode = false,
+  }) : assert(
+          navigationConfig == null || bottomBar == null,
+          'Cannot have both a navigation bar and a bottom bar',
+        );
 
-      child = Expanded(child: child);
-      child = Row(
-        children: Directionality.of(context) == TextDirection.ltr
-            ? [sideNavigation, child]
-            : [child, sideNavigation],
-      );
+  final Widget Function(BuildContext context, bool compact) builder;
+  final PreferredSizeWidget? topBar;
+  final FloatingActionConfig? floatingActionConfig;
+  final NavigationConfig? navigationConfig;
+  final Widget? bottomBar;
+  final bool sheetMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final compact =
+        MediaQuery.sizeOf(context).width < Theming.windowWidthMedium;
+
+    var child = builder(context, compact);
+    Widget? floatingActionButton;
+    FloatingActionButtonLocation? floatingActionButtonLocation;
+    var bottomNavigationBar = bottomBar;
+    if (navigationConfig != null) {
+      if (compact) {
+        bottomNavigationBar = BottomNavigation(
+          selected: navigationConfig!.selected,
+          items: navigationConfig!.items,
+          onChanged: navigationConfig!.onChanged,
+          onSame: navigationConfig!.onSame,
+        );
+      } else {
+        final sideNavigation = SideNavigation(
+          selected: navigationConfig!.selected,
+          items: navigationConfig!.items,
+          onChanged: navigationConfig!.onChanged,
+          onSame: navigationConfig!.onSame,
+        );
+
+        child = Expanded(child: child);
+        child = Row(
+          children: Directionality.of(context) == TextDirection.ltr
+              ? [sideNavigation, child]
+              : [child, sideNavigation],
+        );
+      }
     }
 
-    return expanded(
-      context: context,
-      child: child,
-      topBar: topBar,
-      floatingActionConfig: floatingActionConfig,
-      bottomBar: bottomNavigationBar,
-    );
-  }
+    Color? backgroundColor;
+    bool? resizeToAvoidBottomInset;
+    if (sheetMode) {
+      backgroundColor = Colors.transparent;
+      resizeToAvoidBottomInset = false;
+    }
 
-  static Widget expanded({
-    required BuildContext context,
-    required Widget child,
-    PreferredSizeWidget? topBar,
-    FloatingActionConfig? floatingActionConfig,
-    Widget? bottomBar,
-  }) {
     return Consumer(
       builder: (context, ref, child) {
-        Widget? floatingActionButton;
-        FloatingActionButtonLocation? floatingActionButtonLocation;
-        if (floatingActionConfig != null) {
+        if (floatingActionConfig != null &&
+            (compact || !floatingActionConfig!.showOnlyInCompactView)) {
           final leftHanded = Persistence().leftHanded;
 
           floatingActionButton = _FloatingActionGroup(
-            scrollCtrl: floatingActionConfig.scrollCtrl,
+            scrollCtrl: floatingActionConfig!.scrollCtrl,
             children: leftHanded
-                ? floatingActionConfig.actions
-                : floatingActionConfig.actions.reversed.toList(),
+                ? floatingActionConfig!.actions
+                : floatingActionConfig!.actions.reversed.toList(),
           );
           floatingActionButtonLocation = leftHanded
               ? FloatingActionButtonLocation.startFloat
@@ -75,8 +85,10 @@ extension ScaffoldExtension on Scaffold {
         return Scaffold(
           extendBody: true,
           extendBodyBehindAppBar: true,
+          backgroundColor: backgroundColor,
+          resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           appBar: topBar,
-          bottomNavigationBar: bottomBar,
+          bottomNavigationBar: bottomNavigationBar,
           floatingActionButton: floatingActionButton,
           floatingActionButtonLocation: floatingActionButtonLocation,
           body: child,
@@ -85,31 +97,33 @@ extension ScaffoldExtension on Scaffold {
       child: SafeArea(top: false, bottom: false, child: child),
     );
   }
-
-  /// To display snackbars, sheets need their own scaffold
-  /// with extra tweaks applied to it.
-  static Widget sheet({required Widget child, Widget? bottomBar}) {
-    return Scaffold(
-      extendBody: true,
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.transparent,
-      bottomNavigationBar: bottomBar,
-      body: SafeArea(top: false, bottom: false, child: child),
-    );
-  }
 }
 
-typedef FloatingActionConfig = ({
-  ScrollController scrollCtrl,
-  List<Widget> actions,
-});
+class FloatingActionConfig {
+  const FloatingActionConfig({
+    required this.scrollCtrl,
+    required this.actions,
+    this.showOnlyInCompactView = false,
+  });
 
-typedef NavigationConfig = ({
-  int selected,
-  Map<String, IconData> items,
-  void Function(int) onChanged,
-  void Function(int) onSame,
-});
+  final ScrollController scrollCtrl;
+  final List<Widget> actions;
+  final bool showOnlyInCompactView;
+}
+
+class NavigationConfig {
+  const NavigationConfig({
+    required this.selected,
+    required this.items,
+    required this.onChanged,
+    required this.onSame,
+  });
+
+  final int selected;
+  final Map<String, IconData> items;
+  final void Function(int) onChanged;
+  final void Function(int) onSame;
+}
 
 /// A row that hides/shows actions on scroll and animates their replacement.
 class _FloatingActionGroup extends StatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/staff/staff_header.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/feature/staff/staff_floating_actions.dart';
 import 'package:otraku/feature/staff/staff_characters_view.dart';
@@ -65,9 +65,8 @@ class _StaffViewState extends ConsumerState<StaffView>
     final staff = ref.watch(staffProvider(widget.id));
     final mediaQuery = MediaQuery.of(context);
 
-    return ScaffoldExtension.expanded(
-      context: context,
-      floatingActionConfig: (
+    return AdaptiveScaffold(
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _scrollCtrl,
         actions: [
           if (_tabCtrl.index == 0 && staff.hasValue)
@@ -78,7 +77,7 @@ class _StaffViewState extends ConsumerState<StaffView>
           if (_tabCtrl.index > 0) StaffFilterButton(widget.id, ref),
         ],
       ),
-      child: NestedScrollView(
+      builder: (context, _) => NestedScrollView(
         controller: _scrollCtrl,
         headerSliverBuilder: (context, _) => [
           StaffHeader(

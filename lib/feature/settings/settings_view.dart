@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -74,8 +74,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ),
     ];
 
-    return ScaffoldExtension.expandedTabbed(
-      context: context,
+    return AdaptiveScaffold(
       topBar: TopBarAnimatedSwitcher(
         switch (_tabCtrl.index) {
           0 => const TopBar(key: Key('0'), title: 'App'),
@@ -84,7 +83,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           _ => const TopBar(key: Key('3'), title: 'About'),
         },
       ),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _scrollCtrl,
         actions: _tabCtrl.index == 1 || _tabCtrl.index == 2
             ? [
@@ -97,7 +96,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
               ]
             : const [],
       ),
-      navigationConfig: (
+      navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         onChanged: (i) => _tabCtrl.index = i,
@@ -108,7 +107,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           'About': Ionicons.information_outline,
         },
       ),
-      child: TabBarView(
+      builder: (context, _) => TabBarView(
         controller: _tabCtrl,
         physics: const FastTabBarViewScrollPhysics(),
         children: tabs,

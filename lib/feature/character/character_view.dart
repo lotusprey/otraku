@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/character/character_header.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/character/character_floating_actions.dart';
@@ -9,6 +8,7 @@ import 'package:otraku/feature/character/character_manga_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/character/character_overview_view.dart';
 import 'package:otraku/util/paged_controller.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
 
@@ -65,9 +65,8 @@ class _CharacterViewState extends ConsumerState<CharacterView>
     final character = ref.watch(characterProvider(widget.id));
     final mediaQuery = MediaQuery.of(context);
 
-    return ScaffoldExtension.expanded(
-      context: context,
-      floatingActionConfig: (
+    return AdaptiveScaffold(
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _scrollCtrl,
         actions: [
           if (_tabCtrl.index == 0 && character.hasValue)
@@ -79,7 +78,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
           if (_tabCtrl.index == 1) CharacterLanguageSelectionButton(widget.id),
         ],
       ),
-      child: NestedScrollView(
+      builder: (context, _) => NestedScrollView(
         controller: _scrollCtrl,
         headerSliverBuilder: (context, _) => [
           CharacterHeader(

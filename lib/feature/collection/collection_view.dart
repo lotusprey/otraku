@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/extension/scaffold_extension.dart';
 import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/collection/collection_top_bar.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
@@ -17,6 +16,7 @@ import 'package:otraku/feature/collection/collection_grid.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
@@ -46,14 +46,14 @@ class _CollectionViewState extends State<CollectionView> {
   @override
   Widget build(BuildContext context) {
     final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
-    return ScaffoldExtension.expanded(
-      context: context,
+
+    return AdaptiveScaffold(
       topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
-      floatingActionConfig: (
+      floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _ctrl,
         actions: [CollectionFloatingAction(tag)],
       ),
-      child: CollectionSubview(tag: tag, scrollCtrl: _ctrl),
+      builder: (context, _) => CollectionSubview(tag: tag, scrollCtrl: _ctrl),
     );
   }
 }

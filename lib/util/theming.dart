@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Theming {
-  static const mediumWidth = 840.0;
-  static const compactWidth = 600.0;
+  static const windowWidthMedium = 600.0;
+  static const windowWidthLarge = 840.0;
 
   static const offset = 10.0;
   static const minTapTarget = 48.0;

@@ -74,7 +74,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ),
     ];
 
-    return ScaffoldExtension.expanded(
+    return ScaffoldExtension.expandedTabbed(
       context: context,
       topBar: TopBarAnimatedSwitcher(
         switch (_tabCtrl.index) {

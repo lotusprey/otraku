@@ -43,7 +43,7 @@ class _CalendarViewState extends State<CalendarView> {
             date.month == today.month &&
             date.year == today.year;
 
-        return ScaffoldExtension.expandedWithBottomBar(
+        return ScaffoldExtension.expanded(
           context: context,
           topBar: const TopBar(title: 'Calendar'),
           floatingActionConfig: (

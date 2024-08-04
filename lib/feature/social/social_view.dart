@@ -55,7 +55,7 @@ class _SocialViewState extends ConsumerState<SocialView>
 
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
-    return ScaffoldExtension.expanded(
+    return ScaffoldExtension.expandedTabbed(
       context: context,
       topBar: TopBarAnimatedSwitcher(
         TopBar(

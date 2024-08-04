@@ -17,7 +17,9 @@ class ConstrainedView extends StatelessWidget {
       child: Padding(
         padding: padding,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: Theming.mediumWidth),
+          constraints: const BoxConstraints(
+            maxWidth: Theming.windowWidthMedium,
+          ),
           child: child,
         ),
       ),
@@ -34,7 +36,9 @@ class SliverConstrainedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverLayoutBuilder(
       builder: (context, constraints) {
-        final side = (constraints.crossAxisExtent - Theming.compactWidth) / 2;
+        final side =
+            (constraints.crossAxisExtent - Theming.windowWidthMedium) / 2;
+
         return SliverPadding(
           padding: EdgeInsets.symmetric(
             horizontal: side < Theming.offset ? Theming.offset : side,

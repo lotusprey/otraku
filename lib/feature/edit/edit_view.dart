@@ -212,7 +212,7 @@ class _EditView extends StatelessWidget {
       sliver: SliverToBoxAdapter(
         child: volumeProgressField == null
             ? progressField
-            : MediaQuery.sizeOf(context).width <= Theming.compactWidth
+            : MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [

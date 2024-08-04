@@ -60,7 +60,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
 
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
-    return ScaffoldExtension.expanded(
+    return ScaffoldExtension.expandedTabbed(
       context: context,
       topBar: TopBarAnimatedSwitcher(
         TopBar(

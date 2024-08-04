@@ -7,40 +7,38 @@ import 'package:otraku/widget/layouts/navigation_tool.dart';
 extension ScaffoldExtension on Scaffold {
   /// Tailored to the specific configuration
   /// most scaffolds throughout the app need.
-  static Widget expanded({
+  static Widget expandedTabbed({
     required BuildContext context,
     required Widget child,
-    PreferredSizeWidget? topBar,
+    required PreferredSizeWidget topBar,
+    required NavigationConfig navigationConfig,
     FloatingActionConfig? floatingActionConfig,
-    NavigationConfig? navigationConfig,
   }) {
     Widget? bottomNavigationBar;
-    if (navigationConfig != null) {
-      if (MediaQuery.sizeOf(context).width < Theming.mediumWidth) {
-        bottomNavigationBar = BottomNavigation(
-          selected: navigationConfig.selected,
-          items: navigationConfig.items,
-          onChanged: navigationConfig.onChanged,
-          onSame: navigationConfig.onSame,
-        );
-      } else {
-        final sideNavigation = SideNavigation(
-          selected: navigationConfig.selected,
-          items: navigationConfig.items,
-          onChanged: navigationConfig.onChanged,
-          onSame: navigationConfig.onSame,
-        );
+    if (MediaQuery.sizeOf(context).width < Theming.windowWidthMedium) {
+      bottomNavigationBar = BottomNavigation(
+        selected: navigationConfig.selected,
+        items: navigationConfig.items,
+        onChanged: navigationConfig.onChanged,
+        onSame: navigationConfig.onSame,
+      );
+    } else {
+      final sideNavigation = SideNavigation(
+        selected: navigationConfig.selected,
+        items: navigationConfig.items,
+        onChanged: navigationConfig.onChanged,
+        onSame: navigationConfig.onSame,
+      );
 
-        child = Expanded(child: child);
-        child = Row(
-          children: Directionality.of(context) == TextDirection.ltr
-              ? [sideNavigation, child]
-              : [child, sideNavigation],
-        );
-      }
+      child = Expanded(child: child);
+      child = Row(
+        children: Directionality.of(context) == TextDirection.ltr
+            ? [sideNavigation, child]
+            : [child, sideNavigation],
+      );
     }
 
-    return expandedWithBottomBar(
+    return expanded(
       context: context,
       child: child,
       topBar: topBar,
@@ -49,7 +47,7 @@ extension ScaffoldExtension on Scaffold {
     );
   }
 
-  static Widget expandedWithBottomBar({
+  static Widget expanded({
     required BuildContext context,
     required Widget child,
     PreferredSizeWidget? topBar,

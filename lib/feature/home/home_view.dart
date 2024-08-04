@@ -172,7 +172,7 @@ class _HomeViewState extends ConsumerState<HomeView>
       _ => (scrollCtrl: primaryScrollCtrl, actions: []),
     };
 
-    return ScaffoldExtension.expanded(
+    return ScaffoldExtension.expandedTabbed(
       context: context,
       topBar: topBar,
       floatingActionConfig: floatingActionConfig,

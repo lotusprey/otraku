@@ -97,7 +97,7 @@ class _StatisticsViewState extends State<StatisticsView>
       },
     );
 
-    return ScaffoldExtension.expanded(
+    return ScaffoldExtension.expandedTabbed(
       context: context,
       topBar: _tabCtrl.index == 0
           ? const TopBar(key: Key('0'), title: 'Anime Statistics')

@@ -64,9 +64,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 tooltip: 'Random',
                 icon: const Icon(Ionicons.shuffle_outline),
                 onPressed: () {
-                  final entries =
-                      ref.read(collectionEntriesProvider(tag)).valueOrNull ??
-                          const [];
+                  final entries = ref.read(collectionEntriesProvider(tag));
 
                   if (entries.isEmpty) {
                     showDialog(

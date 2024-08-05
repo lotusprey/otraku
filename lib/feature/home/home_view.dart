@@ -15,6 +15,7 @@ import 'package:otraku/feature/discover/discover_top_bar.dart';
 import 'package:otraku/feature/feed/feed_floating_action.dart';
 import 'package:otraku/feature/feed/feed_top_bar.dart';
 import 'package:otraku/feature/home/home_model.dart';
+import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/feature/user/user_providers.dart';
@@ -113,6 +114,8 @@ class _HomeViewState extends ConsumerState<HomeView>
     ref.watch(
         collectionEntriesProvider(_mangaCollectionTag).select((_) => null));
 
+    final home = ref.watch(homeProvider);
+
     final primaryScrollCtrl = PrimaryScrollController.of(context);
 
     final topBar = TopBarAnimatedSwitcher(
@@ -160,14 +163,17 @@ class _HomeViewState extends ConsumerState<HomeView>
       1 => FloatingActionConfig(
           scrollCtrl: _animeScrollCtrl,
           actions: [CollectionFloatingAction(_animeCollectionTag)],
+          showOnlyInCompactView: home.didExpandAnimeCollection,
         ),
       2 => FloatingActionConfig(
           scrollCtrl: _mangaScrollCtrl,
           actions: [CollectionFloatingAction(_mangaCollectionTag)],
+          showOnlyInCompactView: home.didExpandMangaCollection,
         ),
       3 => FloatingActionConfig(
           scrollCtrl: _discoverScrollCtrl,
-          actions: [const DiscoverFloatingAction()],
+          actions: const [DiscoverFloatingAction()],
+          showOnlyInCompactView: true,
         ),
       _ => FloatingActionConfig(scrollCtrl: primaryScrollCtrl, actions: []),
     };
@@ -214,7 +220,7 @@ class _HomeViewState extends ConsumerState<HomeView>
           }
         },
       ),
-      builder: (context, _) => TabBarView(
+      builder: (context, compact) => TabBarView(
         controller: _tabCtrl,
         physics: const FastTabBarViewScrollPhysics(),
         children: [
@@ -222,14 +228,16 @@ class _HomeViewState extends ConsumerState<HomeView>
           CollectionSubview(
             scrollCtrl: _animeScrollCtrl,
             tag: _animeCollectionTag,
+            compact: compact,
             key: Key(true.toString()),
           ),
           CollectionSubview(
             scrollCtrl: _mangaScrollCtrl,
             tag: _mangaCollectionTag,
+            compact: compact,
             key: Key(false.toString()),
           ),
-          DiscoverSubview(_discoverScrollCtrl),
+          DiscoverSubview(_discoverScrollCtrl, compact),
           UserHomeView(
             _userTag,
             null,

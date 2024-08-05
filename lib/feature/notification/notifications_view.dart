@@ -12,6 +12,7 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -29,7 +30,7 @@ class NotificationsView extends ConsumerStatefulWidget {
 }
 
 class _NotificationsViewState extends ConsumerState<NotificationsView> {
-  late final _ctrl = PagedController(
+  late final _scrollCtrl = PagedController(
     loadMore: () => ref.read(notificationsProvider.notifier).fetch(),
   );
 
@@ -41,7 +42,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -51,12 +52,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
     );
 
+    final filter = ref.watch(notificationsFilterProvider);
+
     return AdaptiveScaffold(
       topBar: TopBar(
         trailing: [
           Expanded(
             child: Text(
-              '${ref.watch(notificationsFilterProvider).label} Notifications',
+              'Notifications',
               style: Theme.of(context).textTheme.titleLarge,
               overflow: TextOverflow.ellipsis,
               maxLines: 1,
@@ -65,7 +68,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
         ],
       ),
       floatingActionConfig: FloatingActionConfig(
-        scrollCtrl: _ctrl,
+        showOnlyInCompactView: true,
+        scrollCtrl: _scrollCtrl,
         actions: [
           FloatingActionButton(
             tooltip: 'Filter',
@@ -74,17 +78,30 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ),
         ],
       ),
-      builder: (context, _) => PagedView<SiteNotification>(
-        scrollCtrl: _ctrl,
-        onRefresh: (invalidate) => invalidate(notificationsProvider),
-        provider: notificationsProvider,
-        onData: (data) => SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, i) => _NotificationItem(data.items[i], i < unreadCount),
-            childCount: data.items.length,
-          ),
-        ),
-      ),
+      builder: (context, compact) {
+        final content = _Content(
+          unreadCount: unreadCount,
+          scrollCtrl: _scrollCtrl,
+        );
+
+        if (compact) return content;
+
+        return Row(
+          children: [
+            PillSelector(
+              selected: filter.index,
+              maxWidth: 120,
+              onTap: (i) => ref
+                  .read(notificationsFilterProvider.notifier)
+                  .state = NotificationsFilter.values[i],
+              items: NotificationsFilter.values
+                  .map((v) => (title: Text(v.label), subtitle: null))
+                  .toList(),
+            ),
+            Expanded(child: content),
+          ],
+        );
+      },
     );
   }
 
@@ -96,19 +113,49 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           final index =
               ref.read(notificationsFilterProvider.notifier).state.index;
 
-          return SimpleSheet.list([
-            for (int i = 0; i < NotificationsFilter.values.length; i++)
-              ListTile(
-                title: Text(NotificationsFilter.values.elementAt(i).label),
-                selected: index == i,
-                onTap: () {
-                  ref.read(notificationsFilterProvider.notifier).state =
-                      NotificationsFilter.values.elementAt(i);
-                  Navigator.pop(context);
-                },
-              ),
-          ]);
+          return SimpleSheet(
+            initialHeight: PillSelector.expectedMinHeight(
+              NotificationsFilter.values.length,
+            ),
+            builder: (context, scrollCtrl) => PillSelector(
+              scrollCtrl: scrollCtrl,
+              selected: index,
+              onTap: (i) {
+                ref.read(notificationsFilterProvider.notifier).state =
+                    NotificationsFilter.values[i];
+                Navigator.pop(context);
+              },
+              items: NotificationsFilter.values
+                  .map((v) => (title: Text(v.label), subtitle: null))
+                  .toList(),
+            ),
+          );
         },
+      ),
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  const _Content({
+    required this.unreadCount,
+    required this.scrollCtrl,
+  });
+
+  final int unreadCount;
+  final ScrollController scrollCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return PagedView<SiteNotification>(
+      scrollCtrl: scrollCtrl,
+      onRefresh: (invalidate) => invalidate(notificationsProvider),
+      provider: notificationsProvider,
+      onData: (data) => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => _NotificationItem(data.items[i], i < unreadCount),
+          childCount: data.items.length,
+        ),
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -20,21 +21,23 @@ class DiscoverFloatingAction extends StatelessWidget {
           onPressed: () {
             showSheet(
               context,
-              SimpleSheet.list(
-                [
-                  for (final discoverType in DiscoverType.values)
-                    ListTile(
-                      title: Text(discoverType.label),
-                      leading: Icon(_typeIcon(discoverType)),
-                      selected: discoverType == type,
-                      onTap: () {
-                        ref
-                            .read(discoverFilterProvider.notifier)
-                            .update((s) => s.copyWith(type: discoverType));
-                        Navigator.pop(context);
-                      },
-                    ),
-                ],
+              SimpleSheet(
+                initialHeight: PillSelector.expectedMinHeight(
+                  DiscoverType.values.length,
+                ),
+                builder: (context, scrollCtrl) => PillSelector(
+                  scrollCtrl: scrollCtrl,
+                  selected: type.index,
+                  onTap: (i) {
+                    ref.read(discoverFilterProvider.notifier).update(
+                          (s) => s.copyWith(type: DiscoverType.values[i]),
+                        );
+                    Navigator.pop(context);
+                  },
+                  items: DiscoverType.values
+                      .map((v) => (title: Text(v.label), subtitle: null))
+                      .toList(),
+                ),
               ),
             );
           },

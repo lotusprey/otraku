@@ -8,13 +8,15 @@ import 'package:otraku/feature/studio/studio_grid.dart';
 import 'package:otraku/feature/user/user_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class DiscoverSubview extends StatelessWidget {
-  const DiscoverSubview(this.scrollCtrl);
+  const DiscoverSubview(this.scrollCtrl, this.compact);
 
   final ScrollController scrollCtrl;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,8 @@ class DiscoverSubview extends StatelessWidget {
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
         final onRefresh = (invalidate) => invalidate(discoverProvider);
 
-        switch (type) {
-          case DiscoverType.anime:
-            return PagedSelectionView(
+        final content = switch (type) {
+          DiscoverType.anime => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -33,9 +34,8 @@ class DiscoverSubview extends StatelessWidget {
               onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
-            );
-          case DiscoverType.manga:
-            return PagedSelectionView(
+            ),
+          DiscoverType.manga => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
@@ -43,48 +43,61 @@ class DiscoverSubview extends StatelessWidget {
               onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
                   : TileItemGrid(data.items),
-            );
-          case DiscoverType.character:
-            return PagedSelectionView(
+            ),
+          DiscoverType.character => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverCharacterItems).pages,
               onData: (data) => TileItemGrid(data.items),
-            );
-          case DiscoverType.staff:
-            return PagedSelectionView(
+            ),
+          DiscoverType.staff => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverStaffItems).pages,
               onData: (data) => TileItemGrid(data.items),
-            );
-          case DiscoverType.studio:
-            return PagedSelectionView(
+            ),
+          DiscoverType.studio => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverStudioItems).pages,
               onData: (data) => StudioGrid(data.items),
-            );
-          case DiscoverType.user:
-            return PagedSelectionView(
+            ),
+          DiscoverType.user => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverUserItems).pages,
               onData: (data) => UserGrid(data.items),
-            );
-          case DiscoverType.review:
-            return PagedSelectionView(
+            ),
+          DiscoverType.review => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverReviewItems).pages,
               onData: (data) => ReviewGrid(data.items),
-            );
-        }
+            ),
+        };
+
+        if (compact) return content;
+
+        return Row(
+          children: [
+            PillSelector(
+              selected: type.index,
+              maxWidth: 130,
+              onTap: (i) => ref.read(discoverFilterProvider.notifier).update(
+                    (s) => s.copyWith(type: DiscoverType.values[i]),
+                  ),
+              items: DiscoverType.values
+                  .map((v) => (title: Text(v.label), subtitle: null))
+                  .toList(),
+            ),
+            Expanded(child: content),
+          ],
+        );
       },
     );
   }

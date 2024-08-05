@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/home/home_provider.dart';
+import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
@@ -49,18 +50,23 @@ class CollectionFloatingAction extends StatelessWidget {
       onPressed: () {
         showSheet(
           context,
-          SimpleSheet.list([
-            for (int i = 0; i < lists.length; i++)
-              ListTile(
-                title: Text(lists[i].name),
-                selected: i == index,
-                trailing: Text(lists[i].entries.length.toString()),
-                onTap: () {
-                  ref.read(collectionProvider(tag).notifier).changeIndex(i);
-                  Navigator.pop(context);
-                },
-              ),
-          ]),
+          SimpleSheet(
+            initialHeight: PillSelector.expectedMinHeight(lists.length),
+            builder: (context, scrollCtrl) => PillSelector(
+              scrollCtrl: scrollCtrl,
+              selected: index,
+              onTap: (i) {
+                ref.read(collectionProvider(tag).notifier).changeIndex(i);
+                Navigator.pop(context);
+              },
+              items: lists
+                  .map((l) => (
+                        title: Text(l.name),
+                        subtitle: Text(l.entries.length.toString()),
+                      ))
+                  .toList(),
+            ),
+          ),
         );
       },
       child: SwipeSwitcher(

@@ -4,45 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
-import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-
-class StaffFavoriteButton extends StatefulWidget {
-  const StaffFavoriteButton(this.staff, this.toggleFavorite)
-      : super(key: const Key('favoriteStaff'));
-
-  final Staff staff;
-  final Future<Object?> Function() toggleFavorite;
-
-  @override
-  State<StaffFavoriteButton> createState() => _StaffFavoriteButtonState();
-}
-
-class _StaffFavoriteButtonState extends State<StaffFavoriteButton> {
-  @override
-  Widget build(BuildContext context) {
-    final staff = widget.staff;
-
-    return FloatingActionButton(
-      tooltip: staff.isFavorite ? 'Unfavourite' : 'Favourite',
-      heroTag: 'favorite',
-      child: staff.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
-      onPressed: () async {
-        setState(() => staff.isFavorite = !staff.isFavorite);
-
-        final err = await widget.toggleFavorite();
-        if (err == null) return;
-
-        setState(() => staff.isFavorite = !staff.isFavorite);
-        if (context.mounted) SnackBarExtension.show(context, err.toString());
-      },
-    );
-  }
-}
 
 class StaffFilterButton extends StatelessWidget {
   const StaffFilterButton(this.id, this.ref)

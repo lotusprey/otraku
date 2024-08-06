@@ -69,11 +69,6 @@ class _CharacterViewState extends ConsumerState<CharacterView>
       floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _scrollCtrl,
         actions: [
-          if (_tabCtrl.index == 0 && character.hasValue)
-            CharacterFavoriteButton(
-              character.valueOrNull!,
-              ref.read(characterProvider(widget.id).notifier).toggleFavorite,
-            ),
           if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id, ref),
           if (_tabCtrl.index == 1) CharacterLanguageSelectionButton(widget.id),
         ],
@@ -87,6 +82,9 @@ class _CharacterViewState extends ConsumerState<CharacterView>
             character: character.valueOrNull,
             tabCtrl: _tabCtrl,
             scrollToTop: _scrollCtrl.scrollToTop,
+            toggleFavorite: () => ref
+                .read(characterProvider(widget.id).notifier)
+                .toggleFavorite(),
           ),
         ],
         body: MediaQuery(

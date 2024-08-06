@@ -2,49 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
-import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
-
-class CharacterFavoriteButton extends StatefulWidget {
-  const CharacterFavoriteButton(this.character, this.toggleFavorite)
-      : super(key: const Key('favoriteCharacter'));
-
-  final Character character;
-  final Future<Object?> Function() toggleFavorite;
-
-  @override
-  State<CharacterFavoriteButton> createState() =>
-      _CharacterFavoriteButtonState();
-}
-
-class _CharacterFavoriteButtonState extends State<CharacterFavoriteButton> {
-  @override
-  Widget build(BuildContext context) {
-    final character = widget.character;
-
-    return FloatingActionButton(
-      tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
-      heroTag: 'favorite',
-      child: character.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
-      onPressed: () async {
-        setState(() => character.isFavorite = !character.isFavorite);
-
-        final err = await widget.toggleFavorite();
-        if (err == null) return;
-
-        setState(() => character.isFavorite = !character.isFavorite);
-        if (context.mounted) SnackBarExtension.show(context, err.toString());
-      },
-    );
-  }
-}
 
 class CharacterMediaFilterButton extends StatelessWidget {
   const CharacterMediaFilterButton(this.id, this.ref)

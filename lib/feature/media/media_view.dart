@@ -70,12 +70,6 @@ class _MediaViewState extends State<MediaView>
             actions: media.valueOrNull != null
                 ? [
                     MediaEditButton(media.value!),
-                    MediaFavoriteButton(
-                      media.value!.info,
-                      ref
-                          .read(mediaProvider(widget.id).notifier)
-                          .toggleFavorite,
-                    ),
                     MediaLanguageButton(widget.id, _tabCtrl),
                   ]
                 : const [],
@@ -89,6 +83,9 @@ class _MediaViewState extends State<MediaView>
                 media: media.valueOrNull,
                 tabCtrl: _tabCtrl,
                 scrollToTop: _scrollCtrl.scrollToTop,
+                toggleFavorite: () => ref
+                    .read(mediaProvider(widget.id).notifier)
+                    .toggleFavorite(),
               ),
             ],
             body: MediaQuery(

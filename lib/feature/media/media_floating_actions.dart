@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class MediaEditButton extends StatefulWidget {
@@ -33,40 +32,6 @@ class _MediaEditButtonState extends State<MediaEditButton> {
           callback: (edit) => setState(() => media.edit = edit),
         ),
       ),
-    );
-  }
-}
-
-class MediaFavoriteButton extends StatefulWidget {
-  const MediaFavoriteButton(this.info, this.toggleFavorite);
-
-  final MediaInfo info;
-  final Future<Object?> Function() toggleFavorite;
-
-  @override
-  State<MediaFavoriteButton> createState() => _MediaFavoriteButtonState();
-}
-
-class _MediaFavoriteButtonState extends State<MediaFavoriteButton> {
-  @override
-  Widget build(BuildContext context) {
-    final info = widget.info;
-
-    return FloatingActionButton(
-      tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
-      heroTag: 'favorite',
-      child: info.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
-      onPressed: () async {
-        setState(() => info.isFavorite = !info.isFavorite);
-
-        final err = await widget.toggleFavorite();
-        if (err == null) return;
-
-        setState(() => info.isFavorite = !info.isFavorite);
-        if (context.mounted) SnackBarExtension.show(context, err.toString());
-      },
     );
   }
 }

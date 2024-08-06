@@ -69,11 +69,6 @@ class _StaffViewState extends ConsumerState<StaffView>
       floatingActionConfig: FloatingActionConfig(
         scrollCtrl: _scrollCtrl,
         actions: [
-          if (_tabCtrl.index == 0 && staff.hasValue)
-            StaffFavoriteButton(
-              staff.valueOrNull!,
-              ref.read(staffProvider(widget.id).notifier).toggleFavorite,
-            ),
           if (_tabCtrl.index > 0) StaffFilterButton(widget.id, ref),
         ],
       ),
@@ -86,6 +81,8 @@ class _StaffViewState extends ConsumerState<StaffView>
             staff: staff.valueOrNull,
             tabCtrl: _tabCtrl,
             scrollToTop: _scrollCtrl.scrollToTop,
+            toggleFavorite: () =>
+                ref.read(staffProvider(widget.id).notifier).toggleFavorite(),
           ),
         ],
         body: MediaQuery(

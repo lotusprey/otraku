@@ -1,20 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
+import 'package:otraku/feature/studio/studio_header.dart';
 import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grids/tile_item_grid.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 
 class StudioView extends ConsumerStatefulWidget {
   const StudioView(this.id, this.name);
@@ -59,21 +56,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
         final studio = ref.watch(studioProvider(widget.id)).valueOrNull;
         final studioMedia = ref.watch(studioMediaProvider(widget.id));
         final name = studio?.name ?? widget.name;
-        final items = <Widget>[
-          if (studio != null)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  top: Theming.offset,
-                  bottom: 20,
-                ),
-                child: Text(
-                  '${studio.favorites.toString()} favourites',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
-              ),
-            ),
-        ];
+        final items = <Widget>[];
         bool? hasNext;
 
         studioMedia.unwrapPrevious().when(
@@ -123,36 +106,13 @@ class _StudioViewState extends ConsumerState<StudioView> {
               },
             );
 
-        final topBar = studio != null
-            ? TopBar(
-                title: name,
-                trailing: [
-                  IconButton(
-                    tooltip: 'More',
-                    icon: const Icon(Ionicons.ellipsis_horizontal),
-                    onPressed: () => showSheet(
-                      context,
-                      SimpleSheet.link(context, studio.siteUrl),
-                    ),
-                  ),
-                ],
-              )
-            : const TopBar();
+        final mediaQuery = MediaQuery.of(context);
 
         return AdaptiveScaffold(
-          topBar: topBar,
           floatingActionConfig: FloatingActionConfig(
             scrollCtrl: _ctrl,
             actions: studio != null
-                ? [
-                    StudioFavoriteButton(
-                      studio,
-                      ref
-                          .read(studioProvider(widget.id).notifier)
-                          .toggleFavorite,
-                    ),
-                    StudioFilterButton(widget.id, ref),
-                  ]
+                ? [StudioFilterButton(widget.id, ref)]
                 : const [],
           ),
           builder: (context, _) => ConstrainedView(
@@ -160,25 +120,25 @@ class _StudioViewState extends ConsumerState<StudioView> {
               physics: Theming.bouncyPhysics,
               controller: hasNext != null ? _ctrl : null,
               slivers: [
-                SliverRefreshControl(
-                  onRefresh: () {
-                    ref.invalidate(studioProvider(widget.id));
-                    ref.invalidate(studioMediaProvider(widget.id));
-                  },
+                StudioHeader(
+                  id: widget.id,
+                  name: name,
+                  studio: studio,
+                  toggleFavorite: () => ref
+                      .read(studioProvider(widget.id).notifier)
+                      .toggleFavorite(),
                 ),
-                if (name != null)
-                  SliverToBoxAdapter(
-                    child: GestureDetector(
-                      onTap: () => SnackBarExtension.copy(context, name),
-                      child: Hero(
-                        tag: widget.id,
-                        child: Text(
-                          name,
-                          style: Theme.of(context).textTheme.titleLarge,
-                        ),
-                      ),
-                    ),
+                MediaQuery(
+                  data: mediaQuery.copyWith(
+                    padding: mediaQuery.padding.copyWith(top: 0),
                   ),
+                  child: SliverRefreshControl(
+                    onRefresh: () {
+                      ref.invalidate(studioProvider(widget.id));
+                      ref.invalidate(studioMediaProvider(widget.id));
+                    },
+                  ),
+                ),
                 ...items,
                 SliverFooter(loading: hasNext ?? false),
               ],

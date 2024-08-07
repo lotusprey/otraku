@@ -29,8 +29,7 @@ class ReviewView extends StatelessWidget {
               bannerUrl: bannerUrl,
             ),
             if (data != null) ...[
-              SliverPadding(
-                padding: Theming.paddingAll,
+              SliverConstrainedView(
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     data.summary,

@@ -350,9 +350,11 @@ abstract class GqlQuery {
             id
             title {userPreferred}
             coverImage {extraLarge large medium}
-            startDate {year}
-            endDate {year}
+            format
             status(version: 2)
+            averageScore
+            mediaListEntry {status}
+            startDate {year month day}
           }
         }
       }

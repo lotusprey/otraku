@@ -59,8 +59,10 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         ref.listen<AsyncValue>(
           provider,
           (_, s) => s.whenOrNull(
-            error: (error, _) =>
-                SnackBarExtension.show(context, error.toString()),
+            error: (error, _) => SnackBarExtension.show(
+              context,
+              error.toString(),
+            ),
           ),
         );
 

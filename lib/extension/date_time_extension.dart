@@ -19,6 +19,18 @@ extension DateTimeExtension on DateTime {
     return DateTime(map!['year'], map['month'] ?? 1, map['day'] ?? 1);
   }
 
+  static String? fuzzyDateString(Map<String, dynamic>? map) {
+    if (map == null || map['year'] == null) return null;
+
+    final year = map['year'];
+    final month = map['month'];
+    final day = map['day'];
+
+    return '${day != null ? '$day ' : ''}'
+        '${month != null ? '${formattedMonth(month)} ' : ''}'
+        '$year';
+  }
+
   Map<String, dynamic> get fuzzyDate =>
       {'year': year, 'month': month, 'day': day};
 

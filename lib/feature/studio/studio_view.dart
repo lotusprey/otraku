@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/studio/studio_filter_provider.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
 import 'package:otraku/feature/studio/studio_header.dart';
+import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/grids/tile_item_grid.dart';
+import 'package:otraku/widget/cached_image.dart';
+import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/text_rail.dart';
 
 class StudioView extends ConsumerStatefulWidget {
   const StudioView(this.id, this.name);
@@ -24,13 +27,13 @@ class StudioView extends ConsumerStatefulWidget {
 }
 
 class _StudioViewState extends ConsumerState<StudioView> {
-  late final _ctrl = PagedController(loadMore: () {
+  late final _scrollCtrl = PagedController(loadMore: () {
     ref.read(studioMediaProvider(widget.id).notifier).fetch();
   });
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -39,113 +42,200 @@ class _StudioViewState extends ConsumerState<StudioView> {
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
-          studioProvider(widget.id),
-          (_, s) {
-            if (s.hasError) {
-              showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: 'Failed to load studio',
-                  content: s.error.toString(),
-                ),
-              );
-            }
-          },
+          studioMediaProvider(widget.id),
+          (_, s) => s.whenOrNull(
+            error: (error, _) => SnackBarExtension.show(
+              context,
+              error.toString(),
+            ),
+          ),
         );
 
         final studio = ref.watch(studioProvider(widget.id)).valueOrNull;
         final studioMedia = ref.watch(studioMediaProvider(widget.id));
-        final name = studio?.name ?? widget.name;
-        final items = <Widget>[];
-        bool? hasNext;
-
-        studioMedia.unwrapPrevious().when(
-              loading: () => items.add(
-                const SliverFillRemaining(child: Center(child: Loader())),
-              ),
-              error: (_, __) => items.add(
-                const SliverFillRemaining(
-                  child: Center(child: Text('Failed to load studio')),
-                ),
-              ),
-              data: (data) {
-                hasNext = data.media.hasNext;
-
-                final sort = ref.watch(studioFilterProvider(widget.id)).sort;
-
-                if (sort != MediaSort.startDate &&
-                    sort != MediaSort.startDateDesc) {
-                  items.add(TileItemGrid(data.media.items));
-                  return;
-                }
-
-                for (int i = 0; i < data.categories.length; i++) {
-                  items.add(SliverToBoxAdapter(
-                    child: Text(
-                      data.categories.keys.elementAt(i),
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                  ));
-
-                  final beg = data.categories.values.elementAt(i);
-                  final end = i < data.categories.length - 1
-                      ? data.categories.values.elementAt(i + 1)
-                      : data.media.items.length;
-
-                  items.add(
-                    SliverPadding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: Theming.offset,
-                      ),
-                      sliver: TileItemGrid(
-                        data.media.items.sublist(beg, end),
-                      ),
-                    ),
-                  );
-                }
-              },
-            );
 
         final mediaQuery = MediaQuery.of(context);
 
+        final header = StudioHeader(
+          id: widget.id,
+          name: studio?.name ?? widget.name,
+          studio: studio,
+          toggleFavorite: () =>
+              ref.read(studioProvider(widget.id).notifier).toggleFavorite(),
+        );
+
+        final content = studioMedia.unwrapPrevious().when(
+              loading: () => CustomScrollView(
+                physics: Theming.bouncyPhysics,
+                slivers: [
+                  header,
+                  const SliverFillRemaining(
+                    child: Center(child: Loader()),
+                  ),
+                ],
+              ),
+              error: (_, __) => CustomScrollView(
+                physics: Theming.bouncyPhysics,
+                slivers: [
+                  header,
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load studio')),
+                  ),
+                ],
+              ),
+              data: (data) => CustomScrollView(
+                physics: Theming.bouncyPhysics,
+                controller: _scrollCtrl,
+                slivers: [
+                  header,
+                  MediaQuery(
+                    data: mediaQuery.copyWith(
+                      padding: mediaQuery.padding.copyWith(top: 0),
+                    ),
+                    child: SliverRefreshControl(
+                      onRefresh: () {
+                        ref.invalidate(studioProvider(widget.id));
+                        ref.invalidate(studioMediaProvider(widget.id));
+                      },
+                    ),
+                  ),
+                  SliverConstrainedView(sliver: _StudioMediaGrid(data.items)),
+                  SliverFooter(loading: data.hasNext),
+                ],
+              ),
+            );
+
         return AdaptiveScaffold(
           floatingActionConfig: FloatingActionConfig(
-            scrollCtrl: _ctrl,
+            scrollCtrl: _scrollCtrl,
             actions: studio != null
                 ? [StudioFilterButton(widget.id, ref)]
                 : const [],
           ),
-          builder: (context, _) => ConstrainedView(
-            child: CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              controller: hasNext != null ? _ctrl : null,
-              slivers: [
-                StudioHeader(
-                  id: widget.id,
-                  name: name,
-                  studio: studio,
-                  toggleFavorite: () => ref
-                      .read(studioProvider(widget.id).notifier)
-                      .toggleFavorite(),
-                ),
-                MediaQuery(
-                  data: mediaQuery.copyWith(
-                    padding: mediaQuery.padding.copyWith(top: 0),
-                  ),
-                  child: SliverRefreshControl(
-                    onRefresh: () {
-                      ref.invalidate(studioProvider(widget.id));
-                      ref.invalidate(studioMediaProvider(widget.id));
-                    },
-                  ),
-                ),
-                ...items,
-                SliverFooter(loading: hasNext ?? false),
-              ],
-            ),
-          ),
+          builder: (context, _) {
+            return content;
+          },
         );
       },
+    );
+  }
+}
+
+class _StudioMediaGrid extends StatelessWidget {
+  const _StudioMediaGrid(this.items);
+
+  final List<StudioMedia> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverGrid(
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 260,
+        height: 100,
+      ),
+      delegate: SliverChildBuilderDelegate(
+        childCount: items.length,
+        (context, i) => _MediaTile(items[i]),
+      ),
+    );
+  }
+}
+
+class _MediaTile extends StatelessWidget {
+  const _MediaTile(this.item);
+
+  final StudioMedia item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final textRailItems = <String, bool>{
+      if (item.format != null) item.format!.label: false,
+      if (item.entryStatus != null) item.entryStatus!.label(true): true,
+      if (item.releaseStatus != null) item.releaseStatus!.label: false,
+    };
+
+    return LinkTile(
+      id: item.id,
+      info: item.cover,
+      discoverType: DiscoverType.anime,
+      child: Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Hero(
+              tag: item.id,
+              child: ClipRRect(
+                borderRadius: Theming.borderRadiusSmall,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                  ),
+                  child: CachedImage(
+                    item.cover,
+                    width: 100 / Theming.coverHtoWRatio,
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: Theming.paddingAll,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        item.title,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    TextRail(
+                      textRailItems,
+                      style: theme.textTheme.labelMedium,
+                    ),
+                    if (item.startDate != null) ...[
+                      const SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.startDate!,
+                              style: theme.textTheme.labelSmall!.copyWith(
+                                color: theme.colorScheme.primary,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.percent_rounded,
+                                  size: 15,
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  item.weightedAverageScore.toString(),
+                                  style: theme.textTheme.labelSmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

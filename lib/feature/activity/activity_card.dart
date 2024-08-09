@@ -424,7 +424,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     widget.toggleSubscription().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 
@@ -442,7 +442,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     widget.togglePin!().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 
@@ -457,7 +457,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
   void _remove() {
     widget.remove().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 

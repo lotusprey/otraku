@@ -155,32 +155,41 @@ class _HomeViewState extends ConsumerState<HomeView>
       },
     );
 
-    final FloatingActionConfig floatingActionConfig = switch (_tabCtrl.index) {
-      0 => FloatingActionConfig(
+    final HidingFloatingActionButton? floatingActionButton =
+        switch (_tabCtrl.index) {
+      0 => HidingFloatingActionButton(
+          key: const Key('feed'),
           scrollCtrl: _feedScrollCtrl,
-          actions: [FeedFloatingAction(ref)],
+          child: FeedFloatingAction(ref),
         ),
-      1 => FloatingActionConfig(
+      1 => HidingFloatingActionButton(
+          key: const Key('anime'),
           scrollCtrl: _animeScrollCtrl,
-          actions: [CollectionFloatingAction(_animeCollectionTag)],
-          showOnlyInCompactView: home.didExpandAnimeCollection,
+          child: CollectionFloatingAction(_animeCollectionTag),
         ),
-      2 => FloatingActionConfig(
+      2 => HidingFloatingActionButton(
+          key: const Key('manga'),
           scrollCtrl: _mangaScrollCtrl,
-          actions: [CollectionFloatingAction(_mangaCollectionTag)],
-          showOnlyInCompactView: home.didExpandMangaCollection,
+          child: CollectionFloatingAction(_mangaCollectionTag),
         ),
-      3 => FloatingActionConfig(
+      3 => HidingFloatingActionButton(
+          key: const Key('discover'),
           scrollCtrl: _discoverScrollCtrl,
-          actions: const [DiscoverFloatingAction()],
-          showOnlyInCompactView: true,
+          child: const DiscoverFloatingAction(),
         ),
-      _ => FloatingActionConfig(scrollCtrl: primaryScrollCtrl, actions: []),
+      _ => null,
     };
+
+    final floatingActionWhenCompactOnly = _tabCtrl.index ==
+            HomeTab.discover.index ||
+        _tabCtrl.index == HomeTab.anime.index &&
+            home.didExpandAnimeCollection ||
+        _tabCtrl.index == HomeTab.manga.index && home.didExpandMangaCollection;
 
     return AdaptiveScaffold(
       topBar: topBar,
-      floatingActionConfig: floatingActionConfig,
+      floatingActionButton: floatingActionButton,
+      floatingActionWhenCompactOnly: floatingActionWhenCompactOnly,
       navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),

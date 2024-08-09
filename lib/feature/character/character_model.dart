@@ -97,8 +97,8 @@ class CharacterMedia {
   const CharacterMedia({
     this.anime = const Paged(),
     this.manga = const Paged(),
-    this.languageToVoiceActors = const {},
-    this.language = '',
+    this.languageToVoiceActors = const [],
+    this.selectedLanguage = 0,
   });
 
   final Paged<Relation> anime;
@@ -106,31 +106,22 @@ class CharacterMedia {
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
-  final Map<String, Map<int, List<Relation>>> languageToVoiceActors;
-
-  /// The currently selected language.
-  final String language;
-
-  Iterable<String> get languages => languageToVoiceActors.keys;
+  final List<CharacterLanguageMapping> languageToVoiceActors;
+  final int selectedLanguage;
 
   /// Returns the media, in which the character has participated,
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
   Paged<(Relation, Relation?)> assembleAnimeWithVoiceActors() {
-    if (anime.items.isEmpty) return const Paged();
-
-    final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) {
-      return Paged(
-        items: [for (final a in anime.items) (a, null)],
-        hasNext: anime.hasNext,
-        next: anime.next,
-      );
+    if (languageToVoiceActors.isEmpty) {
+      return Paged(hasNext: anime.hasNext, next: anime.next);
     }
+
+    final actorsPerMedia = languageToVoiceActors[selectedLanguage];
 
     final animeAndVoiceActors = <(Relation, Relation?)>[];
     for (final a in anime.items) {
-      final actors = actorsPerMedia[a.id];
+      final actors = actorsPerMedia.voiceActors[a.id];
       if (actors == null || actors.isEmpty) {
         animeAndVoiceActors.add((a, null));
         continue;
@@ -148,3 +139,8 @@ class CharacterMedia {
     );
   }
 }
+
+typedef CharacterLanguageMapping = ({
+  String language,
+  Map<int, List<Relation>> voiceActors,
+});

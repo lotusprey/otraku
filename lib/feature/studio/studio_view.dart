@@ -106,12 +106,13 @@ class _StudioViewState extends ConsumerState<StudioView> {
             );
 
         return AdaptiveScaffold(
-          floatingActionConfig: FloatingActionConfig(
-            scrollCtrl: _scrollCtrl,
-            actions: studio != null
-                ? [StudioFilterButton(widget.id, ref)]
-                : const [],
-          ),
+          floatingActionButton: studio != null
+              ? HidingFloatingActionButton(
+                  key: const Key('filter'),
+                  scrollCtrl: _scrollCtrl,
+                  child: StudioFilterButton(widget.id, ref),
+                )
+              : null,
           builder: (context, _) {
             return content;
           },

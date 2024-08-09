@@ -83,19 +83,18 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           _ => const TopBar(key: Key('3'), title: 'About'),
         },
       ),
-      floatingActionConfig: FloatingActionConfig(
-        scrollCtrl: _scrollCtrl,
-        actions: _tabCtrl.index == 1 || _tabCtrl.index == 2
-            ? [
-                _SaveButton(() {
-                  if (_settings == null) return Future.value();
-                  return ref
-                      .read(settingsProvider.notifier)
-                      .updateSettings(_settings!);
-                }),
-              ]
-            : const [],
-      ),
+      floatingActionButton: _tabCtrl.index == 1 || _tabCtrl.index == 2
+          ? HidingFloatingActionButton(
+              key: const Key('save'),
+              scrollCtrl: _scrollCtrl,
+              child: _SaveButton(() {
+                if (_settings == null) return Future.value();
+                return ref
+                    .read(settingsProvider.notifier)
+                    .updateSettings(_settings!);
+              }),
+            )
+          : null,
       navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onSame: (_) => _scrollCtrl.scrollToTop(),

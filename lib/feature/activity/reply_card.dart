@@ -148,12 +148,14 @@ class ReplyCard extends StatelessWidget {
                       .removeReply(reply.id)
                       .then((err) {
                     if (err == null) {
-                      Navigator.pop(context);
+                      if (context.mounted) Navigator.pop(context);
                       return;
                     }
 
-                    SnackBarExtension.show(context, err.toString());
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      SnackBarExtension.show(context, err.toString());
+                      Navigator.pop(context);
+                    }
                   });
                 },
               ),

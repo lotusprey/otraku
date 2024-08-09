@@ -65,15 +65,13 @@ class _MediaViewState extends State<MediaView>
         final mediaQuery = MediaQuery.of(context);
 
         return AdaptiveScaffold(
-          floatingActionConfig: FloatingActionConfig(
-            scrollCtrl: _scrollCtrl,
-            actions: media.valueOrNull != null
-                ? [
-                    MediaEditButton(media.value!),
-                    MediaLanguageButton(widget.id, _tabCtrl),
-                  ]
-                : const [],
-          ),
+          floatingActionButton: media.valueOrNull != null
+              ? HidingFloatingActionButton(
+                  key: const Key('edit'),
+                  scrollCtrl: _scrollCtrl,
+                  child: MediaEditButton(media.value!),
+                )
+              : null,
           builder: (context, _) => NestedScrollView(
             controller: _scrollCtrl,
             headerSliverBuilder: (context, _) => [

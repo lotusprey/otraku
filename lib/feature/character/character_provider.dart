@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/character/character_filter_model.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
@@ -91,8 +92,8 @@ class CharacterMediaNotifier
 
     var anime = oldState.anime;
     var manga = oldState.manga;
-    var languageToVoiceActors = {...oldState.languageToVoiceActors};
-    var language = oldState.language;
+    var languageToVoiceActors = [...oldState.languageToVoiceActors];
+    var selectedLanguage = oldState.selectedLanguage;
 
     if (onAnime == null || onAnime) {
       final map = data['anime'];
@@ -111,17 +112,21 @@ class CharacterMediaNotifier
             final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
             if (l == null) continue;
 
-            final currentLanguage = languageToVoiceActors.putIfAbsent(
-              l,
-              () => <int, List<Relation>>{},
+            var languageMapping = languageToVoiceActors.firstWhereOrNull(
+              (lm) => lm.language == l,
             );
 
-            final currentMedia = currentLanguage.putIfAbsent(
+            if (languageMapping == null) {
+              languageMapping = (language: l, voiceActors: {});
+              languageToVoiceActors.add(languageMapping);
+            }
+
+            final mediaVoiceActors = languageMapping.voiceActors.putIfAbsent(
               items.last.id,
               () => [],
             );
 
-            currentMedia.add(Relation(
+            mediaVoiceActors.add(Relation(
               id: va['id'],
               title: va['name']['userPreferred'],
               imageUrl: va['image']['large'],
@@ -131,9 +136,11 @@ class CharacterMediaNotifier
           }
         }
 
-        if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
-          language = languageToVoiceActors.keys.first;
-        }
+        languageToVoiceActors.sort((a, b) {
+          if (a.language == 'Japanese') return -1;
+          if (b.language == 'Japanese') return 1;
+          return a.language.compareTo(b.language);
+        });
       }
 
       anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
@@ -159,16 +166,20 @@ class CharacterMediaNotifier
       anime: anime,
       manga: manga,
       languageToVoiceActors: languageToVoiceActors,
-      language: language,
+      selectedLanguage: selectedLanguage,
     );
   }
 
-  void changeLanguage(String language) => state = state.whenData(
-        (data) => CharacterMedia(
-          anime: data.anime,
-          manga: data.manga,
-          languageToVoiceActors: data.languageToVoiceActors,
-          language: language,
-        ),
+  void changeLanguage(int selectedLanguage) => state.whenData(
+        (data) {
+          if (selectedLanguage >= data.languageToVoiceActors.length) return;
+
+          state = AsyncValue.data(CharacterMedia(
+            anime: data.anime,
+            manga: data.manga,
+            languageToVoiceActors: data.languageToVoiceActors,
+            selectedLanguage: selectedLanguage,
+          ));
+        },
       );
 }

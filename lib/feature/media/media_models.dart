@@ -34,8 +34,8 @@ class MediaRelations {
     this.staff = const Paged(),
     this.reviews = const Paged(),
     this.recommendations = const Paged(),
-    this.languageToVoiceActors = const {},
-    this.language = '',
+    this.languageToVoiceActors = const [],
+    this.selectedLanguage = 0,
   });
 
   final Paged<Relation> characters;
@@ -45,23 +45,21 @@ class MediaRelations {
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
-  final Map<String, Map<int, List<Relation>>> languageToVoiceActors;
-
-  /// The currently selected language.
-  final String language;
-
-  Iterable<String> get languages => languageToVoiceActors.keys;
+  final List<MediaLanguageMapping> languageToVoiceActors;
+  final int selectedLanguage;
 
   /// Returns the characters, along with their voice actors,
   /// corresponding to the current [language]. If there are
   /// multiple actors, the given character is repeated for each actor.
-  List<(Relation, Relation?)> getCharactersAndVoiceActors() {
-    final chars = characters.items;
-    final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) return [for (final c in chars) (c, null)];
+  Paged<(Relation, Relation?)> getCharactersAndVoiceActors() {
+    if (languageToVoiceActors.isEmpty) {
+      return Paged(hasNext: characters.hasNext, next: characters.next);
+    }
+
+    final actorsPerMedia = languageToVoiceActors[selectedLanguage].voiceActors;
 
     final charactersAndVoiceActors = <(Relation, Relation?)>[];
-    for (final c in chars) {
+    for (final c in characters.items) {
       final actors = actorsPerMedia[c.id];
       if (actors == null || actors.isEmpty) {
         charactersAndVoiceActors.add((c, null));
@@ -73,7 +71,11 @@ class MediaRelations {
       }
     }
 
-    return charactersAndVoiceActors;
+    return Paged(
+      items: charactersAndVoiceActors,
+      hasNext: characters.hasNext,
+      next: characters.next,
+    );
   }
 
   MediaRelations copyWith({
@@ -81,8 +83,8 @@ class MediaRelations {
     Paged<Relation>? staff,
     Paged<RelatedReview>? reviews,
     Paged<Recommendation>? recommendations,
-    Map<String, Map<int, List<Relation>>>? languageToVoiceActors,
-    String? language,
+    List<MediaLanguageMapping>? languageToVoiceActors,
+    int? selectedLanguage,
   }) =>
       MediaRelations(
         characters: characters ?? this.characters,
@@ -91,9 +93,14 @@ class MediaRelations {
         recommendations: recommendations ?? this.recommendations,
         languageToVoiceActors:
             languageToVoiceActors ?? this.languageToVoiceActors,
-        language: language ?? this.language,
+        selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       );
 }
+
+typedef MediaLanguageMapping = ({
+  String language,
+  Map<int, List<Relation>> voiceActors,
+});
 
 class RelatedMedia {
   RelatedMedia._({

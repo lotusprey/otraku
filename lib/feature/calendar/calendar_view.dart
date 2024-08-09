@@ -45,15 +45,14 @@ class _CalendarViewState extends State<CalendarView> {
 
         return AdaptiveScaffold(
           topBar: const TopBar(title: 'Calendar'),
-          floatingActionConfig: FloatingActionConfig(
+          floatingActionButton: HidingFloatingActionButton(
+            key: const Key('filter'),
             scrollCtrl: _scrollCtrl,
-            actions: [
-              FloatingActionButton(
-                tooltip: 'Filter',
-                onPressed: () => showCalendarFilterSheet(context, ref),
-                child: const Icon(Ionicons.funnel_outline),
-              ),
-            ],
+            child: FloatingActionButton(
+              tooltip: 'Filter',
+              onPressed: () => showCalendarFilterSheet(context, ref),
+              child: const Icon(Ionicons.funnel_outline),
+            ),
           ),
           bottomBar: BottomBar([
             const SizedBox(width: Theming.offset),

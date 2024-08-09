@@ -67,16 +67,15 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           ),
         ],
       ),
-      floatingActionConfig: FloatingActionConfig(
-        showOnlyInCompactView: true,
+      floatingActionWhenCompactOnly: true,
+      floatingActionButton: HidingFloatingActionButton(
+        key: const Key('filter'),
         scrollCtrl: _scrollCtrl,
-        actions: [
-          FloatingActionButton(
-            tooltip: 'Filter',
-            onPressed: _showFilterSheet,
-            child: const Icon(Ionicons.funnel_outline),
-          ),
-        ],
+        child: FloatingActionButton(
+          tooltip: 'Filter',
+          onPressed: _showFilterSheet,
+          child: const Icon(Ionicons.funnel_outline),
+        ),
       ),
       builder: (context, compact) {
         final content = _Content(

@@ -66,13 +66,13 @@ class _CharacterViewState extends ConsumerState<CharacterView>
     final mediaQuery = MediaQuery.of(context);
 
     return AdaptiveScaffold(
-      floatingActionConfig: FloatingActionConfig(
-        scrollCtrl: _scrollCtrl,
-        actions: [
-          if (_tabCtrl.index > 0) CharacterMediaFilterButton(widget.id, ref),
-          if (_tabCtrl.index == 1) CharacterLanguageSelectionButton(widget.id),
-        ],
-      ),
+      floatingActionButton: _tabCtrl.index > 0
+          ? HidingFloatingActionButton(
+              key: const Key('filter'),
+              scrollCtrl: _scrollCtrl,
+              child: CharacterMediaFilterButton(widget.id, ref),
+            )
+          : null,
       builder: (context, _) => NestedScrollView(
         controller: _scrollCtrl,
         headerSliverBuilder: (context, _) => [

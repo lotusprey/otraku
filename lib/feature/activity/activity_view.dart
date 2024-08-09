@@ -52,26 +52,25 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       topBar: TopBar(
         trailing: [if (activity != null) _TopBarContent(activity)],
       ),
-      floatingActionConfig: FloatingActionConfig(
+      floatingActionButton: HidingFloatingActionButton(
+        key: const Key('Reply'),
         scrollCtrl: _ctrl,
-        actions: [
-          FloatingActionButton(
-            tooltip: 'New Reply',
-            child: const Icon(Icons.edit_outlined),
-            onPressed: () => showSheet(
-              context,
-              CompositionView(
-                tag: ActivityReplyCompositionTag(
-                  id: null,
-                  activityId: widget.id,
-                ),
-                onSaved: (map) => ref
-                    .read(activityProvider(widget.id).notifier)
-                    .appendReply(map),
+        child: FloatingActionButton(
+          tooltip: 'New Reply',
+          child: const Icon(Icons.edit_outlined),
+          onPressed: () => showSheet(
+            context,
+            CompositionView(
+              tag: ActivityReplyCompositionTag(
+                id: null,
+                activityId: widget.id,
               ),
+              onSaved: (map) => ref
+                  .read(activityProvider(widget.id).notifier)
+                  .appendReply(map),
             ),
           ),
-        ],
+        ),
       ),
       builder: (context, _) => Consumer(
         child: SliverRefreshControl(

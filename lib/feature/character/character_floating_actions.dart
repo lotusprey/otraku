@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
-import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 
 class CharacterMediaFilterButton extends StatelessWidget {
-  const CharacterMediaFilterButton(this.id, this.ref)
-      : super(key: const Key('filterCharacter'));
+  const CharacterMediaFilterButton(this.id, this.ref);
 
   final int id;
   final WidgetRef ref;
@@ -19,7 +17,6 @@ class CharacterMediaFilterButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       tooltip: 'Filter',
-      heroTag: 'filter',
       child: const Icon(Ionicons.funnel_outline),
       onPressed: () {
         var filter = ref.read(characterFilterProvider(id));
@@ -57,54 +54,6 @@ class CharacterMediaFilterButton extends StatelessWidget {
             ),
           ),
         ).then(onDone);
-      },
-    );
-  }
-}
-
-class CharacterLanguageSelectionButton extends StatelessWidget {
-  const CharacterLanguageSelectionButton(this.id)
-      : super(key: const Key('languageCharacter'));
-
-  final int id;
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        return ref.watch(characterMediaProvider(id)).maybeWhen(
-              data: (data) {
-                if (data.languages.length < 2) return const SizedBox();
-
-                return FloatingActionButton(
-                  tooltip: 'Language',
-                  heroTag: 'language',
-                  child: const Icon(Ionicons.globe_outline),
-                  onPressed: () {
-                    final languages = data.languages;
-                    final language = data.language;
-
-                    showSheet(
-                      context,
-                      SimpleSheet.list([
-                        for (int i = 0; i < languages.length; i++)
-                          ListTile(
-                            title: Text(languages.elementAt(i)),
-                            selected: languages.elementAt(i) == language,
-                            onTap: () {
-                              ref
-                                  .read(characterMediaProvider(id).notifier)
-                                  .changeLanguage(languages.elementAt(i));
-                              Navigator.pop(context);
-                            },
-                          ),
-                      ]),
-                    );
-                  },
-                );
-              },
-              orElse: () => const SizedBox(),
-            );
       },
     );
   }

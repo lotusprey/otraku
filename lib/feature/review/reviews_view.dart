@@ -52,21 +52,20 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
             ),
         ],
       ),
-      floatingActionConfig: FloatingActionConfig(
+      floatingActionButton: HidingFloatingActionButton(
+        key: const Key('filter'),
         scrollCtrl: _ctrl,
-        actions: [
-          FloatingActionButton(
-            tooltip: 'Filter',
-            child: const Icon(Ionicons.funnel_outline),
-            onPressed: () => showReviewsFilterSheet(
-              context: context,
-              filter: ref.read(reviewsFilterProvider(widget.id)),
-              onDone: (filter) => ref
-                  .read(reviewsFilterProvider(widget.id).notifier)
-                  .state = filter,
-            ),
+        child: FloatingActionButton(
+          tooltip: 'Filter',
+          child: const Icon(Ionicons.funnel_outline),
+          onPressed: () => showReviewsFilterSheet(
+            context: context,
+            filter: ref.read(reviewsFilterProvider(widget.id)),
+            onDone: (filter) => ref
+                .read(reviewsFilterProvider(widget.id).notifier)
+                .state = filter,
           ),
-        ],
+        ),
       ),
       builder: (context, _) => PagedView<ReviewItem>(
         scrollCtrl: _ctrl,

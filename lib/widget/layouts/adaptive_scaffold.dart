@@ -8,9 +8,10 @@ class AdaptiveScaffold extends StatelessWidget {
   const AdaptiveScaffold({
     required this.builder,
     this.topBar,
-    this.floatingActionConfig,
+    this.floatingActionButton,
     this.navigationConfig,
     this.bottomBar,
+    this.floatingActionWhenCompactOnly = false,
     this.sheetMode = false,
   }) : assert(
           navigationConfig == null || bottomBar == null,
@@ -19,9 +20,10 @@ class AdaptiveScaffold extends StatelessWidget {
 
   final Widget Function(BuildContext context, bool compact) builder;
   final PreferredSizeWidget? topBar;
-  final FloatingActionConfig? floatingActionConfig;
+  final HidingFloatingActionButton? floatingActionButton;
   final NavigationConfig? navigationConfig;
   final Widget? bottomBar;
+  final bool floatingActionWhenCompactOnly;
   final bool sheetMode;
 
   @override
@@ -30,7 +32,6 @@ class AdaptiveScaffold extends StatelessWidget {
         MediaQuery.sizeOf(context).width < Theming.windowWidthMedium;
 
     var child = builder(context, compact);
-    Widget? floatingActionButton;
     FloatingActionButtonLocation? floatingActionButtonLocation;
     var bottomNavigationBar = bottomBar;
     if (navigationConfig != null) {
@@ -67,16 +68,10 @@ class AdaptiveScaffold extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, child) {
-        if (floatingActionConfig != null &&
-            (compact || !floatingActionConfig!.showOnlyInCompactView)) {
+        if (floatingActionButton != null &&
+            (compact || !floatingActionWhenCompactOnly)) {
           final leftHanded = Persistence().leftHanded;
 
-          floatingActionButton = _FloatingActionGroup(
-            scrollCtrl: floatingActionConfig!.scrollCtrl,
-            children: leftHanded
-                ? floatingActionConfig!.actions
-                : floatingActionConfig!.actions.reversed.toList(),
-          );
           floatingActionButtonLocation = leftHanded
               ? FloatingActionButtonLocation.startFloat
               : FloatingActionButtonLocation.endFloat;
@@ -99,18 +94,8 @@ class AdaptiveScaffold extends StatelessWidget {
   }
 }
 
-class FloatingActionConfig {
-  const FloatingActionConfig({
-    required this.scrollCtrl,
-    required this.actions,
-    this.showOnlyInCompactView = false,
-  });
-
-  final ScrollController scrollCtrl;
-  final List<Widget> actions;
-  final bool showOnlyInCompactView;
-}
-
+/// A configuration that can be shared
+/// between bottom navigation bars and navigation rails.
 class NavigationConfig {
   const NavigationConfig({
     required this.selected,
@@ -125,25 +110,24 @@ class NavigationConfig {
   final void Function(int) onSame;
 }
 
-/// A row that hides/shows actions on scroll and animates their replacement.
-class _FloatingActionGroup extends StatefulWidget {
-  const _FloatingActionGroup({
+/// Hides/Shows [child] on scroll.
+class HidingFloatingActionButton extends StatefulWidget {
+  const HidingFloatingActionButton({
+    required super.key,
+    required this.child,
     required this.scrollCtrl,
-    required this.children,
   });
 
-  /// If children might change,
-  /// they *must* have keys, for them to be animated correctly.
-  final List<Widget> children;
+  final Widget child;
   final ScrollController scrollCtrl;
 
   @override
-  State<_FloatingActionGroup> createState() => _FloatingActionGroupState();
+  State<HidingFloatingActionButton> createState() =>
+      _HidingFloatingActionButtonState();
 }
 
-class _FloatingActionGroupState extends State<_FloatingActionGroup>
+class _HidingFloatingActionButtonState extends State<HidingFloatingActionButton>
     with SingleTickerProviderStateMixin {
-  late List<Widget> _children;
   late final AnimationController _animationCtrl;
   late final Animation<Offset> _slideAnimation;
   late final Animation<double> _fadeAnimation;
@@ -172,21 +156,16 @@ class _FloatingActionGroupState extends State<_FloatingActionGroup>
     super.initState();
     widget.scrollCtrl.addListener(_visibility);
 
-    _children = widget.children;
     _animationCtrl = AnimationController(
       duration: const Duration(milliseconds: 100),
       vsync: this,
+      value: 1,
     );
     _slideAnimation = Tween(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(_animationCtrl);
     _fadeAnimation = Tween(begin: 0.3, end: 1.0).animate(_animationCtrl);
-
-    // Actions should appear with an animation.
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _animationCtrl.forward(),
-    );
   }
 
   @override
@@ -197,72 +176,24 @@ class _FloatingActionGroupState extends State<_FloatingActionGroup>
   }
 
   @override
-  void didUpdateWidget(covariant _FloatingActionGroup oldWidget) {
+  void didUpdateWidget(covariant HidingFloatingActionButton oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    // The scroll controller may be different.
     if (widget.scrollCtrl != oldWidget.scrollCtrl) {
       oldWidget.scrollCtrl.removeListener(_visibility);
       widget.scrollCtrl.addListener(_visibility);
     }
-
-    // Hide the actions if they were removed.
-    if (widget.children.isEmpty) {
-      if (oldWidget.children.isEmpty) return;
-
-      _animationCtrl.value = _animationCtrl.upperBound;
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => _animationCtrl.reverse().then((_) {
-          setState(() {
-            _visible = false;
-            _children = widget.children;
-          });
-        }),
-      );
-      return;
-    }
-
-    // Check if the actions are different.
-    var changed = widget.children.length != oldWidget.children.length;
-    if (!changed) {
-      for (int i = 0; i < widget.children.length; i++) {
-        if (widget.children[i].key != oldWidget.children[i].key) {
-          changed = true;
-          break;
-        }
-      }
-    }
-
-    // Don't reanimate if the same actions are already visible.
-    if (!changed && _visible) return;
-
-    // Show the actions if they are different or have been hidden.
-    _visible = true;
-    _children = widget.children;
-    _animationCtrl.value = _animationCtrl.lowerBound;
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => _animationCtrl.forward(),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!_visible || _children.isEmpty) return const SizedBox();
+    if (!_visible) return const SizedBox();
 
     return SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(
         opacity: _fadeAnimation,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _children[0],
-            for (int i = 1; i < _children.length; i++) ...[
-              const SizedBox(width: Theming.offset),
-              _children[i],
-            ],
-          ],
-        ),
+        child: widget.child,
       ),
     );
   }

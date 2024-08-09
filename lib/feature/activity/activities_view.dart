@@ -40,36 +40,36 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      topBar: const TopBar(title: 'Activities'),
-      floatingActionConfig: FloatingActionConfig(
-        scrollCtrl: _ctrl,
-        actions: [
-          FloatingActionButton(
-            tooltip: widget.id == Persistence().id ? 'New Post' : 'New Message',
-            heroTag: 'post',
-            child: const Icon(Icons.edit_outlined),
-            onPressed: () => showSheet(
-              context,
-              CompositionView(
-                tag: widget.id == Persistence().id
-                    ? const StatusActivityCompositionTag(id: null)
-                    : MessageActivityCompositionTag(
-                        id: null,
-                        recipientId: widget.id,
-                      ),
-                onSaved: (map) => ref
-                    .read(activitiesProvider(widget.id).notifier)
-                    .prepend(map),
-              ),
-            ),
-          ),
-          FloatingActionButton(
+      topBar: TopBar(
+        title: 'Activities',
+        trailing: [
+          IconButton(
             tooltip: 'Filter',
-            heroTag: 'filter',
+            icon: const Icon(Ionicons.funnel_outline),
             onPressed: () => showActivityFilterSheet(context, ref, widget.id),
-            child: const Icon(Ionicons.funnel_outline),
           ),
         ],
+      ),
+      floatingActionButton: HidingFloatingActionButton(
+        key: const Key('post'),
+        scrollCtrl: _ctrl,
+        child: FloatingActionButton(
+          tooltip: widget.id == Persistence().id ? 'New Post' : 'New Message',
+          child: const Icon(Icons.edit_outlined),
+          onPressed: () => showSheet(
+            context,
+            CompositionView(
+              tag: widget.id == Persistence().id
+                  ? const StatusActivityCompositionTag(id: null)
+                  : MessageActivityCompositionTag(
+                      id: null,
+                      recipientId: widget.id,
+                    ),
+              onSaved: (map) =>
+                  ref.read(activitiesProvider(widget.id).notifier).prepend(map),
+            ),
+          ),
+        ),
       ),
       builder: (context, _) => ActivitiesSubView(widget.id, _ctrl),
     );

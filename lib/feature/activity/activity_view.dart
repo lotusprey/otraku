@@ -52,7 +52,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       topBar: TopBar(
         trailing: [if (activity != null) _TopBarContent(activity)],
       ),
-      floatingActionButton: HidingFloatingActionButton(
+      floatingAction: HidingFloatingActionButton(
         key: const Key('Reply'),
         scrollCtrl: _ctrl,
         child: FloatingActionButton(

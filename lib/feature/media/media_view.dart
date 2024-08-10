@@ -65,7 +65,7 @@ class _MediaViewState extends State<MediaView>
         final mediaQuery = MediaQuery.of(context);
 
         return AdaptiveScaffold(
-          floatingActionButton: media.valueOrNull != null
+          floatingAction: media.valueOrNull != null
               ? HidingFloatingActionButton(
                   key: const Key('edit'),
                   scrollCtrl: _scrollCtrl,

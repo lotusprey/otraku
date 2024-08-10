@@ -8,10 +8,9 @@ class AdaptiveScaffold extends StatelessWidget {
   const AdaptiveScaffold({
     required this.builder,
     this.topBar,
-    this.floatingActionButton,
+    this.floatingAction,
     this.navigationConfig,
     this.bottomBar,
-    this.floatingActionWhenCompactOnly = false,
     this.sheetMode = false,
   }) : assert(
           navigationConfig == null || bottomBar == null,
@@ -20,10 +19,9 @@ class AdaptiveScaffold extends StatelessWidget {
 
   final Widget Function(BuildContext context, bool compact) builder;
   final PreferredSizeWidget? topBar;
-  final HidingFloatingActionButton? floatingActionButton;
+  final HidingFloatingActionButton? floatingAction;
   final NavigationConfig? navigationConfig;
   final Widget? bottomBar;
-  final bool floatingActionWhenCompactOnly;
   final bool sheetMode;
 
   @override
@@ -68,8 +66,8 @@ class AdaptiveScaffold extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, child) {
-        if (floatingActionButton != null &&
-            (compact || !floatingActionWhenCompactOnly)) {
+        if (floatingAction != null &&
+            (compact || !floatingAction!.showOnlyWhenCompact)) {
           final leftHanded = Persistence().leftHanded;
 
           floatingActionButtonLocation = leftHanded
@@ -84,7 +82,7 @@ class AdaptiveScaffold extends StatelessWidget {
           resizeToAvoidBottomInset: resizeToAvoidBottomInset,
           appBar: topBar,
           bottomNavigationBar: bottomNavigationBar,
-          floatingActionButton: floatingActionButton,
+          floatingActionButton: floatingAction,
           floatingActionButtonLocation: floatingActionButtonLocation,
           body: child,
         );
@@ -116,10 +114,12 @@ class HidingFloatingActionButton extends StatefulWidget {
     required super.key,
     required this.child,
     required this.scrollCtrl,
+    this.showOnlyWhenCompact = false,
   });
 
   final Widget child;
   final ScrollController scrollCtrl;
+  final bool showOnlyWhenCompact;
 
   @override
   State<HidingFloatingActionButton> createState() =>

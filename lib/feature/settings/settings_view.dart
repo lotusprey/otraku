@@ -83,7 +83,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           _ => const TopBar(key: Key('3'), title: 'About'),
         },
       ),
-      floatingActionButton: _tabCtrl.index == 1 || _tabCtrl.index == 2
+      floatingAction: _tabCtrl.index == 1 || _tabCtrl.index == 2
           ? HidingFloatingActionButton(
               key: const Key('save'),
               scrollCtrl: _scrollCtrl,

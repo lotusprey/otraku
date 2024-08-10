@@ -52,7 +52,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
             ),
         ],
       ),
-      floatingActionButton: HidingFloatingActionButton(
+      floatingAction: HidingFloatingActionButton(
         key: const Key('filter'),
         scrollCtrl: _ctrl,
         child: FloatingActionButton(

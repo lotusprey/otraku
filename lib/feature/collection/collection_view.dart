@@ -49,9 +49,9 @@ class _CollectionViewState extends State<CollectionView> {
 
     return AdaptiveScaffold(
       topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
-      floatingActionWhenCompactOnly: true,
-      floatingActionButton: HidingFloatingActionButton(
-        key: Key(tag.toString()),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('lists'),
+        showOnlyWhenCompact: true,
         scrollCtrl: _ctrl,
         child: CollectionFloatingAction(tag),
       ),

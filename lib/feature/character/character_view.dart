@@ -66,7 +66,7 @@ class _CharacterViewState extends ConsumerState<CharacterView>
     final mediaQuery = MediaQuery.of(context);
 
     return AdaptiveScaffold(
-      floatingActionButton: _tabCtrl.index > 0
+      floatingAction: _tabCtrl.index > 0
           ? HidingFloatingActionButton(
               key: const Key('filter'),
               scrollCtrl: _scrollCtrl,

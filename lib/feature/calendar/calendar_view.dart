@@ -45,7 +45,7 @@ class _CalendarViewState extends State<CalendarView> {
 
         return AdaptiveScaffold(
           topBar: const TopBar(title: 'Calendar'),
-          floatingActionButton: HidingFloatingActionButton(
+          floatingAction: HidingFloatingActionButton(
             key: const Key('filter'),
             scrollCtrl: _scrollCtrl,
             child: FloatingActionButton(

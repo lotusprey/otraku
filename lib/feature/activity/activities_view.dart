@@ -50,7 +50,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
           ),
         ],
       ),
-      floatingActionButton: HidingFloatingActionButton(
+      floatingAction: HidingFloatingActionButton(
         key: const Key('post'),
         scrollCtrl: _ctrl,
         child: FloatingActionButton(

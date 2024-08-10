@@ -164,32 +164,28 @@ class _HomeViewState extends ConsumerState<HomeView>
         ),
       1 => HidingFloatingActionButton(
           key: const Key('anime'),
+          showOnlyWhenCompact: home.didExpandAnimeCollection,
           scrollCtrl: _animeScrollCtrl,
           child: CollectionFloatingAction(_animeCollectionTag),
         ),
       2 => HidingFloatingActionButton(
           key: const Key('manga'),
+          showOnlyWhenCompact: home.didExpandMangaCollection,
           scrollCtrl: _mangaScrollCtrl,
           child: CollectionFloatingAction(_mangaCollectionTag),
         ),
       3 => HidingFloatingActionButton(
           key: const Key('discover'),
+          showOnlyWhenCompact: true,
           scrollCtrl: _discoverScrollCtrl,
           child: const DiscoverFloatingAction(),
         ),
       _ => null,
     };
 
-    final floatingActionWhenCompactOnly = _tabCtrl.index ==
-            HomeTab.discover.index ||
-        _tabCtrl.index == HomeTab.anime.index &&
-            home.didExpandAnimeCollection ||
-        _tabCtrl.index == HomeTab.manga.index && home.didExpandMangaCollection;
-
     return AdaptiveScaffold(
       topBar: topBar,
-      floatingActionButton: floatingActionButton,
-      floatingActionWhenCompactOnly: floatingActionWhenCompactOnly,
+      floatingAction: floatingActionButton,
       navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),

@@ -133,9 +133,11 @@ class SheetWithButtonRow extends StatelessWidget {
           ),
           child: ScaffoldMessenger(
             child: AdaptiveScaffold(
-              sheetMode: true,
-              bottomBar: buttons,
-              builder: (context, _) => builder(context, scrollCtrl),
+              (context, compact) => ScaffoldConfig(
+                sheetMode: true,
+                bottomBar: buttons,
+                child: builder(context, scrollCtrl),
+              ),
             ),
           ),
         ),

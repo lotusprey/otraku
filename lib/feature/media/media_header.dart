@@ -8,20 +8,28 @@ import 'package:otraku/widget/layouts/content_header.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
-  const MediaHeader({
+  const MediaHeader.withTabBar({
     required this.id,
     required this.coverUrl,
     required this.media,
-    required this.tabCtrl,
-    required this.scrollToTop,
+    required TabController this.tabCtrl,
+    required void Function() this.scrollToTop,
     required this.toggleFavorite,
   });
+
+  const MediaHeader.withoutTabBar({
+    required this.id,
+    required this.coverUrl,
+    required this.media,
+    required this.toggleFavorite,
+  })  : tabCtrl = null,
+        scrollToTop = null;
 
   final int id;
   final String? coverUrl;
   final Media? media;
-  final TabController tabCtrl;
-  final void Function() scrollToTop;
+  final TabController? tabCtrl;
+  final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
 
   @override
@@ -69,25 +77,33 @@ class MediaHeader extends StatelessWidget {
         textRailItems,
         style: Theme.of(context).textTheme.labelMedium,
       ),
-      tabBarConfig: (
-        tabCtrl: tabCtrl,
-        scrollToTop: scrollToTop,
-        tabs: const [
-          Tab(text: 'Overview'),
-          Tab(text: 'Related'),
-          Tab(text: 'Characters'),
-          Tab(text: 'Staff'),
-          Tab(text: 'Reviews'),
-          Tab(text: 'Following'),
-          Tab(text: 'Recommendations'),
-          Tab(text: 'Statistics'),
-        ],
-      ),
+      tabBarConfig: tabCtrl != null && scrollToTop != null
+          ? (
+              tabCtrl: tabCtrl!,
+              scrollToTop: scrollToTop!,
+              tabs: tabsWithOverview,
+            )
+          : null,
       trailingTopButtons: [
         if (media != null) _FavoriteButton(media!.info, toggleFavorite),
       ],
     );
   }
+
+  static const tabsWithoutOverview = [
+    Tab(text: 'Related'),
+    Tab(text: 'Characters'),
+    Tab(text: 'Staff'),
+    Tab(text: 'Reviews'),
+    Tab(text: 'Following'),
+    Tab(text: 'Recommendations'),
+    Tab(text: 'Statistics'),
+  ];
+
+  static const tabsWithOverview = [
+    Tab(text: 'Overview'),
+    ...tabsWithoutOverview,
+  ];
 }
 
 class _FavoriteButton extends StatefulWidget {

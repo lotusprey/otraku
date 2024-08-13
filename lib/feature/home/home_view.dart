@@ -26,6 +26,7 @@ import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 
@@ -155,102 +156,120 @@ class _HomeViewState extends ConsumerState<HomeView>
       },
     );
 
-    final HidingFloatingActionButton? floatingActionButton =
-        switch (_tabCtrl.index) {
-      0 => HidingFloatingActionButton(
-          key: const Key('feed'),
-          scrollCtrl: _feedScrollCtrl,
-          child: FeedFloatingAction(ref),
-        ),
-      1 => HidingFloatingActionButton(
-          key: const Key('anime'),
-          showOnlyWhenCompact: home.didExpandAnimeCollection,
-          scrollCtrl: _animeScrollCtrl,
-          child: CollectionFloatingAction(_animeCollectionTag),
-        ),
-      2 => HidingFloatingActionButton(
-          key: const Key('manga'),
-          showOnlyWhenCompact: home.didExpandMangaCollection,
-          scrollCtrl: _mangaScrollCtrl,
-          child: CollectionFloatingAction(_mangaCollectionTag),
-        ),
-      3 => HidingFloatingActionButton(
-          key: const Key('discover'),
-          showOnlyWhenCompact: true,
-          scrollCtrl: _discoverScrollCtrl,
-          child: const DiscoverFloatingAction(),
-        ),
-      _ => null,
-    };
+    final navigationConfig = NavigationConfig(
+      selected: _tabCtrl.index,
+      onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
+      items: {
+        for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
+      },
+      onSame: (i) {
+        final tab = HomeTab.values[i];
+
+        switch (tab) {
+          case HomeTab.anime:
+            if (_animeScrollCtrl.position.pixels > 0) {
+              _animeScrollCtrl.scrollToTop();
+            } else {
+              _toggleSearchFocus();
+            }
+            return;
+          case HomeTab.manga:
+            if (_mangaScrollCtrl.position.pixels > 0) {
+              _mangaScrollCtrl.scrollToTop();
+            } else {
+              _toggleSearchFocus();
+            }
+            return;
+          case HomeTab.discover:
+            if (_discoverScrollCtrl.position.pixels > 0) {
+              _discoverScrollCtrl.scrollToTop();
+            } else {
+              _toggleSearchFocus();
+            }
+            return;
+          case HomeTab.feed:
+            _feedScrollCtrl.scrollToTop();
+          case HomeTab.profile:
+            primaryScrollCtrl.scrollToTop();
+            return;
+        }
+      },
+    );
 
     return AdaptiveScaffold(
-      topBar: topBar,
-      floatingAction: floatingActionButton,
-      navigationConfig: NavigationConfig(
-        selected: _tabCtrl.index,
-        onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
-        items: {
-          for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
-        },
-        onSame: (i) {
-          final tab = HomeTab.values[i];
+      (context, compact) {
+        final floatingAction = switch (_tabCtrl.index) {
+          0 => HidingFloatingActionButton(
+              key: const Key('feed'),
+              scrollCtrl: _feedScrollCtrl,
+              child: FeedFloatingAction(ref),
+            ),
+          1 => compact || !home.didExpandAnimeCollection
+              ? HidingFloatingActionButton(
+                  key: const Key('anime'),
+                  scrollCtrl: _animeScrollCtrl,
+                  child: CollectionFloatingAction(_animeCollectionTag),
+                )
+              : null,
+          2 => compact || !home.didExpandMangaCollection
+              ? HidingFloatingActionButton(
+                  key: const Key('manga'),
+                  scrollCtrl: _mangaScrollCtrl,
+                  child: CollectionFloatingAction(_mangaCollectionTag),
+                )
+              : null,
+          3 => compact
+              ? HidingFloatingActionButton(
+                  key: const Key('discover'),
+                  scrollCtrl: _discoverScrollCtrl,
+                  child: const DiscoverFloatingAction(),
+                )
+              : null,
+          _ => null,
+        };
 
-          switch (tab) {
-            case HomeTab.anime:
-              if (_animeScrollCtrl.position.pixels > 0) {
-                _animeScrollCtrl.scrollToTop();
-              } else {
-                _toggleSearchFocus();
-              }
-              return;
-            case HomeTab.manga:
-              if (_mangaScrollCtrl.position.pixels > 0) {
-                _mangaScrollCtrl.scrollToTop();
-              } else {
-                _toggleSearchFocus();
-              }
-              return;
-            case HomeTab.discover:
-              if (_discoverScrollCtrl.position.pixels > 0) {
-                _discoverScrollCtrl.scrollToTop();
-              } else {
-                _toggleSearchFocus();
-              }
-              return;
-            case HomeTab.feed:
-              _feedScrollCtrl.scrollToTop();
-            case HomeTab.profile:
-              primaryScrollCtrl.scrollToTop();
-              return;
-          }
-        },
-      ),
-      builder: (context, compact) => TabBarView(
-        controller: _tabCtrl,
-        physics: const FastTabBarViewScrollPhysics(),
-        children: [
-          ActivitiesSubView(homeFeedId, _feedScrollCtrl),
-          CollectionSubview(
-            scrollCtrl: _animeScrollCtrl,
-            tag: _animeCollectionTag,
-            compact: compact,
-            key: Key(true.toString()),
-          ),
-          CollectionSubview(
-            scrollCtrl: _mangaScrollCtrl,
-            tag: _mangaCollectionTag,
-            compact: compact,
-            key: Key(false.toString()),
-          ),
-          DiscoverSubview(_discoverScrollCtrl, compact),
-          UserHomeView(
-            _userTag,
-            null,
-            homeScrollCtrl: primaryScrollCtrl,
-            removableTopPadding: topBar.preferredSize.height,
-          ),
-        ],
-      ),
+        final child = TabBarView(
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: [
+            ActivitiesSubView(homeFeedId, _feedScrollCtrl),
+            CollectionSubview(
+              scrollCtrl: _animeScrollCtrl,
+              tag: _animeCollectionTag,
+              compact: compact,
+              key: Key(true.toString()),
+            ),
+            CollectionSubview(
+              scrollCtrl: _mangaScrollCtrl,
+              tag: _mangaCollectionTag,
+              compact: compact,
+              key: Key(false.toString()),
+            ),
+            DiscoverSubview(_discoverScrollCtrl, compact),
+            UserHomeView(
+              _userTag,
+              null,
+              homeScrollCtrl: primaryScrollCtrl,
+              removableTopPadding: topBar.preferredSize.height,
+            ),
+          ],
+        );
+
+        return switch (compact) {
+          true => ScaffoldConfig(
+              topBar: topBar,
+              floatingAction: floatingAction,
+              navigationConfig: navigationConfig,
+              child: child,
+            ),
+          false => ScaffoldConfig(
+              topBar: topBar,
+              floatingAction: floatingAction,
+              navigationConfig: navigationConfig,
+              child: child,
+            ),
+        };
+      },
     );
   }
 

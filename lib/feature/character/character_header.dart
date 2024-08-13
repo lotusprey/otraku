@@ -6,20 +6,28 @@ import 'package:otraku/widget/layouts/content_header.dart';
 import 'package:otraku/widget/table_list.dart';
 
 class CharacterHeader extends StatelessWidget {
-  const CharacterHeader({
+  const CharacterHeader.withTabBar({
     required this.id,
     required this.imageUrl,
     required this.character,
-    required this.tabCtrl,
-    required this.scrollToTop,
+    required TabController this.tabCtrl,
+    required void Function() this.scrollToTop,
     required this.toggleFavorite,
   });
+
+  const CharacterHeader.withoutTabBar({
+    required this.id,
+    required this.imageUrl,
+    required this.character,
+    required this.toggleFavorite,
+  })  : tabCtrl = null,
+        scrollToTop = null;
 
   final int id;
   final String? imageUrl;
   final Character? character;
-  final TabController tabCtrl;
-  final void Function() scrollToTop;
+  final TabController? tabCtrl;
+  final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
 
   @override
@@ -36,20 +44,28 @@ class CharacterHeader extends StatelessWidget {
               if (character!.gender != null) ('Gender', character!.gender!),
             ])
           : null,
-      tabBarConfig: (
-        tabCtrl: tabCtrl,
-        scrollToTop: scrollToTop,
-        tabs: const [
-          Tab(text: 'Overview'),
-          Tab(text: 'Anime'),
-          Tab(text: 'Manga'),
-        ],
-      ),
+      tabBarConfig: tabCtrl != null && scrollToTop != null
+          ? (
+              tabCtrl: tabCtrl!,
+              scrollToTop: scrollToTop!,
+              tabs: tabsWithOverview,
+            )
+          : null,
       trailingTopButtons: [
         if (character != null) _FavoriteButton(character!, toggleFavorite),
       ],
     );
   }
+
+  static const tabsWithoutOverview = [
+    Tab(text: 'Anime'),
+    Tab(text: 'Manga'),
+  ];
+
+  static const tabsWithOverview = [
+    Tab(text: 'Overview'),
+    ...tabsWithoutOverview,
+  ];
 }
 
 class _FavoriteButton extends StatefulWidget {

@@ -5,47 +5,70 @@ import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 
 class CharacterOverviewSubview extends StatelessWidget {
-  const CharacterOverviewSubview({
+  const CharacterOverviewSubview.asFragment({
     required this.character,
-    required this.scrollCtrl,
     required this.invalidate,
-  });
+    required ScrollController this.scrollCtrl,
+  }) : header = null;
+
+  const CharacterOverviewSubview.withHeader({
+    required this.character,
+    required this.invalidate,
+    required Widget this.header,
+  }) : scrollCtrl = null;
 
   final Character character;
-  final ScrollController scrollCtrl;
   final void Function() invalidate;
+  final Widget? header;
+  final ScrollController? scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedView(
-      child: CustomScrollView(
-        physics: Theming.bouncyPhysics,
-        controller: scrollCtrl,
-        slivers: [
-          SliverRefreshControl(onRefresh: invalidate),
-          _NameTable(character),
-          const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
-          SliverTableList([
-            if (character.dateOfBirth != null)
-              ('Birth', character.dateOfBirth!),
-            if (character.age != null) ('Age', character.age!),
-            if (character.bloodType != null)
-              ('Blood Type', character.bloodType!),
-          ]),
-          if (character.description.isNotEmpty) ...[
-            const SliverToBoxAdapter(child: SizedBox(height: 15)),
-            HtmlContent(
-              character.description,
-              renderMode: RenderMode.sliverList,
+    final mediaQuery = MediaQuery.of(context);
+    final refreshControl = SliverRefreshControl(onRefresh: invalidate);
+
+    return CustomScrollView(
+      physics: Theming.bouncyPhysics,
+      controller: scrollCtrl,
+      slivers: [
+        if (header != null) ...[
+          header!,
+          MediaQuery(
+            data: mediaQuery.copyWith(
+              padding: mediaQuery.padding.copyWith(top: 0),
             ),
-          ],
-          const SliverFooter(),
-        ],
-      ),
+            child: refreshControl,
+          ),
+        ] else
+          refreshControl,
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              _NameTable(character),
+              const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
+              SliverTableList([
+                if (character.dateOfBirth != null)
+                  ('Birth', character.dateOfBirth!),
+                if (character.age != null) ('Age', character.age!),
+                if (character.bloodType != null)
+                  ('Blood Type', character.bloodType!),
+              ]),
+              if (character.description.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 15)),
+                HtmlContent(
+                  character.description,
+                  renderMode: RenderMode.sliverList,
+                ),
+              ],
+            ],
+          ),
+        ),
+        const SliverFooter(),
+      ],
     );
   }
 }

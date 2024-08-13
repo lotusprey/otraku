@@ -8,7 +8,8 @@ class PagedController extends ScrollController {
   }
 
   /// The callback to call, when the end of the page is reached.
-  final void Function() loadMore;
+  /// While it can be replaced, do so only if absolutely needed.
+  void Function() loadMore;
 
   /// Keeps track of the last [position.maxScrollExtent].
   /// Used to ensure that when the end of the page is reached,

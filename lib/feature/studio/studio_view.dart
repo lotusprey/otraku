@@ -12,6 +12,7 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/widget/text_rail.dart';
@@ -106,16 +107,16 @@ class _StudioViewState extends ConsumerState<StudioView> {
             );
 
         return AdaptiveScaffold(
-          floatingAction: studio != null
-              ? HidingFloatingActionButton(
-                  key: const Key('filter'),
-                  scrollCtrl: _scrollCtrl,
-                  child: StudioFilterButton(widget.id, ref),
-                )
-              : null,
-          builder: (context, _) {
-            return content;
-          },
+          (context, _) => ScaffoldConfig(
+            floatingAction: studio != null
+                ? HidingFloatingActionButton(
+                    key: const Key('filter'),
+                    scrollCtrl: _scrollCtrl,
+                    child: StudioFilterButton(widget.id, ref),
+                  )
+                : null,
+            child: content,
+          ),
         );
       },
     );

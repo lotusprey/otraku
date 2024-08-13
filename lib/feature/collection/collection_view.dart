@@ -19,6 +19,7 @@ import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/loaders/loaders.dart';
 import 'package:otraku/feature/collection/collection_list.dart';
@@ -48,17 +49,20 @@ class _CollectionViewState extends State<CollectionView> {
     final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
 
     return AdaptiveScaffold(
-      topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
-      floatingAction: HidingFloatingActionButton(
-        key: const Key('lists'),
-        showOnlyWhenCompact: true,
-        scrollCtrl: _ctrl,
-        child: CollectionFloatingAction(tag),
-      ),
-      builder: (context, compact) => CollectionSubview(
-        tag: tag,
-        scrollCtrl: _ctrl,
-        compact: compact,
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
+        floatingAction: compact
+            ? HidingFloatingActionButton(
+                key: const Key('lists'),
+                scrollCtrl: _ctrl,
+                child: CollectionFloatingAction(tag),
+              )
+            : null,
+        child: CollectionSubview(
+          tag: tag,
+          scrollCtrl: _ctrl,
+          compact: compact,
+        ),
       ),
     );
   }

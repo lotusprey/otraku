@@ -15,6 +15,7 @@ import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -49,89 +50,91 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     );
 
     return AdaptiveScaffold(
-      topBar: TopBar(
-        trailing: [if (activity != null) _TopBarContent(activity)],
-      ),
-      floatingAction: HidingFloatingActionButton(
-        key: const Key('Reply'),
-        scrollCtrl: _ctrl,
-        child: FloatingActionButton(
-          tooltip: 'New Reply',
-          child: const Icon(Icons.edit_outlined),
-          onPressed: () => showSheet(
-            context,
-            CompositionView(
-              tag: ActivityReplyCompositionTag(
-                id: null,
-                activityId: widget.id,
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBar(
+          trailing: [if (activity != null) _TopBarContent(activity)],
+        ),
+        floatingAction: HidingFloatingActionButton(
+          key: const Key('Reply'),
+          scrollCtrl: _ctrl,
+          child: FloatingActionButton(
+            tooltip: 'New Reply',
+            child: const Icon(Icons.edit_outlined),
+            onPressed: () => showSheet(
+              context,
+              CompositionView(
+                tag: ActivityReplyCompositionTag(
+                  id: null,
+                  activityId: widget.id,
+                ),
+                onSaved: (map) => ref
+                    .read(activityProvider(widget.id).notifier)
+                    .appendReply(map),
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(widget.id).notifier)
-                  .appendReply(map),
             ),
           ),
         ),
-      ),
-      builder: (context, _) => Consumer(
-        child: SliverRefreshControl(
-          onRefresh: () => ref.invalidate(activityProvider(widget.id)),
-        ),
-        builder: (context, ref, refreshControl) {
-          ref.listen<AsyncValue>(
-            activityProvider(widget.id),
-            (_, s) => s.whenOrNull(
-              error: (error, _) =>
-                  SnackBarExtension.show(context, error.toString()),
-            ),
-          );
+        child: Consumer(
+          child: SliverRefreshControl(
+            onRefresh: () => ref.invalidate(activityProvider(widget.id)),
+          ),
+          builder: (context, ref, refreshControl) {
+            ref.listen<AsyncValue>(
+              activityProvider(widget.id),
+              (_, s) => s.whenOrNull(
+                error: (error, _) =>
+                    SnackBarExtension.show(context, error.toString()),
+              ),
+            );
 
-          return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
-                loading: () => const Center(child: Loader()),
-                error: (_, __) => const Center(
-                  child: Text('Failed to load activity'),
-                ),
-                data: (data) {
-                  return ConstrainedView(
-                    child: CustomScrollView(
-                      physics: Theming.bouncyPhysics,
-                      controller: _ctrl,
-                      slivers: [
-                        refreshControl!,
-                        SliverToBoxAdapter(
-                          child: ActivityCard(
-                            withHeader: false,
-                            activity: data.activity,
-                            footer: ActivityFooter(
+            return ref.watch(activityProvider(widget.id)).unwrapPrevious().when(
+                  loading: () => const Center(child: Loader()),
+                  error: (_, __) => const Center(
+                    child: Text('Failed to load activity'),
+                  ),
+                  data: (data) {
+                    return ConstrainedView(
+                      child: CustomScrollView(
+                        physics: Theming.bouncyPhysics,
+                        controller: _ctrl,
+                        slivers: [
+                          refreshControl!,
+                          SliverToBoxAdapter(
+                            child: ActivityCard(
+                              withHeader: false,
                               activity: data.activity,
-                              toggleLike: () => _toggleLike(data.activity),
-                              toggleSubscription: () =>
-                                  _toggleSubscription(data.activity),
-                              togglePin: () => _togglePin(data.activity),
-                              remove: () => _remove(data.activity),
-                              onEdited: _onEdited,
-                              openReplies: null,
+                              footer: ActivityFooter(
+                                activity: data.activity,
+                                toggleLike: () => _toggleLike(data.activity),
+                                toggleSubscription: () =>
+                                    _toggleSubscription(data.activity),
+                                togglePin: () => _togglePin(data.activity),
+                                remove: () => _remove(data.activity),
+                                onEdited: _onEdited,
+                                openReplies: null,
+                              ),
                             ),
                           ),
-                        ),
-                        SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            childCount: data.replies.items.length,
-                            (context, i) => ReplyCard(
-                              activityId: widget.id,
-                              reply: data.replies.items[i],
-                              toggleLike: () => ref
-                                  .read(activityProvider(widget.id).notifier)
-                                  .toggleReplyLike(data.replies.items[i].id),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              childCount: data.replies.items.length,
+                              (context, i) => ReplyCard(
+                                activityId: widget.id,
+                                reply: data.replies.items[i],
+                                toggleLike: () => ref
+                                    .read(activityProvider(widget.id).notifier)
+                                    .toggleReplyLike(data.replies.items[i].id),
+                              ),
                             ),
                           ),
-                        ),
-                        SliverFooter(loading: data.replies.hasNext),
-                      ],
-                    ),
-                  );
-                },
-              );
-        },
+                          SliverFooter(loading: data.replies.hasNext),
+                        ],
+                      ),
+                    );
+                  },
+                );
+          },
+        ),
       ),
     );
   }

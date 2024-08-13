@@ -61,79 +61,81 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.id));
 
     return AdaptiveScaffold(
-      topBar: TopBarAnimatedSwitcher(
-        TopBar(
-          key: Key('${tab.title}TopBar'),
-          title: tab.title,
-          trailing: [
-            if (count > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: Theme.of(context).textTheme.titleSmall,
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBarAnimatedSwitcher(
+          TopBar(
+            key: Key('${tab.title}TopBar'),
+            title: tab.title,
+            trailing: [
+              if (count > 0)
+                Padding(
+                  padding: const EdgeInsets.only(right: Theming.offset),
+                  child: Text(
+                    count.toString(),
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                 ),
+            ],
+          ),
+        ),
+        navigationConfig: NavigationConfig(
+          selected: _tabCtrl.index,
+          onChanged: (i) => _tabCtrl.index = i,
+          onSame: (_) => _scrollCtrl.scrollToTop(),
+          items: const {
+            'Anime': Ionicons.film_outline,
+            'Manga': Ionicons.book_outline,
+            'Characters': Ionicons.man_outline,
+            'Staff': Ionicons.briefcase_outline,
+            'Studios': Ionicons.business_outline,
+          },
+        ),
+        child: TabBarView(
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: [
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.anime),
               ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.manga),
+              ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.characters),
+              ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<TileItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.staff),
+              ),
+              onData: (data) => TileItemGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
+            PagedView<StudioItem>(
+              provider: favoritesProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.studios),
+              ),
+              onData: (data) => StudioGrid(data.items),
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+            ),
           ],
         ),
-      ),
-      navigationConfig: NavigationConfig(
-        selected: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.book_outline,
-          'Characters': Ionicons.man_outline,
-          'Staff': Ionicons.briefcase_outline,
-          'Studios': Ionicons.business_outline,
-        },
-      ),
-      builder: (context, _) => TabBarView(
-        controller: _tabCtrl,
-        physics: const FastTabBarViewScrollPhysics(),
-        children: [
-          PagedView<TileItem>(
-            provider: favoritesProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.anime),
-            ),
-            onData: (data) => TileItemGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-          ),
-          PagedView<TileItem>(
-            provider: favoritesProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.manga),
-            ),
-            onData: (data) => TileItemGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-          ),
-          PagedView<TileItem>(
-            provider: favoritesProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.characters),
-            ),
-            onData: (data) => TileItemGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-          ),
-          PagedView<TileItem>(
-            provider: favoritesProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.staff),
-            ),
-            onData: (data) => TileItemGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-          ),
-          PagedView<StudioItem>(
-            provider: favoritesProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.studios),
-            ),
-            onData: (data) => StudioGrid(data.items),
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-          ),
-        ],
       ),
     );
   }

@@ -56,52 +56,54 @@ class _SocialViewState extends ConsumerState<SocialView>
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
     return AdaptiveScaffold(
-      topBar: TopBarAnimatedSwitcher(
-        TopBar(
-          key: Key('${tab.title}TopBar'),
-          title: tab.title,
-          trailing: [
-            if (count > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: Theme.of(context).textTheme.titleSmall,
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBarAnimatedSwitcher(
+          TopBar(
+            key: Key('${tab.title}TopBar'),
+            title: tab.title,
+            trailing: [
+              if (count > 0)
+                Padding(
+                  padding: const EdgeInsets.only(right: Theming.offset),
+                  child: Text(
+                    count.toString(),
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
                 ),
+            ],
+          ),
+        ),
+        navigationConfig: NavigationConfig(
+          selected: _tabCtrl.index,
+          onChanged: (i) => _tabCtrl.index = i,
+          onSame: (_) => _scrollCtrl.scrollToTop(),
+          items: const {
+            'Following': Ionicons.people_circle,
+            'Followers': Ionicons.person_circle,
+          },
+        ),
+        child: TabBarView(
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: [
+            PagedView<UserItem>(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.following),
               ),
+              onData: (data) => UserGrid(data.items),
+            ),
+            PagedView<UserItem>(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.followers),
+              ),
+              onData: (data) => UserGrid(data.items),
+            ),
           ],
         ),
-      ),
-      navigationConfig: NavigationConfig(
-        selected: _tabCtrl.index,
-        onChanged: (i) => _tabCtrl.index = i,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Following': Ionicons.people_circle,
-          'Followers': Ionicons.person_circle,
-        },
-      ),
-      builder: (context, _) => TabBarView(
-        controller: _tabCtrl,
-        physics: const FastTabBarViewScrollPhysics(),
-        children: [
-          PagedView<UserItem>(
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.following),
-            ),
-            onData: (data) => UserGrid(data.items),
-          ),
-          PagedView<UserItem>(
-            scrollCtrl: _scrollCtrl,
-            onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.followers),
-            ),
-            onData: (data) => UserGrid(data.items),
-          ),
-        ],
       ),
     );
   }

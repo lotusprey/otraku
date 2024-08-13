@@ -24,7 +24,7 @@ class UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AdaptiveScaffold(
-        builder: (context, _) => _UserView(tag, avatarUrl),
+        (context, _) => ScaffoldConfig(child: _UserView(tag, avatarUrl)),
       );
 }
 

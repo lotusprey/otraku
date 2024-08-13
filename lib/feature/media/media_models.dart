@@ -53,7 +53,11 @@ class MediaRelations {
   /// multiple actors, the given character is repeated for each actor.
   Paged<(Relation, Relation?)> getCharactersAndVoiceActors() {
     if (languageToVoiceActors.isEmpty) {
-      return Paged(hasNext: characters.hasNext, next: characters.next);
+      return Paged(
+        items: characters.items.map((c) => (c, null)).toList(),
+        hasNext: characters.hasNext,
+        next: characters.next,
+      );
     }
 
     final actorsPerMedia = languageToVoiceActors[selectedLanguage].voiceActors;

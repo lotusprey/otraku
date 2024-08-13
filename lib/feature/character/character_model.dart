@@ -114,7 +114,11 @@ class CharacterMedia {
   /// If there are multiple actors, the given media is repeated for each actor.
   Paged<(Relation, Relation?)> assembleAnimeWithVoiceActors() {
     if (languageToVoiceActors.isEmpty) {
-      return Paged(hasNext: anime.hasNext, next: anime.next);
+      return Paged(
+        items: anime.items.map((a) => (a, null)).toList(),
+        hasNext: anime.hasNext,
+        next: anime.next,
+      );
     }
 
     final actorsPerMedia = languageToVoiceActors[selectedLanguage];

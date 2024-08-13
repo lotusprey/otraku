@@ -9,6 +9,8 @@ class TableList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty) return const SizedBox();
+
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: Theming.borderRadiusSmall,
@@ -52,6 +54,8 @@ class SliverTableList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (items.isEmpty) return const SliverToBoxAdapter();
+
     return DecoratedSliver(
       decoration: BoxDecoration(
         borderRadius: Theming.borderRadiusSmall,

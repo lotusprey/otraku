@@ -10,6 +10,7 @@ import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/scroll_physics.dart';
 import 'package:otraku/widget/layouts/constrained_view.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
@@ -75,41 +76,43 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     ];
 
     return AdaptiveScaffold(
-      topBar: TopBarAnimatedSwitcher(
-        switch (_tabCtrl.index) {
-          0 => const TopBar(key: Key('0'), title: 'App'),
-          1 => const TopBar(key: Key('1'), title: 'Content'),
-          2 => const TopBar(key: Key('2'), title: 'Notifications'),
-          _ => const TopBar(key: Key('3'), title: 'About'),
-        },
-      ),
-      floatingAction: _tabCtrl.index == 1 || _tabCtrl.index == 2
-          ? HidingFloatingActionButton(
-              key: const Key('save'),
-              scrollCtrl: _scrollCtrl,
-              child: _SaveButton(() {
-                if (_settings == null) return Future.value();
-                return ref
-                    .read(settingsProvider.notifier)
-                    .updateSettings(_settings!);
-              }),
-            )
-          : null,
-      navigationConfig: NavigationConfig(
-        selected: _tabCtrl.index,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        onChanged: (i) => _tabCtrl.index = i,
-        items: const {
-          'App': Ionicons.color_palette_outline,
-          'Content': Ionicons.tv_outline,
-          'Notifications': Ionicons.notifications_outline,
-          'About': Ionicons.information_outline,
-        },
-      ),
-      builder: (context, _) => TabBarView(
-        controller: _tabCtrl,
-        physics: const FastTabBarViewScrollPhysics(),
-        children: tabs,
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBarAnimatedSwitcher(
+          switch (_tabCtrl.index) {
+            0 => const TopBar(key: Key('0'), title: 'App'),
+            1 => const TopBar(key: Key('1'), title: 'Content'),
+            2 => const TopBar(key: Key('2'), title: 'Notifications'),
+            _ => const TopBar(key: Key('3'), title: 'About'),
+          },
+        ),
+        floatingAction: _tabCtrl.index == 1 || _tabCtrl.index == 2
+            ? HidingFloatingActionButton(
+                key: const Key('save'),
+                scrollCtrl: _scrollCtrl,
+                child: _SaveButton(() {
+                  if (_settings == null) return Future.value();
+                  return ref
+                      .read(settingsProvider.notifier)
+                      .updateSettings(_settings!);
+                }),
+              )
+            : null,
+        navigationConfig: NavigationConfig(
+          selected: _tabCtrl.index,
+          onSame: (_) => _scrollCtrl.scrollToTop(),
+          onChanged: (i) => _tabCtrl.index = i,
+          items: const {
+            'App': Ionicons.color_palette_outline,
+            'Content': Ionicons.tv_outline,
+            'Notifications': Ionicons.notifications_outline,
+            'About': Ionicons.information_outline,
+          },
+        ),
+        child: TabBarView(
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: tabs,
+        ),
       ),
     );
   }

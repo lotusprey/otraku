@@ -14,6 +14,7 @@ import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/fields/pill_selector.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -55,50 +56,53 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     final filter = ref.watch(notificationsFilterProvider);
 
     return AdaptiveScaffold(
-      topBar: TopBar(
-        trailing: [
-          Expanded(
-            child: Text(
-              'Notifications',
-              style: Theme.of(context).textTheme.titleLarge,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        ],
-      ),
-      floatingAction: HidingFloatingActionButton(
-        key: const Key('filter'),
-        showOnlyWhenCompact: true,
-        scrollCtrl: _scrollCtrl,
-        child: FloatingActionButton(
-          tooltip: 'Filter',
-          onPressed: _showFilterSheet,
-          child: const Icon(Ionicons.funnel_outline),
-        ),
-      ),
-      builder: (context, compact) {
+      (context, compact) {
         final content = _Content(
           unreadCount: unreadCount,
           scrollCtrl: _scrollCtrl,
         );
 
-        if (compact) return content;
-
-        return Row(
-          children: [
-            PillSelector(
-              selected: filter.index,
-              maxWidth: 120,
-              onTap: (i) => ref
-                  .read(notificationsFilterProvider.notifier)
-                  .state = NotificationsFilter.values[i],
-              items: NotificationsFilter.values
-                  .map((v) => (title: Text(v.label), subtitle: null))
-                  .toList(),
-            ),
-            Expanded(child: content),
-          ],
+        return ScaffoldConfig(
+          topBar: TopBar(
+            trailing: [
+              Expanded(
+                child: Text(
+                  'Notifications',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          ),
+          floatingAction: compact
+              ? HidingFloatingActionButton(
+                  key: const Key('filter'),
+                  scrollCtrl: _scrollCtrl,
+                  child: FloatingActionButton(
+                    tooltip: 'Filter',
+                    onPressed: _showFilterSheet,
+                    child: const Icon(Ionicons.funnel_outline),
+                  ),
+                )
+              : null,
+          child: compact
+              ? content
+              : Row(
+                  children: [
+                    PillSelector(
+                      selected: filter.index,
+                      maxWidth: 120,
+                      onTap: (i) => ref
+                          .read(notificationsFilterProvider.notifier)
+                          .state = NotificationsFilter.values[i],
+                      items: NotificationsFilter.values
+                          .map((v) => (title: Text(v.label), subtitle: null))
+                          .toList(),
+                    ),
+                    Expanded(child: content),
+                  ],
+                ),
         );
       },
     );

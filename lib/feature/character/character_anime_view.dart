@@ -55,6 +55,8 @@ class _LanguageSelected extends StatelessWidget {
         final languageMappings = selection.$1;
         final selectedLanguage = selection.$2;
 
+        if (languageMappings.length < 2) return const SliverToBoxAdapter();
+
         return SliverToBoxAdapter(
           child: SizedBox(
             height: Theming.normalTapTarget,

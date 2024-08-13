@@ -6,7 +6,7 @@ import 'package:otraku/widget/layouts/content_header.dart';
 import 'package:otraku/widget/table_list.dart';
 
 class StaffHeader extends StatelessWidget {
-  const StaffHeader({
+  const StaffHeader.withTabBar({
     required this.id,
     required this.imageUrl,
     required this.staff,
@@ -15,11 +15,19 @@ class StaffHeader extends StatelessWidget {
     required this.toggleFavorite,
   });
 
+  const StaffHeader.withoutTabBar({
+    required this.id,
+    required this.imageUrl,
+    required this.staff,
+    required this.toggleFavorite,
+  })  : tabCtrl = null,
+        scrollToTop = null;
+
   final int id;
   final String? imageUrl;
   final Staff? staff;
-  final TabController tabCtrl;
-  final void Function() scrollToTop;
+  final TabController? tabCtrl;
+  final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
 
   @override
@@ -36,20 +44,28 @@ class StaffHeader extends StatelessWidget {
               if (staff!.gender != null) ('Gender', staff!.gender!),
             ])
           : null,
-      tabBarConfig: (
-        tabCtrl: tabCtrl,
-        scrollToTop: scrollToTop,
-        tabs: const [
-          Tab(text: 'Overview'),
-          Tab(text: 'Characters'),
-          Tab(text: 'Roles'),
-        ],
-      ),
+      tabBarConfig: tabCtrl != null && scrollToTop != null
+          ? (
+              tabCtrl: tabCtrl!,
+              scrollToTop: scrollToTop!,
+              tabs: tabsWithOverview,
+            )
+          : null,
       trailingTopButtons: [
         if (staff != null) _FavoriteButton(staff!, toggleFavorite),
       ],
     );
   }
+
+  static const tabsWithoutOverview = [
+    Tab(text: 'Characters'),
+    Tab(text: 'Roles'),
+  ];
+
+  static const tabsWithOverview = [
+    Tab(text: 'Overview'),
+    ...tabsWithoutOverview,
+  ];
 }
 
 class _FavoriteButton extends StatefulWidget {

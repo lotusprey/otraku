@@ -13,6 +13,7 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
+import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layouts/top_bar.dart';
 import 'package:otraku/widget/overlays/sheets.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -40,38 +41,41 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   @override
   Widget build(BuildContext context) {
     return AdaptiveScaffold(
-      topBar: TopBar(
-        title: 'Activities',
-        trailing: [
-          IconButton(
-            tooltip: 'Filter',
-            icon: const Icon(Ionicons.funnel_outline),
-            onPressed: () => showActivityFilterSheet(context, ref, widget.id),
-          ),
-        ],
-      ),
-      floatingAction: HidingFloatingActionButton(
-        key: const Key('post'),
-        scrollCtrl: _ctrl,
-        child: FloatingActionButton(
-          tooltip: widget.id == Persistence().id ? 'New Post' : 'New Message',
-          child: const Icon(Icons.edit_outlined),
-          onPressed: () => showSheet(
-            context,
-            CompositionView(
-              tag: widget.id == Persistence().id
-                  ? const StatusActivityCompositionTag(id: null)
-                  : MessageActivityCompositionTag(
-                      id: null,
-                      recipientId: widget.id,
-                    ),
-              onSaved: (map) =>
-                  ref.read(activitiesProvider(widget.id).notifier).prepend(map),
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBar(
+          title: 'Activities',
+          trailing: [
+            IconButton(
+              tooltip: 'Filter',
+              icon: const Icon(Ionicons.funnel_outline),
+              onPressed: () => showActivityFilterSheet(context, ref, widget.id),
+            ),
+          ],
+        ),
+        floatingAction: HidingFloatingActionButton(
+          key: const Key('post'),
+          scrollCtrl: _ctrl,
+          child: FloatingActionButton(
+            tooltip: widget.id == Persistence().id ? 'New Post' : 'New Message',
+            child: const Icon(Icons.edit_outlined),
+            onPressed: () => showSheet(
+              context,
+              CompositionView(
+                tag: widget.id == Persistence().id
+                    ? const StatusActivityCompositionTag(id: null)
+                    : MessageActivityCompositionTag(
+                        id: null,
+                        recipientId: widget.id,
+                      ),
+                onSaved: (map) => ref
+                    .read(activitiesProvider(widget.id).notifier)
+                    .prepend(map),
+              ),
             ),
           ),
         ),
+        child: ActivitiesSubView(widget.id, _ctrl),
       ),
-      builder: (context, _) => ActivitiesSubView(widget.id, _ctrl),
     );
   }
 }

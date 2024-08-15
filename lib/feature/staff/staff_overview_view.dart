@@ -4,7 +4,7 @@ import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class StaffOverviewSubview extends StatelessWidget {
   const StaffOverviewSubview.asFragment({

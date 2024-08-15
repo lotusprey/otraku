@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/widget/layouts/navigation_tool.dart';
+import 'package:otraku/widget/field/stateful_tiles.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_buttons.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
@@ -11,13 +11,12 @@ import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/widget/fields/date_field.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/fields/number_field.dart';
+import 'package:otraku/widget/field/date_field.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/field/number_field.dart';
 import 'package:otraku/feature/edit/score_field.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
@@ -36,13 +35,7 @@ class EditView extends StatelessWidget {
           (_, s) => s.whenOrNull(
             error: (err, _) {
               Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: 'Failed to load edit sheet',
-                  content: err.toString(),
-                ),
-              );
+              SnackBarExtension.show(context, 'Failed to load edit sheet');
             },
           ),
         );

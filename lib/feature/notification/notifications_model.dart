@@ -1,6 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/util/persistence.dart';
 
 class SiteNotification {

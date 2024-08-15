@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
 import 'package:otraku/feature/studio/studio_header.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
@@ -9,12 +9,11 @@ import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class StudioView extends ConsumerStatefulWidget {
@@ -158,10 +157,9 @@ class _MediaTile extends StatelessWidget {
       if (item.releaseStatus != null) item.releaseStatus!.label: false,
     };
 
-    return LinkTile(
+    return MediaRouteTile(
       id: item.id,
-      info: item.cover,
-      discoverType: DiscoverType.anime,
+      imageUrl: item.cover,
       child: Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,

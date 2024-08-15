@@ -7,8 +7,6 @@ import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/character/character_filter_model.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
@@ -97,14 +95,12 @@ class CharacterMediaNotifier
 
     if (onAnime == null || onAnime) {
       final map = data['anime'];
-      final items = <Relation>[];
+      final items = <CharacterRelatedItem>[];
       for (final a in map['edges']) {
-        items.add(Relation(
-          id: a['node']['id'],
-          title: a['node']['title']['userPreferred'],
-          imageUrl: a['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
-          type: DiscoverType.anime,
+        items.add(CharacterRelatedItem.media(
+          a['node'],
+          StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
+          Persistence().imageQuality,
         ));
 
         if (a['voiceActors'] != null) {
@@ -126,13 +122,7 @@ class CharacterMediaNotifier
               () => [],
             );
 
-            mediaVoiceActors.add(Relation(
-              id: va['id'],
-              title: va['name']['userPreferred'],
-              imageUrl: va['image']['large'],
-              subtitle: l,
-              type: DiscoverType.staff,
-            ));
+            mediaVoiceActors.add(CharacterRelatedItem.staff(va, l));
           }
         }
 
@@ -148,14 +138,12 @@ class CharacterMediaNotifier
 
     if (onAnime == null || !onAnime) {
       final map = data['manga'];
-      final items = <Relation>[];
+      final items = <CharacterRelatedItem>[];
       for (final m in map['edges']) {
-        items.add(Relation(
-          id: m['node']['id'],
-          title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
-          type: DiscoverType.manga,
+        items.add(CharacterRelatedItem.media(
+          m['node'],
+          StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
+          Persistence().imageQuality,
         ));
       }
 

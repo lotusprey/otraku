@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/widget/layouts/content_header.dart';
+import 'package:otraku/widget/layout/content_header.dart';
 
 class StudioHeader extends StatelessWidget {
   const StudioHeader({

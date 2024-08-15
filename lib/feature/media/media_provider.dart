@@ -4,22 +4,21 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/model/paged.dart';
+import 'package:otraku/util/paged.dart';
 
 final mediaProvider =
     AsyncNotifierProvider.autoDispose.family<MediaNotifier, Media, int>(
   MediaNotifier.new,
 );
 
-final mediaRelationsProvider = AsyncNotifierProvider.autoDispose
-    .family<MediaRelationsNotifier, MediaRelations, int>(
+final mediaConnectionsProvider = AsyncNotifierProvider.autoDispose
+    .family<MediaRelationsNotifier, MediaConnections, int>(
   MediaRelationsNotifier.new,
 );
 
@@ -65,12 +64,13 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
 }
 
 class MediaRelationsNotifier
-    extends AutoDisposeFamilyAsyncNotifier<MediaRelations, int> {
+    extends AutoDisposeFamilyAsyncNotifier<MediaConnections, int> {
   @override
-  FutureOr<MediaRelations> build(arg) => _fetch(const MediaRelations(), null);
+  FutureOr<MediaConnections> build(arg) =>
+      _fetch(const MediaConnections(), null);
 
   Future<void> fetch(MediaTab tab) async {
-    final oldState = state.valueOrNull ?? const MediaRelations();
+    final oldState = state.valueOrNull ?? const MediaConnections();
     state = switch (tab) {
       MediaTab.info ||
       MediaTab.relations ||
@@ -92,7 +92,8 @@ class MediaRelationsNotifier
     };
   }
 
-  Future<MediaRelations> _fetch(MediaRelations oldState, MediaTab? tab) async {
+  Future<MediaConnections> _fetch(
+      MediaConnections oldState, MediaTab? tab) async {
     final variables = <String, dynamic>{'id': arg};
     if (tab == null) {
       variables['withRecommendations'] = true;
@@ -128,15 +129,10 @@ class MediaRelationsNotifier
 
     if (tab == null || tab == MediaTab.characters) {
       final map = data['characters'];
-      final items = <Relation>[];
+      final items = <MediaRelatedItem>[];
       for (final c in map['edges']) {
-        items.add(Relation(
-          id: c['node']['id'],
-          title: c['node']['name']['userPreferred'],
-          imageUrl: c['node']['image']['large'],
-          subtitle: StringExtension.tryNoScreamingSnakeCase(c['role']),
-          type: DiscoverType.character,
-        ));
+        final role = StringExtension.tryNoScreamingSnakeCase(c['role']);
+        items.add(MediaRelatedItem(c['node'], role));
 
         if (c['voiceActors'] == null) continue;
 
@@ -158,13 +154,7 @@ class MediaRelationsNotifier
             () => [],
           );
 
-          characterVoiceActors.add(Relation(
-            id: va['id'],
-            title: va['name']['userPreferred'],
-            imageUrl: va['image']['large'],
-            subtitle: l,
-            type: DiscoverType.staff,
-          ));
+          characterVoiceActors.add(MediaRelatedItem(va, l));
         }
       }
 
@@ -182,15 +172,9 @@ class MediaRelationsNotifier
 
     if (tab == null || tab == MediaTab.staff) {
       final map = data['staff'];
-      final items = <Relation>[];
+      final items = <MediaRelatedItem>[];
       for (final s in map['edges']) {
-        items.add(Relation(
-          id: s['node']['id'],
-          title: s['node']['name']['userPreferred'],
-          imageUrl: s['node']['image']['large'],
-          subtitle: s['role'],
-          type: DiscoverType.staff,
-        ));
+        items.add(MediaRelatedItem(s['node'], s['role']));
       }
 
       staff = staff.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
@@ -237,7 +221,7 @@ class MediaRelationsNotifier
         (data) {
           if (selectedLanguage >= data.languageToVoiceActors.length) return;
 
-          state = AsyncValue.data(MediaRelations(
+          state = AsyncValue.data(MediaConnections(
             recommendations: data.recommendations,
             characters: data.characters,
             staff: data.staff,

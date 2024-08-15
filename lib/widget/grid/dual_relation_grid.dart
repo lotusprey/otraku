@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/model/relation.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/util/tile_modelable.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
-class RelationGrid extends StatelessWidget {
-  const RelationGrid(this.items);
+class DualRelationGrid extends StatelessWidget {
+  const DualRelationGrid({
+    required this.items,
+    required this.onTapPrimary,
+    required this.onTapSecondary,
+  });
 
-  final List<(Relation, Relation?)> items;
+  final List<(TileModelable, TileModelable?)> items;
+  final void Function(TileModelable item) onTapPrimary;
+  final void Function(TileModelable item) onTapSecondary;
 
   @override
   Widget build(BuildContext context) {
@@ -21,67 +26,56 @@ class RelationGrid extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _RelationTile(items[i].$1, items[i].$2),
+        (context, i) => _DualRelationTile(
+          primaryItem: items[i].$1,
+          secondaryItem: items[i].$2,
+          onTapPrimary: onTapPrimary,
+          onTapSecondary: onTapSecondary,
+        ),
       ),
     );
   }
 }
 
-class SingleRelationGrid extends StatelessWidget {
-  const SingleRelationGrid(this.items);
+class _DualRelationTile extends StatelessWidget {
+  const _DualRelationTile({
+    required this.primaryItem,
+    required this.secondaryItem,
+    required this.onTapPrimary,
+    required this.onTapSecondary,
+  });
 
-  final List<Relation> items;
-
-  @override
-  Widget build(BuildContext context) {
-    if (items.isEmpty) return const SliverToBoxAdapter();
-
-    return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 240,
-        height: 115,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        childCount: items.length,
-        (context, i) => _RelationTile(items[i], null),
-      ),
-    );
-  }
-}
-
-class _RelationTile extends StatelessWidget {
-  const _RelationTile(this.item, this.secondary);
-
-  final Relation item;
-  final Relation? secondary;
+  final TileModelable primaryItem;
+  final TileModelable? secondaryItem;
+  final void Function(TileModelable item) onTapPrimary;
+  final void Function(TileModelable item) onTapSecondary;
 
   @override
   Widget build(BuildContext context) {
     late final Widget centerContent;
-    if (secondary != null) {
+    if (secondaryItem != null) {
       centerContent = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Flexible(
-            child: LinkTile(
-              id: item.id,
-              discoverType: item.type,
-              info: item.imageUrl,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => onTapPrimary(primaryItem),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Flexible(
                     child: Text(
-                      item.title,
+                      primaryItem.tileTitle,
                       maxLines: 2,
                       overflow: TextOverflow.fade,
                     ),
                   ),
-                  if (item.subtitle != null)
+                  if (primaryItem.tileSubtitle != null)
                     Text(
-                      item.subtitle!,
+                      primaryItem.tileSubtitle!,
                       maxLines: 2,
                       overflow: TextOverflow.fade,
                       style: Theme.of(context).textTheme.labelSmall,
@@ -90,26 +84,24 @@ class _RelationTile extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 3),
-          LinkTile(
-            id: secondary!.id,
-            discoverType: secondary!.type,
-            info: secondary!.imageUrl,
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => onTapSecondary(secondaryItem!),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Flexible(
                   child: Text(
-                    secondary!.title,
+                    secondaryItem!.tileTitle,
                     maxLines: 2,
                     textAlign: TextAlign.end,
                     overflow: TextOverflow.fade,
                   ),
                 ),
-                if (secondary!.subtitle != null)
+                if (secondaryItem!.tileSubtitle != null)
                   Text(
-                    secondary!.subtitle!,
+                    secondaryItem!.tileSubtitle!,
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     style: Theme.of(context).textTheme.labelSmall,
@@ -120,18 +112,19 @@ class _RelationTile extends StatelessWidget {
         ],
       );
     } else {
-      centerContent = LinkTile(
-        id: item.id,
-        discoverType: item.type,
-        info: item.imageUrl,
+      centerContent = GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onTapPrimary(primaryItem),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(child: Text(item.title, overflow: TextOverflow.fade)),
-            if (item.subtitle != null)
+            Flexible(
+              child: Text(primaryItem.tileTitle, overflow: TextOverflow.fade),
+            ),
+            if (primaryItem.tileSubtitle != null)
               Text(
-                item.subtitle!,
+                primaryItem.tileSubtitle!,
                 maxLines: 4,
                 overflow: TextOverflow.fade,
                 style: Theme.of(context).textTheme.labelSmall,
@@ -144,27 +137,25 @@ class _RelationTile extends StatelessWidget {
     return Card(
       child: Row(
         children: [
-          LinkTile(
-            id: item.id,
-            discoverType: item.type,
-            info: item.imageUrl,
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => onTapPrimary(primaryItem),
             child: ClipRRect(
               borderRadius: Theming.borderRadiusSmall,
-              child: CachedImage(item.imageUrl, width: 80),
+              child: CachedImage(primaryItem.tileImageUrl, width: 80),
             ),
           ),
           Expanded(
             child: Padding(padding: Theming.paddingAll, child: centerContent),
           ),
-          if (secondary != null)
-            LinkTile(
-              key: ValueKey(secondary!.id),
-              id: secondary!.id,
-              discoverType: secondary!.type,
-              info: secondary!.imageUrl,
+          if (secondaryItem != null)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              key: ValueKey(secondaryItem!.tileId),
+              onTap: () => onTapSecondary(secondaryItem!),
               child: ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(secondary!.imageUrl, width: 80),
+                child: CachedImage(secondaryItem!.tileImageUrl, width: 80),
               ),
             ),
         ],

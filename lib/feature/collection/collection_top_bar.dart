@@ -11,10 +11,10 @@ import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/filter/filter_collection_view.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/widget/debounce.dart';
-import 'package:otraku/widget/fields/search_field.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/util/debounce.dart';
+import 'package:otraku/widget/field/search_field.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class CollectionTopBarTrailingContent extends StatelessWidget {
   const CollectionTopBarTrailingContent(this.tag, this.focusNode);

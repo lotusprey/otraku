@@ -1,17 +1,9 @@
 import 'package:otraku/extension/string_extension.dart';
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
+import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-
-TileItem characterItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.character,
-      title: map['name']['userPreferred'],
-      imageUrl: map['image']['large'],
-    );
+import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/tile_modelable.dart';
 
 class Character {
   Character._({
@@ -101,8 +93,8 @@ class CharacterMedia {
     this.selectedLanguage = 0,
   });
 
-  final Paged<Relation> anime;
-  final Paged<Relation> manga;
+  final Paged<CharacterRelatedItem> anime;
+  final Paged<CharacterRelatedItem> manga;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
@@ -112,7 +104,8 @@ class CharacterMedia {
   /// Returns the media, in which the character has participated,
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
-  Paged<(Relation, Relation?)> assembleAnimeWithVoiceActors() {
+  Paged<(CharacterRelatedItem, CharacterRelatedItem?)>
+      assembleAnimeWithVoiceActors() {
     if (languageToVoiceActors.isEmpty) {
       return Paged(
         items: anime.items.map((a) => (a, null)).toList(),
@@ -123,7 +116,8 @@ class CharacterMedia {
 
     final actorsPerMedia = languageToVoiceActors[selectedLanguage];
 
-    final animeAndVoiceActors = <(Relation, Relation?)>[];
+    final animeAndVoiceActors =
+        <(CharacterRelatedItem, CharacterRelatedItem?)>[];
     for (final a in anime.items) {
       final actors = actorsPerMedia.voiceActors[a.id];
       if (actors == null || actors.isEmpty) {
@@ -144,7 +138,53 @@ class CharacterMedia {
   }
 }
 
+class CharacterRelatedItem implements TileModelable {
+  const CharacterRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory CharacterRelatedItem.media(
+    Map<String, dynamic> map,
+    String? role,
+    ImageQuality imageQuality,
+  ) =>
+      CharacterRelatedItem._(
+        id: map['id'],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality],
+        role: role,
+      );
+
+  factory CharacterRelatedItem.staff(Map<String, dynamic> map, String? role) =>
+      CharacterRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
+}
+
 typedef CharacterLanguageMapping = ({
   String language,
-  Map<int, List<Relation>> voiceActors,
+  Map<int, List<CharacterRelatedItem>> voiceActors,
 });

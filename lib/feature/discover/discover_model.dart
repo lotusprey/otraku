@@ -1,13 +1,13 @@
 import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/character/character_item_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/tile_item.dart';
+import 'package:otraku/feature/staff/staff_item_model.dart';
+import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/feature/user/user_item_model.dart';
+import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/review/review_models.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/feature/user/user_models.dart';
 
 enum DiscoverType {
   anime('Anime'),
@@ -21,44 +21,6 @@ enum DiscoverType {
   const DiscoverType(this.label);
 
   final String label;
-}
-
-class DiscoverFilter {
-  const DiscoverFilter._({
-    required this.type,
-    required this.search,
-    required this.mediaFilter,
-    required this.hasBirthday,
-    required this.reviewsFilter,
-  });
-
-  DiscoverFilter(DiscoverType discoverType)
-      : type = discoverType,
-        search = '',
-        mediaFilter = DiscoverMediaFilter(),
-        hasBirthday = false,
-        reviewsFilter = const ReviewsFilter();
-
-  final DiscoverType type;
-  final String search;
-  final DiscoverMediaFilter mediaFilter;
-  final bool hasBirthday;
-  final ReviewsFilter reviewsFilter;
-
-  DiscoverFilter copyWith({
-    DiscoverType? type,
-    String? search,
-    DiscoverMediaFilter? mediaFilter,
-    bool? hasBirthday,
-    ReviewsFilter? reviewsFilter,
-  }) =>
-      DiscoverFilter._(
-        type: type ?? this.type,
-        search: search ?? this.search,
-        mediaFilter: mediaFilter ?? this.mediaFilter,
-        hasBirthday: hasBirthday ?? this.hasBirthday,
-        reviewsFilter: reviewsFilter ?? this.reviewsFilter,
-      );
 }
 
 sealed class DiscoverItems {
@@ -80,13 +42,13 @@ class DiscoverMangaItems extends DiscoverItems {
 class DiscoverCharacterItems extends DiscoverItems {
   const DiscoverCharacterItems([this.pages = const Paged()]);
 
-  final Paged<TileItem> pages;
+  final Paged<CharacterItem> pages;
 }
 
 class DiscoverStaffItems extends DiscoverItems {
   const DiscoverStaffItems([this.pages = const Paged()]);
 
-  final Paged<TileItem> pages;
+  final Paged<StaffItem> pages;
 }
 
 class DiscoverStudioItems extends DiscoverItems {
@@ -107,12 +69,12 @@ class DiscoverReviewItems extends DiscoverItems {
   final Paged<ReviewItem> pages;
 }
 
-class DiscoverMediaItem extends TileItem {
+class DiscoverMediaItem {
   DiscoverMediaItem._({
-    required super.id,
-    required super.type,
-    required super.title,
-    required super.imageUrl,
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.isAnime,
     required this.format,
     required this.releaseStatus,
     required this.entryStatus,
@@ -122,11 +84,15 @@ class DiscoverMediaItem extends TileItem {
     required this.isAdult,
   });
 
-  factory DiscoverMediaItem(Map<String, dynamic> map) => DiscoverMediaItem._(
+  factory DiscoverMediaItem(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) =>
+      DiscoverMediaItem._(
         id: map['id'],
-        type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
-        title: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][Persistence().imageQuality.value],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality.value],
+        isAnime: map['type'] == 'ANIME',
         format: StringExtension.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
         entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
@@ -136,6 +102,10 @@ class DiscoverMediaItem extends TileItem {
         isAdult: map['isAdult'] ?? false,
       );
 
+  final int id;
+  final String name;
+  final String imageUrl;
+  final bool isAnime;
   final String? format;
   final ReleaseStatus? releaseStatus;
   final EntryStatus? entryStatus;

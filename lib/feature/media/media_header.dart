@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/content_header.dart';
+import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {

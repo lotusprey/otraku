@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/content_header.dart';
+import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/table_list.dart';
 
 class CharacterHeader extends StatelessWidget {

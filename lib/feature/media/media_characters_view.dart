@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/model/relation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/grids/relation_grid.dart';
+import 'package:otraku/widget/grid/dual_relation_grid.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
@@ -15,10 +17,10 @@ class MediaCharactersSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PagedView<(Relation, Relation?)>(
+    return PagedView<(MediaRelatedItem, MediaRelatedItem?)>(
       scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
-      provider: mediaRelationsProvider(id).select(
+      onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
+      provider: mediaConnectionsProvider(id).select(
         (s) => s
             .unwrapPrevious()
             .whenData((data) => data.getCharactersAndVoiceActors()),
@@ -27,7 +29,15 @@ class MediaCharactersSubview extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             _LanguageSelector(id),
-            RelationGrid(data.items),
+            DualRelationGrid(
+              items: data.items,
+              onTapPrimary: (item) => context.push(
+                Routes.character(item.tileId, item.tileImageUrl),
+              ),
+              onTapSecondary: (item) => context.push(
+                Routes.staff(item.tileId, item.tileImageUrl),
+              ),
+            ),
           ],
         );
       },
@@ -44,7 +54,7 @@ class _LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selection = ref.watch(mediaRelationsProvider(id).select((s) {
+        final selection = ref.watch(mediaConnectionsProvider(id).select((s) {
           final value = s.valueOrNull;
           if (value == null) return null;
           return (value.languageToVoiceActors, value.selectedLanguage);
@@ -69,7 +79,7 @@ class _LanguageSelector extends StatelessWidget {
                   if (!selected) return;
 
                   ref
-                      .read(mediaRelationsProvider(id).notifier)
+                      .read(mediaConnectionsProvider(id).notifier)
                       .changeLanguage(i);
                 },
               ),

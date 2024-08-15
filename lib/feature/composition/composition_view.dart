@@ -5,10 +5,9 @@ import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/navigation_tool.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/composition/composition_provider.dart';
 
@@ -365,12 +364,7 @@ class _BottomBarState extends State<_BottomBar> {
 
                 setState(() => _locked = false);
                 if (context.mounted) {
-                  showDialog(
-                    context: context,
-                    builder: (context) => const ConfirmationDialog(
-                      title: 'Failed to Save',
-                    ),
-                  );
+                  SnackBarExtension.show(context, 'Failed to save');
                 }
               },
       ),

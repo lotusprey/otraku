@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/model/relation.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/character/character_model.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/grids/relation_grid.dart';
+import 'package:otraku/widget/grid/dual_relation_grid.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
@@ -15,7 +17,7 @@ class CharacterAnimeSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PagedView<(Relation, Relation?)>(
+    return PagedView<(CharacterRelatedItem, CharacterRelatedItem?)>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
       provider: characterMediaProvider(id).select(
@@ -27,7 +29,15 @@ class CharacterAnimeSubview extends StatelessWidget {
         return SliverMainAxisGroup(
           slivers: [
             _LanguageSelected(id),
-            RelationGrid(data.items),
+            DualRelationGrid(
+              items: data.items,
+              onTapPrimary: (item) => context.push(
+                Routes.media(item.tileId, item.tileImageUrl),
+              ),
+              onTapSecondary: (item) => context.push(
+                Routes.staff(item.tileId, item.tileImageUrl),
+              ),
+            ),
           ],
         );
       },

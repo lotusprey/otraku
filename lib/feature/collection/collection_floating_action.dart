@@ -4,9 +4,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/home/home_provider.dart';
-import 'package:otraku/widget/fields/pill_selector.dart';
+import 'package:otraku/widget/field/pill_selector.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class CollectionFloatingAction extends StatelessWidget {
   CollectionFloatingAction(this.tag)

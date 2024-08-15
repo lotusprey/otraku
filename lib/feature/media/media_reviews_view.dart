@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/paged_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 
@@ -24,8 +24,8 @@ class MediaReviewsSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return PagedView<RelatedReview>(
       scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
-      provider: mediaRelationsProvider(id).select(
+      onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
+      provider: mediaConnectionsProvider(id).select(
         (s) => s.unwrapPrevious().whenData((data) => data.reviews),
       ),
       onData: (data) => _MediaReviewGrid(data.items, bannerUrl),
@@ -57,10 +57,11 @@ class _MediaReviewGrid extends StatelessWidget {
         (context, i) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            LinkTile(
-              id: items[i].userId,
-              info: items[i].avatar,
-              discoverType: DiscoverType.user,
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => context.push(
+                Routes.user(items[i].userId, items[i].avatar),
+              ),
               child: Row(
                 children: [
                   Hero(
@@ -88,10 +89,11 @@ class _MediaReviewGrid extends StatelessWidget {
             ),
             const SizedBox(height: 5),
             Expanded(
-              child: LinkTile(
-                id: items[i].reviewId,
-                info: bannerUrl,
-                discoverType: DiscoverType.review,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push(
+                  Routes.review(items[i].reviewId, bannerUrl),
+                ),
                 child: Card(
                   child: SizedBox(
                     width: double.infinity,

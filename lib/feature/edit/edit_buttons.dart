@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/navigation_tool.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/dialogs.dart';
 
 class EditButtons extends StatefulWidget {
   const EditButtons(this.tag, this.oldEdit, this.callback);
@@ -65,13 +66,7 @@ class _EditButtonsState extends State<EditButtons> {
 
           if (context.mounted) {
             Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Could not update entry',
-                content: err,
-              ),
-            );
+            SnackBarExtension.show(context, 'Could not update entry');
           }
         },
       );
@@ -107,13 +102,7 @@ class _EditButtonsState extends State<EditButtons> {
 
               if (context.mounted) {
                 Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: 'Could not remove entry',
-                    content: err,
-                  ),
-                );
+                SnackBarExtension.show(context, 'Could not remove entry');
               }
             },
           ),

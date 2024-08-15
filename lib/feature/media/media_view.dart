@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/media/media_floating_actions.dart';
 import 'package:otraku/feature/media/media_characters_view.dart';
@@ -14,11 +15,11 @@ import 'package:otraku/feature/media/media_stats_view.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layouts/stacked_tab_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/stacked_tab_bar.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/feature/media/media_header.dart';
 
 class MediaView extends StatefulWidget {
@@ -353,14 +354,14 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
       ref.read(mediaFollowingProvider(widget.id).notifier).fetch();
     } else {
       ref
-          .read(mediaRelationsProvider(widget.id).notifier)
+          .read(mediaConnectionsProvider(widget.id).notifier)
           .fetch(MediaTab.values.elementAt(index));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(mediaRelationsProvider(widget.id).select((_) => null));
+    ref.watch(mediaConnectionsProvider(widget.id).select((_) => null));
 
     return TabBarView(
       controller: widget.tabCtrl,
@@ -391,7 +392,7 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
           id: widget.id,
           scrollCtrl: _scrollCtrl,
           rateRecommendation: ref
-              .read(mediaRelationsProvider(widget.id).notifier)
+              .read(mediaConnectionsProvider(widget.id).notifier)
               .rateRecommendation,
         ),
         MediaStatsSubview(

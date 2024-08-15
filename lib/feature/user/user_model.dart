@@ -2,20 +2,6 @@ import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
 
-class UserItem {
-  UserItem._({required this.id, required this.name, required this.imageUrl});
-
-  factory UserItem(Map<String, dynamic> map) => UserItem._(
-        id: map['id'],
-        name: map['name'],
-        imageUrl: map['avatar']['large'],
-      );
-
-  final int id;
-  final String name;
-  final String imageUrl;
-}
-
 class User {
   User._({
     required this.id,

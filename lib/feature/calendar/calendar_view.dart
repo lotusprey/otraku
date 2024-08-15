@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layouts/navigation_tool.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/text_rail.dart';
@@ -16,7 +16,6 @@ import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
 import 'package:otraku/feature/calendar/calendar_filter_sheet.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/calendar/calendar_provider.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView();
@@ -150,10 +149,9 @@ class _Tile extends StatelessWidget {
     const contentPadding = EdgeInsets.symmetric(horizontal: Theming.offset);
 
     return Card(
-      child: LinkTile(
+      child: MediaRouteTile(
         id: item.mediaId,
-        info: item.cover,
-        discoverType: DiscoverType.anime,
+        imageUrl: item.cover,
         child: Row(
           children: [
             Hero(

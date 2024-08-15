@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/entry_labels.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/field/note_label.dart';
+import 'package:otraku/widget/field/score_label.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/paged_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 
@@ -46,10 +47,11 @@ class _MediaFollowingGrid extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => LinkTile(
-          id: items[i].userId,
-          info: items[i].userAvatar,
-          discoverType: DiscoverType.user,
+        (context, i) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push(
+            Routes.user(items[i].userId, items[i].userAvatar),
+          ),
           child: Card(
             child: Row(
               children: [

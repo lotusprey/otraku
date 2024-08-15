@@ -1,17 +1,9 @@
 import 'package:otraku/extension/string_extension.dart';
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
+import 'package:otraku/util/paged.dart';
+import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-
-TileItem staffItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.staff,
-      title: map['name']['userPreferred'],
-      imageUrl: map['image']['large'],
-    );
+import 'package:otraku/util/tile_modelable.dart';
 
 class Staff {
   Staff._({
@@ -110,6 +102,52 @@ class StaffRelations {
     this.roles = const Paged(),
   });
 
-  final Paged<(Relation, Relation)> charactersAndMedia;
-  final Paged<Relation> roles;
+  final Paged<(StaffRelatedItem, StaffRelatedItem)> charactersAndMedia;
+  final Paged<StaffRelatedItem> roles;
+}
+
+class StaffRelatedItem implements TileModelable {
+  const StaffRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory StaffRelatedItem.media(
+    Map<String, dynamic> map,
+    String? role,
+    ImageQuality imageQuality,
+  ) =>
+      StaffRelatedItem._(
+        id: map['id'],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality],
+        role: role,
+      );
+
+  factory StaffRelatedItem.character(Map<String, dynamic> map, String? role) =>
+      StaffRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
 }

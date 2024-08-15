@@ -1,6 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
-import 'package:otraku/model/paged.dart';
+import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/util/persistence.dart';
 

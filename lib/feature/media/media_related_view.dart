@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/text_rail.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class MediaRelatedSubview extends StatelessWidget {
@@ -65,17 +64,14 @@ class _MediaRelatedGrid extends StatelessWidget {
     final details = <String, bool>{
       if (items[i].relationType != null) items[i].relationType!: true,
       if (items[i].entryStatus != null)
-        items[i].entryStatus!.label(
-              items[i].type == DiscoverType.anime,
-            ): true,
+        items[i].entryStatus!.label(items[i].isAnime): true,
       if (items[i].format != null) items[i].format!.label: false,
       if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
     };
 
-    return LinkTile(
+    return MediaRouteTile(
       id: items[i].id,
-      info: items[i].imageUrl,
-      discoverType: items[i].type,
+      imageUrl: items[i].imageUrl,
       child: Card(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,

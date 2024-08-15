@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layouts/scroll_physics.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/scroll_physics.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView();

@@ -7,7 +7,7 @@ import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class StudioFavoriteButton extends StatefulWidget {
   const StudioFavoriteButton(this.studio, this.toggleFavorite);

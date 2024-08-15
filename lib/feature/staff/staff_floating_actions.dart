@@ -5,7 +5,7 @@ import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class StaffFilterButton extends StatelessWidget {
   const StaffFilterButton(this.id, this.ref)

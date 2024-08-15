@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
-import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/statistics/charts.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scroll_physics.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/layout/scroll_physics.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class StatisticsView extends StatefulWidget {
   const StatisticsView(this.id);

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
-class StudioGrid extends StatelessWidget {
-  const StudioGrid(this.items);
+class StudioItemGrid extends StatelessWidget {
+  const StudioItemGrid(this.items);
 
   final List<StudioItem> items;
 
@@ -18,10 +18,9 @@ class StudioGrid extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (_, i) => LinkTile(
-          id: items[i].id,
-          info: items[i].name,
-          discoverType: DiscoverType.studio,
+        (_, i) => GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push(Routes.studio(items[i].id, items[i].name)),
           child: Hero(
             tag: items[i].id,
             child: Text(

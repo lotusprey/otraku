@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({
@@ -67,10 +68,11 @@ class ActivityCard extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: LinkTile(
-                id: activity.authorId,
-                info: activity.authorAvatarUrl,
-                discoverType: DiscoverType.user,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push(
+                  Routes.user(activity.authorId, activity.authorAvatarUrl),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -105,10 +107,14 @@ class ActivityCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                     child: Icon(Icons.arrow_right_alt),
                   ),
-                  LinkTile(
-                    id: message.recipientId,
-                    info: message.recipientAvatarUrl,
-                    discoverType: DiscoverType.user,
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => context.push(
+                      Routes.user(
+                        message.recipientId,
+                        message.recipientAvatarUrl,
+                      ),
+                    ),
                     child: ClipRRect(
                       borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
@@ -143,10 +149,9 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LinkTile(
+    return MediaRouteTile(
       id: item.mediaId,
-      info: item.coverUrl,
-      discoverType: item.isAnime ? DiscoverType.anime : DiscoverType.manga,
+      imageUrl: item.coverUrl,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(

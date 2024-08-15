@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/feature/social/social_model.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/social/social_provider.dart';
-import 'package:otraku/feature/user/user_grid.dart';
+import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
-import 'package:otraku/widget/layouts/scroll_physics.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/scroll_physics.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class SocialView extends ConsumerStatefulWidget {
@@ -92,7 +93,7 @@ class _SocialViewState extends ConsumerState<SocialView>
               provider: socialProvider(widget.id).select(
                 (s) => s.unwrapPrevious().whenData((data) => data.following),
               ),
-              onData: (data) => UserGrid(data.items),
+              onData: (data) => UserItemGrid(data.items),
             ),
             PagedView<UserItem>(
               scrollCtrl: _scrollCtrl,
@@ -100,7 +101,7 @@ class _SocialViewState extends ConsumerState<SocialView>
               provider: socialProvider(widget.id).select(
                 (s) => s.unwrapPrevious().whenData((data) => data.followers),
               ),
-              onData: (data) => UserGrid(data.items),
+              onData: (data) => UserItemGrid(data.items),
             ),
           ],
         ),

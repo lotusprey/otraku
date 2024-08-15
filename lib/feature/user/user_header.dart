@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/content_header.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/layout/content_header.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/text_rail.dart';
 

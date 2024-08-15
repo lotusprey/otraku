@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/debounce.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/util/debounce.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
   const CollectionGrid({required this.items, required this.onProgressUpdated});
@@ -28,10 +27,9 @@ class CollectionGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => Card(
-          child: LinkTile(
+          child: MediaRouteTile(
             id: items[i].mediaId,
-            discoverType: DiscoverType.anime,
-            info: items[i].imageUrl,
+            imageUrl: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(

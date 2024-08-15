@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
@@ -24,8 +24,8 @@ class MediaRecommendationsSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return PagedView<Recommendation>(
       scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
-      provider: mediaRelationsProvider(id).select(
+      onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
+      provider: mediaConnectionsProvider(id).select(
         (s) => s.unwrapPrevious().whenData((data) => data.recommendations),
       ),
       onData: (data) => _MediaRecommendationsGrid(
@@ -65,10 +65,9 @@ class _MediaRecommendationsGrid extends StatelessWidget {
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => Card(
-          child: LinkTile(
+          child: MediaRouteTile(
             id: items[i].id,
-            discoverType: items[i].type,
-            info: items[i].imageUrl,
+            imageUrl: items[i].imageUrl,
             child: Column(
               children: [
                 Expanded(

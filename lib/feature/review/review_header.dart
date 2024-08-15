@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/widget/layouts/content_header.dart';
+import 'package:otraku/widget/layout/content_header.dart';
 
 class ReviewHeader extends StatelessWidget {
   const ReviewHeader({
@@ -42,6 +42,7 @@ class ReviewHeader extends StatelessWidget {
                   ),
                   Flexible(
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => context.push(
                         Routes.user(review!.userId, review!.userAvatar),
                       ),

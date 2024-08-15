@@ -6,15 +6,15 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/widget/layouts/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_header.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class UserView extends StatelessWidget {
   const UserView(this.tag, this.avatarUrl);

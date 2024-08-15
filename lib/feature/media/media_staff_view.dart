@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/widget/grids/relation_grid.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/util/routes.dart';
+import 'package:otraku/widget/grid/mono_relation_grid.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 
@@ -13,13 +15,18 @@ class MediaStaffSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PagedView<Relation>(
+    return PagedView<MediaRelatedItem>(
       scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(mediaRelationsProvider(id)),
-      provider: mediaRelationsProvider(id).select(
+      onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
+      provider: mediaConnectionsProvider(id).select(
         (s) => s.unwrapPrevious().whenData((data) => data.staff),
       ),
-      onData: (data) => SingleRelationGrid(data.items),
+      onData: (data) => MonoRelationGrid(
+        items: data.items,
+        onTap: (item) => context.push(
+          Routes.staff(item.tileId, item.tileImageUrl),
+        ),
+      ),
     );
   }
 }

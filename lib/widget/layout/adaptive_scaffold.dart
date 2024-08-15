@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layouts/navigation_tool.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
   const AdaptiveScaffold(this.configBuilder);

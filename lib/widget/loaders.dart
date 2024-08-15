@@ -1,22 +1,24 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/loaders/shimmer.dart';
+import 'package:otraku/widget/shimmer.dart';
 
 class Loader extends StatelessWidget {
   const Loader();
 
   @override
-  Widget build(BuildContext context) => Shimmer(ShimmerItem(
-        Container(
-          width: 60,
-          height: 15,
-          decoration: BoxDecoration(
-            borderRadius: Theming.borderRadiusSmall,
-            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+  Widget build(BuildContext context) => Shimmer(
+        ShimmerItem(
+          Container(
+            width: 60,
+            height: 15,
+            decoration: BoxDecoration(
+              borderRadius: Theming.borderRadiusSmall,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
           ),
         ),
-      ));
+      );
 }
 
 class SliverRefreshControl extends StatelessWidget {

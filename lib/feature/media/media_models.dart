@@ -4,20 +4,12 @@ import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/util/paged.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_models.dart';
 import 'package:otraku/util/persistence.dart';
-
-TileItem mediaItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.anime,
-      title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Persistence().imageQuality.value],
-    );
+import 'package:otraku/util/tile_modelable.dart';
 
 class Media {
   Media(this.edit, this.info, this.stats, this.related);
@@ -28,8 +20,8 @@ class Media {
   final List<RelatedMedia> related;
 }
 
-class MediaRelations {
-  const MediaRelations({
+class MediaConnections {
+  const MediaConnections({
     this.characters = const Paged(),
     this.staff = const Paged(),
     this.reviews = const Paged(),
@@ -38,8 +30,8 @@ class MediaRelations {
     this.selectedLanguage = 0,
   });
 
-  final Paged<Relation> characters;
-  final Paged<Relation> staff;
+  final Paged<MediaRelatedItem> characters;
+  final Paged<MediaRelatedItem> staff;
   final Paged<RelatedReview> reviews;
   final Paged<Recommendation> recommendations;
 
@@ -51,7 +43,7 @@ class MediaRelations {
   /// Returns the characters, along with their voice actors,
   /// corresponding to the current [language]. If there are
   /// multiple actors, the given character is repeated for each actor.
-  Paged<(Relation, Relation?)> getCharactersAndVoiceActors() {
+  Paged<(MediaRelatedItem, MediaRelatedItem?)> getCharactersAndVoiceActors() {
     if (languageToVoiceActors.isEmpty) {
       return Paged(
         items: characters.items.map((c) => (c, null)).toList(),
@@ -62,7 +54,7 @@ class MediaRelations {
 
     final actorsPerMedia = languageToVoiceActors[selectedLanguage].voiceActors;
 
-    final charactersAndVoiceActors = <(Relation, Relation?)>[];
+    final charactersAndVoiceActors = <(MediaRelatedItem, MediaRelatedItem?)>[];
     for (final c in characters.items) {
       final actors = actorsPerMedia[c.id];
       if (actors == null || actors.isEmpty) {
@@ -82,15 +74,15 @@ class MediaRelations {
     );
   }
 
-  MediaRelations copyWith({
-    Paged<Relation>? characters,
-    Paged<Relation>? staff,
+  MediaConnections copyWith({
+    Paged<MediaRelatedItem>? characters,
+    Paged<MediaRelatedItem>? staff,
     Paged<RelatedReview>? reviews,
     Paged<Recommendation>? recommendations,
     List<MediaLanguageMapping>? languageToVoiceActors,
     int? selectedLanguage,
   }) =>
-      MediaRelations(
+      MediaConnections(
         characters: characters ?? this.characters,
         staff: staff ?? this.staff,
         reviews: reviews ?? this.reviews,
@@ -103,13 +95,13 @@ class MediaRelations {
 
 typedef MediaLanguageMapping = ({
   String language,
-  Map<int, List<Relation>> voiceActors,
+  Map<int, List<MediaRelatedItem>> voiceActors,
 });
 
 class RelatedMedia {
-  RelatedMedia._({
+  const RelatedMedia._({
     required this.id,
-    required this.type,
+    required this.isAnime,
     required this.title,
     required this.imageUrl,
     required this.relationType,
@@ -129,13 +121,11 @@ class RelatedMedia {
         releaseStatus: StringExtension.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
-        type: map['node']['type'] == 'ANIME'
-            ? DiscoverType.anime
-            : DiscoverType.manga,
+        isAnime: map['node']['type'] == 'ANIME',
       );
 
   final int id;
-  final DiscoverType type;
+  final bool isAnime;
   final String title;
   final String imageUrl;
   final String? relationType;
@@ -144,8 +134,42 @@ class RelatedMedia {
   final String? releaseStatus;
 }
 
+class MediaRelatedItem implements TileModelable {
+  const MediaRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory MediaRelatedItem(Map<String, dynamic> map, String? role) =>
+      MediaRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
+}
+
 class RelatedReview {
-  RelatedReview._({
+  const RelatedReview._({
     required this.reviewId,
     required this.userId,
     required this.avatar,
@@ -213,7 +237,6 @@ class Recommendation {
     required this.rating,
     required this.userRating,
     required this.title,
-    required this.type,
     required this.imageUrl,
   });
 
@@ -227,7 +250,6 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
           [Persistence().imageQuality.value],
     );
@@ -238,7 +260,6 @@ class Recommendation {
   bool? userRating;
   final String title;
   final String? imageUrl;
-  final DiscoverType type;
 }
 
 class MediaInfo {

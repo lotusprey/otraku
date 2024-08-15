@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/character/character_item_grid.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_media_grid.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_media_simple_grid.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/discover/discover_provider.dart';
-import 'package:otraku/feature/studio/studio_grid.dart';
-import 'package:otraku/feature/user/user_grid.dart';
+import 'package:otraku/feature/staff/staff_item_grid.dart';
+import 'package:otraku/feature/studio/studio_item_grid.dart';
+import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/fields/pill_selector.dart';
-import 'package:otraku/widget/grids/tile_item_grid.dart';
+import 'package:otraku/widget/field/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class DiscoverSubview extends StatelessWidget {
@@ -33,7 +35,7 @@ class DiscoverSubview extends StatelessWidget {
               select: (data) => (data as DiscoverAnimeItems).pages,
               onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
-                  : TileItemGrid(data.items),
+                  : DiscoverMediaSimpleGrid(data.items),
             ),
           DiscoverType.manga => PagedSelectionView(
               provider: discoverProvider,
@@ -42,35 +44,35 @@ class DiscoverSubview extends StatelessWidget {
               select: (data) => (data as DiscoverMangaItems).pages,
               onData: (data) => Persistence().discoverItemView == 0
                   ? DiscoverMediaGrid(data.items)
-                  : TileItemGrid(data.items),
+                  : DiscoverMediaSimpleGrid(data.items),
             ),
           DiscoverType.character => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverCharacterItems).pages,
-              onData: (data) => TileItemGrid(data.items),
+              onData: (data) => CharacterItemGrid(data.items),
             ),
           DiscoverType.staff => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverStaffItems).pages,
-              onData: (data) => TileItemGrid(data.items),
+              onData: (data) => StaffItemGrid(data.items),
             ),
           DiscoverType.studio => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverStudioItems).pages,
-              onData: (data) => StudioGrid(data.items),
+              onData: (data) => StudioItemGrid(data.items),
             ),
           DiscoverType.user => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverUserItems).pages,
-              onData: (data) => UserGrid(data.items),
+              onData: (data) => UserItemGrid(data.items),
             ),
           DiscoverType.review => PagedSelectionView(
               provider: discoverProvider,

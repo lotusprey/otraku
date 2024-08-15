@@ -1,6 +1,8 @@
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
+import 'package:otraku/feature/character/character_item_model.dart';
+import 'package:otraku/feature/media/media_item_model.dart';
+import 'package:otraku/feature/staff/staff_item_model.dart';
+import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/util/paged.dart';
 
 class Favorites {
   const Favorites({
@@ -11,10 +13,10 @@ class Favorites {
     this.studios = const PagedWithTotal(),
   });
 
-  final PagedWithTotal<TileItem> anime;
-  final PagedWithTotal<TileItem> manga;
-  final PagedWithTotal<TileItem> characters;
-  final PagedWithTotal<TileItem> staff;
+  final PagedWithTotal<MediaItem> anime;
+  final PagedWithTotal<MediaItem> manga;
+  final PagedWithTotal<CharacterItem> characters;
+  final PagedWithTotal<StaffItem> staff;
   final PagedWithTotal<StudioItem> studios;
 
   int getCount(FavoritesTab tab) => switch (tab) {

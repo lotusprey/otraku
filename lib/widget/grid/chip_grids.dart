@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/dialogs.dart';
 
 class ChipGridTemplate extends StatelessWidget {
   const ChipGridTemplate({

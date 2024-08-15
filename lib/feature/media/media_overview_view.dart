@@ -6,14 +6,14 @@ import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
 class MediaOverviewSubview extends StatelessWidget {

@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/filter_discover_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/debounce.dart';
-import 'package:otraku/widget/fields/search_field.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/util/debounce.dart';
+import 'package:otraku/widget/field/search_field.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class DiscoverTopBarTrailingContent extends StatelessWidget {
   const DiscoverTopBarTrailingContent(this.focusNode);

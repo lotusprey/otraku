@@ -157,9 +157,9 @@ class _ImageDialogState extends State<ImageDialog>
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      insetPadding: EdgeInsets.zero,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      insetPadding: const EdgeInsets.only(),
       child: GestureDetector(
         onDoubleTapDown: (details) => _lastOffset = details.localPosition,
         onDoubleTap: () {

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/staff/staff_item_model.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
-class UserGrid extends StatelessWidget {
-  const UserGrid(this.items);
+class StaffItemGrid extends StatelessWidget {
+  const StaffItemGrid(this.items);
 
-  final List<UserItem> items;
+  final List<StaffItem> items;
 
   @override
   Widget build(BuildContext context) {
@@ -29,14 +29,13 @@ class UserGrid extends StatelessWidget {
 class _Tile extends StatelessWidget {
   const _Tile(this.item);
 
-  final UserItem item;
+  final StaffItem item;
 
   @override
   Widget build(BuildContext context) {
-    return LinkTile(
-      id: item.id,
-      info: item.imageUrl,
-      discoverType: DiscoverType.user,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(Routes.staff(item.id, item.imageUrl)),
       child: Column(
         children: [
           Expanded(

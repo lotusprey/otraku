@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/widget/debounce.dart';
-import 'package:otraku/widget/entry_labels.dart';
+import 'package:otraku/util/debounce.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/field/note_label.dart';
+import 'package:otraku/widget/field/score_label.dart';
+import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -51,11 +51,10 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: Theming.offset),
-      child: LinkTile(
+      child: MediaRouteTile(
         key: ValueKey(entry.mediaId),
         id: entry.mediaId,
-        discoverType: DiscoverType.anime,
-        info: entry.imageUrl,
+        imageUrl: entry.imageUrl,
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

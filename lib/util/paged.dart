@@ -1,4 +1,4 @@
-/// Used for pagination.
+/// Collection for pagination.
 class Paged<T> {
   const Paged({
     this.items = const [],
@@ -8,7 +8,7 @@ class Paged<T> {
 
   final List<T> items;
 
-  /// If it's possible to load a new page, or the list is complete.
+  /// If there's another page to load.
   final bool hasNext;
 
   /// The index of the next page to be loaded.
@@ -22,7 +22,6 @@ class Paged<T> {
       );
 }
 
-/// [Paged] that additionally keeps track of the total amount of items.
 class PagedWithTotal<T> extends Paged<T> {
   const PagedWithTotal({
     super.items,
@@ -31,6 +30,7 @@ class PagedWithTotal<T> extends Paged<T> {
     this.total = 0,
   });
 
+  /// Count of all items, even the ones that aren't yet loaded.
   final int total;
 
   @override

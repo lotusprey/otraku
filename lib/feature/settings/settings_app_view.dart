@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/widget/field/stateful_tiles.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';

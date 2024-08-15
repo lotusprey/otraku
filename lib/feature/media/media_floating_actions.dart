@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class MediaEditButton extends StatefulWidget {
   const MediaEditButton(this.media);

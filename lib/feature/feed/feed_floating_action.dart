@@ -4,7 +4,7 @@ import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class FeedFloatingAction extends StatelessWidget {
   const FeedFloatingAction(this.ref) : super(key: const Key('newPost'));

@@ -626,7 +626,7 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -635,7 +635,7 @@ abstract class GqlQuery {
             type
             context
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -643,7 +643,7 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -651,15 +651,8 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
-            createdAt
-          }
-          ... on AiringNotification {
-            id
-            type
-            episode
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on RelatedMediaAdditionNotification {
@@ -688,6 +681,13 @@ abstract class GqlQuery {
             type
             reason
             deletedMediaTitle
+            createdAt
+          }
+          ... on AiringNotification {
+            id
+            type
+            episode
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
         }

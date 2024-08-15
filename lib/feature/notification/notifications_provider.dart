@@ -7,6 +7,7 @@ import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
+import 'package:otraku/util/persistence.dart';
 
 final notificationsProvider = AsyncNotifierProvider.autoDispose<
     NotificationsNotifier, PagedWithTotal<SiteNotification>>(
@@ -51,7 +52,7 @@ class NotificationsNotifier
 
     final items = <SiteNotification>[];
     for (final n in data['Page']['notifications']) {
-      final item = SiteNotification.maybe(n);
+      final item = SiteNotification.maybe(n, Persistence().imageQuality);
       if (item != null) items.add(item);
     }
 

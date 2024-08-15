@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/feature/notification/notifications_provider.dart';
@@ -181,24 +180,40 @@ class _NotificationItem extends StatelessWidget {
           child: Card(
             child: Row(
               children: [
-                if (item.imageUrl != null && item.headId != null)
+                if (item.imageUrl != null)
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => context.push(switch (item.discoverType) {
-                      DiscoverType.anime || DiscoverType.manga => Routes.media(
-                          item.headId!,
-                          item.imageUrl,
+                    onTap: () => switch (item) {
+                      FollowNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
                         ),
-                      _ => Routes.user(item.headId!, item.imageUrl),
-                    }),
-                    onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
-                        showSheet(
+                      ActivityNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ThreadNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ThreadCommentNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      MediaReleaseNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaChangeNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaDeletionNotification _ => null,
+                    },
+                    onLongPress: () => switch (item) {
+                      MediaReleaseNotification item => showSheet(
                           context,
-                          EditView((id: item.headId!, setComplete: false)),
-                        );
-                      }
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      MediaChangeNotification item => showSheet(
+                          context,
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      _ => null,
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.horizontal(
@@ -210,56 +225,41 @@ class _NotificationItem extends StatelessWidget {
                 Flexible(
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => switch (item.type) {
-                      NotificationType.activityLike ||
-                      NotificationType.activityMention ||
-                      NotificationType.activityMessage ||
-                      NotificationType.activityReply ||
-                      NotificationType.acrivityReplyLike ||
-                      NotificationType.activityReplySubscribed =>
-                        context.push(Routes.activity(item.bodyId!)),
-                      NotificationType.following =>
-                        context.push(Routes.user(item.headId!, item.imageUrl)),
-                      NotificationType.airing ||
-                      NotificationType.relatedMediaAddition =>
-                        context.push(Routes.media(item.headId!, item.imageUrl)),
-                      NotificationType.mediaDataChange ||
-                      NotificationType.mediaMerge ||
-                      NotificationType.mediaDeletion =>
+                    onTap: () => switch (item) {
+                      FollowNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ActivityNotification item => context.push(
+                          Routes.activity(item.activityId),
+                        ),
+                      ThreadNotification item => _redirectToSite(
+                          context,
+                          item.threadSiteUrl,
+                        ),
+                      ThreadCommentNotification item => _redirectToSite(
+                          context,
+                          item.commentSiteUrl,
+                        ),
+                      MediaReleaseNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaChangeNotification() ||
+                      MediaDeletionNotification() =>
                         showDialog(
                           context: context,
                           builder: (context) => _NotificationDialog(item),
                         ),
-                      NotificationType.threadLike ||
-                      NotificationType.threadReplySubscribed ||
-                      NotificationType.threadCommentLike ||
-                      NotificationType.threadCommentReply ||
-                      NotificationType.threadCommentMention =>
-                        showDialog(
-                          context: context,
-                          builder: (context) => ConfirmationDialog(
-                            title: 'Forum is not yet supported',
-                            content: 'Open in browser?',
-                            mainAction: 'Open',
-                            secondaryAction: 'Cancel',
-                            onConfirm: () {
-                              if (item.details == null) {
-                                SnackBarExtension.show(context, 'Invalid Link');
-                                return;
-                              }
-                              SnackBarExtension.launch(context, item.details!);
-                            },
-                          ),
-                        ),
                     },
-                    onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
-                        showSheet(
+                    onLongPress: () => switch (item) {
+                      MediaReleaseNotification item => showSheet(
                           context,
-                          EditView((id: item.headId!, setComplete: false)),
-                        );
-                      }
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      MediaChangeNotification item => showSheet(
+                          context,
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      _ => null,
                     },
                     child: Padding(
                       padding: Theming.paddingAll,
@@ -314,6 +314,19 @@ class _NotificationItem extends StatelessWidget {
       ),
     );
   }
+
+  void _redirectToSite(BuildContext context, String? url) => showDialog(
+        context: context,
+        builder: (context) => ConfirmationDialog(
+          title: 'Forum is not yet supported',
+          content: 'Open in browser?',
+          mainAction: 'Open',
+          secondaryAction: 'Cancel',
+          onConfirm: () => url != null
+              ? SnackBarExtension.launch(context, url)
+              : SnackBarExtension.show(context, 'Invalid Link'),
+        ),
+      );
 }
 
 class _NotificationDialog extends StatelessWidget {
@@ -362,10 +375,17 @@ class _NotificationDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(child: title),
-                  if (item.details != null) ...[
-                    const SizedBox(height: Theming.offset),
-                    HtmlContent(item.details!),
-                  ],
+                  ...switch (item) {
+                    MediaChangeNotification item => [
+                        const SizedBox(height: Theming.offset),
+                        HtmlContent(item.reason),
+                      ],
+                    MediaDeletionNotification item => [
+                        const SizedBox(height: Theming.offset),
+                        HtmlContent(item.reason),
+                      ],
+                    _ => const [],
+                  },
                 ],
               ),
             ),

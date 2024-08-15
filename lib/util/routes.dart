@@ -68,6 +68,8 @@ class Routes {
 
   static String thread(int id) => '/thread/$id';
 
+  static String comment(int id) => '/comment/$id';
+
   static String animeCollection(int id) => '/collection/anime/$id';
 
   static String mangaCollection(int id) => '/collection/manga/$id';

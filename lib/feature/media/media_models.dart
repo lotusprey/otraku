@@ -176,6 +176,7 @@ class RelatedReview {
     required this.username,
     required this.summary,
     required this.rating,
+    required this.score,
   });
 
   static RelatedReview? maybe(Map<String, dynamic> map) {
@@ -188,6 +189,7 @@ class RelatedReview {
       summary: map['summary'] ?? '',
       avatar: map['user']['avatar']['large'],
       rating: '${map['rating']}/${map['ratingAmount']}',
+      score: map['score'] ?? 0,
     );
   }
 
@@ -197,6 +199,7 @@ class RelatedReview {
   final String avatar;
   final String summary;
   final String rating;
+  final int score;
 }
 
 class MediaFollowing {

@@ -132,6 +132,7 @@ abstract class GqlQuery {
         nodes {
           id
           summary
+          score
           rating
           ratingAmount
           user {id name avatar {large}}

@@ -47,6 +47,11 @@ class _MediaReviewGrid extends StatelessWidget {
       );
     }
 
+    const verticalDivider = SizedBox(
+      height: 20,
+      child: VerticalDivider(thickness: 1, width: 20),
+    );
+
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 300,
@@ -57,35 +62,70 @@ class _MediaReviewGrid extends StatelessWidget {
         (context, i) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => context.push(
-                Routes.user(items[i].userId, items[i].avatar),
-              ),
-              child: Row(
-                children: [
-                  Hero(
-                    tag: items[i].userId,
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(
-                        items[i].avatar,
-                        height: 50,
-                        width: 50,
-                      ),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => context.push(
+                      Routes.user(items[i].userId, items[i].avatar),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ClipRRect(
+                          borderRadius: Theming.borderRadiusSmall,
+                          child: CachedImage(
+                            items[i].avatar,
+                            height: 50,
+                            width: 50,
+                          ),
+                        ),
+                        const SizedBox(width: Theming.offset),
+                        Flexible(
+                          child: Text(
+                            items[i].username,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: Theming.offset),
-                  Text(items[i].username),
-                  const Spacer(),
-                  const Icon(Icons.thumb_up_outlined, size: Theming.iconSmall),
-                  const SizedBox(width: Theming.offset),
-                  Text(
-                    items[i].rating,
-                    style: Theme.of(context).textTheme.labelMedium,
+                ),
+                verticalDivider,
+                Tooltip(
+                  message: 'Reviewer Score',
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.star_half_rounded,
+                        size: Theming.iconSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(items[i].score.toString()),
+                    ],
                   ),
-                ],
-              ),
+                ),
+                verticalDivider,
+                Tooltip(
+                  message: 'Review Rating',
+                  triggerMode: TooltipTriggerMode.tap,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.thumb_up_outlined,
+                        size: Theming.iconSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Text(items[i].rating),
+                    ],
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 5),
             Expanded(
@@ -101,7 +141,6 @@ class _MediaReviewGrid extends StatelessWidget {
                       padding: Theming.paddingAll,
                       child: Text(
                         items[i].summary,
-                        style: Theme.of(context).textTheme.labelMedium,
                         overflow: TextOverflow.fade,
                       ),
                     ),

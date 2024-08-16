@@ -14,7 +14,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layout/stacked_tab_bar.dart';
+import 'package:otraku/widget/layout/dual_pane_with_tab_bar.dart';
 import 'package:otraku/widget/loaders.dart';
 
 class CharacterView extends ConsumerStatefulWidget {
@@ -220,61 +220,48 @@ class _LargeViewState extends State<_LargeView>
       toggleFavorite: widget.toggleFavorite,
     );
 
-    return Row(
-      children: [
-        Flexible(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: Theming.windowWidthMedium,
+    return DualPaneWithTabBar(
+      tabCtrl: _tabCtrl,
+      scrollToTop: widget.scrollCtrl.scrollToTop,
+      tabs: CharacterHeader.tabsWithoutOverview,
+      leftPane: widget.character.unwrapPrevious().when(
+            loading: () => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                header,
+                const SliverFillRemaining(
+                  child: Center(child: Loader()),
+                ),
+              ],
             ),
-            child: widget.character.unwrapPrevious().when(
-                  loading: () => CustomScrollView(
-                    physics: Theming.bouncyPhysics,
-                    slivers: [
-                      header,
-                      const SliverFillRemaining(
-                        child: Center(child: Loader()),
-                      ),
-                    ],
-                  ),
-                  error: (_, __) => CustomScrollView(
-                    physics: Theming.bouncyPhysics,
-                    slivers: [
-                      header,
-                      const SliverFillRemaining(
-                        child: Center(
-                          child: Text('Failed to load character'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  data: (data) => CharacterOverviewSubview.withHeader(
-                    character: data,
-                    header: header,
-                    invalidate: () => widget.ref.invalidate(
-                      characterProvider(widget.id),
-                    ),
+            error: (_, __) => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                header,
+                const SliverFillRemaining(
+                  child: Center(
+                    child: Text('Failed to load character'),
                   ),
                 ),
-          ),
-        ),
-        Flexible(
-          child: widget.character.unwrapPrevious().maybeWhen(
-                data: (data) => StackedTabBar(
-                  tabCtrl: _tabCtrl,
-                  scrollToTop: widget.scrollCtrl.scrollToTop,
-                  tabs: CharacterHeader.tabsWithoutOverview,
-                  child: _CharacterTabs.withoutOverview(
-                    id: widget.id,
-                    character: data,
-                    tabCtrl: _tabCtrl,
-                    scrollCtrl: widget.scrollCtrl,
-                  ),
-                ),
-                orElse: () => const SizedBox(),
+              ],
+            ),
+            data: (data) => CharacterOverviewSubview.withHeader(
+              character: data,
+              header: header,
+              invalidate: () => widget.ref.invalidate(
+                characterProvider(widget.id),
               ),
-        ),
-      ],
+            ),
+          ),
+      rightPane: widget.character.unwrapPrevious().maybeWhen(
+            data: (data) => _CharacterTabs.withoutOverview(
+              id: widget.id,
+              character: data,
+              tabCtrl: _tabCtrl,
+              scrollCtrl: widget.scrollCtrl,
+            ),
+            orElse: () => const SizedBox(),
+          ),
     );
   }
 }

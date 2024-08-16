@@ -18,7 +18,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layout/stacked_tab_bar.dart';
+import 'package:otraku/widget/layout/dual_pane_with_tab_bar.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/feature/media/media_header.dart';
 
@@ -206,59 +206,46 @@ class _LargeViewState extends State<_LargeView>
       toggleFavorite: widget.toggleFavorite,
     );
 
-    return Row(
-      children: [
-        Flexible(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: Theming.windowWidthMedium,
+    return DualPaneWithTabBar(
+      tabCtrl: _tabCtrl,
+      scrollToTop: widget.scrollCtrl.scrollToTop,
+      tabs: MediaHeader.tabsWithoutOverview,
+      leftPane: widget.media.unwrapPrevious().when(
+            loading: () => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                header,
+                const SliverFillRemaining(
+                  child: Center(child: Loader()),
+                ),
+              ],
             ),
-            child: widget.media.unwrapPrevious().when(
-                  loading: () => CustomScrollView(
-                    physics: Theming.bouncyPhysics,
-                    slivers: [
-                      header,
-                      const SliverFillRemaining(
-                        child: Center(child: Loader()),
-                      ),
-                    ],
-                  ),
-                  error: (_, __) => CustomScrollView(
-                    physics: Theming.bouncyPhysics,
-                    slivers: [
-                      header,
-                      const SliverFillRemaining(
-                        child: Center(
-                          child: Text('Failed to load media'),
-                        ),
-                      ),
-                    ],
-                  ),
-                  data: (data) => MediaOverviewSubview.withHeader(
-                    ref: widget.ref,
-                    info: data.info,
-                    header: header,
+            error: (_, __) => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                header,
+                const SliverFillRemaining(
+                  child: Center(
+                    child: Text('Failed to load media'),
                   ),
                 ),
+              ],
+            ),
+            data: (data) => MediaOverviewSubview.withHeader(
+              ref: widget.ref,
+              info: data.info,
+              header: header,
+            ),
           ),
-        ),
-        Flexible(
-          child: widget.media.unwrapPrevious().maybeWhen(
-                data: (data) => StackedTabBar(
-                  tabCtrl: _tabCtrl,
-                  scrollToTop: widget.scrollCtrl.scrollToTop,
-                  tabs: MediaHeader.tabsWithoutOverview,
-                  child: _MediaTabs.withoutOverview(
-                    id: widget.id,
-                    media: data,
-                    tabCtrl: _tabCtrl,
-                    scrollCtrl: widget.scrollCtrl,
-                  ),
-                ),
-                orElse: () => const SizedBox(),
-              ),
-        ),
-      ],
+      rightPane: widget.media.unwrapPrevious().maybeWhen(
+            data: (data) => _MediaTabs.withoutOverview(
+              id: widget.id,
+              media: data,
+              tabCtrl: _tabCtrl,
+              scrollCtrl: widget.scrollCtrl,
+            ),
+            orElse: () => const SizedBox(),
+          ),
     );
   }
 }

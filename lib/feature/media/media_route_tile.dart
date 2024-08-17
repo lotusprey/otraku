@@ -18,8 +18,7 @@ class MediaRouteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
+    return InkWell(
       onTap: () => context.push(Routes.media(id, imageUrl)),
       onLongPress: () => showSheet(
         context,

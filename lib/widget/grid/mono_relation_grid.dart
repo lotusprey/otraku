@@ -21,24 +21,23 @@ class MonoRelationGrid extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _MonoRelationTile(item: items[i], onTap: onTap),
+        (context, i) => _Tile(item: items[i], onTap: onTap),
       ),
     );
   }
 }
 
-class _MonoRelationTile extends StatelessWidget {
-  const _MonoRelationTile({required this.item, required this.onTap});
+class _Tile extends StatelessWidget {
+  const _Tile({required this.item, required this.onTap});
 
   final TileModelable item;
   final void Function(TileModelable item) onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => onTap(item),
-      child: Card(
+    return Card(
+      child: InkWell(
+        onTap: () => onTap(item),
         child: Row(
           children: [
             ClipRRect(
@@ -49,7 +48,7 @@ class _MonoRelationTile extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(

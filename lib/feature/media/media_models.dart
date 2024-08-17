@@ -241,6 +241,10 @@ class Recommendation {
     required this.userRating,
     required this.title,
     required this.imageUrl,
+    required this.isAnime,
+    required this.releaseYear,
+    required this.format,
+    required this.entryStatus,
   });
 
   factory Recommendation(Map<String, dynamic> map) {
@@ -255,6 +259,11 @@ class Recommendation {
       title: map['mediaRecommendation']['title']['userPreferred'],
       imageUrl: map['mediaRecommendation']['coverImage']
           [Persistence().imageQuality.value],
+      isAnime: map['type'] == 'ANIME',
+      releaseYear: map['mediaRecommendation']['startDate']?['year'],
+      format: MediaFormat.from(map['mediaRecommendation']['format']),
+      entryStatus: EntryStatus.from(
+          map['mediaRecommendation']['mediaListEntry']?['status']),
     );
   }
 
@@ -262,7 +271,11 @@ class Recommendation {
   int rating;
   bool? userRating;
   final String title;
-  final String? imageUrl;
+  final String imageUrl;
+  final bool isAnime;
+  final int? releaseYear;
+  final MediaFormat? format;
+  final EntryStatus? entryStatus;
 }
 
 class MediaInfo {

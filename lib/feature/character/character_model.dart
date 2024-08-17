@@ -154,7 +154,7 @@ class CharacterRelatedItem implements TileModelable {
       CharacterRelatedItem._(
         id: map['id'],
         name: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][imageQuality],
+        imageUrl: map['coverImage'][imageQuality.value],
         role: role,
       );
 

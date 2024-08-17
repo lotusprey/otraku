@@ -33,6 +33,11 @@ class MediaStatsSubview extends StatelessWidget {
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).top,
+            ),
+          ),
           if (stats.ranks.isNotEmpty)
             _MediaRankGrid(
               ref: ref,

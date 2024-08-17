@@ -106,7 +106,7 @@ abstract class GqlQuery {
       createdAt
     }
     fragment characters on Media {
-      characters(page: $page, sort: [ROLE, RELEVANCE]) {
+      characters(page: $page, sort: [ROLE, RELEVANCE, ID]) {
         pageInfo {hasNextPage}
         edges {
           role
@@ -121,7 +121,7 @@ abstract class GqlQuery {
       }
     }
     fragment staff on Media {
-      staff(page: $page, sort: RELEVANCE) {
+      staff(page: $page, sort: [RELEVANCE, ID]) {
         pageInfo {hasNextPage}
         edges {role node {id name {userPreferred} image {large}}}
       }
@@ -150,6 +150,9 @@ abstract class GqlQuery {
             type
             title {userPreferred}
             coverImage {extraLarge large medium}
+            format
+            startDate {year}
+            mediaListEntry {status}
           }
         }
       }

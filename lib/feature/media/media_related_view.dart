@@ -50,7 +50,7 @@ class _MediaRelatedGrid extends StatelessWidget {
 
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 230,
+        minWidth: 270,
         height: 100,
       ),
       delegate: SliverChildBuilderDelegate(
@@ -61,7 +61,7 @@ class _MediaRelatedGrid extends StatelessWidget {
   }
 
   Widget _buildTile(BuildContext context, int i) {
-    final details = <String, bool>{
+    final textRailItems = <String, bool>{
       if (items[i].relationType != null) items[i].relationType!: true,
       if (items[i].entryStatus != null)
         items[i].entryStatus!.label(items[i].isAnime): true,
@@ -69,10 +69,10 @@ class _MediaRelatedGrid extends StatelessWidget {
       if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
     };
 
-    return MediaRouteTile(
-      id: items[i].id,
-      imageUrl: items[i].imageUrl,
-      child: Card(
+    return Card(
+      child: MediaRouteTile(
+        id: items[i].id,
+        imageUrl: items[i].imageUrl,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -93,6 +93,7 @@ class _MediaRelatedGrid extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
@@ -103,7 +104,7 @@ class _MediaRelatedGrid extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     TextRail(
-                      details,
+                      textRailItems,
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],

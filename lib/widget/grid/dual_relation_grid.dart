@@ -26,7 +26,7 @@ class DualRelationGrid extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _DualRelationTile(
+        (context, i) => _Tile(
           primaryItem: items[i].$1,
           secondaryItem: items[i].$2,
           onTapPrimary: onTapPrimary,
@@ -37,8 +37,8 @@ class DualRelationGrid extends StatelessWidget {
   }
 }
 
-class _DualRelationTile extends StatelessWidget {
-  const _DualRelationTile({
+class _Tile extends StatelessWidget {
+  const _Tile({
     required this.primaryItem,
     required this.secondaryItem,
     required this.onTapPrimary,

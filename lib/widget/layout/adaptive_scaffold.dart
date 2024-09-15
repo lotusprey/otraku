@@ -63,19 +63,23 @@ class AdaptiveScaffold extends StatelessWidget {
               : FloatingActionButtonLocation.endFloat;
         }
 
-        return Scaffold(
-          extendBody: true,
-          extendBodyBehindAppBar: true,
-          backgroundColor: backgroundColor,
-          resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-          appBar: config.topBar,
-          bottomNavigationBar: bottomNavigationBar,
-          floatingActionButton: config.floatingAction,
-          floatingActionButtonLocation: floatingActionButtonLocation,
-          body: child,
+        return SafeArea(
+          top: false,
+          bottom: false,
+          child: Scaffold(
+            extendBody: true,
+            extendBodyBehindAppBar: true,
+            backgroundColor: backgroundColor,
+            resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+            appBar: config.topBar,
+            bottomNavigationBar: bottomNavigationBar,
+            floatingActionButton: config.floatingAction,
+            floatingActionButtonLocation: floatingActionButtonLocation,
+            body: child,
+          ),
         );
       },
-      child: SafeArea(top: false, bottom: false, child: child),
+      child: child,
     );
   }
 }

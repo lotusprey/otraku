@@ -1,0 +1,9 @@
+- Tablet support with better layout on wide screens
+- New studio page design
+- New recommendations design in the media page
+- Activity/Reply like icons are different depending on whether the item is liked or not
+- Toast messages were replaced by snackbars
+- Overall design has been tweaked in many areas
+- Fixed progress-incrementing button spamming
+- Fixed language order when selecting voice actor language
+- And more tweaks and fixes

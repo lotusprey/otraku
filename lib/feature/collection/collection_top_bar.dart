@@ -69,8 +69,9 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                   if (entries.isEmpty) {
                     showDialog(
                       context: context,
-                      builder: (context) =>
-                          const ConfirmationDialog(title: 'No Entries'),
+                      builder: (context) => const ConfirmationDialog(
+                        title: 'No entries',
+                      ),
                     );
 
                     return;

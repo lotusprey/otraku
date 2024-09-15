@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
-import 'package:go_router/go_router.dart';
-import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/feature/review/review_header.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/review_provider.dart';
@@ -27,48 +25,11 @@ class ReviewView extends StatelessWidget {
           slivers: [
             ReviewHeader(
               id: id,
+              review: data,
               bannerUrl: bannerUrl,
-              mediaTitle: data?.mediaTitle,
-              siteUrl: data?.siteUrl,
             ),
             if (data != null) ...[
-              SliverPadding(
-                padding: const EdgeInsets.only(top: 15, bottom: 5),
-                sliver: SliverToBoxAdapter(
-                  child: GestureDetector(
-                    onTap: () => context.push(
-                      Routes.media(data.mediaId, data.mediaCover),
-                    ),
-                    child: Text(
-                      data.mediaTitle,
-                      style: Theme.of(context).textTheme.titleMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: GestureDetector(
-                  onTap: () => context.push(
-                    Routes.user(data.userId, data.userAvatar),
-                  ),
-                  child: Text.rich(
-                    textAlign: TextAlign.center,
-                    TextSpan(
-                      style: Theme.of(context).textTheme.titleMedium,
-                      children: [
-                        TextSpan(
-                          text: 'review by ',
-                          style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        TextSpan(text: data.userName),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+              SliverConstrainedView(
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     data.summary,
@@ -222,6 +183,6 @@ class _RateButtonsState extends State<_RateButtons> {
       review.totalRating = oldTotalRating;
       review.viewerRating = oldViewerRating;
     });
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 }

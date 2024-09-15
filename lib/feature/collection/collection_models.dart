@@ -1,5 +1,6 @@
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/filter/filter_collection_model.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -441,7 +442,7 @@ class Entry {
       status: ReleaseStatus.from(map['media']['status']),
       entryStatus: EntryStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
-      airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
+      airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(
         map['media']['nextAiringEpisode']?['airingAt'],
       ),
       createdAt: map['createdAt'],
@@ -456,9 +457,9 @@ class Entry {
       score: map['score'].toDouble() ?? 0.0,
       notes: map['notes'] ?? '',
       avgScore: map['media']['averageScore'],
-      releaseStart: DateTimeUtil.fromFuzzyDate(map['media']['startDate']),
-      watchStart: DateTimeUtil.fromFuzzyDate(map['startedAt']),
-      watchEnd: DateTimeUtil.fromFuzzyDate(map['completedAt']),
+      releaseStart: DateTimeExtension.fromFuzzyDate(map['media']['startDate']),
+      watchStart: DateTimeExtension.fromFuzzyDate(map['startedAt']),
+      watchEnd: DateTimeExtension.fromFuzzyDate(map['completedAt']),
     );
   }
 

@@ -1,20 +1,15 @@
 import 'package:flutter/widgets.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/color_extension.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/util/paged.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_models.dart';
 import 'package:otraku/util/persistence.dart';
-
-TileItem mediaItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.anime,
-      title: map['title']['userPreferred'],
-      imageUrl: map['coverImage'][Persistence().imageQuality.value],
-    );
+import 'package:otraku/util/tile_modelable.dart';
 
 class Media {
   Media(this.edit, this.info, this.stats, this.related);
@@ -25,40 +20,42 @@ class Media {
   final List<RelatedMedia> related;
 }
 
-class MediaRelations {
-  const MediaRelations({
+class MediaConnections {
+  const MediaConnections({
     this.characters = const Paged(),
     this.staff = const Paged(),
     this.reviews = const Paged(),
     this.recommendations = const Paged(),
-    this.languageToVoiceActors = const {},
-    this.language = '',
+    this.languageToVoiceActors = const [],
+    this.selectedLanguage = 0,
   });
 
-  final Paged<Relation> characters;
-  final Paged<Relation> staff;
+  final Paged<MediaRelatedItem> characters;
+  final Paged<MediaRelatedItem> staff;
   final Paged<RelatedReview> reviews;
   final Paged<Recommendation> recommendations;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
-  final Map<String, Map<int, List<Relation>>> languageToVoiceActors;
-
-  /// The currently selected language.
-  final String language;
-
-  Iterable<String> get languages => languageToVoiceActors.keys;
+  final List<MediaLanguageMapping> languageToVoiceActors;
+  final int selectedLanguage;
 
   /// Returns the characters, along with their voice actors,
   /// corresponding to the current [language]. If there are
   /// multiple actors, the given character is repeated for each actor.
-  List<(Relation, Relation?)> getCharactersAndVoiceActors() {
-    final chars = characters.items;
-    final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) return [for (final c in chars) (c, null)];
+  Paged<(MediaRelatedItem, MediaRelatedItem?)> getCharactersAndVoiceActors() {
+    if (languageToVoiceActors.isEmpty) {
+      return Paged(
+        items: characters.items.map((c) => (c, null)).toList(),
+        hasNext: characters.hasNext,
+        next: characters.next,
+      );
+    }
 
-    final charactersAndVoiceActors = <(Relation, Relation?)>[];
-    for (final c in chars) {
+    final actorsPerMedia = languageToVoiceActors[selectedLanguage].voiceActors;
+
+    final charactersAndVoiceActors = <(MediaRelatedItem, MediaRelatedItem?)>[];
+    for (final c in characters.items) {
       final actors = actorsPerMedia[c.id];
       if (actors == null || actors.isEmpty) {
         charactersAndVoiceActors.add((c, null));
@@ -70,32 +67,41 @@ class MediaRelations {
       }
     }
 
-    return charactersAndVoiceActors;
+    return Paged(
+      items: charactersAndVoiceActors,
+      hasNext: characters.hasNext,
+      next: characters.next,
+    );
   }
 
-  MediaRelations copyWith({
-    Paged<Relation>? characters,
-    Paged<Relation>? staff,
+  MediaConnections copyWith({
+    Paged<MediaRelatedItem>? characters,
+    Paged<MediaRelatedItem>? staff,
     Paged<RelatedReview>? reviews,
     Paged<Recommendation>? recommendations,
-    Map<String, Map<int, List<Relation>>>? languageToVoiceActors,
-    String? language,
+    List<MediaLanguageMapping>? languageToVoiceActors,
+    int? selectedLanguage,
   }) =>
-      MediaRelations(
+      MediaConnections(
         characters: characters ?? this.characters,
         staff: staff ?? this.staff,
         reviews: reviews ?? this.reviews,
         recommendations: recommendations ?? this.recommendations,
         languageToVoiceActors:
             languageToVoiceActors ?? this.languageToVoiceActors,
-        language: language ?? this.language,
+        selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       );
 }
 
+typedef MediaLanguageMapping = ({
+  String language,
+  Map<int, List<MediaRelatedItem>> voiceActors,
+});
+
 class RelatedMedia {
-  RelatedMedia._({
+  const RelatedMedia._({
     required this.id,
-    required this.type,
+    required this.isAnime,
     required this.title,
     required this.imageUrl,
     required this.relationType,
@@ -108,19 +114,18 @@ class RelatedMedia {
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
         imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
-        relationType: StringUtil.tryNoScreamingSnakeCase(map['relationType']),
+        relationType:
+            StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
         entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
-        releaseStatus: StringUtil.tryNoScreamingSnakeCase(
+        releaseStatus: StringExtension.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
-        type: map['node']['type'] == 'ANIME'
-            ? DiscoverType.anime
-            : DiscoverType.manga,
+        isAnime: map['node']['type'] == 'ANIME',
       );
 
   final int id;
-  final DiscoverType type;
+  final bool isAnime;
   final String title;
   final String imageUrl;
   final String? relationType;
@@ -129,14 +134,49 @@ class RelatedMedia {
   final String? releaseStatus;
 }
 
+class MediaRelatedItem implements TileModelable {
+  const MediaRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory MediaRelatedItem(Map<String, dynamic> map, String? role) =>
+      MediaRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
+}
+
 class RelatedReview {
-  RelatedReview._({
+  const RelatedReview._({
     required this.reviewId,
     required this.userId,
     required this.avatar,
     required this.username,
     required this.summary,
     required this.rating,
+    required this.score,
   });
 
   static RelatedReview? maybe(Map<String, dynamic> map) {
@@ -149,6 +189,7 @@ class RelatedReview {
       summary: map['summary'] ?? '',
       avatar: map['user']['avatar']['large'],
       rating: '${map['rating']}/${map['ratingAmount']}',
+      score: map['score'] ?? 0,
     );
   }
 
@@ -158,6 +199,7 @@ class RelatedReview {
   final String avatar;
   final String summary;
   final String rating;
+  final int score;
 }
 
 class MediaFollowing {
@@ -198,8 +240,11 @@ class Recommendation {
     required this.rating,
     required this.userRating,
     required this.title,
-    required this.type,
     required this.imageUrl,
+    required this.isAnime,
+    required this.releaseYear,
+    required this.format,
+    required this.entryStatus,
   });
 
   factory Recommendation(Map<String, dynamic> map) {
@@ -212,9 +257,13 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
       imageUrl: map['mediaRecommendation']['coverImage']
           [Persistence().imageQuality.value],
+      isAnime: map['type'] == 'ANIME',
+      releaseYear: map['mediaRecommendation']['startDate']?['year'],
+      format: MediaFormat.from(map['mediaRecommendation']['format']),
+      entryStatus: EntryStatus.from(
+          map['mediaRecommendation']['mediaListEntry']?['status']),
     );
   }
 
@@ -222,8 +271,11 @@ class Recommendation {
   int rating;
   bool? userRating;
   final String title;
-  final String? imageUrl;
-  final DiscoverType type;
+  final String imageUrl;
+  final bool isAnime;
+  final int? releaseYear;
+  final MediaFormat? format;
+  final EntryStatus? entryStatus;
 }
 
 class MediaInfo {
@@ -333,15 +385,15 @@ class MediaInfo {
       format: MediaFormat.from(map['format']),
       status: ReleaseStatus.from(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      airingAt: DateTimeUtil.tryFromSecondsSinceEpoch(
+      airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(
         map['nextAiringEpisode']?['airingAt'],
       ),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
       volumes: map['volumes'],
-      startDate: StringUtil.fromFuzzyDate(map['startDate']),
-      endDate: StringUtil.fromFuzzyDate(map['endDate']),
+      startDate: StringExtension.fromFuzzyDate(map['startDate']),
+      endDate: StringExtension.fromFuzzyDate(map['endDate']),
       season: season,
       averageScore: map['averageScore'] ?? 0,
       meanScore: map['meanScore'] ?? 0,
@@ -380,9 +432,9 @@ class MediaInfo {
           site: link['site'],
           type: ExternalLinkType.fromString(link['type']),
           color: link['color'] != null
-              ? ColorUtil.fromHexString(link['color'])
+              ? ColorExtension.fromHexString(link['color'])
               : null,
-          countryCode: StringUtil.languageToCode(link['language']),
+          countryCode: StringExtension.languageToCode(link['language']),
         ));
       }
       model.externalLinks.sort(

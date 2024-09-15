@@ -106,7 +106,7 @@ abstract class GqlQuery {
       createdAt
     }
     fragment characters on Media {
-      characters(page: $page, sort: [ROLE, RELEVANCE]) {
+      characters(page: $page, sort: [ROLE, RELEVANCE, ID]) {
         pageInfo {hasNextPage}
         edges {
           role
@@ -121,7 +121,7 @@ abstract class GqlQuery {
       }
     }
     fragment staff on Media {
-      staff(page: $page, sort: RELEVANCE) {
+      staff(page: $page, sort: [RELEVANCE, ID]) {
         pageInfo {hasNextPage}
         edges {role node {id name {userPreferred} image {large}}}
       }
@@ -132,6 +132,7 @@ abstract class GqlQuery {
         nodes {
           id
           summary
+          score
           rating
           ratingAmount
           user {id name avatar {large}}
@@ -149,6 +150,9 @@ abstract class GqlQuery {
             type
             title {userPreferred}
             coverImage {extraLarge large medium}
+            format
+            startDate {year}
+            mediaListEntry {status}
           }
         }
       }
@@ -350,9 +354,11 @@ abstract class GqlQuery {
             id
             title {userPreferred}
             coverImage {extraLarge large medium}
-            startDate {year}
-            endDate {year}
+            format
             status(version: 2)
+            averageScore
+            mediaListEntry {status}
+            startDate {year month day}
           }
         }
       }
@@ -624,7 +630,7 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -633,7 +639,7 @@ abstract class GqlQuery {
             type
             context
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -641,7 +647,7 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
             createdAt
           }
@@ -649,15 +655,8 @@ abstract class GqlQuery {
             id
             type
             thread {title}
-            comment {siteUrl}
+            comment {id siteUrl}
             user {id name avatar {large}}
-            createdAt
-          }
-          ... on AiringNotification {
-            id
-            type
-            episode
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on RelatedMediaAdditionNotification {
@@ -688,6 +687,13 @@ abstract class GqlQuery {
             deletedMediaTitle
             createdAt
           }
+          ... on AiringNotification {
+            id
+            type
+            episode
+            media {id type title {userPreferred} coverImage {extraLarge large medium}}
+            createdAt
+          }
         }
       }
     }
@@ -696,7 +702,7 @@ abstract class GqlQuery {
   static const genresAndTags = '''
     query Filters {
       GenreCollection
-      MediaTagCollection {id name description category isGeneralSpoiler}
+      MediaTagCollection {id name description category}
     }
   ''';
 }

@@ -1,4 +1,4 @@
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class Statistics {

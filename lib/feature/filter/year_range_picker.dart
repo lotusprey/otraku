@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:otraku/widget/fields/number_field.dart';
+import 'package:otraku/widget/field/number_field.dart';
 
 const _minYear = 1917;
 

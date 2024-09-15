@@ -1,10 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/staff/staff_filter_model.dart';
-import 'package:otraku/util/extensions.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
@@ -98,30 +97,21 @@ class StaffRelationsNotifier
 
     if (onCharacters == null || onCharacters) {
       final map = data['characterMedia'];
-      final items = <(Relation, Relation)>[];
+      final items = <(StaffRelatedItem, StaffRelatedItem)>[];
       for (final m in map['edges']) {
-        final media = Relation(
-          id: m['node']['id'],
-          title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(m['node']['format']),
-          type: m['node']['type'] == 'ANIME'
-              ? DiscoverType.anime
-              : DiscoverType.manga,
+        final media = StaffRelatedItem.media(
+          m['node'],
+          StringExtension.tryNoScreamingSnakeCase(m['node']['format']),
+          Persistence().imageQuality,
         );
 
         for (final c in m['characters']) {
           if (c == null) continue;
 
           items.add((
-            Relation(
-              id: c['id'],
-              title: c['name']['userPreferred'],
-              imageUrl: c['image']['large'],
-              type: DiscoverType.character,
-              subtitle: StringUtil.tryNoScreamingSnakeCase(
-                m['characterRole'],
-              ),
+            StaffRelatedItem.character(
+              c,
+              StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
             ),
             media,
           ));
@@ -136,16 +126,12 @@ class StaffRelationsNotifier
 
     if (onCharacters == null || !onCharacters) {
       final map = data['staffMedia'];
-      final items = <Relation>[];
+      final items = <StaffRelatedItem>[];
       for (final s in map['edges']) {
-        items.add(Relation(
-          id: s['node']['id'],
-          title: s['node']['title']['userPreferred'],
-          imageUrl: s['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: s['staffRole'],
-          type: s['node']['type'] == 'ANIME'
-              ? DiscoverType.anime
-              : DiscoverType.manga,
+        items.add(StaffRelatedItem.media(
+          s['node'],
+          s['staffRole'],
+          Persistence().imageQuality,
         ));
       }
 

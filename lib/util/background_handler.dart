@@ -95,89 +95,121 @@ void _fetch() => Workmanager().executeTask((_, __) async {
 
       // Show notifications.
       for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
-        final notification = SiteNotification.maybe(ns[i]);
+        final notification = SiteNotification.maybe(
+          ns[i],
+          Persistence().imageQuality,
+        );
+
         if (notification == null) continue;
 
         (switch (notification.type) {
           NotificationType.following => _show(
               notification,
               'New Follow',
-              Routes.user(notification.bodyId!),
-            ),
-          NotificationType.activityMessage => _show(
-              notification,
-              'New Message',
-              Routes.activity(notification.bodyId!),
-            ),
-          NotificationType.activityReply => _show(
-              notification,
-              'New Reply',
-              Routes.activity(notification.bodyId!),
-            ),
-          NotificationType.activityReplySubscribed => _show(
-              notification,
-              'New Reply To Subscribed Activity',
-              Routes.activity(notification.bodyId!),
+              Routes.user((notification as FollowNotification).userId),
             ),
           NotificationType.activityMention => _show(
               notification,
               'New Mention',
-              Routes.activity(notification.bodyId!),
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
+            ),
+          NotificationType.activityMessage => _show(
+              notification,
+              'New Message',
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
+            ),
+          NotificationType.activityReply => _show(
+              notification,
+              'New Reply',
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
+            ),
+          NotificationType.activityReplySubscribed => _show(
+              notification,
+              'New Reply To Subscribed Activity',
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
             ),
           NotificationType.activityLike => _show(
               notification,
               'New Activity Like',
-              Routes.activity(notification.bodyId!),
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
             ),
           NotificationType.acrivityReplyLike => _show(
               notification,
               'New Reply Like',
-              Routes.activity(notification.bodyId!),
-            ),
-          NotificationType.threadCommentReply => _show(
-              notification,
-              'New Forum Reply',
-              Routes.thread(notification.bodyId!),
-            ),
-          NotificationType.threadCommentMention => _show(
-              notification,
-              'New Forum Mention',
-              Routes.thread(notification.bodyId!),
-            ),
-          NotificationType.threadReplySubscribed => _show(
-              notification,
-              'New Forum Comment',
-              Routes.thread(notification.bodyId!),
+              Routes.activity(
+                (notification as ActivityNotification).activityId,
+              ),
             ),
           NotificationType.threadLike => _show(
               notification,
               'New Forum Like',
-              Routes.thread(notification.bodyId!),
+              Routes.thread((notification as ThreadNotification).threadId),
+            ),
+          NotificationType.threadCommentReply => _show(
+              notification,
+              'New Forum Reply',
+              Routes.comment(
+                (notification as ThreadCommentNotification).commentId,
+              ),
+            ),
+          NotificationType.threadCommentMention => _show(
+              notification,
+              'New Forum Mention',
+              Routes.comment(
+                (notification as ThreadCommentNotification).commentId,
+              ),
+            ),
+          NotificationType.threadReplySubscribed => _show(
+              notification,
+              'New Forum Comment',
+              Routes.comment(
+                (notification as ThreadCommentNotification).commentId,
+              ),
             ),
           NotificationType.threadCommentLike => _show(
               notification,
               'New Forum Comment Like',
-              Routes.thread(notification.bodyId!),
+              Routes.comment(
+                (notification as ThreadCommentNotification).commentId,
+              ),
             ),
           NotificationType.airing => _show(
               notification,
               'New Episode',
-              Routes.media(notification.bodyId!),
+              Routes.media(
+                (notification as MediaReleaseNotification).mediaId,
+              ),
             ),
           NotificationType.relatedMediaAddition => _show(
               notification,
               'Added Media',
-              Routes.media(notification.bodyId!),
+              Routes.media(
+                (notification as MediaReleaseNotification).mediaId,
+              ),
             ),
           NotificationType.mediaDataChange => _show(
               notification,
               'Modified Media',
-              Routes.media(notification.bodyId!),
+              Routes.media(
+                (notification as MediaChangeNotification).mediaId,
+              ),
             ),
           NotificationType.mediaMerge => _show(
               notification,
               'Merged Media',
-              Routes.media(notification.bodyId!),
+              Routes.media(
+                (notification as MediaChangeNotification).mediaId,
+              ),
             ),
           NotificationType.mediaDeletion => _show(
               notification,

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/widget/field/stateful_tiles.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -26,7 +25,7 @@ class SettingsAppSubview extends StatelessWidget {
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: listPadding.top + TopBar.height + Theming.offset,
+        top: listPadding.top + Theming.offset,
         bottom: listPadding.bottom + Theming.offset,
       ),
       children: [
@@ -98,7 +97,7 @@ class SettingsAppSubview extends StatelessWidget {
             StatefulSwitchListTile(
               title: const Text('Exclusive Airing Sort for Anime Preview'),
               subtitle: const Text(
-                'Sort by airing time, instead of the default',
+                'Sort by soonest airing, instead of the default',
               ),
               value: Persistence().airingSortForPreview,
               onChanged: (v) => Persistence().airingSortForPreview = v,

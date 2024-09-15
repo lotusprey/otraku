@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/activity/activity_view.dart';
 import 'package:otraku/feature/viewer/auth_view.dart';
@@ -42,31 +42,33 @@ class Routes {
   static String home([HomeTab? tab]) =>
       '/home${tab != null ? "?tab=${tab.name}" : ""}';
 
-  static String media(int id, [String? image]) =>
-      '/media/$id${image != null ? "?image=$image" : ""}';
+  static String media(int id, [String? imageUrl]) =>
+      '/media/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String character(int id, [String? image]) =>
-      '/character/$id${image != null ? "?image=$image" : ""}';
+  static String character(int id, [String? imageUrl]) =>
+      '/character/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String staff(int id, [String? image]) =>
-      '/staff/$id${image != null ? "?image=$image" : ""}';
+  static String staff(int id, [String? imageUrl]) =>
+      '/staff/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String user(int id, [String? image]) =>
-      '/user/$id${image != null ? "?image=$image" : ""}';
+  static String user(int id, [String? imageUrl]) =>
+      '/user/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String userByName(String name, [String? image]) =>
-      '/user/$name${image != null ? "?image=$image" : ""}';
+  static String userByName(String name, [String? imageUrl]) =>
+      '/user/$name${imageUrl != null ? "?image=$imageUrl" : ""}';
 
   static String studio(int id, [String? name]) =>
       '/studio/$id${name != null ? "?name=$name" : ""}';
 
-  static String review(int id, [String? image]) =>
-      '/review/$id${image != null ? "?image=$image" : ""}';
+  static String review(int id, [String? imageUrl]) =>
+      '/review/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
   static String activity(int id, [int? feedId]) =>
       '/activity/$id${feedId != null ? "?feedId=$feedId" : ""}';
 
   static String thread(int id) => '/thread/$id';
+
+  static String comment(int id) => '/comment/$id';
 
   static String animeCollection(int id) => '/collection/anime/$id';
 
@@ -101,7 +103,7 @@ class Routes {
       GoRoute(path: '/', redirect: (context, state) => '/home'),
       GoRoute(
         path: '/404',
-        builder: (context, state) => const NotFoundView(canPop: true),
+        builder: (context, state) => const NotFoundView(),
       ),
       GoRoute(
         path: '/auth',
@@ -296,7 +298,7 @@ class Routes {
       routes: routes,
       initialLocation:
           persistence.selectedAccount != null ? Routes.home() : Routes.auth,
-      errorBuilder: (context, state) => const NotFoundView(canPop: false),
+      errorBuilder: (context, state) => const NotFoundView(),
     );
   }
 }
@@ -305,14 +307,12 @@ String? _parseIdOr404(BuildContext context, GoRouterState state) =>
     int.tryParse(state.pathParameters['id'] ?? '') == null ? '404' : null;
 
 class NotFoundView extends StatelessWidget {
-  const NotFoundView({required this.canPop});
-
-  final bool canPop;
+  const NotFoundView();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopBar(title: 'Not Found', canPop: canPop),
+      appBar: const TopBar(title: 'Not Found'),
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,

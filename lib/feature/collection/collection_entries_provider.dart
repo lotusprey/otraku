@@ -5,7 +5,7 @@ import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/filter/filter_collection_model.dart';
 
 final collectionEntriesProvider =
-    Provider.autoDispose.family<AsyncValue<List<Entry>>, CollectionTag>(
+    Provider.autoDispose.family<List<Entry>, CollectionTag>(
   (ref, CollectionTag tag) {
     final filter = ref.watch(collectionFilterProvider(tag));
     final mediaFilter = filter.mediaFilter;
@@ -13,10 +13,14 @@ final collectionEntriesProvider =
 
     ref.watch(collectionProvider(tag).notifier).ensureSorted(mediaFilter.sort);
 
-    return ref
-        .watch(collectionProvider(tag))
-        .unwrapPrevious()
-        .whenData((s) => _filter(s.entries, mediaFilter, search));
+    final entries = ref
+            .watch(collectionProvider(tag))
+            .unwrapPrevious()
+            .valueOrNull
+            ?.entries ??
+        const [];
+
+    return _filter(entries, mediaFilter, search);
   },
 );
 

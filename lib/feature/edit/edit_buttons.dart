@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/dialogs.dart';
 
-class EditButtons extends StatefulWidget {
+class EditButtons extends ConsumerStatefulWidget {
   const EditButtons(this.tag, this.oldEdit, this.callback);
 
   final EditTag tag;
@@ -17,10 +18,10 @@ class EditButtons extends StatefulWidget {
   final void Function(Edit)? callback;
 
   @override
-  State<EditButtons> createState() => _EditButtonsState();
+  ConsumerState<EditButtons> createState() => _EditButtonsState();
 }
 
-class _EditButtonsState extends State<EditButtons> {
+class _EditButtonsState extends ConsumerState<EditButtons> {
   bool _loading = false;
 
   @override
@@ -29,10 +30,9 @@ class _EditButtonsState extends State<EditButtons> {
       builder: (context, ref, __) {
         final saveButton = _loading
             ? const Expanded(child: Center(child: Loader()))
-            : _saveButton(context, ref);
-        final removeButton = widget.oldEdit.entryId == null
-            ? const Spacer()
-            : _removeButton(context, ref);
+            : _saveButton();
+        final removeButton =
+            widget.oldEdit.entryId == null ? const Spacer() : _removeButton();
 
         return BottomBar(
           Persistence().leftHanded
@@ -43,7 +43,7 @@ class _EditButtonsState extends State<EditButtons> {
     );
   }
 
-  Widget _saveButton(BuildContext context, WidgetRef ref) => BottomBarButton(
+  Widget _saveButton() => BottomBarButton(
         text: 'Save',
         icon: Ionicons.save_outline,
         onTap: () async {
@@ -59,30 +59,24 @@ class _EditButtonsState extends State<EditButtons> {
 
           if (err == null) {
             widget.callback?.call(newEdit);
-            if (context.mounted) Navigator.pop(context);
+            if (mounted) Navigator.pop(context);
             return;
           }
 
-          if (context.mounted) {
+          if (mounted) {
             Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Could not update entry',
-                content: err,
-              ),
-            );
+            SnackBarExtension.show(context, 'Could not update entry');
           }
         },
       );
 
-  Widget _removeButton(BuildContext context, WidgetRef ref) => BottomBarButton(
+  Widget _removeButton() => BottomBarButton(
         text: 'Remove',
         icon: Ionicons.trash_bin_outline,
         warning: true,
         onTap: () => showDialog(
           context: context,
-          builder: (context) => ConfirmationDialog(
+          builder: (_) => ConfirmationDialog(
             title: 'Remove entry?',
             mainAction: 'Yes',
             secondaryAction: 'No',
@@ -101,19 +95,13 @@ class _EditButtonsState extends State<EditButtons> {
 
               if (err == null) {
                 widget.callback?.call(oldEdit.emptyCopy());
-                if (context.mounted) Navigator.pop(context);
+                if (mounted) Navigator.pop(context);
                 return;
               }
 
-              if (context.mounted) {
+              if (mounted) {
                 Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  builder: (context) => ConfirmationDialog(
-                    title: 'Could not remove entry',
-                    content: err,
-                  ),
-                );
+                SnackBarExtension.show(context, 'Could not remove entry');
               }
             },
           ),

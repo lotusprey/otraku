@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 
 final discoverFilterProvider =
     NotifierProvider<DiscoverFilterNotifier, DiscoverFilter>(

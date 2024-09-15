@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/field/stateful_tiles.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-import 'package:otraku/widget/grids/chip_grids.dart';
+import 'package:otraku/widget/grid/chip_grids.dart';
 
 class SettingsContentSubview extends StatelessWidget {
   const SettingsContentSubview(this.scrollCtrl, this.settings);
@@ -25,7 +24,7 @@ class SettingsContentSubview extends StatelessWidget {
     return ListView(
       controller: scrollCtrl,
       padding: EdgeInsets.only(
-        top: listPadding.top + TopBar.height + Theming.offset,
+        top: listPadding.top + Theming.offset,
         bottom: listPadding.bottom + Theming.offset,
       ),
       children: [

@@ -1,375 +1,140 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class MediaHeader extends StatelessWidget {
-  const MediaHeader({
+  const MediaHeader.withTabBar({
     required this.id,
     required this.coverUrl,
-    required this.tabCtrl,
-    required this.scrollToTop,
+    required this.media,
+    required TabController this.tabCtrl,
+    required void Function() this.scrollToTop,
+    required this.toggleFavorite,
   });
+
+  const MediaHeader.withoutTabBar({
+    required this.id,
+    required this.coverUrl,
+    required this.media,
+    required this.toggleFavorite,
+  })  : tabCtrl = null,
+        scrollToTop = null;
 
   final int id;
   final String? coverUrl;
-  final TabController tabCtrl;
-  final void Function() scrollToTop;
+  final Media? media;
+  final TabController? tabCtrl;
+  final void Function()? scrollToTop;
+  final Future<Object?> Function() toggleFavorite;
 
   @override
   Widget build(BuildContext context) {
-    final topOffset = MediaQuery.paddingOf(context).top;
+    final textRailItems = <String, bool>{};
 
-    return Consumer(
-      builder: (context, ref, _) {
-        final media = ref.watch(mediaProvider(id).select((s) => s.valueOrNull));
-        final textRailItems = <String, bool>{};
+    if (media != null) {
+      final info = media!.info;
 
-        if (media != null) {
-          final info = media.info;
+      if (info.isAdult) textRailItems['Adult'] = true;
 
-          if (info.isAdult) textRailItems['Adult'] = true;
+      if (info.format != null) {
+        textRailItems[info.format!.label] = false;
+      }
 
-          if (info.format != null) {
-            textRailItems[info.format!.label] = false;
-          }
+      if (media!.edit.status != null) {
+        textRailItems[media!.edit.status!.label(
+          info.type == DiscoverType.anime,
+        )] = false;
+      }
 
-          if (media.edit.status != null) {
-            textRailItems[media.edit.status!.label(
-              info.type == DiscoverType.anime,
-            )] = false;
-          }
+      if (info.airingAt != null) {
+        textRailItems['Ep ${info.nextEpisode} in '
+            '${info.airingAt!.timeUntil}'] = true;
+      }
 
-          if (info.airingAt != null) {
-            textRailItems['Ep ${info.nextEpisode} in '
-                '${info.airingAt!.timeUntil}'] = true;
-          }
-
-          if (media.edit.status != null) {
-            final progress = media.edit.progress;
-            if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
-              textRailItems['${info.nextEpisode! - 1 - progress}'
-                  ' ep behind'] = true;
-            }
-          }
+      if (media!.edit.status != null) {
+        final progress = media!.edit.progress;
+        if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
+          textRailItems['${info.nextEpisode! - 1 - progress}'
+              ' ep behind'] = true;
         }
+      }
+    }
 
-        final size = MediaQuery.sizeOf(context);
+    return ContentHeader(
+      bannerUrl: media?.info.banner,
+      imageUrl: media?.info.cover ?? coverUrl,
+      imageLargeUrl: media?.info.extraLargeCover,
+      imageHeightToWidthRatio: Theming.coverHtoWRatio,
+      imageHeroTag: id,
+      siteUrl: media?.info.siteUrl,
+      title: media?.info.preferredTitle,
+      details: TextRail(
+        textRailItems,
+        style: Theme.of(context).textTheme.labelMedium,
+      ),
+      tabBarConfig: tabCtrl != null && scrollToTop != null
+          ? (
+              tabCtrl: tabCtrl!,
+              scrollToTop: scrollToTop!,
+              tabs: tabsWithOverview,
+            )
+          : null,
+      trailingTopButtons: [
+        if (media != null) _FavoriteButton(media!.info, toggleFavorite),
+      ],
+    );
+  }
 
-        return SliverPersistentHeader(
-          pinned: true,
-          delegate: _Delegate(
-            id: id,
-            tabCtrl: tabCtrl,
-            info: media?.info,
-            coverUrl: coverUrl,
-            topOffset: topOffset,
-            scrollToTop: scrollToTop,
-            textRailItems: textRailItems,
-            imageWidth: size.width < 430.0 ? size.width * 0.30 : 100.0,
-          ),
-        );
+  static const tabsWithoutOverview = [
+    Tab(text: 'Related'),
+    Tab(text: 'Characters'),
+    Tab(text: 'Staff'),
+    Tab(text: 'Reviews'),
+    Tab(text: 'Following'),
+    Tab(text: 'Recommendations'),
+    Tab(text: 'Statistics'),
+  ];
+
+  static const tabsWithOverview = [
+    Tab(text: 'Overview'),
+    ...tabsWithoutOverview,
+  ];
+}
+
+class _FavoriteButton extends StatefulWidget {
+  const _FavoriteButton(this.info, this.toggleFavorite);
+
+  final MediaInfo info;
+  final Future<Object?> Function() toggleFavorite;
+
+  @override
+  State<_FavoriteButton> createState() => __FavoriteButtonState();
+}
+
+class __FavoriteButtonState extends State<_FavoriteButton> {
+  @override
+  Widget build(BuildContext context) {
+    final info = widget.info;
+
+    return IconButton(
+      tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
+      icon: info.isFavorite
+          ? const Icon(Icons.favorite)
+          : const Icon(Icons.favorite_border),
+      onPressed: () async {
+        setState(() => info.isFavorite = !info.isFavorite);
+
+        final err = await widget.toggleFavorite();
+        if (err == null) return;
+
+        setState(() => info.isFavorite = !info.isFavorite);
+        if (context.mounted) SnackBarExtension.show(context, err.toString());
       },
     );
   }
-}
-
-class _Delegate extends SliverPersistentHeaderDelegate {
-  _Delegate({
-    required this.id,
-    required this.info,
-    required this.imageWidth,
-    required this.coverUrl,
-    required this.topOffset,
-    required this.textRailItems,
-    required this.scrollToTop,
-    required this.tabCtrl,
-  });
-
-  final int id;
-  final MediaInfo? info;
-  final double imageWidth;
-  final String? coverUrl;
-  final double topOffset;
-  final Map<String, bool> textRailItems;
-  final TabController tabCtrl;
-  final void Function() scrollToTop;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final height = maxExtent;
-    final bannerOffset =
-        height - _bannerBaseHeight - topOffset - imageHeight / 4;
-
-    var transition = shrinkOffset > _bannerBaseHeight
-        ? (shrinkOffset - _bannerBaseHeight) / (imageHeight / 4)
-        : 0.0;
-    if (transition > 1) transition = 1;
-
-    final cover = info?.cover ?? coverUrl;
-    final theme = Theme.of(context);
-
-    final infoContent = Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Hero(
-          tag: id,
-          child: ClipRRect(
-            borderRadius: Theming.borderRadiusSmall,
-            child: Container(
-              height: imageHeight,
-              width: imageWidth,
-              color: theme.colorScheme.surfaceContainerHighest,
-              child: cover != null
-                  ? GestureDetector(
-                      onTap: () => showDialog(
-                        context: context,
-                        builder: (context) =>
-                            ImageDialog(info?.extraLargeCover ?? cover),
-                      ),
-                      child: CachedImage(cover),
-                    )
-                  : null,
-            ),
-          ),
-        ),
-        const SizedBox(width: Theming.offset),
-        Expanded(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (info?.preferredTitle != null) ...[
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => Toast.copy(context, info!.preferredTitle!),
-                  child: Text(
-                    info!.preferredTitle!,
-                    maxLines: 8,
-                    overflow: TextOverflow.fade,
-                    style: theme.textTheme.titleLarge!.copyWith(
-                      shadows: [
-                        Shadow(
-                          blurRadius: 10,
-                          color: theme.colorScheme.surface,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
-              ],
-              TextRail(
-                textRailItems,
-                style: theme.textTheme.labelMedium,
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-
-    final topRow = Row(
-      children: [
-        TopBarIcon(
-          tooltip: 'Close',
-          icon: Icons.arrow_back_ios_rounded,
-          onTap: context.back,
-        ),
-        Expanded(
-          child: info?.preferredTitle == null
-              ? const SizedBox()
-              : Opacity(
-                  opacity: transition,
-                  child: Text(
-                    info!.preferredTitle!,
-                    style: theme.textTheme.titleMedium,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-        ),
-        if (info?.siteUrl != null)
-          TopBarIcon(
-            tooltip: 'More',
-            icon: Ionicons.ellipsis_horizontal,
-            onTap: () => showSheet(
-              context,
-              SimpleSheet.link(context, info!.siteUrl!),
-            ),
-          ),
-      ],
-    );
-
-    final body = SizedBox(
-      height: height,
-      child: Column(
-        children: [
-          Flexible(
-            flex: (height - Theming.minTapTarget).floor(),
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                if (transition < 1) ...[
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: bannerOffset,
-                    child: info?.banner != null
-                        ? GestureDetector(
-                            child: CachedImage(info!.banner!),
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => ImageDialog(info!.banner!),
-                            ),
-                          )
-                        : DecoratedBox(
-                            decoration: BoxDecoration(
-                              color: theme.colorScheme.surfaceContainerHighest,
-                            ),
-                          ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    height: bannerOffset,
-                    child: Container(
-                      alignment: Alignment.topCenter,
-                      color: theme.colorScheme.surface,
-                      child: Container(
-                        height: 0,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 15,
-                              spreadRadius: 25,
-                              color: theme.colorScheme.surface,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 5,
-                    left: Theming.offset,
-                    right: Theming.offset,
-                    child: infoContent,
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: topOffset + Theming.minTapTarget,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            theme.colorScheme.surface,
-                            theme.colorScheme.surface.withAlpha(200),
-                            theme.colorScheme.surface.withAlpha(0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: topOffset + Theming.minTapTarget,
-                    child: Opacity(
-                      opacity: transition,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: topOffset,
-                  height: Theming.minTapTarget,
-                  child: topRow,
-                ),
-              ],
-            ),
-          ),
-          Material(
-            color: Colors.transparent,
-            child: TabBar(
-              tabAlignment: TabAlignment.center,
-              splashBorderRadius: Theming.borderRadiusSmall,
-              controller: tabCtrl,
-              isScrollable: true,
-              tabs: const [
-                Tab(text: 'Overview'),
-                Tab(text: 'Related'),
-                Tab(text: 'Characters'),
-                Tab(text: 'Staff'),
-                Tab(text: 'Reviews'),
-                Tab(text: 'Following'),
-                Tab(text: 'Recommendations'),
-                Tab(text: 'Statistics'),
-              ],
-              onTap: (i) {
-                if (i == tabCtrl.index) {
-                  scrollToTop();
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-
-    return transition < 1
-        ? body
-        : ClipRect(
-            child: BackdropFilter(
-              filter: Theming.blurFilter,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).navigationBarTheme.backgroundColor,
-                ),
-                child: body,
-              ),
-            ),
-          );
-  }
-
-  static const _bannerBaseHeight = 200.0;
-
-  double get imageHeight => imageWidth * Theming.coverHtoWRatio;
-
-  @override
-  double get minExtent => topOffset + Theming.minTapTarget * 2;
-
-  @override
-  double get maxExtent =>
-      topOffset + Theming.minTapTarget + _bannerBaseHeight + imageHeight / 2;
-
-  @override
-  bool shouldRebuild(covariant _Delegate oldDelegate) =>
-      info != oldDelegate.info;
 }

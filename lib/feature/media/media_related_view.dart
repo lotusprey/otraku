@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/text_rail.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class MediaRelatedSubview extends StatelessWidget {
@@ -27,7 +26,7 @@ class MediaRelatedSubview extends StatelessWidget {
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
         slivers: [
-          SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
+          SliverRefreshControl(onRefresh: invalidate),
           _MediaRelatedGrid(relations),
           const SliverFooter(),
         ],
@@ -51,7 +50,7 @@ class _MediaRelatedGrid extends StatelessWidget {
 
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 230,
+        minWidth: 270,
         height: 100,
       ),
       delegate: SliverChildBuilderDelegate(
@@ -62,21 +61,18 @@ class _MediaRelatedGrid extends StatelessWidget {
   }
 
   Widget _buildTile(BuildContext context, int i) {
-    final details = <String, bool>{
+    final textRailItems = <String, bool>{
       if (items[i].relationType != null) items[i].relationType!: true,
       if (items[i].entryStatus != null)
-        items[i].entryStatus!.label(
-              items[i].type == DiscoverType.anime,
-            ): true,
+        items[i].entryStatus!.label(items[i].isAnime): true,
       if (items[i].format != null) items[i].format!.label: false,
       if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
     };
 
-    return LinkTile(
-      id: items[i].id,
-      info: items[i].imageUrl,
-      discoverType: items[i].type,
-      child: Card(
+    return Card(
+      child: MediaRouteTile(
+        id: items[i].id,
+        imageUrl: items[i].imageUrl,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -97,6 +93,7 @@ class _MediaRelatedGrid extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Flexible(
@@ -107,7 +104,7 @@ class _MediaRelatedGrid extends StatelessWidget {
                     ),
                     const SizedBox(height: 5),
                     TextRail(
-                      details,
+                      textRailItems,
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],

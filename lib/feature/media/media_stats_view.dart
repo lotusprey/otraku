@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -33,6 +33,11 @@ class MediaStatsSubview extends StatelessWidget {
       child: CustomScrollView(
         controller: scrollCtrl,
         slivers: [
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.paddingOf(context).top,
+            ),
+          ),
           if (stats.ranks.isNotEmpty)
             _MediaRankGrid(
               ref: ref,

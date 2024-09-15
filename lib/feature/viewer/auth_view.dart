@@ -4,17 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class AuthView extends ConsumerStatefulWidget {
   const AuthView([this.credentials]);
@@ -50,7 +49,7 @@ class AuthViewState extends ConsumerState<AuthView> {
 
   Future<void> _triggerAccountSetup() async {
     setState(() => _loading = true);
-    final ok = await Toast.launch(
+    final ok = await SnackBarExtension.launch(
       context,
       'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
     );
@@ -152,10 +151,10 @@ class AuthViewState extends ConsumerState<AuthView> {
                       ],
                     ),
                     const Spacer(),
-                    TopBarIcon(
-                      icon: Ionicons.close_circle_outline,
+                    IconButton(
                       tooltip: 'Remove Account',
-                      onTap: () => showDialog(
+                      icon: const Icon(Ionicons.close_circle_outline),
+                      onPressed: () => showDialog(
                         context: context,
                         builder: (context) => ConfirmationDialog(
                           title: 'Remove Account?',

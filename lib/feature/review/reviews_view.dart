@@ -5,9 +5,9 @@ import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
 import 'package:otraku/feature/review/reviews_provider.dart';
@@ -39,8 +39,8 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
       reviewsProvider(widget.id).select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return PageScaffold(
-      child: TabScaffold(
+    return AdaptiveScaffold(
+      (context, compact) => ScaffoldConfig(
         topBar: TopBar(
           title: 'Reviews',
           trailing: [
@@ -54,21 +54,20 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
               ),
           ],
         ),
-        floatingBar: FloatingBar(
+        floatingAction: HidingFloatingActionButton(
+          key: const Key('filter'),
           scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              icon: Ionicons.funnel_outline,
-              tooltip: 'Filter',
-              onTap: () => showReviewsFilterSheet(
-                context: context,
-                filter: ref.read(reviewsFilterProvider(widget.id)),
-                onDone: (filter) => ref
-                    .read(reviewsFilterProvider(widget.id).notifier)
-                    .state = filter,
-              ),
+          child: FloatingActionButton(
+            tooltip: 'Filter',
+            child: const Icon(Ionicons.funnel_outline),
+            onPressed: () => showReviewsFilterSheet(
+              context: context,
+              filter: ref.read(reviewsFilterProvider(widget.id)),
+              onDone: (filter) => ref
+                  .read(reviewsFilterProvider(widget.id).notifier)
+                  .state = filter,
             ),
-          ],
+          ),
         ),
         child: PagedView<ReviewItem>(
           scrollCtrl: _ctrl,

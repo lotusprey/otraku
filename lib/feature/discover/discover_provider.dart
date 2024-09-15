@@ -1,16 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/character/character_model.dart';
-import 'package:otraku/model/tile_item.dart';
+import 'package:otraku/feature/character/character_item_model.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
+import 'package:otraku/feature/staff/staff_item_model.dart';
+import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/review/review_models.dart';
-import 'package:otraku/feature/staff/staff_model.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
-import 'package:otraku/feature/user/user_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
+import 'package:otraku/util/persistence.dart';
 
 final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
   DiscoverNotifier.new,
@@ -91,7 +92,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
 
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
-      items.add(DiscoverMediaItem(m));
+      items.add(DiscoverMediaItem(m, Persistence().imageQuality));
     }
 
     return DiscoverAnimeItems(oldValue.pages.withNext(
@@ -116,7 +117,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
 
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
-      items.add(DiscoverMediaItem(m));
+      items.add(DiscoverMediaItem(m, Persistence().imageQuality));
     }
 
     return DiscoverMangaItems(oldValue.pages.withNext(
@@ -136,9 +137,9 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
       },
     );
 
-    final items = <TileItem>[];
+    final items = <CharacterItem>[];
     for (final c in data['Page']['characters']) {
-      items.add(characterItem(c));
+      items.add(CharacterItem(c));
     }
 
     return DiscoverCharacterItems(oldValue.pages.withNext(
@@ -157,9 +158,9 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
       },
     );
 
-    final items = <TileItem>[];
+    final items = <StaffItem>[];
     for (final s in data['Page']['staff']) {
-      items.add(staffItem(s));
+      items.add(StaffItem(s));
     }
 
     return DiscoverStaffItems(oldValue.pages.withNext(

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({
@@ -66,10 +68,11 @@ class ActivityCard extends StatelessWidget {
         Row(
           children: [
             Flexible(
-              child: LinkTile(
-                id: activity.authorId,
-                info: activity.authorAvatarUrl,
-                discoverType: DiscoverType.user,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push(
+                  Routes.user(activity.authorId, activity.authorAvatarUrl),
+                ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -104,10 +107,14 @@ class ActivityCard extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                     child: Icon(Icons.arrow_right_alt),
                   ),
-                  LinkTile(
-                    id: message.recipientId,
-                    info: message.recipientAvatarUrl,
-                    discoverType: DiscoverType.user,
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => context.push(
+                      Routes.user(
+                        message.recipientId,
+                        message.recipientAvatarUrl,
+                      ),
+                    ),
                     child: ClipRRect(
                       borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
@@ -142,10 +149,9 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LinkTile(
+    return MediaRouteTile(
       id: item.mediaId,
-      info: item.coverUrl,
-      discoverType: item.isAnime ? DiscoverType.anime : DiscoverType.manga,
+      imageUrl: item.coverUrl,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxHeight: 108),
         child: Row(
@@ -281,7 +287,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   ),
                   const SizedBox(width: 5),
                   Icon(
-                    Icons.favorite_rounded,
+                    !widget.activity.isLiked
+                        ? Icons.favorite_rounded
+                        : Icons.heart_broken_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
                         ? Theme.of(context).colorScheme.primary
@@ -305,43 +313,46 @@ class _ActivityFooterState extends State<ActivityFooter> {
       Consumer(
         builder: (context, ref, __) {
           final ownershipButtons = <Widget>[];
+
           if (activity.isOwned) {
-            switch (activity) {
-              case StatusActivity _:
-                ownershipButtons.add(ListTile(
-                  title: const Text('Edit'),
-                  leading: const Icon(Icons.edit_outlined),
-                  onTap: () => showSheet(
-                    context,
-                    CompositionView(
-                      tag: StatusActivityCompositionTag(id: activity.id),
-                      onSaved: (map) {
-                        widget.onEdited?.call(map);
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
-                ));
-              case MessageActivity _:
-                ownershipButtons.add(ListTile(
-                  title: const Text('Edit'),
-                  leading: const Icon(Icons.edit_outlined),
-                  onTap: () => showSheet(
-                    context,
-                    CompositionView(
-                      tag: MessageActivityCompositionTag(
-                        id: activity.id,
-                        recipientId: activity.recipientId,
+            if (activity.authorId == Persistence().id) {
+              switch (activity) {
+                case StatusActivity _:
+                  ownershipButtons.add(ListTile(
+                    title: const Text('Edit'),
+                    leading: const Icon(Icons.edit_outlined),
+                    onTap: () => showSheet(
+                      context,
+                      CompositionView(
+                        tag: StatusActivityCompositionTag(id: activity.id),
+                        onSaved: (map) {
+                          widget.onEdited?.call(map);
+                          Navigator.pop(context);
+                        },
                       ),
-                      onSaved: (map) {
-                        widget.onEdited?.call(map);
-                        Navigator.pop(context);
-                      },
                     ),
-                  ),
-                ));
-              case MediaActivity _:
-                break;
+                  ));
+                case MessageActivity _:
+                  ownershipButtons.add(ListTile(
+                    title: const Text('Edit'),
+                    leading: const Icon(Icons.edit_outlined),
+                    onTap: () => showSheet(
+                      context,
+                      CompositionView(
+                        tag: MessageActivityCompositionTag(
+                          id: activity.id,
+                          recipientId: activity.recipientId,
+                        ),
+                        onSaved: (map) {
+                          widget.onEdited?.call(map);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                  ));
+                case MediaActivity _:
+                  break;
+              }
             }
 
             ownershipButtons.add(ListTile(
@@ -409,7 +420,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
       activity.likeCount += isLiked ? 1 : -1;
     });
 
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 
   void _toggleSubscription() {
@@ -418,13 +429,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     widget.toggleSubscription().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 
       activity.isSubscribed = !activity.isSubscribed;
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });
@@ -436,13 +447,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
     widget.togglePin!().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 
       activity.isPinned = !activity.isPinned;
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });
@@ -451,12 +462,12 @@ class _ActivityFooterState extends State<ActivityFooter> {
   void _remove() {
     widget.remove().then((err) {
       if (err == null) {
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
         return;
       }
 
       if (mounted) {
-        Toast.show(context, err.toString());
+        SnackBarExtension.show(context, err.toString());
         Navigator.pop(context);
       }
     });

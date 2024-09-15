@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class HtmlContent extends StatelessWidget {
   const HtmlContent(this.text, {this.renderMode = RenderMode.column});
@@ -31,7 +31,7 @@ class HtmlContent extends StatelessWidget {
           }
         }
 
-        return Toast.launch(context, url);
+        return SnackBarExtension.launch(context, url);
       },
       onTapImage: (metadata) {
         final source = metadata.sources.firstOrNull?.url;
@@ -48,12 +48,9 @@ class HtmlContent extends StatelessWidget {
         child: IconButton(
           tooltip: 'Error',
           icon: const Icon(Icons.close_outlined),
-          onPressed: () => showDialog(
-            context: context,
-            builder: (context) => ConfirmationDialog(
-              title: 'Failed to load element ${element.localName}',
-              content: err.toString(),
-            ),
+          onPressed: () => SnackBarExtension.show(
+            context,
+            'Failed to load element ${element.localName}',
           ),
         ),
       ),
@@ -89,7 +86,7 @@ class HtmlContent extends StatelessWidget {
 
         if (element.localName == 'youtube') {
           return GestureDetector(
-            onTap: () => Toast.launch(
+            onTap: () => SnackBarExtension.launch(
               context,
               'https://youtube.com/watch?v=${element.text}',
             ),

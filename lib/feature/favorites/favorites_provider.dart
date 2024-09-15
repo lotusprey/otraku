@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/character/character_model.dart';
-import 'package:otraku/model/tile_item.dart';
+import 'package:otraku/feature/character/character_item_model.dart';
+import 'package:otraku/feature/media/media_item_model.dart';
+import 'package:otraku/feature/staff/staff_item_model.dart';
+import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
-import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/staff/staff_model.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
@@ -75,9 +75,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
 
     if (tab == null || tab == FavoritesTab.anime) {
       final map = data['anime'];
-      final items = <TileItem>[];
+      final items = <MediaItem>[];
       for (final a in map['nodes']) {
-        items.add(mediaItem(a));
+        items.add(MediaItem(a, Persistence().imageQuality));
       }
 
       anime = anime.withNext(
@@ -89,9 +89,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
 
     if (tab == null || tab == FavoritesTab.manga) {
       final map = data['manga'];
-      final items = <TileItem>[];
+      final items = <MediaItem>[];
       for (final m in map['nodes']) {
-        items.add(mediaItem(m));
+        items.add(MediaItem(m, Persistence().imageQuality));
       }
 
       manga = manga.withNext(
@@ -103,9 +103,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
 
     if (tab == null || tab == FavoritesTab.characters) {
       final map = data['characters'];
-      final items = <TileItem>[];
+      final items = <CharacterItem>[];
       for (final c in map['nodes']) {
-        items.add(characterItem(c));
+        items.add(CharacterItem(c));
       }
 
       characters = characters.withNext(
@@ -117,9 +117,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
 
     if (tab == null || tab == FavoritesTab.staff) {
       final map = data['staff'];
-      final items = <TileItem>[];
+      final items = <StaffItem>[];
       for (final s in map['nodes']) {
-        items.add(staffItem(s));
+        items.add(StaffItem(s));
       }
 
       staff = staff.withNext(

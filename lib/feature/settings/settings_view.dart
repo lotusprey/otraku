@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
+import 'package:otraku/extension/scroll_controller_extension.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/scroll_physics.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView();
@@ -47,77 +47,79 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       settingsProvider,
       (_, s) => s.whenOrNull(
         data: (data) => _settings = data.copy(),
-        error: (error, _) => Toast.show(context, error.toString()),
+        error: (error, _) => SnackBarExtension.show(context, error.toString()),
       ),
-    );
-
-    final floatingBar = FloatingBar(
-      scrollCtrl: _scrollCtrl,
-      children: [
-        _SaveButton(() {
-          if (_settings == null) return Future.value();
-          return ref.read(settingsProvider.notifier).updateSettings(_settings!);
-        }),
-      ],
     );
 
     final tabs = [
-      TabScaffold(
-        topBar: const TopBar(title: 'App'),
-        child: ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsAppSubview(_scrollCtrl),
-        ),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAppSubview(_scrollCtrl),
       ),
       if (_settings != null) ...[
-        TabScaffold(
-          topBar: const TopBar(title: 'Content'),
-          floatingBar: floatingBar,
-          child: ConstrainedView(
-            padding: EdgeInsets.zero,
-            child: SettingsContentSubview(_scrollCtrl, _settings!),
-          ),
+        ConstrainedView(
+          padding: EdgeInsets.zero,
+          child: SettingsContentSubview(_scrollCtrl, _settings!),
         ),
-        TabScaffold(
-          topBar: const TopBar(title: 'Notifications'),
-          floatingBar: floatingBar,
-          child: ConstrainedView(
-            padding: EdgeInsets.zero,
-            child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
-          ),
+        ConstrainedView(
+          padding: EdgeInsets.zero,
+          child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
         ),
       ] else ...[
         const SizedBox(),
         const SizedBox(),
       ],
-      TabScaffold(
-        topBar: const TopBar(title: 'About'),
-        child: ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsAboutSubview(_scrollCtrl),
-        ),
+      ConstrainedView(
+        padding: EdgeInsets.zero,
+        child: SettingsAboutSubview(_scrollCtrl),
       ),
     ];
 
-    return PageScaffold(
-      bottomBar: BottomNavBar(
-        current: _tabCtrl.index,
-        onSame: (_) => _scrollCtrl.scrollToTop(),
-        onChanged: (i) => _tabCtrl.index = i,
-        items: const {
-          'App': Ionicons.color_palette_outline,
-          'Content': Ionicons.tv_outline,
-          'Notifications': Ionicons.notifications_outline,
-          'About': Ionicons.information_outline,
-        },
+    return AdaptiveScaffold(
+      (context, compact) => ScaffoldConfig(
+        topBar: TopBarAnimatedSwitcher(
+          switch (_tabCtrl.index) {
+            0 => const TopBar(key: Key('0'), title: 'App'),
+            1 => const TopBar(key: Key('1'), title: 'Content'),
+            2 => const TopBar(key: Key('2'), title: 'Notifications'),
+            _ => const TopBar(key: Key('3'), title: 'About'),
+          },
+        ),
+        floatingAction: _tabCtrl.index == 1 || _tabCtrl.index == 2
+            ? HidingFloatingActionButton(
+                key: const Key('save'),
+                scrollCtrl: _scrollCtrl,
+                child: _SaveButton(() {
+                  if (_settings == null) return Future.value();
+                  return ref
+                      .read(settingsProvider.notifier)
+                      .updateSettings(_settings!);
+                }),
+              )
+            : null,
+        navigationConfig: NavigationConfig(
+          selected: _tabCtrl.index,
+          onSame: (_) => _scrollCtrl.scrollToTop(),
+          onChanged: (i) => _tabCtrl.index = i,
+          items: const {
+            'App': Ionicons.color_palette_outline,
+            'Content': Ionicons.tv_outline,
+            'Notifications': Ionicons.notifications_outline,
+            'About': Ionicons.information_outline,
+          },
+        ),
+        child: TabBarView(
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: tabs,
+        ),
       ),
-      child: TabBarView(controller: _tabCtrl, children: tabs),
     );
   }
 }
 
 class _SaveButton extends StatefulWidget {
-  const _SaveButton(this.onTap);
+  const _SaveButton(this.onTap) : super(key: const Key('saveSettings'));
 
   final Future<void> Function() onTap;
 
@@ -126,20 +128,22 @@ class _SaveButton extends StatefulWidget {
 }
 
 class __SaveButtonState extends State<_SaveButton> {
-  bool _hidden = false;
+  var _hidden = false;
 
   @override
   Widget build(BuildContext context) {
-    if (_hidden) return const SizedBox();
-
-    return ActionButton(
+    return FloatingActionButton(
       tooltip: 'Save Settings',
-      icon: Ionicons.save_outline,
-      onTap: () async {
-        setState(() => _hidden = true);
-        await widget.onTap();
-        setState(() => _hidden = false);
-      },
+      onPressed: _hidden
+          ? null
+          : () async {
+              setState(() => _hidden = true);
+              await widget.onTap();
+              setState(() => _hidden = false);
+            },
+      child: _hidden
+          ? const Icon(Ionicons.time_outline)
+          : const Icon(Ionicons.save_outline),
     );
   }
 }

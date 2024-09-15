@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/fields/stateful_tiles.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
+import 'package:otraku/widget/field/stateful_tiles.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_buttons.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
@@ -11,14 +11,13 @@ import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
-import 'package:otraku/widget/fields/date_field.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/fields/number_field.dart';
+import 'package:otraku/widget/field/date_field.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/field/number_field.dart';
 import 'package:otraku/feature/edit/score_field.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/sheets.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
@@ -36,13 +35,7 @@ class EditView extends StatelessWidget {
           (_, s) => s.whenOrNull(
             error: (err, _) {
               Navigator.pop(context);
-              showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: 'Failed to load edit sheet',
-                  content: err.toString(),
-                ),
-              );
+              SnackBarExtension.show(context, 'Failed to load edit sheet');
             },
           ),
         );
@@ -99,7 +92,7 @@ class _EditView extends StatelessWidget {
                       status == EntryStatus.current &&
                       startedAt == null) {
                     startedAt = DateTime.now();
-                    Toast.show(context, 'Start date changed');
+                    SnackBarExtension.show(context, 'Start date changed');
                   } else if (oldEdit.status != status &&
                       status == EntryStatus.completed &&
                       completedAt == null) {
@@ -111,7 +104,7 @@ class _EditView extends StatelessWidget {
                       text = 'Completed date & progress changed';
                     }
 
-                    Toast.show(context, text);
+                    SnackBarExtension.show(context, text);
                   }
 
                   return s.copyWith(
@@ -157,7 +150,7 @@ class _EditView extends StatelessWidget {
                       : 'Status & Completed date changed';
                 }
 
-                if (text != null) Toast.show(context, text);
+                if (text != null) SnackBarExtension.show(context, text);
               } else if (oldEdit.progress == 0 &&
                   oldEdit.progress != progress) {
                 if (oldEdit.status == status &&
@@ -173,7 +166,7 @@ class _EditView extends StatelessWidget {
                       : 'Status & start date changed';
                 }
               }
-              if (text != null) Toast.show(context, text);
+              if (text != null) SnackBarExtension.show(context, text);
 
               return s.copyWith(
                 progress: progress.toInt(),
@@ -212,7 +205,7 @@ class _EditView extends StatelessWidget {
       sliver: SliverToBoxAdapter(
         child: volumeProgressField == null
             ? progressField
-            : MediaQuery.sizeOf(context).width <= Theming.compactWidth
+            : MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
                 ? Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -255,7 +248,7 @@ class _EditView extends StatelessWidget {
                       oldEdit.status == null &&
                       status == null) {
                     status = EntryStatus.current;
-                    Toast.show(context, 'Status changed');
+                    SnackBarExtension.show(context, 'Status changed');
                   }
 
                   return s.copyWith(
@@ -292,7 +285,7 @@ class _EditView extends StatelessWidget {
                       text = 'Status & progress changed';
                     }
 
-                    Toast.show(context, text);
+                    SnackBarExtension.show(context, text);
                   }
 
                   return s.copyWith(

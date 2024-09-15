@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/feature/notification/notifications_provider.dart';
@@ -12,14 +11,15 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
+import 'package:otraku/widget/field/pill_selector.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
@@ -30,7 +30,7 @@ class NotificationsView extends ConsumerStatefulWidget {
 }
 
 class _NotificationsViewState extends ConsumerState<NotificationsView> {
-  late final _ctrl = PagedController(
+  late final _scrollCtrl = PagedController(
     loadMore: () => ref.read(notificationsProvider.notifier).fetch(),
   );
 
@@ -42,7 +42,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
   }
 
@@ -52,42 +52,58 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
     );
 
-    return PageScaffold(
-      child: TabScaffold(
-        topBar: TopBar(
-          trailing: [
-            Expanded(
-              child: Text(
-                '${ref.watch(notificationsFilterProvider).label} Notifications',
-                style: Theme.of(context).textTheme.titleLarge,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
+    final filter = ref.watch(notificationsFilterProvider);
+
+    return AdaptiveScaffold(
+      (context, compact) {
+        final content = _Content(
+          unreadCount: unreadCount,
+          scrollCtrl: _scrollCtrl,
+        );
+
+        return ScaffoldConfig(
+          topBar: TopBar(
+            trailing: [
+              Expanded(
+                child: Text(
+                  'Notifications',
+                  style: Theme.of(context).textTheme.titleLarge,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
-            ),
-          ],
-        ),
-        floatingBar: FloatingBar(
-          scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              tooltip: 'Filter',
-              icon: Ionicons.funnel_outline,
-              onTap: _showFilterSheet,
-            ),
-          ],
-        ),
-        child: PagedView<SiteNotification>(
-          scrollCtrl: _ctrl,
-          onRefresh: (invalidate) => invalidate(notificationsProvider),
-          provider: notificationsProvider,
-          onData: (data) => SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (context, i) => _NotificationItem(data.items[i], i < unreadCount),
-              childCount: data.items.length,
-            ),
+            ],
           ),
-        ),
-      ),
+          floatingAction: compact
+              ? HidingFloatingActionButton(
+                  key: const Key('filter'),
+                  scrollCtrl: _scrollCtrl,
+                  child: FloatingActionButton(
+                    tooltip: 'Filter',
+                    onPressed: _showFilterSheet,
+                    child: const Icon(Ionicons.funnel_outline),
+                  ),
+                )
+              : null,
+          child: compact
+              ? content
+              : Row(
+                  children: [
+                    PillSelector(
+                      selected: filter.index,
+                      maxWidth: 120,
+                      onTap: (i) => ref
+                          .read(notificationsFilterProvider.notifier)
+                          .state = NotificationsFilter.values[i],
+                      items: NotificationsFilter.values
+                          .map((v) => (title: Text(v.label), subtitle: null))
+                          .toList(),
+                    ),
+                    Expanded(child: content),
+                  ],
+                ),
+        );
+      },
     );
   }
 
@@ -99,19 +115,49 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           final index =
               ref.read(notificationsFilterProvider.notifier).state.index;
 
-          return SimpleSheet.list([
-            for (int i = 0; i < NotificationsFilter.values.length; i++)
-              ListTile(
-                title: Text(NotificationsFilter.values.elementAt(i).label),
-                selected: index == i,
-                onTap: () {
-                  ref.read(notificationsFilterProvider.notifier).state =
-                      NotificationsFilter.values.elementAt(i);
-                  Navigator.pop(context);
-                },
-              ),
-          ]);
+          return SimpleSheet(
+            initialHeight: PillSelector.expectedMinHeight(
+              NotificationsFilter.values.length,
+            ),
+            builder: (context, scrollCtrl) => PillSelector(
+              scrollCtrl: scrollCtrl,
+              selected: index,
+              onTap: (i) {
+                ref.read(notificationsFilterProvider.notifier).state =
+                    NotificationsFilter.values[i];
+                Navigator.pop(context);
+              },
+              items: NotificationsFilter.values
+                  .map((v) => (title: Text(v.label), subtitle: null))
+                  .toList(),
+            ),
+          );
         },
+      ),
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  const _Content({
+    required this.unreadCount,
+    required this.scrollCtrl,
+  });
+
+  final int unreadCount;
+  final ScrollController scrollCtrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return PagedView<SiteNotification>(
+      scrollCtrl: scrollCtrl,
+      onRefresh: (invalidate) => invalidate(notificationsProvider),
+      provider: notificationsProvider,
+      onData: (data) => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => _NotificationItem(data.items[i], i < unreadCount),
+          childCount: data.items.length,
+        ),
       ),
     );
   }
@@ -134,23 +180,40 @@ class _NotificationItem extends StatelessWidget {
           child: Card(
             child: Row(
               children: [
-                if (item.imageUrl != null && item.headId != null)
+                if (item.imageUrl != null)
                   GestureDetector(
-                    onTap: () => context.push(switch (item.discoverType) {
-                      DiscoverType.anime || DiscoverType.manga => Routes.media(
-                          item.headId!,
-                          item.imageUrl,
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => switch (item) {
+                      FollowNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
                         ),
-                      _ => Routes.user(item.headId!, item.imageUrl),
-                    }),
-                    onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
-                        showSheet(
+                      ActivityNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ThreadNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ThreadCommentNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      MediaReleaseNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaChangeNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaDeletionNotification _ => null,
+                    },
+                    onLongPress: () => switch (item) {
+                      MediaReleaseNotification item => showSheet(
                           context,
-                          EditView((id: item.headId!, setComplete: false)),
-                        );
-                      }
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      MediaChangeNotification item => showSheet(
+                          context,
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      _ => null,
                     },
                     child: ClipRRect(
                       borderRadius: const BorderRadius.horizontal(
@@ -162,56 +225,41 @@ class _NotificationItem extends StatelessWidget {
                 Flexible(
                   child: GestureDetector(
                     behavior: HitTestBehavior.opaque,
-                    onTap: () => switch (item.type) {
-                      NotificationType.activityLike ||
-                      NotificationType.activityMention ||
-                      NotificationType.activityMessage ||
-                      NotificationType.activityReply ||
-                      NotificationType.acrivityReplyLike ||
-                      NotificationType.activityReplySubscribed =>
-                        context.push(Routes.activity(item.bodyId!)),
-                      NotificationType.following =>
-                        context.push(Routes.user(item.headId!, item.imageUrl)),
-                      NotificationType.airing ||
-                      NotificationType.relatedMediaAddition =>
-                        context.push(Routes.media(item.headId!, item.imageUrl)),
-                      NotificationType.mediaDataChange ||
-                      NotificationType.mediaMerge ||
-                      NotificationType.mediaDeletion =>
+                    onTap: () => switch (item) {
+                      FollowNotification item => context.push(
+                          Routes.user(item.userId, item.imageUrl),
+                        ),
+                      ActivityNotification item => context.push(
+                          Routes.activity(item.activityId),
+                        ),
+                      ThreadNotification item => _redirectToSite(
+                          context,
+                          item.threadSiteUrl,
+                        ),
+                      ThreadCommentNotification item => _redirectToSite(
+                          context,
+                          item.commentSiteUrl,
+                        ),
+                      MediaReleaseNotification item => context.push(
+                          Routes.media(item.mediaId, item.imageUrl),
+                        ),
+                      MediaChangeNotification() ||
+                      MediaDeletionNotification() =>
                         showDialog(
                           context: context,
                           builder: (context) => _NotificationDialog(item),
                         ),
-                      NotificationType.threadLike ||
-                      NotificationType.threadReplySubscribed ||
-                      NotificationType.threadCommentLike ||
-                      NotificationType.threadCommentReply ||
-                      NotificationType.threadCommentMention =>
-                        showDialog(
-                          context: context,
-                          builder: (context) => ConfirmationDialog(
-                            title: 'Forum is not yet supported',
-                            content: 'Open in browser?',
-                            mainAction: 'Open',
-                            secondaryAction: 'Cancel',
-                            onConfirm: () {
-                              if (item.details == null) {
-                                Toast.show(context, 'Invalid Link');
-                                return;
-                              }
-                              Toast.launch(context, item.details!);
-                            },
-                          ),
-                        ),
                     },
-                    onLongPress: () {
-                      if (item.discoverType == DiscoverType.anime ||
-                          item.discoverType == DiscoverType.manga) {
-                        showSheet(
+                    onLongPress: () => switch (item) {
+                      MediaReleaseNotification item => showSheet(
                           context,
-                          EditView((id: item.headId!, setComplete: false)),
-                        );
-                      }
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      MediaChangeNotification item => showSheet(
+                          context,
+                          EditView((id: item.mediaId, setComplete: false)),
+                        ),
+                      _ => null,
                     },
                     child: Padding(
                       padding: Theming.paddingAll,
@@ -266,6 +314,19 @@ class _NotificationItem extends StatelessWidget {
       ),
     );
   }
+
+  void _redirectToSite(BuildContext context, String? url) => showDialog(
+        context: context,
+        builder: (context) => ConfirmationDialog(
+          title: 'Forum is not yet supported',
+          content: 'Open in browser?',
+          mainAction: 'Open',
+          secondaryAction: 'Cancel',
+          onConfirm: () => url != null
+              ? SnackBarExtension.launch(context, url)
+              : SnackBarExtension.show(context, 'Invalid Link'),
+        ),
+      );
 }
 
 class _NotificationDialog extends StatelessWidget {
@@ -314,10 +375,17 @@ class _NotificationDialog extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(child: title),
-                  if (item.details != null) ...[
-                    const SizedBox(height: Theming.offset),
-                    HtmlContent(item.details!),
-                  ],
+                  ...switch (item) {
+                    MediaChangeNotification item => [
+                        const SizedBox(height: Theming.offset),
+                        HtmlContent(item.reason),
+                      ],
+                    MediaDeletionNotification item => [
+                        const SizedBox(height: Theming.offset),
+                        HtmlContent(item.reason),
+                      ],
+                    _ => const [],
+                  },
                 ],
               ),
             ),

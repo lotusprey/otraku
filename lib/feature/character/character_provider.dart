@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/character/character_filter_model.dart';
-import 'package:otraku/util/extensions.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
-import 'package:otraku/model/relation.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/persistence.dart';
@@ -90,64 +90,60 @@ class CharacterMediaNotifier
 
     var anime = oldState.anime;
     var manga = oldState.manga;
-    var languageToVoiceActors = {...oldState.languageToVoiceActors};
-    var language = oldState.language;
+    var languageToVoiceActors = [...oldState.languageToVoiceActors];
+    var selectedLanguage = oldState.selectedLanguage;
 
     if (onAnime == null || onAnime) {
       final map = data['anime'];
-      final items = <Relation>[];
+      final items = <CharacterRelatedItem>[];
       for (final a in map['edges']) {
-        items.add(Relation(
-          id: a['node']['id'],
-          title: a['node']['title']['userPreferred'],
-          imageUrl: a['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(a['characterRole']),
-          type: DiscoverType.anime,
+        items.add(CharacterRelatedItem.media(
+          a['node'],
+          StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
+          Persistence().imageQuality,
         ));
 
         if (a['voiceActors'] != null) {
           for (final va in a['voiceActors']) {
-            final l = StringUtil.tryNoScreamingSnakeCase(va['languageV2']);
+            final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
             if (l == null) continue;
 
-            final currentLanguage = languageToVoiceActors.putIfAbsent(
-              l,
-              () => <int, List<Relation>>{},
+            var languageMapping = languageToVoiceActors.firstWhereOrNull(
+              (lm) => lm.language == l,
             );
 
-            final currentMedia = currentLanguage.putIfAbsent(
+            if (languageMapping == null) {
+              languageMapping = (language: l, voiceActors: {});
+              languageToVoiceActors.add(languageMapping);
+            }
+
+            final mediaVoiceActors = languageMapping.voiceActors.putIfAbsent(
               items.last.id,
               () => [],
             );
 
-            currentMedia.add(Relation(
-              id: va['id'],
-              title: va['name']['userPreferred'],
-              imageUrl: va['image']['large'],
-              subtitle: l,
-              type: DiscoverType.staff,
-            ));
+            mediaVoiceActors.add(CharacterRelatedItem.staff(va, l));
           }
         }
 
-        if (language.isEmpty && languageToVoiceActors.isNotEmpty) {
-          language = languageToVoiceActors.keys.first;
-        }
-
-        anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
+        languageToVoiceActors.sort((a, b) {
+          if (a.language == 'Japanese') return -1;
+          if (b.language == 'Japanese') return 1;
+          return a.language.compareTo(b.language);
+        });
       }
+
+      anime = anime.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
     if (onAnime == null || !onAnime) {
       final map = data['manga'];
-      final items = <Relation>[];
+      final items = <CharacterRelatedItem>[];
       for (final m in map['edges']) {
-        items.add(Relation(
-          id: m['node']['id'],
-          title: m['node']['title']['userPreferred'],
-          imageUrl: m['node']['coverImage'][Persistence().imageQuality.value],
-          subtitle: StringUtil.tryNoScreamingSnakeCase(m['characterRole']),
-          type: DiscoverType.manga,
+        items.add(CharacterRelatedItem.media(
+          m['node'],
+          StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
+          Persistence().imageQuality,
         ));
       }
 
@@ -158,16 +154,20 @@ class CharacterMediaNotifier
       anime: anime,
       manga: manga,
       languageToVoiceActors: languageToVoiceActors,
-      language: language,
+      selectedLanguage: selectedLanguage,
     );
   }
 
-  void changeLanguage(String language) => state = state.whenData(
-        (data) => CharacterMedia(
-          anime: data.anime,
-          manga: data.manga,
-          languageToVoiceActors: data.languageToVoiceActors,
-          language: language,
-        ),
+  void changeLanguage(int selectedLanguage) => state.whenData(
+        (data) {
+          if (selectedLanguage >= data.languageToVoiceActors.length) return;
+
+          state = AsyncValue.data(CharacterMedia(
+            anime: data.anime,
+            manga: data.manga,
+            languageToVoiceActors: data.languageToVoiceActors,
+            selectedLanguage: selectedLanguage,
+          ));
+        },
       );
 }

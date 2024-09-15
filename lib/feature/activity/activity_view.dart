@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
@@ -11,16 +14,13 @@ import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/reply_card.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/persistence.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/loaders.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class ActivityView extends ConsumerStatefulWidget {
   const ActivityView(this.id, this.feedId);
@@ -49,31 +49,30 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
       activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
     );
 
-    return PageScaffold(
-      child: TabScaffold(
+    return AdaptiveScaffold(
+      (context, compact) => ScaffoldConfig(
         topBar: TopBar(
           trailing: [if (activity != null) _TopBarContent(activity)],
         ),
-        floatingBar: FloatingBar(
+        floatingAction: HidingFloatingActionButton(
+          key: const Key('Reply'),
           scrollCtrl: _ctrl,
-          children: [
-            ActionButton(
-              tooltip: 'New Reply',
-              icon: Icons.edit_outlined,
-              onTap: () => showSheet(
-                context,
-                CompositionView(
-                  tag: ActivityReplyCompositionTag(
-                    id: null,
-                    activityId: widget.id,
-                  ),
-                  onSaved: (map) => ref
-                      .read(activityProvider(widget.id).notifier)
-                      .appendReply(map),
+          child: FloatingActionButton(
+            tooltip: 'New Reply',
+            child: const Icon(Icons.edit_outlined),
+            onPressed: () => showSheet(
+              context,
+              CompositionView(
+                tag: ActivityReplyCompositionTag(
+                  id: null,
+                  activityId: widget.id,
                 ),
+                onSaved: (map) => ref
+                    .read(activityProvider(widget.id).notifier)
+                    .appendReply(map),
               ),
             ),
-          ],
+          ),
         ),
         child: Consumer(
           child: SliverRefreshControl(
@@ -83,7 +82,8 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
             ref.listen<AsyncValue>(
               activityProvider(widget.id),
               (_, s) => s.whenOrNull(
-                error: (error, _) => Toast.show(context, error.toString()),
+                error: (error, _) =>
+                    SnackBarExtension.show(context, error.toString()),
               ),
             );
 
@@ -208,10 +208,11 @@ class _TopBarContent extends StatelessWidget {
       child: Row(
         children: [
           Flexible(
-            child: LinkTile(
-              id: activity.authorId,
-              info: activity.authorAvatarUrl,
-              discoverType: DiscoverType.user,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => context.push(
+                Routes.user(activity.authorId, activity.authorAvatarUrl),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -249,10 +250,14 @@ class _TopBarContent extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: Theming.offset),
                   child: Icon(Icons.arrow_right_alt),
                 ),
-                LinkTile(
-                  id: message.recipientId,
-                  info: message.recipientAvatarUrl,
-                  discoverType: DiscoverType.user,
+                GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => context.push(
+                    Routes.user(
+                      message.recipientId,
+                      message.recipientAvatarUrl,
+                    ),
+                  ),
                   child: ClipRRect(
                     borderRadius: Theming.borderRadiusSmall,
                     child: CachedImage(

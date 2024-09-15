@@ -1,25 +1,19 @@
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/util/paged.dart';
+import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-
-TileItem staffItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.staff,
-      title: map['name']['userPreferred'],
-      imageUrl: map['image']['large'],
-    );
+import 'package:otraku/util/tile_modelable.dart';
 
 class Staff {
   Staff._({
     required this.id,
-    required this.name,
+    required this.preferredName,
+    required this.fullName,
+    required this.nativeName,
+    required this.altNames,
     required this.imageUrl,
     required this.description,
-    required this.altNames,
     required this.dateOfBirth,
     required this.dateOfDeath,
     required this.bloodType,
@@ -48,29 +42,24 @@ class Staff {
 
     final altNames = List<String>.from(names['alternative'] ?? []);
 
-    String name;
-    if (nativeName != null) {
-      if (personNaming != PersonNaming.native) {
-        name = fullName;
-        altNames.insert(0, nativeName);
-      } else {
-        name = nativeName;
-        altNames.insert(0, fullName);
-      }
-    } else {
-      name = fullName;
-    }
+    final preferredName = nativeName != null
+        ? personNaming != PersonNaming.native
+            ? fullName
+            : nativeName
+        : fullName;
 
     final yearsActive = map['yearsActive'] as List?;
 
     return Staff._(
       id: map['id'],
-      name: name,
+      preferredName: preferredName,
+      fullName: fullName,
+      nativeName: nativeName,
       altNames: altNames,
       imageUrl: map['image']['large'],
       description: parseMarkdown(map['description'] ?? ''),
-      dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
-      dateOfDeath: StringUtil.fromFuzzyDate(map['dateOfDeath']),
+      dateOfBirth: StringExtension.fromFuzzyDate(map['dateOfBirth']),
+      dateOfDeath: StringExtension.fromFuzzyDate(map['dateOfDeath']),
       bloodType: map['bloodType'],
       homeTown: map['homeTown'],
       gender: map['gender'],
@@ -88,10 +77,12 @@ class Staff {
   }
 
   final int id;
-  final String name;
+  final String preferredName;
+  final String fullName;
+  final String? nativeName;
+  final List<String> altNames;
   final String imageUrl;
   final String description;
-  final List<String> altNames;
   final String? dateOfBirth;
   final String? dateOfDeath;
   final String? bloodType;
@@ -111,6 +102,52 @@ class StaffRelations {
     this.roles = const Paged(),
   });
 
-  final Paged<(Relation, Relation)> charactersAndMedia;
-  final Paged<Relation> roles;
+  final Paged<(StaffRelatedItem, StaffRelatedItem)> charactersAndMedia;
+  final Paged<StaffRelatedItem> roles;
+}
+
+class StaffRelatedItem implements TileModelable {
+  const StaffRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory StaffRelatedItem.media(
+    Map<String, dynamic> map,
+    String? role,
+    ImageQuality imageQuality,
+  ) =>
+      StaffRelatedItem._(
+        id: map['id'],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality.value],
+        role: role,
+      );
+
+  factory StaffRelatedItem.character(Map<String, dynamic> map, String? role) =>
+      StaffRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
 }

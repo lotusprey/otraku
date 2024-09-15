@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 
 class Tag {
   final String name;
@@ -19,8 +19,7 @@ class Tag {
         name: map['name'],
         rank: map['rank'],
         desciption: map['description'] ?? 'No description',
-        isSpoiler: (map['isGeneralSpoiler'] ?? false) ||
-            (map['isMediaSpoiler'] ?? false),
+        isSpoiler: map['isMediaSpoiler'] ?? false,
       );
 }
 

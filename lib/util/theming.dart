@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class Theming {
-  static const mediumWidth = 840.0;
-  static const compactWidth = 600.0;
+  static const windowWidthMedium = 600.0;
+  static const windowWidthLarge = 840.0;
 
   static const offset = 10.0;
   static const minTapTarget = 48.0;
@@ -57,6 +57,10 @@ class Theming {
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: scheme.surface.withAlpha(190),
           labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+        ),
+        navigationRailTheme: const NavigationRailThemeData(
+          labelType: NavigationRailLabelType.all,
+          groupAlignment: 0,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

@@ -1,26 +1,20 @@
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/model/relation.dart';
-import 'package:otraku/model/tile_item.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-
-TileItem characterItem(Map<String, dynamic> map) => TileItem(
-      id: map['id'],
-      type: DiscoverType.character,
-      title: map['name']['userPreferred'],
-      imageUrl: map['image']['large'],
-    );
+import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/tile_modelable.dart';
 
 class Character {
   Character._({
     required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.description,
+    required this.preferredName,
+    required this.fullName,
+    required this.nativeName,
     required this.altNames,
     required this.altNamesSpoilers,
+    required this.imageUrl,
+    required this.description,
     required this.dateOfBirth,
     required this.bloodType,
     required this.gender,
@@ -49,27 +43,22 @@ class Character {
       growable: false,
     );
 
-    String name;
-    if (nativeName != null) {
-      if (personNaming != PersonNaming.native) {
-        name = fullName;
-        altNames.insert(0, nativeName);
-      } else {
-        name = nativeName;
-        altNames.insert(0, fullName);
-      }
-    } else {
-      name = fullName;
-    }
+    final preferredName = nativeName != null
+        ? personNaming != PersonNaming.native
+            ? fullName
+            : nativeName
+        : fullName;
 
     return Character._(
       id: map['id'],
-      name: name,
+      preferredName: preferredName,
+      fullName: fullName,
+      nativeName: nativeName,
       altNames: altNames,
       altNamesSpoilers: altNamesSpoilers,
       description: parseMarkdown(map['description'] ?? ''),
       imageUrl: map['image']['large'],
-      dateOfBirth: StringUtil.fromFuzzyDate(map['dateOfBirth']),
+      dateOfBirth: StringExtension.fromFuzzyDate(map['dateOfBirth']),
       bloodType: map['bloodType'],
       gender: map['gender'],
       age: map['age'],
@@ -80,11 +69,13 @@ class Character {
   }
 
   final int id;
-  final String name;
-  final String imageUrl;
-  final String description;
+  final String preferredName;
+  final String fullName;
+  final String? nativeName;
   final List<String> altNames;
   final List<String> altNamesSpoilers;
+  final String imageUrl;
+  final String description;
   final String? dateOfBirth;
   final String? bloodType;
   final String? gender;
@@ -98,35 +89,37 @@ class CharacterMedia {
   const CharacterMedia({
     this.anime = const Paged(),
     this.manga = const Paged(),
-    this.languageToVoiceActors = const {},
-    this.language = '',
+    this.languageToVoiceActors = const [],
+    this.selectedLanguage = 0,
   });
 
-  final Paged<Relation> anime;
-  final Paged<Relation> manga;
+  final Paged<CharacterRelatedItem> anime;
+  final Paged<CharacterRelatedItem> manga;
 
   /// For each language, a list of voice actors
   /// is mapped to the corresponding media's id.
-  final Map<String, Map<int, List<Relation>>> languageToVoiceActors;
-
-  /// The currently selected language.
-  final String language;
-
-  Iterable<String> get languages => languageToVoiceActors.keys;
+  final List<CharacterLanguageMapping> languageToVoiceActors;
+  final int selectedLanguage;
 
   /// Returns the media, in which the character has participated,
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
-  List<(Relation, Relation?)> getAnimeAndVoiceActors() {
-    final anime = this.anime.items;
-    if (anime.isEmpty) return [];
+  Paged<(CharacterRelatedItem, CharacterRelatedItem?)>
+      assembleAnimeWithVoiceActors() {
+    if (languageToVoiceActors.isEmpty) {
+      return Paged(
+        items: anime.items.map((a) => (a, null)).toList(),
+        hasNext: anime.hasNext,
+        next: anime.next,
+      );
+    }
 
-    final actorsPerMedia = languageToVoiceActors[language];
-    if (actorsPerMedia == null) return [for (final a in anime) (a, null)];
+    final actorsPerMedia = languageToVoiceActors[selectedLanguage];
 
-    final animeAndVoiceActors = <(Relation, Relation?)>[];
-    for (final a in anime) {
-      final actors = actorsPerMedia[a.id];
+    final animeAndVoiceActors =
+        <(CharacterRelatedItem, CharacterRelatedItem?)>[];
+    for (final a in anime.items) {
+      final actors = actorsPerMedia.voiceActors[a.id];
       if (actors == null || actors.isEmpty) {
         animeAndVoiceActors.add((a, null));
         continue;
@@ -137,6 +130,61 @@ class CharacterMedia {
       }
     }
 
-    return animeAndVoiceActors;
+    return Paged(
+      items: animeAndVoiceActors,
+      hasNext: anime.hasNext,
+      next: anime.next,
+    );
   }
 }
+
+class CharacterRelatedItem implements TileModelable {
+  const CharacterRelatedItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.role,
+  });
+
+  factory CharacterRelatedItem.media(
+    Map<String, dynamic> map,
+    String? role,
+    ImageQuality imageQuality,
+  ) =>
+      CharacterRelatedItem._(
+        id: map['id'],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality.value],
+        role: role,
+      );
+
+  factory CharacterRelatedItem.staff(Map<String, dynamic> map, String? role) =>
+      CharacterRelatedItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+        role: role,
+      );
+
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String? role;
+
+  @override
+  int get tileId => id;
+
+  @override
+  String get tileTitle => name;
+
+  @override
+  String? get tileSubtitle => role;
+
+  @override
+  String get tileImageUrl => imageUrl;
+}
+
+typedef CharacterLanguageMapping = ({
+  String language,
+  Map<int, List<CharacterRelatedItem>> voiceActors,
+});

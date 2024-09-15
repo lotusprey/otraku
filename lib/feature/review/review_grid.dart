@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/link_tile.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
   const ReviewGrid(this.items);
@@ -33,10 +33,9 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LinkTile(
-      id: item.id,
-      info: item.bannerUrl,
-      discoverType: DiscoverType.review,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push(Routes.review(item.id, item.bannerUrl)),
       child: Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -2,31 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 
 class MediaOverviewSubview extends StatelessWidget {
-  const MediaOverviewSubview({
+  const MediaOverviewSubview.asFragment({
     required this.info,
-    required this.scrollCtrl,
-    required this.invalidate,
-  });
+    required this.ref,
+    required ScrollController this.scrollCtrl,
+  }) : header = null;
 
+  const MediaOverviewSubview.withHeader({
+    required this.info,
+    required this.ref,
+    required Widget this.header,
+  }) : scrollCtrl = null;
+
+  final WidgetRef ref;
   final MediaInfo info;
-  final ScrollController scrollCtrl;
-  final void Function() invalidate;
+  final Widget? header;
+  final ScrollController? scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
@@ -64,103 +70,119 @@ class MediaOverviewSubview extends StatelessWidget {
     ];
 
     const spacing = SliverToBoxAdapter(child: SizedBox(height: Theming.offset));
+    final mediaQuery = MediaQuery.of(context);
+    final refreshControl = SliverRefreshControl(
+      onRefresh: () => ref.invalidate(mediaProvider(info.id)),
+    );
 
-    return ConstrainedView(
-      child: Consumer(
-        builder: (context, ref, _) => CustomScrollView(
-          controller: scrollCtrl,
-          physics: Theming.bouncyPhysics,
-          slivers: [
-            SliverRefreshControl(onRefresh: invalidate, withTopOffset: false),
-            if (info.description.isNotEmpty) _Description(info.description),
-            SliverToBoxAdapter(
-              child: Card.outlined(
-                child: Padding(
-                  padding: Theming.paddingAll,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _IconTile(
-                        text: info.favourites.toString(),
-                        tooltip: 'Favorites',
-                        icon: Icons.favorite_outline_rounded,
-                      ),
-                      _IconTile(
-                        text: info.popularity.toString(),
-                        tooltip: 'Popularity',
-                        icon: Icons.person_outline_rounded,
-                      ),
-                      _IconTile(
-                        text: info.averageScore.toString(),
-                        tooltip: 'Weighted Average Score',
-                        icon: Icons.percent_rounded,
-                      ),
-                      _IconTile(
-                        text: info.meanScore.toString(),
-                        tooltip: 'Mean Score',
-                        icon: Ionicons.star_half_outline,
-                      ),
-                    ],
+    return CustomScrollView(
+      controller: scrollCtrl,
+      physics: Theming.bouncyPhysics,
+      slivers: [
+        if (header != null) ...[
+          header!,
+          MediaQuery(
+            data: mediaQuery.copyWith(
+              padding: mediaQuery.padding.copyWith(top: 0),
+            ),
+            child: refreshControl,
+          ),
+        ] else
+          refreshControl,
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              if (info.description.isNotEmpty) _Description(info.description),
+              SliverToBoxAdapter(
+                child: Card.outlined(
+                  child: Padding(
+                    padding: Theming.paddingAll,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _IconTile(
+                          text: info.favourites.toString(),
+                          tooltip: 'Favorites',
+                          icon: Icons.favorite_outline_rounded,
+                        ),
+                        _IconTile(
+                          text: info.popularity.toString(),
+                          tooltip: 'Popularity',
+                          icon: Icons.person_outline_rounded,
+                        ),
+                        _IconTile(
+                          text: info.averageScore.toString(),
+                          tooltip: 'Weighted Average Score',
+                          icon: Icons.percent_rounded,
+                        ),
+                        _IconTile(
+                          text: info.meanScore.toString(),
+                          tooltip: 'Mean Score',
+                          icon: Ionicons.star_half_outline,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            spacing,
-            TableList(details),
-            if (info.genres.isNotEmpty)
-              _PlainScrollCards(
-                title: 'Genres',
-                items: info.genres,
-                onTap: (i) {
-                  final notifier = ref.read(discoverFilterProvider.notifier);
-                  final filter = notifier.state.copyWith(
-                    type: info.type,
-                    search: '',
-                    mediaFilter: DiscoverMediaFilter(),
-                  )..mediaFilter.genreIn.add(info.genres[i]);
-                  notifier.state = filter;
+              spacing,
+              SliverTableList(details),
+              if (info.genres.isNotEmpty)
+                _PlainScrollCards(
+                  title: 'Genres',
+                  items: info.genres,
+                  onTap: (i) {
+                    final notifier = ref.read(discoverFilterProvider.notifier);
+                    final filter = notifier.state.copyWith(
+                      type: info.type,
+                      search: '',
+                      mediaFilter: DiscoverMediaFilter(),
+                    )..mediaFilter.genreIn.add(info.genres[i]);
+                    notifier.state = filter;
 
-                  context.go(Routes.home(HomeTab.discover));
-                },
-              ),
-            if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
-            if (info.studios.isNotEmpty)
-              _PlainScrollCards(
-                title: 'Studios',
-                items: info.studios.keys.toList(),
-                onTap: (i) => context.push(
-                  Routes.studio(
-                    info.studios.values.elementAt(i),
-                    info.studios.keys.elementAt(i),
+                    context.go(Routes.home(HomeTab.discover));
+                  },
+                ),
+              if (info.tags.isNotEmpty) _TagScrollCards(info, ref),
+              if (info.studios.isNotEmpty)
+                _PlainScrollCards(
+                  title: 'Studios',
+                  items: info.studios.keys.toList(),
+                  onTap: (i) => context.push(
+                    Routes.studio(
+                      info.studios.values.elementAt(i),
+                      info.studios.keys.elementAt(i),
+                    ),
                   ),
                 ),
-              ),
-            if (info.producers.isNotEmpty)
-              _PlainScrollCards(
-                title: 'Producers',
-                items: info.producers.keys.toList(),
-                onTap: (i) => context.push(
-                  Routes.studio(
-                    info.producers.values.elementAt(i),
-                    info.producers.keys.elementAt(i),
+              if (info.producers.isNotEmpty)
+                _PlainScrollCards(
+                  title: 'Producers',
+                  items: info.producers.keys.toList(),
+                  onTap: (i) => context.push(
+                    Routes.studio(
+                      info.producers.values.elementAt(i),
+                      info.producers.keys.elementAt(i),
+                    ),
                   ),
                 ),
-              ),
-            if (info.externalLinks.isNotEmpty)
-              _ExternalLinkScrollCards(info.externalLinks),
-            spacing,
-            spacing,
-            TableList(titles),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: MediaQuery.paddingOf(context).bottom +
-                    floatingBarItemHeight +
-                    26,
-              ),
-            ),
-          ],
+              if (info.externalLinks.isNotEmpty)
+                _ExternalLinkScrollCards(info.externalLinks),
+              spacing,
+              spacing,
+              SliverTableList(titles),
+            ],
+          ),
         ),
-      ),
+        SliverToBoxAdapter(
+          child: SizedBox(
+            height: MediaQuery.paddingOf(context).bottom +
+                Theming.normalTapTarget +
+                26,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -202,7 +224,7 @@ class _DescriptionState extends State<_Description> {
             onTap: () => setState(() => _expanded = !_expanded),
             onLongPress: () {
               final text = widget.text.replaceAll(RegExp(r'<br>'), '');
-              Toast.copy(context, text);
+              SnackBarExtension.copy(context, text);
             },
             child: Padding(
               padding: const EdgeInsets.all(Theming.offset),
@@ -322,7 +344,7 @@ class _PlainScrollCards extends StatelessWidget {
       title: title,
       itemCount: items.length,
       onTap: onTap,
-      onLongPress: (i) => Toast.copy(context, items[i]),
+      onLongPress: (i) => SnackBarExtension.copy(context, items[i]),
       builder: (context, i) => Text(items[i]),
     );
   }
@@ -421,8 +443,8 @@ class _ExternalLinkScrollCards extends StatelessWidget {
     return _ScrollCards(
       title: "External Links",
       itemCount: items.length,
-      onTap: (i) => Toast.launch(context, items[i].url),
-      onLongPress: (i) => Toast.copy(context, items[i].url),
+      onTap: (i) => SnackBarExtension.launch(context, items[i].url),
+      onLongPress: (i) => SnackBarExtension.copy(context, items[i].url),
       builder: (context, i) => Row(
         children: [
           if (items[i].color != null)

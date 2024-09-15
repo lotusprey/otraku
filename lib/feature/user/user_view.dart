@@ -5,16 +5,16 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_header.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class UserView extends StatelessWidget {
   const UserView(this.tag, this.avatarUrl);
@@ -23,12 +23,43 @@ class UserView extends StatelessWidget {
   final String? avatarUrl;
 
   @override
-  Widget build(BuildContext context) =>
-      PageScaffold(child: UserSubview(tag, avatarUrl));
+  Widget build(BuildContext context) => AdaptiveScaffold(
+        (context, _) => ScaffoldConfig(child: _UserView(tag, avatarUrl)),
+      );
 }
 
-class UserSubview extends StatelessWidget {
-  const UserSubview(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
+/// The home page has app bars,
+/// but the one on the user tab should be transparent
+/// and the padding should be removed.
+class UserHomeView extends StatelessWidget {
+  const UserHomeView(
+    this.tag,
+    this.avatarUrl, {
+    this.homeScrollCtrl,
+    required this.removableTopPadding,
+  });
+
+  final UserTag tag;
+  final String? avatarUrl;
+  final ScrollController? homeScrollCtrl;
+  final double removableTopPadding;
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return MediaQuery(
+      data: mediaQuery.copyWith(
+        padding: mediaQuery.padding.copyWith(
+          top: mediaQuery.padding.top - removableTopPadding,
+        ),
+      ),
+      child: _UserView(tag, avatarUrl, homeScrollCtrl),
+    );
+  }
+}
+
+class _UserView extends StatelessWidget {
+  const _UserView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
 
   final UserTag tag;
   final String? avatarUrl;
@@ -50,7 +81,8 @@ class UserSubview extends StatelessWidget {
                 );
               }
             },
-            error: (error, _) => Toast.show(context, error.toString()),
+            error: (error, _) =>
+                SnackBarExtension.show(context, error.toString()),
           ),
         );
 
@@ -69,15 +101,23 @@ class UserSubview extends StatelessWidget {
           },
         );
 
+        final mediaQuery = MediaQuery.of(context);
+
+        final refreshControl = MediaQuery(
+          data: mediaQuery.copyWith(
+            padding: mediaQuery.padding.copyWith(top: 0),
+          ),
+          child: SliverRefreshControl(
+            onRefresh: () => ref.invalidate(userProvider(tag)),
+          ),
+        );
+
         return user.unwrapPrevious().when(
               error: (_, __) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(userProvider(tag)),
-                    withTopOffset: false,
-                  ),
+                  refreshControl,
                   const SliverFillRemaining(
                     child: Center(child: Text('Failed to load user')),
                   )
@@ -94,10 +134,7 @@ class UserSubview extends StatelessWidget {
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(userProvider(tag)),
-                    withTopOffset: false,
-                  ),
+                  refreshControl,
                   _ButtonRow(data.id),
                   if (data.description.isNotEmpty) ...[
                     const SliverToBoxAdapter(

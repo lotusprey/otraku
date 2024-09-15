@@ -1,5 +1,5 @@
-import 'package:otraku/model/paged.dart';
-import 'package:otraku/feature/user/user_models.dart';
+import 'package:otraku/feature/user/user_item_model.dart';
+import 'package:otraku/util/paged.dart';
 
 class Social {
   const Social({

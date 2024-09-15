@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 import 'package:otraku/util/persistence.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/widget/overlays/sheets.dart';
+import 'package:otraku/widget/dialogs.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class ReplyCard extends StatelessWidget {
   const ReplyCard({
@@ -31,10 +31,11 @@ class ReplyCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        LinkTile(
-          id: reply.authorId,
-          info: reply.authorAvatarUrl,
-          discoverType: DiscoverType.user,
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push(
+            Routes.user(reply.authorId, reply.authorAvatarUrl),
+          ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -148,12 +149,14 @@ class ReplyCard extends StatelessWidget {
                       .removeReply(reply.id)
                       .then((err) {
                     if (err == null) {
-                      Navigator.pop(context);
+                      if (context.mounted) Navigator.pop(context);
                       return;
                     }
 
-                    Toast.show(context, err.toString());
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      SnackBarExtension.show(context, err.toString());
+                      Navigator.pop(context);
+                    }
                   });
                 },
               ),
@@ -236,7 +239,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               ),
               const SizedBox(width: 5),
               Icon(
-                Icons.favorite_rounded,
+                !widget.reply.isLiked
+                    ? Icons.favorite_rounded
+                    : Icons.heart_broken_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
                     ? Theme.of(context).colorScheme.primary
@@ -266,6 +271,6 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
       reply.likeCount += isLiked ? 1 : -1;
     });
 
-    if (mounted) Toast.show(context, err.toString());
+    if (mounted) SnackBarExtension.show(context, err.toString());
   }
 }

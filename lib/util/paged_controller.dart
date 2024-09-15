@@ -8,7 +8,8 @@ class PagedController extends ScrollController {
   }
 
   /// The callback to call, when the end of the page is reached.
-  final void Function() loadMore;
+  /// While it can be replaced, do so only if absolutely needed.
+  void Function() loadMore;
 
   /// Keeps track of the last [position.maxScrollExtent].
   /// Used to ensure that when the end of the page is reached,
@@ -32,20 +33,5 @@ class PagedController extends ScrollController {
   void detach(ScrollPosition position) {
     _lastMaxExtent = 0;
     super.detach(position);
-  }
-}
-
-// Scroll up to the top with an animation.
-extension ScrollCommand on ScrollController {
-  Future<void> scrollToTop() async {
-    if (!hasClients || positions.last.pixels <= 0) return;
-
-    if (positions.last.pixels > 100) positions.last.jumpTo(100);
-
-    await positions.last.animateTo(
-      0,
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.decelerate,
-    );
   }
 }

@@ -8,8 +8,8 @@ import 'package:otraku/feature/filter/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class FilterDiscoverView extends StatefulWidget {
   const FilterDiscoverView({

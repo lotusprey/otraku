@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:otraku/feature/viewer/account_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Current app version.
-const versionCode = '1.4.3';
+const versionCode = '1.5.0';
 
 /// General options keys.
 enum _OptionKey {

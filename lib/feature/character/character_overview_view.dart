@@ -1,165 +1,113 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
-import 'package:otraku/feature/character/character_provider.dart';
-import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
-import 'package:otraku/widget/overlays/dialogs.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class CharacterOverviewSubview extends StatelessWidget {
-  const CharacterOverviewSubview({
-    required this.id,
-    required this.scrollCtrl,
-    required this.imageUrl,
-  });
+  const CharacterOverviewSubview.asFragment({
+    required this.character,
+    required this.invalidate,
+    required ScrollController this.scrollCtrl,
+  }) : header = null;
 
-  final int id;
-  final ScrollController scrollCtrl;
-  final String? imageUrl;
+  const CharacterOverviewSubview.withHeader({
+    required this.character,
+    required this.invalidate,
+    required Widget this.header,
+  }) : scrollCtrl = null;
+
+  final Character character;
+  final void Function() invalidate;
+  final Widget? header;
+  final ScrollController? scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.sizeOf(context);
-    final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
-    final imageHeight = imageWidth * Theming.coverHtoWRatio;
+    final mediaQuery = MediaQuery.of(context);
+    final refreshControl = SliverRefreshControl(onRefresh: invalidate);
 
-    return Consumer(
-      builder: (context, ref, _) {
-        final character = ref.watch(characterProvider(id));
-        final imageUrl = character.valueOrNull?.imageUrl ?? this.imageUrl;
-
-        final header = SliverToBoxAdapter(
-          child: IntrinsicHeight(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (imageUrl != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: Theming.offset),
-                    child: Hero(
-                      tag: id,
-                      child: ClipRRect(
-                        borderRadius: Theming.borderRadiusSmall,
-                        child: Container(
-                          width: imageWidth,
-                          height: imageHeight,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest,
-                          child: GestureDetector(
-                            child: CachedImage(imageUrl),
-                            onTap: () => showDialog(
-                              context: context,
-                              builder: (context) => ImageDialog(imageUrl),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                character.unwrapPrevious().maybeWhen(
-                      orElse: () => const SizedBox(),
-                      data: (data) => Flexible(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            GestureDetector(
-                              onTap: () => Toast.copy(context, data.name),
-                              child: Text(
-                                data.name,
-                                style: Theme.of(context).textTheme.titleLarge,
-                              ),
-                            ),
-                            if (data.altNames.isNotEmpty)
-                              Text(data.altNames.join(', ')),
-                            if (data.altNamesSpoilers.isNotEmpty)
-                              GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                child: Text(
-                                  'Spoiler names',
-                                  style: Theme.of(context).textTheme.labelLarge,
-                                ),
-                                onTap: () => showDialog(
-                                  context: context,
-                                  builder: (context) => TextDialog(
-                                    title: 'Spoiler names',
-                                    text: data.altNamesSpoilers.join(', '),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+    return CustomScrollView(
+      physics: Theming.bouncyPhysics,
+      controller: scrollCtrl,
+      slivers: [
+        if (header != null) ...[
+          header!,
+          MediaQuery(
+            data: mediaQuery.copyWith(
+              padding: mediaQuery.padding.copyWith(top: 0),
+            ),
+            child: refreshControl,
+          ),
+        ] else
+          refreshControl,
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              _NameTable(character),
+              const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
+              SliverTableList([
+                if (character.dateOfBirth != null)
+                  ('Birth', character.dateOfBirth!),
+                if (character.age != null) ('Age', character.age!),
+                if (character.bloodType != null)
+                  ('Blood Type', character.bloodType!),
+              ]),
+              if (character.description.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: 15)),
+                HtmlContent(
+                  character.description,
+                  renderMode: RenderMode.sliverList,
+                ),
               ],
+            ],
+          ),
+        ),
+        const SliverFooter(),
+      ],
+    );
+  }
+}
+
+class _NameTable extends StatefulWidget {
+  const _NameTable(this.character);
+
+  final Character character;
+
+  @override
+  State<_NameTable> createState() => __NameTableState();
+}
+
+class __NameTableState extends State<_NameTable> {
+  var _showSpoilers = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverMainAxisGroup(
+      slivers: [
+        SliverTableList([
+          ('Full', widget.character.fullName),
+          if (widget.character.nativeName != null)
+            ('Native', widget.character.nativeName!),
+          ...widget.character.altNames.map((s) => ('Alternative', s)),
+          if (_showSpoilers)
+            ...widget.character.altNamesSpoilers.map(
+              (s) => ('Alternative Spoiler', s),
+            ),
+        ]),
+        if (widget.character.altNamesSpoilers.isNotEmpty && !_showSpoilers)
+          SliverToBoxAdapter(
+            child: TextButton.icon(
+              label: const Text('Show Spoilers'),
+              icon: const Icon(Ionicons.eye_outline),
+              onPressed: () => setState(() => _showSpoilers = true),
             ),
           ),
-        );
-
-        final refreshControl = SliverRefreshControl(
-          onRefresh: () => ref.invalidate(characterProvider(id)),
-        );
-
-        return ConstrainedView(
-          child: character.unwrapPrevious().when(
-                loading: () => CustomScrollView(
-                  physics: Theming.bouncyPhysics,
-                  controller: scrollCtrl,
-                  slivers: [
-                    refreshControl,
-                    header,
-                    const SliverFillRemaining(child: Center(child: Loader())),
-                    const SliverFooter(),
-                  ],
-                ),
-                error: (_, __) => CustomScrollView(
-                  physics: Theming.bouncyPhysics,
-                  controller: scrollCtrl,
-                  slivers: [
-                    refreshControl,
-                    header,
-                    const SliverFillRemaining(
-                      child: Center(child: Text('No data')),
-                    ),
-                    const SliverFooter(),
-                  ],
-                ),
-                data: (data) => CustomScrollView(
-                  physics: Theming.bouncyPhysics,
-                  controller: scrollCtrl,
-                  slivers: [
-                    refreshControl,
-                    header,
-                    const SliverToBoxAdapter(child: SizedBox(height: 15)),
-                    TableList([
-                      ('Favorites', data.favorites.toString()),
-                      if (data.dateOfBirth != null)
-                        ('Birth', data.dateOfBirth!),
-                      if (data.age != null) ('Age', data.age!),
-                      if (data.gender != null) ('Gender', data.gender!),
-                      if (data.bloodType != null)
-                        ('Blood Type', data.bloodType!),
-                    ]),
-                    if (data.description.isNotEmpty) ...[
-                      const SliverToBoxAdapter(child: SizedBox(height: 15)),
-                      HtmlContent(
-                        data.description,
-                        renderMode: RenderMode.sliverList,
-                      ),
-                    ],
-                    const SliverFooter(),
-                  ],
-                ),
-              ),
-        );
-      },
+      ],
     );
   }
 }

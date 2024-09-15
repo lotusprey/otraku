@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/layouts/bottom_bar.dart';
-import 'package:otraku/widget/layouts/floating_bar.dart';
-import 'package:otraku/widget/layouts/scaffolds.dart';
-import 'package:otraku/widget/layouts/top_bar.dart';
-import 'package:otraku/widget/link_tile.dart';
-import 'package:otraku/util/toast.dart';
+import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
+import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/layout/top_bar.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
 import 'package:otraku/feature/calendar/calendar_filter_sheet.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/calendar/calendar_provider.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
 
 class CalendarView extends StatefulWidget {
   const CalendarView();
@@ -44,60 +43,59 @@ class _CalendarViewState extends State<CalendarView> {
             date.month == today.month &&
             date.year == today.year;
 
-        return PageScaffold(
-          bottomBar: BottomBar([
-            const SizedBox(width: Theming.offset),
-            SizedBox(
-              width: 60,
-              child: isBeforeToday
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_rounded),
-                      onPressed: () => _setDate(
-                        ref,
-                        date.subtract(const Duration(days: 1)),
-                      ),
-                    ),
-            ),
-            Expanded(
-              child: TextButton(
-                onPressed: () => showDatePicker(
-                  context: context,
-                  initialDate: date,
-                  firstDate: today.add(const Duration(days: -1)),
-                  lastDate: today.add(const Duration(days: 150)),
-                ).then((newDate) {
-                  if (newDate != null && newDate != date) {
-                    _setDate(ref, newDate);
-                  }
-                }),
-                child: Text(date.formattedWithWeekDay),
-              ),
-            ),
-            SizedBox(
-              width: 60,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_forward_ios_rounded),
-                onPressed: () => _setDate(
-                  ref,
-                  date.add(const Duration(days: 1)),
-                ),
-              ),
-            ),
-            const SizedBox(width: Theming.offset),
-          ]),
-          child: TabScaffold(
+        return AdaptiveScaffold(
+          (context, compact) => ScaffoldConfig(
             topBar: const TopBar(title: 'Calendar'),
-            floatingBar: FloatingBar(
+            floatingAction: HidingFloatingActionButton(
+              key: const Key('filter'),
               scrollCtrl: _scrollCtrl,
-              children: [
-                ActionButton(
-                  tooltip: 'Filter',
-                  icon: Ionicons.funnel_outline,
-                  onTap: () => showCalendarFilterSheet(context, ref),
-                ),
-              ],
+              child: FloatingActionButton(
+                tooltip: 'Filter',
+                onPressed: () => showCalendarFilterSheet(context, ref),
+                child: const Icon(Ionicons.funnel_outline),
+              ),
             ),
+            bottomBar: BottomBar([
+              const SizedBox(width: Theming.offset),
+              SizedBox(
+                width: 60,
+                child: isBeforeToday
+                    ? null
+                    : IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_rounded),
+                        onPressed: () => _setDate(
+                          ref,
+                          date.subtract(const Duration(days: 1)),
+                        ),
+                      ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () => showDatePicker(
+                    context: context,
+                    initialDate: date,
+                    firstDate: today.add(const Duration(days: -1)),
+                    lastDate: today.add(const Duration(days: 150)),
+                  ).then((newDate) {
+                    if (newDate != null && newDate != date) {
+                      _setDate(ref, newDate);
+                    }
+                  }),
+                  child: Text(date.formattedWithWeekDay),
+                ),
+              ),
+              SizedBox(
+                width: 60,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_forward_ios_rounded),
+                  onPressed: () => _setDate(
+                    ref,
+                    date.add(const Duration(days: 1)),
+                  ),
+                ),
+              ),
+              const SizedBox(width: Theming.offset),
+            ]),
             child: PagedView(
               provider: calendarProvider,
               scrollCtrl: _scrollCtrl,
@@ -151,10 +149,9 @@ class _Tile extends StatelessWidget {
     const contentPadding = EdgeInsets.symmetric(horizontal: Theming.offset);
 
     return Card(
-      child: LinkTile(
+      child: MediaRouteTile(
         id: item.mediaId,
-        info: item.cover,
-        discoverType: DiscoverType.anime,
+        imageUrl: item.cover,
         child: Row(
           children: [
             Hero(
@@ -227,7 +224,7 @@ class _ExternalLinkList extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(right: Theming.offset / 2),
           child: ActionChip(
-            onPressed: () => Toast.launch(context, links[i].url),
+            onPressed: () => SnackBarExtension.launch(context, links[i].url),
             label: Text(links[i].site),
             avatar: links[i].color != null
                 ? Container(

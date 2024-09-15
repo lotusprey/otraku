@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/extensions.dart';
+import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';

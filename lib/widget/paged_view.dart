@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/model/paged.dart';
+import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/util/toast.dart';
-import 'package:otraku/widget/layouts/constrained_view.dart';
-import 'package:otraku/widget/loaders/loaders.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/widget/layout/constrained_view.dart';
+import 'package:otraku/widget/loaders.dart';
 
 /// A wrapper around [PagedSelectionView] to reduce boilerplate,
 /// for the cases where [PagedSelectionView.select] is redundant.
@@ -14,21 +14,18 @@ class PagedView<T> extends StatelessWidget {
     required this.scrollCtrl,
     required this.onRefresh,
     required this.onData,
-    this.withTopOffset = true,
   });
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
   final ScrollController scrollCtrl;
   final void Function(void Function(ProviderOrFamily) invalidate) onRefresh;
   final Widget Function(Paged<T>) onData;
-  final bool withTopOffset;
 
   @override
   Widget build(BuildContext context) => PagedSelectionView(
         provider: provider,
         onRefresh: onRefresh,
         scrollCtrl: scrollCtrl,
-        withTopOffset: withTopOffset,
         onData: onData,
         select: (data) => data,
       );
@@ -41,12 +38,10 @@ class PagedSelectionView<T, U> extends StatelessWidget {
     required this.onRefresh,
     required this.onData,
     required this.select,
-    this.withTopOffset = true,
   });
 
   final ProviderListenable<AsyncValue<T>> provider;
   final void Function(void Function(ProviderOrFamily) invalidate) onRefresh;
-  final bool withTopOffset;
 
   /// When data is available, [select] extracts a paginated list.
   final Paged<U> Function(T) select;
@@ -64,7 +59,10 @@ class PagedSelectionView<T, U> extends StatelessWidget {
         ref.listen<AsyncValue>(
           provider,
           (_, s) => s.whenOrNull(
-            error: (error, _) => Toast.show(context, error.toString()),
+            error: (error, _) => SnackBarExtension.show(
+              context,
+              error.toString(),
+            ),
           ),
         );
 
@@ -74,7 +72,6 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   SliverRefreshControl(
-                    withTopOffset: withTopOffset,
                     onRefresh: () => onRefresh(ref.invalidate),
                   ),
                   const SliverFillRemaining(
@@ -90,7 +87,6 @@ class PagedSelectionView<T, U> extends StatelessWidget {
                     controller: scrollCtrl,
                     slivers: [
                       SliverRefreshControl(
-                        withTopOffset: withTopOffset,
                         onRefresh: () => onRefresh(ref.invalidate),
                       ),
                       selection.items.isEmpty

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:otraku/feature/discover/discover_models.dart';
+import 'package:otraku/feature/discover/discover_model.dart';
+import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/grids/sliver_grid_delegates.dart';
-import 'package:otraku/widget/link_tile.dart';
+import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class DiscoverMediaGrid extends StatelessWidget {
@@ -47,9 +47,7 @@ class _Tile extends StatelessWidget {
     }
 
     if (item.entryStatus != null) {
-      textRailItems[item.entryStatus!.label(
-        item.type == DiscoverType.anime,
-      )] = true;
+      textRailItems[item.entryStatus!.label(item.isAnime)] = true;
     }
 
     if (item.isAdult) textRailItems['Adult'] = true;
@@ -57,10 +55,9 @@ class _Tile extends StatelessWidget {
     final detailTextStyle = Theme.of(context).textTheme.labelSmall;
 
     return Card(
-      child: LinkTile(
+      child: MediaRouteTile(
         id: item.id,
-        discoverType: DiscoverType.anime,
-        info: item.imageUrl,
+        imageUrl: item.imageUrl,
         child: Row(
           children: [
             Hero(
@@ -90,7 +87,7 @@ class _Tile extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              item.title,
+                              item.name,
                               overflow: TextOverflow.fade,
                             ),
                           ),

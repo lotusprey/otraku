@@ -16,6 +16,7 @@ class DiscoverMediaSimpleGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 40,
+        rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         (_, i) => _Tile(items[i]),
@@ -42,7 +43,7 @@ class _Tile extends StatelessWidget {
               tag: item.id,
               child: ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(item.imageUrl, fit: BoxFit.contain),
+                child: CachedImage(item.imageUrl),
               ),
             ),
           ),

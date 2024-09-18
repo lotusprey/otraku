@@ -33,10 +33,10 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => context.push(Routes.review(item.id, item.bannerUrl)),
-      child: Card(
+    return Card(
+      child: InkWell(
+        borderRadius: Theming.borderRadiusSmall,
+        onTap: () => context.push(Routes.review(item.id, item.bannerUrl)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [

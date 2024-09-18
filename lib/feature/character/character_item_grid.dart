@@ -17,6 +17,7 @@ class CharacterItemGrid extends StatelessWidget {
       gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
         extraHeight: 40,
+        rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         (_, i) => _Tile(items[i]),
@@ -33,9 +34,9 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => context.push(Routes.staff(item.id, item.imageUrl)),
+    return InkWell(
+      borderRadius: Theming.borderRadiusSmall,
+      onTap: () => context.push(Routes.character(item.id, item.imageUrl)),
       child: Column(
         children: [
           Expanded(
@@ -43,7 +44,7 @@ class _Tile extends StatelessWidget {
               tag: item.id,
               child: ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(item.imageUrl, fit: BoxFit.contain),
+                child: CachedImage(item.imageUrl),
               ),
             ),
           ),

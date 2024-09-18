@@ -37,6 +37,7 @@ class _Tile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: InkWell(
+        borderRadius: Theming.borderRadiusSmall,
         onTap: () => onTap(item),
         child: Row(
           children: [

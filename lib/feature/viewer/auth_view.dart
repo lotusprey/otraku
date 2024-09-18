@@ -113,6 +113,7 @@ class AuthViewState extends ConsumerState<AuthView> {
             return Card(
               margin: const EdgeInsets.only(top: Theming.offset),
               child: InkWell(
+                borderRadius: Theming.borderRadiusSmall,
                 onTap: () {
                   if (DateTime.now().compareTo(accounts[i].expiration) < 0) {
                     _selectAccount(i);

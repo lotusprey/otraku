@@ -24,6 +24,9 @@ class AdaptiveScaffold extends StatelessWidget {
       resizeToAvoidBottomInset = false;
     }
 
+    var startFabLocation = _StartFloatFabLocation.withoutOffset;
+    const endFabLocation = FloatingActionButtonLocation.endFloat;
+
     var child = config.child;
     var bottomNavigationBar = config.bottomBar;
     if (config.navigationConfig != null) {
@@ -42,6 +45,8 @@ class AdaptiveScaffold extends StatelessWidget {
           onSame: config.navigationConfig!.onSame,
         );
 
+        startFabLocation = _StartFloatFabLocation.withOffset;
+
         child = Expanded(child: child);
         child = Row(
           children: Directionality.of(context) == TextDirection.ltr
@@ -55,13 +60,10 @@ class AdaptiveScaffold extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, child) {
-        if (config.floatingAction != null) {
-          final leftHanded = Persistence().leftHanded;
+        final leftHanded = Persistence().leftHanded;
 
-          floatingActionButtonLocation = leftHanded
-              ? FloatingActionButtonLocation.startFloat
-              : FloatingActionButtonLocation.endFloat;
-        }
+        floatingActionButtonLocation =
+            leftHanded ? startFabLocation : endFabLocation;
 
         return SafeArea(
           top: false,
@@ -124,4 +126,33 @@ class NavigationConfig {
   final Map<String, IconData> items;
   final void Function(int) onChanged;
   final void Function(int) onSame;
+}
+
+class _StartFloatFabLocation extends StandardFabLocation
+    with FabStartOffsetX, FabFloatOffsetY {
+  const _StartFloatFabLocation(this.offset);
+
+  static const withOffset = _StartFloatFabLocation(
+    Theming.normalTapTarget * 1.5,
+  );
+
+  static const withoutOffset = _StartFloatFabLocation(0);
+
+  final double offset;
+
+  @override
+  double getOffsetX(
+    ScaffoldPrelayoutGeometry scaffoldGeometry,
+    double adjustment,
+  ) {
+    return switch (scaffoldGeometry.textDirection) {
+      TextDirection.rtl =>
+        super.getOffsetX(scaffoldGeometry, adjustment + offset),
+      TextDirection.ltr =>
+        super.getOffsetX(scaffoldGeometry, adjustment - offset),
+    };
+  }
+
+  @override
+  String toString() => 'FloatingActionButtonLocation.startFloatWithOffset';
 }

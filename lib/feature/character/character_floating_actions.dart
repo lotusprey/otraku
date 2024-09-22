@@ -27,7 +27,9 @@ class CharacterMediaFilterButton extends StatelessWidget {
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: Theming.minTapTarget * 3.5,
+            initialHeight: Theming.normalTapTarget * 2.5 +
+                MediaQuery.paddingOf(context).bottom +
+                40,
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,

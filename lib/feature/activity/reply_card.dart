@@ -196,10 +196,7 @@ class _ReplyMentionButton extends StatelessWidget {
                   .appendReply(map),
             ),
           ),
-          child: const Icon(
-            Icons.reply_outlined,
-            size: Theming.iconSmall,
-          ),
+          child: const Icon(Icons.reply_rounded, size: Theming.iconSmall),
         ),
       ),
     );
@@ -240,8 +237,8 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               const SizedBox(width: 5),
               Icon(
                 !widget.reply.isLiked
-                    ? Icons.favorite_rounded
-                    : Icons.heart_broken_rounded,
+                    ? Icons.favorite_outline_rounded
+                    : Icons.favorite_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
                     ? Theme.of(context).colorScheme.primary

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -19,7 +20,7 @@ class ActivitiesNotifier
     extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int> {
   late int viewerId;
   late ActivitiesFilter filter;
-  int _lastCreatedAt = DateTime.now().millisecondsSinceEpoch;
+  int _lastCreatedAt = DateTime.now().secondsSinceEpoch;
 
   @override
   FutureOr<Paged<Activity>> build(arg) async {

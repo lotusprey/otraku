@@ -14,11 +14,13 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
   showSheet(
     context,
     SimpleSheet(
-      initialHeight: Theming.minTapTarget * 3.5,
+      initialHeight: Theming.normalTapTarget * 2 +
+          MediaQuery.paddingOf(context).bottom +
+          40,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
-        padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+        padding: const EdgeInsets.symmetric(vertical: 20),
         children: [
           ChipSelector(
             title: 'Season',

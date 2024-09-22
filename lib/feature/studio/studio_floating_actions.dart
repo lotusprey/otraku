@@ -4,44 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
-import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/sheets.dart';
-
-class StudioFavoriteButton extends StatefulWidget {
-  const StudioFavoriteButton(this.studio, this.toggleFavorite);
-
-  final Studio studio;
-  final Future<Object?> Function() toggleFavorite;
-
-  @override
-  State<StudioFavoriteButton> createState() => _StudioFavoriteButtonState();
-}
-
-class _StudioFavoriteButtonState extends State<StudioFavoriteButton> {
-  @override
-  Widget build(BuildContext context) {
-    final studio = widget.studio;
-
-    return FloatingActionButton(
-      tooltip: studio.isFavorite ? 'Unfavourite' : 'Favourite',
-      heroTag: 'favorite',
-      child: studio.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
-      onPressed: () async {
-        setState(() => studio.isFavorite = !studio.isFavorite);
-
-        final err = await widget.toggleFavorite();
-        if (err == null) return;
-
-        setState(() => studio.isFavorite = !studio.isFavorite);
-        if (context.mounted) SnackBarExtension.show(context, err.toString());
-      },
-    );
-  }
-}
 
 class StudioFilterButton extends StatelessWidget {
   const StudioFilterButton(this.id, this.ref);
@@ -64,14 +28,13 @@ class StudioFilterButton extends StatelessWidget {
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: Theming.minTapTarget * 5,
+            initialHeight: Theming.normalTapTarget * 4 +
+                MediaQuery.paddingOf(context).bottom +
+                40,
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,
-              padding: const EdgeInsets.symmetric(
-                horizontal: Theming.offset,
-                vertical: 20,
-              ),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               children: [
                 ChipSelector.ensureSelected(
                   title: 'Sort',

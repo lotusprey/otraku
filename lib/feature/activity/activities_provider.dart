@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -20,7 +19,9 @@ class ActivitiesNotifier
     extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int> {
   late int viewerId;
   late ActivitiesFilter filter;
-  int _lastCreatedAt = DateTime.now().secondsSinceEpoch;
+
+  // Used to skip activities when fetching outdated pages.
+  int? _lastId;
 
   @override
   FutureOr<Paged<Activity>> build(arg) async {
@@ -28,6 +29,7 @@ class ActivitiesNotifier
       ref.keepAlive();
     }
 
+    _lastId = null;
     viewerId = Persistence().id!;
     filter = ref.watch(activitiesFilterProvider(arg));
     return await _fetch(const Paged());
@@ -46,10 +48,10 @@ class ActivitiesNotifier
         'typeIn': filter.typeIn.map((t) => t.name).toList(),
         ...switch (filter) {
           HomeActivitiesFilter filter => {
+              'page': oldState.next,
               'isFollowing': filter.onFollowing,
               if (!filter.withViewerActivities) 'userIdNot': viewerId,
               if (!filter.onFollowing) 'hasRepliesOrText': true,
-              if (oldState.items.isNotEmpty) 'createdBefore': _lastCreatedAt,
             },
           UserActivitiesFilter filter => {
               'userId': filter.userId,
@@ -61,12 +63,14 @@ class ActivitiesNotifier
 
     final items = <Activity>[];
     for (final a in data['Page']['activities']) {
+      if (_lastId != null && a['id'] >= _lastId) continue;
+
       final item = Activity.maybe(a, viewerId, Persistence().imageQuality);
       if (item != null) items.add(item);
     }
 
     if (data['Page']['activities'].isNotEmpty) {
-      _lastCreatedAt = data['Page']['activities'].last['createdAt'];
+      _lastId = data['Page']['activities'].last['id'];
     }
 
     return oldState.withNext(

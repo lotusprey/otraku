@@ -4,8 +4,8 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_item_model.dart';
 import 'package:otraku/feature/studio/studio_item_model.dart';
 import 'package:otraku/feature/user/user_item_model.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 
@@ -22,6 +22,8 @@ enum DiscoverType {
 
   final String label;
 }
+
+enum DiscoverItemView { detailedList, simpleGrid }
 
 sealed class DiscoverItems {
   const DiscoverItems();

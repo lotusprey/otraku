@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:otraku/extension/color_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 
@@ -64,6 +65,19 @@ class CalendarFilter {
     required this.status,
   });
 
+  factory CalendarFilter.empty() => CalendarFilter(
+        date: DateTime.now(),
+        season: CalendarSeasonFilter.all,
+        status: CalendarStatusFilter.all,
+      );
+
+  factory CalendarFilter.fromMap(Map<String, dynamic> map) {
+    final season = CalendarSeasonFilter.values.getOrFirst(map['season']);
+    final status = CalendarStatusFilter.values.getOrFirst(map['status']);
+
+    return CalendarFilter(date: DateTime.now(), season: season, status: status);
+  }
+
   final DateTime date;
   final CalendarSeasonFilter season;
   final CalendarStatusFilter status;
@@ -78,6 +92,11 @@ class CalendarFilter {
         season: season ?? this.season,
         status: status ?? this.status,
       );
+
+  Map<String, dynamic> toMap() => {
+        'season': season.index,
+        'status': status.index,
+      };
 }
 
 enum CalendarSeasonFilter {

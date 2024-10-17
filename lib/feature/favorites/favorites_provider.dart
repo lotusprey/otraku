@@ -5,7 +5,7 @@ import 'package:otraku/feature/character/character_item_model.dart';
 import 'package:otraku/feature/media/media_item_model.dart';
 import 'package:otraku/feature/staff/staff_item_model.dart';
 import 'package:otraku/feature/studio/studio_item_model.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
@@ -67,6 +67,8 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         .request(GqlQuery.favorites, variables);
     data = data['User']['favourites'];
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     var anime = oldState.anime;
     var manga = oldState.manga;
     var characters = oldState.characters;
@@ -77,7 +79,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
       final map = data['anime'];
       final items = <MediaItem>[];
       for (final a in map['nodes']) {
-        items.add(MediaItem(a, Persistence().imageQuality));
+        items.add(MediaItem(a, imageQuality));
       }
 
       anime = anime.withNext(
@@ -91,7 +93,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
       final map = data['manga'];
       final items = <MediaItem>[];
       for (final m in map['nodes']) {
-        items.add(MediaItem(m, Persistence().imageQuality));
+        items.add(MediaItem(m, imageQuality));
       }
 
       manga = manga.withNext(

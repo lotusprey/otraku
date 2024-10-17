@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
@@ -84,9 +83,9 @@ class Routes {
 
   static String statistics(int id) => '/statistics/$id';
 
-  static GoRouter buildRouter(Persistence persistence) {
+  static GoRouter buildRouter(bool isGuest, bool Function() mustConfirmExit) {
     final onExit = (BuildContext context, GoRouterState _) {
-      if (!Persistence().confirmExit) return Future.value(true);
+      if (!mustConfirmExit()) return Future.value(true);
 
       return showDialog<bool>(
         context: context,
@@ -296,8 +295,7 @@ class Routes {
 
     return GoRouter(
       routes: routes,
-      initialLocation:
-          persistence.selectedAccount != null ? Routes.home() : Routes.auth,
+      initialLocation: isGuest ? Routes.auth : Routes.home(),
       errorBuilder: (context, state) => const NotFoundView(),
     );
   }

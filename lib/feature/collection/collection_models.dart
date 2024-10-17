@@ -1,10 +1,12 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/filter/filter_collection_model.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
+
+enum CollectionItemView { detailedList, simpleGrid }
 
 sealed class Collection {
   const Collection({required this.scoreFormat});
@@ -23,13 +25,16 @@ class PreviewCollection extends Collection {
     required super.scoreFormat,
   });
 
-  factory PreviewCollection(Map<String, dynamic> map) {
+  factory PreviewCollection(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) {
     final entries = <Entry>[];
     for (final l in map['lists']) {
       if (l['isCustomList']) continue;
 
       for (final e in l['entries']) {
-        entries.add(Entry(e));
+        entries.add(Entry(e, imageQuality));
       }
     }
 
@@ -60,7 +65,12 @@ class FullCollection extends Collection {
     required super.scoreFormat,
   });
 
-  factory FullCollection(Map<String, dynamic> map, bool ofAnime, int index) {
+  factory FullCollection(
+    Map<String, dynamic> map,
+    bool ofAnime,
+    int index,
+    ImageQuality imageQuality,
+  ) {
     final maps = map['lists'] as List<dynamic>;
     final lists = <EntryList>[];
     final metaData =
@@ -73,11 +83,11 @@ class FullCollection extends Collection {
 
       final l = maps.removeAt(pos);
 
-      lists.add(EntryList(l, splitCompleted));
+      lists.add(EntryList(l, splitCompleted, imageQuality));
     }
 
     for (final l in maps) {
-      lists.add(EntryList(l, splitCompleted));
+      lists.add(EntryList(l, splitCompleted, imageQuality));
     }
 
     if (index >= lists.length) index = 0;
@@ -125,7 +135,11 @@ class EntryList {
     required this.splitCompletedListFormat,
   });
 
-  factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
+  factory EntryList(
+    Map<String, dynamic> map,
+    bool splitCompleted,
+    ImageQuality imageQuality,
+  ) {
     final status =
         !map['isCustomList'] ? EntryStatus.from(map['status']) : null;
 
@@ -136,7 +150,9 @@ class EntryList {
           splitCompleted && status == EntryStatus.completed
               ? MediaFormat.from(map['entries'][0]['media']['format'])
               : null,
-      entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
+      entries: (map['entries'] as List<dynamic>)
+          .map((e) => Entry(e, imageQuality))
+          .toList(),
     );
   }
 
@@ -417,7 +433,7 @@ class Entry {
     required this.watchEnd,
   });
 
-  factory Entry(Map<String, dynamic> map) {
+  factory Entry(Map<String, dynamic> map, ImageQuality imageQuality) {
     final titles = <String>[map['media']['title']['userPreferred']];
     if (map['media']['title']['english'] != null) {
       titles.add(map['media']['title']['english']);
@@ -437,7 +453,7 @@ class Entry {
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Persistence().imageQuality.value],
+      imageUrl: map['media']['coverImage'][imageQuality.value],
       format: MediaFormat.from(map['media']['format']),
       status: ReleaseStatus.from(map['media']['status']),
       entryStatus: EntryStatus.from(map['status']),

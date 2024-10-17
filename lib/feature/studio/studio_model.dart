@@ -1,7 +1,7 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 
 class Studio {
   Studio._({

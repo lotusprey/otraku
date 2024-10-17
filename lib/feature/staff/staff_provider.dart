@@ -7,9 +7,9 @@ import 'package:otraku/feature/staff/staff_filter_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/staff/staff_filter_provider.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 
 final staffProvider =
     AsyncNotifierProvider.autoDispose.family<StaffNotifier, Staff, int>(
@@ -92,6 +92,8 @@ class StaffRelationsNotifier
         );
     data = data['Staff'];
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     var charactersAndMedia = oldState.charactersAndMedia;
     var roles = oldState.roles;
 
@@ -102,7 +104,7 @@ class StaffRelationsNotifier
         final media = StaffRelatedItem.media(
           m['node'],
           StringExtension.tryNoScreamingSnakeCase(m['node']['format']),
-          Persistence().imageQuality,
+          imageQuality,
         );
 
         for (final c in m['characters']) {
@@ -131,7 +133,7 @@ class StaffRelationsNotifier
         items.add(StaffRelatedItem.media(
           s['node'],
           s['staffRole'],
-          Persistence().imageQuality,
+          imageQuality,
         ));
       }
 

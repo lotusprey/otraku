@@ -1,8 +1,8 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/util/persistence.dart';
 
 const homeFeedId = -1;
 
@@ -70,7 +70,7 @@ sealed class Activity {
 
   static Activity? maybe(
     Map<String, dynamic> map,
-    int viewerId,
+    int? viewerId,
     ImageQuality imageQuality,
   ) {
     try {

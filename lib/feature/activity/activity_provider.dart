@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
-import 'package:otraku/util/persistence.dart';
 
 final activityProvider = AsyncNotifierProvider.autoDispose
     .family<ActivityNotifier, ExpandedActivity, int>(
@@ -15,11 +15,14 @@ final activityProvider = AsyncNotifierProvider.autoDispose
 
 class ActivityNotifier
     extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, int> {
-  late int viewerId;
+  int? _viewerId;
 
   @override
   FutureOr<ExpandedActivity> build(arg) async {
-    viewerId = Persistence().id!;
+    _viewerId = ref.watch(
+      persistenceProvider.select((s) => s.accountGroup.account?.id),
+    );
+
     return await _fetch(null);
   }
 
@@ -46,8 +49,8 @@ class ActivityNotifier
     final activity = oldState?.activity ??
         Activity.maybe(
           data['Activity'],
-          viewerId,
-          Persistence().imageQuality,
+          _viewerId,
+          ref.read(persistenceProvider).options.imageQuality,
         );
     if (activity == null) throw StateError('Could not parse activity');
 

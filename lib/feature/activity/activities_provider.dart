@@ -5,10 +5,10 @@ import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 
 final activitiesProvider = AsyncNotifierProvider.autoDispose
     .family<ActivitiesNotifier, Paged<Activity>, int>(
@@ -17,11 +17,10 @@ final activitiesProvider = AsyncNotifierProvider.autoDispose
 
 class ActivitiesNotifier
     extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int> {
-  late int viewerId;
-  late ActivitiesFilter filter;
-
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
+  int? _viewerId;
+  late ActivitiesFilter _filter;
 
   @override
   FutureOr<Paged<Activity>> build(arg) async {
@@ -30,8 +29,11 @@ class ActivitiesNotifier
     }
 
     _lastId = null;
-    viewerId = Persistence().id!;
-    filter = ref.watch(activitiesFilterProvider(arg));
+    _filter = ref.watch(activitiesFilterProvider(arg));
+    _viewerId = ref.watch(
+      persistenceProvider.select((s) => s.accountGroup.account?.id),
+    );
+
     return await _fetch(const Paged());
   }
 
@@ -45,12 +47,13 @@ class ActivitiesNotifier
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.activityPage,
       {
-        'typeIn': filter.typeIn.map((t) => t.name).toList(),
-        ...switch (filter) {
+        'typeIn': _filter.typeIn.map((t) => t.name).toList(),
+        ...switch (_filter) {
           HomeActivitiesFilter filter => {
               'page': oldState.next,
               'isFollowing': filter.onFollowing,
-              if (!filter.withViewerActivities) 'userIdNot': viewerId,
+              if (!filter.withViewerActivities && _viewerId != null)
+                'userIdNot': _viewerId,
               if (!filter.onFollowing) 'hasRepliesOrText': true,
             },
           UserActivitiesFilter filter => {
@@ -61,11 +64,13 @@ class ActivitiesNotifier
       },
     );
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final items = <Activity>[];
     for (final a in data['Page']['activities']) {
       if (_lastId != null && a['id'] >= _lastId) continue;
 
-      final item = Activity.maybe(a, viewerId, Persistence().imageQuality);
+      final item = Activity.maybe(a, _viewerId, imageQuality);
       if (item != null) items.add(item);
     }
 
@@ -83,7 +88,11 @@ class ActivitiesNotifier
     final value = state.valueOrNull;
     if (value == null) return;
 
-    final activity = Activity.maybe(map, viewerId, Persistence().imageQuality);
+    final activity = Activity.maybe(
+      map,
+      _viewerId,
+      ref.read(persistenceProvider).options.imageQuality,
+    );
     if (activity == null) return;
 
     state = AsyncValue.data(Paged(

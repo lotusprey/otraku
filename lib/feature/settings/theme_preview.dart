@@ -1,69 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/home/home_provider.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 
-class ThemePreview extends StatefulWidget {
-  const ThemePreview();
+class ThemePreview extends StatelessWidget {
+  const ThemePreview({required this.ref, required this.options});
 
-  @override
-  State<StatefulWidget> createState() => _ThemePreviewState();
-}
+  final WidgetRef ref;
+  final Options options;
 
-class _ThemePreviewState extends State<ThemePreview> {
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).colorScheme.brightness;
 
-    return Consumer(
-      builder: (context, ref, _) {
-        final system = ref.watch(homeProvider.select(
-          (s) => brightness == Brightness.dark
-              ? s.systemDarkPrimaryColor
-              : s.systemLightPrimaryColor,
-        ));
+    final systemPrimaryColor = ref.watch(homeProvider.select(
+      (s) => brightness == Brightness.dark
+          ? s.systemDarkPrimaryColor
+          : s.systemLightPrimaryColor,
+    ));
 
-        final background =
-            brightness == Brightness.dark && Persistence().pureWhiteOrBlackTheme
-                ? Colors.black
-                : null;
+    final background = options.highContrast
+        ? brightness == Brightness.dark
+            ? Colors.black
+            : Colors.white
+        : null;
 
-        final children = <_ThemeCard>[];
-        if (system != null) {
-          children.add(_ThemeCard(
-            name: 'System',
-            scheme: ColorScheme.fromSeed(
-              seedColor: system,
-              brightness: brightness,
-            ).copyWith(surface: background),
-            active: Persistence().theme == null,
-            onTap: () => setState(() => Persistence().theme = null),
-          ));
-        }
+    final children = <_ThemeCard>[];
+    if (systemPrimaryColor != null) {
+      children.add(_ThemeCard(
+        name: 'System',
+        scheme: ColorScheme.fromSeed(
+          seedColor: systemPrimaryColor,
+          brightness: brightness,
+        ).copyWith(surface: background),
+        active: options.themeBase == null,
+        onTap: () => ref
+            .read(persistenceProvider.notifier)
+            .setOptions(options.copyWith(themeBase: () => null)),
+      ));
+    }
 
-        for (int i = 0; i < Theming.colorSeeds.length; i++) {
-          final e = Theming.colorSeeds.entries.elementAt(i);
-          children.add(_ThemeCard(
-            name: e.key,
-            scheme: ColorScheme.fromSeed(
-              seedColor: e.value,
-              brightness: brightness,
-            ).copyWith(surface: background),
-            active: Persistence().theme == i,
-            onTap: () => setState(() => Persistence().theme = i),
-          ));
-        }
+    for (final tb in ThemeBase.values) {
+      children.add(_ThemeCard(
+        name: tb.title,
+        scheme: ColorScheme.fromSeed(
+          seedColor: tb.seed,
+          brightness: brightness,
+        ).copyWith(surface: background),
+        active: options.themeBase == tb,
+        onTap: () => ref
+            .read(persistenceProvider.notifier)
+            .setOptions(options.copyWith(themeBase: () => tb)),
+      ));
+    }
 
-        return SizedBox(
-          height: 195,
-          child: ShadowedOverflowList(
-            itemCount: children.length,
-            itemBuilder: (_, i) => children[i],
-          ),
-        );
-      },
+    return SizedBox(
+      height: 195,
+      child: ShadowedOverflowList(
+        itemCount: children.length,
+        itemBuilder: (_, i) => children[i],
+      ),
     );
   }
 }

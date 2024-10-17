@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/home/home_provider.dart';
@@ -25,7 +25,11 @@ class CollectionNotifier
       _ => 0,
     };
 
-    final isFull = arg.userId != Persistence().id ||
+    final viewerId = ref.watch(
+      persistenceProvider.select((s) => s.accountGroup.account?.id),
+    );
+
+    final isFull = arg.userId != viewerId ||
         ref.watch(homeProvider.select(
           (s) => arg.ofAnime
               ? s.didExpandAnimeCollection
@@ -41,9 +45,16 @@ class CollectionNotifier
       },
     );
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final collection = isFull
-        ? FullCollection(data['MediaListCollection'], arg.ofAnime, index)
-        : PreviewCollection(data['MediaListCollection']);
+        ? FullCollection(
+            data['MediaListCollection'],
+            arg.ofAnime,
+            index,
+            imageQuality,
+          )
+        : PreviewCollection(data['MediaListCollection'], imageQuality);
     collection.sort(_sort);
     return collection;
   }
@@ -79,7 +90,10 @@ class CollectionNotifier
         {'userId': arg.userId, 'mediaId': newEdit.mediaId},
       );
 
-      entry = Entry(data['MediaList']);
+      entry = Entry(
+        data['MediaList'],
+        ref.read(persistenceProvider).options.imageQuality,
+      );
     } catch (e) {
       return e.toString();
     }

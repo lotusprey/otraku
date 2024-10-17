@@ -3,11 +3,12 @@ import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:workmanager/workmanager.dart';
 
 final _notificationPlugin = FlutterLocalNotificationsPlugin();
@@ -63,17 +64,19 @@ class BackgroundHandler {
 void _fetch() => Workmanager().executeTask((_, __) async {
       final container = ProviderContainer();
 
-      // Initialise local settings.
-      await Persistence.init();
-      if (Persistence().selectedAccount == null) return true;
-      Persistence().lastBackgroundWork = DateTime.now();
+      await container.read(persistenceProvider.notifier).init();
+      final persistence = container.read(persistenceProvider);
 
-      // Log in.
-      if (!await container.read(repositoryProvider.notifier).init()) {
-        return true;
-      }
+      // No notifications are fetched in guest mode.
+      if (persistence.accountGroup.accountIndex == null) return true;
 
-      // Get new notifications.
+      var appMeta = AppMeta(
+        lastBackgroundJob: DateTime.now(),
+        lastNotificationId: persistence.appMeta.lastNotificationId,
+        lastAppVersion: persistence.appMeta.lastAppVersion,
+      );
+      container.read(persistenceProvider.notifier).setAppMeta(appMeta);
+
       final repository = container.read(repositoryProvider);
       Map<String, dynamic> data;
       try {
@@ -90,14 +93,19 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       if (count > ns.length) count = ns.length;
       if (count == 0) return true;
 
-      final last = Persistence().lastNotificationId;
-      Persistence().lastNotificationId = ns[0]?['id'] ?? -1;
+      final lastNotificationId = persistence.appMeta.lastNotificationId;
 
-      // Show notifications.
-      for (int i = 0; i < count && ns[i]?['id'] != last; i++) {
+      appMeta = AppMeta(
+        lastNotificationId: ns[0]?['id'] ?? -1,
+        lastBackgroundJob: persistence.appMeta.lastBackgroundJob,
+        lastAppVersion: persistence.appMeta.lastAppVersion,
+      );
+      container.read(persistenceProvider.notifier).setAppMeta(appMeta);
+
+      for (int i = 0; i < count && ns[i]?['id'] != lastNotificationId; i++) {
         final notification = SiteNotification.maybe(
           ns[i],
-          Persistence().imageQuality,
+          persistence.options.imageQuality,
         );
 
         if (notification == null) continue;

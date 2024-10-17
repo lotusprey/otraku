@@ -1,8 +1,8 @@
 import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/tile_modelable.dart';
 
 class Character {

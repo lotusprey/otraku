@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -11,7 +12,6 @@ import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_header.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/loaders.dart';
@@ -69,20 +69,24 @@ class _UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final viewerId = ref.watch(
+          persistenceProvider.select((s) => s.accountGroup.account?.id),
+        );
+
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
           (_, s) => s.whenOrNull(
             data: (data) {
-              if (homeScrollCtrl != null) {
-                Persistence().confirmAccountNameAndAvatar(
-                  data.id,
-                  data.name,
-                  data.imageUrl,
-                );
-              }
+              if (homeScrollCtrl == null) return;
+
+              ref
+                  .read(persistenceProvider.notifier)
+                  .refreshViewerDetails(data.name, data.imageUrl);
             },
-            error: (error, _) =>
-                SnackBarExtension.show(context, error.toString()),
+            error: (error, _) => SnackBarExtension.show(
+              context,
+              error.toString(),
+            ),
           ),
         );
 
@@ -135,7 +139,7 @@ class _UserView extends StatelessWidget {
                 slivers: [
                   header,
                   refreshControl,
-                  _ButtonRow(data.id),
+                  _ButtonRow(data.id, viewerId),
                   if (data.description.isNotEmpty) ...[
                     const SliverToBoxAdapter(
                       child: SizedBox(height: Theming.offset),
@@ -157,14 +161,15 @@ class _UserView extends StatelessWidget {
 }
 
 class _ButtonRow extends StatelessWidget {
-  const _ButtonRow(this.id);
+  const _ButtonRow(this.id, this.viewerId);
 
   final int id;
+  final int? viewerId;
 
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      if (id != Persistence().id) ...[
+      if (id != viewerId) ...[
         _Button(
           label: 'Anime',
           icon: Ionicons.film,

@@ -1,16 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:otraku/feature/viewer/account_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:path_provider/path_provider.dart';
-
-/// Current app version.
-const versionCode = '1.5.3';
 
 /// General options keys.
 enum _OptionKey {
@@ -46,18 +43,6 @@ enum _OptionKey {
 enum _ProfileKey {
   selectedAccount,
   accounts,
-}
-
-/// Available image qualities.
-enum ImageQuality {
-  VeryHigh('Very High', 'extraLarge'),
-  High('High', 'large'),
-  Medium('Medium', 'medium');
-
-  const ImageQuality(this.label, this.value);
-
-  final String label;
-  final String value;
 }
 
 /// Hive box keys.
@@ -102,7 +87,7 @@ class Persistence extends ChangeNotifier {
     final accounts =
         (_profileBox.get(_ProfileKey.accounts.name) as List<dynamic>? ?? [])
             .cast<Map<dynamic, dynamic>>()
-            .map((a) => Account.fromMap(a.cast<String, dynamic>()))
+            .map((a) => Account.fromMap(a.cast<String, dynamic>(), ''))
             .toList();
     final selectedAccountIndex =
         _profileBox.get(_ProfileKey.selectedAccount.name);
@@ -220,13 +205,6 @@ class Persistence extends ChangeNotifier {
     _instance = Persistence._read();
   }
 
-  /// Clears option data and resets instance.
-  /// Doesn't affect local profile settings or online account settings.
-  static void resetOptions() {
-    Hive.box(_optionsBoxKey).clear();
-    _instance = Persistence._read();
-  }
-
   static Box get _optionBox => Hive.box(_optionsBoxKey);
   static Box get _profileBox => Hive.box(_profileBoxKey);
 
@@ -329,7 +307,7 @@ class Persistence extends ChangeNotifier {
       return;
     }
 
-    if (v < 0 || v >= Theming.colorSeeds.length) return;
+    if (v < 0 || v >= ThemeBase.values.length) return;
     _theme = v;
     _optionBox.put(_OptionKey.themeIndex.name, v);
     notifyListeners();
@@ -452,11 +430,6 @@ class Persistence extends ChangeNotifier {
     _optionBox.put(_OptionKey.lastBackgroundWork.name, v);
   }
 
-  void updateVersionCodeToLatestVersion() {
-    _lastVersionCode = versionCode;
-    _optionBox.put(_OptionKey.lastVersionCode.name, versionCode);
-  }
-
   /// If the [name] or [avatarUrl] have changed, update the cached account info.
   void confirmAccountNameAndAvatar(int id, String name, String avatarUrl) {
     for (int i = 0; i < _accounts.length; i++) {
@@ -468,6 +441,7 @@ class Persistence extends ChangeNotifier {
             name: name,
             avatarUrl: avatarUrl,
             expiration: account.expiration,
+            accessToken: account.accessToken,
           );
         }
         return;

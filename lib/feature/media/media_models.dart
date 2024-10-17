@@ -4,11 +4,11 @@ import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_models.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/tile_modelable.dart';
 
 class Media {
@@ -110,10 +110,11 @@ class RelatedMedia {
     required this.releaseStatus,
   });
 
-  factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
+  factory RelatedMedia(Map<String, dynamic> map, ImageQuality imageQuality) =>
+      RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
+        imageUrl: map['node']['coverImage'][imageQuality.value],
         relationType:
             StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
@@ -247,7 +248,7 @@ class Recommendation {
     required this.entryStatus,
   });
 
-  factory Recommendation(Map<String, dynamic> map) {
+  factory Recommendation(Map<String, dynamic> map, ImageQuality imageQuality) {
     bool? userRating;
     if (map['userRating'] == 'RATE_UP') userRating = true;
     if (map['userRating'] == 'RATE_DOWN') userRating = false;
@@ -257,8 +258,7 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      imageUrl: map['mediaRecommendation']['coverImage']
-          [Persistence().imageQuality.value],
+      imageUrl: map['mediaRecommendation']['coverImage'][imageQuality.value],
       isAnime: map['type'] == 'ANIME',
       releaseYear: map['mediaRecommendation']['startDate']?['year'],
       format: MediaFormat.from(map['mediaRecommendation']['format']),
@@ -353,7 +353,7 @@ class MediaInfo {
   final bool isAdult;
   final externalLinks = <ExternalLink>[];
 
-  factory MediaInfo(Map<String, dynamic> map) {
+  factory MediaInfo(Map<String, dynamic> map, ImageQuality imageQuality) {
     String? duration;
     if (map['duration'] != null) {
       final time = map['duration'];
@@ -379,7 +379,7 @@ class MediaInfo {
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
       description: map['description'] ?? '',
-      cover: map['coverImage'][Persistence().imageQuality.value],
+      cover: map['coverImage'][imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: MediaFormat.from(map['format']),

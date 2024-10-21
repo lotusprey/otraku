@@ -9,6 +9,7 @@ extension SnackBarExtension on SnackBar {
   ) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
+      behavior: SnackBarBehavior.floating,
     ));
   }
 

@@ -23,7 +23,9 @@ extension SnackBarExtension on SnackBar {
     try {
       final ok = await launchUrl(
         Uri.parse(link),
-        mode: LaunchMode.externalApplication,
+        mode: link.startsWith("https://anilist.co")
+            ? LaunchMode.externalApplication
+            : LaunchMode.inAppBrowserView,
       );
 
       if (ok) return true;

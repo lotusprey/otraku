@@ -9,6 +9,7 @@ extension SnackBarExtension on SnackBar {
   ) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
+      behavior: SnackBarBehavior.floating,
     ));
   }
 
@@ -23,7 +24,9 @@ extension SnackBarExtension on SnackBar {
     try {
       final ok = await launchUrl(
         Uri.parse(link),
-        mode: LaunchMode.externalApplication,
+        mode: link.startsWith("https://anilist.co")
+            ? LaunchMode.inAppBrowserView
+            : LaunchMode.externalApplication,
       );
 
       if (ok) return true;

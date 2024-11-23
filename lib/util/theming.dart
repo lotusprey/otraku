@@ -2,6 +2,21 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+enum ThemeBase {
+  navy('Navy', Color(0xFF45A0F2)),
+  mint('Mint', Color(0xFF2AB8B8)),
+  lavender('Lavender', Color(0xFFB4ABF5)),
+  caramel('Caramel', Color(0xFFF78204)),
+  forest('Forest', Color(0xFF00FFA9)),
+  wine('Wine', Color(0xFF894771)),
+  mustard('Mustard', Color(0xFFFFBF02));
+
+  const ThemeBase(this.title, this.seed);
+
+  final String title;
+  final Color seed;
+}
+
 class Theming {
   static const windowWidthMedium = 600.0;
   static const windowWidthLarge = 840.0;
@@ -27,16 +42,6 @@ class Theming {
   static const bouncyPhysics = AlwaysScrollableScrollPhysics(
     parent: BouncingScrollPhysics(),
   );
-
-  static const colorSeeds = {
-    'Navy': Color(0xFF45A0F2),
-    'Mint': Color(0xFF2AB8B8),
-    'Lavender': Color(0xFFB4ABF5),
-    'Caramel': Color(0xFFF78204),
-    'Forest': Color(0xFF00FFA9),
-    'Wine': Color(0xFF894771),
-    'Mustard': Color(0xFFFFBF02),
-  };
 
   static ThemeData schemeToThemeData(ColorScheme scheme) => ThemeData(
         fontFamily: 'Rubik',

@@ -8,6 +8,7 @@ import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
@@ -35,9 +36,13 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
         .request(GqlQuery.media, {'id': arg, 'withInfo': true});
     data = data['Media'];
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final relatedMedia = <RelatedMedia>[];
     for (final relation in data['relations']['edges']) {
-      if (relation['node'] != null) relatedMedia.add(RelatedMedia(relation));
+      if (relation['node'] != null) {
+        relatedMedia.add(RelatedMedia(relation, imageQuality));
+      }
     }
 
     final settings = await ref.watch(
@@ -46,7 +51,7 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
 
     return Media(
       Edit(data, settings),
-      MediaInfo(data),
+      MediaInfo(data, imageQuality),
       MediaStats(data),
       relatedMedia,
     );
@@ -119,6 +124,8 @@ class MediaRelationsNotifier
           variables,
         );
     data = data['Media'];
+
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
 
     var characters = oldState.characters;
     var staff = oldState.staff;
@@ -198,7 +205,9 @@ class MediaRelationsNotifier
       final map = data['recommendations'];
       final items = <Recommendation>[];
       for (final r in map['nodes']) {
-        if (r['mediaRecommendation'] != null) items.add(Recommendation(r));
+        if (r['mediaRecommendation'] != null) {
+          items.add(Recommendation(r, imageQuality));
+        }
       }
 
       recommendations = recommendations.withNext(

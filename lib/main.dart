@@ -4,51 +4,69 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/viewer/repository_provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/background_handler.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
   final container = ProviderContainer();
-  await Persistence.init();
-  await container.read(repositoryProvider.notifier).init();
+  await container.read(persistenceProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
 
-  runApp(UncontrolledProviderScope(container: container, child: const App()));
+  runApp(UncontrolledProviderScope(container: container, child: const _App()));
 }
 
 final _notificationCtrl = StreamController<String>.broadcast();
 
-class App extends ConsumerStatefulWidget {
-  const App();
+class _App extends ConsumerStatefulWidget {
+  const _App();
 
   @override
   AppState createState() => AppState();
 }
 
-class AppState extends ConsumerState<App> {
-  final _router = Routes.buildRouter(Persistence());
+class AppState extends ConsumerState<_App> {
+  late final GoRouter _router;
   late final StreamSubscription<String> _notificationSubscription;
+  Color? _systemLightPrimaryColor;
+  Color? _systemDarkPrimaryColor;
 
   @override
   void initState() {
     super.initState();
-    if (Persistence().lastVersionCode != versionCode) {
-      Persistence().updateVersionCodeToLatestVersion();
+
+    final isGuest = ref.read(viewerIdProvider) == null;
+
+    final mustConfirmExit = () => ref.read(persistenceProvider.select(
+          (s) => s.options.confirmExit,
+        ));
+
+    _router = Routes.buildRouter(isGuest, mustConfirmExit);
+
+    _notificationSubscription = _notificationCtrl.stream.listen(_router.push);
+
+    var appMeta = ref.read(persistenceProvider).appMeta;
+    if (appMeta.lastAppVersion != appVersion) {
+      appMeta = AppMeta(
+        lastAppVersion: appVersion,
+        lastNotificationId: appMeta.lastNotificationId,
+        lastBackgroundJob: appMeta.lastBackgroundJob,
+      );
+
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ref.read(persistenceProvider.notifier).setAppMeta(appMeta),
+      );
+
       BackgroundHandler.requestPermissionForNotifications();
     }
-
-    Persistence().addListener(() => setState(() {}));
-    _notificationSubscription = _notificationCtrl.stream.listen(_router.push);
   }
 
   @override
   void dispose() {
     _notificationSubscription.cancel();
-    Persistence().dispose();
     super.dispose();
   }
 
@@ -56,43 +74,41 @@ class AppState extends ConsumerState<App> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        Color? systemLightPrimaryColor = lightDynamic?.primary;
-        Color? systemDarkPrimaryColor = darkDynamic?.primary;
+        ref.watch(viewerIdProvider);
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-        // The system schemes must be cached, so
-        // they can later be used in the settings.
-        final notifier = ref.watch(homeProvider.notifier);
-        Future(
-          () => notifier.cacheSystemColorSchemes(
-            systemLightPrimaryColor,
-            systemDarkPrimaryColor,
-          ),
-        );
+        Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
+        Color darkSeed = lightSeed;
+        if (lightDynamic != null && darkDynamic != null) {
+          _systemLightPrimaryColor = lightDynamic.primary;
+          _systemDarkPrimaryColor = darkDynamic.primary;
+
+          // The system primary colors must be cached,
+          // so they can later be used in the settings.
+          final notifier = ref.watch(persistenceProvider.notifier);
+
+          // A provider can't be modified during build,
+          // so it's done asynchronously as a workaround.
+          Future(
+            () => notifier.cacheSystemPrimaryColors((
+              lightPrimaryColor: _systemLightPrimaryColor,
+              darkPrimaryColor: _systemDarkPrimaryColor,
+            )),
+          );
+
+          if (options.themeBase == null &&
+              _systemLightPrimaryColor != null &&
+              _systemDarkPrimaryColor != null) {
+            lightSeed = _systemLightPrimaryColor!;
+            darkSeed = _systemDarkPrimaryColor!;
+          }
+        }
 
         Color? lightBackground;
         Color? darkBackground;
-        if (Persistence().pureWhiteOrBlackTheme) {
+        if (options.highContrast) {
           lightBackground = Colors.white;
           darkBackground = Colors.black;
-        }
-
-        Color lightSeed;
-        Color darkSeed;
-        var theme = Persistence().theme;
-
-        if (theme == null &&
-            systemLightPrimaryColor != null &&
-            systemDarkPrimaryColor != null) {
-          lightSeed = systemLightPrimaryColor;
-          darkSeed = systemDarkPrimaryColor;
-        } else {
-          theme ??= 0;
-          if (theme >= Theming.colorSeeds.length) {
-            theme = Theming.colorSeeds.length - 1;
-          }
-
-          lightSeed = Theming.colorSeeds.values.elementAt(theme);
-          darkSeed = lightSeed;
         }
 
         final lightScheme = ColorScheme.fromSeed(
@@ -104,12 +120,11 @@ class AppState extends ConsumerState<App> {
           brightness: Brightness.dark,
         ).copyWith(surface: darkBackground);
 
-        final themeMode = Persistence().themeMode;
         final platformBrightness = MediaQuery.platformBrightnessOf(context);
 
-        final isDark = themeMode == ThemeMode.system
+        final isDark = options.themeMode == ThemeMode.system
             ? platformBrightness == Brightness.dark
-            : themeMode == ThemeMode.dark;
+            : options.themeMode == ThemeMode.dark;
 
         final ColorScheme scheme;
         final Brightness overlayBrightness;
@@ -136,12 +151,11 @@ class AppState extends ConsumerState<App> {
           title: 'Otraku',
           theme: Theming.schemeToThemeData(lightScheme),
           darkTheme: Theming.schemeToThemeData(darkScheme),
-          themeMode: themeMode,
+          themeMode: options.themeMode,
           routerConfig: _router,
           builder: (context, child) {
             // Override the [textScaleFactor], because some devices apply
             // too high of a factor and it breaks the app visually.
-            // [child] can't be null, because [onGenerateRoute] is provided.
             final mediaQuery = MediaQuery.of(context);
             final scale = mediaQuery.textScaler.clamp(
               minScaleFactor: 0.8,

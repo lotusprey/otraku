@@ -1,11 +1,7 @@
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/util/persistence.dart';
 
 class CollectionMediaFilter {
-  CollectionMediaFilter(bool ofAnime)
-      : sort = ofAnime
-            ? Persistence().defaultAnimeSort
-            : Persistence().defaultMangaSort;
+  CollectionMediaFilter(this.sort);
 
   final statuses = <ReleaseStatus>[];
   final formats = <MediaFormat>[];
@@ -15,7 +11,7 @@ class CollectionMediaFilter {
   final tagNotIn = <String>[];
   final tagIdIn = <int>[];
   final tagIdNotIn = <int>[];
-  late EntrySort sort;
+  EntrySort sort;
   int? startYearFrom;
   int? startYearTo;
   OriginCountry? country;
@@ -35,7 +31,7 @@ class CollectionMediaFilter {
       isPrivate != null ||
       hasNotes != null;
 
-  CollectionMediaFilter copy() => CollectionMediaFilter(true)
+  CollectionMediaFilter copy() => CollectionMediaFilter(sort)
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)

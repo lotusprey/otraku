@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -18,7 +18,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 class AuthView extends ConsumerStatefulWidget {
   const AuthView([this.credentials]);
 
-  final (String, int)? credentials;
+  final (String token, int secondsUntilExpiration)? credentials;
 
   @override
   AuthViewState createState() => AuthViewState();
@@ -40,15 +40,37 @@ class AuthViewState extends ConsumerState<AuthView> {
   }
 
   void _attemptToFinishAccountSetup() async {
-    if (widget.credentials == null) return;
+    if (widget.credentials == null) {
+      return;
+    }
+
     final token = widget.credentials!.$1;
     final expiration = widget.credentials!.$2;
-    await ref.read(repositoryProvider.notifier).addAccount(token, expiration);
+
+    final account = await ref
+        .read(repositoryProvider.notifier)
+        .initAccount(token, expiration);
+
+    if (account == null) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (context) => const ConfirmationDialog(
+            title: 'Failed to connect account',
+          ),
+        );
+      }
+
+      return;
+    }
+
+    ref.read(persistenceProvider.notifier).addAccount(account);
     setState(() => _loading = false);
   }
 
   Future<void> _triggerAccountSetup() async {
     setState(() => _loading = true);
+
     final ok = await SnackBarExtension.launch(
       context,
       'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token',
@@ -56,11 +78,9 @@ class AuthViewState extends ConsumerState<AuthView> {
     if (!ok) setState(() => _loading = false);
   }
 
-  void _selectAccount(int index) async {
-    final ok = await ref.read(repositoryProvider.notifier).selectAccount(index);
-    if (ok && mounted) {
-      context.go(Routes.home());
-    }
+  void _selectAccount(int index) {
+    ref.read(persistenceProvider.notifier).switchAccount(index);
+    context.go(Routes.home());
   }
 
   @override
@@ -84,7 +104,7 @@ class AuthViewState extends ConsumerState<AuthView> {
       );
     }
 
-    final accounts = Persistence().accounts;
+    final accounts = ref.watch(persistenceProvider).accountGroup.accounts;
     return Scaffold(
       body: ConstrainedView(
         child: ListView.builder(
@@ -162,7 +182,7 @@ class AuthViewState extends ConsumerState<AuthView> {
                           mainAction: 'Yes',
                           secondaryAction: 'No',
                           onConfirm: () => ref
-                              .read(repositoryProvider.notifier)
+                              .read(persistenceProvider.notifier)
                               .removeAccount(i)
                               .then((_) => setState(() {})),
                         ),

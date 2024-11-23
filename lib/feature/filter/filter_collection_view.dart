@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/filter/chip_selector.dart';
 import 'package:otraku/feature/filter/filter_collection_model.dart';
 import 'package:otraku/feature/filter/filter_edit_sheet.dart';
@@ -7,36 +8,42 @@ import 'package:otraku/feature/filter/tag_selector.dart';
 import 'package:otraku/feature/filter/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/loaders.dart';
 
-class FilterCollectionView extends StatefulWidget {
+class FilterCollectionView extends ConsumerStatefulWidget {
   const FilterCollectionView({
-    required this.ofAnime,
+    required this.tag,
     required this.filter,
     required this.onChanged,
-    required this.ofViewer,
   });
 
-  final bool ofAnime;
+  final CollectionTag tag;
   final CollectionMediaFilter filter;
   final void Function(CollectionMediaFilter) onChanged;
-  final bool ofViewer;
 
   @override
-  State<FilterCollectionView> createState() => _FilterCollectionViewState();
+  ConsumerState<FilterCollectionView> createState() =>
+      _FilterCollectionViewState();
 }
 
-class _FilterCollectionViewState extends State<FilterCollectionView> {
+class _FilterCollectionViewState extends ConsumerState<FilterCollectionView> {
   late final _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+    final ofViewer = ref.watch(viewerIdProvider) == widget.tag.userId;
+
     return FilterEditSheet(
       filter: _filter,
       onChanged: widget.onChanged,
-      onCleared: () => widget.onChanged(CollectionMediaFilter(widget.ofAnime)),
+      onCleared: () => widget.onChanged(
+        CollectionMediaFilter(widget.filter.sort),
+      ),
+      leftHanded: options.leftHanded,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),
@@ -53,7 +60,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
           ),
           ChipMultiSelector(
             title: 'Formats',
-            items: (widget.ofAnime
+            items: (widget.tag.ofAnime
                     ? MediaFormat.animeFormats
                     : MediaFormat.mangaFormats)
                 .map((v) => (v.label, v))
@@ -96,7 +103,7 @@ class _FilterCollectionViewState extends State<FilterCollectionView> {
             value: filter.country,
             onChanged: (v) => filter.country = v,
           ),
-          if (widget.ofViewer)
+          if (ofViewer)
             ChipSelector(
               title: 'Visibility',
               items: const [('Private', true), ('Public', false)],

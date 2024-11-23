@@ -7,9 +7,9 @@ import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/character/character_filter_model.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
 import 'package:otraku/feature/character/character_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 
 final characterProvider =
@@ -88,6 +88,8 @@ class CharacterMediaNotifier
         .request(GqlQuery.character, variables);
     data = data['Character'];
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     var anime = oldState.anime;
     var manga = oldState.manga;
     var languageToVoiceActors = [...oldState.languageToVoiceActors];
@@ -100,7 +102,7 @@ class CharacterMediaNotifier
         items.add(CharacterRelatedItem.media(
           a['node'],
           StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
-          Persistence().imageQuality,
+          imageQuality,
         ));
 
         if (a['voiceActors'] != null) {
@@ -143,7 +145,7 @@ class CharacterMediaNotifier
         items.add(CharacterRelatedItem.media(
           m['node'],
           StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
-          Persistence().imageQuality,
+          imageQuality,
         ));
       }
 

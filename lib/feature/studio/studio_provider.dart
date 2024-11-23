@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/studio/studio_filter_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 
 final studioProvider =
     AsyncNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
@@ -63,10 +63,11 @@ class StudioMediaNotifier
       if (filter.isMain != null) 'isMain': filter.isMain,
     });
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
     final map = data['Studio']['media'];
     final items = <StudioMedia>[];
     for (final m in map['nodes']) {
-      items.add(StudioMedia(m, Persistence().imageQuality));
+      items.add(StudioMedia(m, imageQuality));
     }
 
     return oldState.withNext(items, map['pageInfo']['hasNextPage'] ?? false);

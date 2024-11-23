@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
@@ -42,6 +43,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
       'airingTo': airingTo,
     });
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
     final items = <CalendarItem>[];
     for (final c in data['Page']['airingSchedules']) {
       final season = c['media']['season'];
@@ -85,7 +87,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
           break;
       }
 
-      items.add(CalendarItem(c));
+      items.add(CalendarItem(c, imageQuality));
     }
 
     return oldState.withNext(

@@ -6,7 +6,7 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -78,7 +78,7 @@ class ReplyCard extends StatelessWidget {
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
                         height: 40,
-                        child: reply.authorId == Persistence().id
+                        child: reply.authorId == ref.watch(viewerIdProvider)
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(

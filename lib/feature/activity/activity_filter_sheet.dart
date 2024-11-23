@@ -7,8 +7,8 @@ import 'package:otraku/widget/field/stateful_tiles.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
 
-void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
-  ActivitiesFilter filter = ref.read(activitiesFilterProvider(id));
+void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? userId) {
+  ActivitiesFilter filter = ref.read(activitiesFilterProvider(userId));
   double initialHeight =
       Theming.normalTapTarget * ActivityType.values.length + Theming.offset;
 
@@ -27,7 +27,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int id) {
       ),
     ),
   ).then((_) {
-    ref.read(activitiesFilterProvider(id).notifier).state = filter;
+    ref.read(activitiesFilterProvider(userId).notifier).state = filter;
   });
 }
 
@@ -60,7 +60,7 @@ class _FilterListState extends State<_FilterList> {
       children: [
         for (final a in ActivityType.values)
           StatefulCheckboxListTile(
-            title: Text(a.text),
+            title: Text(a.label),
             value: _filter.typeIn.contains(a),
             onChanged: (val) {
               setState(() {

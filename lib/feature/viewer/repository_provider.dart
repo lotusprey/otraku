@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:otraku/feature/viewer/account_model.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_model.dart';
-import 'package:otraku/util/persistence.dart';
 
 final repositoryProvider = NotifierProvider<RepositoryNotifier, Repository>(
   RepositoryNotifier.new,
@@ -10,51 +9,17 @@ final repositoryProvider = NotifierProvider<RepositoryNotifier, Repository>(
 
 class RepositoryNotifier extends Notifier<Repository> {
   @override
-  Repository build() => const Repository.guest();
-
-  Future<bool> init() async {
-    final account = Persistence().selectedAccount;
-    if (account == null) return false;
-
-    if (DateTime.now().compareTo(account.expiration) >= 0) return false;
-
-    final accessToken = await const FlutterSecureStorage().read(
-      key: account.tokenPersistenceKey,
-    );
-    if (accessToken == null) return false;
-
-    state = Repository(accessToken);
-    return true;
-  }
-
-  Future<bool> selectAccount(int index) async {
-    if (index < 0 || index >= Persistence().accounts.length) return false;
-
-    final account = Persistence().accounts[index];
-    if (DateTime.now().compareTo(account.expiration) >= 0) return false;
-
-    Persistence().selectedAccountIndex = index;
-    final accessToken = await const FlutterSecureStorage().read(
-      key: account.tokenPersistenceKey,
+  Repository build() {
+    final accessToken = ref.watch(
+      persistenceProvider.select((s) => s.accountGroup.account?.accessToken),
     );
 
-    if (accessToken == null) {
-      Persistence().selectedAccountIndex = null;
-      return false;
-    }
-
-    state = Repository(accessToken);
-    return true;
+    return Repository(accessToken);
   }
 
-  void unselectAccount() {
-    state = const Repository.guest();
-    Persistence().selectedAccountIndex = null;
-  }
-
-  Future<bool> addAccount(
+  Future<Account?> initAccount(
     String token,
-    int secondsLeftBeforeExpiration,
+    int secondsUntilExpiration,
   ) async {
     try {
       final data = await Repository(token).request(
@@ -65,43 +30,22 @@ class RepositoryNotifier extends Notifier<Repository> {
       final name = data['Viewer']?['name'];
       final avatarUrl = data['Viewer']?['avatar']?['large'];
       if (id == null || name == null || avatarUrl == null) {
-        return false;
-      }
-
-      if (Persistence().accounts.indexWhere((a) => a.id == id) > -1) {
-        return true;
+        return null;
       }
 
       final expiration = DateTime.now().add(
-        Duration(seconds: secondsLeftBeforeExpiration, days: -1),
+        Duration(seconds: secondsUntilExpiration, days: -1),
       );
 
-      final account = Account(
+      return Account(
         id: id,
         name: name,
         avatarUrl: avatarUrl,
         expiration: expiration,
+        accessToken: token,
       );
-
-      Persistence().accounts = [...Persistence().accounts, account];
-      await const FlutterSecureStorage().write(
-        key: account.tokenPersistenceKey,
-        value: token,
-      );
-      return true;
     } catch (_) {
-      return false;
+      return null;
     }
-  }
-
-  Future<void> removeAccount(int index) async {
-    final account = Persistence().accounts.elementAtOrNull(index);
-    if (account == null) return;
-
-    Persistence().selectedAccountIndex = null;
-
-    await const FlutterSecureStorage().delete(key: account.tokenPersistenceKey);
-    Persistence().accounts.removeAt(index);
-    Persistence().accounts = Persistence().accounts;
   }
 }

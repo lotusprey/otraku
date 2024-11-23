@@ -100,8 +100,11 @@ class _MediaRankGrid extends StatelessWidget {
                   final filter = notifier.state.copyWith(
                     type: info.type,
                     search: '',
-                    mediaFilter: DiscoverMediaFilter(),
+                    mediaFilter: DiscoverMediaFilter(
+                      notifier.state.mediaFilter.sort,
+                    ),
                   );
+
                   filter.mediaFilter.season = ranks[i].season;
                   filter.mediaFilter.startYearFrom = ranks[i].year;
                   filter.mediaFilter.startYearTo = ranks[i].year;

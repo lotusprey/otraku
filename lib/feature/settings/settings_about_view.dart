@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
-import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -20,8 +20,9 @@ class SettingsAboutSubview extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final padding = MediaQuery.paddingOf(context);
-        final lastNotificationFetch =
-            Persistence().lastBackgroundWork?.millisecondsSinceEpoch;
+        final lastBackgroundJob = ref.watch(persistenceProvider.select(
+          (s) => s.appMeta.lastBackgroundJob?.millisecondsSinceEpoch,
+        ));
 
         return Align(
           alignment: Alignment.center,
@@ -41,7 +42,7 @@ class SettingsAboutSubview extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  'Otraku - v.$versionCode',
+                  'Otraku - v.$appVersion',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
@@ -81,7 +82,7 @@ class SettingsAboutSubview extends StatelessWidget {
                 leading: const Icon(Ionicons.log_out_outline),
                 title: const Text('Accounts'),
                 onTap: () {
-                  ref.read(repositoryProvider.notifier).unselectAccount();
+                  ref.read(persistenceProvider.notifier).switchAccount(null);
                   context.go(Routes.auth);
                 },
               ),
@@ -90,12 +91,14 @@ class SettingsAboutSubview extends StatelessWidget {
                 title: Text('Clear Image Cache'),
                 onTap: clearImageCache,
               ),
-              const ListTile(
+              ListTile(
                 leading: Icon(Ionicons.refresh_outline),
                 title: Text('Reset Options'),
-                onTap: Persistence.resetOptions,
+                onTap: () => ref
+                    .read(persistenceProvider.notifier)
+                    .setOptions(Options.empty()),
               ),
-              if (lastNotificationFetch != null) ...[
+              if (lastBackgroundJob != null) ...[
                 Padding(
                   padding: const EdgeInsets.only(
                     left: Theming.offset,
@@ -103,7 +106,7 @@ class SettingsAboutSubview extends StatelessWidget {
                     top: 20,
                   ),
                   child: Text(
-                    'Performed a notification check around ${DateTimeExtension.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+                    'Performed a notification check around ${DateTimeExtension.formattedDateTimeFromSeconds((lastBackgroundJob / 1000).truncate())}.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
@@ -60,7 +60,9 @@ class AdaptiveScaffold extends StatelessWidget {
 
     return Consumer(
       builder: (context, ref, child) {
-        final leftHanded = Persistence().leftHanded;
+        final leftHanded = ref.watch(
+          persistenceProvider.select((s) => s.options.leftHanded),
+        );
 
         floatingActionButtonLocation =
             leftHanded ? startFabLocation : endFabLocation;

@@ -7,17 +7,11 @@ import 'package:http/http.dart';
 class Repository {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
-  const Repository.guest()
-      : _headers = const {
-          'Accept': 'application/json',
-          'Content-type': 'application/json',
-        };
-
-  Repository(String accessToken)
+  Repository(String? accessToken)
       : _headers = {
           'Accept': 'application/json',
           'Content-type': 'application/json',
-          'Authorization': 'Bearer $accessToken',
+          if (accessToken != null) 'Authorization': 'Bearer $accessToken',
         };
 
   final Map<String, String> _headers;

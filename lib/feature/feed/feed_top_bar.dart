@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activity_filter_sheet.dart';
-import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/util/routes.dart';
 
@@ -45,11 +44,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
             IconButton(
               tooltip: 'Filter',
               icon: const Icon(Ionicons.funnel_outline),
-              onPressed: () => showActivityFilterSheet(
-                context,
-                ref,
-                homeFeedId,
-              ),
+              onPressed: () => showActivityFilterSheet(context, ref, null),
             ),
             notificationIcon,
           ],

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
@@ -17,7 +18,11 @@ class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
     final data = await ref
         .read(repositoryProvider)
         .request(GqlQuery.review, {'id': arg});
-    return Review(data['Review']);
+
+    return Review(
+      data['Review'],
+      ref.read(persistenceProvider).options.imageQuality,
+    );
   }
 
   Future<Object?> rate(bool? rating) {

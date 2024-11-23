@@ -137,7 +137,9 @@ class MediaOverviewSubview extends StatelessWidget {
                     final filter = notifier.state.copyWith(
                       type: info.type,
                       search: '',
-                      mediaFilter: DiscoverMediaFilter(),
+                      mediaFilter: DiscoverMediaFilter(
+                        notifier.state.mediaFilter.sort,
+                      ),
                     )..mediaFilter.genreIn.add(info.genres[i]);
                     notifier.state = filter;
 
@@ -393,7 +395,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         final filter = notifier.state.copyWith(
           type: widget.info.type,
           search: '',
-          mediaFilter: DiscoverMediaFilter(),
+          mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
         )..mediaFilter.tagIn.add(tags[i].name);
         notifier.state = filter;
 

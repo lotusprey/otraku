@@ -1,5 +1,6 @@
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
+import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 
 class DiscoverFilter {
@@ -11,10 +12,10 @@ class DiscoverFilter {
     required this.reviewsFilter,
   });
 
-  DiscoverFilter(DiscoverType discoverType)
+  DiscoverFilter(DiscoverType discoverType, MediaSort sort)
       : type = discoverType,
         search = '',
-        mediaFilter = DiscoverMediaFilter(),
+        mediaFilter = DiscoverMediaFilter(sort),
         hasBirthday = false,
         reviewsFilter = const ReviewsFilter();
 

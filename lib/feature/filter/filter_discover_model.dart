@@ -1,9 +1,8 @@
 import 'package:otraku/feature/filter/filter_collection_model.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class DiscoverMediaFilter {
-  DiscoverMediaFilter();
+  DiscoverMediaFilter(this.sort);
 
   final statuses = <ReleaseStatus>[];
   final animeFormats = <MediaFormat>[];
@@ -13,7 +12,7 @@ class DiscoverMediaFilter {
   final tagIn = <String>[];
   final tagNotIn = <String>[];
   final sources = <MediaSource>[];
-  MediaSort sort = Persistence().defaultDiscoverSort;
+  MediaSort sort;
   MediaSeason? season;
   int? startYearFrom;
   int? startYearTo;
@@ -37,7 +36,7 @@ class DiscoverMediaFilter {
       inLists != null ||
       isAdult != null;
 
-  DiscoverMediaFilter copy() => DiscoverMediaFilter()
+  DiscoverMediaFilter copy() => DiscoverMediaFilter(sort)
     ..statuses.addAll(statuses)
     ..animeFormats.addAll(animeFormats)
     ..mangaFormats.addAll(mangaFormats)
@@ -56,9 +55,10 @@ class DiscoverMediaFilter {
 
   static DiscoverMediaFilter fromCollection({
     required CollectionMediaFilter filter,
-    required ofAnime,
+    required MediaSort sort,
+    required bool ofAnime,
   }) =>
-      DiscoverMediaFilter()
+      DiscoverMediaFilter(sort)
         ..statuses.addAll(filter.statuses)
         ..animeFormats.addAll(ofAnime ? filter.formats : const [])
         ..mangaFormats.addAll(!ofAnime ? filter.formats : const [])

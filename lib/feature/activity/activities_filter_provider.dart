@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
-import 'package:otraku/feature/activity/activity_model.dart';
 
 final activitiesFilterProvider = NotifierProvider.autoDispose
-    .family<ActivitiesFilterNotifier, ActivitiesFilter, int>(
+    .family<ActivitiesFilterNotifier, ActivitiesFilter, int?>(
   ActivitiesFilterNotifier.new,
 );
 
 class ActivitiesFilterNotifier
-    extends AutoDisposeFamilyNotifier<ActivitiesFilter, int> {
+    extends AutoDisposeFamilyNotifier<ActivitiesFilter, int?> {
   @override
-  ActivitiesFilter build(arg) => arg == homeFeedId
+  ActivitiesFilter build(arg) => arg == null
       ? ref.watch(persistenceProvider.select((s) => s.homeActivitiesFilter))
       : UserActivitiesFilter(ActivityType.values, arg);
 

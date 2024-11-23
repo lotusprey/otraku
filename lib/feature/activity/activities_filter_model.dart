@@ -26,19 +26,25 @@ class HomeActivitiesFilter extends ActivitiesFilter {
   );
 
   factory HomeActivitiesFilter.empty() => const HomeActivitiesFilter(
-        [ActivityType.ANIME_LIST, ActivityType.MANGA_LIST, ActivityType.TEXT],
+        [
+          ActivityType.animeStatus,
+          ActivityType.mangaStatus,
+          ActivityType.status
+        ],
         false,
         false,
       );
 
-  factory HomeActivitiesFilter.fromMap(Map<String, dynamic> map) =>
-      HomeActivitiesFilter(
-        map['activityTypeIn']
-            .map((index) => ActivityType.values.getOrFirst(index))
-            .toList(),
-        map['onFollowing'],
-        map['withViewerActivities'],
-      );
+  factory HomeActivitiesFilter.fromMap(Map<dynamic, dynamic> map) {
+    final List<int> typeIn = map['activityTypeIn'] ??
+        List.generate(ActivityType.values.length, (i) => i, growable: false);
+
+    return HomeActivitiesFilter(
+      typeIn.map((index) => ActivityType.values.getOrFirst(index)).toList(),
+      map['onFollowing'] ?? false,
+      map['withViewerActivities'] ?? false,
+    );
+  }
 
   final bool onFollowing;
   final bool withViewerActivities;
@@ -63,12 +69,13 @@ class HomeActivitiesFilter extends ActivitiesFilter {
 }
 
 enum ActivityType {
-  TEXT('Statuses'),
-  ANIME_LIST('Anime Progress'),
-  MANGA_LIST('Manga Progress'),
-  MESSAGE('Messages');
+  status('Statuses', 'TEXT'),
+  animeStatus('Anime Progress', 'ANIME_LIST'),
+  mangaStatus('Manga Progress', 'MANGA_LIST'),
+  message('Messages', 'MESSAGE');
 
-  const ActivityType(this.text);
+  const ActivityType(this.label, this.value);
 
-  final String text;
+  final String label;
+  final String value;
 }

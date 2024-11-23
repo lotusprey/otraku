@@ -23,7 +23,7 @@ enum DiscoverType {
   final String label;
 }
 
-enum DiscoverItemView { detailedList, simpleGrid }
+enum DiscoverItemView { detailed, simple }
 
 sealed class DiscoverItems {
   const DiscoverItems();

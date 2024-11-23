@@ -19,10 +19,7 @@ class ActivityNotifier
 
   @override
   FutureOr<ExpandedActivity> build(arg) async {
-    _viewerId = ref.watch(
-      persistenceProvider.select((s) => s.accountGroup.account?.id),
-    );
-
+    _viewerId = ref.watch(viewerIdProvider);
     return await _fetch(null);
   }
 

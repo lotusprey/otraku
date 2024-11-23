@@ -5,9 +5,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
-import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_floating_action.dart';
+import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_top_bar.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_floating_action.dart';
@@ -21,8 +21,8 @@ import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_view.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
 import 'package:otraku/util/routes.dart';
@@ -42,16 +42,16 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  final _id = Persistence().id!;
-  late final _userTag = idUserTag(_id);
-  late final _animeCollectionTag = (userId: _id, ofAnime: true);
-  late final _mangaCollectionTag = (userId: _id, ofAnime: false);
+  late final int? _viewerId;
+  late final UserTag? _userTag;
+  late final CollectionTag? _animeCollectionTag;
+  late final CollectionTag? _mangaCollectionTag;
 
   final _searchFocusNode = FocusNode();
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
-    loadMore: () => ref.read(activitiesProvider(homeFeedId).notifier).fetch(),
+    loadMore: () => ref.read(activitiesProvider(null).notifier).fetch(),
   );
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
@@ -64,7 +64,16 @@ class _HomeViewState extends ConsumerState<HomeView>
   @override
   void initState() {
     super.initState();
-    _tabCtrl.index = Persistence().defaultHomeTab.index;
+    final persistence = ref.read(persistenceProvider);
+
+    _viewerId = persistence.accountGroup.account?.id;
+    if (_viewerId != null) {
+      _userTag = idUserTag(_viewerId!);
+      _animeCollectionTag = (userId: _viewerId!, ofAnime: true);
+      _mangaCollectionTag = (userId: _viewerId!, ofAnime: false);
+    }
+
+    _tabCtrl.index = persistence.options.defaultHomeTab.index;
     if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
 
     _tabCtrl.addListener(
@@ -84,7 +93,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   void deactivate() {
     ref.invalidate(discoverProvider);
     ref.invalidate(discoverFilterProvider);
-    ref.invalidate(activitiesProvider(homeFeedId));
+    ref.invalidate(activitiesProvider(null));
     super.deactivate();
   }
 
@@ -103,18 +112,28 @@ class _HomeViewState extends ConsumerState<HomeView>
   Widget build(BuildContext context) {
     ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
-    ref.watch(userProvider(_userTag).select((_) => null));
 
     if (_tabCtrl.index == HomeTab.feed.index) {
-      ref.watch(activitiesProvider(homeFeedId).select((_) => null));
+      ref.watch(activitiesProvider(null).select((_) => null));
     } else if (_tabCtrl.index == HomeTab.discover.index) {
       ref.watch(discoverProvider.select((_) => null));
     }
 
-    ref.watch(
-        collectionEntriesProvider(_animeCollectionTag).select((_) => null));
-    ref.watch(
-        collectionEntriesProvider(_mangaCollectionTag).select((_) => null));
+    if (_userTag != null) {
+      ref.watch(userProvider(_userTag!).select((_) => null));
+    }
+
+    if (_animeCollectionTag != null) {
+      ref.watch(
+        collectionEntriesProvider(_animeCollectionTag!).select((_) => null),
+      );
+    }
+
+    if (_mangaCollectionTag != null) {
+      ref.watch(
+        collectionEntriesProvider(_mangaCollectionTag!).select((_) => null),
+      );
+    }
 
     final home = ref.watch(homeProvider);
 
@@ -132,19 +151,21 @@ class _HomeViewState extends ConsumerState<HomeView>
         1 => TopBar(
             key: const Key('animeCollectionTopBar'),
             trailing: [
-              CollectionTopBarTrailingContent(
-                _animeCollectionTag,
-                _searchFocusNode,
-              ),
+              if (_animeCollectionTag != null)
+                CollectionTopBarTrailingContent(
+                  _animeCollectionTag!,
+                  _searchFocusNode,
+                ),
             ],
           ),
         2 => TopBar(
             key: const Key('mangaCollectionTopBar'),
             trailing: [
-              CollectionTopBarTrailingContent(
-                _mangaCollectionTag,
-                _searchFocusNode,
-              ),
+              if (_mangaCollectionTag != null)
+                CollectionTopBarTrailingContent(
+                  _mangaCollectionTag!,
+                  _searchFocusNode,
+                ),
             ],
           ),
         3 => TopBar(
@@ -205,18 +226,20 @@ class _HomeViewState extends ConsumerState<HomeView>
               scrollCtrl: _feedScrollCtrl,
               child: FeedFloatingAction(ref),
             ),
-          1 => compact || !home.didExpandAnimeCollection
+          1 => (compact || !home.didExpandAnimeCollection) &&
+                  _animeCollectionTag != null
               ? HidingFloatingActionButton(
                   key: const Key('anime'),
                   scrollCtrl: _animeScrollCtrl,
-                  child: CollectionFloatingAction(_animeCollectionTag),
+                  child: CollectionFloatingAction(_animeCollectionTag!),
                 )
               : null,
-          2 => compact || !home.didExpandMangaCollection
+          2 => (compact || !home.didExpandMangaCollection) &&
+                  _mangaCollectionTag != null
               ? HidingFloatingActionButton(
                   key: const Key('manga'),
                   scrollCtrl: _mangaScrollCtrl,
-                  child: CollectionFloatingAction(_mangaCollectionTag),
+                  child: CollectionFloatingAction(_mangaCollectionTag!),
                 )
               : null,
           3 => compact
@@ -233,7 +256,7 @@ class _HomeViewState extends ConsumerState<HomeView>
           controller: _tabCtrl,
           physics: const FastTabBarViewScrollPhysics(),
           children: [
-            ActivitiesSubView(homeFeedId, _feedScrollCtrl),
+            ActivitiesSubView(null, _feedScrollCtrl),
             CollectionSubview(
               scrollCtrl: _animeScrollCtrl,
               tag: _animeCollectionTag,

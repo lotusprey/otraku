@@ -14,7 +14,7 @@ import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
-const _TILE_HEIGHT = 140.0;
+const _tileHeight = 140.0;
 
 class CollectionList extends StatelessWidget {
   const CollectionList({
@@ -35,7 +35,7 @@ class CollectionList extends StatelessWidget {
         childCount: items.length,
       ),
       // The added pixels are for the bottom margin.
-      itemExtent: _TILE_HEIGHT + Theming.offset,
+      itemExtent: _tileHeight + Theming.offset,
     );
   }
 }
@@ -65,7 +65,7 @@ class _Tile extends StatelessWidget {
                   left: Theming.radiusSmall,
                 ),
                 child: Container(
-                  width: _TILE_HEIGHT / Theming.coverHtoWRatio,
+                  width: _tileHeight / Theming.coverHtoWRatio,
                   color: Theme.of(context).colorScheme.surfaceContainerHighest,
                   child: CachedImage(entry.imageUrl),
                 ),

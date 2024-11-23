@@ -10,14 +10,14 @@ final repositoryProvider = NotifierProvider<RepositoryNotifier, Repository>(
 class RepositoryNotifier extends Notifier<Repository> {
   @override
   Repository build() {
-    final account = ref.watch(
-      persistenceProvider.select((s) => s.accountGroup.account),
+    final accessToken = ref.watch(
+      persistenceProvider.select((s) => s.accountGroup.account?.accessToken),
     );
 
-    return Repository(account?.accessToken);
+    return Repository(accessToken);
   }
 
-  Future<Account?> setUpAccount(
+  Future<Account?> initAccount(
     String token,
     int secondsUntilExpiration,
   ) async {

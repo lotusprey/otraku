@@ -9,7 +9,6 @@ import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/filter/filter_collection_view.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/debounce.dart';
 import 'package:otraku/widget/field/search_field.dart';
@@ -34,8 +33,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
           onPressed: () => showSheet(
             context,
             FilterCollectionView(
-              ofAnime: tag.ofAnime,
-              ofViewer: tag.userId == Persistence().id,
+              tag: tag,
               filter: filter.mediaFilter,
               onChanged: (mediaFilter) => ref
                   .read(collectionFilterProvider(tag).notifier)

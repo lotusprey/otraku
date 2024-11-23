@@ -5,15 +5,16 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_providers.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/dialogs.dart';
 
 class EditButtons extends ConsumerStatefulWidget {
-  const EditButtons(this.tag, this.oldEdit, this.callback);
+  const EditButtons(this.tag, this.viewerId, this.oldEdit, this.callback);
 
   final EditTag tag;
+  final int viewerId;
   final Edit oldEdit;
   final void Function(Edit)? callback;
 
@@ -28,6 +29,8 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, __) {
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
+
         final saveButton = _loading
             ? const Expanded(child: Center(child: Loader()))
             : _saveButton();
@@ -35,7 +38,7 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
             widget.oldEdit.entryId == null ? const Spacer() : _removeButton();
 
         return BottomBar(
-          Persistence().leftHanded
+          options.leftHanded
               ? [saveButton, removeButton]
               : [removeButton, saveButton],
         );
@@ -51,8 +54,10 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
           final newEdit = ref.read(newEditProvider(widget.tag));
           setState(() => _loading = true);
 
-          final tag =
-              (userId: Persistence().id!, ofAnime: oldEdit.type == 'ANIME');
+          final tag = (
+            userId: widget.viewerId,
+            ofAnime: oldEdit.type == 'ANIME',
+          );
           final err = await ref
               .read(collectionProvider(tag).notifier)
               .saveEntry(oldEdit, newEdit);
@@ -85,7 +90,7 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
 
               final oldEdit = widget.oldEdit;
               final tag = (
-                userId: Persistence().id!,
+                userId: widget.viewerId,
                 ofAnime: oldEdit.type == 'ANIME',
               );
 

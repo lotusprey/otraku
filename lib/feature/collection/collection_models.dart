@@ -6,7 +6,7 @@ import 'package:otraku/feature/media/media_models.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
-enum CollectionItemView { detailedList, simpleGrid }
+enum CollectionItemView { detailed, simple }
 
 sealed class Collection {
   const Collection({required this.scoreFormat});
@@ -540,9 +540,9 @@ enum EntryStatus {
 class CollectionFilter {
   const CollectionFilter._({required this.search, required this.mediaFilter});
 
-  CollectionFilter(bool ofAnime)
+  CollectionFilter(EntrySort sort)
       : search = '',
-        mediaFilter = CollectionMediaFilter(ofAnime);
+        mediaFilter = CollectionMediaFilter(sort);
 
   final String search;
   final CollectionMediaFilter mediaFilter;

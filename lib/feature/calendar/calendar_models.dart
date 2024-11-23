@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:otraku/extension/color_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/enum_extension.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 
 class CalendarItem {
@@ -16,7 +16,7 @@ class CalendarItem {
     required this.streamingServices,
   });
 
-  factory CalendarItem(Map<String, dynamic> map) {
+  factory CalendarItem(Map<String, dynamic> map, ImageQuality imageQuality) {
     final streamingServices = <StreamingService>[];
     if (map['media']['externalLinks'] != null) {
       for (final link in map['media']['externalLinks']) {
@@ -35,7 +35,7 @@ class CalendarItem {
     return CalendarItem._(
       mediaId: map['mediaId'],
       title: map['media']['title']['userPreferred'],
-      cover: map['media']['coverImage'][Persistence().imageQuality.value],
+      cover: map['media']['coverImage'][imageQuality.value],
       episode: map['episode'],
       airingAt: DateTimeExtension.fromSecondsSinceEpoch(map['airingAt']),
       entryStatus: EntryStatus.from(map['media']['mediaListEntry']?['status']),
@@ -71,7 +71,7 @@ class CalendarFilter {
         status: CalendarStatusFilter.all,
       );
 
-  factory CalendarFilter.fromMap(Map<String, dynamic> map) {
+  factory CalendarFilter.fromMap(Map<dynamic, dynamic> map) {
     final season = CalendarSeasonFilter.values.getOrFirst(map['season']);
     final status = CalendarStatusFilter.values.getOrFirst(map['status']);
 

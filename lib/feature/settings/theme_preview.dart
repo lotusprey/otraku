@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
-import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/theming.dart';
 
 class ThemePreview extends StatelessWidget {
@@ -16,10 +15,10 @@ class ThemePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).colorScheme.brightness;
 
-    final systemPrimaryColor = ref.watch(homeProvider.select(
+    final systemPrimaryColor = ref.watch(persistenceProvider.select(
       (s) => brightness == Brightness.dark
-          ? s.systemDarkPrimaryColor
-          : s.systemLightPrimaryColor,
+          ? s.systemColors.darkPrimaryColor
+          : s.systemColors.lightPrimaryColor,
     ));
 
     final background = options.highContrast

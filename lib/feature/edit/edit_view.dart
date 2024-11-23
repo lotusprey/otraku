@@ -30,6 +30,18 @@ class EditView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final viewerId = ref.watch(viewerIdProvider);
+        if (viewerId == null) {
+          return SimpleSheet(
+            builder: (context, scrollCtrl) => Center(
+              child: Padding(
+                padding: Theming.paddingAll,
+                child: Text('Log in to edit media'),
+              ),
+            ),
+          );
+        }
+
         ref.listen<AsyncValue<Edit>>(
           oldEditProvider(tag),
           (_, s) => s.whenOrNull(
@@ -42,7 +54,7 @@ class EditView extends StatelessWidget {
 
         return ref.watch(oldEditProvider(tag)).maybeWhen(
               data: (oldEdit) => SheetWithButtonRow(
-                buttons: EditButtons(tag, oldEdit, callback),
+                buttons: EditButtons(tag, viewerId, oldEdit, callback),
                 builder: (context, scrollCtrl) => _EditView(
                   scrollCtrl,
                   tag,

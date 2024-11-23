@@ -25,9 +25,7 @@ class CollectionNotifier
       _ => 0,
     };
 
-    final viewerId = ref.watch(
-      persistenceProvider.select((s) => s.accountGroup.account?.id),
-    );
+    final viewerId = ref.watch(viewerIdProvider);
 
     final isFull = arg.userId != viewerId ||
         ref.watch(homeProvider.select(

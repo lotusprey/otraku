@@ -8,15 +8,19 @@ import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:path_provider/path_provider.dart';
 
-final persistenceProvider = NotifierProvider<PersistenceNotifier, Persistence1>(
+final persistenceProvider = NotifierProvider<PersistenceNotifier, Persistence>(
   PersistenceNotifier.new,
 );
 
-class PersistenceNotifier extends Notifier<Persistence1> {
-  late Box<Map<String, dynamic>> _box;
+final viewerIdProvider = persistenceProvider.select(
+  (s) => s.accountGroup.account?.id,
+);
+
+class PersistenceNotifier extends Notifier<Persistence> {
+  late Box<Map<dynamic, dynamic>> _box;
 
   @override
-  Persistence1 build() => Persistence1.empty();
+  Persistence build() => Persistence.empty();
 
   Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -27,51 +31,31 @@ class PersistenceNotifier extends Notifier<Persistence1> {
     _box = await Hive.openBox('persistence');
     final accessTokens = await const FlutterSecureStorage().readAll();
 
-    state = Persistence1.fromMap(_box.toMap(), accessTokens);
+    state = Persistence.fromMap(_box.toMap(), accessTokens);
+  }
+
+  void cacheSystemPrimaryColors(SystemColors systemColors) {
+    state = state.copyWith(systemColors: systemColors);
   }
 
   void setOptions(Options options) {
     _box.put('options', options.toMap());
-    state = Persistence1(
-      options: options,
-      accountGroup: state.accountGroup,
-      appMeta: state.appMeta,
-      homeActivitiesFilter: state.homeActivitiesFilter,
-      calendarFilter: state.calendarFilter,
-    );
+    state = state.copyWith(options: options);
   }
 
   void setAppMeta(AppMeta appMeta) {
     _box.put('appMeta', appMeta.toMap());
-    state = Persistence1(
-      appMeta: appMeta,
-      accountGroup: state.accountGroup,
-      options: state.options,
-      homeActivitiesFilter: state.homeActivitiesFilter,
-      calendarFilter: state.calendarFilter,
-    );
+    state = state.copyWith(appMeta: appMeta);
   }
 
   void setHomeActivitiesFilter(HomeActivitiesFilter homeActivitiesFilter) {
     _box.put('homeActivitiesFilter', homeActivitiesFilter.toMap());
-    state = Persistence1(
-      homeActivitiesFilter: homeActivitiesFilter,
-      accountGroup: state.accountGroup,
-      options: state.options,
-      appMeta: state.appMeta,
-      calendarFilter: state.calendarFilter,
-    );
+    state = state.copyWith(homeActivitiesFilter: homeActivitiesFilter);
   }
 
   void setCalendarFilter(CalendarFilter calendarFilter) {
     _box.put('calendarFilter', calendarFilter.toMap());
-    state = Persistence1(
-      calendarFilter: calendarFilter,
-      accountGroup: state.accountGroup,
-      options: state.options,
-      appMeta: state.appMeta,
-      homeActivitiesFilter: state.homeActivitiesFilter,
-    );
+    state = state.copyWith(calendarFilter: calendarFilter);
   }
 
   void refreshViewerDetails(String newName, String newAvatarUrl) {
@@ -164,13 +148,6 @@ class PersistenceNotifier extends Notifier<Persistence1> {
   /// Token changes must be handled separately.
   void _setAccountGroup(AccountGroup accountGroup) {
     _box.put('accountGroup', accountGroup.toMap());
-
-    state = Persistence1(
-      accountGroup: accountGroup,
-      options: state.options,
-      appMeta: state.appMeta,
-      homeActivitiesFilter: state.homeActivitiesFilter,
-      calendarFilter: state.calendarFilter,
-    );
+    state = state.copyWith(accountGroup: accountGroup);
   }
 }

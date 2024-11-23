@@ -10,7 +10,7 @@ import 'package:otraku/feature/staff/staff_item_grid.dart';
 import 'package:otraku/feature/studio/studio_item_grid.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/field/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
 
@@ -24,6 +24,7 @@ class DiscoverSubview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
         final onRefresh = (invalidate) => invalidate(discoverProvider);
 
@@ -33,18 +34,20 @@ class DiscoverSubview extends StatelessWidget {
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverAnimeItems).pages,
-              onData: (data) => Persistence().discoverItemView == 0
-                  ? DiscoverMediaGrid(data.items)
-                  : DiscoverMediaSimpleGrid(data.items),
+              onData: (data) =>
+                  options.discoverItemView == DiscoverItemView.simple
+                      ? DiscoverMediaSimpleGrid(data.items)
+                      : DiscoverMediaGrid(data.items),
             ),
           DiscoverType.manga => PagedSelectionView(
               provider: discoverProvider,
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
               select: (data) => (data as DiscoverMangaItems).pages,
-              onData: (data) => Persistence().discoverItemView == 0
-                  ? DiscoverMediaGrid(data.items)
-                  : DiscoverMediaSimpleGrid(data.items),
+              onData: (data) =>
+                  options.discoverItemView == DiscoverItemView.simple
+                      ? DiscoverMediaSimpleGrid(data.items)
+                      : DiscoverMediaGrid(data.items),
             ),
           DiscoverType.character => PagedSelectionView(
               provider: discoverProvider,

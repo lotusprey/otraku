@@ -4,8 +4,6 @@ import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
 
-const homeFeedId = -1;
-
 class ExpandedActivity {
   ExpandedActivity(this.activity, this.replies);
 

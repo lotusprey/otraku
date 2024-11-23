@@ -7,6 +7,7 @@ import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -15,7 +16,6 @@ import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_grid.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/widget/field/pill_selector.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
@@ -76,16 +76,20 @@ class CollectionSubview extends StatelessWidget {
     super.key,
   });
 
-  final CollectionTag tag;
+  final CollectionTag? tag;
   final ScrollController scrollCtrl;
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
+    if (tag == null) {
+      return const Center(child: Text('Log in to view collection'));
+    }
+
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
-          collectionProvider(tag),
+          collectionProvider(tag!),
           (_, s) => s.whenOrNull(
             error: (error, _) => SnackBarExtension.show(
               context,
@@ -94,7 +98,7 @@ class CollectionSubview extends StatelessWidget {
           ),
         );
 
-        return ref.watch(collectionProvider(tag)).unwrapPrevious().when(
+        return ref.watch(collectionProvider(tag!)).unwrapPrevious().when(
               loading: () => const Center(child: Loader()),
               error: (_, __) => const Center(child: Text('No results')),
               data: (data) {
@@ -107,10 +111,10 @@ class CollectionSubview extends StatelessWidget {
                       slivers: [
                         SliverRefreshControl(
                           onRefresh: () => ref.invalidate(
-                            collectionProvider(tag),
+                            collectionProvider(tag!),
                           ),
                         ),
-                        _Content(tag, data),
+                        _Content(tag!, data),
                         const SliverFooter(),
                       ],
                     ),
@@ -127,7 +131,7 @@ class CollectionSubview extends StatelessWidget {
                           maxWidth: 200,
                           selected: c.index,
                           onTap: (i) => ref
-                              .read(collectionProvider(tag).notifier)
+                              .read(collectionProvider(tag!).notifier)
                               .changeIndex(i),
                           items: data.lists
                               .map((l) => (
@@ -159,7 +163,8 @@ class _Content extends StatelessWidget {
       builder: (context, ref, _) {
         final entries = ref.watch(collectionEntriesProvider(tag));
 
-        final isViewer = tag.userId == Persistence().id;
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
+        final isViewer = ref.watch(viewerIdProvider) == tag.userId;
 
         if (entries.isEmpty) {
           if (!isViewer) {
@@ -193,9 +198,11 @@ class _Content extends StatelessWidget {
           FullCollection _ => true,
         };
 
-        if (collectionIsExpanded && Persistence().collectionItemView == 1 ||
+        if (collectionIsExpanded &&
+                options.collectionItemView == CollectionItemView.simple ||
             !collectionIsExpanded &&
-                Persistence().collectionPreviewItemView == 1) {
+                options.collectionPreviewItemView ==
+                    CollectionItemView.simple) {
           return CollectionGrid(
             items: entries,
             onProgressUpdated: onProgressUpdated,
@@ -217,20 +224,19 @@ class _Content extends StatelessWidget {
 
   void _searchGlobally(BuildContext context, WidgetRef ref) {
     final collectionFilter = ref.read(collectionFilterProvider(tag));
+    final options = ref.read(persistenceProvider).options;
 
     ref.read(discoverFilterProvider.notifier).update((f) => f.copyWith(
           type: tag.ofAnime ? DiscoverType.anime : DiscoverType.manga,
           search: collectionFilter.search,
           mediaFilter: DiscoverMediaFilter.fromCollection(
             filter: collectionFilter.mediaFilter,
+            sort: options.defaultDiscoverSort,
             ofAnime: tag.ofAnime,
           ),
         ));
 
     context.go(Routes.home(HomeTab.discover));
-
-    ref
-        .read(collectionFilterProvider(tag).notifier)
-        .update((_) => CollectionFilter(tag.ofAnime));
+    ref.invalidate(collectionFilterProvider(tag));
   }
 }

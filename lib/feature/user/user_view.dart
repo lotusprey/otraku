@@ -39,13 +39,31 @@ class UserHomeView extends StatelessWidget {
     required this.removableTopPadding,
   });
 
-  final UserTag tag;
+  final UserTag? tag;
   final String? avatarUrl;
   final ScrollController? homeScrollCtrl;
   final double removableTopPadding;
 
   @override
   Widget build(BuildContext context) {
+    final body = tag != null
+        ? _UserView(tag!, avatarUrl, homeScrollCtrl)
+        : CustomScrollView(
+            controller: homeScrollCtrl,
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              UserHeader(
+                id: null,
+                user: null,
+                isViewer: true,
+                imageUrl: null,
+                toggleFollow: () async => null,
+              ),
+              const SliverToBoxAdapter(child: Text('Log in to view account')),
+              const SliverFooter(),
+            ],
+          );
+
     final mediaQuery = MediaQuery.of(context);
     return MediaQuery(
       data: mediaQuery.copyWith(
@@ -53,7 +71,7 @@ class UserHomeView extends StatelessWidget {
           top: mediaQuery.padding.top - removableTopPadding,
         ),
       ),
-      child: _UserView(tag, avatarUrl, homeScrollCtrl),
+      child: body,
     );
   }
 }
@@ -69,9 +87,7 @@ class _UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final viewerId = ref.watch(
-          persistenceProvider.select((s) => s.accountGroup.account?.id),
-        );
+        final viewerId = ref.watch(viewerIdProvider);
 
         ref.listen<AsyncValue<User>>(
           userProvider(tag),

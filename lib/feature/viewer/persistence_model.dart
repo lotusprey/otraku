@@ -10,8 +10,9 @@ import 'package:otraku/util/theming.dart';
 
 const appVersion = '1.5.3';
 
-class Persistence1 {
-  const Persistence1({
+class Persistence {
+  const Persistence({
+    required this.systemColors,
     required this.accountGroup,
     required this.options,
     required this.appMeta,
@@ -19,7 +20,8 @@ class Persistence1 {
     required this.calendarFilter,
   });
 
-  factory Persistence1.empty() => Persistence1(
+  factory Persistence.empty() => Persistence(
+        systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
         accountGroup: AccountGroup.empty(),
         options: Options.empty(),
         appMeta: AppMeta.empty(),
@@ -27,34 +29,43 @@ class Persistence1 {
         calendarFilter: CalendarFilter.empty(),
       );
 
-  factory Persistence1.fromMap(
+  factory Persistence.fromMap(
     Map<dynamic, dynamic> map,
     Map<String, String> accessTokens,
   ) =>
-      Persistence1(
-        accountGroup: AccountGroup.fromMap(map['accountGroup'], accessTokens),
-        options: Options.fromMap(map['options']),
-        appMeta: AppMeta.fromMap(map['appMeta']),
-        homeActivitiesFilter: HomeActivitiesFilter.fromMap(
-          map['homeActivitiesFilter'],
+      Persistence(
+        systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
+        accountGroup: AccountGroup.fromMap(
+          map['accountGroup'] ?? const {},
+          accessTokens,
         ),
-        calendarFilter: CalendarFilter.fromMap(map['calendarFilter']),
+        options: Options.fromMap(map['options'] ?? const {}),
+        appMeta: AppMeta.fromMap(map['appMeta'] ?? const {}),
+        homeActivitiesFilter: HomeActivitiesFilter.fromMap(
+          map['homeActivitiesFilter'] ?? const {},
+        ),
+        calendarFilter: CalendarFilter.fromMap(
+          map['calendarFilter'] ?? const {},
+        ),
       );
 
+  final SystemColors systemColors;
   final AccountGroup accountGroup;
   final Options options;
   final AppMeta appMeta;
   final HomeActivitiesFilter homeActivitiesFilter;
   final CalendarFilter calendarFilter;
 
-  Persistence1 copyWith({
+  Persistence copyWith({
+    SystemColors? systemColors,
     AccountGroup? accountGroup,
     Options? options,
     AppMeta? appMeta,
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
   }) =>
-      Persistence1(
+      Persistence(
+        systemColors: systemColors ?? this.systemColors,
         accountGroup: accountGroup ?? this.accountGroup,
         options: options ?? this.options,
         appMeta: appMeta ?? this.appMeta,
@@ -62,6 +73,8 @@ class Persistence1 {
         calendarFilter: calendarFilter ?? this.calendarFilter,
       );
 }
+
+typedef SystemColors = ({Color? lightPrimaryColor, Color? darkPrimaryColor});
 
 class AccountGroup {
   const AccountGroup({required this.accounts, required this.accountIndex});
@@ -72,11 +85,11 @@ class AccountGroup {
       );
 
   factory AccountGroup.fromMap(
-    Map<String, dynamic> map,
+    Map<dynamic, dynamic> map,
     Map<String, String> accessTokens,
   ) {
     final accounts = <Account>[];
-    for (final a in map['accounts']) {
+    for (final a in map['accounts'] ?? const []) {
       final accessToken = accessTokens[Account.accessTokenKeyById(a['id'])];
       if (accessToken == null) continue;
 
@@ -114,7 +127,7 @@ class Account {
     required this.accessToken,
   });
 
-  factory Account.fromMap(Map<String, dynamic> map, String accessToken) =>
+  factory Account.fromMap(Map<dynamic, dynamic> map, String accessToken) =>
       Account(
         id: map['id'],
         name: map['name'],
@@ -170,19 +183,19 @@ class Options {
         defaultAnimeSort: EntrySort.title,
         defaultMangaSort: EntrySort.title,
         defaultDiscoverSort: MediaSort.trendingDesc,
-        imageQuality: ImageQuality.High,
+        imageQuality: ImageQuality.high,
         animeCollectionPreview: true,
         mangaCollectionPreview: true,
         airingSortForAnimePreview: true,
         confirmExit: false,
         leftHanded: false,
         analogueClock: false,
-        discoverItemView: DiscoverItemView.detailedList,
-        collectionItemView: CollectionItemView.detailedList,
-        collectionPreviewItemView: CollectionItemView.detailedList,
+        discoverItemView: DiscoverItemView.detailed,
+        collectionItemView: CollectionItemView.detailed,
+        collectionPreviewItemView: CollectionItemView.detailed,
       );
 
-  factory Options.fromMap(Map<String, dynamic> map) => Options(
+  factory Options.fromMap(Map<dynamic, dynamic> map) => Options(
         themeMode: ThemeMode.values.getOrFirst(map['themeMode']),
         themeBase: ThemeBase.values.getOrFirst(map['themeBase']),
         highContrast: map['highContrast'] ?? false,
@@ -304,9 +317,9 @@ class Options {
 }
 
 enum ImageQuality {
-  VeryHigh('Very High', 'extraLarge'),
-  High('High', 'large'),
-  Medium('Medium', 'medium');
+  veryHigh('Very High', 'extraLarge'),
+  high('High', 'large'),
+  medium('Medium', 'medium');
 
   const ImageQuality(this.label, this.value);
 
@@ -327,7 +340,7 @@ class AppMeta {
         lastBackgroundJob: null,
       );
 
-  factory AppMeta.fromMap(Map<String, dynamic> map) => AppMeta(
+  factory AppMeta.fromMap(Map<dynamic, dynamic> map) => AppMeta(
         lastNotificationId: map['lastNotificationId'] ?? -1,
         lastAppVersion: map['lastAppVersion'] ?? '',
         lastBackgroundJob: map['lastBackgroundJob'],

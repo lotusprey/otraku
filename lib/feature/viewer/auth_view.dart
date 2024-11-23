@@ -7,7 +7,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -41,13 +40,16 @@ class AuthViewState extends ConsumerState<AuthView> {
   }
 
   void _attemptToFinishAccountSetup() async {
-    if (widget.credentials == null) return;
+    if (widget.credentials == null) {
+      return;
+    }
+
     final token = widget.credentials!.$1;
     final expiration = widget.credentials!.$2;
 
     final account = await ref
         .read(repositoryProvider.notifier)
-        .setUpAccount(token, expiration);
+        .initAccount(token, expiration);
 
     if (account == null) {
       if (mounted) {
@@ -63,7 +65,7 @@ class AuthViewState extends ConsumerState<AuthView> {
     }
 
     ref.read(persistenceProvider.notifier).addAccount(account);
-    _loading = false;
+    setState(() => _loading = false);
   }
 
   Future<void> _triggerAccountSetup() async {
@@ -102,7 +104,7 @@ class AuthViewState extends ConsumerState<AuthView> {
       );
     }
 
-    final accounts = Persistence().accounts;
+    final accounts = ref.watch(persistenceProvider).accountGroup.accounts;
     return Scaffold(
       body: ConstrainedView(
         child: ListView.builder(

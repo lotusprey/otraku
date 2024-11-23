@@ -89,22 +89,26 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       }
 
       int count = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final ns = data['Page']?['notifications'] ?? [];
-      if (count > ns.length) count = ns.length;
+      final List<dynamic> notifications =
+          data['Page']?['notifications'] ?? const [];
+
+      if (count > notifications.length) count = notifications.length;
       if (count == 0) return true;
 
       final lastNotificationId = persistence.appMeta.lastNotificationId;
 
       appMeta = AppMeta(
-        lastNotificationId: ns[0]?['id'] ?? -1,
+        lastNotificationId: notifications[0]['id'] ?? -1,
         lastBackgroundJob: persistence.appMeta.lastBackgroundJob,
         lastAppVersion: persistence.appMeta.lastAppVersion,
       );
       container.read(persistenceProvider.notifier).setAppMeta(appMeta);
 
-      for (int i = 0; i < count && ns[i]?['id'] != lastNotificationId; i++) {
+      for (int i = 0;
+          i < count && notifications[i]['id'] != lastNotificationId;
+          i++) {
         final notification = SiteNotification.maybe(
-          ns[i],
+          notifications[i],
           persistence.options.imageQuality,
         );
 

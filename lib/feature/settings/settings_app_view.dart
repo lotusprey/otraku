@@ -168,8 +168,8 @@ class SettingsAppSubview extends ConsumerWidget {
               child: ChipSelector.ensureSelected(
                 title: 'Discover View',
                 items: const [
-                  ('Detailed List', DiscoverItemView.detailedList),
-                  ('Simple Grid', DiscoverItemView.simpleGrid),
+                  ('Detailed', DiscoverItemView.detailed),
+                  ('Simple', DiscoverItemView.simple),
                 ],
                 value: options.discoverItemView,
                 onChanged: (v) => update(options.copyWith(discoverItemView: v)),
@@ -180,8 +180,8 @@ class SettingsAppSubview extends ConsumerWidget {
               child: ChipSelector.ensureSelected(
                 title: 'Collection View',
                 items: const [
-                  ('Detailed List', CollectionItemView.detailedList),
-                  ('Simple Grid', CollectionItemView.simpleGrid),
+                  ('Detailed', CollectionItemView.detailed),
+                  ('Simple', CollectionItemView.simple),
                 ],
                 value: options.collectionItemView,
                 onChanged: (v) => update(
@@ -194,8 +194,8 @@ class SettingsAppSubview extends ConsumerWidget {
               child: ChipSelector.ensureSelected(
                 title: 'Collection Preview View',
                 items: const [
-                  ('Detailed List', CollectionItemView.detailedList),
-                  ('Simple Grid', CollectionItemView.simpleGrid),
+                  ('Detailed', CollectionItemView.detailed),
+                  ('Simple', CollectionItemView.simple),
                 ],
                 value: options.collectionPreviewItemView,
                 onChanged: (v) => update(

@@ -11,12 +11,12 @@ import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
 
 final activitiesProvider = AsyncNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, Paged<Activity>, int>(
+    .family<ActivitiesNotifier, Paged<Activity>, int?>(
   ActivitiesNotifier.new,
 );
 
 class ActivitiesNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int> {
+    extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int?> {
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
   int? _viewerId;
@@ -24,15 +24,13 @@ class ActivitiesNotifier
 
   @override
   FutureOr<Paged<Activity>> build(arg) async {
-    if (arg == homeFeedId) {
+    if (arg == null) {
       ref.keepAlive();
     }
 
     _lastId = null;
     _filter = ref.watch(activitiesFilterProvider(arg));
-    _viewerId = ref.watch(
-      persistenceProvider.select((s) => s.accountGroup.account?.id),
-    );
+    _viewerId = ref.watch(viewerIdProvider);
 
     return await _fetch(const Paged());
   }
@@ -47,7 +45,7 @@ class ActivitiesNotifier
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.activityPage,
       {
-        'typeIn': _filter.typeIn.map((t) => t.name).toList(),
+        'typeIn': _filter.typeIn.map((t) => t.value).toList(),
         ...switch (_filter) {
           HomeActivitiesFilter filter => {
               'page': oldState.next,

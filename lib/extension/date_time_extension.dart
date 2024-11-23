@@ -1,5 +1,3 @@
-import 'package:otraku/util/persistence.dart';
-
 extension DateTimeExtension on DateTime {
   int get secondsSinceEpoch => millisecondsSinceEpoch ~/ 1000;
 
@@ -37,8 +35,8 @@ extension DateTimeExtension on DateTime {
   String get formattedWithWeekDay =>
       '$formattedDate - ${formattedWeekday(weekday)}';
 
-  String get formattedTime {
-    if (Persistence().analogueClock) {
+  String formattedTime(bool analogueClock) {
+    if (analogueClock) {
       final (overflows, realHour) =
           hour > 12 ? (true, hour - 12) : (false, hour);
 

@@ -8,7 +8,6 @@ import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
-import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/theming.dart';
 
@@ -32,14 +31,14 @@ class _App extends ConsumerStatefulWidget {
 class AppState extends ConsumerState<_App> {
   late final GoRouter _router;
   late final StreamSubscription<String> _notificationSubscription;
+  Color? _systemLightPrimaryColor;
+  Color? _systemDarkPrimaryColor;
 
   @override
   void initState() {
     super.initState();
 
-    final isGuest = ref.read(persistenceProvider.select(
-      (s) => s.accountGroup.accountIndex == null,
-    ));
+    final isGuest = ref.read(viewerIdProvider) == null;
 
     final mustConfirmExit = () => ref.read(persistenceProvider.select(
           (s) => s.options.confirmExit,
@@ -56,7 +55,10 @@ class AppState extends ConsumerState<_App> {
         lastNotificationId: appMeta.lastNotificationId,
         lastBackgroundJob: appMeta.lastBackgroundJob,
       );
-      ref.read(persistenceProvider.notifier).setAppMeta(appMeta);
+
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => ref.read(persistenceProvider.notifier).setAppMeta(appMeta),
+      );
 
       BackgroundHandler.requestPermissionForNotifications();
     }
@@ -72,39 +74,41 @@ class AppState extends ConsumerState<_App> {
   Widget build(BuildContext context) {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        Color? systemLightPrimaryColor = lightDynamic?.primary;
-        Color? systemDarkPrimaryColor = darkDynamic?.primary;
-
-        // The system schemes must be cached, so
-        // they can later be used in the settings.
-        final notifier = ref.watch(homeProvider.notifier);
-        Future(
-          () => notifier.cacheSystemColorSchemes(
-            systemLightPrimaryColor,
-            systemDarkPrimaryColor,
-          ),
-        );
-
+        ref.watch(viewerIdProvider);
         final options = ref.watch(persistenceProvider.select((s) => s.options));
+
+        Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
+        Color darkSeed = lightSeed;
+        if (lightDynamic != null && darkDynamic != null) {
+          _systemLightPrimaryColor = lightDynamic.primary;
+          _systemDarkPrimaryColor = darkDynamic.primary;
+
+          // The system primary colors must be cached,
+          // so they can later be used in the settings.
+          final notifier = ref.watch(persistenceProvider.notifier);
+
+          // A provider can't be modified during build,
+          // so it's done asynchronously as a workaround.
+          Future(
+            () => notifier.cacheSystemPrimaryColors((
+              lightPrimaryColor: _systemLightPrimaryColor,
+              darkPrimaryColor: _systemDarkPrimaryColor,
+            )),
+          );
+
+          if (options.themeBase == null &&
+              _systemLightPrimaryColor != null &&
+              _systemDarkPrimaryColor != null) {
+            lightSeed = _systemLightPrimaryColor!;
+            darkSeed = _systemDarkPrimaryColor!;
+          }
+        }
 
         Color? lightBackground;
         Color? darkBackground;
         if (options.highContrast) {
           lightBackground = Colors.white;
           darkBackground = Colors.black;
-        }
-
-        Color lightSeed;
-        Color darkSeed;
-
-        if (options.themeBase == null &&
-            systemLightPrimaryColor != null &&
-            systemDarkPrimaryColor != null) {
-          lightSeed = systemLightPrimaryColor;
-          darkSeed = systemDarkPrimaryColor;
-        } else {
-          lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
-          darkSeed = lightSeed;
         }
 
         final lightScheme = ColorScheme.fromSeed(
@@ -152,7 +156,6 @@ class AppState extends ConsumerState<_App> {
           builder: (context, child) {
             // Override the [textScaleFactor], because some devices apply
             // too high of a factor and it breaks the app visually.
-            // [child] can't be null, because [onGenerateRoute] is provided.
             final mediaQuery = MediaQuery.of(context);
             final scale = mediaQuery.textScaler.clamp(
               minScaleFactor: 0.8,

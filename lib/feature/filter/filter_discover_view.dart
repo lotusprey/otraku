@@ -16,11 +16,13 @@ class FilterDiscoverView extends StatefulWidget {
     required this.ofAnime,
     required this.filter,
     required this.onChanged,
+    required this.leftHanded,
   });
 
   final bool ofAnime;
   final DiscoverMediaFilter filter;
   final void Function(DiscoverMediaFilter) onChanged;
+  final bool leftHanded;
 
   @override
   State<FilterDiscoverView> createState() => _FilterDiscoverViewState();
@@ -34,7 +36,10 @@ class _FilterDiscoverViewState extends State<FilterDiscoverView> {
     return FilterEditSheet(
       filter: _filter,
       onChanged: widget.onChanged,
-      onCleared: () => widget.onChanged(DiscoverMediaFilter()),
+      onCleared: () => widget.onChanged(
+        DiscoverMediaFilter(widget.filter.sort),
+      ),
+      leftHanded: widget.leftHanded,
       builder: (context, scrollCtrl, filter) => ListView(
         controller: scrollCtrl,
         padding: const EdgeInsets.only(top: 20),

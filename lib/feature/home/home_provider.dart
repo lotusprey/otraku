@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/home/home_model.dart';
 
 final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(
@@ -9,20 +8,15 @@ final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(
 
 class HomeNotifier extends AutoDisposeNotifier<Home> {
   @override
-  Home build() => Home(
-        didExpandAnimeCollection: !Persistence().animeCollectionPreview,
-        didExpandMangaCollection: !Persistence().mangaCollectionPreview,
-      );
+  Home build() {
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+
+    return Home(
+      didExpandAnimeCollection: !options.animeCollectionPreview,
+      didExpandMangaCollection: !options.mangaCollectionPreview,
+    );
+  }
 
   void expandCollection(bool ofAnime) =>
       state = state.withExpandedCollection(ofAnime);
-
-  void cacheSystemColorSchemes(
-    Color? systemLightPrimaryColor,
-    Color? systemDarkPrimaryColor,
-  ) =>
-      state = state.withSystemColorSchemes(
-        systemLightPrimaryColor,
-        systemDarkPrimaryColor,
-      );
 }

@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^2.6.1
 
   # Routing.
-  go_router: ^14.3.0
+  go_router: ^14.6.1
 
   # Data fetching.
   http: ^1.2.2
@@ -25,7 +25,7 @@ dependencies:
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.1.4
+  path_provider: ^2.1.5
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^9.2.2
@@ -49,7 +49,7 @@ dependencies:
   workmanager: ^0.5.2
 
   # Sending device notifications.
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^18.0.1
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.15.2

@@ -7,7 +7,6 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -204,6 +203,7 @@ class _ActivityMediaBox extends StatelessWidget {
 
 class ActivityFooter extends StatefulWidget {
   const ActivityFooter({
+    required this.viewerId,
     required this.activity,
     required this.remove,
     required this.togglePin,
@@ -213,11 +213,12 @@ class ActivityFooter extends StatefulWidget {
     required this.onEdited,
   });
 
+  final int? viewerId;
   final Activity activity;
   final Future<Object?> Function() remove;
   final Future<Object?> Function() toggleLike;
   final Future<Object?> Function() toggleSubscription;
-  final Future<Object?> Function()? togglePin;
+  final Future<Object?> Function() togglePin;
   final Future<Object?> Function()? openReplies;
   final void Function(Map<String, dynamic>)? onEdited;
 
@@ -315,7 +316,18 @@ class _ActivityFooterState extends State<ActivityFooter> {
           final ownershipButtons = <Widget>[];
 
           if (activity.isOwned) {
-            if (activity.authorId == Persistence().id) {
+            if (activity is! MessageActivity) {
+              ownershipButtons.add(ListTile(
+                title:
+                    activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                leading: activity.isPinned
+                    ? const Icon(Icons.push_pin)
+                    : const Icon(Icons.push_pin_outlined),
+                onTap: _togglePin,
+              ));
+            }
+
+            if (activity.authorId == widget.viewerId) {
               switch (activity) {
                 case StatusActivity _:
                   ownershipButtons.add(ListTile(
@@ -375,18 +387,6 @@ class _ActivityFooterState extends State<ActivityFooter> {
             activity.siteUrl,
             [
               ...ownershipButtons,
-              if (widget.togglePin != null &&
-                  activity.isOwned &&
-                  activity is! MessageActivity)
-                ListTile(
-                  title: activity.isPinned
-                      ? const Text('Unpin')
-                      : const Text('Pin'),
-                  leading: activity.isPinned
-                      ? const Icon(Icons.push_pin)
-                      : const Icon(Icons.push_pin_outlined),
-                  onTap: _togglePin,
-                ),
               ListTile(
                 title: !activity.isSubscribed
                     ? const Text('Subscribe')
@@ -445,7 +445,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     final activity = widget.activity;
     activity.isPinned = !activity.isPinned;
 
-    widget.togglePin!().then((err) {
+    widget.togglePin().then((err) {
       if (err == null) {
         if (mounted) Navigator.pop(context);
         return;

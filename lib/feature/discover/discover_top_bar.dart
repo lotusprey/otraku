@@ -7,6 +7,7 @@ import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/filter/filter_discover_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/debounce.dart';
@@ -23,6 +24,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final filter = ref.watch(discoverFilterProvider);
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
 
         return Expanded(
           child: Row(
@@ -61,10 +63,15 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                     smallSize: 10,
                     alignment: Alignment.topLeft,
                     backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: _filterIcon(context, ref, filter),
+                    child: _filterIcon(
+                      context,
+                      ref,
+                      filter,
+                      options.leftHanded,
+                    ),
                   )
                 else
-                  _filterIcon(context, ref, filter)
+                  _filterIcon(context, ref, filter, options.leftHanded)
               else if (filter.type == DiscoverType.character ||
                   filter.type == DiscoverType.staff)
                 _BirthdayFilter(ref)
@@ -93,6 +100,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     BuildContext context,
     WidgetRef ref,
     DiscoverFilter filter,
+    bool leftHanded,
   ) {
     return IconButton(
       tooltip: 'Filter',
@@ -102,6 +110,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
         FilterDiscoverView(
           ofAnime: filter.type == DiscoverType.anime,
           filter: filter.mediaFilter,
+          leftHanded: leftHanded,
           onChanged: (mediaFilter) => ref
               .read(discoverFilterProvider.notifier)
               .update((s) => s.copyWith(mediaFilter: mediaFilter)),

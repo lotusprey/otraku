@@ -31,7 +31,9 @@ class Repository {
 
       if (body.containsKey('errors')) {
         throw StateError(
-          (body['errors'] as List).map((e) => e['message'].toString()).join(),
+          (body['errors'] as List)
+              .map((e) => e['message'].toString())
+              .join(', '),
         );
       }
 

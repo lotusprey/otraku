@@ -50,7 +50,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                   debounce: Debounce(),
                   focusNode: focusNode,
                   hint: ref.watch(collectionProvider(tag).select(
-                    (s) => s.valueOrNull?.listName ?? '',
+                    (s) => s.valueOrNull?.list.name ?? '',
                   )),
                   value: filter.search,
                   onChanged: (search) => ref
@@ -65,13 +65,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                   final entries = ref.read(collectionEntriesProvider(tag));
 
                   if (entries.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const ConfirmationDialog(
-                        title: 'No entries',
-                      ),
-                    );
-
+                    ConfirmationDialog.show(context, title: 'No entries');
                     return;
                   }
 

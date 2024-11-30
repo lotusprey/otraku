@@ -13,17 +13,20 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
+import 'package:otraku/widget/timestamp.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({
     required this.activity,
     required this.footer,
     required this.withHeader,
+    required this.analogueClock,
   });
 
   final Activity activity;
   final ActivityFooter footer;
   final bool withHeader;
+  final bool analogueClock;
 
   @override
   Widget build(BuildContext context) {
@@ -44,13 +47,7 @@ class ActivityCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  child: Text(
-                    activity.createdAt,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ),
+                Flexible(child: Timestamp(activity.createdAt, analogueClock)),
                 footer,
               ],
             ),
@@ -209,7 +206,7 @@ class ActivityFooter extends StatefulWidget {
     required this.togglePin,
     required this.toggleLike,
     required this.toggleSubscription,
-    required this.openReplies,
+    required this.reply,
     required this.onEdited,
   });
 
@@ -219,7 +216,7 @@ class ActivityFooter extends StatefulWidget {
   final Future<Object?> Function() toggleLike;
   final Future<Object?> Function() toggleSubscription;
   final Future<Object?> Function() togglePin;
-  final Future<Object?> Function()? openReplies;
+  final Future<Object?> Function()? reply;
   final void Function(Map<String, dynamic>)? onEdited;
 
   @override
@@ -254,7 +251,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             message: 'Replies',
             child: InkResponse(
               radius: Theming.radiusSmall.x,
-              onTap: widget.openReplies,
+              onTap: widget.reply,
               child: Row(
                 children: [
                   Text(
@@ -370,14 +367,12 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ownershipButtons.add(ListTile(
               title: const Text('Delete'),
               leading: const Icon(Ionicons.trash_outline),
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: 'Delete?',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: _remove,
-                ),
+              onTap: () => ConfirmationDialog.show(
+                context,
+                title: 'Delete?',
+                primaryAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: _remove,
               ),
             ));
           }

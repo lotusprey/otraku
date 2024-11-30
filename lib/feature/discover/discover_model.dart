@@ -97,7 +97,7 @@ class DiscoverMediaItem {
         isAnime: map['type'] == 'ANIME',
         format: StringExtension.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
-        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
         popularity: map['popularity'] ?? 0,
@@ -110,7 +110,7 @@ class DiscoverMediaItem {
   final bool isAnime;
   final String? format;
   final ReleaseStatus? releaseStatus;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final int? releaseYear;
   final int averageScore;
   final int popularity;

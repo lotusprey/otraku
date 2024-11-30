@@ -191,6 +191,10 @@ class _View extends ConsumerWidget {
 
     final viewerId = ref.watch(viewerIdProvider);
 
+    final analogueClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogueClock),
+    );
+
     return ref.watch(activityProvider(id)).unwrapPrevious().when(
           loading: () => const Center(child: Loader()),
           error: (_, __) => const Center(
@@ -208,6 +212,7 @@ class _View extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: ActivityCard(
                       withHeader: false,
+                      analogueClock: analogueClock,
                       activity: data.activity,
                       footer: ActivityFooter(
                         viewerId: viewerId,
@@ -218,7 +223,7 @@ class _View extends ConsumerWidget {
                         togglePin: () => _togglePin(ref, data.activity),
                         remove: () => _remove(context, ref, data.activity),
                         onEdited: (map) => _onEdited(ref, map),
-                        openReplies: null,
+                        reply: () => _reply(context, ref, data.activity),
                       ),
                     ),
                   ),
@@ -227,6 +232,7 @@ class _View extends ConsumerWidget {
                       childCount: data.replies.items.length,
                       (context, i) => ReplyCard(
                         activityId: id,
+                        analogueClock: analogueClock,
                         reply: data.replies.items[i],
                         toggleLike: () => ref
                             .read(activityProvider(id).notifier)
@@ -299,5 +305,21 @@ class _View extends ConsumerWidget {
     if (feedId != null) {
       ref.read(activitiesProvider(feedId!).notifier).replace(activity);
     }
+  }
+
+  Future<void> _reply(
+    BuildContext context,
+    WidgetRef ref,
+    Activity activity,
+  ) {
+    return showSheet(
+      context,
+      CompositionView(
+        defaultText: '@${activity.authorName} ',
+        tag: ActivityReplyCompositionTag(id: null, activityId: id),
+        onSaved: (map) =>
+            ref.read(activityProvider(id).notifier).appendReply(map),
+      ),
+    );
   }
 }

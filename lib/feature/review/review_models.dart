@@ -50,7 +50,11 @@ class Review {
     required this.viewerRating,
   });
 
-  factory Review(Map<String, dynamic> map, ImageQuality imageQuality) =>
+  factory Review(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+    bool analogueClock,
+  ) =>
       Review._(
         id: map['id'],
         userId: map['user']['id'],
@@ -62,8 +66,8 @@ class Review {
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),
-        createdAt:
-            DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
+        createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'])
+            .formattedDateTimeFromSeconds(analogueClock),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

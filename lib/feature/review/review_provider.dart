@@ -19,10 +19,9 @@ class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
         .read(repositoryProvider)
         .request(GqlQuery.review, {'id': arg});
 
-    return Review(
-      data['Review'],
-      ref.read(persistenceProvider).options.imageQuality,
-    );
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+
+    return Review(data['Review'], options.imageQuality, options.analogueClock);
   }
 
   Future<Object?> rate(bool? rating) {

@@ -45,8 +45,8 @@ class MediaHeader extends StatelessWidget {
         textRailItems[info.format!.label] = false;
       }
 
-      if (media!.edit.status != null) {
-        textRailItems[media!.edit.status!.label(
+      if (media!.edit.listStatus != null) {
+        textRailItems[media!.edit.listStatus!.label(
           info.type == DiscoverType.anime,
         )] = false;
       }
@@ -56,7 +56,7 @@ class MediaHeader extends StatelessWidget {
             '${info.airingAt!.timeUntil}'] = true;
       }
 
-      if (media!.edit.status != null) {
+      if (media!.edit.listStatus != null) {
         final progress = media!.edit.progress;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
           textRailItems['${info.nextEpisode! - 1 - progress}'

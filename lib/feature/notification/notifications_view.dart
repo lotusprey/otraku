@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
@@ -21,6 +22,7 @@ import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
+import 'package:otraku/widget/timestamp.dart';
 
 class NotificationsView extends ConsumerStatefulWidget {
   const NotificationsView();
@@ -54,10 +56,15 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
     final filter = ref.watch(notificationsFilterProvider);
 
+    final analogueClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogueClock),
+    );
+
     return AdaptiveScaffold(
       (context, compact) {
         final content = _Content(
           unreadCount: unreadCount,
+          analogueClock: analogueClock,
           scrollCtrl: _scrollCtrl,
         );
 
@@ -141,10 +148,12 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 class _Content extends StatelessWidget {
   const _Content({
     required this.unreadCount,
+    required this.analogueClock,
     required this.scrollCtrl,
   });
 
   final int unreadCount;
+  final bool analogueClock;
   final ScrollController scrollCtrl;
 
   @override
@@ -155,7 +164,11 @@ class _Content extends StatelessWidget {
       provider: notificationsProvider,
       onData: (data) => SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, i) => _NotificationItem(data.items[i], i < unreadCount),
+          (context, i) => _NotificationItem(
+            data.items[i],
+            i < unreadCount,
+            analogueClock,
+          ),
           childCount: data.items.length,
         ),
       ),
@@ -164,10 +177,11 @@ class _Content extends StatelessWidget {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(this.item, this.unread);
+  const _NotificationItem(this.item, this.unread, this.analogueClock);
 
   final SiteNotification item;
   final bool unread;
+  final bool analogueClock;
 
   @override
   Widget build(BuildContext context) {
@@ -287,10 +301,7 @@ class _NotificationItem extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Text(
-                            item.createdAt,
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
+                          Timestamp(item.createdAt, analogueClock),
                         ],
                       ),
                     ),
@@ -315,17 +326,16 @@ class _NotificationItem extends StatelessWidget {
     );
   }
 
-  void _redirectToSite(BuildContext context, String? url) => showDialog(
-        context: context,
-        builder: (context) => ConfirmationDialog(
-          title: 'Forum is not yet supported',
-          content: 'Open in browser?',
-          mainAction: 'Open',
-          secondaryAction: 'Cancel',
-          onConfirm: () => url != null
-              ? SnackBarExtension.launch(context, url)
-              : SnackBarExtension.show(context, 'Invalid Link'),
-        ),
+  void _redirectToSite(BuildContext context, String? url) =>
+      ConfirmationDialog.show(
+        context,
+        title: 'Forum is not yet supported',
+        content: 'Open in browser?',
+        primaryAction: 'Open',
+        secondaryAction: 'Cancel',
+        onConfirm: () => url != null
+            ? SnackBarExtension.launch(context, url)
+            : SnackBarExtension.show(context, 'Invalid Link'),
       );
 }
 

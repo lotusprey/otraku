@@ -32,8 +32,7 @@ class ActivityReply {
       authorName: map['user']['name'],
       authorAvatarUrl: map['user']['avatar']['large'],
       text: parseMarkdown(map['text'] ?? ''),
-      createdAt:
-          DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
+      createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
       likeCount: map['likeCount'] ?? 0,
       isLiked: map['isLiked'] ?? false,
     );
@@ -44,7 +43,7 @@ class ActivityReply {
   final String authorName;
   final String authorAvatarUrl;
   final String text;
-  final String createdAt;
+  final DateTime createdAt;
   int likeCount;
   bool isLiked;
 }
@@ -83,7 +82,7 @@ sealed class Activity {
             authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['text'] ?? ''),
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -106,7 +105,7 @@ sealed class Activity {
             recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['message'] ?? ''),
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['messenger']['id'] == viewerId ||
@@ -140,7 +139,7 @@ sealed class Activity {
             isAnime: map['type'] == 'ANIME_LIST',
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -162,9 +161,9 @@ sealed class Activity {
   final int authorId;
   final String authorName;
   final String authorAvatarUrl;
-  final String createdAt;
   final String text;
   final String siteUrl;
+  final DateTime createdAt;
   final bool isOwned;
   int replyCount;
   int likeCount;

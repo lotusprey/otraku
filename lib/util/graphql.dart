@@ -18,7 +18,9 @@ abstract class GqlQuery {
 
   static const listEntry = r'''
     query CollectionEntry($userId: Int, $mediaId: Int) {
-      MediaList(userId: $userId, mediaId: $mediaId) {...collectionEntry}
+      MediaList(userId: $userId, mediaId: $mediaId) {
+        ...collectionEntry customLists hiddenFromStatusLists
+      }
     }
   '''
       '${_GqlFragment.collectionEntry}';
@@ -722,8 +724,8 @@ abstract class GqlMutation {
   ''';
 
   static const updateProgress = r'''
-    mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {customLists}
+    mutation UpdateProgress($mediaId: Int, $progress: Int, $status: MediaListStatus, $startedAt: FuzzyDateInput) {
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress, status: $status, startedAt: $startedAt) {id}
     }
   ''';
 

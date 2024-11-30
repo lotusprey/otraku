@@ -8,6 +8,7 @@ import 'package:otraku/util/debounce.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/widget/cached_image.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/field/note_label.dart';
 import 'package:otraku/widget/field/score_label.dart';
 import 'package:otraku/widget/sheets.dart';
@@ -25,7 +26,7 @@ class CollectionList extends StatelessWidget {
 
   final List<Entry> items;
   final ScoreFormat scoreFormat;
-  final Future<String?> Function(Entry)? onProgressUpdated;
+  final Future<String?> Function(Entry, bool)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class _Tile extends StatelessWidget {
 
   final Entry entry;
   final ScoreFormat scoreFormat;
-  final Future<String?> Function(Entry)? onProgressUpdated;
+  final Future<String?> Function(Entry, bool)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +96,7 @@ class _TileContent extends StatefulWidget {
 
   final Entry item;
   final ScoreFormat scoreFormat;
-  final Future<String?> Function(Entry)? onProgressUpdated;
+  final Future<String?> Function(Entry, bool)? onProgressUpdated;
 
   @override
   State<_TileContent> createState() => __TileContentState();
@@ -222,31 +223,20 @@ class __TileContentState extends State<_TileContent> {
         foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
       onPressed: () {
+        _debounce.cancel();
+
         if (item.progressMax != null &&
             item.progress >= item.progressMax! - 1) {
-          _debounce.cancel();
           _resetProgress();
 
           showSheet(context, EditView((id: item.mediaId, setComplete: true)));
           return;
         }
 
-        _debounce.cancel();
         _lastProgress ??= item.progress;
         setState(() => item.progress++);
 
-        _debounce.run(() async {
-          final err = await widget.onProgressUpdated!(item);
-          if (err == null) {
-            _lastProgress = null;
-            return;
-          }
-
-          _resetProgress();
-          if (context.mounted) {
-            SnackBarExtension.show(context, 'Failed updating progress: $err');
-          }
-        });
+        _debounce.run(_update);
       },
       child: Tooltip(
         message: 'Increment Progress',
@@ -259,6 +249,36 @@ class __TileContentState extends State<_TileContent> {
         ),
       ),
     );
+  }
+
+  void _update() async {
+    final item = widget.item;
+    var updateStatus = false;
+
+    if (_lastProgress == 0 &&
+        (item.listStatus == ListStatus.planning ||
+            item.listStatus == ListStatus.paused ||
+            item.listStatus == ListStatus.dropped)) {
+      await ConfirmationDialog.show(
+        context,
+        title: 'Update status?',
+        content: 'Do you also want to update the list status?',
+        primaryAction: 'Yes',
+        secondaryAction: 'No',
+        onConfirm: () => updateStatus = true,
+      );
+    }
+
+    final err = await widget.onProgressUpdated!(item, updateStatus);
+    if (err == null) {
+      _lastProgress = null;
+      return;
+    }
+
+    _resetProgress();
+    if (mounted) {
+      SnackBarExtension.show(context, 'Failed updating progress: $err');
+    }
   }
 
   void _resetProgress() {

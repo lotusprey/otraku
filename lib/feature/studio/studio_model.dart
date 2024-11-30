@@ -47,7 +47,7 @@ class StudioMedia {
         format: MediaFormat.from(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
         weightedAverageScore: map['averageScore'] ?? 0,
-        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
         startDate: DateTimeExtension.fuzzyDateString(map['startDate']),
       );
 
@@ -57,6 +57,6 @@ class StudioMedia {
   final MediaFormat? format;
   final ReleaseStatus? releaseStatus;
   final int weightedAverageScore;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final String? startDate;
 }

@@ -57,19 +57,35 @@ class DialogBox extends StatelessWidget {
 }
 
 class ConfirmationDialog extends StatelessWidget {
-  const ConfirmationDialog({
+  const ConfirmationDialog._({
     required this.title,
-    this.mainAction = 'Ok',
-    this.content,
-    this.secondaryAction,
-    this.onConfirm,
+    required this.content,
+    required this.primaryAction,
+    required this.secondaryAction,
   });
 
   final String title;
   final String? content;
-  final String mainAction;
+  final String primaryAction;
   final String? secondaryAction;
-  final void Function()? onConfirm;
+
+  static Future<void> show(
+    BuildContext context, {
+    required String title,
+    String? content,
+    String primaryAction = 'Ok',
+    String? secondaryAction,
+    void Function()? onConfirm,
+  }) =>
+      showDialog(
+        context: context,
+        builder: (context) => ConfirmationDialog._(
+          title: title,
+          content: content,
+          primaryAction: primaryAction,
+          secondaryAction: secondaryAction,
+        ),
+      ).then((ok) => ok == true ? onConfirm?.call() : null);
 
   @override
   Widget build(BuildContext context) {
@@ -83,14 +99,11 @@ class ConfirmationDialog extends StatelessWidget {
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
             child: Text(secondaryAction!),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(context, false),
           ),
         TextButton(
-          child: Text(mainAction),
-          onPressed: () {
-            onConfirm?.call();
-            Navigator.pop(context);
-          },
+          child: Text(primaryAction),
+          onPressed: () => Navigator.pop(context, true),
         ),
       ],
     );

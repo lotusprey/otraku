@@ -84,18 +84,19 @@ class Routes {
   static String statistics(int id) => '/statistics/$id';
 
   static GoRouter buildRouter(bool isGuest, bool Function() mustConfirmExit) {
-    final onExit = (BuildContext context, GoRouterState _) {
+    final onExit = (BuildContext context, GoRouterState _) async {
       if (!mustConfirmExit()) return Future.value(true);
 
-      return showDialog<bool>(
-        context: context,
-        builder: (context) => ConfirmationDialog(
-          title: 'Exit?',
-          mainAction: 'Yes',
-          secondaryAction: 'No',
-          onConfirm: () => Navigator.of(context).pop(true),
-        ),
-      ).then((value) => value ?? false);
+      var exit = false;
+      await ConfirmationDialog.show(
+        context,
+        title: 'Exit?',
+        primaryAction: 'Yes',
+        secondaryAction: 'No',
+        onConfirm: () => exit = true,
+      );
+
+      return exit;
     };
 
     final routes = [

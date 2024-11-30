@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/home/home_provider.dart';

@@ -7,10 +7,8 @@ extension DateTimeExtension on DateTime {
   static DateTime? tryFromSecondsSinceEpoch(int? seconds) =>
       seconds != null ? fromSecondsSinceEpoch(seconds) : null;
 
-  static String formattedDateTimeFromSeconds(int seconds) {
-    DateTime date = fromSecondsSinceEpoch(seconds);
-    return '${formattedWeekday(date.weekday)}, ${date.formattedDate}, ${date.formattedTime}';
-  }
+  String formattedDateTimeFromSeconds(bool analogueClock) =>
+      '${_weekdayName(weekday)}, $formattedDate, ${formattedTime(analogueClock)}';
 
   static DateTime? fromFuzzyDate(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
@@ -25,7 +23,7 @@ extension DateTimeExtension on DateTime {
     final day = map['day'];
 
     return '${day != null ? '$day ' : ''}'
-        '${month != null ? '${formattedMonth(month)} ' : ''}'
+        '${month != null ? '${monthName(month)} ' : ''}'
         '$year';
   }
 
@@ -33,7 +31,9 @@ extension DateTimeExtension on DateTime {
       {'year': year, 'month': month, 'day': day};
 
   String get formattedWithWeekDay =>
-      '$formattedDate - ${formattedWeekday(weekday)}';
+      '$formattedDate - ${_weekdayName(weekday)}';
+
+  String get formattedDate => '$day ${monthName(month)} $year';
 
   String formattedTime(bool analogueClock) {
     if (analogueClock) {
@@ -60,19 +60,7 @@ extension DateTimeExtension on DateTime {
         '${minutes < 1 ? "" : "${minutes}m"}';
   }
 
-  String get formattedDate => '$day ${formattedMonth(month)} $year';
-
-  static String formattedWeekday(int weekday) => switch (weekday) {
-        1 => 'Mon',
-        2 => 'Tue',
-        3 => 'Wed',
-        4 => 'Thu',
-        5 => 'Fri',
-        6 => 'Sat',
-        _ => 'Sun',
-      };
-
-  static String formattedMonth(int month) => switch (month) {
+  static String monthName(int month) => switch (month) {
         1 => 'Jan',
         2 => 'Feb',
         3 => 'Mar',
@@ -85,5 +73,15 @@ extension DateTimeExtension on DateTime {
         10 => 'Oct',
         11 => 'Nov',
         _ => 'Dec',
+      };
+
+  static String _weekdayName(int weekday) => switch (weekday) {
+        1 => 'Mon',
+        2 => 'Tue',
+        3 => 'Wed',
+        4 => 'Thu',
+        5 => 'Fri',
+        6 => 'Sat',
+        _ => 'Sun',
       };
 }

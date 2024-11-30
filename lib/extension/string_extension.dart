@@ -49,6 +49,6 @@ extension StringExtension on String {
     final year = map!['year'];
     final month = map['month'];
     final day = map['day'];
-    return '${day != null ? '$day ' : ''}${month != null ? '${DateTimeExtension.formattedMonth(month)} ' : ''}$year';
+    return '${day != null ? '$day ' : ''}${month != null ? '${DateTimeExtension.monthName(month)} ' : ''}$year';
   }
 }

@@ -17,7 +17,8 @@ final collectionEntriesProvider =
             .watch(collectionProvider(tag))
             .unwrapPrevious()
             .valueOrNull
-            ?.entries ??
+            ?.list
+            .entries ??
         const [];
 
     return _filter(entries, mediaFilter, search);
@@ -65,7 +66,7 @@ List<Entry> _filter(
     }
 
     if (mediaFilter.statuses.isNotEmpty &&
-        !mediaFilter.statuses.contains(entry.status)) {
+        !mediaFilter.statuses.contains(entry.releaseStatus)) {
       continue;
     }
 

@@ -91,12 +91,12 @@ class _EditView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
         child: Consumer(
           builder: (context, ref, _) {
-            final status = ref.watch(provider.select((s) => s.status));
+            final status = ref.watch(provider.select((s) => s.listStatus));
 
             return ChipSelector(
               title: 'Status',
               items:
-                  EntryStatus.values.map((v) => (v.label(ofAnime), v)).toList(),
+                  ListStatus.values.map((v) => (v.label(ofAnime), v)).toList(),
               value: status,
               onChanged: (status) => notifier.update(
                 (s) {
@@ -104,13 +104,13 @@ class _EditView extends ConsumerWidget {
                   var completedAt = s.completedAt;
                   var progress = s.progress;
 
-                  if (oldEdit.status == null &&
-                      status == EntryStatus.current &&
+                  if (oldEdit.listStatus == null &&
+                      status == ListStatus.current &&
                       startedAt == null) {
                     startedAt = DateTime.now();
                     SnackBarExtension.show(context, 'Start date changed');
-                  } else if (oldEdit.status != status &&
-                      status == EntryStatus.completed &&
+                  } else if (oldEdit.listStatus != status &&
+                      status == ListStatus.completed &&
                       completedAt == null) {
                     completedAt = DateTime.now();
                     var text = 'Completed date changed';
@@ -124,7 +124,7 @@ class _EditView extends ConsumerWidget {
                   }
 
                   return s.copyWith(
-                    status: status,
+                    listStatus: status,
                     progress: progress,
                     startedAt: () => startedAt,
                     completedAt: () => completedAt,
@@ -155,15 +155,15 @@ class _EditView extends ConsumerWidget {
             value: progress,
             maxValue: oldEdit.progressMax ?? 100000,
             onChanged: (progress) => notifier.update((s) {
-              var status = s.status;
+              var status = s.listStatus;
               var startedAt = s.startedAt;
               var completedAt = s.completedAt;
 
               String? text;
               if (progress == s.progressMax && oldEdit.progress != progress) {
-                if (oldEdit.status == status &&
-                    status != EntryStatus.completed) {
-                  status = EntryStatus.completed;
+                if (oldEdit.listStatus == status &&
+                    status != ListStatus.completed) {
+                  status = ListStatus.completed;
                   text = 'Status changed';
                 }
 
@@ -177,9 +177,9 @@ class _EditView extends ConsumerWidget {
                 if (text != null) SnackBarExtension.show(context, text);
               } else if (oldEdit.progress == 0 &&
                   oldEdit.progress != progress) {
-                if (oldEdit.status == status &&
-                    (status == null || status == EntryStatus.planning)) {
-                  status = EntryStatus.current;
+                if (oldEdit.listStatus == status &&
+                    (status == null || status == ListStatus.planning)) {
+                  status = ListStatus.current;
                   text = 'Status changed';
                 }
 
@@ -194,7 +194,7 @@ class _EditView extends ConsumerWidget {
 
               return s.copyWith(
                 progress: progress.toInt(),
-                status: status,
+                listStatus: status,
                 startedAt: () => startedAt,
                 completedAt: () => completedAt,
               );
@@ -254,17 +254,17 @@ class _EditView extends ConsumerWidget {
               label: 'Started',
               value: startedAt,
               onChanged: (startedAt) => notifier.update((s) {
-                var status = s.status;
+                var status = s.listStatus;
 
                 if (startedAt != null &&
-                    oldEdit.status == null &&
+                    oldEdit.listStatus == null &&
                     status == null) {
-                  status = EntryStatus.current;
+                  status = ListStatus.current;
                   SnackBarExtension.show(context, 'Status changed');
                 }
 
                 return s.copyWith(
-                  status: status,
+                  listStatus: status,
                   startedAt: () => startedAt,
                 );
               }),
@@ -273,14 +273,14 @@ class _EditView extends ConsumerWidget {
               label: 'Completed',
               value: completedAt,
               onChanged: (completedAt) => notifier.update((s) {
-                var status = s.status;
+                var status = s.listStatus;
                 var progress = s.progress;
 
                 if (completedAt != null &&
-                    oldEdit.status != EntryStatus.completed &&
-                    oldEdit.status != EntryStatus.repeating &&
-                    oldEdit.status == status) {
-                  status = EntryStatus.completed;
+                    oldEdit.listStatus != ListStatus.completed &&
+                    oldEdit.listStatus != ListStatus.repeating &&
+                    oldEdit.listStatus == status) {
+                  status = ListStatus.completed;
                   String text = 'Status changed';
 
                   if (s.progressMax != null && s.progress < s.progressMax!) {
@@ -292,7 +292,7 @@ class _EditView extends ConsumerWidget {
                 }
 
                 return s.copyWith(
-                  status: status,
+                  listStatus: status,
                   progress: progress,
                   completedAt: () => completedAt,
                 );

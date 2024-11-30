@@ -53,12 +53,7 @@ class AuthViewState extends ConsumerState<AuthView> {
 
     if (account == null) {
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (context) => const ConfirmationDialog(
-            title: 'Failed to connect account',
-          ),
-        );
+        ConfirmationDialog.show(context, title: 'Failed to connect account');
       }
 
       return;
@@ -140,12 +135,10 @@ class AuthViewState extends ConsumerState<AuthView> {
                     return;
                   }
 
-                  showDialog(
-                    context: context,
-                    builder: (context) => const ConfirmationDialog(
-                      title: 'Session expired',
-                      content: 'Please remove the account and add it again.',
-                    ),
+                  ConfirmationDialog.show(
+                    context,
+                    title: 'Session expired',
+                    content: 'Please remove the account and add it again.',
                   );
                 },
                 child: Row(
@@ -175,17 +168,15 @@ class AuthViewState extends ConsumerState<AuthView> {
                     IconButton(
                       tooltip: 'Remove Account',
                       icon: const Icon(Ionicons.close_circle_outline),
-                      onPressed: () => showDialog(
-                        context: context,
-                        builder: (context) => ConfirmationDialog(
-                          title: 'Remove Account?',
-                          mainAction: 'Yes',
-                          secondaryAction: 'No',
-                          onConfirm: () => ref
-                              .read(persistenceProvider.notifier)
-                              .removeAccount(i)
-                              .then((_) => setState(() {})),
-                        ),
+                      onPressed: () => ConfirmationDialog.show(
+                        context,
+                        title: 'Remove Account?',
+                        primaryAction: 'Yes',
+                        secondaryAction: 'No',
+                        onConfirm: () => ref
+                            .read(persistenceProvider.notifier)
+                            .removeAccount(i)
+                            .then((_) => setState(() {})),
                       ),
                     ),
                   ],

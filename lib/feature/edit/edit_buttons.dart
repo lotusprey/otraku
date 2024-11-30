@@ -60,7 +60,7 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
           );
           final err = await ref
               .read(collectionProvider(tag).notifier)
-              .saveEntry(oldEdit, newEdit);
+              .saveEntry(oldEdit.listStatus, newEdit);
 
           if (err == null) {
             widget.callback?.call(newEdit);
@@ -79,37 +79,35 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
         text: 'Remove',
         icon: Ionicons.trash_bin_outline,
         warning: true,
-        onTap: () => showDialog(
-          context: context,
-          builder: (_) => ConfirmationDialog(
-            title: 'Remove entry?',
-            mainAction: 'Yes',
-            secondaryAction: 'No',
-            onConfirm: () async {
-              setState(() => _loading = true);
+        onTap: () => ConfirmationDialog.show(
+          context,
+          title: 'Remove entry?',
+          primaryAction: 'Yes',
+          secondaryAction: 'No',
+          onConfirm: () async {
+            setState(() => _loading = true);
 
-              final oldEdit = widget.oldEdit;
-              final tag = (
-                userId: widget.viewerId,
-                ofAnime: oldEdit.type == 'ANIME',
-              );
+            final oldEdit = widget.oldEdit;
+            final tag = (
+              userId: widget.viewerId,
+              ofAnime: oldEdit.type == 'ANIME',
+            );
 
-              final err = await ref
-                  .read(collectionProvider(tag).notifier)
-                  .removeEntry(oldEdit);
+            final err = await ref
+                .read(collectionProvider(tag).notifier)
+                .removeEntry(oldEdit);
 
-              if (err == null) {
-                widget.callback?.call(oldEdit.emptyCopy());
-                if (mounted) Navigator.pop(context);
-                return;
-              }
+            if (err == null) {
+              widget.callback?.call(oldEdit.emptyCopy());
+              if (mounted) Navigator.pop(context);
+              return;
+            }
 
-              if (mounted) {
-                Navigator.pop(context);
-                SnackBarExtension.show(context, 'Could not remove entry');
-              }
-            },
-          ),
+            if (mounted) {
+              SnackBarExtension.show(context, 'Could not remove entry');
+              Navigator.pop(context);
+            }
+          },
         ),
       );
 }

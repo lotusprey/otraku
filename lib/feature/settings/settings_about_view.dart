@@ -20,9 +20,12 @@ class SettingsAboutSubview extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final padding = MediaQuery.paddingOf(context);
-        final lastBackgroundJob = ref.watch(persistenceProvider.select(
-          (s) => s.appMeta.lastBackgroundJob?.millisecondsSinceEpoch,
-        ));
+        final persistence = ref.watch(persistenceProvider);
+        final lastBackgroundJob = persistence.appMeta.lastBackgroundJob;
+        final lastJobTimestamp =
+            lastBackgroundJob?.formattedDateTimeFromSeconds(
+          persistence.options.analogueClock,
+        );
 
         return Align(
           alignment: Alignment.center,
@@ -98,7 +101,7 @@ class SettingsAboutSubview extends StatelessWidget {
                     .read(persistenceProvider.notifier)
                     .setOptions(Options.empty()),
               ),
-              if (lastBackgroundJob != null) ...[
+              if (lastJobTimestamp != null) ...[
                 Padding(
                   padding: const EdgeInsets.only(
                     left: Theming.offset,
@@ -106,7 +109,7 @@ class SettingsAboutSubview extends StatelessWidget {
                     top: 20,
                   ),
                   child: Text(
-                    'Performed a notification check around ${DateTimeExtension.formattedDateTimeFromSeconds((lastBackgroundJob / 1000).truncate())}.',
+                    'Performed a notification check around $lastJobTimestamp.',
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),

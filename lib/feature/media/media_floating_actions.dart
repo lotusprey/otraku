@@ -17,8 +17,8 @@ class _MediaEditButtonState extends State<MediaEditButton> {
   Widget build(BuildContext context) {
     final media = widget.media;
     return FloatingActionButton(
-      tooltip: media.edit.status == null ? 'Add' : 'Edit',
-      child: media.edit.status == null
+      tooltip: media.edit.listStatus == null ? 'Add' : 'Edit',
+      child: media.edit.listStatus == null
           ? const Icon(Icons.add)
           : const Icon(Icons.edit_outlined),
       onPressed: () => showSheet(

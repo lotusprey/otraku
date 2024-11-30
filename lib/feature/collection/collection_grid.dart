@@ -7,6 +7,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/util/debounce.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/sheets.dart';
 
@@ -14,7 +15,7 @@ class CollectionGrid extends StatelessWidget {
   const CollectionGrid({required this.items, required this.onProgressUpdated});
 
   final List<Entry> items;
-  final Future<String?> Function(Entry)? onProgressUpdated;
+  final Future<String?> Function(Entry, bool)? onProgressUpdated;
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +73,7 @@ class _IncrementButton extends StatefulWidget {
   const _IncrementButton(this.item, this.onProgressUpdated);
 
   final Entry item;
-  final Future<String?> Function(Entry)? onProgressUpdated;
+  final Future<String?> Function(Entry, bool)? onProgressUpdated;
 
   @override
   State<_IncrementButton> createState() => _IncrementButtonState();
@@ -131,31 +132,20 @@ class _IncrementButtonState extends State<_IncrementButton> {
         foregroundColor: overridenTextColor,
       ),
       onPressed: () {
+        _debounce.cancel();
+
         if (item.progressMax != null &&
             item.progress >= item.progressMax! - 1) {
-          _debounce.cancel();
           _resetProgress();
 
           showSheet(context, EditView((id: item.mediaId, setComplete: true)));
           return;
         }
 
-        _debounce.cancel();
         _lastProgress ??= item.progress;
         setState(() => item.progress++);
 
-        _debounce.run(() async {
-          final err = await widget.onProgressUpdated!(item);
-          if (err == null) {
-            _lastProgress = null;
-            return;
-          }
-
-          _resetProgress();
-          if (context.mounted) {
-            SnackBarExtension.show(context, 'Failed updating progress: $err');
-          }
-        });
+        _debounce.run(_update);
       },
       child: Tooltip(
         message: 'Increment Progress',
@@ -172,6 +162,36 @@ class _IncrementButtonState extends State<_IncrementButton> {
         ),
       ),
     );
+  }
+
+  void _update() async {
+    final item = widget.item;
+    var updateStatus = false;
+
+    if (_lastProgress == 0 &&
+        (item.listStatus == ListStatus.planning ||
+            item.listStatus == ListStatus.paused ||
+            item.listStatus == ListStatus.dropped)) {
+      await ConfirmationDialog.show(
+        context,
+        title: 'Update status?',
+        content: 'Do you also want to update the list status?',
+        primaryAction: 'Yes',
+        secondaryAction: 'No',
+        onConfirm: () => updateStatus = true,
+      );
+    }
+
+    final err = await widget.onProgressUpdated!(item, updateStatus);
+    if (err == null) {
+      _lastProgress = null;
+      return;
+    }
+
+    _resetProgress();
+    if (mounted) {
+      SnackBarExtension.show(context, 'Failed updating progress: $err');
+    }
   }
 
   void _resetProgress() {

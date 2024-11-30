@@ -38,7 +38,7 @@ class CalendarItem {
       cover: map['media']['coverImage'][imageQuality.value],
       episode: map['episode'],
       airingAt: DateTimeExtension.fromSecondsSinceEpoch(map['airingAt']),
-      entryStatus: EntryStatus.from(map['media']['mediaListEntry']?['status']),
+      entryStatus: ListStatus.from(map['media']['mediaListEntry']?['status']),
       streamingServices: streamingServices,
     );
   }
@@ -48,7 +48,7 @@ class CalendarItem {
   final String cover;
   final int episode;
   final DateTime airingAt;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final List<StreamingService> streamingServices;
 }
 

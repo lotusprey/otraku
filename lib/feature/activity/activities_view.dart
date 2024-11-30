@@ -120,6 +120,7 @@ class ActivitiesSubView extends StatelessWidget {
               childCount: data.items.length,
               (context, i) => ActivityCard(
                 withHeader: true,
+                analogueClock: options.analogueClock,
                 activity: data.items[i],
                 footer: ActivityFooter(
                   viewerId: viewerId,
@@ -149,7 +150,7 @@ class ActivitiesSubView extends StatelessWidget {
                         .read(activitiesProvider(userId).notifier)
                         .replace(activity);
                   },
-                  openReplies: () => context.push(
+                  reply: () => context.push(
                     Routes.activity(data.items[i].id, userId),
                   ),
                 ),

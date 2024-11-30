@@ -62,7 +62,7 @@ class Settings {
         disabledListActivity: {
           for (var activity
               in map['options']?['disabledListActivity'] ?? const [])
-            EntryStatus.from(activity['type'])!: activity['disabled']
+            ListStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {
           for (var option in map['options']?['notificationOptions'] ?? const [])
@@ -85,7 +85,7 @@ class Settings {
   final List<String> advancedScores;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
-  final Map<EntryStatus, bool> disabledListActivity;
+  final Map<ListStatus, bool> disabledListActivity;
   final Map<NotificationType, bool> notificationOptions;
 
   Settings copy({int unreadNotifications = 0}) => Settings._(

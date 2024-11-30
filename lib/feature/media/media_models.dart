@@ -118,7 +118,7 @@ class RelatedMedia {
         relationType:
             StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
-        entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
         releaseStatus: StringExtension.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
@@ -131,7 +131,7 @@ class RelatedMedia {
   final String imageUrl;
   final String? relationType;
   final MediaFormat? format;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final String? releaseStatus;
 }
 
@@ -215,7 +215,7 @@ class MediaFollowing {
   });
 
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
-        entryStatus: EntryStatus.from(map['status'])!,
+        entryStatus: ListStatus.from(map['status'])!,
         score: (map['score'] ?? 0).toDouble(),
         notes: map['notes'] ?? '',
         userId: map['user']['id'],
@@ -226,7 +226,7 @@ class MediaFollowing {
         ),
       );
 
-  final EntryStatus entryStatus;
+  final ListStatus entryStatus;
   final double score;
   final String notes;
   final int userId;
@@ -262,7 +262,7 @@ class Recommendation {
       isAnime: map['type'] == 'ANIME',
       releaseYear: map['mediaRecommendation']['startDate']?['year'],
       format: MediaFormat.from(map['mediaRecommendation']['format']),
-      entryStatus: EntryStatus.from(
+      entryStatus: ListStatus.from(
           map['mediaRecommendation']['mediaListEntry']?['status']),
     );
   }
@@ -275,7 +275,7 @@ class Recommendation {
   final bool isAnime;
   final int? releaseYear;
   final MediaFormat? format;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
 }
 
 class MediaInfo {
@@ -546,7 +546,7 @@ class MediaStats {
 
           model.statusNames.insert(
             index,
-            EntryStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
+            ListStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
           );
         }
       }

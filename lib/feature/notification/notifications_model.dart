@@ -38,7 +38,7 @@ sealed class SiteNotification {
     required this.imageUrl,
     required this.texts,
   })  : id = map['id'],
-        createdAt = DateTimeExtension.formattedDateTimeFromSeconds(
+        createdAt = DateTimeExtension.fromSecondsSinceEpoch(
           map['createdAt'],
         );
 
@@ -76,7 +76,7 @@ sealed class SiteNotification {
 
   final int id;
   final NotificationType type;
-  final String createdAt;
+  final DateTime createdAt;
   final String? imageUrl;
   final List<String> texts;
 }

@@ -104,22 +104,40 @@ class PersistenceNotifier extends Notifier<Persistence> {
   }
 
   Future<void> addAccount(Account account) async {
-    final accountGroup = state.accountGroup;
-    for (final a in accountGroup.accounts) {
-      if (a.id == account.id) return;
-    }
+    final accounts = state.accountGroup.accounts;
+    final accountIndex = state.accountGroup.accountIndex;
 
     await const FlutterSecureStorage().write(
       key: Account.accessTokenKeyById(account.id),
       value: account.accessToken,
     );
 
+    for (int i = 0; i < accounts.length; i++) {
+      if (accounts[i].id == account.id) {
+        _setAccountGroup(
+          AccountGroup(
+            accounts: [
+              ...accounts.sublist(0, i),
+              account,
+              ...accounts.sublist(i + 1),
+            ],
+            accountIndex: accountIndex,
+          ),
+        );
+
+        switchAccount(i);
+        return;
+      }
+    }
+
     _setAccountGroup(
       AccountGroup(
-        accounts: [...accountGroup.accounts, account],
-        accountIndex: accountGroup.accountIndex,
+        accounts: [...accounts, account],
+        accountIndex: accountIndex,
       ),
     );
+
+    switchAccount(state.accountGroup.accounts.length - 1);
   }
 
   Future<void> removeAccount(int index) async {

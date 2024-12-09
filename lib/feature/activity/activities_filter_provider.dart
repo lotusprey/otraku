@@ -16,7 +16,9 @@ class ActivitiesFilterNotifier
 
   @override
   set state(ActivitiesFilter newState) {
-    switch (state) {
+    if (state == newState) return;
+
+    switch (newState) {
       case HomeActivitiesFilter homeActivitiesFilter:
         ref
             .read(persistenceProvider.notifier)

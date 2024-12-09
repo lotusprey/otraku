@@ -47,9 +47,7 @@ class _FilterList extends StatefulWidget {
 }
 
 class _FilterListState extends State<_FilterList> {
-  late ActivitiesFilter _filter = widget.filter.copyWith(
-    typeIn: [...widget.filter.typeIn],
-  );
+  late var _filter = widget.filter.copy();
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +61,13 @@ class _FilterListState extends State<_FilterList> {
             title: Text(a.label),
             value: _filter.typeIn.contains(a),
             onChanged: (val) {
-              setState(() {
-                val! ? _filter.typeIn.add(a) : _filter.typeIn.remove(a);
-                _filter = _filter.copyWith(typeIn: _filter.typeIn);
-              });
+              if (val!) {
+                _filter.typeIn.add(a);
+              } else {
+                _filter.typeIn.remove(a);
+              }
+              _filter = _filter.copyWith(typeIn: _filter.typeIn);
+
               widget.onChanged(_filter);
             },
           ),
@@ -81,6 +82,7 @@ class _FilterListState extends State<_FilterList> {
                   setState(
                     () => _filter = filter.copyWith(withViewerActivities: v!),
                   );
+
                   widget.onChanged(_filter);
                 },
               ),
@@ -108,6 +110,7 @@ class _FilterListState extends State<_FilterList> {
                     setState(
                       () => _filter = filter.copyWith(onFollowing: v.first),
                     );
+
                     widget.onChanged(_filter);
                   },
                 ),

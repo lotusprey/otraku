@@ -83,8 +83,27 @@ class CollectionSubview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (tag == null) {
-      return const Center(child: Text('Log in to view collection'));
+      return const Center(
+        child: Padding(
+          padding: Theming.paddingAll,
+          child: Text(
+            'Log in from the profile tab to view your collections',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
     }
+
+    final listToWidget = (EntryList l) => Row(
+          children: [
+            Expanded(child: Text(l.name)),
+            const SizedBox(width: Theming.offset / 2),
+            DefaultTextStyle(
+              style: Theme.of(context).textTheme.labelMedium!,
+              child: Text(l.entries.length.toString()),
+            ),
+          ],
+        );
 
     return Consumer(
       builder: (context, ref, _) {
@@ -130,15 +149,10 @@ class CollectionSubview extends StatelessWidget {
                         PillSelector(
                           maxWidth: 200,
                           selected: c.index,
+                          items: data.lists.map(listToWidget).toList(),
                           onTap: (i) => ref
                               .read(collectionProvider(tag!).notifier)
                               .changeIndex(i),
-                          items: data.lists
-                              .map((l) => (
-                                    title: Text(l.name),
-                                    subtitle: Text(l.entries.length.toString()),
-                                  ))
-                              .toList(),
                         ),
                         Expanded(child: content)
                       ],

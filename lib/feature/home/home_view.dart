@@ -42,11 +42,6 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  late final int? _viewerId;
-  late final UserTag? _userTag;
-  late final CollectionTag? _animeCollectionTag;
-  late final CollectionTag? _mangaCollectionTag;
-
   final _searchFocusNode = FocusNode();
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
@@ -65,13 +60,6 @@ class _HomeViewState extends ConsumerState<HomeView>
   void initState() {
     super.initState();
     final persistence = ref.read(persistenceProvider);
-
-    _viewerId = persistence.accountGroup.account?.id;
-    if (_viewerId != null) {
-      _userTag = idUserTag(_viewerId!);
-      _animeCollectionTag = (userId: _viewerId!, ofAnime: true);
-      _mangaCollectionTag = (userId: _viewerId!, ofAnime: false);
-    }
 
     _tabCtrl.index = persistence.options.defaultHomeTab.index;
     if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
@@ -119,25 +107,27 @@ class _HomeViewState extends ConsumerState<HomeView>
       ref.watch(discoverProvider.select((_) => null));
     }
 
-    if (_userTag != null) {
-      ref.watch(userProvider(_userTag!).select((_) => null));
-    }
+    UserTag? userTag;
+    CollectionTag? animeCollectionTag;
+    CollectionTag? mangaCollectionTag;
 
-    if (_animeCollectionTag != null) {
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId != null) {
+      userTag = idUserTag(viewerId);
+      animeCollectionTag = (userId: viewerId, ofAnime: true);
+      mangaCollectionTag = (userId: viewerId, ofAnime: false);
+
+      ref.watch(userProvider(userTag).select((_) => null));
       ref.watch(
-        collectionEntriesProvider(_animeCollectionTag!).select((_) => null),
+        collectionEntriesProvider(animeCollectionTag).select((_) => null),
+      );
+      ref.watch(
+        collectionEntriesProvider(mangaCollectionTag).select((_) => null),
       );
     }
-
-    if (_mangaCollectionTag != null) {
-      ref.watch(
-        collectionEntriesProvider(_mangaCollectionTag!).select((_) => null),
-      );
-    }
-
-    final home = ref.watch(homeProvider);
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
+    final home = ref.watch(homeProvider);
 
     final topBar = TopBarAnimatedSwitcher(
       switch (_tabCtrl.index) {
@@ -148,24 +138,22 @@ class _HomeViewState extends ConsumerState<HomeView>
               FeedTopBarTrailingContent(),
             ],
           ),
-        1 => TopBar(
+        1 when animeCollectionTag != null => TopBar(
             key: const Key('animeCollectionTopBar'),
             trailing: [
-              if (_animeCollectionTag != null)
-                CollectionTopBarTrailingContent(
-                  _animeCollectionTag!,
-                  _searchFocusNode,
-                ),
+              CollectionTopBarTrailingContent(
+                animeCollectionTag,
+                _searchFocusNode,
+              ),
             ],
           ),
-        2 => TopBar(
+        2 when mangaCollectionTag != null => TopBar(
             key: const Key('mangaCollectionTopBar'),
             trailing: [
-              if (_mangaCollectionTag != null)
-                CollectionTopBarTrailingContent(
-                  _mangaCollectionTag!,
-                  _searchFocusNode,
-                ),
+              CollectionTopBarTrailingContent(
+                mangaCollectionTag,
+                _searchFocusNode,
+              ),
             ],
           ),
         3 => TopBar(
@@ -179,11 +167,9 @@ class _HomeViewState extends ConsumerState<HomeView>
     );
 
     final navigationConfig = NavigationConfig(
+      items: _homeTabs,
       selected: _tabCtrl.index,
       onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
-      items: {
-        for (final tab in HomeTab.values) tab.label: _homeTabIconData(tab),
-      },
       onSame: (i) {
         final tab = HomeTab.values[i];
 
@@ -227,19 +213,19 @@ class _HomeViewState extends ConsumerState<HomeView>
               child: FeedFloatingAction(ref),
             ),
           1 => (compact || !home.didExpandAnimeCollection) &&
-                  _animeCollectionTag != null
+                  animeCollectionTag != null
               ? HidingFloatingActionButton(
                   key: const Key('anime'),
                   scrollCtrl: _animeScrollCtrl,
-                  child: CollectionFloatingAction(_animeCollectionTag!),
+                  child: CollectionFloatingAction(animeCollectionTag),
                 )
               : null,
           2 => (compact || !home.didExpandMangaCollection) &&
-                  _mangaCollectionTag != null
+                  mangaCollectionTag != null
               ? HidingFloatingActionButton(
                   key: const Key('manga'),
                   scrollCtrl: _mangaScrollCtrl,
-                  child: CollectionFloatingAction(_mangaCollectionTag!),
+                  child: CollectionFloatingAction(mangaCollectionTag),
                 )
               : null,
           3 => compact
@@ -259,19 +245,19 @@ class _HomeViewState extends ConsumerState<HomeView>
             ActivitiesSubView(null, _feedScrollCtrl),
             CollectionSubview(
               scrollCtrl: _animeScrollCtrl,
-              tag: _animeCollectionTag,
+              tag: animeCollectionTag,
               compact: compact,
               key: Key(true.toString()),
             ),
             CollectionSubview(
               scrollCtrl: _mangaScrollCtrl,
-              tag: _mangaCollectionTag,
+              tag: mangaCollectionTag,
               compact: compact,
               key: Key(false.toString()),
             ),
             DiscoverSubview(_discoverScrollCtrl, compact),
             UserHomeView(
-              _userTag,
+              userTag,
               null,
               homeScrollCtrl: primaryScrollCtrl,
               removableTopPadding: topBar.preferredSize.height,
@@ -297,15 +283,15 @@ class _HomeViewState extends ConsumerState<HomeView>
     );
   }
 
+  static final _homeTabs = {
+    HomeTab.feed.label: Ionicons.file_tray_outline,
+    HomeTab.anime.label: Ionicons.film_outline,
+    HomeTab.manga.label: Ionicons.book_outline,
+    HomeTab.discover.label: Ionicons.compass_outline,
+    HomeTab.profile.label: Ionicons.person_outline,
+  };
+
   void _toggleSearchFocus() => _searchFocusNode.hasFocus
       ? _searchFocusNode.unfocus()
       : _searchFocusNode.requestFocus();
-
-  IconData _homeTabIconData(HomeTab tab) => switch (tab) {
-        HomeTab.feed => Ionicons.file_tray_outline,
-        HomeTab.anime => Ionicons.film_outline,
-        HomeTab.manga => Ionicons.book_outline,
-        HomeTab.discover => Ionicons.compass_outline,
-        HomeTab.profile => Ionicons.person_outline,
-      };
 }

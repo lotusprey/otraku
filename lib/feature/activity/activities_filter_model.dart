@@ -5,6 +5,8 @@ sealed class ActivitiesFilter {
 
   final List<ActivityType> typeIn;
 
+  ActivitiesFilter copy();
+
   ActivitiesFilter copyWith({List<ActivityType>? typeIn});
 }
 
@@ -12,6 +14,9 @@ class UserActivitiesFilter extends ActivitiesFilter {
   const UserActivitiesFilter(super.typeIn, this.userId);
 
   final int userId;
+
+  @override
+  ActivitiesFilter copy() => UserActivitiesFilter([...typeIn], userId);
 
   @override
   ActivitiesFilter copyWith({List<ActivityType>? typeIn}) =>
@@ -48,6 +53,13 @@ class HomeActivitiesFilter extends ActivitiesFilter {
 
   final bool onFollowing;
   final bool withViewerActivities;
+
+  @override
+  ActivitiesFilter copy() => HomeActivitiesFilter(
+        [...typeIn],
+        onFollowing,
+        withViewerActivities,
+      );
 
   @override
   ActivitiesFilter copyWith({

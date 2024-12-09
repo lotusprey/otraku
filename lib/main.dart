@@ -38,13 +38,10 @@ class AppState extends ConsumerState<_App> {
   void initState() {
     super.initState();
 
-    final isGuest = ref.read(viewerIdProvider) == null;
+    final mustConfirmExit =
+        () => ref.read(persistenceProvider).options.confirmExit;
 
-    final mustConfirmExit = () => ref.read(persistenceProvider.select(
-          (s) => s.options.confirmExit,
-        ));
-
-    _router = Routes.buildRouter(isGuest, mustConfirmExit);
+    _router = Routes.buildRouter(mustConfirmExit);
 
     _notificationSubscription = _notificationCtrl.stream.listen(_router.push);
 

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
-import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -80,14 +78,6 @@ class SettingsAboutSubview extends StatelessWidget {
                   context,
                   'https://sites.google.com/view/otraku/privacy-policy',
                 ),
-              ),
-              ListTile(
-                leading: const Icon(Ionicons.log_out_outline),
-                title: const Text('Accounts'),
-                onTap: () {
-                  ref.read(persistenceProvider.notifier).switchAccount(null);
-                  context.go(Routes.auth);
-                },
               ),
               const ListTile(
                 leading: Icon(Ionicons.trash_bin_outline),

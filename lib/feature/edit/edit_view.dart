@@ -19,7 +19,6 @@ import 'package:otraku/feature/edit/score_field.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
-/// A sheet for entry editing. Should be opened with [showSheet].
 class EditView extends StatelessWidget {
   const EditView(this.tag, {this.callback});
 

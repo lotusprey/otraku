@@ -70,6 +70,26 @@ class Settings {
         },
       );
 
+  factory Settings.empty() => Settings._(
+        unreadNotifications: 0,
+        scoreFormat: ScoreFormat.point10,
+        defaultSort: EntrySort.title,
+        titleLanguage: TitleLanguage.romaji,
+        personNaming: PersonNaming.romajiWestern,
+        activityMergeTime: 720,
+        splitCompletedAnime: false,
+        splitCompletedManga: false,
+        displayAdultContent: false,
+        airingNotifications: true,
+        advancedScoringEnabled: false,
+        restrictMessagesToFollowing: false,
+        advancedScores: const [],
+        animeCustomLists: const [],
+        mangaCustomLists: const [],
+        disabledListActivity: const {},
+        notificationOptions: const {},
+      );
+
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
   TitleLanguage titleLanguage;

@@ -59,7 +59,17 @@ class UserHomeView extends StatelessWidget {
                 imageUrl: null,
                 toggleFollow: () async => null,
               ),
-              const SliverToBoxAdapter(child: Text('Log in to view account')),
+              const SliverToBoxAdapter(
+                child: Center(
+                  child: Padding(
+                    padding: Theming.paddingAll,
+                    child: Text(
+                      'Log in with the profile icon at the top to view your account',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
               const SliverFooter(),
             ],
           );

@@ -15,6 +15,9 @@ final settingsProvider =
 class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId == null) return Settings.empty();
+
     final data = await ref.read(repositoryProvider).request(GqlQuery.settings);
     return Settings(data['Viewer']);
   }

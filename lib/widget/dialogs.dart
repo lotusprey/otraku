@@ -95,9 +95,6 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
             child: Text(secondaryAction!),
             onPressed: () => Navigator.pop(context, false),
           ),

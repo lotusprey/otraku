@@ -28,15 +28,13 @@ class DiscoverFloatingAction extends StatelessWidget {
                 builder: (context, scrollCtrl) => PillSelector(
                   scrollCtrl: scrollCtrl,
                   selected: type.index,
+                  items: DiscoverType.values.map((v) => Text(v.label)).toList(),
                   onTap: (i) {
                     ref.read(discoverFilterProvider.notifier).update(
                           (s) => s.copyWith(type: DiscoverType.values[i]),
                         );
                     Navigator.pop(context);
                   },
-                  items: DiscoverType.values
-                      .map((v) => (title: Text(v.label), subtitle: null))
-                      .toList(),
                 ),
               ),
             );

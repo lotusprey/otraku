@@ -1,12 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/activity/activity_view.dart';
-import 'package:otraku/feature/viewer/auth_view.dart';
 import 'package:otraku/feature/calendar/calendar_view.dart';
 import 'package:otraku/feature/character/character_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
@@ -24,13 +26,12 @@ import 'package:otraku/feature/statistics/statistics_view.dart';
 import 'package:otraku/feature/studio/studio_view.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_view.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class Routes {
   const Routes._();
 
   static const notFound = '/404';
-
-  static const auth = '/auth';
 
   static const settings = '/settings';
 
@@ -83,7 +84,7 @@ class Routes {
 
   static String statistics(int id) => '/statistics/$id';
 
-  static GoRouter buildRouter(bool isGuest, bool Function() mustConfirmExit) {
+  static GoRouter buildRouter(bool Function() mustConfirmExit) {
     final onExit = (BuildContext context, GoRouterState _) async {
       if (!mustConfirmExit()) return Future.value(true);
 
@@ -102,15 +103,10 @@ class Routes {
     final routes = [
       GoRoute(path: '/', redirect: (context, state) => '/home'),
       GoRoute(
-        path: '/404',
-        builder: (context, state) => const NotFoundView(),
-      ),
-      GoRoute(
         path: '/auth',
-        onExit: onExit,
         builder: (context, state) {
           final fragment = state.uri.fragment;
-          if (fragment.isEmpty) return const AuthView();
+          if (fragment.isEmpty) return const _AuthView(null);
 
           final start = fragment.indexOf('=') + 1;
           final middle = fragment.indexOf('&');
@@ -118,19 +114,25 @@ class Routes {
 
           final token = fragment.substring(start, middle);
           final expiration = int.tryParse(fragment.substring(end)) ?? -1;
-          if (token.isEmpty || expiration < 0) return const AuthView();
+          if (token.isEmpty || expiration <= 0) return const _AuthView(null);
 
-          return AuthView((token, expiration));
+          return _AuthView((token, expiration));
         },
+      ),
+      GoRoute(
+        path: '/404',
+        builder: (context, state) => const NotFoundView(),
       ),
       GoRoute(
         path: '/home',
         onExit: onExit,
         builder: (context, state) {
           final tab = state.uri.queryParameters['tab'];
-          return tab != null
-              ? HomeView(key: state.pageKey, tab: HomeTab.values.byName(tab))
-              : HomeView(key: state.pageKey);
+
+          return HomeView(
+            key: state.pageKey,
+            tab: tab != null ? HomeTab.values.byName(tab) : null,
+          );
         },
       ),
       GoRoute(
@@ -296,14 +298,16 @@ class Routes {
 
     return GoRouter(
       routes: routes,
-      initialLocation: isGuest ? Routes.auth : Routes.home(),
+      initialLocation: Routes.home(),
       errorBuilder: (context, state) => const NotFoundView(),
     );
   }
 }
 
 String? _parseIdOr404(BuildContext context, GoRouterState state) =>
-    int.tryParse(state.pathParameters['id'] ?? '') == null ? '404' : null;
+    int.tryParse(state.pathParameters['id'] ?? '') == null
+        ? Routes.notFound
+        : null;
 
 class NotFoundView extends StatelessWidget {
   const NotFoundView();
@@ -328,5 +332,84 @@ class NotFoundView extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _AuthView extends ConsumerStatefulWidget {
+  const _AuthView(this.credentials);
+
+  final (String token, int secondsUntilExpiration)? credentials;
+
+  @override
+  ConsumerState<_AuthView> createState() => __AuthViewState();
+}
+
+class __AuthViewState extends ConsumerState<_AuthView> {
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.credentials == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await ConfirmationDialog.show(context, title: 'Invalid credentials');
+        if (mounted) context.go(Routes.home());
+      });
+    }
+
+    _attemptToFinishAccountSetup();
+  }
+
+  @override
+  void didUpdateWidget(covariant _AuthView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.credentials?.$1 != oldWidget.credentials?.$1 ||
+        widget.credentials?.$2 != oldWidget.credentials?.$2) {
+      _attemptToFinishAccountSetup();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Authenticating, please wait...'),
+            SizedBox(height: 20),
+            Loader(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _attemptToFinishAccountSetup() async {
+    if (widget.credentials == null) {
+      return;
+    }
+
+    final token = widget.credentials!.$1;
+    final expiration = widget.credentials!.$2;
+
+    final account = await ref
+        .read(repositoryProvider.notifier)
+        .initAccount(token, expiration);
+
+    if (account == null) {
+      if (mounted) {
+        await ConfirmationDialog.show(
+          context,
+          title: 'Failed to connect account',
+        );
+
+        if (mounted) context.go(Routes.home());
+      }
+
+      return;
+    }
+
+    await ref.read(persistenceProvider.notifier).addAccount(account);
+    if (mounted) context.go(Routes.home());
   }
 }

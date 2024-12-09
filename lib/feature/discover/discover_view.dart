@@ -93,12 +93,10 @@ class DiscoverSubview extends StatelessWidget {
             PillSelector(
               selected: type.index,
               maxWidth: 130,
+              items: DiscoverType.values.map((v) => Text(v.label)).toList(),
               onTap: (i) => ref.read(discoverFilterProvider.notifier).update(
                     (s) => s.copyWith(type: DiscoverType.values[i]),
                   ),
-              items: DiscoverType.values
-                  .map((v) => (title: Text(v.label), subtitle: null))
-                  .toList(),
             ),
             Expanded(child: content),
           ],

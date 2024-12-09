@@ -103,7 +103,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                           .read(notificationsFilterProvider.notifier)
                           .state = NotificationsFilter.values[i],
                       items: NotificationsFilter.values
-                          .map((v) => (title: Text(v.label), subtitle: null))
+                          .map((v) => Text(v.label))
                           .toList(),
                     ),
                     Expanded(child: content),
@@ -134,9 +134,8 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     NotificationsFilter.values[i];
                 Navigator.pop(context);
               },
-              items: NotificationsFilter.values
-                  .map((v) => (title: Text(v.label), subtitle: null))
-                  .toList(),
+              items:
+                  NotificationsFilter.values.map((v) => Text(v.label)).toList(),
             ),
           );
         },

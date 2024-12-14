@@ -43,8 +43,6 @@
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
-               <!-- Deep linking -->
-               <meta-data android:name="flutter_deeplinking_enabled" android:value="true" />
                <intent-filter>
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
@@ -68,5 +66,6 @@
                </intent-filter>
           </activity>
           <meta-data android:name="flutterEmbedding" android:value="2" />
+          <meta-data android:name="io.flutter.embedding.android.DisableSurfaceControl" android:value="true" />
      </application>
 </manifest>

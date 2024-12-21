@@ -48,7 +48,7 @@ class ShadowedOverflowList extends StatelessWidget {
                   end: Alignment.centerRight,
                   colors: [
                     Theme.of(context).colorScheme.surface,
-                    Theme.of(context).colorScheme.surface.withOpacity(0),
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0),
                   ],
                 ),
               ),
@@ -68,7 +68,7 @@ class ShadowedOverflowList extends StatelessWidget {
                   end: Alignment.centerLeft,
                   colors: [
                     Theme.of(context).colorScheme.surface,
-                    Theme.of(context).colorScheme.surface.withOpacity(0),
+                    Theme.of(context).colorScheme.surface.withValues(alpha: 0),
                   ],
                 ),
               ),

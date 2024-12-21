@@ -4,7 +4,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
-import 'package:otraku/feature/filter/chip_selector.dart';
+import 'package:otraku/widget/input/chip_selector.dart';
 
 void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
   final filter = ref.read(calendarFilterProvider);

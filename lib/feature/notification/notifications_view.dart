@@ -12,7 +12,7 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/field/pill_selector.dart';
+import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/top_bar.dart';

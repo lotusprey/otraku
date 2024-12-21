@@ -8,7 +8,7 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/field/pill_selector.dart';
+import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';

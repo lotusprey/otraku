@@ -434,7 +434,7 @@ class Entry {
     required this.country,
     required this.isPrivate,
     required this.genres,
-    required this.tags,
+    required this.tagIds,
     required this.progressMax,
     required this.progress,
     required this.repeat,
@@ -458,9 +458,9 @@ class Entry {
       titles.add(map['media']['title']['native']);
     }
 
-    final tags = <int>[];
+    final tagIds = <int>[];
     for (final t in map['media']['tags']) {
-      tags.add(t['id']);
+      tagIds.add(t['id']);
     }
 
     return Entry._(
@@ -479,7 +479,7 @@ class Entry {
       country: map['media']['countryOfOrigin'],
       isPrivate: map['private'] ?? false,
       genres: List.from(map['media']['genres'] ?? [], growable: false),
-      tags: tags,
+      tagIds: tagIds,
       progressMax: map['media']['episodes'] ?? map['media']['chapters'],
       progress: map['progress'] ?? 0,
       repeat: map['repeat'] ?? 0,
@@ -505,7 +505,7 @@ class Entry {
   final String? country;
   final bool isPrivate;
   final List<String> genres;
-  final List<int> tags;
+  final List<int> tagIds;
   final int? progressMax;
   int progress;
   int repeat;

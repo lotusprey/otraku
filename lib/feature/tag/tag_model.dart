@@ -24,32 +24,32 @@ class Tag {
 }
 
 /// Stores all tags (genres as treated as tags too).
-class TagGroup {
-  TagGroup._({
+class TagCollection {
+  TagCollection._({
     required this.categories,
     required this.ids,
     required this.names,
     required this.descriptions,
-    required this.indices,
+    required this.indexByName,
   });
 
-  factory TagGroup(Map<String, dynamic> map) {
-    final categories = [(name: _genreCategoryName, indices: <int>[])];
+  factory TagCollection(Map<String, dynamic> map) {
+    final categories = [(name: _genreCategoryName, indexes: <int>[])];
     final ids = <int>[];
     final names = <String>[];
     final descriptions = <String>[];
-    final indices = HashMap<String, int>();
+    final indexByName = HashMap<String, int>();
 
-    /// Genres are given negative indices, as
+    /// Genres are given negative ids, as
     /// to not get mixed up with normal tags.
     int id = -1;
     for (final g in map['GenreCollection']) {
-      categories[0].indices.add(ids.length);
+      categories[0].indexes.add(ids.length);
       ids.add(id);
       names.add(g.toString());
       descriptions.add('');
 
-      indices.putIfAbsent(names.last, () => names.length - 1);
+      indexByName.putIfAbsent(names.last, () => names.length - 1);
       id--;
     }
 
@@ -64,16 +64,16 @@ class TagGroup {
       );
 
       if (category == null) {
-        category = (name: categoryName, indices: []);
+        category = (name: categoryName, indexes: []);
         categories.add(category);
       }
 
-      category.indices.add(ids.length);
+      category.indexes.add(ids.length);
       ids.add(t['id']);
       names.add(t['name']);
       descriptions.add(t['description'] ?? '');
 
-      indices.putIfAbsent(t['name'], () => names.length - 1);
+      indexByName.putIfAbsent(names.last, () => names.length - 1);
     }
 
     // Sort categories alphabetically.
@@ -86,12 +86,12 @@ class TagGroup {
       return a.name.compareTo(b.name);
     });
 
-    return TagGroup._(
+    return TagCollection._(
       categories: categories,
       ids: ids,
       names: names,
       descriptions: descriptions,
-      indices: indices,
+      indexByName: indexByName,
     );
   }
 
@@ -99,13 +99,12 @@ class TagGroup {
   static const _adultCategoryName = 'Sexual Content';
 
   /// Each category has a name and a list of indices for its tags.
-  final List<({String name, List<int> indices})> categories;
+  final List<({String name, List<int> indexes})> categories;
 
   /// Tag data.
   final List<int> ids;
   final List<String> names;
   final List<String> descriptions;
 
-  /// Associates a name with the corret index in [ids]/[names]/[descriptions].
-  final HashMap<String, int> indices;
+  final HashMap<String, int> indexByName;
 }

@@ -8,7 +8,7 @@ import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
-import 'package:otraku/feature/tag/tag_models.dart';
+import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/util/tile_modelable.dart';
 
 class Media {

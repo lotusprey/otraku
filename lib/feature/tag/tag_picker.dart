@@ -1,84 +1,75 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/field/search_field.dart';
-import 'package:otraku/widget/field/stateful_tiles.dart';
+import 'package:otraku/widget/input/search_field.dart';
+import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/grid/chip_grids.dart';
+import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
-import 'package:otraku/feature/tag/tag_models.dart';
+import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 
-class TagSelector extends StatefulWidget {
-  const TagSelector({
-    required this.inclusiveGenres,
-    required this.exclusiveGenres,
-    required this.inclusiveTags,
-    required this.exclusiveTags,
-    this.tags,
-    this.tagIdIn,
-    this.tagIdNotIn,
+class TagPicker extends StatefulWidget {
+  const TagPicker({
+    required this.includedGenres,
+    required this.excludedGenres,
+    required this.includedTags,
+    required this.excludedTags,
   });
 
-  final List<String> inclusiveGenres;
-  final List<String> exclusiveGenres;
-  final List<String> inclusiveTags;
-  final List<String> exclusiveTags;
-  final TagGroup? tags;
-  final List<int>? tagIdIn;
-  final List<int>? tagIdNotIn;
+  final List<String> includedGenres;
+  final List<String> excludedGenres;
+  final List<String> includedTags;
+  final List<String> excludedTags;
 
   @override
-  TagSelectorState createState() => TagSelectorState();
+  TagPickerState createState() => TagPickerState();
 }
 
-class TagSelectorState extends State<TagSelector> {
+class TagPickerState extends State<TagPicker> {
   @override
   Widget build(BuildContext context) {
     final children = <Widget>[];
 
-    for (int i = 0; i < widget.inclusiveGenres.length; i++) {
-      final name = widget.inclusiveGenres[i];
+    for (final name in widget.includedGenres) {
       children.add(_DualStateTagChip(
-        key: Key(widget.inclusiveGenres[i]),
-        text: name.noScreamingSnakeCase,
+        key: Key(name),
+        label: name,
         positive: true,
         onChanged: (positive) => _toggleGenre(name, positive),
-        onDeleted: () => setState(() => widget.inclusiveGenres.remove(name)),
+        onRemoved: () => setState(() => widget.includedGenres.remove(name)),
       ));
     }
 
-    for (int i = 0; i < widget.inclusiveTags.length; i++) {
-      final name = widget.inclusiveTags[i];
+    for (final name in widget.excludedGenres) {
       children.add(_DualStateTagChip(
-        key: Key(widget.inclusiveTags[i]),
-        text: name.noScreamingSnakeCase,
-        positive: true,
-        onChanged: (positive) => _toggleTag(name, positive),
-        onDeleted: () => setState(() => widget.inclusiveTags.remove(name)),
-      ));
-    }
-
-    for (int i = 0; i < widget.exclusiveGenres.length; i++) {
-      final name = widget.exclusiveGenres[i];
-      children.add(_DualStateTagChip(
-        key: Key(widget.exclusiveGenres[i]),
-        text: name.noScreamingSnakeCase,
+        key: Key(name),
+        label: name,
         positive: false,
         onChanged: (positive) => _toggleGenre(name, positive),
-        onDeleted: () => setState(() => widget.exclusiveGenres.remove(name)),
+        onRemoved: () => setState(() => widget.excludedGenres.remove(name)),
       ));
     }
 
-    for (int i = 0; i < widget.exclusiveTags.length; i++) {
-      final name = widget.exclusiveTags[i];
+    for (final name in widget.includedTags) {
       children.add(_DualStateTagChip(
-        key: Key(widget.exclusiveTags[i]),
-        text: name.noScreamingSnakeCase,
+        key: Key(name),
+        label: name,
+        positive: true,
+        onChanged: (positive) => _toggleTag(name, positive),
+        onRemoved: () => setState(() => widget.includedTags.remove(name)),
+      ));
+    }
+
+    for (final name in widget.excludedTags) {
+      children.add(_DualStateTagChip(
+        key: Key(name),
+        label: name,
         positive: false,
         onChanged: (positive) => _toggleTag(name, positive),
-        onDeleted: () => setState(() => widget.exclusiveTags.remove(name)),
+        onRemoved: () => setState(() => widget.excludedTags.remove(name)),
       ));
     }
 
@@ -89,62 +80,62 @@ class TagSelectorState extends State<TagSelector> {
       onEdit: () => showSheet(
         context,
         SimpleSheet(
-          builder: (context, scrollCtrl) => _FilterTagSheet(
-            inclusiveGenres: widget.inclusiveGenres,
-            exclusiveGenres: widget.exclusiveGenres,
-            inclusiveTags: widget.inclusiveTags,
-            exclusiveTags: widget.exclusiveTags,
-            scrollCtrl: scrollCtrl,
+          builder: (context, scrollCtrl) => Consumer(
+            builder: (context, ref, child) {
+              TagCollection tags;
+              switch (ref.watch(tagsProvider)) {
+                case AsyncData(:final value):
+                  tags = value;
+                  break;
+                case AsyncError(:final error):
+                  return Center(
+                    child: Padding(
+                      padding: Theming.paddingAll,
+                      child: Text('Failed to load tags: ${error.toString()}'),
+                    ),
+                  );
+                case _:
+                  return const Center(child: Loader());
+              }
+
+              return _FilterTagSheet(
+                tags: tags,
+                includedGenres: widget.includedGenres,
+                excludedGenres: widget.excludedGenres,
+                includedTags: widget.includedTags,
+                excludedTags: widget.excludedTags,
+                scrollCtrl: scrollCtrl,
+              );
+            },
           ),
         ),
-      ).then((_) {
-        setState(() {});
-
-        if (widget.tags == null ||
-            widget.tagIdIn == null ||
-            widget.tagIdNotIn == null) return;
-
-        widget.tagIdIn!.clear();
-        widget.tagIdNotIn!.clear();
-        for (final t in widget.inclusiveTags) {
-          final i = widget.tags!.indices[t];
-          if (i == null) continue;
-          widget.tagIdIn!.add(widget.tags!.ids[i]);
-        }
-        for (final t in widget.exclusiveTags) {
-          final i = widget.tags!.indices[t];
-          if (i == null) continue;
-          widget.tagIdNotIn!.add(widget.tags!.ids[i]);
-        }
-      }),
+      ).then((_) => setState(() {})),
       onClear: () => setState(() {
-        widget.inclusiveGenres.clear();
-        widget.exclusiveGenres.clear();
-        widget.inclusiveTags.clear();
-        widget.exclusiveTags.clear();
-        widget.tagIdIn?.clear();
-        widget.tagIdNotIn?.clear();
+        widget.includedGenres.clear();
+        widget.excludedGenres.clear();
+        widget.includedTags.clear();
+        widget.excludedTags.clear();
       }),
     );
   }
 
   void _toggleGenre(String name, bool positive) {
     if (positive) {
-      widget.inclusiveGenres.add(name);
-      widget.exclusiveGenres.remove(name);
+      widget.includedGenres.add(name);
+      widget.excludedGenres.remove(name);
     } else {
-      widget.exclusiveGenres.add(name);
-      widget.inclusiveGenres.remove(name);
+      widget.excludedGenres.add(name);
+      widget.includedGenres.remove(name);
     }
   }
 
   void _toggleTag(String name, bool positive) {
     if (positive) {
-      widget.inclusiveTags.add(name);
-      widget.exclusiveTags.remove(name);
+      widget.includedTags.add(name);
+      widget.excludedTags.remove(name);
     } else {
-      widget.exclusiveTags.add(name);
-      widget.inclusiveTags.remove(name);
+      widget.excludedTags.add(name);
+      widget.includedTags.remove(name);
     }
   }
 }
@@ -152,16 +143,16 @@ class TagSelectorState extends State<TagSelector> {
 class _DualStateTagChip extends StatefulWidget {
   const _DualStateTagChip({
     required super.key,
-    required this.text,
+    required this.label,
     required this.positive,
     required this.onChanged,
-    required this.onDeleted,
+    required this.onRemoved,
   });
 
-  final String text;
+  final String label;
   final bool positive;
   final void Function(bool) onChanged;
-  final void Function() onDeleted;
+  final void Function() onRemoved;
 
   @override
   State<_DualStateTagChip> createState() => _DualStateTagChipState();
@@ -173,7 +164,7 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
   @override
   Widget build(BuildContext context) {
     return InputChip(
-      label: Text(widget.text),
+      label: Text(widget.label),
       labelStyle: TextStyle(
         color: _positive
             ? Theme.of(context).colorScheme.onSecondaryContainer
@@ -185,7 +176,7 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
       backgroundColor: _positive
           ? Theme.of(context).colorScheme.secondaryContainer
           : Theme.of(context).colorScheme.errorContainer,
-      onDeleted: widget.onDeleted,
+      onDeleted: widget.onRemoved,
       onPressed: () {
         setState(() => _positive = !_positive);
         widget.onChanged(_positive);
@@ -196,17 +187,19 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
 
 class _FilterTagSheet extends ConsumerStatefulWidget {
   const _FilterTagSheet({
-    required this.inclusiveGenres,
-    required this.exclusiveGenres,
-    required this.inclusiveTags,
-    required this.exclusiveTags,
+    required this.tags,
+    required this.includedGenres,
+    required this.excludedGenres,
+    required this.includedTags,
+    required this.excludedTags,
     required this.scrollCtrl,
   });
 
-  final List<String> inclusiveGenres;
-  final List<String> exclusiveGenres;
-  final List<String> inclusiveTags;
-  final List<String> exclusiveTags;
+  final TagCollection tags;
+  final List<String> includedGenres;
+  final List<String> excludedGenres;
+  final List<String> includedTags;
+  final List<String> excludedTags;
   final ScrollController scrollCtrl;
 
   @override
@@ -214,35 +207,33 @@ class _FilterTagSheet extends ConsumerStatefulWidget {
 }
 
 class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
-  late final TagGroup _tags;
-  late final List<int> _itemIndices;
-  late final List<int> _categoryIndices;
+  late final List<int> _itemIndexes;
+  late final List<int> _categoryIndexes;
   String _filter = '';
   int _index = 0;
 
   @override
   void initState() {
     super.initState();
-    _tags = ref.read(tagsProvider).valueOrNull!;
-    _itemIndices = [..._tags.categories[_index].indices];
-    _categoryIndices = List.generate(_tags.categories.length, (i) => i);
+    _itemIndexes = [...widget.tags.categories[_index].indexes];
+    _categoryIndexes = List.generate(widget.tags.categories.length, (i) => i);
   }
 
   @override
   Widget build(BuildContext context) {
-    late final List<String> inclusive;
-    late final List<String> exclusive;
-    if (_categoryIndices.isNotEmpty && _categoryIndices[_index] == 0) {
-      inclusive = widget.inclusiveGenres;
-      exclusive = widget.exclusiveGenres;
+    late final List<String> included;
+    late final List<String> excluded;
+    if (_categoryIndexes.isNotEmpty && _categoryIndexes[_index] == 0) {
+      included = widget.includedGenres;
+      excluded = widget.excludedGenres;
     } else {
-      inclusive = widget.inclusiveTags;
-      exclusive = widget.exclusiveTags;
+      included = widget.includedTags;
+      excluded = widget.excludedTags;
     }
 
     return Stack(
       children: [
-        if (_itemIndices.isNotEmpty)
+        if (_itemIndexes.isNotEmpty)
           Material(
             color: Colors.transparent,
             child: ListView.builder(
@@ -251,26 +242,26 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                 bottom: MediaQuery.paddingOf(context).bottom,
               ),
               controller: widget.scrollCtrl,
-              itemCount: _itemIndices.length,
+              itemCount: _itemIndexes.length,
               itemExtent: 56,
               itemBuilder: (_, i) {
-                final name = _tags.names[_itemIndices[i]];
+                final name = widget.tags.names[_itemIndexes[i]];
                 return StatefulCheckboxListTile(
                   title: Text(name),
                   tristate: true,
-                  value: inclusive.contains(name)
+                  value: included.contains(name)
                       ? true
-                      : exclusive.contains(name)
+                      : excluded.contains(name)
                           ? null
                           : false,
                   onChanged: (v) {
                     if (v == null) {
-                      inclusive.remove(name);
-                      exclusive.add(name);
+                      included.remove(name);
+                      excluded.add(name);
                     } else if (v) {
-                      inclusive.add(name);
+                      included.add(name);
                     } else {
-                      exclusive.remove(name);
+                      excluded.remove(name);
                     }
                   },
                 );
@@ -304,8 +295,8 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                   SizedBox(
                     height: 40,
                     child: ShadowedOverflowList(
-                      itemCount: _categoryIndices.length,
-                      itemBuilder: _buildCategoryChip,
+                      itemCount: _categoryIndexes.length,
+                      itemBuilder: _categoryChipBuilder,
                     ),
                   ),
                 ],
@@ -318,52 +309,55 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
   }
 
   void _onSearch(String val) {
+    final tags = widget.tags;
     _filter = val.toLowerCase();
-    _categoryIndices.clear();
-    _itemIndices.clear();
+    _categoryIndexes.clear();
+    _itemIndexes.clear();
 
-    categoryLoop:
-    for (int i = 0; i < _tags.categories.length; i++) {
-      for (final j in _tags.categories[i].indices) {
-        if (_tags.names[j].toLowerCase().contains(_filter)) {
-          _categoryIndices.add(i);
-          continue categoryLoop;
-        }
+    for (int i = 0; i < tags.categories.length; i++) {
+      final matchingTag = tags.categories[i].indexes.firstWhereOrNull(
+        (index) => tags.names[index].toLowerCase().contains(_filter),
+      );
+
+      if (matchingTag != null) {
+        _categoryIndexes.add(i);
       }
     }
 
-    if (_categoryIndices.isEmpty) {
+    if (_categoryIndexes.isEmpty) {
       _index = 0;
       setState(() {});
       return;
     }
 
-    if (_index >= _categoryIndices.length) {
-      _index = _categoryIndices.length - 1;
+    if (_index >= _categoryIndexes.length) {
+      _index = _categoryIndexes.length - 1;
     }
 
-    for (final i in _tags.categories[_categoryIndices[_index]].indices) {
-      if (_tags.names[i].toLowerCase().contains(_filter)) {
-        _itemIndices.add(i);
+    for (final i in tags.categories[_categoryIndexes[_index]].indexes) {
+      if (tags.names[i].toLowerCase().contains(_filter)) {
+        _itemIndexes.add(i);
       }
     }
 
     setState(() {});
   }
 
-  Widget _buildCategoryChip(BuildContext context, int i) {
+  Widget _categoryChipBuilder(BuildContext context, int i) {
+    final tags = widget.tags;
+
     return _TagCategoryChip(
-      name: _tags.categories[_categoryIndices[i]].name,
+      name: tags.categories[_categoryIndexes[i]].name,
       selected: i == _index,
       onTap: () {
         if (_index == i) return;
 
         _index = i;
-        _itemIndices.clear();
+        _itemIndexes.clear();
 
-        for (final i in _tags.categories[_categoryIndices[_index]].indices) {
-          if (_tags.names[i].toLowerCase().contains(_filter)) {
-            _itemIndices.add(i);
+        for (final i in tags.categories[_categoryIndexes[_index]].indexes) {
+          if (tags.names[i].toLowerCase().contains(_filter)) {
+            _itemIndexes.add(i);
           }
         }
 

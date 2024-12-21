@@ -8,10 +8,10 @@ import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
-import 'package:otraku/feature/filter/filter_collection_view.dart';
+import 'package:otraku/feature/collection/collection_filter_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/debounce.dart';
-import 'package:otraku/widget/field/search_field.dart';
+import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
 
@@ -32,7 +32,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
           icon: const Icon(Ionicons.funnel_outline),
           onPressed: () => showSheet(
             context,
-            FilterCollectionView(
+            CollectionFilterView(
               tag: tag,
               filter: filter.mediaFilter,
               onChanged: (mediaFilter) => ref

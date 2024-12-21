@@ -11,7 +11,7 @@ import 'package:otraku/feature/studio/studio_item_grid.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
-import 'package:otraku/widget/field/pill_selector.dart';
+import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class DiscoverSubview extends StatelessWidget {

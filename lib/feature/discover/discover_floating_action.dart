@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
-import 'package:otraku/widget/field/pill_selector.dart';
+import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/sheets.dart';
 

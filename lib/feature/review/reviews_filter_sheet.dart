@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
-import 'package:otraku/feature/filter/chip_selector.dart';
+import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 

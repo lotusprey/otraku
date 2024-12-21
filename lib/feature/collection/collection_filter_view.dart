@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/tag/tag_picker.dart';
 import 'package:otraku/widget/input/year_range_picker.dart';
@@ -46,21 +47,50 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
       },
     );
 
-    final clearButton = BottomBarButton(
-      text: 'Clear',
-      icon: Icons.close,
+    final revertToDefaultButton = BottomBarButton(
+      text: 'Reset',
+      icon: Icons.restore_rounded,
       warning: true,
       onTap: () {
-        widget.onChanged(CollectionMediaFilter(widget.filter.sort));
+        final persistence = ref.read(persistenceProvider);
+        if (widget.tag.ofAnime) {
+          widget.onChanged(persistence.animeCollectionMediaFilter);
+        } else {
+          widget.onChanged(persistence.mangaCollectionMediaFilter);
+        }
+
         Navigator.pop(context);
       },
+    );
+
+    final saveButton = BottomBarButton(
+      text: 'Save',
+      icon: Icons.save_outlined,
+      onTap: () => ConfirmationDialog.show(
+        context,
+        title: 'Make default?',
+        content: 'The current filters and sorting will become the default.',
+        primaryAction: 'Yes',
+        secondaryAction: 'No',
+        onConfirm: () {
+          final notifier = ref.read(persistenceProvider.notifier);
+          if (widget.tag.ofAnime) {
+            notifier.setAnimeCollectionMediaFilter(_filter);
+          } else {
+            notifier.setMangaCollectionMediaFilter(_filter);
+          }
+
+          widget.onChanged(_filter);
+          Navigator.pop(context);
+        },
+      ),
     );
 
     return SheetWithButtonRow(
       buttons: BottomBar(
         options.leftHanded
-            ? [applyButton, clearButton]
-            : [clearButton, applyButton],
+            ? [applyButton, revertToDefaultButton, saveButton]
+            : [saveButton, revertToDefaultButton, applyButton],
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),

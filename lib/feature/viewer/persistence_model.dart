@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
+import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -16,6 +18,9 @@ class Persistence {
     required this.accountGroup,
     required this.options,
     required this.appMeta,
+    required this.animeCollectionMediaFilter,
+    required this.mangaCollectionMediaFilter,
+    required this.discoverMediaFilter,
     required this.homeActivitiesFilter,
     required this.calendarFilter,
   });
@@ -25,26 +30,38 @@ class Persistence {
         accountGroup: AccountGroup.empty(),
         options: Options.empty(),
         appMeta: AppMeta.empty(),
+        animeCollectionMediaFilter: CollectionMediaFilter(EntrySort.title),
+        mangaCollectionMediaFilter: CollectionMediaFilter(EntrySort.title),
+        discoverMediaFilter: DiscoverMediaFilter(MediaSort.titleRomaji),
         homeActivitiesFilter: HomeActivitiesFilter.empty(),
         calendarFilter: CalendarFilter.empty(),
       );
 
-  factory Persistence.fromMap(
+  factory Persistence.fromPersistenceMap(
     Map<dynamic, dynamic> map,
     Map<String, String> accessTokens,
   ) =>
       Persistence(
         systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
-        accountGroup: AccountGroup.fromMap(
+        accountGroup: AccountGroup.fromPersistenceMap(
           map['accountGroup'] ?? const {},
           accessTokens,
         ),
-        options: Options.fromMap(map['options'] ?? const {}),
-        appMeta: AppMeta.fromMap(map['appMeta'] ?? const {}),
-        homeActivitiesFilter: HomeActivitiesFilter.fromMap(
+        options: Options.fromPersistenceMap(map['options'] ?? const {}),
+        appMeta: AppMeta.fromPersistenceMap(map['appMeta'] ?? const {}),
+        animeCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+          map['animeCollectionMediaFilter'] ?? const {},
+        ),
+        mangaCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+          map['mangaCollectionMediaFilter'] ?? const {},
+        ),
+        discoverMediaFilter: DiscoverMediaFilter.fromPersistenceMap(
+          map['discoverMediaFilter'] ?? const {},
+        ),
+        homeActivitiesFilter: HomeActivitiesFilter.fromPersistenceMap(
           map['homeActivitiesFilter'] ?? const {},
         ),
-        calendarFilter: CalendarFilter.fromMap(
+        calendarFilter: CalendarFilter.fromPersistenceMap(
           map['calendarFilter'] ?? const {},
         ),
       );
@@ -53,6 +70,9 @@ class Persistence {
   final AccountGroup accountGroup;
   final Options options;
   final AppMeta appMeta;
+  final CollectionMediaFilter animeCollectionMediaFilter;
+  final CollectionMediaFilter mangaCollectionMediaFilter;
+  final DiscoverMediaFilter discoverMediaFilter;
   final HomeActivitiesFilter homeActivitiesFilter;
   final CalendarFilter calendarFilter;
 
@@ -61,6 +81,9 @@ class Persistence {
     AccountGroup? accountGroup,
     Options? options,
     AppMeta? appMeta,
+    CollectionMediaFilter? animeCollectionMediaFilter,
+    CollectionMediaFilter? mangaCollectionMediaFilter,
+    DiscoverMediaFilter? discoverMediaFilter,
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
   }) =>
@@ -69,6 +92,11 @@ class Persistence {
         accountGroup: accountGroup ?? this.accountGroup,
         options: options ?? this.options,
         appMeta: appMeta ?? this.appMeta,
+        animeCollectionMediaFilter:
+            animeCollectionMediaFilter ?? this.animeCollectionMediaFilter,
+        mangaCollectionMediaFilter:
+            mangaCollectionMediaFilter ?? this.mangaCollectionMediaFilter,
+        discoverMediaFilter: discoverMediaFilter ?? this.discoverMediaFilter,
         homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
         calendarFilter: calendarFilter ?? this.calendarFilter,
       );
@@ -84,7 +112,7 @@ class AccountGroup {
         accountIndex: null,
       );
 
-  factory AccountGroup.fromMap(
+  factory AccountGroup.fromPersistenceMap(
     Map<dynamic, dynamic> map,
     Map<String, String> accessTokens,
   ) {
@@ -93,7 +121,7 @@ class AccountGroup {
       final accessToken = accessTokens[Account.accessTokenKeyById(a['id'])];
       if (accessToken == null) continue;
 
-      accounts.add(Account.fromMap(a, accessToken));
+      accounts.add(Account.fromPersistenceMap(a, accessToken));
     }
 
     int? accountIndex = map['accountIndex']?.clamp(0, accounts.length - 1);
@@ -112,8 +140,8 @@ class AccountGroup {
 
   Account? get account => accountIndex != null ? accounts[accountIndex!] : null;
 
-  Map<String, dynamic> toMap() => {
-        'accounts': accounts.map((a) => a.toMap()).toList(),
+  Map<String, dynamic> toPersistenceMap() => {
+        'accounts': accounts.map((a) => a.toPersistenceMap()).toList(),
         'accountIndex': accountIndex,
       };
 }
@@ -127,7 +155,8 @@ class Account {
     required this.accessToken,
   });
 
-  factory Account.fromMap(Map<dynamic, dynamic> map, String accessToken) =>
+  factory Account.fromPersistenceMap(
+          Map<dynamic, dynamic> map, String accessToken) =>
       Account(
         id: map['id'],
         name: map['name'],
@@ -144,7 +173,7 @@ class Account {
 
   static String accessTokenKeyById(int id) => 'auth$id';
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toPersistenceMap() => {
         'id': id,
         'name': name,
         'avatarUrl': avatarUrl,
@@ -157,11 +186,8 @@ class Options {
     required this.themeMode,
     required this.themeBase,
     required this.highContrast,
-    required this.defaultHomeTab,
-    required this.defaultDiscoverType,
-    required this.defaultAnimeSort,
-    required this.defaultMangaSort,
-    required this.defaultDiscoverSort,
+    required this.homeTab,
+    required this.discoverType,
     required this.imageQuality,
     required this.animeCollectionPreview,
     required this.mangaCollectionPreview,
@@ -178,11 +204,8 @@ class Options {
         themeMode: ThemeMode.system,
         themeBase: null,
         highContrast: false,
-        defaultHomeTab: HomeTab.feed,
-        defaultDiscoverType: DiscoverType.anime,
-        defaultAnimeSort: EntrySort.title,
-        defaultMangaSort: EntrySort.title,
-        defaultDiscoverSort: MediaSort.trendingDesc,
+        homeTab: HomeTab.feed,
+        discoverType: DiscoverType.anime,
         imageQuality: ImageQuality.high,
         animeCollectionPreview: true,
         mangaCollectionPreview: true,
@@ -195,23 +218,12 @@ class Options {
         collectionPreviewItemView: CollectionItemView.detailed,
       );
 
-  factory Options.fromMap(Map<dynamic, dynamic> map) => Options(
+  factory Options.fromPersistenceMap(Map<dynamic, dynamic> map) => Options(
         themeMode: ThemeMode.values.getOrFirst(map['themeMode']),
         themeBase: ThemeBase.values.getOrFirst(map['themeBase']),
         highContrast: map['highContrast'] ?? false,
-        defaultHomeTab: HomeTab.values.getOrFirst(map['defaultHomeTab']),
-        defaultDiscoverType: DiscoverType.values.getOrFirst(
-          map['defaultDiscoverType'],
-        ),
-        defaultAnimeSort: EntrySort.values.getOrFirst(
-          map['defaultAnimeSort'],
-        ),
-        defaultMangaSort: EntrySort.values.getOrFirst(
-          map['defaultMangaSort'],
-        ),
-        defaultDiscoverSort: MediaSort.values.getOrFirst(
-          map['defaultDiscoverSort'],
-        ),
+        homeTab: HomeTab.values.getOrFirst(map['homeTab']),
+        discoverType: DiscoverType.values.getOrFirst(map['discoverType']),
         imageQuality: ImageQuality.values.getOrFirst(map['imageQuality']),
         animeCollectionPreview: map['animeCollectionPreview'] ?? true,
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
@@ -233,11 +245,8 @@ class Options {
   final ThemeMode themeMode;
   final ThemeBase? themeBase;
   final bool highContrast;
-  final HomeTab defaultHomeTab;
-  final DiscoverType defaultDiscoverType;
-  final EntrySort defaultAnimeSort;
-  final EntrySort defaultMangaSort;
-  final MediaSort defaultDiscoverSort;
+  final HomeTab homeTab;
+  final DiscoverType discoverType;
   final ImageQuality imageQuality;
   final bool animeCollectionPreview;
   final bool mangaCollectionPreview;
@@ -253,11 +262,8 @@ class Options {
     ThemeMode? themeMode,
     ThemeBase? Function()? themeBase,
     bool? highContrast,
-    HomeTab? defaultHomeTab,
-    DiscoverType? defaultDiscoverType,
-    EntrySort? defaultAnimeSort,
-    EntrySort? defaultMangaSort,
-    MediaSort? defaultDiscoverSort,
+    HomeTab? homeTab,
+    DiscoverType? discoverType,
     ImageQuality? imageQuality,
     bool? animeCollectionPreview,
     bool? mangaCollectionPreview,
@@ -273,11 +279,8 @@ class Options {
         themeMode: themeMode ?? this.themeMode,
         themeBase: themeBase != null ? themeBase() : this.themeBase,
         highContrast: highContrast ?? this.highContrast,
-        defaultHomeTab: defaultHomeTab ?? this.defaultHomeTab,
-        defaultDiscoverType: defaultDiscoverType ?? this.defaultDiscoverType,
-        defaultAnimeSort: defaultAnimeSort ?? this.defaultAnimeSort,
-        defaultMangaSort: defaultMangaSort ?? this.defaultMangaSort,
-        defaultDiscoverSort: defaultDiscoverSort ?? this.defaultDiscoverSort,
+        homeTab: homeTab ?? this.homeTab,
+        discoverType: discoverType ?? this.discoverType,
         imageQuality: imageQuality ?? this.imageQuality,
         animeCollectionPreview:
             animeCollectionPreview ?? this.animeCollectionPreview,
@@ -294,15 +297,12 @@ class Options {
             collectionPreviewItemView ?? this.collectionPreviewItemView,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toPersistenceMap() => {
         'themeMode': themeMode.index,
         'themeBase': themeBase?.index,
         'highContrast': highContrast,
-        'defaultHomeTab': defaultHomeTab.index,
-        'defaultDiscoverType': defaultDiscoverType.index,
-        'defaultAnimeSort': defaultAnimeSort.index,
-        'defaultMangaSort': defaultMangaSort.index,
-        'defaultDiscoverSort': defaultDiscoverSort.index,
+        'homeTab': homeTab.index,
+        'discoverType': discoverType.index,
         'imageQuality': imageQuality.index,
         'animeCollectionPreview': animeCollectionPreview,
         'mangaCollectionPreview': mangaCollectionPreview,
@@ -340,7 +340,7 @@ class AppMeta {
         lastBackgroundJob: null,
       );
 
-  factory AppMeta.fromMap(Map<dynamic, dynamic> map) => AppMeta(
+  factory AppMeta.fromPersistenceMap(Map<dynamic, dynamic> map) => AppMeta(
         lastNotificationId: map['lastNotificationId'] ?? -1,
         lastAppVersion: map['lastAppVersion'] ?? '',
         lastBackgroundJob: map['lastBackgroundJob'],
@@ -350,7 +350,7 @@ class AppMeta {
   final String lastAppVersion;
   final DateTime? lastBackgroundJob;
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toPersistenceMap() => {
         'lastNotificationId': lastNotificationId,
         'lastAppVersion': lastAppVersion,
         'lastBackgroundJob': lastBackgroundJob,

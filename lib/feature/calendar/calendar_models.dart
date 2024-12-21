@@ -71,7 +71,7 @@ class CalendarFilter {
         status: CalendarStatusFilter.all,
       );
 
-  factory CalendarFilter.fromMap(Map<dynamic, dynamic> map) {
+  factory CalendarFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
     final season = CalendarSeasonFilter.values.getOrFirst(map['season']);
     final status = CalendarStatusFilter.values.getOrFirst(map['status']);
 
@@ -93,7 +93,7 @@ class CalendarFilter {
         status: status ?? this.status,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toPersistenceMap() => {
         'season': season.index,
         'status': status.index,
       };

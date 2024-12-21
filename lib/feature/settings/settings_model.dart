@@ -128,7 +128,7 @@ class Settings {
         notificationOptions: {...notificationOptions},
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toGraphQlVariables() => {
         'titleLanguage': titleLanguage.value,
         'staffNameLanguage': personNaming.value,
         'activityMergeTime': activityMergeTime,

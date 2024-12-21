@@ -11,21 +11,24 @@ class Timestamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkResponse(
-      onTap: () => SnackBarExtension.show(
-        context,
-        dateTime.formattedDateTimeFromSeconds(analogueClock),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.history_rounded, size: Theming.iconSmall),
-          const SizedBox(width: 5),
-          Text(
-            _relativeTime(),
-            style: Theme.of(context).textTheme.labelSmall,
-          )
-        ],
+    return Semantics(
+      tooltip: 'Creation Time',
+      child: InkResponse(
+        onTap: () => SnackBarExtension.show(
+          context,
+          dateTime.formattedDateTimeFromSeconds(analogueClock),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.history_rounded, size: Theming.iconSmall),
+            const SizedBox(width: 5),
+            Text(
+              _relativeTime(),
+              style: Theme.of(context).textTheme.labelSmall,
+            )
+          ],
+        ),
       ),
     );
   }

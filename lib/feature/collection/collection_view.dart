@@ -238,14 +238,14 @@ class _Content extends StatelessWidget {
 
   void _searchGlobally(BuildContext context, WidgetRef ref) {
     final collectionFilter = ref.read(collectionFilterProvider(tag));
-    final options = ref.read(persistenceProvider).options;
+    final sort = ref.read(persistenceProvider).discoverMediaFilter.sort;
 
     ref.read(discoverFilterProvider.notifier).update((f) => f.copyWith(
           type: tag.ofAnime ? DiscoverType.anime : DiscoverType.manga,
           search: collectionFilter.search,
           mediaFilter: DiscoverMediaFilter.fromCollection(
             filter: collectionFilter.mediaFilter,
-            sort: options.defaultDiscoverSort,
+            sort: sort,
             ofAnime: tag.ofAnime,
           ),
         ));

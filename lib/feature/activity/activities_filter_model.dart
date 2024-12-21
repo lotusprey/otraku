@@ -40,7 +40,7 @@ class HomeActivitiesFilter extends ActivitiesFilter {
         false,
       );
 
-  factory HomeActivitiesFilter.fromMap(Map<dynamic, dynamic> map) {
+  factory HomeActivitiesFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
     final List<int> typeIn = map['activityTypeIn'] ??
         List.generate(ActivityType.values.length, (i) => i, growable: false);
 
@@ -73,7 +73,7 @@ class HomeActivitiesFilter extends ActivitiesFilter {
         withViewerActivities ?? this.withViewerActivities,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toPersistenceMap() => {
         'activityTypeIn': typeIn.map((a) => a.index).toList(),
         'onFollowing': onFollowing,
         'withViewerActivities': withViewerActivities,

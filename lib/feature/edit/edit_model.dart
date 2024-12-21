@@ -201,7 +201,7 @@ class Edit {
         customLists: customLists ?? this.customLists,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toGraphQlVariables() => {
         'mediaId': mediaId,
         'status': (listStatus ?? ListStatus.current).value,
         'progress': progress,

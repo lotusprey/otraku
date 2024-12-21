@@ -14,21 +14,27 @@ class CollectionFilterNotifier
     extends AutoDisposeFamilyNotifier<CollectionFilter, CollectionTag> {
   @override
   CollectionFilter build(arg) {
+    final mediaFilter = arg.ofAnime
+        ? ref.watch(
+            persistenceProvider.select((s) => s.animeCollectionMediaFilter),
+          )
+        : ref.watch(
+            persistenceProvider.select((s) => s.mangaCollectionMediaFilter),
+          );
+
     final options = ref.watch(persistenceProvider.select((s) => s.options));
-    final filter = CollectionFilter(
-      arg.ofAnime ? options.defaultAnimeSort : options.defaultMangaSort,
-    );
-    final selectIsInAnimePreview = homeProvider.select(
+    final isInAnimePreviewProvider = homeProvider.select(
       (s) => !s.didExpandAnimeCollection,
     );
 
     if (arg.userId == ref.watch(viewerIdProvider) &&
         arg.ofAnime &&
         options.airingSortForAnimePreview &&
-        ref.watch(selectIsInAnimePreview)) {
-      filter.mediaFilter.sort = EntrySort.airing;
+        ref.watch(isInAnimePreviewProvider)) {
+      mediaFilter.sort = EntrySort.airing;
     }
-    return filter;
+
+    return CollectionFilter(mediaFilter);
   }
 
   CollectionFilter update(

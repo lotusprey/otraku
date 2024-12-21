@@ -1,3 +1,4 @@
+import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -12,10 +13,8 @@ class DiscoverFilter {
     required this.reviewsFilter,
   });
 
-  DiscoverFilter(DiscoverType discoverType, MediaSort sort)
-      : type = discoverType,
-        search = '',
-        mediaFilter = DiscoverMediaFilter(sort),
+  DiscoverFilter(this.type, this.mediaFilter)
+      : search = '',
         hasBirthday = false,
         reviewsFilter = const ReviewsFilter();
 
@@ -43,6 +42,53 @@ class DiscoverFilter {
 
 class DiscoverMediaFilter {
   DiscoverMediaFilter(this.sort);
+
+  factory DiscoverMediaFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
+    final sort = MediaSort.values.getOrFirst(map['sort']);
+
+    final filter = DiscoverMediaFilter(sort)
+      ..season = MediaSeason.values.getOrNull(map['season'])
+      ..startYearFrom = map['startYearFrom']
+      ..startYearTo = map['startYearTo']
+      ..country = OriginCountry.values.getOrNull(map['country'])
+      ..inLists = map['inLists']
+      ..isAdult = map['isAdult'];
+
+    for (final e in map['statuses'] ?? const []) {
+      final status = ReleaseStatus.values.getOrNull(e);
+      if (status != null) {
+        filter.statuses.add(status);
+      }
+    }
+
+    for (final e in map['animeFormats'] ?? const []) {
+      final format = MediaFormat.values.getOrNull(e);
+      if (format != null) {
+        filter.animeFormats.add(format);
+      }
+    }
+
+    for (final e in map['mangaFormats'] ?? const []) {
+      final format = MediaFormat.values.getOrNull(e);
+      if (format != null) {
+        filter.mangaFormats.add(format);
+      }
+    }
+
+    for (final e in map['sources'] ?? const []) {
+      final source = MediaSource.values.getOrNull(e);
+      if (source != null) {
+        filter.sources.add(source);
+      }
+    }
+
+    filter.genreIn.addAll(map['genreIn'] ?? const []);
+    filter.genreNotIn.addAll(map['genreNotIn'] ?? const []);
+    filter.tagIn.addAll(map['tagIn'] ?? const []);
+    filter.tagNotIn.addAll(map['tagNotIn'] ?? const []);
+
+    return filter;
+  }
 
   final statuses = <ReleaseStatus>[];
   final animeFormats = <MediaFormat>[];
@@ -85,7 +131,6 @@ class DiscoverMediaFilter {
     ..tagIn.addAll(tagIn)
     ..tagNotIn.addAll(tagNotIn)
     ..sources.addAll(sources)
-    ..sort = sort
     ..season = season
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
@@ -110,7 +155,7 @@ class DiscoverMediaFilter {
         ..startYearTo = filter.startYearTo
         ..country = filter.country;
 
-  Map<String, dynamic> toMap(bool ofAnime) => {
+  Map<String, dynamic> toGraphQlVariables({required bool ofAnime}) => {
         'sort': sort.value,
         if (ofAnime && animeFormats.isNotEmpty)
           'format_in': animeFormats.map((v) => v.value).toList(),
@@ -129,5 +174,23 @@ class DiscoverMediaFilter {
         if (country != null) 'countryOfOrigin': country!.code,
         if (inLists != null) 'onList': inLists,
         if (isAdult != null) 'isAdult': isAdult,
+      };
+
+  Map<String, dynamic> toPersistenceMap() => {
+        'statuses': statuses.map((e) => e.index).toList(),
+        'animeFormats': animeFormats.map((e) => e.index).toList(),
+        'mangaFormats': mangaFormats.map((e) => e.index).toList(),
+        'genreIn': genreIn,
+        'genreNotIn': genreNotIn,
+        'tagIn': tagIn,
+        'tagNotIn': tagNotIn,
+        'sources': sources.map((e) => e.index).toList(),
+        'sort': sort.index,
+        'season': season?.index,
+        'startYearFrom': startYearFrom,
+        'startYearTo': startYearTo,
+        'country': country?.index,
+        'inLists': inLists,
+        'isAdult': isAdult,
       };
 }

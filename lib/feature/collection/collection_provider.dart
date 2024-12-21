@@ -103,7 +103,7 @@ class CollectionNotifier
     try {
       await ref
           .read(repositoryProvider)
-          .request(GqlMutation.updateEntry, newEdit.toMap());
+          .request(GqlMutation.updateEntry, newEdit.toGraphQlVariables());
 
       await _saveEntry(newEdit.mediaId, oldStatus);
 

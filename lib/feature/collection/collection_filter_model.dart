@@ -1,11 +1,10 @@
+import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class CollectionFilter {
   const CollectionFilter._({required this.search, required this.mediaFilter});
 
-  CollectionFilter(EntrySort sort)
-      : search = '',
-        mediaFilter = CollectionMediaFilter(sort);
+  CollectionFilter(this.mediaFilter) : search = '';
 
   final String search;
   final CollectionMediaFilter mediaFilter;
@@ -22,6 +21,38 @@ class CollectionFilter {
 
 class CollectionMediaFilter {
   CollectionMediaFilter(this.sort);
+
+  factory CollectionMediaFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
+    final sort = EntrySort.values.getOrFirst(map['sort']);
+
+    final filter = CollectionMediaFilter(sort)
+      ..startYearFrom = map['startYearFrom']
+      ..startYearTo = map['startYearTo']
+      ..country = OriginCountry.values.getOrNull(map['country'])
+      ..isPrivate = map['isPrivate']
+      ..hasNotes = map['hasNotes'];
+
+    for (final e in map['statuses'] ?? const []) {
+      final status = ReleaseStatus.values.getOrNull(e);
+      if (status != null) {
+        filter.statuses.add(status);
+      }
+    }
+
+    for (final e in map['formats'] ?? const []) {
+      final format = MediaFormat.values.getOrNull(e);
+      if (format != null) {
+        filter.formats.add(format);
+      }
+    }
+
+    filter.genreIn.addAll(map['genreIn'] ?? const []);
+    filter.genreNotIn.addAll(map['genreNotIn'] ?? const []);
+    filter.tagIn.addAll(map['tagIn'] ?? const []);
+    filter.tagNotIn.addAll(map['tagNotIn'] ?? const []);
+
+    return filter;
+  }
 
   final statuses = <ReleaseStatus>[];
   final formats = <MediaFormat>[];
@@ -56,10 +87,24 @@ class CollectionMediaFilter {
     ..genreNotIn.addAll(genreNotIn)
     ..tagIn.addAll(tagIn)
     ..tagNotIn.addAll(tagNotIn)
-    ..sort = sort
     ..startYearFrom = startYearFrom
     ..startYearTo = startYearTo
     ..country = country
     ..isPrivate = isPrivate
     ..hasNotes = hasNotes;
+
+  Map<String, dynamic> toPersistenceMap() => {
+        'statuses': statuses.map((e) => e.index).toList(),
+        'formats': formats.map((e) => e.index).toList(),
+        'genreIn': genreIn,
+        'genreNotIn': genreNotIn,
+        'tagIn': tagIn,
+        'tagNotIn': tagNotIn,
+        'sort': sort.index,
+        'startYearFrom': startYearFrom,
+        'startYearTo': startYearTo,
+        'country': country?.index,
+        'isPrivate': isPrivate,
+        'hasNotes': hasNotes,
+      };
 }

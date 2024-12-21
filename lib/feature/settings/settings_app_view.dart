@@ -8,7 +8,6 @@ import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/home/home_model.dart';
-import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/theme_preview.dart';
 
 class SettingsAppSubview extends ConsumerWidget {
@@ -53,38 +52,6 @@ class SettingsAppSubview extends ConsumerWidget {
               title: const Text('High Contrast'),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
-            ),
-          ],
-        ),
-        ExpansionTile(
-          title: const Text('Default Sortings'),
-          children: [
-            Padding(
-              padding: tilePadding,
-              child: EntrySortChipSelector(
-                title: 'Anime Collection Sorting',
-                value: options.defaultAnimeSort,
-                onChanged: (v) => update(options.copyWith(defaultAnimeSort: v)),
-              ),
-            ),
-            Padding(
-              padding: tilePadding,
-              child: EntrySortChipSelector(
-                title: 'Manga Collection Sorting',
-                value: options.defaultMangaSort,
-                onChanged: (v) => update(options.copyWith(defaultMangaSort: v)),
-              ),
-            ),
-            Padding(
-              padding: tilePadding,
-              child: ChipSelector.ensureSelected(
-                title: 'Discover Media Sorting',
-                items: MediaSort.values.map((e) => (e.label, e)).toList(),
-                value: options.defaultDiscoverSort,
-                onChanged: (v) => update(
-                  options.copyWith(defaultDiscoverSort: v),
-                ),
-              ),
             ),
           ],
         ),
@@ -134,8 +101,8 @@ class SettingsAppSubview extends ConsumerWidget {
               child: ChipSelector.ensureSelected(
                 title: 'Home Tab',
                 items: HomeTab.values.map((v) => (v.label, v)).toList(),
-                value: options.defaultHomeTab,
-                onChanged: (v) => update(options.copyWith(defaultHomeTab: v)),
+                value: options.homeTab,
+                onChanged: (v) => update(options.copyWith(homeTab: v)),
               ),
             ),
             Padding(
@@ -143,9 +110,9 @@ class SettingsAppSubview extends ConsumerWidget {
               child: ChipSelector.ensureSelected(
                 title: 'Default Discover Type',
                 items: DiscoverType.values.map((v) => (v.label, v)).toList(),
-                value: options.defaultDiscoverType,
+                value: options.discoverType,
                 onChanged: (v) => update(
-                  options.copyWith(defaultDiscoverType: v),
+                  options.copyWith(discoverType: v),
                 ),
               ),
             ),

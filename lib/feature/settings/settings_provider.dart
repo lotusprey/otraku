@@ -32,9 +32,11 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     state = await AsyncValue.guard(() async {
       final data = await ref
           .read(repositoryProvider)
-          .request(GqlMutation.updateSettings, other.toMap());
+          .request(GqlMutation.updateSettings, other.toGraphQlVariables());
+
       return Settings(data['UpdateUser']);
     });
+
     final next = state.valueOrNull;
     if (prev == null || next == null) return;
 

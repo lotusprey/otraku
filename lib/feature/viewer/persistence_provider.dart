@@ -5,6 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
+import 'package:otraku/feature/collection/collection_filter_model.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -31,7 +33,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
     _box = await Hive.openBox('persistence');
     final accessTokens = await const FlutterSecureStorage().readAll();
 
-    state = Persistence.fromMap(_box.toMap(), accessTokens);
+    state = Persistence.fromPersistenceMap(_box.toMap(), accessTokens);
   }
 
   void cacheSystemPrimaryColors(SystemColors systemColors) {
@@ -39,22 +41,37 @@ class PersistenceNotifier extends Notifier<Persistence> {
   }
 
   void setOptions(Options options) {
-    _box.put('options', options.toMap());
+    _box.put('options', options.toPersistenceMap());
     state = state.copyWith(options: options);
   }
 
   void setAppMeta(AppMeta appMeta) {
-    _box.put('appMeta', appMeta.toMap());
+    _box.put('appMeta', appMeta.toPersistenceMap());
     state = state.copyWith(appMeta: appMeta);
   }
 
+  void setAnimeCollectionMediaFilter(CollectionMediaFilter mediaFilter) {
+    _box.put('animeCollectionMediaFilter', mediaFilter.toPersistenceMap());
+    state = state.copyWith(animeCollectionMediaFilter: mediaFilter);
+  }
+
+  void setMangaCollectionMediaFilter(CollectionMediaFilter mediaFilter) {
+    _box.put('mangaCollectionMediaFilter', mediaFilter.toPersistenceMap());
+    state = state.copyWith(mangaCollectionMediaFilter: mediaFilter);
+  }
+
+  void setDiscoverMediaFilter(DiscoverMediaFilter discoverMediaFilter) {
+    _box.put('discoverMediaFilter', discoverMediaFilter.toPersistenceMap());
+    state = state.copyWith(discoverMediaFilter: discoverMediaFilter);
+  }
+
   void setHomeActivitiesFilter(HomeActivitiesFilter homeActivitiesFilter) {
-    _box.put('homeActivitiesFilter', homeActivitiesFilter.toMap());
+    _box.put('homeActivitiesFilter', homeActivitiesFilter.toPersistenceMap());
     state = state.copyWith(homeActivitiesFilter: homeActivitiesFilter);
   }
 
   void setCalendarFilter(CalendarFilter calendarFilter) {
-    _box.put('calendarFilter', calendarFilter.toMap());
+    _box.put('calendarFilter', calendarFilter.toPersistenceMap());
     state = state.copyWith(calendarFilter: calendarFilter);
   }
 
@@ -165,7 +182,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
   /// Persists the account changes, but doesn't affect secure storage.
   /// Token changes must be handled separately.
   void _setAccountGroup(AccountGroup accountGroup) {
-    _box.put('accountGroup', accountGroup.toMap());
+    _box.put('accountGroup', accountGroup.toPersistenceMap());
     state = state.copyWith(accountGroup: accountGroup);
   }
 }

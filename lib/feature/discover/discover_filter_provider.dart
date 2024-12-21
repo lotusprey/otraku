@@ -10,12 +10,15 @@ final discoverFilterProvider =
 class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
   @override
   DiscoverFilter build() {
-    final options = ref.watch(persistenceProvider.select((s) => s.options));
-
-    return DiscoverFilter(
-      options.defaultDiscoverType,
-      options.defaultDiscoverSort,
+    final mediaFilter = ref.watch(
+      persistenceProvider.select((s) => s.discoverMediaFilter),
     );
+
+    final discoverType = ref.watch(
+      persistenceProvider.select((s) => s.options.discoverType),
+    );
+
+    return DiscoverFilter(discoverType, mediaFilter);
   }
 
   @override

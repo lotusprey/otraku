@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/tag/tag_picker.dart';
 import 'package:otraku/widget/input/year_range_picker.dart';
@@ -11,7 +13,7 @@ import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
-class DiscoverFilterView extends StatefulWidget {
+class DiscoverFilterView extends ConsumerStatefulWidget {
   const DiscoverFilterView({
     required this.ofAnime,
     required this.filter,
@@ -25,10 +27,10 @@ class DiscoverFilterView extends StatefulWidget {
   final bool leftHanded;
 
   @override
-  State<DiscoverFilterView> createState() => _DiscoverFilterViewState();
+  ConsumerState<DiscoverFilterView> createState() => _DiscoverFilterViewState();
 }
 
-class _DiscoverFilterViewState extends State<DiscoverFilterView> {
+class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
   late final _filter = widget.filter.copy();
 
   @override
@@ -42,21 +44,41 @@ class _DiscoverFilterViewState extends State<DiscoverFilterView> {
       },
     );
 
-    final clearButton = BottomBarButton(
-      text: 'Clear',
-      icon: Icons.close,
+    final revertToDefaultButton = BottomBarButton(
+      text: 'Reset',
+      icon: Icons.restore_rounded,
       warning: true,
       onTap: () {
-        widget.onChanged(DiscoverMediaFilter(widget.filter.sort));
+        widget.onChanged(ref.read(persistenceProvider).discoverMediaFilter);
         Navigator.pop(context);
       },
+    );
+
+    final saveButton = BottomBarButton(
+      text: 'Save',
+      icon: Icons.save_outlined,
+      onTap: () => ConfirmationDialog.show(
+        context,
+        title: 'Make default?',
+        content: 'The current filters and sorting will become the default.',
+        primaryAction: 'Yes',
+        secondaryAction: 'No',
+        onConfirm: () {
+          ref
+              .read(persistenceProvider.notifier)
+              .setDiscoverMediaFilter(_filter);
+
+          widget.onChanged(_filter);
+          Navigator.pop(context);
+        },
+      ),
     );
 
     return SheetWithButtonRow(
       buttons: BottomBar(
         widget.leftHanded
-            ? [applyButton, clearButton]
-            : [clearButton, applyButton],
+            ? [applyButton, revertToDefaultButton, saveButton]
+            : [saveButton, revertToDefaultButton, applyButton],
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),

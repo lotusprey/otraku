@@ -168,6 +168,8 @@ class BottomBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = warning ? Theme.of(context).colorScheme.error : null;
+
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
@@ -176,8 +178,9 @@ class BottomBarButton extends StatelessWidget {
           icon: Icon(icon),
           onPressed: onTap,
           style: TextButton.styleFrom(
-            foregroundColor:
-                warning ? Theme.of(context).colorScheme.error : null,
+            foregroundColor: color,
+            iconColor: color,
+            iconSize: Theming.iconBig,
           ),
         ),
       ),

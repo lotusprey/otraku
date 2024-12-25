@@ -1,10 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/character/character_item_model.dart';
-import 'package:otraku/feature/media/media_item_model.dart';
-import 'package:otraku/feature/staff/staff_item_model.dart';
-import 'package:otraku/feature/studio/studio_item_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -37,6 +33,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
   }
 
   Future<Favorites> _fetch(Favorites oldState, FavoritesTab? tab) async {
+    final edit = oldState.edit;
     final variables = <String, dynamic>{'userId': arg};
 
     if (tab == null) {
@@ -77,9 +74,9 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
 
     if (tab == null || tab == FavoritesTab.anime) {
       final map = data['anime'];
-      final items = <MediaItem>[];
+      final items = <FavoriteItem>[];
       for (final a in map['nodes']) {
-        items.add(MediaItem(a, imageQuality));
+        items.add(FavoriteItem.media(a, imageQuality));
       }
 
       anime = anime.withNext(
@@ -87,13 +84,17 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         map['pageInfo']['hasNextPage'] ?? false,
         map['pageInfo']['total'],
       );
+
+      if (edit?.editedTab == FavoritesTab.anime) {
+        edit!.oldItems.addAll(items);
+      }
     }
 
     if (tab == null || tab == FavoritesTab.manga) {
       final map = data['manga'];
-      final items = <MediaItem>[];
+      final items = <FavoriteItem>[];
       for (final m in map['nodes']) {
-        items.add(MediaItem(m, imageQuality));
+        items.add(FavoriteItem.media(m, imageQuality));
       }
 
       manga = manga.withNext(
@@ -101,13 +102,17 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         map['pageInfo']['hasNextPage'] ?? false,
         map['pageInfo']['total'],
       );
+
+      if (edit?.editedTab == FavoritesTab.manga) {
+        edit!.oldItems.addAll(items);
+      }
     }
 
     if (tab == null || tab == FavoritesTab.characters) {
       final map = data['characters'];
-      final items = <CharacterItem>[];
+      final items = <FavoriteItem>[];
       for (final c in map['nodes']) {
-        items.add(CharacterItem(c));
+        items.add(FavoriteItem.character(c));
       }
 
       characters = characters.withNext(
@@ -115,13 +120,17 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         map['pageInfo']['hasNextPage'] ?? false,
         map['pageInfo']['total'],
       );
+
+      if (edit?.editedTab == FavoritesTab.characters) {
+        edit!.oldItems.addAll(items);
+      }
     }
 
     if (tab == null || tab == FavoritesTab.staff) {
       final map = data['staff'];
-      final items = <StaffItem>[];
+      final items = <FavoriteItem>[];
       for (final s in map['nodes']) {
-        items.add(StaffItem(s));
+        items.add(FavoriteItem.staff(s));
       }
 
       staff = staff.withNext(
@@ -129,13 +138,17 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         map['pageInfo']['hasNextPage'] ?? false,
         map['pageInfo']['total'],
       );
+
+      if (edit?.editedTab == FavoritesTab.staff) {
+        edit!.oldItems.addAll(items);
+      }
     }
 
     if (tab == null || tab == FavoritesTab.studios) {
       final map = data['studios'];
-      final items = <StudioItem>[];
+      final items = <FavoriteItem>[];
       for (final s in map['nodes']) {
-        items.add(StudioItem(s));
+        items.add(FavoriteItem.studio(s));
       }
 
       studios = studios.withNext(
@@ -143,6 +156,10 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
         map['pageInfo']['hasNextPage'] ?? false,
         map['pageInfo']['total'],
       );
+
+      if (edit?.editedTab == FavoritesTab.studios) {
+        edit!.oldItems.addAll(items);
+      }
     }
 
     return Favorites(
@@ -151,6 +168,104 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
       characters: characters,
       staff: staff,
       studios: studios,
+      edit: edit,
     );
+  }
+
+  void startEdit(FavoritesTab tab) {
+    final value = state.valueOrNull;
+    if (value == null) return;
+
+    final edit = FavoritesEdit(
+      tab,
+      switch (tab) {
+        FavoritesTab.anime => [...value.anime.items],
+        FavoritesTab.manga => [...value.manga.items],
+        FavoritesTab.characters => [...value.characters.items],
+        FavoritesTab.staff => [...value.staff.items],
+        FavoritesTab.studios => [...value.studios.items],
+      },
+    );
+
+    state = AsyncValue.data(value.withEdit(edit));
+  }
+
+  void cancelEdit() {
+    final value = state.valueOrNull;
+    if (value == null) return;
+
+    final edit = value.edit;
+    if (edit == null) return;
+
+    switch (edit.editedTab) {
+      case FavoritesTab.anime:
+        value.anime.items.clear();
+        value.anime.items.addAll(edit.oldItems);
+      case FavoritesTab.manga:
+        value.manga.items.clear();
+        value.manga.items.addAll(edit.oldItems);
+      case FavoritesTab.characters:
+        value.characters.items.clear();
+        value.characters.items.addAll(edit.oldItems);
+      case FavoritesTab.staff:
+        value.staff.items.clear();
+        value.staff.items.addAll(edit.oldItems);
+      case FavoritesTab.studios:
+        value.studios.items.clear();
+        value.studios.items.addAll(edit.oldItems);
+    }
+
+    state = AsyncValue.data(value.withEdit(null));
+  }
+
+  Future<Object?> saveEdit() async {
+    final value = state.valueOrNull;
+    if (value == null) return null;
+
+    final edit = value.edit;
+    if (edit == null) return null;
+
+    state = AsyncValue.data(value.withEdit(null));
+
+    String idsVariableKey;
+    String indexesVariableKey;
+    List<FavoriteItem> items;
+    switch (edit.editedTab) {
+      case FavoritesTab.anime:
+        idsVariableKey = 'animeIds';
+        indexesVariableKey = 'animeOrder';
+        items = value.anime.items;
+      case FavoritesTab.manga:
+        idsVariableKey = 'mangaIds';
+        indexesVariableKey = 'mangaOrder';
+        items = value.manga.items;
+      case FavoritesTab.characters:
+        idsVariableKey = 'characterIds';
+        indexesVariableKey = 'characterOrder';
+        items = value.characters.items;
+      case FavoritesTab.staff:
+        idsVariableKey = 'staffIds';
+        indexesVariableKey = 'staffOrder';
+        items = value.staff.items;
+      case FavoritesTab.studios:
+        idsVariableKey = 'studioIds';
+        indexesVariableKey = 'studioOrder';
+        items = value.studios.items;
+    }
+
+    final ids = items.map((e) => e.id).toList();
+    final indexes = List.generate(items.length, (i) => i + 1, growable: false);
+
+    try {
+      await ref.read(repositoryProvider).request(
+        GqlMutation.reorderFavorites,
+        {idsVariableKey: ids, indexesVariableKey: indexes},
+      );
+
+      return null;
+    } catch (e) {
+      cancelEdit();
+      return e;
+    }
   }
 }

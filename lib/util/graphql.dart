@@ -753,6 +753,17 @@ abstract class GqlMutation {
   '''
       '${_GqlFragment.userSettings}';
 
+  static const reorderFavorites = r'''
+    mutation ReorderFavorites($animeIds: [Int], $animeOrder: [Int], $mangaIds: [Int], $mangaOrder: [Int],
+        $characterIds: [Int], $characterOrder: [Int], $staffIds: [Int], $staffOrder: [Int], $studioIds: [Int], $studioOrder: [Int]) {
+      UpdateFavouriteOrder(animeIds: $animeIds, animeOrder: $animeOrder, mangaIds: $mangaIds, mangaOrder: $mangaOrder,
+          characterIds: $characterIds, characterOrder: $characterOrder, staffIds: $staffIds, staffOrder: $staffOrder,
+          studioIds: $studioIds, studioOrder: $studioOrder) {
+        anime {pageInfo {total}}
+      }
+    }
+  ''';
+
   static const toggleFavorite = r'''
     mutation ToggleFavorite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {
       ToggleFavourite(animeId: $anime, mangaId: $manga, characterId: $character, staffId: $staff, studioId: $studio) {

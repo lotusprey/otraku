@@ -1,7 +1,4 @@
-import 'package:otraku/feature/character/character_item_model.dart';
-import 'package:otraku/feature/media/media_item_model.dart';
-import 'package:otraku/feature/staff/staff_item_model.dart';
-import 'package:otraku/feature/studio/studio_item_model.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 
 class Favorites {
@@ -11,13 +8,15 @@ class Favorites {
     this.characters = const PagedWithTotal(),
     this.staff = const PagedWithTotal(),
     this.studios = const PagedWithTotal(),
+    this.edit,
   });
 
-  final PagedWithTotal<MediaItem> anime;
-  final PagedWithTotal<MediaItem> manga;
-  final PagedWithTotal<CharacterItem> characters;
-  final PagedWithTotal<StaffItem> staff;
-  final PagedWithTotal<StudioItem> studios;
+  final PagedWithTotal<FavoriteItem> anime;
+  final PagedWithTotal<FavoriteItem> manga;
+  final PagedWithTotal<FavoriteItem> characters;
+  final PagedWithTotal<FavoriteItem> staff;
+  final PagedWithTotal<FavoriteItem> studios;
+  final FavoritesEdit? edit;
 
   int getCount(FavoritesTab tab) => switch (tab) {
         FavoritesTab.anime => anime.total,
@@ -26,6 +25,65 @@ class Favorites {
         FavoritesTab.staff => staff.total,
         FavoritesTab.studios => studios.total,
       };
+
+  Favorites withEdit(FavoritesEdit? edit) => Favorites(
+        anime: anime,
+        manga: manga,
+        characters: characters,
+        staff: staff,
+        studios: studios,
+        edit: edit,
+      );
+}
+
+class FavoritesEdit {
+  const FavoritesEdit(this.editedTab, this.oldItems);
+
+  /// The favorites category that is currently being edited.
+  final FavoritesTab editedTab;
+
+  /// The favorite items from the category in their original sorting.
+  final List<FavoriteItem> oldItems;
+}
+
+class FavoriteItem {
+  const FavoriteItem._({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+  });
+
+  factory FavoriteItem.media(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) =>
+      FavoriteItem._(
+        id: map['id'],
+        name: map['title']['userPreferred'],
+        imageUrl: map['coverImage'][imageQuality.value],
+      );
+
+  factory FavoriteItem.character(Map<String, dynamic> map) => FavoriteItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+      );
+
+  factory FavoriteItem.staff(Map<String, dynamic> map) => FavoriteItem._(
+        id: map['id'],
+        name: map['name']['userPreferred'],
+        imageUrl: map['image']['large'],
+      );
+
+  factory FavoriteItem.studio(Map<String, dynamic> map) => FavoriteItem._(
+        id: map['id'],
+        name: map['name'],
+        imageUrl: null,
+      );
+
+  final int id;
+  final String name;
+  final String? imageUrl;
 }
 
 enum FavoritesTab {

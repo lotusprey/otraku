@@ -18,12 +18,12 @@ class Favorites {
   final PagedWithTotal<FavoriteItem> studios;
   final FavoritesEdit? edit;
 
-  int getCount(FavoritesTab tab) => switch (tab) {
-        FavoritesTab.anime => anime.total,
-        FavoritesTab.manga => manga.total,
-        FavoritesTab.characters => characters.total,
-        FavoritesTab.staff => staff.total,
-        FavoritesTab.studios => studios.total,
+  int getCount(FavoritesType type) => switch (type) {
+        FavoritesType.anime => anime.total,
+        FavoritesType.manga => manga.total,
+        FavoritesType.characters => characters.total,
+        FavoritesType.staff => staff.total,
+        FavoritesType.studios => studios.total,
       };
 
   Favorites withEdit(FavoritesEdit? edit) => Favorites(
@@ -37,21 +37,21 @@ class Favorites {
 }
 
 class FavoritesEdit {
-  const FavoritesEdit(this.editedTab, this.oldItems);
+  const FavoritesEdit(this.editedType, this.oldItems);
 
   /// The favorites category that is currently being edited.
-  final FavoritesTab editedTab;
+  final FavoritesType editedType;
 
   /// The favorite items from the category in their original sorting.
   final List<FavoriteItem> oldItems;
 }
 
 class FavoriteItem {
-  const FavoriteItem._({
+  FavoriteItem._({
     required this.id,
     required this.name,
     required this.imageUrl,
-  });
+  }) : isFavorite = true;
 
   factory FavoriteItem.media(
     Map<String, dynamic> map,
@@ -84,9 +84,10 @@ class FavoriteItem {
   final int id;
   final String name;
   final String? imageUrl;
+  bool isFavorite;
 }
 
-enum FavoritesTab {
+enum FavoritesType {
   anime,
   manga,
   characters,
@@ -94,10 +95,10 @@ enum FavoritesTab {
   studios;
 
   String get title => switch (this) {
-        FavoritesTab.anime => 'Favourite Anime',
-        FavoritesTab.manga => 'Favourite Manga',
-        FavoritesTab.characters => 'Favourite Characters',
-        FavoritesTab.staff => 'Favourite Staff',
-        FavoritesTab.studios => 'Favourite Studios',
+        FavoritesType.anime => 'Favourite Anime',
+        FavoritesType.manga => 'Favourite Manga',
+        FavoritesType.characters => 'Favourite Characters',
+        FavoritesType.staff => 'Favourite Staff',
+        FavoritesType.studios => 'Favourite Studios',
       };
 }

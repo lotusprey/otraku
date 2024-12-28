@@ -370,6 +370,9 @@ class MediaInfo {
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
+    String description = map['description'] ?? '';
+    description = description.replaceAll(_forbiddenDescriptionTags, '');
+
     final model = MediaInfo._(
       id: map['id'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
@@ -378,7 +381,7 @@ class MediaInfo {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      description: map['description'] ?? '',
+      description: description,
       cover: map['coverImage'][imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
@@ -446,6 +449,9 @@ class MediaInfo {
 
     return model;
   }
+
+  /// Unexpected html tags in the description only make rendering harder.
+  static final _forbiddenDescriptionTags = RegExp('</?[^bi].?>');
 }
 
 typedef ExternalLink = ({

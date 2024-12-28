@@ -224,7 +224,8 @@ class Options {
         highContrast: map['highContrast'] ?? false,
         homeTab: HomeTab.values.getOrFirst(map['homeTab']),
         discoverType: DiscoverType.values.getOrFirst(map['discoverType']),
-        imageQuality: ImageQuality.values.getOrFirst(map['imageQuality']),
+        imageQuality: ImageQuality.values.getOrNull(map['imageQuality']) ??
+            ImageQuality.high,
         animeCollectionPreview: map['animeCollectionPreview'] ?? true,
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
         airingSortForAnimePreview: map['airingSortForAnimePreview'] ?? true,

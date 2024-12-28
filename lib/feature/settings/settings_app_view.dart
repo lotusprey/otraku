@@ -81,7 +81,7 @@ class SettingsAppSubview extends ConsumerWidget {
               ),
             ),
             StatefulSwitchListTile(
-              title: const Text('Exclusive Airing Sort for Anime Preview'),
+              title: const Text('Force Airing Sort for Anime Preview'),
               subtitle: const Text(
                 'Sort by soonest airing, instead of the default',
               ),
@@ -94,7 +94,7 @@ class SettingsAppSubview extends ConsumerWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('Loading & Startup Defaults'),
+          title: const Text('Defaults'),
           children: [
             Padding(
               padding: tilePadding,
@@ -108,7 +108,7 @@ class SettingsAppSubview extends ConsumerWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Default Discover Type',
+                title: 'Discover Type',
                 items: DiscoverType.values.map((v) => (v.label, v)).toList(),
                 value: options.discoverType,
                 onChanged: (v) => update(

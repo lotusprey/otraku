@@ -82,9 +82,14 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   onPressed: () => showReviewsFilterSheet(
                     context: context,
                     filter: filter.reviewsFilter,
-                    onDone: (filter) => ref
-                        .read(discoverFilterProvider.notifier)
-                        .update((s) => s.copyWith(reviewsFilter: filter)),
+                    onDone: (filter) {
+                      final discoverFilter = ref.read(discoverFilterProvider);
+                      if (filter != discoverFilter.reviewsFilter) {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(reviewsFilter: filter));
+                      }
+                    },
                   ),
                 )
               else

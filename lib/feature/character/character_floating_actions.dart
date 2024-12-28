@@ -33,7 +33,10 @@ class CharacterMediaFilterButton extends StatelessWidget {
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(
+                horizontal: Theming.offset,
+                vertical: 20,
+              ),
               children: [
                 ChipSelector.ensureSelected(
                   title: 'Sort',

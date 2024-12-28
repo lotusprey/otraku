@@ -78,9 +78,9 @@ class SimpleSheet extends StatelessWidget {
       builder: (context, scrollCtrl) {
         sheet ??= Center(
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-            constraints:
-                const BoxConstraints(maxWidth: Theming.windowWidthMedium),
+            constraints: const BoxConstraints(
+              maxWidth: Theming.windowWidthMedium,
+            ),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
@@ -125,8 +125,9 @@ class SheetWithButtonRow extends StatelessWidget {
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
       Center(
         child: Container(
-          constraints:
-              const BoxConstraints(maxWidth: Theming.windowWidthMedium),
+          constraints: const BoxConstraints(
+            maxWidth: Theming.windowWidthMedium,
+          ),
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),

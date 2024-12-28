@@ -156,20 +156,16 @@ class BottomBarButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onTap,
-    this.warning = false,
+    this.foregroundColor,
   });
 
   final String text;
   final IconData icon;
   final void Function() onTap;
-
-  /// If the icon/text should be in the error colour.
-  final bool warning;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
-    final color = warning ? Theme.of(context).colorScheme.error : null;
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
@@ -178,8 +174,8 @@ class BottomBarButton extends StatelessWidget {
           icon: Icon(icon),
           onPressed: onTap,
           style: TextButton.styleFrom(
-            foregroundColor: color,
-            iconColor: color,
+            foregroundColor: foregroundColor,
+            iconColor: foregroundColor,
             iconSize: Theming.iconBig,
           ),
         ),

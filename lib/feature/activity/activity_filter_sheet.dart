@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
 
@@ -57,25 +56,26 @@ class _FilterListState extends State<_FilterList> {
       padding: const EdgeInsets.symmetric(vertical: Theming.offset),
       children: [
         for (final a in ActivityType.values)
-          StatefulCheckboxListTile(
+          CheckboxListTile(
             title: Text(a.label),
             value: _filter.typeIn.contains(a),
             onChanged: (val) {
-              if (val!) {
-                _filter.typeIn.add(a);
-              } else {
-                _filter.typeIn.remove(a);
-              }
-              _filter = _filter.copyWith(typeIn: _filter.typeIn);
+              setState(() {
+                if (val == true) {
+                  _filter.typeIn.add(a);
+                } else if (val == false) {
+                  _filter.typeIn.remove(a);
+                }
+              });
 
-              widget.onChanged(_filter);
+              widget.onChanged(_filter.copy());
             },
           ),
         ...switch (_filter) {
           UserActivitiesFilter _ => [],
           HomeActivitiesFilter filter => [
               const Divider(),
-              StatefulCheckboxListTile(
+              CheckboxListTile(
                 title: const Text('My Activities'),
                 value: filter.withViewerActivities,
                 onChanged: (v) {
@@ -83,7 +83,7 @@ class _FilterListState extends State<_FilterList> {
                     () => _filter = filter.copyWith(withViewerActivities: v!),
                   );
 
-                  widget.onChanged(_filter);
+                  widget.onChanged(_filter.copy());
                 },
               ),
               Padding(
@@ -111,7 +111,7 @@ class _FilterListState extends State<_FilterList> {
                       () => _filter = filter.copyWith(onFollowing: v.first),
                     );
 
-                    widget.onChanged(_filter);
+                    widget.onChanged(_filter.copy());
                   },
                 ),
               ),

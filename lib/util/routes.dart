@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
@@ -126,12 +127,19 @@ class Routes {
       GoRoute(
         path: '/home',
         onExit: onExit,
+        redirect: (context, state) {
+          final tabName = state.uri.queryParameters['tab'];
+          if (tabName == null) return null;
+
+          final tab = HomeTab.values.firstWhereOrNull((e) => e.name == tabName);
+          return tab != null ? null : notFound;
+        },
         builder: (context, state) {
-          final tab = state.uri.queryParameters['tab'];
+          final tabName = state.uri.queryParameters['tab'];
 
           return HomeView(
             key: state.pageKey,
-            tab: tab != null ? HomeTab.values.byName(tab) : null,
+            tab: tabName != null ? HomeTab.values.byName(tabName) : null,
           );
         },
       ),

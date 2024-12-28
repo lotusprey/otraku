@@ -45,8 +45,5 @@
                </intent-filter>
           </activity>
           <meta-data android:name="flutterEmbedding" android:value="2" />
-
-          <!-- NOTE: Remove as soon as all the problems have been ironed out. -->
-          <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false" />
      </application>
 </manifest>

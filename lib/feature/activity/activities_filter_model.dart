@@ -42,7 +42,11 @@ class HomeActivitiesFilter extends ActivitiesFilter {
 
   factory HomeActivitiesFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
     final List<int> typeIn = map['activityTypeIn'] ??
-        List.generate(ActivityType.values.length, (i) => i, growable: false);
+        [
+          ActivityType.status.index,
+          ActivityType.animeStatus.index,
+          ActivityType.mangaStatus.index,
+        ];
 
     return HomeActivitiesFilter(
       typeIn.map((index) => ActivityType.values.getOrFirst(index)).toList(),

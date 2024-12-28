@@ -21,7 +21,7 @@ class Timestamp extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.history_rounded, size: Theming.iconSmall),
+            const Icon(Icons.history_rounded, size: Theming.iconSmall),
             const SizedBox(width: 5),
             Text(
               _relativeTime(),

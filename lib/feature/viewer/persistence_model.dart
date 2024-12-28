@@ -220,7 +220,7 @@ class Options {
 
   factory Options.fromPersistenceMap(Map<dynamic, dynamic> map) => Options(
         themeMode: ThemeMode.values.getOrFirst(map['themeMode']),
-        themeBase: ThemeBase.values.getOrFirst(map['themeBase']),
+        themeBase: ThemeBase.values.getOrNull(map['themeBase']),
         highContrast: map['highContrast'] ?? false,
         homeTab: HomeTab.values.getOrFirst(map['homeTab']),
         discoverType: DiscoverType.values.getOrFirst(map['discoverType']),

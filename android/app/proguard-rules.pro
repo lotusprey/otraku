@@ -26,3 +26,11 @@
 # Retain generic signatures of TypeToken and its subclasses with R8 version 3.0 and higher.
 -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
+
+# NOTE: Which packages needs this is unknown. Remove as soon as these rules aren't needed.
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn com.google.errorprone.annotations.CheckReturnValue
+-dontwarn com.google.errorprone.annotations.Immutable
+-dontwarn com.google.errorprone.annotations.RestrictedApi
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.concurrent.GuardedBy

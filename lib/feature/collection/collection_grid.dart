@@ -102,7 +102,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
       );
     }
 
-    final overridenTextColor =
+    final foregroundColor =
         item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
             ? Theme.of(context).colorScheme.error
             : null;
@@ -116,7 +116,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
             child: Text(
               '${item.progress}/${item.progressMax ?? "?"}',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: overridenTextColor,
+                    color: foregroundColor,
                   ),
             ),
           ),
@@ -129,7 +129,8 @@ class _IncrementButtonState extends State<_IncrementButton> {
         minimumSize: const Size(0, 30),
         padding: const EdgeInsets.symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: overridenTextColor,
+        foregroundColor: foregroundColor,
+        iconColor: foregroundColor,
       ),
       onPressed: () {
         _debounce.cancel();

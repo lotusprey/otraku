@@ -204,11 +204,19 @@ class __TileContentState extends State<_TileContent> {
 
   Widget _buildProgressButton(BuildContext context) {
     final item = widget.item;
+    final foregroundColor =
+        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
+            ? Theme.of(context).colorScheme.error
+            : Theme.of(context).colorScheme.onSurfaceVariant;
+
     final text = Text(
       item.progress == item.progressMax
           ? item.progress.toString()
           : '${item.progress}/${item.progressMax ?? "?"}',
-      style: Theme.of(context).textTheme.labelSmall,
+      style: Theme.of(context)
+          .textTheme
+          .labelSmall
+          ?.copyWith(color: foregroundColor),
     );
 
     if (widget.onProgressUpdated == null || item.progress == item.progressMax) {
@@ -220,7 +228,8 @@ class __TileContentState extends State<_TileContent> {
         minimumSize: const Size(0, 40),
         padding: const EdgeInsets.only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        foregroundColor: foregroundColor,
+        iconColor: foregroundColor,
       ),
       onPressed: () {
         _debounce.cancel();

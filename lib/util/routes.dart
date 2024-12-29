@@ -330,7 +330,7 @@ class NotFoundView extends StatelessWidget {
           children: [
             Text(
               '404 Not Found',
-              style: Theme.of(context).textTheme.titleMedium,
+              style: TextTheme.of(context).titleMedium,
             ),
             TextButton(
               child: const Text('Go Home'),

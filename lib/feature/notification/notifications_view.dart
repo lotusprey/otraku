@@ -74,7 +74,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               Expanded(
                 child: Text(
                   'Notifications',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: TextTheme.of(context).titleLarge,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
@@ -311,7 +311,7 @@ class _NotificationItem extends StatelessWidget {
                     width: Theming.offset,
                     height: double.infinity,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: ColorScheme.of(context).primary,
                       borderRadius: const BorderRadius.horizontal(
                         right: Theming.radiusSmall,
                       ),
@@ -353,8 +353,8 @@ class _NotificationDialog extends StatelessWidget {
             TextSpan(
               text: item.texts[i],
               style: (i % 2 == 0)
-                  ? Theme.of(context).textTheme.labelLarge
-                  : Theme.of(context).textTheme.bodyMedium,
+                  ? TextTheme.of(context).labelLarge
+                  : TextTheme.of(context).bodyMedium,
             ),
         ],
       ),

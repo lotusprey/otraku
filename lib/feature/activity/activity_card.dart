@@ -170,11 +170,11 @@ class _ActivityMediaBox extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: item.text,
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: TextTheme.of(context).labelMedium,
                             ),
                             TextSpan(
                               text: item.title,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: TextTheme.of(context).bodyMedium,
                             ),
                           ],
                         ),
@@ -184,7 +184,7 @@ class _ActivityMediaBox extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         item.format!,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: TextTheme.of(context).labelMedium,
                       ),
                     ],
                   ],
@@ -256,7 +256,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 children: [
                   Text(
                     activity.replyCount.toString(),
-                    style: Theme.of(context).textTheme.labelSmall,
+                    style: TextTheme.of(context).labelSmall,
                   ),
                   const SizedBox(width: 5),
                   const Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
@@ -278,9 +278,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   Text(
                     activity.likeCount.toString(),
                     style: !activity.isLiked
-                        ? Theme.of(context).textTheme.labelSmall
-                        : Theme.of(context).textTheme.labelSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
+                        ? TextTheme.of(context).labelSmall
+                        : TextTheme.of(context).labelSmall!.copyWith(
+                              color: ColorScheme.of(context).primary,
                             ),
                   ),
                   const SizedBox(width: 5),
@@ -290,7 +290,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                         : Icons.favorite_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
-                        ? Theme.of(context).colorScheme.primary
+                        ? ColorScheme.of(context).primary
                         : null,
                   ),
                 ],

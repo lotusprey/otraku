@@ -225,11 +225,11 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               Text(
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
-                    ? Theme.of(context).textTheme.labelSmall
+                    ? TextTheme.of(context).labelSmall
                     : Theme.of(context)
                         .textTheme
                         .labelSmall!
-                        .copyWith(color: Theme.of(context).colorScheme.primary),
+                        .copyWith(color: ColorScheme.of(context).primary),
               ),
               const SizedBox(width: 5),
               Icon(
@@ -238,7 +238,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                     : Icons.favorite_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
-                    ? Theme.of(context).colorScheme.primary
+                    ? ColorScheme.of(context).primary
                     : null,
               ),
             ],

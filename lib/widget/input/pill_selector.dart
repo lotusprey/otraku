@@ -38,9 +38,8 @@ class PillSelector extends StatelessWidget {
         ),
         itemBuilder: (context, i) => Material(
           shape: const StadiumBorder(),
-          color: i == selected
-              ? Theme.of(context).colorScheme.secondaryContainer
-              : null,
+          color:
+              i == selected ? ColorScheme.of(context).secondaryContainer : null,
           child: InkWell(
             customBorder: const StadiumBorder(),
             onTap: () => onTap(i),

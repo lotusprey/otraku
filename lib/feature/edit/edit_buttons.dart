@@ -78,7 +78,7 @@ class _EditButtonsState extends ConsumerState<EditButtons> {
   Widget _removeButton() => BottomBarButton(
         text: 'Remove',
         icon: Ionicons.trash_bin_outline,
-        foregroundColor: Theme.of(context).colorScheme.error,
+        foregroundColor: ColorScheme.of(context).error,
         onTap: () => ConfirmationDialog.show(
           context,
           title: 'Remove entry?',

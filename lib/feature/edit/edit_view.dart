@@ -483,7 +483,7 @@ class _NotesState extends State<_Notes> {
             minLines: 1,
             maxLines: 10,
             controller: _ctrl,
-            style: Theme.of(context).textTheme.bodyMedium,
+            style: TextTheme.of(context).bodyMedium,
             decoration: const InputDecoration(
               labelText: 'Notes',
               border: OutlineInputBorder(),

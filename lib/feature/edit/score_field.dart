@@ -73,8 +73,8 @@ class _SmileyScorePicker extends StatelessWidget {
             iconSize: 30,
             icon: icon,
             color: score.floor() != i
-                ? Theme.of(context).colorScheme.surfaceContainerHighest
-                : Theme.of(context).colorScheme.primary,
+                ? ColorScheme.of(context).surfaceContainerHighest
+                : ColorScheme.of(context).primary,
             onPressed: () =>
                 score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
           ),
@@ -101,7 +101,7 @@ class _StarScorePicker extends StatelessWidget {
             icon: score >= i
                 ? const Icon(Icons.star_rounded)
                 : const Icon(Icons.star_outline_rounded),
-            color: Theme.of(context).colorScheme.primary,
+            color: ColorScheme.of(context).primary,
             onPressed: () =>
                 score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
           ),

@@ -47,7 +47,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                     'Reviews',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: TextTheme.of(context).titleLarge,
                   ),
                 ),
               if (filter.type == DiscoverType.anime)
@@ -62,7 +62,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   Badge(
                     smallSize: 10,
                     alignment: Alignment.topLeft,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: ColorScheme.of(context).primary,
                     child: _filterIcon(
                       context,
                       ref,
@@ -147,7 +147,7 @@ class _BirthdayFilter extends StatelessWidget {
         ? Badge(
             smallSize: 10,
             alignment: Alignment.topLeft,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: ColorScheme.of(context).primary,
             child: icon,
           )
         : icon;

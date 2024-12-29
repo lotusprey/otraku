@@ -167,15 +167,15 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
       label: Text(widget.label),
       labelStyle: TextStyle(
         color: _positive
-            ? Theme.of(context).colorScheme.onSecondaryContainer
-            : Theme.of(context).colorScheme.onErrorContainer,
+            ? ColorScheme.of(context).onSecondaryContainer
+            : ColorScheme.of(context).onErrorContainer,
       ),
       deleteIconColor: _positive
-          ? Theme.of(context).colorScheme.onSecondaryContainer
-          : Theme.of(context).colorScheme.onErrorContainer,
+          ? ColorScheme.of(context).onSecondaryContainer
+          : ColorScheme.of(context).onErrorContainer,
       backgroundColor: _positive
-          ? Theme.of(context).colorScheme.secondaryContainer
-          : Theme.of(context).colorScheme.errorContainer,
+          ? ColorScheme.of(context).secondaryContainer
+          : ColorScheme.of(context).errorContainer,
       onDeleted: widget.onRemoved,
       onPressed: () {
         setState(() => _positive = !_positive);
@@ -388,14 +388,14 @@ class _TagCategoryChip extends StatelessWidget {
             ? Theme.of(context)
                 .textTheme
                 .bodyMedium
-                ?.copyWith(color: Theme.of(context).colorScheme.surface)
-            : Theme.of(context).textTheme.bodyMedium,
+                ?.copyWith(color: ColorScheme.of(context).surface)
+            : TextTheme.of(context).bodyMedium,
         backgroundColor: selected
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSecondary,
+            ? ColorScheme.of(context).primary
+            : ColorScheme.of(context).onSecondary,
         side: selected
-            ? BorderSide(color: Theme.of(context).colorScheme.primary)
-            : BorderSide(color: Theme.of(context).colorScheme.onSurface),
+            ? BorderSide(color: ColorScheme.of(context).primary)
+            : BorderSide(color: ColorScheme.of(context).onSurface),
       ),
     );
   }

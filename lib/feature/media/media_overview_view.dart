@@ -261,7 +261,7 @@ class _IconTile extends StatelessWidget {
           Icon(
             icon,
             size: Theming.iconSmall,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: ColorScheme.of(context).onSurfaceVariant,
           ),
           const SizedBox(height: 5),
           Text(text),
@@ -385,7 +385,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
     final spoilerTextStyle = Theme.of(context)
         .textTheme
         .bodyMedium
-        ?.copyWith(color: Theme.of(context).colorScheme.error);
+        ?.copyWith(color: ColorScheme.of(context).error);
 
     return _ScrollCards(
       title: 'Tags',
@@ -427,7 +427,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
           const SizedBox(width: 5),
           Text(
             '${tags[i].rank}%',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextTheme.of(context).labelMedium,
           ),
         ],
       ),
@@ -467,7 +467,7 @@ class _ExternalLinkScrollCards extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               items[i].countryCode!,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: TextTheme.of(context).labelMedium,
             ),
           ],
         ],

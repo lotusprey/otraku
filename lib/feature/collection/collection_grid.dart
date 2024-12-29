@@ -55,7 +55,7 @@ class CollectionGrid extends StatelessWidget {
                       items[i].titles[0],
                       overflow: TextOverflow.fade,
                       maxLines: 2,
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      style: TextTheme.of(context).bodyMedium,
                     ),
                   ),
                 ),
@@ -95,7 +95,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           child: Center(
             child: Text(
               item.progress.toString(),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextTheme.of(context).labelSmall,
             ),
           ),
         ),
@@ -104,7 +104,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
     final foregroundColor =
         item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
-            ? Theme.of(context).colorScheme.error
+            ? ColorScheme.of(context).error
             : null;
 
     if (widget.onProgressUpdated == null) {
@@ -115,7 +115,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           child: Center(
             child: Text(
               '${item.progress}/${item.progressMax ?? "?"}',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              style: TextTheme.of(context).labelSmall?.copyWith(
                     color: foregroundColor,
                   ),
             ),

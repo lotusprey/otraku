@@ -13,7 +13,7 @@ class ThemePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).colorScheme.brightness;
+    final brightness = ColorScheme.of(context).brightness;
 
     final systemPrimaryColor = ref.watch(persistenceProvider.select(
       (s) => brightness == Brightness.dark

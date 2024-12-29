@@ -77,7 +77,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 Badge(
                   smallSize: 10,
                   alignment: Alignment.topLeft,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: ColorScheme.of(context).primary,
                   child: filterIcon,
                 )
               else

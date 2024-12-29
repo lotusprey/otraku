@@ -36,7 +36,7 @@ class SettingsAboutSubview extends StatelessWidget {
             children: [
               Image.asset(
                 'assets/icons/about.png',
-                color: Theme.of(context).colorScheme.primary,
+                color: ColorScheme.of(context).primary,
                 width: 180,
                 height: 180,
               ),
@@ -45,7 +45,7 @@ class SettingsAboutSubview extends StatelessWidget {
                 child: Text(
                   'Otraku - v.$appVersion',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: TextTheme.of(context).titleMedium,
                 ),
               ),
               const Text(
@@ -101,7 +101,7 @@ class SettingsAboutSubview extends StatelessWidget {
                   child: Text(
                     'Performed a notification check around $lastJobTimestamp.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextTheme.of(context).labelMedium,
                   ),
                 ),
               ],

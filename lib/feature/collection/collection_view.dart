@@ -99,7 +99,7 @@ class CollectionSubview extends StatelessWidget {
             Expanded(child: Text(l.name)),
             const SizedBox(width: Theming.offset / 2),
             DefaultTextStyle(
-              style: Theme.of(context).textTheme.labelMedium!,
+              style: TextTheme.of(context).labelMedium!,
               child: Text(l.entries.length.toString()),
             ),
           ],

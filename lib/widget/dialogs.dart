@@ -20,7 +20,7 @@ class InputDialog extends StatelessWidget {
           maxLines: 5,
           autofocus: true,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.titleLarge,
+          style: TextTheme.of(context).titleLarge,
           decoration: const InputDecoration(
             filled: false,
             contentPadding: EdgeInsets.symmetric(horizontal: Theming.offset),
@@ -246,7 +246,7 @@ class _DialogColumn extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: Theming.offset),
               child: Text(
                 title,
-                style: Theme.of(context).textTheme.titleMedium,
+                style: TextTheme.of(context).titleMedium,
               ),
             ),
             const Divider(height: 2, thickness: 2),

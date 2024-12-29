@@ -50,7 +50,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
     final revertToDefaultButton = BottomBarButton(
       text: 'Reset',
       icon: Icons.restore_rounded,
-      foregroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: ColorScheme.of(context).secondary,
       onTap: () {
         final persistence = ref.read(persistenceProvider);
         if (widget.tag.ofAnime) {
@@ -66,7 +66,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
     final saveButton = BottomBarButton(
       text: 'Save',
       icon: Icons.save_outlined,
-      foregroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: ColorScheme.of(context).secondary,
       onTap: () => ConfirmationDialog.show(
         context,
         title: 'Make default?',
@@ -111,7 +111,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
                   'Note: Airing sort is set to replace your default one for the anime preview. You can turn it off in the settings.',
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextTheme.of(context).labelMedium,
                 ),
               ),
             ChipMultiSelector(

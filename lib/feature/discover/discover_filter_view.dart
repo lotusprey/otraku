@@ -47,7 +47,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
     final revertToDefaultButton = BottomBarButton(
       text: 'Reset',
       icon: Icons.restore_rounded,
-      foregroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: ColorScheme.of(context).secondary,
       onTap: () {
         widget.onChanged(ref.read(persistenceProvider).discoverMediaFilter);
         Navigator.pop(context);
@@ -57,7 +57,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
     final saveButton = BottomBarButton(
       text: 'Save',
       icon: Icons.save_outlined,
-      foregroundColor: Theme.of(context).colorScheme.secondary,
+      foregroundColor: ColorScheme.of(context).secondary,
       onTap: () => ConfirmationDialog.show(
         context,
         title: 'Make default?',

@@ -26,7 +26,7 @@ class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final back = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final back = ColorScheme.of(context).surfaceContainerHighest;
     final hsl = HSLColor.fromColor(back);
     final l = hsl.lightness;
     final front = hsl.withLightness(l < 0.5 ? l + 0.1 : l - 0.1).toColor();

@@ -81,7 +81,7 @@ class _MediaRelatedGrid extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
                 child: Container(
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(
                     items[i].imageUrl,
                     width: 100 / Theming.coverHtoWRatio,
@@ -105,7 +105,7 @@ class _MediaRelatedGrid extends StatelessWidget {
                     const SizedBox(height: 5),
                     TextRail(
                       textRailItems,
-                      style: Theme.of(context).textTheme.labelMedium,
+                      style: TextTheme.of(context).labelMedium,
                     ),
                   ],
                 ),

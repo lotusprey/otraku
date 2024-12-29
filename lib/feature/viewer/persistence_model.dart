@@ -10,7 +10,7 @@ import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.5.3';
+const appVersion = '1.6.0';
 
 class Persistence {
   const Persistence({

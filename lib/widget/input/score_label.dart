@@ -37,7 +37,7 @@ class ScoreLabel extends StatelessWidget {
           children: [
             Text(
               score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextTheme.of(context).labelSmall,
             ),
             const SizedBox(width: 3),
             const Icon(Icons.star_rounded, size: Theming.iconSmall),
@@ -51,7 +51,7 @@ class ScoreLabel extends StatelessWidget {
             const SizedBox(width: 3),
             Text(
               score.toStringAsFixed(1),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextTheme.of(context).labelSmall,
             ),
           ],
         );
@@ -63,7 +63,7 @@ class ScoreLabel extends StatelessWidget {
             const SizedBox(width: 3),
             Text(
               score.toStringAsFixed(0),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextTheme.of(context).labelSmall,
             ),
           ],
         );

@@ -15,9 +15,9 @@ class TextRail extends StatelessWidget {
 
     const spacing = TextSpan(text: ' • ');
 
-    final style = this.style ?? Theme.of(context).textTheme.labelSmall;
+    final style = this.style ?? TextTheme.of(context).labelSmall;
     final highlightStyle = style?.copyWith(
-      color: Theme.of(context).colorScheme.primary,
+      color: ColorScheme.of(context).primary,
     );
 
     return Text.rich(

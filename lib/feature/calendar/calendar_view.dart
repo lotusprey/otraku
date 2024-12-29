@@ -165,7 +165,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: 120 / Theming.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(item.cover),
                 ),
               ),
@@ -190,7 +190,7 @@ class _Tile extends StatelessWidget {
                       padding: contentPadding,
                       child: TextRail(
                         textRailItems,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: TextTheme.of(context).labelMedium,
                       ),
                     ),
                     if (item.streamingServices.isNotEmpty)

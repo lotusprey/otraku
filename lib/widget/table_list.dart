@@ -15,7 +15,7 @@ class TableList extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: Theming.borderRadiusSmall,
         border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
+          color: ColorScheme.of(context).outlineVariant,
         ),
       ),
       child: Padding(
@@ -60,7 +60,7 @@ class SliverTableList extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: Theming.borderRadiusSmall,
         border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
+          color: ColorScheme.of(context).outlineVariant,
         ),
       ),
       sliver: SliverPadding(

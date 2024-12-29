@@ -133,7 +133,7 @@ class _MediaRankGrid extends StatelessWidget {
                         ranks[i].typeIsScore
                             ? Ionicons.star
                             : Icons.favorite_rounded,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: ColorScheme.of(context).onSurfaceVariant,
                       ),
                       const SizedBox(width: 5),
                       Expanded(

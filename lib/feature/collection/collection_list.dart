@@ -67,7 +67,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: _tileHeight / Theming.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(entry.imageUrl),
                 ),
               ),
@@ -164,10 +164,10 @@ class __TileContentState extends State<_TileContent> {
             borderRadius: Theming.borderRadiusSmall,
             gradient: LinearGradient(
               colors: [
-                Theme.of(context).colorScheme.onSurfaceVariant,
-                Theme.of(context).colorScheme.onSurfaceVariant,
-                Theme.of(context).colorScheme.surface,
-                Theme.of(context).colorScheme.surface,
+                ColorScheme.of(context).onSurfaceVariant,
+                ColorScheme.of(context).onSurfaceVariant,
+                ColorScheme.of(context).surface,
+                ColorScheme.of(context).surface,
               ],
               stops: [0.0, progressPercent, progressPercent, 1.0],
             ),
@@ -187,7 +187,7 @@ class __TileContentState extends State<_TileContent> {
                     const SizedBox(width: 3),
                     Text(
                       widget.item.repeat.toString(),
-                      style: Theme.of(context).textTheme.labelSmall,
+                      style: TextTheme.of(context).labelSmall,
                     ),
                   ],
                 ),
@@ -206,8 +206,8 @@ class __TileContentState extends State<_TileContent> {
     final item = widget.item;
     final foregroundColor =
         item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
-            ? Theme.of(context).colorScheme.error
-            : Theme.of(context).colorScheme.onSurfaceVariant;
+            ? ColorScheme.of(context).error
+            : ColorScheme.of(context).onSurfaceVariant;
 
     final text = Text(
       item.progress == item.progressMax

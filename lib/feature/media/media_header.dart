@@ -75,7 +75,7 @@ class MediaHeader extends StatelessWidget {
       title: media?.info.preferredTitle,
       details: TextRail(
         textRailItems,
-        style: Theme.of(context).textTheme.labelMedium,
+        style: TextTheme.of(context).labelMedium,
       ),
       tabBarConfig: tabCtrl != null && scrollToTop != null
           ? (

@@ -138,7 +138,7 @@ class BottomBar extends StatelessWidget {
           child: Material(
             elevation: 3,
             color: Theme.of(context).navigationBarTheme.backgroundColor,
-            surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+            surfaceTintColor: ColorScheme.of(context).surfaceTint,
             shadowColor: Colors.transparent,
             child: Padding(
               padding: EdgeInsets.only(bottom: bottomPadding),

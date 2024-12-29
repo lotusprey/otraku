@@ -63,7 +63,7 @@ class _Tile extends StatelessWidget {
                         item.tileSubtitle!,
                         maxLines: 4,
                         overflow: TextOverflow.fade,
-                        style: Theme.of(context).textTheme.labelSmall,
+                        style: TextTheme.of(context).labelSmall,
                       ),
                   ],
                 ),

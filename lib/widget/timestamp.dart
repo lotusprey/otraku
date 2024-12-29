@@ -25,7 +25,7 @@ class Timestamp extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               _relativeTime(),
-              style: Theme.of(context).textTheme.labelSmall,
+              style: TextTheme.of(context).labelSmall,
             )
           ],
         ),

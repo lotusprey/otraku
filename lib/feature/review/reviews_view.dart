@@ -49,7 +49,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
                 padding: const EdgeInsets.only(right: Theming.offset),
                 child: Text(
                   count.toString(),
-                  style: Theme.of(context).textTheme.titleSmall,
+                  style: TextTheme.of(context).titleSmall,
                 ),
               ),
           ],

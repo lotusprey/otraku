@@ -60,7 +60,7 @@ class UserHeader extends StatelessWidget {
         },
         child: TextRail(
           textRailItems,
-          style: Theme.of(context).textTheme.labelMedium,
+          style: TextTheme.of(context).labelMedium,
         ),
       ),
       trailingTopButtons: [
@@ -143,7 +143,7 @@ class __AccountPickerState extends State<_AccountPicker> {
                           DateTime.now().isBefore(accounts[i].expiration)
                               ? 'Expires in ${accounts[i].expiration.timeUntil}'
                               : 'Expired',
-                          style: Theme.of(context).textTheme.labelMedium,
+                          style: TextTheme.of(context).labelMedium,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         )

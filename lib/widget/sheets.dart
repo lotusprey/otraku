@@ -82,7 +82,7 @@ class SimpleSheet extends StatelessWidget {
               maxWidth: Theming.windowWidthMedium,
             ),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: ColorScheme.of(context).surface,
               borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
             ),
             child: Material(
@@ -129,7 +129,7 @@ class SheetWithButtonRow extends StatelessWidget {
             maxWidth: Theming.windowWidthMedium,
           ),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: ColorScheme.of(context).surface,
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
           child: ScaffoldMessenger(

@@ -41,7 +41,7 @@ class _SearchFieldState extends State<SearchField> {
     return TextField(
       controller: _ctrl,
       focusNode: widget.focusNode,
-      style: Theme.of(context).textTheme.bodyMedium,
+      style: TextTheme.of(context).bodyMedium,
       onChanged: (val) {
         if (val.isEmpty) {
           widget.debounce?.cancel();
@@ -59,7 +59,7 @@ class _SearchFieldState extends State<SearchField> {
         isDense: false,
         hintText: widget.hint,
         filled: true,
-        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+        fillColor: ColorScheme.of(context).surfaceContainerHighest,
         contentPadding: const EdgeInsets.only(left: 15),
         constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
         suffixIcon: _ctrl.text.isNotEmpty
@@ -67,7 +67,7 @@ class _SearchFieldState extends State<SearchField> {
                 tooltip: 'Clear',
                 iconSize: Theming.iconSmall,
                 icon: const Icon(Icons.close_rounded),
-                color: Theme.of(context).colorScheme.onSurface,
+                color: ColorScheme.of(context).onSurface,
                 padding: const EdgeInsets.all(0),
                 onPressed: () {
                   _ctrl.clear();

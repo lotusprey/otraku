@@ -170,9 +170,9 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
       title: widget.title,
       length: _labels.length,
       itemBuilder: (context, index) => FilterChip(
-        backgroundColor: Theme.of(context).colorScheme.surface,
+        backgroundColor: ColorScheme.of(context).surface,
         labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
+          color: ColorScheme.of(context).onSecondaryContainer,
         ),
         label: Text(_labels[index]),
         showCheckmark: false,
@@ -181,7 +181,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
                 isDescending
                     ? Icons.arrow_downward_rounded
                     : Icons.arrow_upward_rounded,
-                color: Theme.of(context).colorScheme.onPrimaryContainer,
+                color: ColorScheme.of(context).onPrimaryContainer,
               )
             : null,
         selected: unorderedValue == index,

@@ -28,6 +28,7 @@ import 'package:otraku/feature/studio/studio_view.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/widget/loaders.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Routes {
   const Routes._();
@@ -356,6 +357,9 @@ class __AuthViewState extends ConsumerState<_AuthView> {
   @override
   void initState() {
     super.initState();
+
+    // On iOS the in app browser doesn't automatically close after login.
+    closeInAppWebView().onError((_, __) {});
 
     if (widget.credentials == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {

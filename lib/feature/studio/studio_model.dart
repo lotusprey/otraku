@@ -1,7 +1,7 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 
 class Studio {
   Studio._({
@@ -47,7 +47,7 @@ class StudioMedia {
         format: MediaFormat.from(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
         weightedAverageScore: map['averageScore'] ?? 0,
-        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
         startDate: DateTimeExtension.fuzzyDateString(map['startDate']),
       );
 
@@ -57,6 +57,6 @@ class StudioMedia {
   final MediaFormat? format;
   final ReleaseStatus? releaseStatus;
   final int weightedAverageScore;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final String? startDate;
 }

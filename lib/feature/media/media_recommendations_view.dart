@@ -109,7 +109,7 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                           const SizedBox(height: 5),
                           TextRail(
                             textRailItems,
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: TextTheme.of(context).labelMedium,
                           ),
                           const SizedBox(height: 5),
                           _RecommendationRating(
@@ -193,12 +193,12 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                 ? Icon(
                     Icons.thumb_up,
                     size: Theming.iconSmall,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: ColorScheme.of(context).primary,
                   )
                 : Icon(
                     Icons.thumb_up_outlined,
                     size: Theming.iconSmall,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: ColorScheme.of(context).onSurface,
                   ),
           ),
         ),
@@ -248,12 +248,12 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                 ? Icon(
                     Icons.thumb_down,
                     size: Theming.iconSmall,
-                    color: Theme.of(context).colorScheme.error,
+                    color: ColorScheme.of(context).error,
                   )
                 : Icon(
                     Icons.thumb_down_outlined,
                     size: Theming.iconSmall,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: ColorScheme.of(context).onSurface,
                   ),
           ),
         ),

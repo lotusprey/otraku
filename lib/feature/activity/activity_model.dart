@@ -1,54 +1,14 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/util/persistence.dart';
-
-const homeFeedId = -1;
 
 class ExpandedActivity {
   ExpandedActivity(this.activity, this.replies);
 
   final Activity activity;
   final Paged<ActivityReply> replies;
-}
-
-class ActivityReply {
-  ActivityReply._({
-    required this.id,
-    required this.authorId,
-    required this.authorName,
-    required this.authorAvatarUrl,
-    required this.text,
-    required this.createdAt,
-    this.likeCount = 0,
-    this.isLiked = false,
-  });
-
-  static ActivityReply? maybe(Map<String, dynamic> map) {
-    if (map['id'] == null || map['user']?['id'] == null) return null;
-
-    return ActivityReply._(
-      id: map['id'],
-      authorId: map['user']['id'],
-      authorName: map['user']['name'],
-      authorAvatarUrl: map['user']['avatar']['large'],
-      text: parseMarkdown(map['text'] ?? ''),
-      createdAt:
-          DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
-      likeCount: map['likeCount'] ?? 0,
-      isLiked: map['isLiked'] ?? false,
-    );
-  }
-
-  final int id;
-  final int authorId;
-  final String authorName;
-  final String authorAvatarUrl;
-  final String text;
-  final String createdAt;
-  int likeCount;
-  bool isLiked;
 }
 
 sealed class Activity {
@@ -70,7 +30,7 @@ sealed class Activity {
 
   static Activity? maybe(
     Map<String, dynamic> map,
-    int viewerId,
+    int? viewerId,
     ImageQuality imageQuality,
   ) {
     try {
@@ -85,7 +45,7 @@ sealed class Activity {
             authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['text'] ?? ''),
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -108,7 +68,7 @@ sealed class Activity {
             recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['message'] ?? ''),
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['messenger']['id'] == viewerId ||
@@ -142,7 +102,7 @@ sealed class Activity {
             isAnime: map['type'] == 'ANIME_LIST',
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: DateTimeExtension.formattedDateTimeFromSeconds(
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
             isOwned: map['user']['id'] == viewerId,
@@ -164,9 +124,9 @@ sealed class Activity {
   final int authorId;
   final String authorName;
   final String authorAvatarUrl;
-  final String createdAt;
   final String text;
   final String siteUrl;
+  final DateTime createdAt;
   final bool isOwned;
   int replyCount;
   int likeCount;
@@ -247,4 +207,41 @@ class MediaActivity extends Activity {
   final String coverUrl;
   final bool isAnime;
   final String? format;
+}
+
+class ActivityReply {
+  ActivityReply._({
+    required this.id,
+    required this.authorId,
+    required this.authorName,
+    required this.authorAvatarUrl,
+    required this.text,
+    required this.createdAt,
+    this.likeCount = 0,
+    this.isLiked = false,
+  });
+
+  static ActivityReply? maybe(Map<String, dynamic> map) {
+    if (map['id'] == null || map['user']?['id'] == null) return null;
+
+    return ActivityReply._(
+      id: map['id'],
+      authorId: map['user']['id'],
+      authorName: map['user']['name'],
+      authorAvatarUrl: map['user']['avatar']['large'],
+      text: parseMarkdown(map['text'] ?? ''),
+      createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
+      likeCount: map['likeCount'] ?? 0,
+      isLiked: map['isLiked'] ?? false,
+    );
+  }
+
+  final int id;
+  final int authorId;
+  final String authorName;
+  final String authorAvatarUrl;
+  final String text;
+  final DateTime createdAt;
+  int likeCount;
+  bool isLiked;
 }

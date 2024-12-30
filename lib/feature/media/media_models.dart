@@ -4,11 +4,11 @@ import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
-import 'package:otraku/feature/tag/tag_models.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/util/tile_modelable.dart';
 
 class Media {
@@ -110,14 +110,15 @@ class RelatedMedia {
     required this.releaseStatus,
   });
 
-  factory RelatedMedia(Map<String, dynamic> map) => RelatedMedia._(
+  factory RelatedMedia(Map<String, dynamic> map, ImageQuality imageQuality) =>
+      RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][Persistence().imageQuality.value],
+        imageUrl: map['node']['coverImage'][imageQuality.value],
         relationType:
             StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
-        entryStatus: EntryStatus.from(map['node']['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
         releaseStatus: StringExtension.tryNoScreamingSnakeCase(
           map['node']['status'],
         ),
@@ -130,7 +131,7 @@ class RelatedMedia {
   final String imageUrl;
   final String? relationType;
   final MediaFormat? format;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final String? releaseStatus;
 }
 
@@ -214,7 +215,7 @@ class MediaFollowing {
   });
 
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
-        entryStatus: EntryStatus.from(map['status'])!,
+        entryStatus: ListStatus.from(map['status'])!,
         score: (map['score'] ?? 0).toDouble(),
         notes: map['notes'] ?? '',
         userId: map['user']['id'],
@@ -225,7 +226,7 @@ class MediaFollowing {
         ),
       );
 
-  final EntryStatus entryStatus;
+  final ListStatus entryStatus;
   final double score;
   final String notes;
   final int userId;
@@ -247,7 +248,7 @@ class Recommendation {
     required this.entryStatus,
   });
 
-  factory Recommendation(Map<String, dynamic> map) {
+  factory Recommendation(Map<String, dynamic> map, ImageQuality imageQuality) {
     bool? userRating;
     if (map['userRating'] == 'RATE_UP') userRating = true;
     if (map['userRating'] == 'RATE_DOWN') userRating = false;
@@ -257,12 +258,11 @@ class Recommendation {
       rating: map['rating'] ?? 0,
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
-      imageUrl: map['mediaRecommendation']['coverImage']
-          [Persistence().imageQuality.value],
+      imageUrl: map['mediaRecommendation']['coverImage'][imageQuality.value],
       isAnime: map['type'] == 'ANIME',
       releaseYear: map['mediaRecommendation']['startDate']?['year'],
       format: MediaFormat.from(map['mediaRecommendation']['format']),
-      entryStatus: EntryStatus.from(
+      entryStatus: ListStatus.from(
           map['mediaRecommendation']['mediaListEntry']?['status']),
     );
   }
@@ -275,7 +275,7 @@ class Recommendation {
   final bool isAnime;
   final int? releaseYear;
   final MediaFormat? format;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
 }
 
 class MediaInfo {
@@ -353,7 +353,7 @@ class MediaInfo {
   final bool isAdult;
   final externalLinks = <ExternalLink>[];
 
-  factory MediaInfo(Map<String, dynamic> map) {
+  factory MediaInfo(Map<String, dynamic> map, ImageQuality imageQuality) {
     String? duration;
     if (map['duration'] != null) {
       final time = map['duration'];
@@ -370,6 +370,9 @@ class MediaInfo {
       if (map['seasonYear'] != null) season += ' ${map["seasonYear"]}';
     }
 
+    String description = map['description'] ?? '';
+    description = description.replaceAll(_forbiddenDescriptionTags, '');
+
     final model = MediaInfo._(
       id: map['id'],
       type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
@@ -378,8 +381,8 @@ class MediaInfo {
       englishTitle: map['title']['english'],
       nativeTitle: map['title']['native'],
       synonyms: List<String>.from(map['synonyms'] ?? [], growable: false),
-      description: map['description'] ?? '',
-      cover: map['coverImage'][Persistence().imageQuality.value],
+      description: description,
+      cover: map['coverImage'][imageQuality.value],
       extraLargeCover: map['coverImage']['extraLarge'],
       banner: map['bannerImage'],
       format: MediaFormat.from(map['format']),
@@ -446,6 +449,9 @@ class MediaInfo {
 
     return model;
   }
+
+  /// Unexpected html tags in the description only make rendering harder.
+  static final _forbiddenDescriptionTags = RegExp('</?[^bi].?>');
 }
 
 typedef ExternalLink = ({
@@ -546,7 +552,7 @@ class MediaStats {
 
           model.statusNames.insert(
             index,
-            EntryStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
+            ListStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
           );
         }
       }

@@ -1,6 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/markdown.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class ReviewItem {
@@ -50,20 +50,24 @@ class Review {
     required this.viewerRating,
   });
 
-  factory Review(Map<String, dynamic> map) => Review._(
+  factory Review(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+    bool analogueClock,
+  ) =>
+      Review._(
         id: map['id'],
         userId: map['user']['id'],
         mediaId: map['media']['id'],
         userName: map['user']['name'] ?? '',
         userAvatar: map['user']['avatar']['large'],
         mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage']
-            [Persistence().imageQuality.value],
+        mediaCover: map['media']['coverImage'][imageQuality.value],
         banner: map['media']['bannerImage'],
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),
-        createdAt:
-            DateTimeExtension.formattedDateTimeFromSeconds(map['createdAt']),
+        createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'])
+            .formattedDateTimeFromSeconds(analogueClock),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

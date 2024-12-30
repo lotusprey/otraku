@@ -4,8 +4,8 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/staff/staff_item_model.dart';
 import 'package:otraku/feature/studio/studio_item_model.dart';
 import 'package:otraku/feature/user/user_item_model.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 
@@ -22,6 +22,8 @@ enum DiscoverType {
 
   final String label;
 }
+
+enum DiscoverItemView { detailed, simple }
 
 sealed class DiscoverItems {
   const DiscoverItems();
@@ -95,7 +97,7 @@ class DiscoverMediaItem {
         isAnime: map['type'] == 'ANIME',
         format: StringExtension.tryNoScreamingSnakeCase(map['format']),
         releaseStatus: ReleaseStatus.from(map['status']),
-        entryStatus: EntryStatus.from(map['mediaListEntry']?['status']),
+        entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
         releaseYear: map['startDate']?['year'],
         averageScore: map['averageScore'] ?? 0,
         popularity: map['popularity'] ?? 0,
@@ -108,7 +110,7 @@ class DiscoverMediaItem {
   final bool isAnime;
   final String? format;
   final ReleaseStatus? releaseStatus;
-  final EntryStatus? entryStatus;
+  final ListStatus? entryStatus;
   final int? releaseYear;
   final int averageScore;
   final int popularity;

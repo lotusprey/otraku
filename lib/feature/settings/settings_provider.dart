@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 
@@ -15,6 +15,9 @@ final settingsProvider =
 class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId == null) return Settings.empty();
+
     final data = await ref.read(repositoryProvider).request(GqlQuery.settings);
     return Settings(data['Viewer']);
   }
@@ -22,17 +25,21 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
   /// Update settings and if necessary
   /// restart collections to reflect the changes.
   Future<void> updateSettings(Settings other) async {
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId == null) return;
+
     final prev = state.valueOrNull;
     state = await AsyncValue.guard(() async {
       final data = await ref
           .read(repositoryProvider)
-          .request(GqlMutation.updateSettings, other.toMap());
+          .request(GqlMutation.updateSettings, other.toGraphQlVariables());
+
       return Settings(data['UpdateUser']);
     });
+
     final next = state.valueOrNull;
     if (prev == null || next == null) return;
 
-    final id = Persistence().id!;
     bool invalidateAnimeCollection = false;
     bool invalidateMangaCollection = false;
 
@@ -50,11 +57,11 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     }
 
     if (invalidateAnimeCollection) {
-      ref.invalidate(collectionProvider((userId: id, ofAnime: true)));
+      ref.invalidate(collectionProvider((userId: viewerId, ofAnime: true)));
     }
 
     if (invalidateMangaCollection) {
-      ref.invalidate(collectionProvider((userId: id, ofAnime: false)));
+      ref.invalidate(collectionProvider((userId: viewerId, ofAnime: false)));
     }
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 
 final discoverFilterProvider =
     NotifierProvider<DiscoverFilterNotifier, DiscoverFilter>(
@@ -9,7 +9,17 @@ final discoverFilterProvider =
 
 class DiscoverFilterNotifier extends Notifier<DiscoverFilter> {
   @override
-  DiscoverFilter build() => DiscoverFilter(Persistence().defaultDiscoverType);
+  DiscoverFilter build() {
+    final mediaFilter = ref.watch(
+      persistenceProvider.select((s) => s.discoverMediaFilter),
+    );
+
+    final discoverType = ref.watch(
+      persistenceProvider.select((s) => s.options.discoverType),
+    );
+
+    return DiscoverFilter(discoverType, mediaFilter);
+  }
 
   @override
   DiscoverFilter get state => super.state;

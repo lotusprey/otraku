@@ -41,7 +41,7 @@ class StudioHeader extends StatelessWidget {
                       name,
                       overflow: TextOverflow.fade,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
+                      style: TextTheme.of(context).titleLarge,
                     ),
                   ),
                 ),

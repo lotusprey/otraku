@@ -27,43 +27,67 @@ class Settings {
 
   factory Settings(Map<String, dynamic> map) => Settings._(
         unreadNotifications: map['unreadNotificationCount'] ?? 0,
-        scoreFormat: ScoreFormat.from(map['mediaListOptions']['scoreFormat']),
+        scoreFormat: ScoreFormat.from(map['mediaListOptions']?['scoreFormat']),
         defaultSort: EntrySort.fromRowOrder(
-          map['mediaListOptions']['rowOrder'] ?? 'TITLE',
+          map['mediaListOptions']?['rowOrder'],
         ),
-        titleLanguage: TitleLanguage.from(map['options']['titleLanguage']),
-        personNaming: PersonNaming.from(map['options']['staffNameLanguage']),
-        activityMergeTime: map['options']['activityMergeTime'] ?? 720,
-        splitCompletedAnime: map['mediaListOptions']['animeList']
-                ['splitCompletedSectionByFormat'] ??
+        titleLanguage: TitleLanguage.from(map['options']?['titleLanguage']),
+        personNaming: PersonNaming.from(map['options']?['staffNameLanguage']),
+        activityMergeTime: map['options']?['activityMergeTime'] ?? 720,
+        splitCompletedAnime: map['mediaListOptions']?['animeList']
+                ?['splitCompletedSectionByFormat'] ??
             false,
-        splitCompletedManga: map['mediaListOptions']['mangaList']
-                ['splitCompletedSectionByFormat'] ??
+        splitCompletedManga: map['mediaListOptions']?['mangaList']
+                ?['splitCompletedSectionByFormat'] ??
             false,
-        displayAdultContent: map['options']['displayAdultContent'] ?? false,
-        airingNotifications: map['options']['airingNotifications'] ?? true,
-        advancedScoringEnabled: map['mediaListOptions']['animeList']
-                ['advancedScoringEnabled'] ??
+        displayAdultContent: map['options']?['displayAdultContent'] ?? false,
+        airingNotifications: map['options']?['airingNotifications'] ?? true,
+        advancedScoringEnabled: map['mediaListOptions']?['animeList']
+                ?['advancedScoringEnabled'] ??
             false,
         restrictMessagesToFollowing:
-            map['options']['restrictMessagesToFollowing'] ?? false,
+            map['options']?['restrictMessagesToFollowing'] ?? false,
         advancedScores: List<String>.from(
-          map['mediaListOptions']['animeList']['advancedScoring'] ?? <String>[],
+          map['mediaListOptions']?['animeList']?['advancedScoring'] ??
+              const <String>[],
         ),
         animeCustomLists: List<String>.from(
-          map['mediaListOptions']['animeList']['customLists'] ?? <String>[],
+          map['mediaListOptions']?['animeList']?['customLists'] ??
+              const <String>[],
         ),
         mangaCustomLists: List<String>.from(
-          map['mediaListOptions']['mangaList']['customLists'] ?? <String>[],
+          map['mediaListOptions']?['mangaList']?['customLists'] ??
+              const <String>[],
         ),
         disabledListActivity: {
-          for (var activity in map['options']['disabledListActivity'])
-            EntryStatus.from(activity['type'])!: activity['disabled']
+          for (var activity
+              in map['options']?['disabledListActivity'] ?? const [])
+            ListStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {
-          for (var option in map['options']['notificationOptions'])
+          for (var option in map['options']?['notificationOptions'] ?? const [])
             NotificationType.from(option['type'])!: option['enabled']
         },
+      );
+
+  factory Settings.empty() => Settings._(
+        unreadNotifications: 0,
+        scoreFormat: ScoreFormat.point10,
+        defaultSort: EntrySort.title,
+        titleLanguage: TitleLanguage.romaji,
+        personNaming: PersonNaming.romajiWestern,
+        activityMergeTime: 720,
+        splitCompletedAnime: false,
+        splitCompletedManga: false,
+        displayAdultContent: false,
+        airingNotifications: true,
+        advancedScoringEnabled: false,
+        restrictMessagesToFollowing: false,
+        advancedScores: const [],
+        animeCustomLists: const [],
+        mangaCustomLists: const [],
+        disabledListActivity: const {},
+        notificationOptions: const {},
       );
 
   ScoreFormat scoreFormat;
@@ -81,7 +105,7 @@ class Settings {
   final List<String> advancedScores;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
-  final Map<EntryStatus, bool> disabledListActivity;
+  final Map<ListStatus, bool> disabledListActivity;
   final Map<NotificationType, bool> notificationOptions;
 
   Settings copy({int unreadNotifications = 0}) => Settings._(
@@ -104,7 +128,7 @@ class Settings {
         notificationOptions: {...notificationOptions},
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toGraphQlVariables() => {
         'titleLanguage': titleLanguage.value,
         'staffNameLanguage': personNaming.value,
         'activityMergeTime': activityMergeTime,

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
@@ -37,6 +38,7 @@ class _CalendarViewState extends State<CalendarView> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
         final date = ref.watch(calendarFilterProvider.select((s) => s.date));
         final today = DateTime.now();
         final isBeforeToday = date.day < today.day &&
@@ -102,7 +104,7 @@ class _CalendarViewState extends State<CalendarView> {
               onRefresh: (invalidate) => invalidate(calendarProvider),
               onData: (data) => SliverGrid(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => _Tile(data.items[i]),
+                  (context, i) => _Tile(data.items[i], options.analogueClock),
                   childCount: data.items.length,
                 ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -128,14 +130,15 @@ class _CalendarViewState extends State<CalendarView> {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item);
+  const _Tile(this.item, this.analogueClock);
 
   final CalendarItem item;
+  final bool analogueClock;
 
   @override
   Widget build(BuildContext context) {
     final textRailItems = {
-      item.airingAt.formattedTime: true,
+      item.airingAt.formattedTime(analogueClock): true,
       if (item.airingAt.isAfter(DateTime.now()))
         'Ep ${item.episode} in ${item.airingAt.timeUntil}': false
       else
@@ -162,7 +165,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: 120 / Theming.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(item.cover),
                 ),
               ),
@@ -187,7 +190,7 @@ class _Tile extends StatelessWidget {
                       padding: contentPadding,
                       child: TextRail(
                         textRailItems,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: TextTheme.of(context).labelMedium,
                       ),
                     ),
                     if (item.streamingServices.isNotEmpty)

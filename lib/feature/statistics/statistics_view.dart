@@ -239,7 +239,7 @@ class _Details extends StatelessWidget {
           children: [
             Icon(
               icons[i],
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              color: ColorScheme.of(context).onSurfaceVariant,
             ),
             const SizedBox(width: Theming.offset),
             Column(
@@ -248,7 +248,7 @@ class _Details extends StatelessWidget {
               children: [
                 Text(
                   titles[i],
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextTheme.of(context).labelMedium,
                 ),
                 Text(subtitles[i].toString()),
               ],

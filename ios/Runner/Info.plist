@@ -24,8 +24,6 @@
 	<array>
 		<string>https</string>
 	</array>
-	<key>FlutterDeepLinkingEnabled</key>
-	<true/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

@@ -5,8 +5,5 @@ linter:
     # Often unnecessary.
     use_key_in_widget_constructors: false
 
-    # Some enums use SCREAMING_SNAKE_CASE for easy API integration (accessing `name`).
-    constant_identifier_names: false
-
     # For closures.
     prefer_function_declarations_over_variables: false

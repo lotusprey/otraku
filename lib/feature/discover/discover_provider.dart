@@ -9,9 +9,9 @@ import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
-import 'package:otraku/util/persistence.dart';
 
 final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
   DiscoverNotifier.new,
@@ -84,15 +84,18 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
         'type': 'ANIME',
         if (filter.search.isNotEmpty) ...{
           'search': filter.search,
-          ...filter.mediaFilter.toMap(true)..['sort'] = 'SEARCH_MATCH',
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: true)
+            ..['sort'] = 'SEARCH_MATCH',
         } else
-          ...filter.mediaFilter.toMap(true),
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: true),
       },
     );
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
-      items.add(DiscoverMediaItem(m, Persistence().imageQuality));
+      items.add(DiscoverMediaItem(m, imageQuality));
     }
 
     return DiscoverAnimeItems(oldValue.pages.withNext(
@@ -109,15 +112,18 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
         'type': 'MANGA',
         if (filter.search.isNotEmpty) ...{
           'search': filter.search,
-          ...filter.mediaFilter.toMap(false)..['sort'] = 'SEARCH_MATCH',
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: false)
+            ..['sort'] = 'SEARCH_MATCH',
         } else
-          ...filter.mediaFilter.toMap(false),
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: false),
       },
     );
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final items = <DiscoverMediaItem>[];
     for (final m in data['Page']['media']) {
-      items.add(DiscoverMediaItem(m, Persistence().imageQuality));
+      items.add(DiscoverMediaItem(m, imageQuality));
     }
 
     return DiscoverMangaItems(oldValue.pages.withNext(

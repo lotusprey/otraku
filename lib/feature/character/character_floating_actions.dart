@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
-import 'package:otraku/feature/filter/chip_selector.dart';
+import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
@@ -33,7 +33,10 @@ class CharacterMediaFilterButton extends StatelessWidget {
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,
-              padding: const EdgeInsets.symmetric(vertical: 20),
+              padding: const EdgeInsets.symmetric(
+                horizontal: Theming.offset,
+                vertical: 20,
+              ),
               children: [
                 ChipSelector.ensureSelected(
                   title: 'Sort',

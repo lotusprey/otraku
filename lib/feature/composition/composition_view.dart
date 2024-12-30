@@ -166,7 +166,7 @@ class _CompositionBody extends StatelessWidget {
                 autofocus: true,
                 focusNode: focus,
                 controller: textCtrl,
-                style: Theme.of(context).textTheme.bodyMedium,
+                style: TextTheme.of(context).bodyMedium,
                 decoration: InputDecoration(contentPadding: padding),
                 maxLines: null,
               ),
@@ -345,7 +345,7 @@ class _BottomBarState extends State<_BottomBar> {
           height: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Theme.of(context).colorScheme.outline,
+            color: ColorScheme.of(context).outline,
           ),
         ),
       ] else

@@ -68,7 +68,7 @@ class _SocialViewState extends ConsumerState<SocialView>
                   padding: const EdgeInsets.only(right: Theming.offset),
                   child: Text(
                     count.toString(),
-                    style: Theme.of(context).textTheme.titleSmall,
+                    style: TextTheme.of(context).titleSmall,
                   ),
                 ),
             ],

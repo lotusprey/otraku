@@ -1,8 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
-import 'package:otraku/feature/filter/filter_collection_model.dart';
+import 'package:otraku/feature/tag/tag_model.dart';
+import 'package:otraku/feature/tag/tag_provider.dart';
 
 final collectionEntriesProvider =
     Provider.autoDispose.family<List<Entry>, CollectionTag>(
@@ -17,10 +19,12 @@ final collectionEntriesProvider =
             .watch(collectionProvider(tag))
             .unwrapPrevious()
             .valueOrNull
-            ?.entries ??
+            ?.list
+            .entries ??
         const [];
+    final tags = ref.watch(tagsProvider).valueOrNull;
 
-    return _filter(entries, mediaFilter, search);
+    return _filter(entries, mediaFilter, search, tags);
   },
 );
 
@@ -28,6 +32,7 @@ List<Entry> _filter(
   List<Entry> allEntries,
   CollectionMediaFilter mediaFilter,
   String search,
+  TagCollection? tags,
 ) {
   final entries = <Entry>[];
   final releaseStartFrom = mediaFilter.startYearFrom != null
@@ -36,6 +41,14 @@ List<Entry> _filter(
   final releaseStartTo = mediaFilter.startYearTo != null
       ? DateTime(mediaFilter.startYearTo! + 1)
       : DateTime.now().add(const Duration(days: 900));
+
+  var tagIdIn = const <int>[];
+  var tagIdNotIn = const <int>[];
+  if (tags != null) {
+    final tagFinder = (String name) => tags.ids[tags.indexByName[name] ?? 0];
+    tagIdIn = mediaFilter.tagIn.map(tagFinder).toList();
+    tagIdNotIn = mediaFilter.tagNotIn.map(tagFinder).toList();
+  }
 
   for (final entry in allEntries) {
     if (search.isNotEmpty) {
@@ -65,7 +78,7 @@ List<Entry> _filter(
     }
 
     if (mediaFilter.statuses.isNotEmpty &&
-        !mediaFilter.statuses.contains(entry.status)) {
+        !mediaFilter.statuses.contains(entry.releaseStatus)) {
       continue;
     }
 
@@ -96,10 +109,10 @@ List<Entry> _filter(
       if (isIn) continue;
     }
 
-    if (mediaFilter.tagIdIn.isNotEmpty) {
+    if (tagIdIn.isNotEmpty) {
       bool isIn = true;
-      for (final tagId in mediaFilter.tagIdIn) {
-        if (!entry.tags.contains(tagId)) {
+      for (final tagId in tagIdIn) {
+        if (!entry.tagIds.contains(tagId)) {
           isIn = false;
           break;
         }
@@ -107,10 +120,10 @@ List<Entry> _filter(
       if (!isIn) continue;
     }
 
-    if (mediaFilter.tagIdNotIn.isNotEmpty) {
+    if (tagIdNotIn.isNotEmpty) {
       bool isIn = false;
-      for (final tagId in mediaFilter.tagIdNotIn) {
-        if (entry.tags.contains(tagId)) {
+      for (final tagId in tagIdNotIn) {
+        if (entry.tagIds.contains(tagId)) {
           isIn = true;
           break;
         }

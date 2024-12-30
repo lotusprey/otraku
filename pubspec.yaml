@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.5.3+77
+version: 1.6.0+78
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^2.6.1
 
   # Routing.
-  go_router: ^14.2.7
+  go_router: ^14.6.2
 
   # Data fetching.
   http: ^1.2.2
@@ -25,7 +25,7 @@ dependencies:
   hive: ^2.2.3
 
   # Access to device storage. Used for [hive] setup.
-  path_provider: ^2.1.4
+  path_provider: ^2.1.5
 
   # Secure storage for the access tokens.
   flutter_secure_storage: ^9.2.2
@@ -40,7 +40,7 @@ dependencies:
   cached_network_image: ^3.4.1
 
   # Opening links in the browser.
-  url_launcher: ^6.3.0
+  url_launcher: ^6.3.1
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.7.0
@@ -49,7 +49,7 @@ dependencies:
   workmanager: ^0.5.2
 
   # Sending device notifications.
-  flutter_local_notifications: ^17.2.3
+  flutter_local_notifications: ^18.0.1
 
   # Translating html into flutter widgets.
   flutter_widget_from_html_core: ^0.15.2
@@ -61,7 +61,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter_icons:
   ios: true

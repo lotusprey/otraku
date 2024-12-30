@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/home/home_provider.dart';
@@ -25,7 +26,9 @@ class CollectionNotifier
       _ => 0,
     };
 
-    final isFull = arg.userId != Persistence().id ||
+    final viewerId = ref.watch(viewerIdProvider);
+
+    final isFull = arg.userId != viewerId ||
         ref.watch(homeProvider.select(
           (s) => arg.ofAnime
               ? s.didExpandAnimeCollection
@@ -41,9 +44,16 @@ class CollectionNotifier
       },
     );
 
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
     final collection = isFull
-        ? FullCollection(data['MediaListCollection'], arg.ofAnime, index)
-        : PreviewCollection(data['MediaListCollection']);
+        ? FullCollection(
+            data['MediaListCollection'],
+            arg.ofAnime,
+            index,
+            imageQuality,
+          )
+        : PreviewCollection(data['MediaListCollection'], imageQuality);
     collection.sort(_sort);
     return collection;
   }
@@ -65,83 +75,6 @@ class CollectionNotifier
         },
       );
 
-  Future<String?> saveEntry(Edit oldEdit, Edit newEdit) async {
-    Entry entry;
-    try {
-      // There is an api bug in entry updating, which prevents tag
-      // data from being returned. This is why 2 requests are needed.
-      await ref
-          .read(repositoryProvider)
-          .request(GqlMutation.updateEntry, newEdit.toMap());
-
-      final data = await ref.read(repositoryProvider).request(
-        GqlQuery.listEntry,
-        {'userId': arg.userId, 'mediaId': newEdit.mediaId},
-      );
-
-      entry = Entry(data['MediaList']);
-    } catch (e) {
-      return e.toString();
-    }
-
-    _updateState(
-      (collection) => switch (collection) {
-        FullCollection _ => _saveEntryInFullCollection(
-            collection,
-            entry,
-            oldEdit,
-            newEdit,
-          ),
-        PreviewCollection _ => _saveEntryInPreviewCollection(
-            collection,
-            entry,
-            oldEdit,
-            newEdit,
-          ),
-      },
-    );
-
-    return null;
-  }
-
-  /// An alternative to [saveEntry], that only updates the progress.
-  /// When incrementing to last episode, [saveEntry] should be called instead.
-  Future<String?> saveEntryProgress(Entry entry) async {
-    final customLists = <String>[];
-    try {
-      final data = await ref.read(repositoryProvider).request(
-        GqlMutation.updateProgress,
-        {'mediaId': entry.mediaId, 'progress': entry.progress},
-      );
-
-      final Map<String, dynamic> customListItems =
-          data['SaveMediaListEntry']?['customLists'] ?? const {};
-
-      for (final entry in customListItems.entries) {
-        if (entry.value) customLists.add(entry.key.toString().toLowerCase());
-      }
-    } catch (e) {
-      return e.toString();
-    }
-
-    _updateState(
-      (collection) => switch (collection) {
-        FullCollection _ => _saveEntryProgressInFullCollection(
-            collection,
-            entry,
-            customLists,
-          ),
-        PreviewCollection _ => _saveEntryProgressInPreviewCollection(
-            collection,
-            entry,
-            customLists,
-          ),
-      },
-    );
-
-    return null;
-  }
-
   Future<String?> removeEntry(Edit edit) async {
     if (edit.entryId == null) return 'Missing entry id';
 
@@ -149,103 +82,148 @@ class CollectionNotifier
       await ref
           .read(repositoryProvider)
           .request(GqlMutation.removeEntry, {'entryId': edit.entryId});
+
+      _updateState(
+        (collection) => switch (collection) {
+          PreviewCollection c => c..list.removeByMediaId(edit.mediaId),
+          FullCollection c => _withRemovedEmptyLists(
+              c..lists.map((list) => list.removeByMediaId(edit.mediaId)),
+            ),
+        },
+      );
+
+      return null;
     } catch (e) {
       return e.toString();
     }
+  }
+
+  /// Updates or adds an entry.
+  Future<String?> saveEntry(ListStatus? oldStatus, Edit newEdit) async {
+    try {
+      await ref
+          .read(repositoryProvider)
+          .request(GqlMutation.updateEntry, newEdit.toGraphQlVariables());
+
+      await _saveEntry(newEdit.mediaId, oldStatus);
+
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  /// An alternative to [saveEntry],
+  /// that only updates the progress and potentially, the list status.
+  /// When incrementing to last episode, [saveEntry] should be called instead.
+  Future<String?> saveEntryProgress(
+    Entry oldEntry,
+    bool setAsCurrent,
+  ) async {
+    try {
+      await ref.read(repositoryProvider).request(
+        GqlMutation.updateProgress,
+        {
+          'mediaId': oldEntry.mediaId,
+          'progress': oldEntry.progress,
+          if (setAsCurrent) ...{
+            'status': ListStatus.current.value,
+            if (oldEntry.watchStart == null)
+              'startedAt': DateTime.now().fuzzyDate,
+          },
+        },
+      );
+
+      await _saveEntry(oldEntry.mediaId, oldEntry.listStatus);
+
+      return null;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  /// There is an api bug in entry updating,
+  /// which prevents tag data from being returned.
+  /// This is why [_saveEntry] additionally fetches the updated entry.
+  Future<void> _saveEntry(int mediaId, ListStatus? oldStatus) async {
+    var data = await ref.read(repositoryProvider).request(
+      GqlQuery.listEntry,
+      {'userId': arg.userId, 'mediaId': mediaId},
+    );
+    data = data['MediaList'];
+
+    final entry = Entry(
+      data,
+      ref.read(persistenceProvider).options.imageQuality,
+    );
 
     _updateState(
       (collection) => switch (collection) {
-        FullCollection _ => _removeEntryFromFullCollection(collection, edit),
-        PreviewCollection _ => _removeEntryFromPreviewCollection(
+        FullCollection _ => _saveEntryInFullCollection(
             collection,
-            edit,
+            entry,
+            oldStatus,
+            data,
+          ),
+        PreviewCollection _ => _saveEntryInPreviewCollection(
+            collection,
+            entry,
+            oldStatus,
+            entry.listStatus,
           ),
       },
     );
-
-    return null;
   }
 
   FullCollection _saveEntryInFullCollection(
     FullCollection collection,
     Entry entry,
-    Edit oldEdit,
-    Edit newEdit,
+    ListStatus? oldStatus,
+    Map<String, dynamic> data,
   ) {
-    final oldCustomLists = oldEdit.customLists.entries
-        .where((e) => e.value)
-        .map((e) => e.key.toLowerCase())
+    final hiddenFromStatusLists = data['hiddenFromStatusLists'] ?? false;
+    final customListItems = data['customLists'] ?? const <String, dynamic>{};
+    final customLists = customListItems.entries
+        .where((e) => e.value == true)
+        .map((e) => e.key)
         .toList();
 
-    final newCustomLists = newEdit.customLists.entries
-        .where((e) => e.value)
-        .map((e) => e.key.toLowerCase())
-        .toList();
+    for (final list in collection.lists) {
+      if (list.status != null) {
+        if (list.status == oldStatus) {
+          if (list.status == entry.listStatus) {
+            if (hiddenFromStatusLists) {
+              list.removeByMediaId(entry.mediaId);
+              continue;
+            }
 
-    // Remove from old status list.
-    if (oldEdit.status != null && !oldEdit.hiddenFromStatusLists) {
-      for (final list in collection.lists) {
-        if (oldEdit.status == list.status &&
-            (list.splitCompletedListFormat == null ||
-                list.splitCompletedListFormat == entry.format)) {
+            if (!list.setByMediaId(entry)) {
+              list.insertSorted(entry, _sort);
+            }
+
+            continue;
+          }
+
           list.removeByMediaId(entry.mediaId);
-          break;
+          continue;
         }
-      }
-    }
 
-    // Add to new status list.
-    if (!newEdit.hiddenFromStatusLists) {
-      bool added = false;
-      for (final list in collection.lists) {
-        if (entry.entryStatus == list.status &&
-            (list.splitCompletedListFormat == null ||
-                list.splitCompletedListFormat == entry.format)) {
+        if (list.status == entry.listStatus) {
           list.insertSorted(entry, _sort);
-          added = true;
-          break;
         }
+
+        continue;
       }
 
-      if (!added) {
-        ref.invalidateSelf();
-      }
-    }
-
-    // Remove from old custom lists.
-    if (oldCustomLists.isNotEmpty) {
-      for (final list in collection.lists) {
-        if (list.status != null) continue;
-
-        for (int i = 0; i < oldCustomLists.length; i++) {
-          if (oldCustomLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(entry.mediaId);
-            oldCustomLists[i] = oldCustomLists.last;
-            oldCustomLists.removeLast();
-            break;
-          }
+      if (customLists.contains(list.name)) {
+        if (!list.setByMediaId(entry)) {
+          list.insertSorted(entry, _sort);
         }
-      }
-    }
 
-    // Add to new custom lists.
-    if (newCustomLists.isNotEmpty) {
-      for (final list in collection.lists) {
-        if (list.status != null) continue;
-
-        for (int i = 0; i < newCustomLists.length; i++) {
-          if (newCustomLists[i] == list.name.toLowerCase()) {
-            list.insertSorted(entry, _sort);
-            newCustomLists[i] = newCustomLists.last;
-            newCustomLists.removeLast();
-            break;
-          }
-        }
+        continue;
       }
 
-      if (newCustomLists.isNotEmpty) {
-        ref.invalidateSelf();
-      }
+      list.removeByMediaId(entry.mediaId);
     }
 
     return _withRemovedEmptyLists(collection);
@@ -254,141 +232,21 @@ class CollectionNotifier
   PreviewCollection _saveEntryInPreviewCollection(
     PreviewCollection collection,
     Entry entry,
-    Edit oldEdit,
-    Edit newEdit,
+    ListStatus? oldStatus,
+    ListStatus? newStatus,
   ) {
-    if (newEdit.status == EntryStatus.current ||
-        newEdit.status == EntryStatus.repeating) {
-      if (oldEdit.status == EntryStatus.current ||
-          oldEdit.status == EntryStatus.repeating) {
-        final entries = collection.entries;
-        for (int i = 0; i < entries.length; i++) {
-          if (entries[i].mediaId == entry.mediaId) {
-            entries[i] = entry;
-            return collection;
-          }
-        }
-
-        return collection;
-      } else {
-        collection.entries.add(entry);
+    if (newStatus == ListStatus.current || newStatus == ListStatus.repeating) {
+      if (oldStatus == ListStatus.current ||
+          oldStatus == ListStatus.repeating) {
+        collection.list.setByMediaId(entry);
         return collection;
       }
+
+      collection.list.insertSorted(entry, _sort);
+      return collection;
     }
 
-    return _removeEntryFromPreviewCollection(collection, oldEdit);
-  }
-
-  FullCollection _saveEntryProgressInFullCollection(
-    FullCollection collection,
-    Entry entry,
-    List<String> customLists,
-  ) {
-    // Update status list.
-    for (final list in collection.lists) {
-      if (list.status == null ||
-          list.status != entry.entryStatus ||
-          (list.splitCompletedListFormat != null &&
-              list.splitCompletedListFormat != entry.format)) continue;
-
-      for (final e in list.entries) {
-        if (e.mediaId == entry.mediaId) {
-          e.progress = entry.progress;
-          break;
-        }
-      }
-
-      break;
-    }
-
-    // Update custom lists.
-    if (customLists.isNotEmpty) {
-      for (final list in collection.lists) {
-        if (list.status != null) continue;
-
-        for (int i = 0; i < customLists.length; i++) {
-          if (customLists[i] == list.name.toLowerCase()) {
-            for (final e in list.entries) {
-              if (e.mediaId == entry.mediaId) {
-                e.progress = entry.progress;
-                break;
-              }
-            }
-
-            customLists[i] = customLists.last;
-            customLists.removeLast();
-            break;
-          }
-        }
-      }
-    }
-
-    return collection;
-  }
-
-  PreviewCollection _saveEntryProgressInPreviewCollection(
-    PreviewCollection collection,
-    Entry entry,
-    List<String> customLists,
-  ) {
-    final entries = collection.entries;
-    for (int i = 0; i < entries.length; i++) {
-      if (entries[i].mediaId == entry.mediaId) {
-        entries[i].progress = entry.progress;
-        return collection;
-      }
-    }
-
-    return collection;
-  }
-
-  FullCollection _removeEntryFromFullCollection(
-    FullCollection collection,
-    Edit edit,
-  ) {
-    final customLists = edit.customLists.entries
-        .where((e) => e.value)
-        .map((e) => e.key.toLowerCase())
-        .toList();
-
-    // Remove from status list.
-    if (!edit.hiddenFromStatusLists) {
-      for (final list in collection.lists) {
-        if (list.status != null && list.status == edit.status) {
-          list.removeByMediaId(edit.mediaId);
-        }
-      }
-    }
-
-    // Remove from custom lists.
-    if (customLists.isNotEmpty) {
-      for (final list in collection.lists) {
-        for (int i = 0; i < customLists.length; i++) {
-          if (customLists[i] == list.name.toLowerCase()) {
-            list.removeByMediaId(edit.mediaId);
-            customLists[i] = customLists.last;
-            customLists.removeLast();
-            break;
-          }
-        }
-      }
-    }
-
-    return _withRemovedEmptyLists(collection);
-  }
-
-  PreviewCollection _removeEntryFromPreviewCollection(
-    PreviewCollection collection,
-    Edit edit,
-  ) {
-    final entries = collection.entries;
-    for (int i = 0; i < entries.length; i++) {
-      if (entries[i].mediaId == edit.mediaId) {
-        entries.removeAt(i);
-        return collection;
-      }
-    }
-
+    collection.list.removeByMediaId(entry.mediaId);
     return collection;
   }
 

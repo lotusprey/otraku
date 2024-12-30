@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/collection/collection_filter_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -13,18 +14,27 @@ class CollectionFilterNotifier
     extends AutoDisposeFamilyNotifier<CollectionFilter, CollectionTag> {
   @override
   CollectionFilter build(arg) {
-    final filter = CollectionFilter(arg.ofAnime);
-    final selectIsInAnimePreview = homeProvider.select(
+    final mediaFilter = arg.ofAnime
+        ? ref.watch(
+            persistenceProvider.select((s) => s.animeCollectionMediaFilter),
+          )
+        : ref.watch(
+            persistenceProvider.select((s) => s.mangaCollectionMediaFilter),
+          );
+
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+    final isInAnimePreviewProvider = homeProvider.select(
       (s) => !s.didExpandAnimeCollection,
     );
 
-    if (arg.userId == Persistence().id &&
+    if (arg.userId == ref.watch(viewerIdProvider) &&
         arg.ofAnime &&
-        Persistence().airingSortForPreview &&
-        ref.watch(selectIsInAnimePreview)) {
-      filter.mediaFilter.sort = EntrySort.airing;
+        options.airingSortForAnimePreview &&
+        ref.watch(isInAnimePreviewProvider)) {
+      mediaFilter.sort = EntrySort.airing;
     }
-    return filter;
+
+    return CollectionFilter(mediaFilter);
   }
 
   CollectionFilter update(

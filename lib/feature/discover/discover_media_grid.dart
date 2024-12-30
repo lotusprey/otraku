@@ -52,7 +52,7 @@ class _Tile extends StatelessWidget {
 
     if (item.isAdult) textRailItems['Adult'] = true;
 
-    final detailTextStyle = Theme.of(context).textTheme.labelSmall;
+    final detailTextStyle = TextTheme.of(context).labelSmall;
 
     return Card(
       child: MediaRouteTile(
@@ -68,7 +68,7 @@ class _Tile extends StatelessWidget {
                 ),
                 child: Container(
                   width: 120 / Theming.coverHtoWRatio,
-                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(item.imageUrl),
                 ),
               ),
@@ -94,7 +94,7 @@ class _Tile extends StatelessWidget {
                           const SizedBox(height: 5),
                           TextRail(
                             textRailItems,
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: TextTheme.of(context).labelMedium,
                           ),
                         ],
                       ),
@@ -105,7 +105,7 @@ class _Tile extends StatelessWidget {
                         Icon(
                           Icons.percent_rounded,
                           size: 15,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: ColorScheme.of(context).onSurfaceVariant,
                         ),
                         const SizedBox(width: 5),
                         Text(
@@ -116,7 +116,7 @@ class _Tile extends StatelessWidget {
                         Icon(
                           Icons.person_outline_rounded,
                           size: 15,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: ColorScheme.of(context).onSurfaceVariant,
                         ),
                         const SizedBox(width: 5),
                         Text(

@@ -1,6 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 
 enum NotificationType {
   following('Follows', 'FOLLOWING'),
@@ -38,8 +38,8 @@ sealed class SiteNotification {
     required this.imageUrl,
     required this.texts,
   })  : id = map['id'],
-        createdAt = DateTimeExtension.formattedDateTimeFromSeconds(
-          map['createdAt'],
+        createdAt = DateTimeExtension.fromSecondsSinceEpoch(
+          map['createdAt'] ?? 0,
         );
 
   static SiteNotification? maybe(
@@ -76,7 +76,7 @@ sealed class SiteNotification {
 
   final int id;
   final NotificationType type;
-  final String createdAt;
+  final DateTime createdAt;
   final String? imageUrl;
   final List<String> texts;
 }
@@ -94,9 +94,9 @@ class FollowNotification extends SiteNotification {
       FollowNotification._(
         map: map,
         type: type,
-        imageUrl: map['user']['avatar']['large'],
-        texts: [map['user']['name'], ' followed you'],
-        userId: map['user']['id'],
+        imageUrl: map['user']?['avatar']?['large'],
+        texts: [map['user']?['name'] ?? '?', ' followed you'],
+        userId: map['user']?['id'] ?? 0,
       );
 
   final int userId;
@@ -118,27 +118,27 @@ class ActivityNotification extends SiteNotification {
   ) {
     final List<String> texts = switch (type) {
       NotificationType.activityMention => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' mentioned you in an activity',
         ],
       NotificationType.activityMessage => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' sent you a message',
         ],
       NotificationType.activityLike => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' liked your activity',
         ],
       NotificationType.activityReply => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' replied to your activity',
         ],
       NotificationType.acrivityReplyLike => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' liked your reply',
         ],
       NotificationType.activityReplySubscribed => [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' replied to a subscribed activity',
         ],
       _ => const [],
@@ -147,10 +147,10 @@ class ActivityNotification extends SiteNotification {
     return ActivityNotification._(
       map: map,
       type: type,
-      imageUrl: map['user']['avatar']['large'],
+      imageUrl: map['user']?['avatar']?['large'],
       texts: texts,
-      userId: map['user']['id'],
-      activityId: map['activityId'],
+      userId: map['user']?['id'] ?? 0,
+      activityId: map['activityId'] ?? 0,
     );
   }
 
@@ -173,14 +173,14 @@ class ThreadNotification extends SiteNotification {
       ThreadNotification._(
         map: map,
         type: type,
-        imageUrl: map['user']['avatar']['large'],
+        imageUrl: map['user']?['avatar']?['large'],
         texts: [
-          map['user']['name'],
+          map['user']?['name'] ?? '?',
           ' liked your thread ',
-          if (map['thread'] != null) map['thread']['title'],
+          map['thread']?['title'] ?? '',
         ],
-        userId: map['user']['id'],
-        threadId: map['thread']['id'],
+        userId: map['user']?['id'] ?? 0,
+        threadId: map['thread']?['id'] ?? 0,
         threadSiteUrl: map['thread']?['siteUrl'],
       );
 
@@ -206,32 +206,32 @@ class ThreadCommentNotification extends SiteNotification {
   ) {
     final List<String> texts = switch (type) {
       NotificationType.threadReplySubscribed => [
-          map['user']['name'],
-          if (map['thread'] != null) ...[
+          map['user']?['name'] ?? '?',
+          if (map['thread']?['title'] != null) ...[
             ' commented in ',
             map['thread']['title']
           ] else
             ' commented in a subscribed thread',
         ],
       NotificationType.threadCommentMention => [
-          map['user']['name'],
-          if (map['thread'] != null) ...[
+          map['user']?['name'] ?? '?',
+          if (map['thread']?['title'] != null) ...[
             ' mentioned you in ',
             map['thread']['title']
           ] else
             ' mentioned you in a subscribed thread',
         ],
       NotificationType.threadCommentReply => [
-          map['user']['name'],
-          if (map['thread'] != null) ...[
+          map['user']?['name'] ?? '?',
+          if (map['thread']?['title'] != null) ...[
             ' replied to your comment in ',
             map['thread']['title']
           ] else
             ' replied to your comment in a subscribed thread',
         ],
       NotificationType.threadCommentLike => [
-          map['user']['name'],
-          if (map['thread'] != null) ...[
+          map['user']?['name'] ?? '?',
+          if (map['thread']?['title'] != null) ...[
             ' liked your comment in ',
             map['thread']['title']
           ] else
@@ -243,10 +243,10 @@ class ThreadCommentNotification extends SiteNotification {
     return ThreadCommentNotification._(
       map: map,
       type: type,
-      imageUrl: map['user']['avatar']['large'],
+      imageUrl: map['user']?['avatar']?['large'],
       texts: texts,
-      userId: map['user']['id'],
-      commentId: map['comment']['id'],
+      userId: map['user']?['id'] ?? 0,
+      commentId: map['comment']?['id'] ?? 0,
       commentSiteUrl: map['comment']?['siteUrl'],
     );
   }
@@ -272,13 +272,13 @@ class MediaReleaseNotification extends SiteNotification {
   ) {
     final List<String> texts = switch (type) {
       NotificationType.airing => [
-          map['media']['title']['userPreferred'],
+          map['media']?['title']?['userPreferred'] ?? '?',
           ' episode ',
-          map['episode'].toString(),
+          map['episode']?.toString() ?? '?',
           ' aired',
         ],
       NotificationType.relatedMediaAddition => [
-          map['media']['title']['userPreferred'],
+          map['media']?['title']?['userPreferred'] ?? '?',
           ' got added to the site',
         ],
       _ => const [],
@@ -289,7 +289,7 @@ class MediaReleaseNotification extends SiteNotification {
       type: type,
       imageUrl: map['media']?['coverImage']?[imageQuality.value],
       texts: texts,
-      mediaId: map['media']['id'],
+      mediaId: map['media']?['id'] ?? 0,
     );
   }
 
@@ -313,7 +313,7 @@ class MediaChangeNotification extends SiteNotification {
   ) {
     final List<String> texts = switch (type) {
       NotificationType.mediaDataChange => [
-          map['media']['title']['userPreferred'],
+          map['media']?['title']?['userPreferred'] ?? '?',
           ' got site data changes',
         ],
       NotificationType.mediaMerge => [
@@ -322,7 +322,7 @@ class MediaChangeNotification extends SiteNotification {
             growable: false,
           ).join(", "),
           ' got merged into ',
-          map['media']['title']['userPreferred'],
+          map['media']?['title']?['userPreferred'] ?? '?',
         ],
       _ => const [],
     };
@@ -332,7 +332,7 @@ class MediaChangeNotification extends SiteNotification {
       type: type,
       imageUrl: map['media']?['coverImage']?[imageQuality.value],
       texts: texts,
-      mediaId: map['media']['id'],
+      mediaId: map['media']?['id'] ?? 0,
       reason: map['reason'] ?? '',
     );
   }
@@ -359,7 +359,7 @@ class MediaDeletionNotification extends SiteNotification {
         type: type,
         imageUrl: null,
         texts: [
-          map['deletedMediaTitle'],
+          map['deletedMediaTitle'] ?? '?',
           ' got deleted from the site',
         ],
         reason: map['reason'] ?? '',

@@ -172,7 +172,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                       child: Text(
                         title!,
                         overflow: TextOverflow.fade,
-                        style: Theme.of(context).textTheme.titleLarge,
+                        style: TextTheme.of(context).titleLarge,
                       ),
                     ),
                   if (details != null) ...[

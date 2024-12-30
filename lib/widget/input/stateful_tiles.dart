@@ -32,7 +32,7 @@ class _StatefulSwitchListTileState extends State<StatefulSwitchListTile> {
     return SwitchListTile.adaptive(
       // The active color needs to be overriden, because
       // the cupertino selected state won't pick it up otherwise.
-      activeTrackColor: Theme.of(context).colorScheme.primary,
+      activeTrackColor: ColorScheme.of(context).primary,
       title: widget.title,
       subtitle: widget.subtitle,
       value: _value,
@@ -77,7 +77,7 @@ class _StatefulCheckboxListTileState extends State<StatefulCheckboxListTile> {
     return CheckboxListTile.adaptive(
       // The active color needs to be overriden, because
       // the cupertino selected state won't pick it up otherwise.
-      activeColor: Theme.of(context).colorScheme.primary,
+      activeColor: ColorScheme.of(context).primary,
       title: widget.title,
       tristate: widget.tristate,
       value: _value,

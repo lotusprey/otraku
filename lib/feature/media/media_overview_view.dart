@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -10,7 +11,6 @@ import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/widget/dialogs.dart';
@@ -137,7 +137,9 @@ class MediaOverviewSubview extends StatelessWidget {
                     final filter = notifier.state.copyWith(
                       type: info.type,
                       search: '',
-                      mediaFilter: DiscoverMediaFilter(),
+                      mediaFilter: DiscoverMediaFilter(
+                        notifier.state.mediaFilter.sort,
+                      ),
                     )..mediaFilter.genreIn.add(info.genres[i]);
                     notifier.state = filter;
 
@@ -205,7 +207,7 @@ class _DescriptionState extends State<_Description> {
         ? HtmlContent(widget.text)
         : ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
-              begin: Alignment(0.0, 0.7),
+              begin: Alignment(0.0, 0.5),
               end: Alignment(0.0, 1.0),
               colors: [Colors.white, Colors.transparent],
             ).createShader(bounds),
@@ -259,7 +261,7 @@ class _IconTile extends StatelessWidget {
           Icon(
             icon,
             size: Theming.iconSmall,
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            color: ColorScheme.of(context).onSurfaceVariant,
           ),
           const SizedBox(height: 5),
           Text(text),
@@ -383,7 +385,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
     final spoilerTextStyle = Theme.of(context)
         .textTheme
         .bodyMedium
-        ?.copyWith(color: Theme.of(context).colorScheme.error);
+        ?.copyWith(color: ColorScheme.of(context).error);
 
     return _ScrollCards(
       title: 'Tags',
@@ -393,7 +395,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
         final filter = notifier.state.copyWith(
           type: widget.info.type,
           search: '',
-          mediaFilter: DiscoverMediaFilter(),
+          mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
         )..mediaFilter.tagIn.add(tags[i].name);
         notifier.state = filter;
 
@@ -425,7 +427,7 @@ class _TagScrollCardsState extends State<_TagScrollCards> {
           const SizedBox(width: 5),
           Text(
             '${tags[i].rank}%',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextTheme.of(context).labelMedium,
           ),
         ],
       ),
@@ -465,7 +467,7 @@ class _ExternalLinkScrollCards extends StatelessWidget {
             const SizedBox(width: 5),
             Text(
               items[i].countryCode!,
-              style: Theme.of(context).textTheme.labelMedium,
+              style: TextTheme.of(context).labelMedium,
             ),
           ],
         ],

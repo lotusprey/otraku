@@ -18,7 +18,9 @@ abstract class GqlQuery {
 
   static const listEntry = r'''
     query CollectionEntry($userId: Int, $mediaId: Int) {
-      MediaList(userId: $userId, mediaId: $mediaId) {...collectionEntry}
+      MediaList(userId: $userId, mediaId: $mediaId) {
+        ...collectionEntry customLists hiddenFromStatusLists
+      }
     }
   '''
       '${_GqlFragment.collectionEntry}';
@@ -722,8 +724,8 @@ abstract class GqlMutation {
   ''';
 
   static const updateProgress = r'''
-    mutation UpdateProgress($mediaId: Int, $progress: Int) {
-      SaveMediaListEntry(mediaId: $mediaId, progress: $progress) {customLists}
+    mutation UpdateProgress($mediaId: Int, $progress: Int, $status: MediaListStatus, $startedAt: FuzzyDateInput) {
+      SaveMediaListEntry(mediaId: $mediaId, progress: $progress, status: $status, startedAt: $startedAt) {id}
     }
   ''';
 
@@ -750,6 +752,17 @@ abstract class GqlMutation {
     }
   '''
       '${_GqlFragment.userSettings}';
+
+  static const reorderFavorites = r'''
+    mutation ReorderFavorites($animeIds: [Int], $animeOrder: [Int], $mangaIds: [Int], $mangaOrder: [Int],
+        $characterIds: [Int], $characterOrder: [Int], $staffIds: [Int], $staffOrder: [Int], $studioIds: [Int], $studioOrder: [Int]) {
+      UpdateFavouriteOrder(animeIds: $animeIds, animeOrder: $animeOrder, mangaIds: $mangaIds, mangaOrder: $mangaOrder,
+          characterIds: $characterIds, characterOrder: $characterOrder, staffIds: $staffIds, staffOrder: $staffOrder,
+          studioIds: $studioIds, studioOrder: $studioOrder) {
+        anime {pageInfo {total}}
+      }
+    }
+  ''';
 
   static const toggleFavorite = r'''
     mutation ToggleFavorite($anime: Int, $manga: Int, $character: Int, $staff: Int, $studio: Int) {

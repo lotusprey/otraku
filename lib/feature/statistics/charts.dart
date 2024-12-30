@@ -34,7 +34,7 @@ class BarChart extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Text(title, style: Theme.of(context).textTheme.titleSmall),
+          child: Text(title, style: TextTheme.of(context).titleSmall),
         ),
         if (toolbar != null) toolbar!,
         SizedBox(
@@ -47,7 +47,7 @@ class BarChart extends StatelessWidget {
               children: [
                 Text(
                   values[i].toString(),
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextTheme.of(context).labelMedium,
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
@@ -60,15 +60,18 @@ class BarChart extends StatelessWidget {
                       end: Alignment.bottomCenter,
                       stops: const [0, 1],
                       colors: [
-                        Theme.of(context).colorScheme.primary,
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        ColorScheme.of(context).primary,
+                        Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withValues(alpha: 0.1),
                       ],
                     ),
                   ),
                 ),
                 Text(
                   names[i],
-                  style: Theme.of(context).textTheme.labelMedium,
+                  style: TextTheme.of(context).labelMedium,
                 ),
               ],
             ),
@@ -96,7 +99,7 @@ class PieChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleSmall),
+        Text(title, style: TextTheme.of(context).titleSmall),
         const SizedBox(height: 5),
         Container(
           height: 225,
@@ -135,15 +138,15 @@ class PieChart extends StatelessWidget {
                         center: const Alignment(-0.5, -0.5),
                         radius: 0.8,
                         colors: [
-                          Theme.of(context).colorScheme.primary,
-                          Theme.of(context).colorScheme.primary.withAlpha(100),
+                          ColorScheme.of(context).primary,
+                          ColorScheme.of(context).primary.withAlpha(100),
                         ],
                         stops: const [0.5, 1.0],
                       ),
                     ),
                     child: CustomPaint(
                       foregroundPainter: _PieLines(
-                        Theme.of(context).colorScheme.surface,
+                        ColorScheme.of(context).surface,
                         values,
                       ),
                     ),
@@ -163,7 +166,7 @@ class PieChart extends StatelessWidget {
                           const SizedBox(width: 5),
                           Text(
                             values[i].toString(),
-                            style: Theme.of(context).textTheme.labelMedium,
+                            style: TextTheme.of(context).labelMedium,
                           ),
                         ],
                       ),

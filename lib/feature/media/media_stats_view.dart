@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -9,7 +10,6 @@ import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
-import 'package:otraku/feature/filter/filter_discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/statistics/charts.dart';
@@ -100,8 +100,11 @@ class _MediaRankGrid extends StatelessWidget {
                   final filter = notifier.state.copyWith(
                     type: info.type,
                     search: '',
-                    mediaFilter: DiscoverMediaFilter(),
+                    mediaFilter: DiscoverMediaFilter(
+                      notifier.state.mediaFilter.sort,
+                    ),
                   );
+
                   filter.mediaFilter.season = ranks[i].season;
                   filter.mediaFilter.startYearFrom = ranks[i].year;
                   filter.mediaFilter.startYearTo = ranks[i].year;
@@ -130,7 +133,7 @@ class _MediaRankGrid extends StatelessWidget {
                         ranks[i].typeIsScore
                             ? Ionicons.star
                             : Icons.favorite_rounded,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        color: ColorScheme.of(context).onSurfaceVariant,
                       ),
                       const SizedBox(width: 5),
                       Expanded(

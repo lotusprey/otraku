@@ -21,7 +21,7 @@ class HtmlContent extends StatelessWidget {
     return HtmlWidget(
       text,
       renderMode: renderMode,
-      textStyle: Theme.of(context).textTheme.bodyMedium,
+      textStyle: TextTheme.of(context).bodyMedium,
       onTapUrl: (url) {
         for (final matcher in _routeMatchers.entries) {
           final match = matcher.key.firstMatch(url)?.group(1);
@@ -78,7 +78,7 @@ class HtmlContent extends StatelessWidget {
             width: double.infinity,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: ColorScheme.of(context).surfaceContainerHighest,
               borderRadius: Theming.borderRadiusSmall,
             ),
           );

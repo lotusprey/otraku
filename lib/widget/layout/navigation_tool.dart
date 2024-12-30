@@ -138,7 +138,7 @@ class BottomBar extends StatelessWidget {
           child: Material(
             elevation: 3,
             color: Theme.of(context).navigationBarTheme.backgroundColor,
-            surfaceTintColor: Theme.of(context).colorScheme.surfaceTint,
+            surfaceTintColor: ColorScheme.of(context).surfaceTint,
             shadowColor: Colors.transparent,
             child: Padding(
               padding: EdgeInsets.only(bottom: bottomPadding),
@@ -156,15 +156,13 @@ class BottomBarButton extends StatelessWidget {
     required this.text,
     required this.icon,
     required this.onTap,
-    this.warning = false,
+    this.foregroundColor,
   });
 
   final String text;
   final IconData icon;
   final void Function() onTap;
-
-  /// If the icon/text should be in the error colour.
-  final bool warning;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -176,8 +174,9 @@ class BottomBarButton extends StatelessWidget {
           icon: Icon(icon),
           onPressed: onTap,
           style: TextButton.styleFrom(
-            foregroundColor:
-                warning ? Theme.of(context).colorScheme.error : null,
+            foregroundColor: foregroundColor,
+            iconColor: foregroundColor,
+            iconSize: Theming.iconBig,
           ),
         ),
       ),

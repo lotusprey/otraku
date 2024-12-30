@@ -9,11 +9,14 @@ import 'package:otraku/feature/settings/settings_app_view.dart';
 import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/scroll_physics.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
+import 'package:otraku/widget/loaders.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView();
@@ -24,9 +27,9 @@ class SettingsView extends ConsumerStatefulWidget {
 
 class _SettingsViewState extends ConsumerState<SettingsView>
     with SingleTickerProviderStateMixin {
-  late Settings? _settings = ref.read(settingsProvider).valueOrNull?.copy();
   late final _tabCtrl = TabController(length: 4, vsync: this);
   final _scrollCtrl = ScrollController();
+  AsyncValue<Settings>? _settings;
 
   @override
   void initState() {
@@ -43,37 +46,81 @@ class _SettingsViewState extends ConsumerState<SettingsView>
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(
-      settingsProvider,
-      (_, s) => s.whenOrNull(
-        data: (data) => _settings = data.copy(),
-        error: (error, _) => SnackBarExtension.show(context, error.toString()),
-      ),
-    );
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId == null) {
+      _settings = null;
+    } else {
+      _settings ??= ref.watch(settingsProvider).whenData((data) => data.copy());
+
+      ref.listen(
+        settingsProvider,
+        (_, s) => s.whenOrNull(
+          loading: () => _settings = const AsyncValue.loading(),
+          data: (data) => _settings = AsyncValue.data(data.copy()),
+          error: (error, _) => SnackBarExtension.show(
+            context,
+            error.toString(),
+          ),
+        ),
+      );
+    }
 
     final tabs = [
       ConstrainedView(
         padding: EdgeInsets.zero,
         child: SettingsAppSubview(_scrollCtrl),
       ),
-      if (_settings != null) ...[
-        ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsContentSubview(_scrollCtrl, _settings!),
-        ),
-        ConstrainedView(
-          padding: EdgeInsets.zero,
-          child: SettingsNotificationsSubview(_scrollCtrl, _settings!),
-        ),
-      ] else ...[
-        const SizedBox(),
-        const SizedBox(),
-      ],
+      switch (_settings) {
+        null => const Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Text('Log in to view content settings'),
+            ),
+          ),
+        AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value),
+        AsyncError(:final error) => Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Text('Failed to load: ${error.toString()}'),
+            ),
+          ),
+        _ => const Center(child: Loader()),
+      },
+      switch (_settings) {
+        null => const Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Text('Log in to view notification settings'),
+            ),
+          ),
+        AsyncData(:final value) => SettingsNotificationsSubview(
+            _scrollCtrl,
+            value,
+          ),
+        AsyncError(:final error) => Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Text('Failed to load: ${error.toString()}'),
+            ),
+          ),
+        _ => const Center(child: Loader()),
+      },
       ConstrainedView(
         padding: EdgeInsets.zero,
         child: SettingsAboutSubview(_scrollCtrl),
       ),
     ];
+
+    final floatingAction = switch (_settings) {
+      AsyncData(:final value) => HidingFloatingActionButton(
+          key: const Key('save'),
+          scrollCtrl: _scrollCtrl,
+          child: _SaveButton(
+            () => ref.read(settingsProvider.notifier).updateSettings(value),
+          ),
+        ),
+      _ => null,
+    };
 
     return AdaptiveScaffold(
       (context, compact) => ScaffoldConfig(
@@ -85,18 +132,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
             _ => const TopBar(key: Key('3'), title: 'About'),
           },
         ),
-        floatingAction: _tabCtrl.index == 1 || _tabCtrl.index == 2
-            ? HidingFloatingActionButton(
-                key: const Key('save'),
-                scrollCtrl: _scrollCtrl,
-                child: _SaveButton(() {
-                  if (_settings == null) return Future.value();
-                  return ref
-                      .read(settingsProvider.notifier)
-                      .updateSettings(_settings!);
-                }),
-              )
-            : null,
+        floatingAction: floatingAction,
         navigationConfig: NavigationConfig(
           selected: _tabCtrl.index,
           onSame: (_) => _scrollCtrl.scrollToTop(),

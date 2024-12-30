@@ -1,0 +1,6 @@
+- In the filter sheets for collections and discover, you can set a custom default configuration
+- Basic AniList interactions are now supported without logging in
+- Easier account switching from the profile tab
+- You can reorder favorites and easily unfavorite them
+- Timestamps are now relative, but you can tap them for an absolute date
+- When incrementing the episode count from 0 on an entry in some lists, a pop up will offer to also change the list status

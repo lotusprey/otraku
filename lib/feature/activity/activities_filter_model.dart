@@ -1,7 +1,11 @@
+import 'package:otraku/extension/enum_extension.dart';
+
 sealed class ActivitiesFilter {
   const ActivitiesFilter(this.typeIn);
 
   final List<ActivityType> typeIn;
+
+  ActivitiesFilter copy();
 
   ActivitiesFilter copyWith({List<ActivityType>? typeIn});
 }
@@ -10,6 +14,9 @@ class UserActivitiesFilter extends ActivitiesFilter {
   const UserActivitiesFilter(super.typeIn, this.userId);
 
   final int userId;
+
+  @override
+  ActivitiesFilter copy() => UserActivitiesFilter([...typeIn], userId);
 
   @override
   ActivitiesFilter copyWith({List<ActivityType>? typeIn}) =>
@@ -23,8 +30,40 @@ class HomeActivitiesFilter extends ActivitiesFilter {
     this.withViewerActivities,
   );
 
+  factory HomeActivitiesFilter.empty() => const HomeActivitiesFilter(
+        [
+          ActivityType.animeStatus,
+          ActivityType.mangaStatus,
+          ActivityType.status
+        ],
+        false,
+        false,
+      );
+
+  factory HomeActivitiesFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
+    final List<int> typeIn = map['activityTypeIn'] ??
+        [
+          ActivityType.status.index,
+          ActivityType.animeStatus.index,
+          ActivityType.mangaStatus.index,
+        ];
+
+    return HomeActivitiesFilter(
+      typeIn.map((index) => ActivityType.values.getOrFirst(index)).toList(),
+      map['onFollowing'] ?? false,
+      map['withViewerActivities'] ?? false,
+    );
+  }
+
   final bool onFollowing;
   final bool withViewerActivities;
+
+  @override
+  ActivitiesFilter copy() => HomeActivitiesFilter(
+        [...typeIn],
+        onFollowing,
+        withViewerActivities,
+      );
 
   @override
   ActivitiesFilter copyWith({
@@ -37,15 +76,22 @@ class HomeActivitiesFilter extends ActivitiesFilter {
         onFollowing ?? this.onFollowing,
         withViewerActivities ?? this.withViewerActivities,
       );
+
+  Map<String, dynamic> toPersistenceMap() => {
+        'activityTypeIn': typeIn.map((a) => a.index).toList(),
+        'onFollowing': onFollowing,
+        'withViewerActivities': withViewerActivities,
+      };
 }
 
 enum ActivityType {
-  TEXT('Statuses'),
-  ANIME_LIST('Anime Progress'),
-  MANGA_LIST('Manga Progress'),
-  MESSAGE('Messages');
+  status('Statuses', 'TEXT'),
+  animeStatus('Anime Progress', 'ANIME_LIST'),
+  mangaStatus('Manga Progress', 'MANGA_LIST'),
+  message('Messages', 'MESSAGE');
 
-  const ActivityType(this.text);
+  const ActivityType(this.label, this.value);
 
-  final String text;
+  final String label;
+  final String value;
 }

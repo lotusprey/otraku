@@ -8,11 +8,10 @@ import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
-import 'package:otraku/feature/filter/filter_collection_view.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/collection/collection_filter_view.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/debounce.dart';
-import 'package:otraku/widget/field/search_field.dart';
+import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
 
@@ -33,9 +32,8 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
           icon: const Icon(Ionicons.funnel_outline),
           onPressed: () => showSheet(
             context,
-            FilterCollectionView(
-              ofAnime: tag.ofAnime,
-              ofViewer: tag.userId == Persistence().id,
+            CollectionFilterView(
+              tag: tag,
               filter: filter.mediaFilter,
               onChanged: (mediaFilter) => ref
                   .read(collectionFilterProvider(tag).notifier)
@@ -52,7 +50,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                   debounce: Debounce(),
                   focusNode: focusNode,
                   hint: ref.watch(collectionProvider(tag).select(
-                    (s) => s.valueOrNull?.listName ?? '',
+                    (s) => s.valueOrNull?.list.name ?? '',
                   )),
                   value: filter.search,
                   onChanged: (search) => ref
@@ -67,13 +65,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                   final entries = ref.read(collectionEntriesProvider(tag));
 
                   if (entries.isEmpty) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const ConfirmationDialog(
-                        title: 'No entries',
-                      ),
-                    );
-
+                    ConfirmationDialog.show(context, title: 'No entries');
                     return;
                   }
 
@@ -85,7 +77,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 Badge(
                   smallSize: 10,
                   alignment: Alignment.topLeft,
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  backgroundColor: ColorScheme.of(context).primary,
                   child: filterIcon,
                 )
               else

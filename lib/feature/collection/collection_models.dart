@@ -1,40 +1,48 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
-import 'package:otraku/feature/filter/filter_collection_model.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
+
+enum CollectionItemView { detailed, simple }
 
 sealed class Collection {
   const Collection({required this.scoreFormat});
 
   final ScoreFormat scoreFormat;
 
-  List<Entry> get entries;
-  String get listName;
+  EntryList get list;
 
   void sort(EntrySort s);
 }
 
 class PreviewCollection extends Collection {
   const PreviewCollection._({
-    required this.entries,
+    required this.list,
     required super.scoreFormat,
   });
 
-  factory PreviewCollection(Map<String, dynamic> map) {
+  factory PreviewCollection(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) {
     final entries = <Entry>[];
     for (final l in map['lists']) {
       if (l['isCustomList']) continue;
 
       for (final e in l['entries']) {
-        entries.add(Entry(e));
+        entries.add(Entry(e, imageQuality));
       }
     }
 
     return PreviewCollection._(
-      entries: entries,
+      list: EntryList._(
+        name: 'Preview',
+        entries: entries,
+        status: null,
+        splitCompletedListFormat: null,
+      ),
       scoreFormat: ScoreFormat.from(
         map['user']['mediaListOptions']['scoreFormat'],
       ),
@@ -42,14 +50,11 @@ class PreviewCollection extends Collection {
   }
 
   @override
-  final List<Entry> entries;
-
-  @override
-  String get listName => 'Preview';
+  final EntryList list;
 
   @override
   void sort(EntrySort s) {
-    entries.sort(entryComparator(s));
+    list.entries.sort(_entryComparator(s));
   }
 }
 
@@ -60,7 +65,12 @@ class FullCollection extends Collection {
     required super.scoreFormat,
   });
 
-  factory FullCollection(Map<String, dynamic> map, bool ofAnime, int index) {
+  factory FullCollection(
+    Map<String, dynamic> map,
+    bool ofAnime,
+    int index,
+    ImageQuality imageQuality,
+  ) {
     final maps = map['lists'] as List<dynamic>;
     final lists = <EntryList>[];
     final metaData =
@@ -73,11 +83,11 @@ class FullCollection extends Collection {
 
       final l = maps.removeAt(pos);
 
-      lists.add(EntryList(l, splitCompleted));
+      lists.add(EntryList(l, splitCompleted, imageQuality));
     }
 
     for (final l in maps) {
-      lists.add(EntryList(l, splitCompleted));
+      lists.add(EntryList(l, splitCompleted, imageQuality));
     }
 
     if (index >= lists.length) index = 0;
@@ -95,14 +105,18 @@ class FullCollection extends Collection {
   final int index;
 
   @override
-  List<Entry> get entries => lists.isEmpty ? const [] : lists[index].entries;
-
-  @override
-  String get listName => lists.isEmpty ? '' : lists[index].name;
+  EntryList get list => lists.isNotEmpty
+      ? lists[index]
+      : const EntryList._(
+          name: '',
+          entries: [],
+          status: null,
+          splitCompletedListFormat: null,
+        );
 
   @override
   void sort(EntrySort s) {
-    final comparator = entryComparator(s);
+    final comparator = _entryComparator(s);
     for (final l in lists) {
       l.entries.sort(comparator);
     }
@@ -118,63 +132,78 @@ class FullCollection extends Collection {
 }
 
 class EntryList {
-  EntryList._({
+  const EntryList._({
     required this.name,
     required this.entries,
     required this.status,
     required this.splitCompletedListFormat,
   });
 
-  factory EntryList(Map<String, dynamic> map, bool splitCompleted) {
-    final status =
-        !map['isCustomList'] ? EntryStatus.from(map['status']) : null;
+  factory EntryList(
+    Map<String, dynamic> map,
+    bool splitCompleted,
+    ImageQuality imageQuality,
+  ) {
+    final status = !map['isCustomList'] ? ListStatus.from(map['status']) : null;
 
     return EntryList._(
       name: map['name'],
       status: status,
-      splitCompletedListFormat:
-          splitCompleted && status == EntryStatus.completed
-              ? MediaFormat.from(map['entries'][0]['media']['format'])
-              : null,
-      entries: (map['entries'] as List<dynamic>).map((e) => Entry(e)).toList(),
+      splitCompletedListFormat: splitCompleted && status == ListStatus.completed
+          ? MediaFormat.from(map['entries'][0]['media']['format'])
+          : null,
+      entries: (map['entries'] as List<dynamic>)
+          .map((e) => Entry(e, imageQuality))
+          .toList(),
     );
   }
 
   final String name;
   final List<Entry> entries;
 
-  /// The [EntryStatus] of the [entries] in this list.
+  /// The [ListStatus] of the [entries] in this list.
   /// If `null`, this is a custom list.
-  final EntryStatus? status;
+  final ListStatus? status;
 
   /// If the user's "completed" list is split by format and this is one of the
   /// resulting lists, [splitCompletedListFormat] is the corresponding format.
   final MediaFormat? splitCompletedListFormat;
 
+  bool setByMediaId(Entry entry) {
+    for (int i = 0; i < entries.length; i++) {
+      if (entries[i].mediaId == entry.mediaId) {
+        entries[i] = entry;
+        return true;
+      }
+    }
+    return false;
+  }
+
   void removeByMediaId(int id) {
     for (int i = 0; i < entries.length; i++) {
-      if (id == entries[i].mediaId) {
+      if (entries[i].mediaId == id) {
         entries.removeAt(i);
         return;
       }
     }
   }
 
-  void insertSorted(Entry item, EntrySort s) {
-    final compare = entryComparator(s);
+  void insertSorted(Entry entry, EntrySort s) {
+    final compare = _entryComparator(s);
     for (int i = 0; i < entries.length; i++) {
-      if (compare(item, entries[i]) <= 0) {
-        entries.insert(i, item);
+      if (compare(entry, entries[i]) <= 0) {
+        entries.insert(i, entry);
         return;
       }
     }
-    entries.add(item);
+    entries.add(entry);
   }
 
-  void sort(EntrySort s) => entries.sort(entryComparator(s));
+  void sort(EntrySort s) => entries.sort(_entryComparator(s));
 }
 
-int Function(Entry, Entry) entryComparator(EntrySort s) => switch (s) {
+/// Returns a [Comparator] for [Entry], based on an [EntrySort].
+int Function(Entry, Entry) _entryComparator(EntrySort s) => switch (s) {
       EntrySort.title => (a, b) =>
           a.titles[0].toUpperCase().compareTo(b.titles[0].toUpperCase()),
       EntrySort.titleDesc => (a, b) => b.titles[0].compareTo(a.titles[0]),
@@ -396,8 +425,8 @@ class Entry {
     required this.titles,
     required this.imageUrl,
     required this.format,
-    required this.status,
-    required this.entryStatus,
+    required this.releaseStatus,
+    required this.listStatus,
     required this.nextEpisode,
     required this.airingAt,
     required this.createdAt,
@@ -405,7 +434,7 @@ class Entry {
     required this.country,
     required this.isPrivate,
     required this.genres,
-    required this.tags,
+    required this.tagIds,
     required this.progressMax,
     required this.progress,
     required this.repeat,
@@ -417,7 +446,7 @@ class Entry {
     required this.watchEnd,
   });
 
-  factory Entry(Map<String, dynamic> map) {
+  factory Entry(Map<String, dynamic> map, ImageQuality imageQuality) {
     final titles = <String>[map['media']['title']['userPreferred']];
     if (map['media']['title']['english'] != null) {
       titles.add(map['media']['title']['english']);
@@ -429,18 +458,18 @@ class Entry {
       titles.add(map['media']['title']['native']);
     }
 
-    final tags = <int>[];
+    final tagIds = <int>[];
     for (final t in map['media']['tags']) {
-      tags.add(t['id']);
+      tagIds.add(t['id']);
     }
 
     return Entry._(
       mediaId: map['media']['id'],
       titles: titles,
-      imageUrl: map['media']['coverImage'][Persistence().imageQuality.value],
+      imageUrl: map['media']['coverImage'][imageQuality.value],
       format: MediaFormat.from(map['media']['format']),
-      status: ReleaseStatus.from(map['media']['status']),
-      entryStatus: EntryStatus.from(map['status']),
+      releaseStatus: ReleaseStatus.from(map['media']['status']),
+      listStatus: ListStatus.from(map['status']),
       nextEpisode: map['media']['nextAiringEpisode']?['episode'],
       airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(
         map['media']['nextAiringEpisode']?['airingAt'],
@@ -450,7 +479,7 @@ class Entry {
       country: map['media']['countryOfOrigin'],
       isPrivate: map['private'] ?? false,
       genres: List.from(map['media']['genres'] ?? [], growable: false),
-      tags: tags,
+      tagIds: tagIds,
       progressMax: map['media']['episodes'] ?? map['media']['chapters'],
       progress: map['progress'] ?? 0,
       repeat: map['repeat'] ?? 0,
@@ -467,8 +496,8 @@ class Entry {
   final List<String> titles;
   final String imageUrl;
   final MediaFormat? format;
-  final ReleaseStatus? status;
-  final EntryStatus? entryStatus;
+  final ReleaseStatus? releaseStatus;
+  final ListStatus? listStatus;
   final int? nextEpisode;
   final DateTime? airingAt;
   final int? createdAt;
@@ -476,7 +505,7 @@ class Entry {
   final String? country;
   final bool isPrivate;
   final List<String> genres;
-  final List<int> tags;
+  final List<int> tagIds;
   final int? progressMax;
   int progress;
   int repeat;
@@ -488,7 +517,7 @@ class Entry {
   DateTime? watchEnd;
 }
 
-enum EntryStatus {
+enum ListStatus {
   current('CURRENT'),
   planning('PLANNING'),
   completed('COMPLETED'),
@@ -496,7 +525,7 @@ enum EntryStatus {
   paused('PAUSED'),
   repeating('REPEATING');
 
-  const EntryStatus(this.value);
+  const ListStatus(this.value);
 
   final String value;
 
@@ -517,26 +546,6 @@ enum EntryStatus {
         dropped => 'Dropped',
       };
 
-  static EntryStatus? from(String? value) =>
-      EntryStatus.values.firstWhereOrNull((v) => v.value == value);
-}
-
-class CollectionFilter {
-  const CollectionFilter._({required this.search, required this.mediaFilter});
-
-  CollectionFilter(bool ofAnime)
-      : search = '',
-        mediaFilter = CollectionMediaFilter(ofAnime);
-
-  final String search;
-  final CollectionMediaFilter mediaFilter;
-
-  CollectionFilter copyWith({
-    String? search,
-    CollectionMediaFilter? mediaFilter,
-  }) =>
-      CollectionFilter._(
-        search: search ?? this.search,
-        mediaFilter: mediaFilter ?? this.mediaFilter,
-      );
+  static ListStatus? from(String? value) =>
+      ListStatus.values.firstWhereOrNull((v) => v.value == value);
 }

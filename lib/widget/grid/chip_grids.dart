@@ -35,7 +35,7 @@ class ChipGridTemplate extends StatelessWidget {
                   icon: const Icon(Ionicons.close_outline),
                   tooltip: 'Clear',
                   onPressed: onClear!,
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: ColorScheme.of(context).onSurface,
                   padding: const EdgeInsets.symmetric(
                     horizontal: Theming.offset,
                   ),
@@ -47,7 +47,7 @@ class ChipGridTemplate extends StatelessWidget {
                 icon: const Icon(Ionicons.add_circle_outline),
                 tooltip: 'Edit',
                 onPressed: onEdit,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: ColorScheme.of(context).onSurface,
                 padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
               ),
             ),
@@ -60,7 +60,7 @@ class ChipGridTemplate extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'No $placeholder',
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextTheme.of(context).labelMedium,
                   ),
                 ),
               ),
@@ -96,7 +96,7 @@ class ChipNamingGridState extends State<ChipNamingGrid> {
         key: Key(widget.names[i]),
         label: Text(widget.names[i]),
         labelStyle: TextStyle(
-          color: Theme.of(context).colorScheme.onSecondaryContainer,
+          color: ColorScheme.of(context).onSecondaryContainer,
         ),
         onDeleted: () {
           setState(() => widget.names.removeAt(i));

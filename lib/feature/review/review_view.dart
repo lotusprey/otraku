@@ -33,7 +33,7 @@ class ReviewView extends StatelessWidget {
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     data.summary,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextTheme.of(context).labelMedium,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -50,13 +50,13 @@ class ReviewView extends StatelessWidget {
                     margin: Theming.paddingAll,
                     padding: Theming.paddingAll,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary,
+                      color: ColorScheme.of(context).primary,
                       borderRadius: Theming.borderRadiusBig,
                     ),
                     child: Text(
                       '${data.score}/100',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
+                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                            color: ColorScheme.of(context).onPrimary,
                             fontSize: Theming.fontBig,
                             fontWeight: FontWeight.w500,
                           ),
@@ -74,7 +74,7 @@ class ReviewView extends StatelessWidget {
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     data.createdAt,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextTheme.of(context).labelMedium,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -116,7 +116,7 @@ class _RateButtonsState extends State<_RateButtons> {
                       : Icons.thumb_up_outlined,
                 ),
                 color: review.viewerRating == true
-                    ? Theme.of(context).colorScheme.primary
+                    ? ColorScheme.of(context).primary
                     : null,
                 onPressed: () => _rate(
                   review.viewerRating != true ? true : null,
@@ -129,7 +129,7 @@ class _RateButtonsState extends State<_RateButtons> {
                       : Icons.thumb_down_outlined,
                 ),
                 color: review.viewerRating == false
-                    ? Theme.of(context).colorScheme.error
+                    ? ColorScheme.of(context).error
                     : null,
                 onPressed: () => _rate(
                   review.viewerRating != false ? false : null,
@@ -139,7 +139,7 @@ class _RateButtonsState extends State<_RateButtons> {
           ),
           Text(
             '${review.rating}/${review.totalRating} users liked this review',
-            style: Theme.of(context).textTheme.labelMedium,
+            style: TextTheme.of(context).labelMedium,
             textAlign: TextAlign.center,
           ),
         ],

@@ -6,7 +6,7 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
-import 'package:otraku/util/persistence.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -14,16 +14,19 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
+import 'package:otraku/widget/timestamp.dart';
 
 class ReplyCard extends StatelessWidget {
   const ReplyCard({
     required this.activityId,
     required this.reply,
+    required this.analogueClock,
     required this.toggleLike,
   });
 
   final int activityId;
   final ActivityReply reply;
+  final bool analogueClock;
   final Future<Object?> Function() toggleLike;
 
   @override
@@ -70,15 +73,12 @@ class ReplyCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Text(
-                      reply.createdAt,
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
+                    Timestamp(reply.createdAt, analogueClock),
                     const Spacer(),
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
                         height: 40,
-                        child: reply.authorId == Persistence().id
+                        child: reply.authorId == ref.watch(viewerIdProvider)
                             ? Tooltip(
                                 message: 'More',
                                 child: InkResponse(
@@ -137,29 +137,26 @@ class ReplyCard extends StatelessWidget {
           ListTile(
             title: const Text('Delete'),
             leading: const Icon(Ionicons.trash_outline),
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) => ConfirmationDialog(
-                title: 'Delete?',
-                mainAction: 'Yes',
-                secondaryAction: 'No',
-                onConfirm: () {
-                  ref
-                      .read(activityProvider(activityId).notifier)
-                      .removeReply(reply.id)
-                      .then((err) {
-                    if (err == null) {
-                      if (context.mounted) Navigator.pop(context);
-                      return;
-                    }
+            onTap: () => ConfirmationDialog.show(
+              context,
+              title: 'Delete?',
+              primaryAction: 'Yes',
+              secondaryAction: 'No',
+              onConfirm: () async {
+                final err = await ref
+                    .read(activityProvider(activityId).notifier)
+                    .removeReply(reply.id);
 
-                    if (context.mounted) {
-                      SnackBarExtension.show(context, err.toString());
-                      Navigator.pop(context);
-                    }
-                  });
-                },
-              ),
+                if (err == null) {
+                  if (context.mounted) Navigator.pop(context);
+                  return;
+                }
+
+                if (context.mounted) {
+                  SnackBarExtension.show(context, err.toString());
+                  Navigator.pop(context);
+                }
+              },
             ),
           ),
         ],
@@ -228,11 +225,11 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               Text(
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
-                    ? Theme.of(context).textTheme.labelSmall
+                    ? TextTheme.of(context).labelSmall
                     : Theme.of(context)
                         .textTheme
                         .labelSmall!
-                        .copyWith(color: Theme.of(context).colorScheme.primary),
+                        .copyWith(color: ColorScheme.of(context).primary),
               ),
               const SizedBox(width: 5),
               Icon(
@@ -241,7 +238,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                     : Icons.favorite_rounded,
                 size: Theming.iconSmall,
                 color: widget.reply.isLiked
-                    ? Theme.of(context).colorScheme.primary
+                    ? ColorScheme.of(context).primary
                     : null,
               ),
             ],

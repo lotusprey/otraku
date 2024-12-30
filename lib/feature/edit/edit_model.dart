@@ -9,7 +9,7 @@ class Edit {
     required this.mediaId,
     this.type,
     this.entryId,
-    this.status,
+    this.listStatus,
     this.progress = 0,
     this.progressMax,
     this.progressVolumes = 0,
@@ -71,7 +71,7 @@ class Edit {
       type: map['type'],
       mediaId: map['id'],
       entryId: map['mediaListEntry']['id'],
-      status: EntryStatus.from(map['mediaListEntry']['status']),
+      listStatus: ListStatus.from(map['mediaListEntry']['status']),
       progress: map['mediaListEntry']['progress'] ?? 0,
       progressMax: map['episodes'] ?? map['chapters'],
       progressVolumes: map['mediaListEntry']['progressVolumes'] ?? 0,
@@ -94,7 +94,7 @@ class Edit {
 
   final int mediaId;
   final String? type;
-  final EntryStatus? status;
+  final ListStatus? listStatus;
   final int progress;
   final int? progressMax;
   final int progressVolumes;
@@ -119,7 +119,7 @@ class Edit {
         progressVolumesMax: progressVolumesMax,
       );
 
-  /// A deep copy. If [setComplete] is `true`, [status], [progress],
+  /// A deep copy. If [setComplete] is `true`, [listStatus], [progress],
   /// [progressVolumes] and [completedAd] will be modified appropriately.
   Edit copy([setComplete = false]) {
     DateTime? startedAtCopy;
@@ -145,7 +145,7 @@ class Edit {
       mediaId: mediaId,
       type: type,
       entryId: entryId,
-      status: setComplete ? EntryStatus.completed : status,
+      listStatus: setComplete ? ListStatus.completed : listStatus,
       progress: setComplete && progressMax != null ? progressMax! : progress,
       progressMax: progressMax,
       progressVolumes: setComplete && progressVolumesMax != null
@@ -167,7 +167,7 @@ class Edit {
   /// [startedAt] and [completedAt] parameters are callbacks,
   /// as `null` is a valid value for the actual fields.
   Edit copyWith({
-    EntryStatus? status,
+    ListStatus? listStatus,
     int? progress,
     int? progressVolumes,
     double? score,
@@ -184,7 +184,7 @@ class Edit {
         type: type,
         mediaId: mediaId,
         entryId: entryId,
-        status: status ?? this.status,
+        listStatus: listStatus ?? this.listStatus,
         progress: progress ?? this.progress,
         progressMax: progressMax,
         progressVolumes: progressVolumes ?? this.progressVolumes,
@@ -201,9 +201,9 @@ class Edit {
         customLists: customLists ?? this.customLists,
       );
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toGraphQlVariables() => {
         'mediaId': mediaId,
-        'status': (status ?? EntryStatus.current).value,
+        'status': (listStatus ?? ListStatus.current).value,
         'progress': progress,
         'progressVolumes': progressVolumes,
         'score': score,

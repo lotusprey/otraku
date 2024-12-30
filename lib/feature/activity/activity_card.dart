@@ -7,24 +7,26 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
-import 'package:otraku/util/persistence.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
+import 'package:otraku/widget/timestamp.dart';
 
 class ActivityCard extends StatelessWidget {
   const ActivityCard({
     required this.activity,
     required this.footer,
     required this.withHeader,
+    required this.analogueClock,
   });
 
   final Activity activity;
   final ActivityFooter footer;
   final bool withHeader;
+  final bool analogueClock;
 
   @override
   Widget build(BuildContext context) {
@@ -45,13 +47,7 @@ class ActivityCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
-                  child: Text(
-                    activity.createdAt,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-                ),
+                Flexible(child: Timestamp(activity.createdAt, analogueClock)),
                 footer,
               ],
             ),
@@ -174,11 +170,11 @@ class _ActivityMediaBox extends StatelessWidget {
                           children: [
                             TextSpan(
                               text: item.text,
-                              style: Theme.of(context).textTheme.labelMedium,
+                              style: TextTheme.of(context).labelMedium,
                             ),
                             TextSpan(
                               text: item.title,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: TextTheme.of(context).bodyMedium,
                             ),
                           ],
                         ),
@@ -188,7 +184,7 @@ class _ActivityMediaBox extends StatelessWidget {
                       const SizedBox(height: 5),
                       Text(
                         item.format!,
-                        style: Theme.of(context).textTheme.labelMedium,
+                        style: TextTheme.of(context).labelMedium,
                       ),
                     ],
                   ],
@@ -204,21 +200,23 @@ class _ActivityMediaBox extends StatelessWidget {
 
 class ActivityFooter extends StatefulWidget {
   const ActivityFooter({
+    required this.viewerId,
     required this.activity,
     required this.remove,
     required this.togglePin,
     required this.toggleLike,
     required this.toggleSubscription,
-    required this.openReplies,
+    required this.reply,
     required this.onEdited,
   });
 
+  final int? viewerId;
   final Activity activity;
   final Future<Object?> Function() remove;
   final Future<Object?> Function() toggleLike;
   final Future<Object?> Function() toggleSubscription;
-  final Future<Object?> Function()? togglePin;
-  final Future<Object?> Function()? openReplies;
+  final Future<Object?> Function() togglePin;
+  final Future<Object?> Function()? reply;
   final void Function(Map<String, dynamic>)? onEdited;
 
   @override
@@ -253,12 +251,12 @@ class _ActivityFooterState extends State<ActivityFooter> {
             message: 'Replies',
             child: InkResponse(
               radius: Theming.radiusSmall.x,
-              onTap: widget.openReplies,
+              onTap: widget.reply,
               child: Row(
                 children: [
                   Text(
                     activity.replyCount.toString(),
-                    style: Theme.of(context).textTheme.labelSmall,
+                    style: TextTheme.of(context).labelSmall,
                   ),
                   const SizedBox(width: 5),
                   const Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
@@ -280,9 +278,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                   Text(
                     activity.likeCount.toString(),
                     style: !activity.isLiked
-                        ? Theme.of(context).textTheme.labelSmall
-                        : Theme.of(context).textTheme.labelSmall!.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
+                        ? TextTheme.of(context).labelSmall
+                        : TextTheme.of(context).labelSmall!.copyWith(
+                              color: ColorScheme.of(context).primary,
                             ),
                   ),
                   const SizedBox(width: 5),
@@ -292,7 +290,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                         : Icons.favorite_rounded,
                     size: Theming.iconSmall,
                     color: activity.isLiked
-                        ? Theme.of(context).colorScheme.primary
+                        ? ColorScheme.of(context).primary
                         : null,
                   ),
                 ],
@@ -315,7 +313,18 @@ class _ActivityFooterState extends State<ActivityFooter> {
           final ownershipButtons = <Widget>[];
 
           if (activity.isOwned) {
-            if (activity.authorId == Persistence().id) {
+            if (activity is! MessageActivity) {
+              ownershipButtons.add(ListTile(
+                title:
+                    activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                leading: activity.isPinned
+                    ? const Icon(Icons.push_pin)
+                    : const Icon(Icons.push_pin_outlined),
+                onTap: _togglePin,
+              ));
+            }
+
+            if (activity.authorId == widget.viewerId) {
               switch (activity) {
                 case StatusActivity _:
                   ownershipButtons.add(ListTile(
@@ -358,14 +367,12 @@ class _ActivityFooterState extends State<ActivityFooter> {
             ownershipButtons.add(ListTile(
               title: const Text('Delete'),
               leading: const Icon(Ionicons.trash_outline),
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) => ConfirmationDialog(
-                  title: 'Delete?',
-                  mainAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: _remove,
-                ),
+              onTap: () => ConfirmationDialog.show(
+                context,
+                title: 'Delete?',
+                primaryAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: _remove,
               ),
             ));
           }
@@ -375,18 +382,6 @@ class _ActivityFooterState extends State<ActivityFooter> {
             activity.siteUrl,
             [
               ...ownershipButtons,
-              if (widget.togglePin != null &&
-                  activity.isOwned &&
-                  activity is! MessageActivity)
-                ListTile(
-                  title: activity.isPinned
-                      ? const Text('Unpin')
-                      : const Text('Pin'),
-                  leading: activity.isPinned
-                      ? const Icon(Icons.push_pin)
-                      : const Icon(Icons.push_pin_outlined),
-                  onTap: _togglePin,
-                ),
               ListTile(
                 title: !activity.isSubscribed
                     ? const Text('Subscribe')
@@ -445,7 +440,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     final activity = widget.activity;
     activity.isPinned = !activity.isPinned;
 
-    widget.togglePin!().then((err) {
+    widget.togglePin().then((err) {
       if (err == null) {
         if (mounted) Navigator.pop(context);
         return;

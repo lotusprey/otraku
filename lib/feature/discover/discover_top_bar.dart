@@ -5,12 +5,13 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
-import 'package:otraku/feature/filter/filter_discover_view.dart';
+import 'package:otraku/feature/discover/discover_filter_view.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/debounce.dart';
-import 'package:otraku/widget/field/search_field.dart';
+import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class DiscoverTopBarTrailingContent extends StatelessWidget {
@@ -23,6 +24,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final filter = ref.watch(discoverFilterProvider);
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
 
         return Expanded(
           child: Row(
@@ -45,7 +47,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                     'Reviews',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: TextTheme.of(context).titleLarge,
                   ),
                 ),
               if (filter.type == DiscoverType.anime)
@@ -60,11 +62,16 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   Badge(
                     smallSize: 10,
                     alignment: Alignment.topLeft,
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    child: _filterIcon(context, ref, filter),
+                    backgroundColor: ColorScheme.of(context).primary,
+                    child: _filterIcon(
+                      context,
+                      ref,
+                      filter,
+                      options.leftHanded,
+                    ),
                   )
                 else
-                  _filterIcon(context, ref, filter)
+                  _filterIcon(context, ref, filter, options.leftHanded)
               else if (filter.type == DiscoverType.character ||
                   filter.type == DiscoverType.staff)
                 _BirthdayFilter(ref)
@@ -75,9 +82,14 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   onPressed: () => showReviewsFilterSheet(
                     context: context,
                     filter: filter.reviewsFilter,
-                    onDone: (filter) => ref
-                        .read(discoverFilterProvider.notifier)
-                        .update((s) => s.copyWith(reviewsFilter: filter)),
+                    onDone: (filter) {
+                      final discoverFilter = ref.read(discoverFilterProvider);
+                      if (filter != discoverFilter.reviewsFilter) {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(reviewsFilter: filter));
+                      }
+                    },
                   ),
                 )
               else
@@ -93,15 +105,17 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     BuildContext context,
     WidgetRef ref,
     DiscoverFilter filter,
+    bool leftHanded,
   ) {
     return IconButton(
       tooltip: 'Filter',
       icon: const Icon(Ionicons.funnel_outline),
       onPressed: () => showSheet(
         context,
-        FilterDiscoverView(
+        DiscoverFilterView(
           ofAnime: filter.type == DiscoverType.anime,
           filter: filter.mediaFilter,
+          leftHanded: leftHanded,
           onChanged: (mediaFilter) => ref
               .read(discoverFilterProvider.notifier)
               .update((s) => s.copyWith(mediaFilter: mediaFilter)),
@@ -133,7 +147,7 @@ class _BirthdayFilter extends StatelessWidget {
         ? Badge(
             smallSize: 10,
             alignment: Alignment.topLeft,
-            backgroundColor: Theme.of(context).colorScheme.primary,
+            backgroundColor: ColorScheme.of(context).primary,
             child: icon,
           )
         : icon;

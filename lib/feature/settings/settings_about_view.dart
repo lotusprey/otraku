@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
-import 'package:otraku/feature/viewer/repository_provider.dart';
-import 'package:otraku/util/persistence.dart';
-import 'package:otraku/util/routes.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -20,8 +18,12 @@ class SettingsAboutSubview extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final padding = MediaQuery.paddingOf(context);
-        final lastNotificationFetch =
-            Persistence().lastBackgroundWork?.millisecondsSinceEpoch;
+        final persistence = ref.watch(persistenceProvider);
+        final lastBackgroundJob = persistence.appMeta.lastBackgroundJob;
+        final lastJobTimestamp =
+            lastBackgroundJob?.formattedDateTimeFromSeconds(
+          persistence.options.analogueClock,
+        );
 
         return Align(
           alignment: Alignment.center,
@@ -34,16 +36,16 @@ class SettingsAboutSubview extends StatelessWidget {
             children: [
               Image.asset(
                 'assets/icons/about.png',
-                color: Theme.of(context).colorScheme.primary,
+                color: ColorScheme.of(context).primary,
                 width: 180,
                 height: 180,
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: Text(
-                  'Otraku - v.$versionCode',
+                  'Otraku - v.$appVersion',
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: TextTheme.of(context).titleMedium,
                 ),
               ),
               const Text(
@@ -77,25 +79,19 @@ class SettingsAboutSubview extends StatelessWidget {
                   'https://sites.google.com/view/otraku/privacy-policy',
                 ),
               ),
-              ListTile(
-                leading: const Icon(Ionicons.log_out_outline),
-                title: const Text('Accounts'),
-                onTap: () {
-                  ref.read(repositoryProvider.notifier).unselectAccount();
-                  context.go(Routes.auth);
-                },
-              ),
               const ListTile(
                 leading: Icon(Ionicons.trash_bin_outline),
                 title: Text('Clear Image Cache'),
                 onTap: clearImageCache,
               ),
-              const ListTile(
+              ListTile(
                 leading: Icon(Ionicons.refresh_outline),
                 title: Text('Reset Options'),
-                onTap: Persistence.resetOptions,
+                onTap: () => ref
+                    .read(persistenceProvider.notifier)
+                    .setOptions(Options.empty()),
               ),
-              if (lastNotificationFetch != null) ...[
+              if (lastJobTimestamp != null) ...[
                 Padding(
                   padding: const EdgeInsets.only(
                     left: Theming.offset,
@@ -103,9 +99,9 @@ class SettingsAboutSubview extends StatelessWidget {
                     top: 20,
                   ),
                   child: Text(
-                    'Performed a notification check around ${DateTimeExtension.formattedDateTimeFromSeconds((lastNotificationFetch / 1000).truncate())}.',
+                    'Performed a notification check around $lastJobTimestamp.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelMedium,
+                    style: TextTheme.of(context).labelMedium,
                   ),
                 ),
               ],

@@ -96,39 +96,42 @@ class __AccountPickerState extends State<_AccountPicker> {
   static const _loginLink =
       'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
 
-  static const _imageSize = 60.0;
+  static const _imageSize = 55.0;
 
   @override
   Widget build(BuildContext context) {
+    const divider = SizedBox(
+      height: 40,
+      child: VerticalDivider(width: 10, thickness: 1),
+    );
+    const imagePadding = EdgeInsets.symmetric(horizontal: 5);
+
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(
         vertical: 24,
         horizontal: Theming.offset,
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-        child: Consumer(
-          builder: (context, ref, _) {
-            final accountGroup = ref.watch(
-              persistenceProvider.select((s) => s.accountGroup),
-            );
-            final accounts = accountGroup.accounts;
+      child: Consumer(
+        builder: (context, ref, _) {
+          final accountGroup = ref.watch(
+            persistenceProvider.select((s) => s.accountGroup),
+          );
+          final accounts = accountGroup.accounts;
 
-            const divider = SizedBox(
-              height: 40,
-              child: VerticalDivider(width: 10, thickness: 1),
-            );
-
-            final items = <Widget>[];
-            for (int i = 0; i < accounts.length; i++) {
-              items.add(Row(
+          final items = <Widget>[];
+          for (int i = 0; i < accounts.length; i++) {
+            items.add(SizedBox(
+              height: 60,
+              child: Row(
                 children: [
-                  CachedImage(
-                    accounts[i].avatarUrl,
-                    width: _imageSize,
-                    height: _imageSize,
+                  Padding(
+                    padding: imagePadding,
+                    child: CachedImage(
+                      accounts[i].avatarUrl,
+                      width: _imageSize,
+                      height: _imageSize,
+                    ),
                   ),
-                  const SizedBox(width: 5),
                   Expanded(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -174,14 +177,16 @@ class __AccountPickerState extends State<_AccountPicker> {
                     ),
                   ),
                 ],
-              ));
-            }
+              ),
+            ));
+          }
 
-            items.add(Row(
+          items.add(SizedBox(
+            height: 60,
+            child: Row(
               children: [
-                const SizedBox(
-                  height: _imageSize,
-                  width: _imageSize + Theming.offset,
+                const Padding(
+                  padding: imagePadding,
                   child: Icon(Icons.person_rounded, size: _imageSize),
                 ),
                 const Expanded(child: Text('Guest')),
@@ -192,41 +197,41 @@ class __AccountPickerState extends State<_AccountPicker> {
                   onPressed: () => _addAccount(accounts.isEmpty),
                 ),
               ],
-            ));
+            ),
+          ));
 
-            return PillSelector(
-              maxWidth: 350,
-              shrinkWrap: true,
-              selected: accountGroup.accountIndex ?? accounts.length,
-              items: items,
-              onTap: (i) async {
-                if (i == accounts.length) {
-                  ref.read(persistenceProvider.notifier).switchAccount(null);
-                  Navigator.pop(context);
-                  return;
-                }
+          return PillSelector(
+            maxWidth: 380,
+            shrinkWrap: true,
+            selected: accountGroup.accountIndex ?? accounts.length,
+            items: items,
+            onTap: (i) async {
+              if (i == accounts.length) {
+                ref.read(persistenceProvider.notifier).switchAccount(null);
+                Navigator.pop(context);
+                return;
+              }
 
-                if (DateTime.now().isBefore(accounts[i].expiration)) {
-                  ref.read(persistenceProvider.notifier).switchAccount(i);
-                  Navigator.pop(context);
-                  return;
-                }
+              if (DateTime.now().isBefore(accounts[i].expiration)) {
+                ref.read(persistenceProvider.notifier).switchAccount(i);
+                Navigator.pop(context);
+                return;
+              }
 
-                var ok = false;
-                await ConfirmationDialog.show(
-                  context,
-                  title: 'Session expired',
-                  content: 'Do you want to log in again?',
-                  primaryAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: () => ok = true,
-                );
+              var ok = false;
+              await ConfirmationDialog.show(
+                context,
+                title: 'Session expired',
+                content: 'Do you want to log in again?',
+                primaryAction: 'Yes',
+                secondaryAction: 'No',
+                onConfirm: () => ok = true,
+              );
 
-                if (ok) _addAccount(accounts.isEmpty);
-              },
-            );
-          },
-        ),
+              if (ok) _addAccount(accounts.isEmpty);
+            },
+          );
+        },
       ),
     );
   }

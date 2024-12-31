@@ -17,6 +17,7 @@ class Timestamp extends StatelessWidget {
         onTap: () => SnackBarExtension.show(
           context,
           dateTime.formattedDateTimeFromSeconds(analogueClock),
+          canCopyText: true,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

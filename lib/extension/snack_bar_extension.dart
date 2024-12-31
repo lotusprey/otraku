@@ -5,11 +5,18 @@ import 'package:url_launcher/url_launcher.dart';
 extension SnackBarExtension on SnackBar {
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> show(
     BuildContext context,
-    String text,
-  ) {
+    String text, {
+    bool canCopyText = false,
+  }) {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
       behavior: SnackBarBehavior.floating,
+      action: canCopyText
+          ? SnackBarAction(
+              label: 'Copy',
+              onPressed: () => Clipboard.setData(ClipboardData(text: text)),
+            )
+          : null,
     ));
   }
 

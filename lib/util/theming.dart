@@ -71,6 +71,7 @@ class Theming {
           style: ElevatedButton.styleFrom(
             backgroundColor: scheme.primary,
             foregroundColor: scheme.onPrimary,
+            iconColor: scheme.onPrimary,
             textStyle: const TextStyle(fontWeight: FontWeight.w500),
           ),
         ),

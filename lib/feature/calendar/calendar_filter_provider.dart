@@ -9,9 +9,9 @@ final calendarFilterProvider =
 
 class CalendarFilterNotifier extends AutoDisposeNotifier<CalendarFilter> {
   @override
-  CalendarFilter build() => ref
-      .watch(persistenceProvider.select((s) => s.calendarFilter))
-      .copyWith(date: DateTime.now());
+  CalendarFilter build() => ref.watch(
+        persistenceProvider.select((s) => s.calendarFilter),
+      );
 
   @override
   set state(CalendarFilter newState) {

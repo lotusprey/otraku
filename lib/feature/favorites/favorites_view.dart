@@ -9,6 +9,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/favorites/favorites_model.dart';
 import 'package:otraku/feature/favorites/favorites_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -59,6 +60,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
   Widget build(BuildContext context) {
     final type = FavoritesType.values[_tabCtrl.index];
 
+    final isViewer = ref.watch(viewerIdProvider) == widget.userId;
+
     final count = ref.watch(
       favoritesProvider(widget.userId).select(
         (s) => s.valueOrNull?.getCount(type) ?? 0,
@@ -82,9 +85,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
       (context, compact) => ScaffoldConfig(
         topBar: TopBarAnimatedSwitcher(
           TopBar(
-            key: Key(
-              inEditingMode ? '${type.title}EditTopBar' : '${type.title}TopBar',
-            ),
+            key: inEditingMode
+                ? const Key('EditTopBar')
+                : Key('${type.title}TopBar'),
             title: type.title,
             trailing: [
               if (inEditingMode) ...[
@@ -118,7 +121,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
             ],
           ),
         ),
-        floatingAction: inEditingMode
+        floatingAction: !isViewer || inEditingMode
             ? null
             : HidingFloatingActionButton(
                 key: const Key('edit'),
@@ -157,7 +160,9 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
             child: child,
           ),
           child: TabBarView(
-            key: Key(inEditingMode ? 'editTabBarView' : 'tabBarView'),
+            key: inEditingMode
+                ? const Key('editTabBarView')
+                : const Key('tabBarView'),
             controller: _tabCtrl,
             physics: const FastTabBarViewScrollPhysics(),
             children: [

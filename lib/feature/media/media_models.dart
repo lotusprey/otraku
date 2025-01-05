@@ -12,9 +12,9 @@ import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/util/tile_modelable.dart';
 
 class Media {
-  Media(this.edit, this.info, this.stats, this.related);
+  Media(this.entryEdit, this.info, this.stats, this.related);
 
-  Edit edit;
+  EntryEdit entryEdit;
   final MediaInfo info;
   final MediaStats stats;
   final List<RelatedMedia> related;
@@ -259,7 +259,7 @@ class Recommendation {
       userRating: userRating,
       title: map['mediaRecommendation']['title']['userPreferred'],
       imageUrl: map['mediaRecommendation']['coverImage'][imageQuality.value],
-      isAnime: map['type'] == 'ANIME',
+      isAnime: map['mediaRecommendation']['type'] == 'ANIME',
       releaseYear: map['mediaRecommendation']['startDate']?['year'],
       format: MediaFormat.from(map['mediaRecommendation']['format']),
       entryStatus: ListStatus.from(

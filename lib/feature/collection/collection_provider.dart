@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
-import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/home/home_provider.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -75,42 +74,50 @@ class CollectionNotifier
         },
       );
 
-  Future<String?> removeEntry(Edit edit) async {
-    if (edit.entryId == null) return 'Missing entry id';
+  void removeEntry(int mediaId) {
+    _updateState(
+      (collection) => switch (collection) {
+        PreviewCollection c => c..list.removeByMediaId(mediaId),
+        FullCollection c => _withRemovedEmptyLists(
+            c..lists.forEach((list) => list.removeByMediaId(mediaId)),
+          ),
+      },
+    );
+  }
 
+  /// There is an api bug in entry updating,
+  /// which prevents tag data from being returned.
+  /// This is why [saveEntry] additionally fetches the updated entry.
+  Future<void> saveEntry(int mediaId, ListStatus? oldStatus) async {
     try {
-      await ref
-          .read(repositoryProvider)
-          .request(GqlMutation.removeEntry, {'entryId': edit.entryId});
+      var data = await ref.read(repositoryProvider).request(
+        GqlQuery.listEntry,
+        {'userId': arg.userId, 'mediaId': mediaId},
+      );
+      data = data['MediaList'];
+
+      final entry = Entry(
+        data,
+        ref.read(persistenceProvider).options.imageQuality,
+      );
 
       _updateState(
         (collection) => switch (collection) {
-          PreviewCollection c => c..list.removeByMediaId(edit.mediaId),
-          FullCollection c => _withRemovedEmptyLists(
-              c..lists.map((list) => list.removeByMediaId(edit.mediaId)),
+          FullCollection _ => _saveEntryInFullCollection(
+              collection,
+              entry,
+              oldStatus,
+              data,
+            ),
+          PreviewCollection _ => _saveEntryInPreviewCollection(
+              collection,
+              entry,
+              oldStatus,
+              entry.listStatus,
             ),
         },
       );
-
-      return null;
-    } catch (e) {
-      return e.toString();
-    }
-  }
-
-  /// Updates or adds an entry.
-  Future<String?> saveEntry(ListStatus? oldStatus, Edit newEdit) async {
-    try {
-      await ref
-          .read(repositoryProvider)
-          .request(GqlMutation.updateEntry, newEdit.toGraphQlVariables());
-
-      await _saveEntry(newEdit.mediaId, oldStatus);
-
-      return null;
-    } catch (e) {
-      return e.toString();
-    }
+    } catch (_) {}
   }
 
   /// An alternative to [saveEntry],
@@ -134,45 +141,12 @@ class CollectionNotifier
         },
       );
 
-      await _saveEntry(oldEntry.mediaId, oldEntry.listStatus);
+      await saveEntry(oldEntry.mediaId, oldEntry.listStatus);
 
       return null;
     } catch (e) {
       return e.toString();
     }
-  }
-
-  /// There is an api bug in entry updating,
-  /// which prevents tag data from being returned.
-  /// This is why [_saveEntry] additionally fetches the updated entry.
-  Future<void> _saveEntry(int mediaId, ListStatus? oldStatus) async {
-    var data = await ref.read(repositoryProvider).request(
-      GqlQuery.listEntry,
-      {'userId': arg.userId, 'mediaId': mediaId},
-    );
-    data = data['MediaList'];
-
-    final entry = Entry(
-      data,
-      ref.read(persistenceProvider).options.imageQuality,
-    );
-
-    _updateState(
-      (collection) => switch (collection) {
-        FullCollection _ => _saveEntryInFullCollection(
-            collection,
-            entry,
-            oldStatus,
-            data,
-          ),
-        PreviewCollection _ => _saveEntryInPreviewCollection(
-            collection,
-            entry,
-            oldStatus,
-            entry.listStatus,
-          ),
-      },
-    );
   }
 
   FullCollection _saveEntryInFullCollection(
@@ -185,7 +159,7 @@ class CollectionNotifier
     final customListItems = data['customLists'] ?? const <String, dynamic>{};
     final customLists = customListItems.entries
         .where((e) => e.value == true)
-        .map((e) => e.key)
+        .map((e) => e.key.toLowerCase())
         .toList();
 
     for (final list in collection.lists) {
@@ -215,7 +189,7 @@ class CollectionNotifier
         continue;
       }
 
-      if (customLists.contains(list.name)) {
+      if (customLists.contains(list.name.toLowerCase())) {
         if (!list.setByMediaId(entry)) {
           list.insertSorted(entry, _sort);
         }

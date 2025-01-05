@@ -50,7 +50,7 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
     );
 
     return Media(
-      Edit(data, settings),
+      EntryEdit(data, settings, false),
       MediaInfo(data, imageQuality),
       MediaStats(data),
       relatedMedia,

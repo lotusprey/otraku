@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/edit/edit_model.dart';
-import 'package:otraku/feature/edit/edit_providers.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/util/theming.dart';
 
 /// Score picker.
 class ScoreField extends StatelessWidget {
-  const ScoreField(this.tag);
+  const ScoreField({
+    required this.value,
+    required this.scoreFormat,
+    required this.onChanged,
+  });
 
-  final EditTag tag;
+  final double value;
+  final ScoreFormat? scoreFormat;
+  final void Function(double) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +23,14 @@ class ScoreField extends StatelessWidget {
           labelText: 'Score',
           border: OutlineInputBorder(),
         ),
-        child: Consumer(
-          builder: (context, ref, _) {
-            final score = ref.watch(
-              newEditProvider(tag).select((s) => s.score),
-            );
-
-            final scoreFormat =
-                ref.watch(settingsProvider).valueOrNull?.scoreFormat ??
-                    ScoreFormat.point10;
-
-            final onChanged = (num v) => ref
-                .read(newEditProvider(tag).notifier)
-                .update((s) => s.copyWith(score: v.toDouble()));
-
-            return switch (scoreFormat) {
-              ScoreFormat.point3 => _SmileyScorePicker(score, onChanged),
-              ScoreFormat.point5 => _StarScorePicker(score, onChanged),
-              ScoreFormat.point10 => _TenScorePicker(score, onChanged),
-              ScoreFormat.point10Decimal =>
-                _TenDecimalScorePicker(score, onChanged),
-              ScoreFormat.point100 => _HundredScorePicker(score, onChanged),
-            };
-          },
-        ),
+        child: switch (scoreFormat ?? ScoreFormat.point10) {
+          ScoreFormat.point3 => _SmileyScorePicker(value, onChanged),
+          ScoreFormat.point5 => _StarScorePicker(value, onChanged),
+          ScoreFormat.point10 => _TenScorePicker(value, onChanged),
+          ScoreFormat.point10Decimal =>
+            _TenDecimalScorePicker(value, onChanged),
+          ScoreFormat.point100 => _HundredScorePicker(value, onChanged),
+        },
       ),
     );
   }

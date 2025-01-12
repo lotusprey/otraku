@@ -1,0 +1,6 @@
+- Chips on the media page are now a grid, not a scrollable row
+- Fixed the the favorites editing button appearing in others' favorites
+- Fixed edge cases in entry saving/removing
+- Fixed list statuses in media recommendations mixing up anime and manga
+- Fixed notification timestamps taking too much space
+- Shortened the snackbar timeout

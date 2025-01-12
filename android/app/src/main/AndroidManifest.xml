@@ -4,10 +4,10 @@
      <!-- Note: Additionally the property fullBackupContent was configured with
          the settings stored in "./res/xml/backup_rules.xml" -->
      
-     <!-- Internet -->
+     <!-- Internet. -->
      <uses-permission android:name="android.permission.INTERNET" />
 
-     <!-- Url launcher -->
+     <!-- Url launcher. -->
      <queries>
        <intent>
          <action android:name="android.intent.action.VIEW" />
@@ -43,6 +43,7 @@
                     <action android:name="android.intent.action.MAIN"/>
                     <category android:name="android.intent.category.LAUNCHER"/>
                </intent-filter>
+               <!-- Deep link for logging in. -->
                <intent-filter>
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />
@@ -50,6 +51,7 @@
                     <data android:scheme="app" />
                     <data android:host="otraku" android:pathPrefix="/auth" />
                </intent-filter>
+               <!-- Deep links for AniList. -->
                <intent-filter>
                     <action android:name="android.intent.action.VIEW" />
                     <category android:name="android.intent.category.DEFAULT" />

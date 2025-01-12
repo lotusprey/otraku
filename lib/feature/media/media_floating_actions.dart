@@ -17,15 +17,15 @@ class _MediaEditButtonState extends State<MediaEditButton> {
   Widget build(BuildContext context) {
     final media = widget.media;
     return FloatingActionButton(
-      tooltip: media.edit.listStatus == null ? 'Add' : 'Edit',
-      child: media.edit.listStatus == null
+      tooltip: media.entryEdit.listStatus == null ? 'Add' : 'Edit',
+      child: media.entryEdit.listStatus == null
           ? const Icon(Icons.add)
           : const Icon(Icons.edit_outlined),
       onPressed: () => showSheet(
         context,
         EditView(
           (id: media.info.id, setComplete: false),
-          callback: (edit) => setState(() => media.edit = edit),
+          callback: (entryEdit) => setState(() => media.entryEdit = entryEdit),
         ),
       ),
     );

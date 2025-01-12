@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/content_header.dart';
@@ -45,10 +44,8 @@ class MediaHeader extends StatelessWidget {
         textRailItems[info.format!.label] = false;
       }
 
-      if (media!.edit.listStatus != null) {
-        textRailItems[media!.edit.listStatus!.label(
-          info.type == DiscoverType.anime,
-        )] = false;
+      if (media!.entryEdit.listStatus != null) {
+        textRailItems[media!.entryEdit.listStatus!.label(info.isAnime)] = false;
       }
 
       if (info.airingAt != null) {
@@ -56,8 +53,8 @@ class MediaHeader extends StatelessWidget {
             '${info.airingAt!.timeUntil}'] = true;
       }
 
-      if (media!.edit.listStatus != null) {
-        final progress = media!.edit.progress;
+      if (media!.entryEdit.listStatus != null) {
+        final progress = media!.entryEdit.progress;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
           textRailItems['${info.nextEpisode! - 1 - progress}'
               ' ep behind'] = true;

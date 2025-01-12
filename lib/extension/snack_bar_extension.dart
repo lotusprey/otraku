@@ -11,6 +11,7 @@ extension SnackBarExtension on SnackBar {
     return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(text),
       behavior: SnackBarBehavior.floating,
+      duration: const Duration(milliseconds: 2000),
       action: canCopyText
           ? SnackBarAction(
               label: 'Copy',

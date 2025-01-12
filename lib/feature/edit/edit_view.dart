@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
@@ -19,356 +20,177 @@ import 'package:otraku/feature/edit/score_field.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
-class EditView extends StatelessWidget {
+class EditView extends ConsumerWidget {
   const EditView(this.tag, {this.callback});
 
   final EditTag tag;
-  final void Function(Edit)? callback;
+  final void Function(EntryEdit)? callback;
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final viewerId = ref.watch(viewerIdProvider);
-        if (viewerId == null) {
-          return SimpleSheet(
-            builder: (context, scrollCtrl) => Center(
-              child: Padding(
-                padding: Theming.paddingAll,
-                child: Text('Log in to edit media'),
-              ),
-            ),
-          );
-        }
-
-        ref.listen<AsyncValue<Edit>>(
-          oldEditProvider(tag),
-          (_, s) => s.whenOrNull(
-            error: (err, _) {
-              Navigator.pop(context);
-              SnackBarExtension.show(context, 'Failed to load edit sheet');
-            },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewerId = ref.watch(viewerIdProvider);
+    if (viewerId == null) {
+      return SimpleSheet(
+        builder: (context, scrollCtrl) => const Center(
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Log in to edit media'),
           ),
-        );
+        ),
+      );
+    }
 
-        return ref.watch(oldEditProvider(tag)).maybeWhen(
-              data: (oldEdit) => SheetWithButtonRow(
-                buttons: EditButtons(tag, viewerId, oldEdit, callback),
-                builder: (context, scrollCtrl) => _EditView(
-                  scrollCtrl,
-                  tag,
-                  oldEdit,
-                ),
-              ),
-              orElse: () => SheetWithButtonRow(
-                builder: (context, scrollCtrl) => const Center(child: Loader()),
-              ),
-            );
-      },
-    );
+    return switch (ref.watch(entryEditProvider(tag))) {
+      AsyncData(:final value) => SheetWithButtonRow(
+          buttons: EditButtons(ref, tag, value, callback),
+          builder: (context, scrollCtrl) => _EditView(
+            scrollCtrl,
+            tag,
+            value,
+          ),
+        ),
+      AsyncError(:final error) => SheetWithButtonRow(
+          buttons: EditButtons(ref, tag, null, callback),
+          builder: (context, scrollCtrl) => Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Text('Failed to load edit sheet: $error'),
+            ),
+          ),
+        ),
+      _ => SheetWithButtonRow(
+          buttons: EditButtons(ref, tag, null, callback),
+          builder: (context, scrollCtrl) => const Center(
+            child: Padding(
+              padding: Theming.paddingAll,
+              child: Loader(),
+            ),
+          ),
+        ),
+    };
   }
 }
 
 class _EditView extends ConsumerWidget {
-  const _EditView(this.scrollCtrl, this.tag, this.oldEdit);
+  const _EditView(this.scrollCtrl, this.tag, this.entryEdit);
 
   final ScrollController scrollCtrl;
   final EditTag tag;
-  final Edit oldEdit;
+  final EntryEdit entryEdit;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ofAnime = oldEdit.type == 'ANIME';
-    final provider = newEditProvider(tag);
-    final notifier = ref.watch(provider.notifier);
-    final leftHanded = ref.watch(
-      persistenceProvider.select((s) => s.options.leftHanded),
+    final readableNotifier = entryEditProvider(tag).notifier;
+
+    final settings = ref.watch(
+      settingsProvider.select((s) => s.valueOrNull),
     );
 
     final statusField = SliverToBoxAdapter(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-        child: Consumer(
-          builder: (context, ref, _) {
-            final status = ref.watch(provider.select((s) => s.listStatus));
+        child: ChipSelector(
+          title: 'Status',
+          items: ListStatus.values
+              .map((v) => (v.label(entryEdit.baseEntry.isAnime), v))
+              .toList(),
+          value: entryEdit.listStatus,
+          onChanged: (status) => ref.read(readableNotifier).updateBy(
+            (s) {
+              var startedAt = s.startedAt;
+              var completedAt = s.completedAt;
+              var progress = s.progress;
 
-            return ChipSelector(
-              title: 'Status',
-              items:
-                  ListStatus.values.map((v) => (v.label(ofAnime), v)).toList(),
-              value: status,
-              onChanged: (status) => notifier.update(
-                (s) {
-                  var startedAt = s.startedAt;
-                  var completedAt = s.completedAt;
-                  var progress = s.progress;
+              if (entryEdit.baseEntry.listStatus == null &&
+                  status == ListStatus.current &&
+                  startedAt == null) {
+                startedAt = DateTime.now();
+                SnackBarExtension.show(context, 'Start date changed');
+              } else if (entryEdit.baseEntry.listStatus != status &&
+                  status == ListStatus.completed &&
+                  completedAt == null) {
+                completedAt = DateTime.now();
+                var text = 'Completed date changed';
 
-                  if (oldEdit.listStatus == null &&
-                      status == ListStatus.current &&
-                      startedAt == null) {
-                    startedAt = DateTime.now();
-                    SnackBarExtension.show(context, 'Start date changed');
-                  } else if (oldEdit.listStatus != status &&
-                      status == ListStatus.completed &&
-                      completedAt == null) {
-                    completedAt = DateTime.now();
-                    var text = 'Completed date changed';
+                if (entryEdit.baseEntry.progressMax != null &&
+                    progress < s.baseEntry.progressMax!) {
+                  progress = s.baseEntry.progressMax!;
+                  text = 'Completed date & progress changed';
+                }
 
-                    if (s.progressMax != null && progress < s.progressMax!) {
-                      progress = s.progressMax!;
-                      text = 'Completed date & progress changed';
-                    }
+                SnackBarExtension.show(context, text);
+              }
 
-                    SnackBarExtension.show(context, text);
-                  }
-
-                  return s.copyWith(
-                    listStatus: status,
-                    progress: progress,
-                    startedAt: () => startedAt,
-                    completedAt: () => completedAt,
-                  );
-                },
-              ),
-            );
-          },
+              return s.copyWith(
+                listStatus: status,
+                progress: progress,
+                startedAt: () => startedAt,
+                completedAt: () => completedAt,
+              );
+            },
+          ),
         ),
       ),
     );
 
-    final progressFields = SliverPadding(
-      padding: const EdgeInsets.only(
-        left: Theming.offset,
-        right: Theming.offset,
-        bottom: Theming.offset,
-      ),
-      sliver: Consumer(
-        builder: (context, ref, _) {
-          final progress = ref.watch(provider.select((s) => s.progress));
-          final progressVolumes = ref.watch(
-            provider.select((s) => s.progressVolumes),
-          );
+    final timelineFields = _FieldGrid(
+      minWidth: 195,
+      children: [
+        DateField(
+          label: 'Started',
+          value: entryEdit.startedAt,
+          onChanged: (startedAt) => ref.read(readableNotifier).updateBy((s) {
+            var listStatus = s.listStatus;
 
-          final progressField = NumberField(
-            label: 'Progress',
-            value: progress,
-            maxValue: oldEdit.progressMax ?? 100000,
-            onChanged: (progress) => notifier.update((s) {
-              var status = s.listStatus;
-              var startedAt = s.startedAt;
-              var completedAt = s.completedAt;
-
-              String? text;
-              if (progress == s.progressMax && oldEdit.progress != progress) {
-                if (oldEdit.listStatus == status &&
-                    status != ListStatus.completed) {
-                  status = ListStatus.completed;
-                  text = 'Status changed';
-                }
-
-                if (oldEdit.completedAt == completedAt && completedAt == null) {
-                  completedAt = DateTime.now();
-                  text = text == null
-                      ? 'Completed date changed'
-                      : 'Status & Completed date changed';
-                }
-
-                if (text != null) SnackBarExtension.show(context, text);
-              } else if (oldEdit.progress == 0 &&
-                  oldEdit.progress != progress) {
-                if (oldEdit.listStatus == status &&
-                    (status == null || status == ListStatus.planning)) {
-                  status = ListStatus.current;
-                  text = 'Status changed';
-                }
-
-                if (oldEdit.startedAt == null && startedAt == null) {
-                  startedAt = DateTime.now();
-                  text = text == null
-                      ? 'Start date changed'
-                      : 'Status & start date changed';
-                }
-              }
-              if (text != null) SnackBarExtension.show(context, text);
-
-              return s.copyWith(
-                progress: progress.toInt(),
-                listStatus: status,
-                startedAt: () => startedAt,
-                completedAt: () => completedAt,
-              );
-            }),
-          );
-
-          Widget child = progressField;
-          if (oldEdit.type != 'ANIME') {
-            final volumeProgressField = NumberField(
-              label: 'Volume Progress',
-              value: progressVolumes,
-              maxValue: oldEdit.progressVolumesMax ?? 100000,
-              onChanged: (progressVolumes) => notifier.update(
-                (s) => s.copyWith(progressVolumes: progressVolumes.toInt()),
-              ),
-            );
-
-            child = MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
-                ? Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      progressField,
-                      const SizedBox(height: 20),
-                      volumeProgressField,
-                    ],
-                  )
-                : Row(
-                    children: leftHanded
-                        ? [
-                            Expanded(child: progressField),
-                            const SizedBox(width: Theming.offset),
-                            Expanded(child: volumeProgressField),
-                          ]
-                        : [
-                            Expanded(child: volumeProgressField),
-                            const SizedBox(width: Theming.offset),
-                            Expanded(child: progressField),
-                          ],
-                  );
-          }
-
-          return SliverToBoxAdapter(child: child);
-        },
-      ),
-    );
-
-    final timelineFields = Consumer(
-      builder: (context, ref, _) {
-        final startedAt = ref.watch(provider.select((s) => s.startedAt));
-        final completedAt = ref.watch(provider.select((s) => s.completedAt));
-        final repeat = ref.watch(provider.select((s) => s.repeat));
-
-        return _FieldGrid(
-          minWidth: 195,
-          children: [
-            DateField(
-              label: 'Started',
-              value: startedAt,
-              onChanged: (startedAt) => notifier.update((s) {
-                var status = s.listStatus;
-
-                if (startedAt != null &&
-                    oldEdit.listStatus == null &&
-                    status == null) {
-                  status = ListStatus.current;
-                  SnackBarExtension.show(context, 'Status changed');
-                }
-
-                return s.copyWith(
-                  listStatus: status,
-                  startedAt: () => startedAt,
-                );
-              }),
-            ),
-            DateField(
-              label: 'Completed',
-              value: completedAt,
-              onChanged: (completedAt) => notifier.update((s) {
-                var status = s.listStatus;
-                var progress = s.progress;
-
-                if (completedAt != null &&
-                    oldEdit.listStatus != ListStatus.completed &&
-                    oldEdit.listStatus != ListStatus.repeating &&
-                    oldEdit.listStatus == status) {
-                  status = ListStatus.completed;
-                  String text = 'Status changed';
-
-                  if (s.progressMax != null && s.progress < s.progressMax!) {
-                    progress = s.progressMax!;
-                    text = 'Status & progress changed';
-                  }
-
-                  SnackBarExtension.show(context, text);
-                }
-
-                return s.copyWith(
-                  listStatus: status,
-                  progress: progress,
-                  completedAt: () => completedAt,
-                );
-              }),
-            ),
-            Consumer(
-              builder: (context, ref, _) => NumberField(
-                label: 'Repeat',
-                value: repeat,
-                onChanged: (repeat) => notifier.update(
-                  (s) => s.copyWith(repeat: repeat.toInt()),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-
-    final advancedScoring = Consumer(
-      builder: (context, ref, _) {
-        final settings = ref.watch(
-          settingsProvider.select((s) => s.valueOrNull),
-        );
-
-        final advancedScoringEnabled =
-            settings?.advancedScoringEnabled ?? false;
-        final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
-
-        if (!advancedScoringEnabled ||
-            scoreFormat != ScoreFormat.point100 &&
-                scoreFormat != ScoreFormat.point10Decimal) {
-          return const SliverToBoxAdapter(child: SizedBox());
-        }
-
-        final scores = notifier.state.advancedScores;
-        final isDecimal = scoreFormat == ScoreFormat.point10Decimal;
-
-        final onChanged = (entry, score) {
-          scores[entry.key] = score.toDouble();
-
-          int count = 0;
-          double avg = 0;
-          for (final v in scores.values) {
-            if (v > 0) {
-              avg += v;
-              count++;
+            if (startedAt != null &&
+                entryEdit.baseEntry.listStatus == null &&
+                listStatus == null) {
+              listStatus = ListStatus.current;
+              SnackBarExtension.show(context, 'Status changed');
             }
-          }
 
-          if (count > 0) avg /= count;
+            return s.copyWith(
+              listStatus: listStatus,
+              startedAt: () => startedAt,
+            );
+          }),
+        ),
+        DateField(
+          label: 'Completed',
+          value: entryEdit.completedAt,
+          onChanged: (completedAt) => ref.read(readableNotifier).updateBy((s) {
+            var listStatus = s.listStatus;
+            var progress = s.progress;
 
-          if (notifier.state.score != avg) {
-            notifier.update((s) => s.copyWith(score: avg));
-          }
-        };
+            if (completedAt != null &&
+                entryEdit.baseEntry.listStatus != ListStatus.completed &&
+                entryEdit.baseEntry.listStatus != ListStatus.repeating &&
+                entryEdit.baseEntry.listStatus == listStatus) {
+              listStatus = ListStatus.completed;
+              String text = 'Status changed';
 
-        return _FieldGrid(
-          minWidth: 140,
-          children: [
-            for (final s in scores.entries)
-              isDecimal
-                  ? NumberField.decimal(
-                      label: s.key,
-                      value: s.value,
-                      maxValue: 10.0,
-                      onChanged: (score) => onChanged(s, score),
-                    )
-                  : NumberField(
-                      label: s.key,
-                      value: s.value.toInt(),
-                      maxValue: 100,
-                      onChanged: (score) => onChanged(s, score),
-                    ),
-          ],
-        );
-      },
+              if (s.baseEntry.progressMax != null &&
+                  s.progress < s.baseEntry.progressMax!) {
+                progress = s.baseEntry.progressMax!;
+                text = 'Status & progress changed';
+              }
+
+              SnackBarExtension.show(context, text);
+            }
+
+            return s.copyWith(
+              listStatus: listStatus,
+              progress: progress,
+              completedAt: () => completedAt,
+            );
+          }),
+        ),
+        NumberField(
+          label: 'Repeat',
+          value: entryEdit.repeat,
+          onChanged: (repeat) => entryEdit.repeat = repeat,
+        ),
+      ],
     );
 
     return Material(
@@ -379,46 +201,49 @@ class _EditView extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           statusField,
           const SliverToBoxAdapter(child: SizedBox(height: 15)),
-          progressFields,
-          SliverToBoxAdapter(child: ScoreField(tag)),
+          _buildProgressFields(context, ref),
+          SliverToBoxAdapter(
+            child: ScoreField(
+              value: entryEdit.score,
+              scoreFormat: settings?.scoreFormat,
+              onChanged: (score) => entryEdit.score = score,
+            ),
+          ),
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
-          advancedScoring,
+          _buildAdvancedScoringFields(ref, settings),
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
           _Notes(
-            value: notifier.state.notes,
-            onChanged: (notes) => notifier.state.notes = notes,
+            value: entryEdit.notes,
+            onChanged: (notes) => entryEdit.notes = notes,
           ),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           timelineFields,
           SliverToBoxAdapter(
             child: StatefulCheckboxListTile(
               title: const Text('Private'),
-              value: notifier.state.private,
-              onChanged: (v) => notifier.update(
-                (s) => s.copyWith(private: v),
-              ),
+              value: entryEdit.private,
+              onChanged: (private) => entryEdit.private = private!,
             ),
           ),
           SliverToBoxAdapter(
             child: StatefulCheckboxListTile(
               title: const Text('Hidden From Status Lists'),
-              value: notifier.state.hiddenFromStatusLists,
-              onChanged: (v) => notifier.update(
-                (s) => s.copyWith(hiddenFromStatusLists: v),
-              ),
+              value: entryEdit.hiddenFromStatusLists,
+              onChanged: (hiddenFromStatusLists) =>
+                  entryEdit.hiddenFromStatusLists = hiddenFromStatusLists!,
             ),
           ),
-          if (notifier.state.customLists.isNotEmpty)
+          if (entryEdit.customLists.isNotEmpty)
             SliverToBoxAdapter(
               child: ExpansionTile(
                 title: const Text('Custom Lists'),
                 initiallyExpanded: true,
                 children: [
-                  for (final e in notifier.state.customLists.entries)
+                  for (final e in entryEdit.customLists.entries)
                     StatefulCheckboxListTile(
                       title: Text(e.key),
                       value: e.value,
-                      onChanged: (v) => notifier.state.customLists[e.key] = v!,
+                      onChanged: (v) => entryEdit.customLists[e.key] = v!,
                     ),
                 ],
               ),
@@ -431,6 +256,164 @@ class _EditView extends ConsumerWidget {
           )
         ],
       ),
+    );
+  }
+
+  Widget _buildProgressFields(BuildContext context, WidgetRef ref) {
+    final readableNotifier = entryEditProvider(tag).notifier;
+
+    final leftHanded = ref.watch(
+      persistenceProvider.select((s) => s.options.leftHanded),
+    );
+
+    final progressField = NumberField(
+      label: 'Progress',
+      value: entryEdit.progress,
+      maxValue: entryEdit.baseEntry.progressMax ?? 100000,
+      onChanged: (progress) => ref.read(readableNotifier).updateBy((s) {
+        var status = s.listStatus;
+        var startedAt = s.startedAt;
+        var completedAt = s.completedAt;
+
+        String? text;
+        if (progress == entryEdit.baseEntry.progressMax &&
+            progress != entryEdit.baseEntry.progress) {
+          if (entryEdit.baseEntry.listStatus == status &&
+              status != ListStatus.completed) {
+            status = ListStatus.completed;
+            text = 'Status changed';
+          }
+
+          if (entryEdit.baseEntry.completedAt == null && completedAt == null) {
+            completedAt = DateTime.now();
+            text = text == null
+                ? 'Completed date changed'
+                : 'Status & Completed date changed';
+          }
+        } else if (entryEdit.baseEntry.progress == 0 &&
+            entryEdit.baseEntry.progress != progress) {
+          if (entryEdit.baseEntry.listStatus == status &&
+              (status == null || status == ListStatus.planning)) {
+            status = ListStatus.current;
+            text = 'Status changed';
+          }
+
+          if (entryEdit.baseEntry.startedAt == null && startedAt == null) {
+            startedAt = DateTime.now();
+            text = text == null
+                ? 'Start date changed'
+                : 'Status & start date changed';
+          }
+        }
+
+        if (text != null) SnackBarExtension.show(context, text);
+
+        return s.copyWith(
+          progress: progress,
+          listStatus: status,
+          startedAt: () => startedAt,
+          completedAt: () => completedAt,
+        );
+      }),
+    );
+
+    Widget child = progressField;
+
+    if (!entryEdit.baseEntry.isAnime) {
+      final volumeProgressField = NumberField(
+        label: 'Volume Progress',
+        value: entryEdit.progressVolumes,
+        maxValue: entryEdit.baseEntry.progressVolumesMax ?? 100000,
+        onChanged: (progressVolumes) =>
+            entryEdit.progressVolumes = progressVolumes,
+      );
+
+      child = MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                progressField,
+                const SizedBox(height: 20),
+                volumeProgressField,
+              ],
+            )
+          : Row(
+              children: leftHanded
+                  ? [
+                      Expanded(child: progressField),
+                      const SizedBox(width: Theming.offset),
+                      Expanded(child: volumeProgressField),
+                    ]
+                  : [
+                      Expanded(child: volumeProgressField),
+                      const SizedBox(width: Theming.offset),
+                      Expanded(child: progressField),
+                    ],
+            );
+    }
+
+    return SliverPadding(
+      padding: const EdgeInsets.only(
+        left: Theming.offset,
+        right: Theming.offset,
+        bottom: Theming.offset,
+      ),
+      sliver: SliverToBoxAdapter(child: child),
+    );
+  }
+
+  Widget _buildAdvancedScoringFields(WidgetRef ref, Settings? settings) {
+    final advancedScoringEnabled = settings?.advancedScoringEnabled ?? false;
+    final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
+
+    if (!advancedScoringEnabled ||
+        scoreFormat != ScoreFormat.point100 &&
+            scoreFormat != ScoreFormat.point10Decimal) {
+      return const SliverToBoxAdapter(child: SizedBox());
+    }
+
+    final scores = entryEdit.advancedScores;
+    final isDecimal = scoreFormat == ScoreFormat.point10Decimal;
+
+    final onChanged = (entry, score) {
+      scores[entry.key] = score.toDouble();
+
+      int count = 0;
+      double avg = 0;
+      for (final v in scores.values) {
+        if (v > 0) {
+          avg += v;
+          count++;
+        }
+      }
+
+      if (count > 0) avg /= count;
+
+      if (entryEdit.score != avg) {
+        ref
+            .read(entryEditProvider(tag).notifier)
+            .updateBy((s) => s.copyWith(score: avg));
+      }
+    };
+
+    return _FieldGrid(
+      minWidth: 140,
+      children: [
+        for (final s in scores.entries)
+          isDecimal
+              ? NumberField.decimal(
+                  label: s.key,
+                  value: s.value,
+                  maxValue: 10.0,
+                  onChanged: (score) => onChanged(s, score),
+                )
+              : NumberField(
+                  label: s.key,
+                  value: s.value.toInt(),
+                  maxValue: 100,
+                  onChanged: (score) => onChanged(s, score),
+                ),
+      ],
     );
   }
 }

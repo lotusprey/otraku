@@ -98,7 +98,8 @@ class _MediaRankGrid extends StatelessWidget {
                 onTap: () {
                   final notifier = ref.read(discoverFilterProvider.notifier);
                   final filter = notifier.state.copyWith(
-                    type: info.type,
+                    type:
+                        info.isAnime ? DiscoverType.anime : DiscoverType.manga,
                     search: '',
                     mediaFilter: DiscoverMediaFilter(
                       notifier.state.mediaFilter.sort,
@@ -112,7 +113,7 @@ class _MediaRankGrid extends StatelessWidget {
                       ? MediaSort.scoreDesc
                       : MediaSort.popularityDesc;
                   if (info.format != null) {
-                    if (info.type == DiscoverType.anime) {
+                    if (info.isAnime) {
                       filter.mediaFilter.animeFormats.add(info.format!);
                     } else {
                       filter.mediaFilter.mangaFormats.add(info.format!);

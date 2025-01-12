@@ -300,7 +300,10 @@ class _NotificationItem extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Timestamp(item.createdAt, analogueClock),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Timestamp(item.createdAt, analogueClock),
+                          ),
                         ],
                       ),
                     ),

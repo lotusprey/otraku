@@ -6,7 +6,6 @@ import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/util/tile_modelable.dart';
@@ -281,7 +280,7 @@ class Recommendation {
 class MediaInfo {
   MediaInfo._({
     required this.id,
-    required this.type,
+    required this.isAnime,
     required this.preferredTitle,
     required this.romajiTitle,
     required this.englishTitle,
@@ -316,7 +315,7 @@ class MediaInfo {
   });
 
   final int id;
-  final DiscoverType type;
+  final bool isAnime;
   final String? preferredTitle;
   final String? romajiTitle;
   final String? englishTitle;
@@ -375,7 +374,7 @@ class MediaInfo {
 
     final model = MediaInfo._(
       id: map['id'],
-      type: map['type'] == 'ANIME' ? DiscoverType.anime : DiscoverType.manga,
+      isAnime: map['type'] == 'ANIME',
       preferredTitle: map['title']['userPreferred'],
       romajiTitle: map['title']['romaji'],
       englishTitle: map['title']['english'],

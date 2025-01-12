@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
@@ -58,12 +57,13 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
   }
 
   Future<Object?> toggleFavorite() {
-    final type = state.valueOrNull?.info.type;
-    if (type == null) return Future.value('User not yet loaded');
+    final value = state.valueOrNull;
+    if (value == null) return Future.value('User not yet loaded');
 
+    final typeKey = value.info.isAnime ? 'anime' : 'manga';
     return ref.read(repositoryProvider).request(
       GqlMutation.toggleFavorite,
-      {(type == DiscoverType.anime ? 'anime' : 'manga'): arg},
+      {typeKey: arg},
     ).getErrorOrNull();
   }
 }

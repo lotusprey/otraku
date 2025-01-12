@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/content_header.dart';
@@ -46,9 +45,7 @@ class MediaHeader extends StatelessWidget {
       }
 
       if (media!.entryEdit.listStatus != null) {
-        textRailItems[media!.entryEdit.listStatus!.label(
-          info.type == DiscoverType.anime,
-        )] = false;
+        textRailItems[media!.entryEdit.listStatus!.label(info.isAnime)] = false;
       }
 
       if (info.airingAt != null) {

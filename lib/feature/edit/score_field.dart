@@ -3,7 +3,7 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
 /// Score picker.
-class ScoreField extends StatelessWidget {
+class ScoreField extends StatefulWidget {
   const ScoreField({
     required this.value,
     required this.scoreFormat,
@@ -15,6 +15,13 @@ class ScoreField extends StatelessWidget {
   final void Function(double) onChanged;
 
   @override
+  State<ScoreField> createState() => _ScoreFieldState();
+}
+
+class _ScoreFieldState extends State<ScoreField> {
+  late var _value = widget.value;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(Theming.offset),
@@ -23,16 +30,21 @@ class ScoreField extends StatelessWidget {
           labelText: 'Score',
           border: OutlineInputBorder(),
         ),
-        child: switch (scoreFormat ?? ScoreFormat.point10) {
-          ScoreFormat.point3 => _SmileyScorePicker(value, onChanged),
-          ScoreFormat.point5 => _StarScorePicker(value, onChanged),
-          ScoreFormat.point10 => _TenScorePicker(value, onChanged),
+        child: switch (widget.scoreFormat ?? ScoreFormat.point10) {
+          ScoreFormat.point3 => _SmileyScorePicker(_value, _onChanged),
+          ScoreFormat.point5 => _StarScorePicker(_value, _onChanged),
+          ScoreFormat.point10 => _TenScorePicker(_value, _onChanged),
           ScoreFormat.point10Decimal =>
-            _TenDecimalScorePicker(value, onChanged),
-          ScoreFormat.point100 => _HundredScorePicker(value, onChanged),
+            _TenDecimalScorePicker(_value, _onChanged),
+          ScoreFormat.point100 => _HundredScorePicker(_value, _onChanged),
         },
       ),
     );
+  }
+
+  void _onChanged(double value) {
+    setState(() => _value = value);
+    widget.onChanged(value);
   }
 }
 

@@ -63,35 +63,56 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
       },
     );
 
-    final saveButton = BottomBarButton(
-      text: 'Save',
-      icon: Icons.save_outlined,
-      foregroundColor: ColorScheme.of(context).secondary,
-      onTap: () => ConfirmationDialog.show(
-        context,
-        title: 'Make default?',
-        content: 'The current filters and sorting will become the default.',
-        primaryAction: 'Yes',
-        secondaryAction: 'No',
-        onConfirm: () {
-          final notifier = ref.read(persistenceProvider.notifier);
-          if (widget.tag.ofAnime) {
-            notifier.setAnimeCollectionMediaFilter(_filter);
-          } else {
-            notifier.setMangaCollectionMediaFilter(_filter);
-          }
+    Widget? saveButton;
+    Widget? previewSortPicker;
 
-          widget.onChanged(_filter);
-          Navigator.pop(context);
-        },
-      ),
-    );
+    if (ofViewer &&
+        (widget.tag.ofAnime && options.animeCollectionPreview ||
+            !widget.tag.ofAnime && options.mangaCollectionPreview)) {
+      saveButton = BottomBarButton(
+        text: 'Save',
+        icon: Icons.save_outlined,
+        foregroundColor: ColorScheme.of(context).secondary,
+        onTap: () => ConfirmationDialog.show(
+          context,
+          title: 'Make default?',
+          content: 'The current filters and sorting will become the default.',
+          primaryAction: 'Yes',
+          secondaryAction: 'No',
+          onConfirm: () {
+            final notifier = ref.read(persistenceProvider.notifier);
+            if (widget.tag.ofAnime) {
+              notifier.setAnimeCollectionMediaFilter(_filter);
+            } else {
+              notifier.setMangaCollectionMediaFilter(_filter);
+            }
+
+            widget.onChanged(_filter);
+            Navigator.pop(context);
+          },
+        ),
+      );
+
+      previewSortPicker = EntrySortChipSelector(
+        title: 'Preview Sorting',
+        value: _filter.previewSort,
+        onChanged: (v) => _filter.previewSort = v,
+      );
+    }
 
     return SheetWithButtonRow(
       buttons: BottomBar(
         options.leftHanded
-            ? [applyButton, revertToDefaultButton, saveButton]
-            : [saveButton, revertToDefaultButton, applyButton],
+            ? [
+                applyButton,
+                revertToDefaultButton,
+                if (saveButton != null) saveButton,
+              ]
+            : [
+                if (saveButton != null) saveButton,
+                revertToDefaultButton,
+                applyButton,
+              ],
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
@@ -104,16 +125,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               value: _filter.sort,
               onChanged: (v) => _filter.sort = v,
             ),
-            if (ofViewer &&
-                _filter.sort == EntrySort.airing &&
-                options.airingSortForAnimePreview)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Text(
-                  'Note: Airing sort is set to replace your default one for the anime preview. You can turn it off in the settings.',
-                  style: TextTheme.of(context).labelMedium,
-                ),
-              ),
+            if (previewSortPicker != null) previewSortPicker,
             ChipMultiSelector(
               title: 'Statuses',
               items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),

@@ -80,17 +80,6 @@ class SettingsAppSubview extends ConsumerWidget {
                 options.copyWith(mangaCollectionPreview: v),
               ),
             ),
-            StatefulSwitchListTile(
-              title: const Text('Force Airing Sort for Anime Preview'),
-              subtitle: const Text(
-                'Sort by soonest airing, instead of the default',
-              ),
-              value: options.airingSortForAnimePreview,
-              onChanged: (v) => update(
-                options.copyWith(airingSortForAnimePreview: v),
-              ),
-            ),
-            const SizedBox(height: 5),
           ],
         ),
         ExpansionTile(

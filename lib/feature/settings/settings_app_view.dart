@@ -50,6 +50,7 @@ class SettingsAppSubview extends ConsumerWidget {
             ThemePreview(ref: ref, options: options),
             StatefulSwitchListTile(
               title: const Text('High Contrast'),
+              subtitle: const Text('Pure white/black backgrounds'),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
             ),

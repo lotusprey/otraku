@@ -87,23 +87,28 @@ class UserHomeView extends StatelessWidget {
 }
 
 class _UserView extends StatelessWidget {
-  const _UserView(this.tag, this.avatarUrl, [this.homeScrollCtrl]);
+  const _UserView(this.tag, this.avatarUrl, [this.scrollCtrl]);
 
   final UserTag tag;
   final String? avatarUrl;
-  final ScrollController? homeScrollCtrl;
+  final ScrollController? scrollCtrl;
 
   @override
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final viewerId = ref.watch(viewerIdProvider);
+        final viewer = ref.watch(
+          persistenceProvider.select((s) => s.accountGroup.account),
+        );
+
+        final isViewer = viewer != null &&
+            (tag.id != null ? tag.id == viewer.id : tag.name == viewer.name);
 
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
           (_, s) => s.whenOrNull(
             data: (data) {
-              if (homeScrollCtrl == null) return;
+              if (!isViewer) return;
 
               ref
                   .read(persistenceProvider.notifier)
@@ -121,7 +126,7 @@ class _UserView extends StatelessWidget {
         final header = UserHeader(
           id: tag.id,
           user: user.valueOrNull,
-          isViewer: homeScrollCtrl != null,
+          isViewer: isViewer,
           imageUrl: avatarUrl ?? user.valueOrNull?.imageUrl,
           toggleFollow: () {
             final userId = user.valueOrNull?.id;
@@ -160,12 +165,12 @@ class _UserView extends StatelessWidget {
                 ],
               ),
               data: (data) => CustomScrollView(
-                controller: homeScrollCtrl,
+                controller: scrollCtrl,
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   header,
                   refreshControl,
-                  _ButtonRow(data.id, viewerId),
+                  _ButtonRow(data.id, isViewer),
                   if (data.description.isNotEmpty) ...[
                     const SliverToBoxAdapter(
                       child: SizedBox(height: Theming.offset),
@@ -187,50 +192,50 @@ class _UserView extends StatelessWidget {
 }
 
 class _ButtonRow extends StatelessWidget {
-  const _ButtonRow(this.id, this.viewerId);
+  const _ButtonRow(this.userId, this.isViewer);
 
-  final int id;
-  final int? viewerId;
+  final int userId;
+  final bool isViewer;
 
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      if (id != viewerId) ...[
+      if (!isViewer) ...[
         _Button(
           label: 'Anime',
           icon: Ionicons.film,
-          onTap: () => context.push(Routes.animeCollection(id)),
+          onTap: () => context.push(Routes.animeCollection(userId)),
         ),
         _Button(
           label: 'Manga',
           icon: Ionicons.book,
-          onTap: () => context.push(Routes.mangaCollection(id)),
+          onTap: () => context.push(Routes.mangaCollection(userId)),
         ),
       ],
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
-        onTap: () => context.push(Routes.activities(id)),
+        onTap: () => context.push(Routes.activities(userId)),
       ),
       _Button(
         label: 'Social',
         icon: Ionicons.people_circle,
-        onTap: () => context.push(Routes.social(id)),
+        onTap: () => context.push(Routes.social(userId)),
       ),
       _Button(
         label: 'Favourites',
         icon: Icons.favorite,
-        onTap: () => context.push(Routes.favorites(id)),
+        onTap: () => context.push(Routes.favorites(userId)),
       ),
       _Button(
         label: 'Statistics',
         icon: Ionicons.stats_chart,
-        onTap: () => context.push(Routes.statistics(id)),
+        onTap: () => context.push(Routes.statistics(userId)),
       ),
       _Button(
         label: 'Reviews',
         icon: Icons.rate_review,
-        onTap: () => context.push(Routes.reviews(id)),
+        onTap: () => context.push(Routes.reviews(userId)),
       ),
     ];
 

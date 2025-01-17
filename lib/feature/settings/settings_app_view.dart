@@ -33,7 +33,7 @@ class SettingsAppSubview extends ConsumerWidget {
       controller: scrollCtrl,
       padding: EdgeInsets.only(
         top: listPadding.top + Theming.offset,
-        bottom: listPadding.bottom + Theming.offset,
+        bottom: listPadding.bottom + Theming.offset + 60,
       ),
       children: [
         ExpansionTile(

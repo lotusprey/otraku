@@ -174,32 +174,37 @@ class _HomeViewState extends ConsumerState<HomeView>
         final tab = HomeTab.values[i];
 
         switch (tab) {
+          case HomeTab.feed:
+            _feedScrollCtrl.scrollToTop();
           case HomeTab.anime:
             if (_animeScrollCtrl.position.pixels > 0) {
               _animeScrollCtrl.scrollToTop();
-            } else {
-              _toggleSearchFocus();
+              return;
             }
-            return;
+
+            _toggleSearchFocus();
           case HomeTab.manga:
             if (_mangaScrollCtrl.position.pixels > 0) {
               _mangaScrollCtrl.scrollToTop();
-            } else {
-              _toggleSearchFocus();
+              return;
             }
-            return;
+
+            _toggleSearchFocus();
           case HomeTab.discover:
             if (_discoverScrollCtrl.position.pixels > 0) {
               _discoverScrollCtrl.scrollToTop();
-            } else {
-              _toggleSearchFocus();
+              return;
             }
+
+            _toggleSearchFocus();
             return;
-          case HomeTab.feed:
-            _feedScrollCtrl.scrollToTop();
           case HomeTab.profile:
-            primaryScrollCtrl.scrollToTop();
-            return;
+            if (primaryScrollCtrl.positions.last.pixels > 0) {
+              primaryScrollCtrl.scrollToTop();
+              return;
+            }
+
+            context.push(Routes.settings);
         }
       },
     );

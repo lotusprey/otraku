@@ -20,12 +20,19 @@ class CollectionFilter {
 }
 
 class CollectionMediaFilter {
-  CollectionMediaFilter(this.sort);
+  CollectionMediaFilter()
+      : sort = EntrySort.title,
+        previewSort = EntrySort.title;
 
-  factory CollectionMediaFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
+  factory CollectionMediaFilter.fromPersistenceMap(
+    Map<dynamic, dynamic> map,
+  ) {
     final sort = EntrySort.values.getOrFirst(map['sort']);
+    final previewSort = EntrySort.values.getOrFirst(map['previewSort']);
 
-    final filter = CollectionMediaFilter(sort)
+    final filter = CollectionMediaFilter()
+      ..sort = sort
+      ..previewSort = previewSort
       ..startYearFrom = map['startYearFrom']
       ..startYearTo = map['startYearTo']
       ..country = OriginCountry.values.getOrNull(map['country'])
@@ -61,6 +68,7 @@ class CollectionMediaFilter {
   final tagIn = <String>[];
   final tagNotIn = <String>[];
   EntrySort sort;
+  EntrySort previewSort;
   int? startYearFrom;
   int? startYearTo;
   OriginCountry? country;
@@ -80,7 +88,9 @@ class CollectionMediaFilter {
       isPrivate != null ||
       hasNotes != null;
 
-  CollectionMediaFilter copy() => CollectionMediaFilter(sort)
+  CollectionMediaFilter copy() => CollectionMediaFilter()
+    ..sort = sort
+    ..previewSort = previewSort
     ..statuses.addAll(statuses)
     ..formats.addAll(formats)
     ..genreIn.addAll(genreIn)
@@ -101,6 +111,7 @@ class CollectionMediaFilter {
         'tagIn': tagIn,
         'tagNotIn': tagNotIn,
         'sort': sort.index,
+        'previewSort': previewSort.index,
         'startYearFrom': startYearFrom,
         'startYearTo': startYearTo,
         'country': country?.index,

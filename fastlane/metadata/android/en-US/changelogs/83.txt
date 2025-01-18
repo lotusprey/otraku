@@ -1,0 +1,3 @@
+- In the collection filter sheets for both your anime and manga collection, you can explicitly set the preview collection sorting, separately from the one for the full collection. The exclusive airing sorting for anime collection preview toggle is removed from settings.
+- Added a doujin filter in the discover filter sheet.
+- While on the profile tab of the home screen, tapping the profile icon will scroll to top like before. But now it will also open settings, if you're already at the top.

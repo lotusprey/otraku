@@ -52,7 +52,8 @@ class DiscoverMediaFilter {
       ..startYearTo = map['startYearTo']
       ..country = OriginCountry.values.getOrNull(map['country'])
       ..inLists = map['inLists']
-      ..isAdult = map['isAdult'];
+      ..isAdult = map['isAdult']
+      ..isLicensed = map['isLicensed'];
 
     for (final e in map['statuses'] ?? const []) {
       final status = ReleaseStatus.values.getOrNull(e);
@@ -105,6 +106,7 @@ class DiscoverMediaFilter {
   OriginCountry? country;
   bool? inLists;
   bool? isAdult;
+  bool? isLicensed;
 
   bool get isActive =>
       statuses.isNotEmpty ||
@@ -120,7 +122,8 @@ class DiscoverMediaFilter {
       startYearTo != null ||
       country != null ||
       inLists != null ||
-      isAdult != null;
+      isAdult != null ||
+      isLicensed != null;
 
   DiscoverMediaFilter copy() => DiscoverMediaFilter(sort)
     ..statuses.addAll(statuses)
@@ -136,7 +139,8 @@ class DiscoverMediaFilter {
     ..startYearTo = startYearTo
     ..country = country
     ..inLists = inLists
-    ..isAdult = isAdult;
+    ..isAdult = isAdult
+    ..isLicensed = isLicensed;
 
   static DiscoverMediaFilter fromCollection({
     required CollectionMediaFilter filter,
@@ -174,6 +178,7 @@ class DiscoverMediaFilter {
         if (country != null) 'countryOfOrigin': country!.code,
         if (inLists != null) 'onList': inLists,
         if (isAdult != null) 'isAdult': isAdult,
+        if (isLicensed != null) 'isLicensed': isLicensed,
       };
 
   Map<String, dynamic> toPersistenceMap() => {
@@ -192,5 +197,6 @@ class DiscoverMediaFilter {
         'country': country?.index,
         'inLists': inLists,
         'isAdult': isAdult,
+        'isLicensed': isLicensed,
       };
 }

@@ -33,7 +33,7 @@ class SettingsAppSubview extends ConsumerWidget {
       controller: scrollCtrl,
       padding: EdgeInsets.only(
         top: listPadding.top + Theming.offset,
-        bottom: listPadding.bottom + Theming.offset,
+        bottom: listPadding.bottom + Theming.offset + 60,
       ),
       children: [
         ExpansionTile(
@@ -50,6 +50,7 @@ class SettingsAppSubview extends ConsumerWidget {
             ThemePreview(ref: ref, options: options),
             StatefulSwitchListTile(
               title: const Text('High Contrast'),
+              subtitle: const Text('Pure white/black backgrounds'),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
             ),
@@ -80,17 +81,6 @@ class SettingsAppSubview extends ConsumerWidget {
                 options.copyWith(mangaCollectionPreview: v),
               ),
             ),
-            StatefulSwitchListTile(
-              title: const Text('Force Airing Sort for Anime Preview'),
-              subtitle: const Text(
-                'Sort by soonest airing, instead of the default',
-              ),
-              value: options.airingSortForAnimePreview,
-              onChanged: (v) => update(
-                options.copyWith(airingSortForAnimePreview: v),
-              ),
-            ),
-            const SizedBox(height: 5),
           ],
         ),
         ExpansionTile(

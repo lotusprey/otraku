@@ -13,7 +13,9 @@ final collectionEntriesProvider =
     final mediaFilter = filter.mediaFilter;
     final search = filter.search.toLowerCase();
 
-    ref.watch(collectionProvider(tag).notifier).ensureSorted(mediaFilter.sort);
+    ref
+        .watch(collectionProvider(tag).notifier)
+        .ensureSorted(mediaFilter.sort, mediaFilter.previewSort);
 
     final entries = ref
             .watch(collectionProvider(tag))

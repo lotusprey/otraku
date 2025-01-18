@@ -74,11 +74,7 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.only(
-                  top: Theming.offset,
-                  left: Theming.offset,
-                  right: Theming.offset,
-                ),
+                padding: Theming.paddingAll,
                 child: _TileContent(entry, scoreFormat, onProgressUpdated),
               ),
             ),

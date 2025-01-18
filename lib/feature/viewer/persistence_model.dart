@@ -10,7 +10,7 @@ import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.6.4';
+const appVersion = '1.7.0';
 
 class Persistence {
   const Persistence({
@@ -30,8 +30,8 @@ class Persistence {
         accountGroup: AccountGroup.empty(),
         options: Options.empty(),
         appMeta: AppMeta.empty(),
-        animeCollectionMediaFilter: CollectionMediaFilter(EntrySort.title),
-        mangaCollectionMediaFilter: CollectionMediaFilter(EntrySort.title),
+        animeCollectionMediaFilter: CollectionMediaFilter(),
+        mangaCollectionMediaFilter: CollectionMediaFilter(),
         discoverMediaFilter: DiscoverMediaFilter(MediaSort.titleRomaji),
         homeActivitiesFilter: HomeActivitiesFilter.empty(),
         calendarFilter: CalendarFilter.empty(),
@@ -191,7 +191,6 @@ class Options {
     required this.imageQuality,
     required this.animeCollectionPreview,
     required this.mangaCollectionPreview,
-    required this.airingSortForAnimePreview,
     required this.confirmExit,
     required this.leftHanded,
     required this.analogueClock,
@@ -209,7 +208,6 @@ class Options {
         imageQuality: ImageQuality.high,
         animeCollectionPreview: true,
         mangaCollectionPreview: true,
-        airingSortForAnimePreview: true,
         confirmExit: false,
         leftHanded: false,
         analogueClock: false,
@@ -228,7 +226,6 @@ class Options {
             ImageQuality.high,
         animeCollectionPreview: map['animeCollectionPreview'] ?? true,
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
-        airingSortForAnimePreview: map['airingSortForAnimePreview'] ?? true,
         confirmExit: map['confirmExit'] ?? false,
         leftHanded: map['leftHanded'] ?? false,
         analogueClock: map['analogueClock'] ?? false,
@@ -251,7 +248,6 @@ class Options {
   final ImageQuality imageQuality;
   final bool animeCollectionPreview;
   final bool mangaCollectionPreview;
-  final bool airingSortForAnimePreview;
   final bool confirmExit;
   final bool leftHanded;
   final bool analogueClock;
@@ -268,7 +264,6 @@ class Options {
     ImageQuality? imageQuality,
     bool? animeCollectionPreview,
     bool? mangaCollectionPreview,
-    bool? airingSortForAnimePreview,
     bool? confirmExit,
     bool? leftHanded,
     bool? analogueClock,
@@ -287,8 +282,6 @@ class Options {
             animeCollectionPreview ?? this.animeCollectionPreview,
         mangaCollectionPreview:
             mangaCollectionPreview ?? this.mangaCollectionPreview,
-        airingSortForAnimePreview:
-            airingSortForAnimePreview ?? this.airingSortForAnimePreview,
         confirmExit: confirmExit ?? this.confirmExit,
         leftHanded: leftHanded ?? this.leftHanded,
         analogueClock: analogueClock ?? this.analogueClock,
@@ -307,7 +300,6 @@ class Options {
         'imageQuality': imageQuality.index,
         'animeCollectionPreview': animeCollectionPreview,
         'mangaCollectionPreview': mangaCollectionPreview,
-        'airingSortForAnimePreview': airingSortForAnimePreview,
         'confirmExit': confirmExit,
         'leftHanded': leftHanded,
         'analogueClock': analogueClock,

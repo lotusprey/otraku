@@ -174,6 +174,12 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
               value: _filter.isAdult,
               onChanged: (v) => _filter.isAdult = v,
             ),
+            ChipSelector(
+              title: 'Licensing',
+              items: const [('Licensed', true), ('Doujin', false)],
+              value: _filter.isLicensed,
+              onChanged: (v) => _filter.isLicensed = v,
+            ),
             SizedBox(
               height: MediaQuery.paddingOf(context).bottom +
                   BottomBar.height +

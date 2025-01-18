@@ -57,12 +57,17 @@ class CollectionNotifier
     return collection;
   }
 
-  void ensureSorted(EntrySort sort) {
-    if (_sort == sort) return;
-    _sort = sort;
-
+  void ensureSorted(EntrySort sort, EntrySort previewSort) {
     _updateState((collection) {
-      collection.sort(sort);
+      final selectedSort = switch (collection) {
+        FullCollection _ => sort,
+        PreviewCollection _ => previewSort,
+      };
+
+      if (_sort == selectedSort) return;
+      _sort = selectedSort;
+
+      collection.sort(selectedSort);
       return null;
     });
   }

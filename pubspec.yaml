@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.6.4+82
+version: 1.7.0+83
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -31,7 +31,7 @@ dependencies:
   flutter_secure_storage: ^9.2.4
 
   # Markdown to HTML parsing.
-  markdown: ^7.2.2
+  markdown: ^7.3.0
 
   # Used for configuring [cached_network_image].
   flutter_cache_manager: ^3.4.1

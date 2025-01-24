@@ -103,12 +103,9 @@ class ReviewsFilter {
   final MediaType? mediaType;
   final ReviewsSort sort;
 
-  ReviewsFilter copyWith({
-    MediaType? Function()? mediaType,
-    ReviewsSort? sort,
-  }) =>
+  ReviewsFilter copyWith({(MediaType?,)? mediaType, ReviewsSort? sort}) =>
       ReviewsFilter(
-        mediaType: mediaType == null ? this.mediaType : mediaType(),
+        mediaType: mediaType == null ? this.mediaType : mediaType.$1,
         sort: sort ?? this.sort,
       );
 }

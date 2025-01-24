@@ -124,8 +124,8 @@ class _EditView extends ConsumerWidget {
               return s.copyWith(
                 listStatus: status,
                 progress: progress,
-                startedAt: () => startedAt,
-                completedAt: () => completedAt,
+                startedAt: (startedAt,),
+                completedAt: (completedAt,),
               );
             },
           ),
@@ -149,10 +149,7 @@ class _EditView extends ConsumerWidget {
               SnackBarExtension.show(context, 'Status changed');
             }
 
-            return s.copyWith(
-              listStatus: listStatus,
-              startedAt: () => startedAt,
-            );
+            return s.copyWith(listStatus: listStatus, startedAt: (startedAt,));
           }),
         ),
         DateField(
@@ -181,7 +178,7 @@ class _EditView extends ConsumerWidget {
             return s.copyWith(
               listStatus: listStatus,
               progress: progress,
-              completedAt: () => completedAt,
+              completedAt: (completedAt,),
             );
           }),
         ),
@@ -311,8 +308,8 @@ class _EditView extends ConsumerWidget {
         return s.copyWith(
           progress: progress,
           listStatus: status,
-          startedAt: () => startedAt,
-          completedAt: () => completedAt,
+          startedAt: (startedAt,),
+          completedAt: (completedAt,),
         );
       }),
     );

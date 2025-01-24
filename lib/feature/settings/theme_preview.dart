@@ -38,7 +38,7 @@ class ThemePreview extends StatelessWidget {
         active: options.themeBase == null,
         onTap: () => ref
             .read(persistenceProvider.notifier)
-            .setOptions(options.copyWith(themeBase: () => null)),
+            .setOptions(options.copyWith(themeBase: (null,))),
       ));
     }
 
@@ -52,7 +52,7 @@ class ThemePreview extends StatelessWidget {
         active: options.themeBase == tb,
         onTap: () => ref
             .read(persistenceProvider.notifier)
-            .setOptions(options.copyWith(themeBase: () => tb)),
+            .setOptions(options.copyWith(themeBase: (tb,))),
       ));
     }
 

@@ -22,6 +22,12 @@ class _ScoreFieldState extends State<ScoreField> {
   late var _value = widget.value;
 
   @override
+  void didUpdateWidget(covariant ScoreField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _value = widget.value;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(Theming.offset),

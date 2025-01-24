@@ -52,7 +52,7 @@ class CharacterMediaFilterButton extends StatelessWidget {
                   ],
                   value: filter.inLists,
                   onChanged: (v) => filter = filter.copyWith(
-                    inLists: () => v,
+                    inLists: (v,),
                   ),
                 ),
               ],

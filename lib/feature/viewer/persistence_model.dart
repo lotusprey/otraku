@@ -257,7 +257,7 @@ class Options {
 
   Options copyWith({
     ThemeMode? themeMode,
-    ThemeBase? Function()? themeBase,
+    (ThemeBase?,)? themeBase,
     bool? highContrast,
     HomeTab? homeTab,
     DiscoverType? discoverType,
@@ -273,7 +273,7 @@ class Options {
   }) =>
       Options(
         themeMode: themeMode ?? this.themeMode,
-        themeBase: themeBase != null ? themeBase() : this.themeBase,
+        themeBase: themeBase == null ? this.themeBase : themeBase.$1,
         highContrast: highContrast ?? this.highContrast,
         homeTab: homeTab ?? this.homeTab,
         discoverType: discoverType ?? this.discoverType,

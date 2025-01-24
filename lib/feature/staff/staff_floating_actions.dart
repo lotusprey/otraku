@@ -50,9 +50,7 @@ class StaffFilterButton extends StatelessWidget {
                   title: 'Type',
                   items: const [('Anime', true), ('Manga', false)],
                   value: filter.ofAnime,
-                  onChanged: (v) => filter = filter.copyWith(
-                    ofAnime: () => v,
-                  ),
+                  onChanged: (v) => filter = filter.copyWith(ofAnime: (v,)),
                 ),
                 const SizedBox(height: Theming.offset),
                 ChipSelector(
@@ -62,9 +60,7 @@ class StaffFilterButton extends StatelessWidget {
                     ('Not in Lists', false),
                   ],
                   value: filter.inLists,
-                  onChanged: (v) => filter = filter.copyWith(
-                    inLists: () => v,
-                  ),
+                  onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
                 ),
               ],
             ),

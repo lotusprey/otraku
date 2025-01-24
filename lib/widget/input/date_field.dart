@@ -42,40 +42,27 @@ class _DateFieldState extends State<DateField> {
       readOnly: true,
       controller: _ctrl,
       textAlign: TextAlign.center,
+      onTap: () => showDatePicker(
+        context: context,
+        initialDate: _value ?? DateTime.now(),
+        firstDate: DateTime(1920),
+        lastDate: DateTime.now(),
+        errorInvalidText: 'Enter date in valid range',
+        errorFormatText: 'Enter valid date',
+        confirmText: 'Done',
+        cancelText: 'Cancel',
+        fieldLabelText: '',
+        helpText: '',
+      ).then((pickedDate) {
+        if (pickedDate == null) return;
+
+        _value = pickedDate;
+        _ctrl.text = _value?.formattedDate ?? '';
+        widget.onChanged(pickedDate);
+      }),
       decoration: InputDecoration(
         labelText: widget.label,
         border: const OutlineInputBorder(),
-        prefixIcon: Semantics(
-          button: true,
-          child: Material(
-            color: Colors.transparent,
-            child: InkResponse(
-              radius: Theming.radiusSmall.x,
-              child: const Tooltip(
-                message: 'Pick Date',
-                child: Icon(Ionicons.calendar_clear_outline),
-              ),
-              onTap: () => showDatePicker(
-                context: context,
-                initialDate: _value ?? DateTime.now(),
-                firstDate: DateTime(1920),
-                lastDate: DateTime.now(),
-                errorInvalidText: 'Enter date in valid range',
-                errorFormatText: 'Enter valid date',
-                confirmText: 'Done',
-                cancelText: 'Cancel',
-                fieldLabelText: '',
-                helpText: '',
-              ).then((pickedDate) {
-                if (pickedDate == null) return;
-
-                _value = pickedDate;
-                _ctrl.text = _value?.formattedDate ?? '';
-                widget.onChanged(pickedDate);
-              }),
-            ),
-          ),
-        ),
         suffixIcon: Semantics(
           button: true,
           child: Material(

@@ -52,17 +52,13 @@ class StudioFilterButton extends StatelessWidget {
                     ('Not in Lists', false),
                   ],
                   value: filter.inLists,
-                  onChanged: (v) => filter = filter.copyWith(
-                    inLists: () => v,
-                  ),
+                  onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
                 ),
                 ChipSelector(
                   title: 'Main Studio',
                   items: const [('Is Main', true), ('Is Not Main', false)],
                   value: filter.isMain,
-                  onChanged: (v) => filter = filter.copyWith(
-                    isMain: () => v,
-                  ),
+                  onChanged: (v) => filter = filter.copyWith(isMain: (v,)),
                 ),
               ],
             ),

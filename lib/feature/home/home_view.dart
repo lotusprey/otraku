@@ -66,7 +66,10 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     _tabCtrl.addListener(
       () => WidgetsBinding.instance.addPostFrameCallback(
-        (_) => context.go(Routes.home(HomeTab.values[_tabCtrl.index])),
+        (_) {
+          _searchFocusNode.unfocus();
+          context.go(Routes.home(HomeTab.values[_tabCtrl.index]));
+        },
       ),
     );
   }

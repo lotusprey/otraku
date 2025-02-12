@@ -4,10 +4,15 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 class Timestamp extends StatelessWidget {
-  const Timestamp(this.dateTime, this.analogueClock);
+  const Timestamp(
+    this.dateTime,
+    this.analogueClock, {
+    this.leading = const Icon(Icons.history_rounded, size: Theming.iconSmall),
+  });
 
   final DateTime dateTime;
   final bool analogueClock;
+  final Widget leading;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class Timestamp extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.history_rounded, size: Theming.iconSmall),
+            leading,
             const SizedBox(width: 5),
             Text(
               _relativeTime(),

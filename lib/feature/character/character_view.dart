@@ -355,7 +355,7 @@ class __CharacterViewContentState extends ConsumerState<_CharacterTabs> {
       children: [
         if (widget.withOverview)
           ConstrainedView(
-            padding: EdgeInsets.zero,
+            padded: false,
             child: CharacterOverviewSubview.asFragment(
               character: widget.character,
               scrollCtrl: _scrollCtrl,

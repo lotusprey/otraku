@@ -55,10 +55,8 @@ class ReviewView extends StatelessWidget {
                     ),
                     child: Text(
                       '${data.score}/100',
-                      style: TextTheme.of(context).bodyMedium?.copyWith(
+                      style: TextTheme.of(context).titleLarge?.copyWith(
                             color: ColorScheme.of(context).onPrimary,
-                            fontSize: Theming.fontBig,
-                            fontWeight: FontWeight.w500,
                           ),
                     ),
                   ),

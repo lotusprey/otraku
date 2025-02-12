@@ -66,10 +66,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     }
 
     final tabs = [
-      ConstrainedView(
-        padding: EdgeInsets.zero,
-        child: SettingsAppSubview(_scrollCtrl),
-      ),
+      ConstrainedView(padded: false, child: SettingsAppSubview(_scrollCtrl)),
       switch (_settings) {
         null => const Center(
             child: Padding(
@@ -105,10 +102,7 @@ class _SettingsViewState extends ConsumerState<SettingsView>
           ),
         _ => const Center(child: Loader()),
       },
-      ConstrainedView(
-        padding: EdgeInsets.zero,
-        child: SettingsAboutSubview(_scrollCtrl),
-      ),
+      ConstrainedView(padded: false, child: SettingsAboutSubview(_scrollCtrl)),
     ];
 
     final floatingAction = switch (_settings) {

@@ -38,44 +38,47 @@ class _SearchFieldState extends State<SearchField> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _ctrl,
-      focusNode: widget.focusNode,
-      style: TextTheme.of(context).bodyMedium,
-      onChanged: (val) {
-        if (val.isEmpty) {
-          widget.debounce?.cancel();
-          widget.onChanged('');
-          return;
-        }
+    return Semantics(
+      label: 'Search',
+      child: TextField(
+        controller: _ctrl,
+        focusNode: widget.focusNode,
+        style: TextTheme.of(context).bodyMedium,
+        onChanged: (val) {
+          if (val.isEmpty) {
+            widget.debounce?.cancel();
+            widget.onChanged('');
+            return;
+          }
 
-        if (widget.debounce != null) {
-          widget.debounce!.run(() => widget.onChanged(val));
-        } else {
-          widget.onChanged(val);
-        }
-      },
-      decoration: InputDecoration(
-        isDense: false,
-        hintText: widget.hint,
-        filled: true,
-        fillColor: ColorScheme.of(context).surfaceContainerHighest,
-        contentPadding: const EdgeInsets.only(left: 15),
-        constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
-        suffixIcon: _ctrl.text.isNotEmpty
-            ? IconButton(
-                tooltip: 'Clear',
-                iconSize: Theming.iconSmall,
-                icon: const Icon(Icons.close_rounded),
-                color: ColorScheme.of(context).onSurface,
-                padding: const EdgeInsets.all(0),
-                onPressed: () {
-                  _ctrl.clear();
-                  widget.debounce?.cancel();
-                  widget.onChanged('');
-                },
-              )
-            : null,
+          if (widget.debounce != null) {
+            widget.debounce!.run(() => widget.onChanged(val));
+          } else {
+            widget.onChanged(val);
+          }
+        },
+        decoration: InputDecoration(
+          isDense: false,
+          hintText: widget.hint,
+          filled: true,
+          fillColor: ColorScheme.of(context).surfaceContainerHighest,
+          contentPadding: const EdgeInsets.only(left: 15),
+          constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
+          suffixIcon: _ctrl.text.isNotEmpty
+              ? IconButton(
+                  tooltip: 'Clear',
+                  iconSize: Theming.iconSmall,
+                  icon: const Icon(Icons.close_rounded),
+                  color: ColorScheme.of(context).onSurface,
+                  padding: const EdgeInsets.all(0),
+                  onPressed: () {
+                    _ctrl.clear();
+                    widget.debounce?.cancel();
+                    widget.onChanged('');
+                  },
+                )
+              : null,
+        ),
       ),
     );
   }

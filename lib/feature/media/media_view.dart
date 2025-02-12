@@ -355,7 +355,7 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
       children: [
         if (widget.withOverview)
           ConstrainedView(
-            padding: EdgeInsets.zero,
+            padded: false,
             child: MediaOverviewSubview.asFragment(
               ref: ref,
               info: widget.media.info,

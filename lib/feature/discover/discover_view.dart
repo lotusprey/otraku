@@ -29,59 +29,72 @@ class DiscoverSubview extends StatelessWidget {
         final onRefresh = (invalidate) => invalidate(discoverProvider);
 
         final content = switch (type) {
-          DiscoverType.anime => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.anime => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverAnimeItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
+              ),
               onData: (data) =>
                   options.discoverItemView == DiscoverItemView.simple
                       ? DiscoverMediaSimpleGrid(data.items)
                       : DiscoverMediaGrid(data.items),
             ),
-          DiscoverType.manga => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.manga => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverMangaItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
+              ),
               onData: (data) =>
                   options.discoverItemView == DiscoverItemView.simple
                       ? DiscoverMediaSimpleGrid(data.items)
                       : DiscoverMediaGrid(data.items),
             ),
-          DiscoverType.character => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.character => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverCharacterItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData(
+                  (data) => (data as DiscoverCharacterItems).pages,
+                ),
+              ),
               onData: (data) => CharacterItemGrid(data.items),
             ),
-          DiscoverType.staff => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.staff => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverStaffItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData((data) => (data as DiscoverStaffItems).pages),
+              ),
               onData: (data) => StaffItemGrid(data.items),
             ),
-          DiscoverType.studio => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.studio => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverStudioItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData(
+                  (data) => (data as DiscoverStudioItems).pages,
+                ),
+              ),
               onData: (data) => StudioItemGrid(data.items),
             ),
-          DiscoverType.user => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.user => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverUserItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData((data) => (data as DiscoverUserItems).pages),
+              ),
               onData: (data) => UserItemGrid(data.items),
             ),
-          DiscoverType.review => PagedSelectionView(
-              provider: discoverProvider,
+          DiscoverType.review => PagedView(
               scrollCtrl: scrollCtrl,
               onRefresh: onRefresh,
-              select: (data) => (data as DiscoverReviewItems).pages,
+              provider: discoverProvider.select(
+                (s) => s.whenData(
+                  (data) => (data as DiscoverReviewItems).pages,
+                ),
+              ),
               onData: (data) => ReviewGrid(data.items),
             ),
         };

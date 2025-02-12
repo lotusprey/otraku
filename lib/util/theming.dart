@@ -72,13 +72,15 @@ class Theming {
             backgroundColor: scheme.primary,
             foregroundColor: scheme.onPrimary,
             iconColor: scheme.onPrimary,
-            textStyle: const TextStyle(fontWeight: FontWeight.w500),
+            textStyle: const TextStyle(
+              fontVariations: [FontVariation('wght', 500)],
+            ),
           ),
         ),
         chipTheme: ChipThemeData(
           labelStyle: TextStyle(
             color: scheme.onSecondaryContainer,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
         ),
         segmentedButtonTheme: const SegmentedButtonThemeData(
@@ -92,42 +94,43 @@ class Theming {
           titleLarge: TextStyle(
             fontSize: fontBig,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           titleMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           titleSmall: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           bodyLarge: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           bodyMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelLarge: TextStyle(
             fontSize: fontMedium,
             color: scheme.primary,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelSmall: TextStyle(
             fontSize: fontSmall,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 350)],
+            letterSpacing: 0.5,
           ),
         ),
         textSelectionTheme: TextSelectionThemeData(
@@ -141,12 +144,12 @@ class Theming {
           titleTextStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           contentTextStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
         ),
         tooltipTheme: TooltipThemeData(
@@ -169,7 +172,7 @@ class Theming {
           hintStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           border: const OutlineInputBorder(
             borderRadius: borderRadiusBig,

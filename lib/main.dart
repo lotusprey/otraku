@@ -69,11 +69,19 @@ class AppState extends ConsumerState<_App> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(viewerIdProvider);
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+    final platformBrightness = MediaQuery.platformBrightnessOf(context);
+    final viewSize = MediaQuery.sizeOf(context);
+
+    final theming = Theming(
+      formFactor: viewSize.width < Theming.windowWidthMedium
+          ? FormFactor.phone
+          : FormFactor.tablet,
+    );
+
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        ref.watch(viewerIdProvider);
-        final options = ref.watch(persistenceProvider.select((s) => s.options));
-
         Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
         Color darkSeed = lightSeed;
         if (lightDynamic != null && darkDynamic != null) {
@@ -117,8 +125,6 @@ class AppState extends ConsumerState<_App> {
           brightness: Brightness.dark,
         ).copyWith(surface: darkBackground);
 
-        final platformBrightness = MediaQuery.platformBrightnessOf(context);
-
         final isDark = options.themeMode == ThemeMode.system
             ? platformBrightness == Brightness.dark
             : options.themeMode == ThemeMode.dark;
@@ -146,8 +152,8 @@ class AppState extends ConsumerState<_App> {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Otraku',
-          theme: Theming.schemeToThemeData(lightScheme),
-          darkTheme: Theming.schemeToThemeData(darkScheme),
+          theme: theming.generateThemeData(lightScheme),
+          darkTheme: theming.generateThemeData(darkScheme),
           themeMode: options.themeMode,
           routerConfig: _router,
           builder: (context, child) {

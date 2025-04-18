@@ -2,6 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+enum FormFactor {
+  phone,
+  tablet,
+}
+
 enum ThemeBase {
   navy('Navy', Color(0xFF45A0F2)),
   mint('Mint', Color(0xFF2AB8B8)),
@@ -17,7 +22,26 @@ enum ThemeBase {
   final Color seed;
 }
 
-class Theming {
+class Theming extends ThemeExtension<Theming> {
+  const Theming({required this.formFactor});
+
+  final FormFactor formFactor;
+
+  static Theming of(BuildContext context) =>
+      Theme.of(context).extension<Theming>() ??
+      const Theming(formFactor: FormFactor.phone);
+
+  @override
+  ThemeExtension<Theming> copyWith({FormFactor? formFactor}) =>
+      Theming(formFactor: formFactor ?? this.formFactor);
+
+  @override
+  ThemeExtension<Theming> lerp(
+    covariant ThemeExtension<Theming>? other,
+    double t,
+  ) =>
+      switch (other) { Theming _ => other, _ => this };
+
   static const windowWidthMedium = 600.0;
   static const windowWidthLarge = 840.0;
 
@@ -43,7 +67,8 @@ class Theming {
     parent: BouncingScrollPhysics(),
   );
 
-  static ThemeData schemeToThemeData(ColorScheme scheme) => ThemeData(
+  ThemeData generateThemeData(ColorScheme scheme) => ThemeData(
+        extensions: [this],
         fontFamily: 'Rubik',
         colorScheme: scheme,
         scaffoldBackgroundColor: scheme.surface,

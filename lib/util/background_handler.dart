@@ -47,16 +47,35 @@ class BackgroundHandler {
     }
   }
 
-  /// Request for a permission to send notifications, if not already granted.
-  static Future<bool> requestPermissionForNotifications() async {
-    final android = _notificationPlugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
-    if (android == null) return true;
-    if (await android.areNotificationsEnabled() ?? true) return true;
-    return await android.requestNotificationsPermission() ?? true;
+  /// Requests a notifications permission, if not already granted.
+  static Future<void> requestPermissionForNotifications() async {
+    if (Platform.isAndroid) {
+      final platform =
+          _notificationPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      if (platform == null) return;
+
+      if (await platform.areNotificationsEnabled() ?? false) return;
+
+      await platform.requestNotificationsPermission();
+      return;
+    }
+
+    if (Platform.isIOS) {
+      final platform =
+          _notificationPlugin.resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>();
+      if (platform == null) return;
+
+      final permissions = await platform.checkPermissions();
+      if (permissions?.isEnabled ?? false) return;
+
+      await platform.requestPermissions(sound: true, badge: true);
+      return;
+    }
   }
 
-  /// Should be called, for example, when the user logs out of an account.
+  /// Clears device notifications.
   static void clearNotifications() => _notificationPlugin.cancelAll();
 }
 

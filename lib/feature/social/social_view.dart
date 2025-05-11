@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
+import 'package:otraku/feature/comment/comment_model.dart';
+import 'package:otraku/feature/comment/comment_tile.dart';
+import 'package:otraku/feature/forum/thread_item_list.dart';
 import 'package:otraku/feature/social/social_model.dart';
-import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/social/social_provider.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
+import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/scroll_physics.dart';
@@ -24,7 +29,10 @@ class SocialView extends ConsumerStatefulWidget {
 
 class _SocialViewState extends ConsumerState<SocialView>
     with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(length: 2, vsync: this);
+  late final _tabCtrl = TabController(
+    length: SocialTab.values.length,
+    vsync: this,
+  );
   late final _scrollCtrl = PagedController(
     loadMore: () => ref
         .read(socialProvider(widget.id).notifier)
@@ -47,6 +55,11 @@ class _SocialViewState extends ConsumerState<SocialView>
   @override
   Widget build(BuildContext context) {
     final tab = SocialTab.values[_tabCtrl.index];
+
+    final viewerId = ref.watch(viewerIdProvider);
+    final analogClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogClock),
+    );
 
     final count = ref.watch(
       socialProvider(widget.id).select(
@@ -78,16 +91,18 @@ class _SocialViewState extends ConsumerState<SocialView>
           selected: _tabCtrl.index,
           onChanged: (i) => _tabCtrl.index = i,
           onSame: (_) => _scrollCtrl.scrollToTop(),
-          items: const {
-            'Following': Ionicons.people_circle,
-            'Followers': Ionicons.person_circle,
+          items: {
+            SocialTab.following.title: Ionicons.people_circle,
+            SocialTab.followers.title: Ionicons.person_circle,
+            SocialTab.threads.title: Ionicons.chatbubble_outline,
+            SocialTab.comments.title: Ionicons.chatbubbles_outline,
           },
         ),
         child: TabBarView(
           controller: _tabCtrl,
           physics: const FastTabBarViewScrollPhysics(),
           children: [
-            PagedView<UserItem>(
+            PagedView(
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               provider: socialProvider(widget.id).select(
@@ -95,7 +110,7 @@ class _SocialViewState extends ConsumerState<SocialView>
               ),
               onData: (data) => UserItemGrid(data.items),
             ),
-            PagedView<UserItem>(
+            PagedView(
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               provider: socialProvider(widget.id).select(
@@ -103,9 +118,70 @@ class _SocialViewState extends ConsumerState<SocialView>
               ),
               onData: (data) => UserItemGrid(data.items),
             ),
+            PagedView(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.threads),
+              ),
+              onData: (data) => ThreadItemList(data.items, analogClock),
+            ),
+            PagedView(
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              provider: socialProvider(widget.id).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.comments),
+              ),
+              onData: (data) => _CommentItemList(
+                data.items,
+                viewerId,
+                analogClock,
+              ),
+            ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _CommentItemList extends StatelessWidget {
+  const _CommentItemList(this.items, this.viewerId, this.analogClock);
+
+  final List<Comment> items;
+  final int? viewerId;
+  final bool analogClock;
+
+  @override
+  Widget build(BuildContext context) {
+    return SliverList.builder(
+      itemCount: items.length,
+      itemBuilder: (context, i) {
+        final item = items[i];
+
+        final openThread = () => context.push(Routes.thread(item.threadId));
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Semantics(
+              onTap: openThread,
+              onTapHint: 'open thread',
+              child: GestureDetector(
+                onTap: openThread,
+                behavior: HitTestBehavior.opaque,
+                child: Text(
+                  item.threadTitle,
+                  style: TextTheme.of(context).titleMedium,
+                ),
+              ),
+            ),
+            const SizedBox(height: Theming.offset),
+            CommentTile(item, viewerId: viewerId, analogClock: analogClock),
+            const SizedBox(height: Theming.offset),
+          ],
+        );
+      },
     );
   }
 }

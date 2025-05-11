@@ -5,6 +5,7 @@ import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
+import 'package:otraku/feature/forum/forum_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
@@ -20,6 +21,11 @@ final mediaProvider =
 final mediaConnectionsProvider = AsyncNotifierProvider.autoDispose
     .family<MediaRelationsNotifier, MediaConnections, int>(
   MediaRelationsNotifier.new,
+);
+
+final mediaThreadsProvider =
+    AsyncNotifierProvider.family<MediaThreadsNotifier, Paged<ThreadItem>, int>(
+  MediaThreadsNotifier.new,
 );
 
 final mediaFollowingProvider = AsyncNotifierProvider.family<
@@ -79,6 +85,7 @@ class MediaRelationsNotifier
     state = switch (tab) {
       MediaTab.info ||
       MediaTab.relations ||
+      MediaTab.threads ||
       MediaTab.following ||
       MediaTab.statistics =>
         state,
@@ -254,6 +261,34 @@ class MediaRelationsNotifier
                 : 'RATE_DOWN',
       },
     ).getErrorOrNull();
+  }
+}
+
+class MediaThreadsNotifier extends FamilyAsyncNotifier<Paged<ThreadItem>, int> {
+  @override
+  FutureOr<Paged<ThreadItem>> build(arg) => _fetch(const Paged());
+
+  Future<void> fetch() async {
+    final oldState = state.valueOrNull ?? const Paged();
+    if (!oldState.hasNext) return;
+    state = await AsyncValue.guard(() => _fetch(oldState));
+  }
+
+  Future<Paged<ThreadItem>> _fetch(Paged<ThreadItem> oldState) async {
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.threadPage,
+      {'mediaId': arg, 'page': oldState.next, 'sort': 'ID_DESC'},
+    );
+
+    final items = <ThreadItem>[];
+    for (final t in data['Page']['threads']) {
+      items.add(ThreadItem(t));
+    }
+
+    return oldState.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    );
   }
 }
 

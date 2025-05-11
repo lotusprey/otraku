@@ -104,7 +104,7 @@ class _CalendarViewState extends State<CalendarView> {
               onRefresh: (invalidate) => invalidate(calendarProvider),
               onData: (data) => SliverGrid(
                 delegate: SliverChildBuilderDelegate(
-                  (context, i) => _Tile(data.items[i], options.analogueClock),
+                  (context, i) => _Tile(data.items[i], options.analogClock),
                   childCount: data.items.length,
                 ),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -130,15 +130,15 @@ class _CalendarViewState extends State<CalendarView> {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item, this.analogueClock);
+  const _Tile(this.item, this.analogClock);
 
   final CalendarItem item;
-  final bool analogueClock;
+  final bool analogClock;
 
   @override
   Widget build(BuildContext context) {
     final textRailItems = {
-      item.airingAt.formattedTime(analogueClock): true,
+      item.airingAt.formattedTime(analogClock): true,
       if (item.airingAt.isAfter(DateTime.now()))
         'Ep ${item.episode} in ${item.airingAt.timeUntil}': false
       else

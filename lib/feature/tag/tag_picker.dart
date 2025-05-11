@@ -385,8 +385,7 @@ class _TagCategoryChip extends StatelessWidget {
       child: Chip(
         label: Text(name),
         labelStyle: selected
-            ? Theme.of(context)
-                .textTheme
+            ? TextTheme.of(context)
                 .bodyMedium
                 ?.copyWith(color: ColorScheme.of(context).surface)
             : TextTheme.of(context).bodyMedium,

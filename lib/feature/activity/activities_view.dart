@@ -120,7 +120,7 @@ class ActivitiesSubView extends StatelessWidget {
               childCount: data.items.length,
               (context, i) => ActivityCard(
                 withHeader: true,
-                analogueClock: options.analogueClock,
+                analogClock: options.analogClock,
                 activity: data.items[i],
                 footer: ActivityFooter(
                   viewerId: viewerId,

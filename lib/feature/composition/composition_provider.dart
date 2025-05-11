@@ -38,7 +38,27 @@ class CompositionNotifier
             .request(GqlQuery.activityReplyComposition, {'id': id}).then(
           (data) => Composition(data['ActivityReply']['text']),
         ),
+      CommentCompositionTag(id: var id) => ref
+            .read(repositoryProvider)
+            .request(GqlQuery.commentComposition, {'id': id}).then(
+          (data) => Composition(_findComment(data['ThreadComment'][0])),
+        ),
     };
+  }
+
+  /// The API always returns the root comment,
+  /// so we search for the target comment with DFS.
+  String _findComment(Map<String, dynamic> map) {
+    if (map['id'] == arg.id) {
+      return map['comment'] ?? '';
+    }
+
+    for (final c in map['childComments'] ?? const []) {
+      final comment = _findComment(c);
+      if (comment != '') return comment;
+    }
+
+    return '';
   }
 
   Future<AsyncValue<Map<String, dynamic>>> save() async {
@@ -77,6 +97,21 @@ class CompositionNotifier
             },
           );
           return data['SaveActivityReply'];
+        case CommentCompositionTag(
+            id: var id,
+            threadId: var threadId,
+            parentCommentId: var parentCommentId,
+          ):
+          final data = await ref.read(repositoryProvider).request(
+            GqlMutation.saveComment,
+            {
+              if (id != null) 'id': id,
+              'text': value.text.withParsedEmojis,
+              'threadId': threadId,
+              if (parentCommentId != null) 'parentCommentId': parentCommentId,
+            },
+          );
+          return data['SaveThreadComment'];
       }
     });
   }

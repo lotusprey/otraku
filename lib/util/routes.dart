@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/feature/comment/comment_view.dart';
+import 'package:otraku/feature/forum/forum_view.dart';
+import 'package:otraku/feature/thread/thread_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
@@ -67,6 +70,8 @@ class Routes {
 
   static String activity(int id, [int? feedId]) =>
       '/activity/$id${feedId != null ? "?feedId=$feedId" : ""}';
+
+  static const forum = '/forum';
 
   static String thread(int id) => '/thread/$id';
 
@@ -216,6 +221,24 @@ class Routes {
         ),
       ),
       GoRoute(
+        path: '/forum',
+        builder: (context, state) => const ForumView(),
+      ),
+      GoRoute(
+        path: '/thread/:id',
+        redirect: _parseIdOr404,
+        builder: (context, state) => ThreadView(
+          int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: '/comment/:id',
+        redirect: _parseIdOr404,
+        builder: (context, state) => CommentView(
+          int.parse(state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
         path: '/collection/anime/:id',
         redirect: _parseIdOr404,
         builder: (context, state) => CollectionView(
@@ -269,6 +292,7 @@ class Routes {
 
       // Extra routes for AniList deep links:
       // - Media endpoints are split between anime/manga.
+      // - Comments are thread sub-routes and threads are forum sub-routes.
       // - Paths can contain superfluous information after the path parameter.
       GoRoute(
         path: '/anime/:id',
@@ -302,6 +326,18 @@ class Routes {
       GoRoute(
         path: '/user/:name/:_(.*)',
         redirect: (context, state) => '/user/${state.pathParameters['name']}',
+      ),
+      GoRoute(
+        path: '/forum/thread/:_([^/]*)/comment/:id',
+        redirect: (context, state) => '/comment/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/forum/thread/:id',
+        redirect: (context, state) => '/thread/${state.pathParameters['id']}',
+      ),
+      GoRoute(
+        path: '/forum/:_([^/]*)',
+        redirect: (context, state) => '/forum',
       ),
     ];
 

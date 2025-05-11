@@ -7,8 +7,8 @@ extension DateTimeExtension on DateTime {
   static DateTime? tryFromSecondsSinceEpoch(int? seconds) =>
       seconds != null ? fromSecondsSinceEpoch(seconds) : null;
 
-  String formattedDateTimeFromSeconds(bool analogueClock) =>
-      '${_weekdayName(weekday)}, $formattedDate, ${formattedTime(analogueClock)}';
+  String formattedDateTimeFromSeconds(bool analogClock) =>
+      '${_weekdayName(weekday)}, $formattedDate, ${formattedTime(analogClock)}';
 
   static DateTime? fromFuzzyDate(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;
@@ -35,8 +35,8 @@ extension DateTimeExtension on DateTime {
 
   String get formattedDate => '$day ${monthName(month)} $year';
 
-  String formattedTime(bool analogueClock) {
-    if (analogueClock) {
+  String formattedTime(bool analogClock) {
+    if (analogClock) {
       final (overflows, realHour) =
           hour > 12 ? (true, hour - 12) : (false, hour);
 

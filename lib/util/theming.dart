@@ -111,6 +111,13 @@ class Theming extends ThemeExtension<Theming> {
         segmentedButtonTheme: const SegmentedButtonThemeData(
           style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
         ),
+        sliderTheme: const SliderThemeData(
+          trackGap: 6,
+          trackHeight: 16,
+          trackShape: GappedSliderTrackShape(),
+          thumbShape: HandleThumbShape(),
+          thumbSize: WidgetStatePropertyAll(Size(4, 44)),
+        ),
         listTileTheme: const ListTileThemeData(
           contentPadding: EdgeInsets.symmetric(horizontal: offset),
         ),

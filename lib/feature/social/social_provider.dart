@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/comment/comment_model.dart';
+import 'package:otraku/feature/forum/forum_model.dart';
 import 'package:otraku/feature/social/social_model.dart';
 import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -22,6 +24,10 @@ class SocialNotifier extends AutoDisposeFamilyAsyncNotifier<Social, int> {
         if (!oldState.following.hasNext) return;
       case SocialTab.followers:
         if (!oldState.followers.hasNext) return;
+      case SocialTab.threads:
+        if (!oldState.threads.hasNext) return;
+      case SocialTab.comments:
+        if (!oldState.comments.hasNext) return;
     }
     state = await AsyncValue.guard(() => _fetch(oldState, tab));
   }
@@ -33,6 +39,8 @@ class SocialNotifier extends AutoDisposeFamilyAsyncNotifier<Social, int> {
       case null:
         variables['withFollowing'] = true;
         variables['withFollowers'] = true;
+        variables['withThreads'] = true;
+        variables['withComments'] = true;
         break;
       case SocialTab.following:
         variables['withFollowing'] = true;
@@ -42,15 +50,25 @@ class SocialNotifier extends AutoDisposeFamilyAsyncNotifier<Social, int> {
         variables['withFollowers'] = true;
         variables['page'] = oldState.followers.next;
         break;
+      case SocialTab.threads:
+        variables['withThreads'] = true;
+        variables['page'] = oldState.threads.next;
+        break;
+      case SocialTab.comments:
+        variables['withComments'] = true;
+        variables['page'] = oldState.comments.next;
+        break;
     }
 
     final data = await ref.read(repositoryProvider).request(
-          GqlQuery.friends,
+          GqlQuery.social,
           variables,
         );
 
     var following = oldState.following;
     var followers = oldState.followers;
+    var threads = oldState.threads;
+    var comments = oldState.comments;
 
     if (tab == null || tab == SocialTab.following) {
       final map = data['following'];
@@ -80,6 +98,39 @@ class SocialNotifier extends AutoDisposeFamilyAsyncNotifier<Social, int> {
       );
     }
 
-    return Social(following: following, followers: followers);
+    if (tab == null || tab == SocialTab.threads) {
+      final map = data['threads'];
+      final items = <ThreadItem>[];
+      for (final u in map['threads']) {
+        items.add(ThreadItem(u));
+      }
+
+      threads = threads.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+        map['pageInfo']['total'],
+      );
+    }
+
+    if (tab == null || tab == SocialTab.comments) {
+      final map = data['comments'];
+      final items = <Comment>[];
+      for (final u in map['threadComments']) {
+        items.add(Comment(u));
+      }
+
+      comments = comments.withNext(
+        items,
+        map['pageInfo']['hasNextPage'] ?? false,
+        map['pageInfo']['total'],
+      );
+    }
+
+    return Social(
+      following: following,
+      followers: followers,
+      threads: threads,
+      comments: comments,
+    );
   }
 }

@@ -53,7 +53,7 @@ class Review {
   factory Review(
     Map<String, dynamic> map,
     ImageQuality imageQuality,
-    bool analogueClock,
+    bool analogClock,
   ) =>
       Review._(
         id: map['id'],
@@ -67,7 +67,7 @@ class Review {
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),
         createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'])
-            .formattedDateTimeFromSeconds(analogueClock),
+            .formattedDateTimeFromSeconds(analogClock),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,

@@ -20,13 +20,13 @@ class ActivityCard extends StatelessWidget {
     required this.activity,
     required this.footer,
     required this.withHeader,
-    required this.analogueClock,
+    required this.analogClock,
   });
 
   final Activity activity;
   final ActivityFooter footer;
   final bool withHeader;
-  final bool analogueClock;
+  final bool analogClock;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class ActivityCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(child: Timestamp(activity.createdAt, analogueClock)),
+                Flexible(child: Timestamp(activity.createdAt, analogClock)),
                 footer,
               ],
             ),
@@ -309,7 +309,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
     showSheet(
       context,
       Consumer(
-        builder: (context, ref, __) {
+        builder: (context, ref, _) {
           final ownershipButtons = <Widget>[];
 
           if (activity.isOwned) {

@@ -61,10 +61,7 @@ class BarChart extends StatelessWidget {
                       stops: const [0, 1],
                       colors: [
                         ColorScheme.of(context).primary,
-                        Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withValues(alpha: 0.1),
+                        ColorScheme.of(context).primary.withValues(alpha: 0.1),
                       ],
                     ),
                   ),
@@ -111,14 +108,8 @@ class PieChart extends StatelessWidget {
               end: Alignment.centerRight,
               stops: const [0, 1],
               colors: [
-                Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHighest
-                    .withAlpha(50),
-                Theme.of(context)
-                    .colorScheme
-                    .surfaceContainerHighest
-                    .withAlpha(100),
+                ColorScheme.of(context).surfaceContainerHighest.withAlpha(50),
+                ColorScheme.of(context).surfaceContainerHighest.withAlpha(100),
               ],
             ),
           ),

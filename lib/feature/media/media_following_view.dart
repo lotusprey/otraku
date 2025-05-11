@@ -18,7 +18,7 @@ class MediaFollowingSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PagedView<MediaFollowing>(
+    return PagedView(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaFollowingProvider(id)),
       provider: mediaFollowingProvider(id),
@@ -34,12 +34,6 @@ class _MediaFollowingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (items.isEmpty) {
-      return const SliverFillRemaining(
-        child: Center(child: Text('No results')),
-      );
-    }
-
     return SliverGrid(
       gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 300,

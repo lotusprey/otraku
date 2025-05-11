@@ -12,7 +12,7 @@ class ShadowedOverflowList extends StatelessWidget {
   });
 
   final int itemCount;
-  final Widget Function(BuildContext, int) itemBuilder;
+  final Widget Function(BuildContext context, int i) itemBuilder;
   final double? itemExtent;
   final bool shrinkWrap;
 

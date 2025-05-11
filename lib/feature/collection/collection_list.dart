@@ -209,10 +209,7 @@ class __TileContentState extends State<_TileContent> {
       item.progress == item.progressMax
           ? item.progress.toString()
           : '${item.progress}/${item.progressMax ?? "?"}',
-      style: Theme.of(context)
-          .textTheme
-          .labelSmall
-          ?.copyWith(color: foregroundColor),
+      style: TextTheme.of(context).labelSmall?.copyWith(color: foregroundColor),
     );
 
     if (widget.onProgressUpdated == null || item.progress == item.progressMax) {

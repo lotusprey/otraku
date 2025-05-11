@@ -54,6 +54,29 @@ class ActivityReplyCompositionTag extends CompositionTag {
   int get hashCode => Object.hash(id, activityId);
 }
 
+class CommentCompositionTag extends CompositionTag {
+  const CommentCompositionTag({
+    required this.threadId,
+    required this.parentCommentId,
+  }) : super(id: null);
+
+  const CommentCompositionTag.edit({required super.id, required this.threadId})
+      : parentCommentId = null;
+
+  final int threadId;
+  final int? parentCommentId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is CommentCompositionTag &&
+      id == other.id &&
+      threadId == other.threadId &&
+      parentCommentId == other.parentCommentId;
+
+  @override
+  int get hashCode => Object.hash(id, threadId, parentCommentId);
+}
+
 class Composition {
   Composition(this.text);
 

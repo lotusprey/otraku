@@ -119,7 +119,17 @@ class CollectionSubview extends StatelessWidget {
 
         return ref.watch(collectionProvider(tag!)).unwrapPrevious().when(
               loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(child: Text('No results')),
+              error: (_, __) => CustomScrollView(
+                physics: Theming.bouncyPhysics,
+                slivers: [
+                  SliverRefreshControl(
+                    onRefresh: () => ref.invalidate(collectionProvider(tag!)),
+                  ),
+                  const SliverFillRemaining(
+                    child: Center(child: Text('Failed to load')),
+                  ),
+                ],
+              ),
               data: (data) {
                 final content = Scrollbar(
                   controller: scrollCtrl,

@@ -10,7 +10,7 @@ import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.7.0';
+const appVersion = '1.8.0';
 
 class Persistence {
   const Persistence({
@@ -193,7 +193,7 @@ class Options {
     required this.mangaCollectionPreview,
     required this.confirmExit,
     required this.leftHanded,
-    required this.analogueClock,
+    required this.analogClock,
     required this.discoverItemView,
     required this.collectionItemView,
     required this.collectionPreviewItemView,
@@ -210,7 +210,7 @@ class Options {
         mangaCollectionPreview: true,
         confirmExit: false,
         leftHanded: false,
-        analogueClock: false,
+        analogClock: false,
         discoverItemView: DiscoverItemView.detailed,
         collectionItemView: CollectionItemView.detailed,
         collectionPreviewItemView: CollectionItemView.detailed,
@@ -228,7 +228,7 @@ class Options {
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
         confirmExit: map['confirmExit'] ?? false,
         leftHanded: map['leftHanded'] ?? false,
-        analogueClock: map['analogueClock'] ?? false,
+        analogClock: map['analogueClock'] ?? false,
         discoverItemView: DiscoverItemView.values.getOrFirst(
           map['discoverItemView'],
         ),
@@ -250,14 +250,14 @@ class Options {
   final bool mangaCollectionPreview;
   final bool confirmExit;
   final bool leftHanded;
-  final bool analogueClock;
+  final bool analogClock;
   final DiscoverItemView discoverItemView;
   final CollectionItemView collectionItemView;
   final CollectionItemView collectionPreviewItemView;
 
   Options copyWith({
     ThemeMode? themeMode,
-    ThemeBase? Function()? themeBase,
+    (ThemeBase?,)? themeBase,
     bool? highContrast,
     HomeTab? homeTab,
     DiscoverType? discoverType,
@@ -266,14 +266,14 @@ class Options {
     bool? mangaCollectionPreview,
     bool? confirmExit,
     bool? leftHanded,
-    bool? analogueClock,
+    bool? analogClock,
     DiscoverItemView? discoverItemView,
     CollectionItemView? collectionItemView,
     CollectionItemView? collectionPreviewItemView,
   }) =>
       Options(
         themeMode: themeMode ?? this.themeMode,
-        themeBase: themeBase != null ? themeBase() : this.themeBase,
+        themeBase: themeBase == null ? this.themeBase : themeBase.$1,
         highContrast: highContrast ?? this.highContrast,
         homeTab: homeTab ?? this.homeTab,
         discoverType: discoverType ?? this.discoverType,
@@ -284,7 +284,7 @@ class Options {
             mangaCollectionPreview ?? this.mangaCollectionPreview,
         confirmExit: confirmExit ?? this.confirmExit,
         leftHanded: leftHanded ?? this.leftHanded,
-        analogueClock: analogueClock ?? this.analogueClock,
+        analogClock: analogClock ?? this.analogClock,
         discoverItemView: discoverItemView ?? this.discoverItemView,
         collectionItemView: collectionItemView ?? this.collectionItemView,
         collectionPreviewItemView:
@@ -302,7 +302,7 @@ class Options {
         'mangaCollectionPreview': mangaCollectionPreview,
         'confirmExit': confirmExit,
         'leftHanded': leftHanded,
-        'analogueClock': analogueClock,
+        'analogueClock': analogClock,
         'discoverItemView': discoverItemView.index,
         'collectionItemView': collectionItemView.index,
         'collectionPreviewItemView': collectionPreviewItemView.index,

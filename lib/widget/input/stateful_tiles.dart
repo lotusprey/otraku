@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 /// A wrapper around [SwitchListTile.adaptive], which handles state.
 class StatefulSwitchListTile extends StatefulWidget {
   const StatefulSwitchListTile({
+    required this.title,
     required this.value,
     required this.onChanged,
-    this.title,
     this.subtitle,
   });
 
+  final Widget title;
+  final Widget? subtitle;
   final bool value;
   final void Function(bool) onChanged;
-  final Widget? title;
-  final Widget? subtitle;
 
   @override
   State<StatefulSwitchListTile> createState() => _StatefulSwitchListTileState();

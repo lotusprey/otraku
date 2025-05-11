@@ -21,7 +21,7 @@ class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    return Review(data['Review'], options.imageQuality, options.analogueClock);
+    return Review(data['Review'], options.imageQuality, options.analogClock);
   }
 
   Future<Object?> rate(bool? rating) {

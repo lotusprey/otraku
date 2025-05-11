@@ -22,7 +22,7 @@ class SettingsAboutSubview extends StatelessWidget {
         final lastBackgroundJob = persistence.appMeta.lastBackgroundJob;
         final lastJobTimestamp =
             lastBackgroundJob?.formattedDateTimeFromSeconds(
-          persistence.options.analogueClock,
+          persistence.options.analogClock,
         );
 
         return Align(

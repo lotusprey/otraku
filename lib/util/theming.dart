@@ -2,6 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
+enum FormFactor {
+  phone,
+  tablet,
+}
+
 enum ThemeBase {
   navy('Navy', Color(0xFF45A0F2)),
   mint('Mint', Color(0xFF2AB8B8)),
@@ -17,7 +22,26 @@ enum ThemeBase {
   final Color seed;
 }
 
-class Theming {
+class Theming extends ThemeExtension<Theming> {
+  const Theming({required this.formFactor});
+
+  final FormFactor formFactor;
+
+  static Theming of(BuildContext context) =>
+      Theme.of(context).extension<Theming>() ??
+      const Theming(formFactor: FormFactor.phone);
+
+  @override
+  ThemeExtension<Theming> copyWith({FormFactor? formFactor}) =>
+      Theming(formFactor: formFactor ?? this.formFactor);
+
+  @override
+  ThemeExtension<Theming> lerp(
+    covariant ThemeExtension<Theming>? other,
+    double t,
+  ) =>
+      switch (other) { Theming _ => other, _ => this };
+
   static const windowWidthMedium = 600.0;
   static const windowWidthLarge = 840.0;
 
@@ -43,7 +67,8 @@ class Theming {
     parent: BouncingScrollPhysics(),
   );
 
-  static ThemeData schemeToThemeData(ColorScheme scheme) => ThemeData(
+  ThemeData generateThemeData(ColorScheme scheme) => ThemeData(
+        extensions: [this],
         fontFamily: 'Rubik',
         colorScheme: scheme,
         scaffoldBackgroundColor: scheme.surface,
@@ -72,17 +97,26 @@ class Theming {
             backgroundColor: scheme.primary,
             foregroundColor: scheme.onPrimary,
             iconColor: scheme.onPrimary,
-            textStyle: const TextStyle(fontWeight: FontWeight.w500),
+            textStyle: const TextStyle(
+              fontVariations: [FontVariation('wght', 500)],
+            ),
           ),
         ),
         chipTheme: ChipThemeData(
           labelStyle: TextStyle(
             color: scheme.onSecondaryContainer,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
         ),
         segmentedButtonTheme: const SegmentedButtonThemeData(
           style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+        ),
+        sliderTheme: const SliderThemeData(
+          trackGap: 6,
+          trackHeight: 16,
+          trackShape: GappedSliderTrackShape(),
+          thumbShape: HandleThumbShape(),
+          thumbSize: WidgetStatePropertyAll(Size(4, 44)),
         ),
         listTileTheme: const ListTileThemeData(
           contentPadding: EdgeInsets.symmetric(horizontal: offset),
@@ -92,42 +126,43 @@ class Theming {
           titleLarge: TextStyle(
             fontSize: fontBig,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           titleMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           titleSmall: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           bodyLarge: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           bodyMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelLarge: TextStyle(
             fontSize: fontMedium,
             color: scheme.primary,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           labelSmall: TextStyle(
             fontSize: fontSmall,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 350)],
+            letterSpacing: 0.5,
           ),
         ),
         textSelectionTheme: TextSelectionThemeData(
@@ -141,12 +176,12 @@ class Theming {
           titleTextStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.w500,
+            fontVariations: const [FontVariation('wght', 500)],
           ),
           contentTextStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
         ),
         tooltipTheme: TooltipThemeData(
@@ -169,7 +204,7 @@ class Theming {
           hintStyle: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontWeight: FontWeight.normal,
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           border: const OutlineInputBorder(
             borderRadius: borderRadiusBig,

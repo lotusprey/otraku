@@ -8,6 +8,7 @@ import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/util/background_handler.dart';
 import 'package:path_provider/path_provider.dart';
 
 final persistenceProvider = NotifierProvider<PersistenceNotifier, Persistence>(
@@ -111,6 +112,8 @@ class PersistenceNotifier extends Notifier<Persistence> {
     if (index != null && (index < 0 || index >= accountGroup.accounts.length)) {
       return;
     }
+
+    if (index == null) BackgroundHandler.clearNotifications();
 
     _setAccountGroup(
       AccountGroup(

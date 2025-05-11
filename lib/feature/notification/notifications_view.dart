@@ -20,7 +20,6 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/timestamp.dart';
 
@@ -56,15 +55,15 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
     final filter = ref.watch(notificationsFilterProvider);
 
-    final analogueClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogueClock),
+    final analogClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogClock),
     );
 
     return AdaptiveScaffold(
       (context, compact) {
         final content = _Content(
           unreadCount: unreadCount,
-          analogueClock: analogueClock,
+          analogClock: analogClock,
           scrollCtrl: _scrollCtrl,
         );
 
@@ -147,12 +146,12 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 class _Content extends StatelessWidget {
   const _Content({
     required this.unreadCount,
-    required this.analogueClock,
+    required this.analogClock,
     required this.scrollCtrl,
   });
 
   final int unreadCount;
-  final bool analogueClock;
+  final bool analogClock;
   final ScrollController scrollCtrl;
 
   @override
@@ -166,7 +165,7 @@ class _Content extends StatelessWidget {
           (context, i) => _NotificationItem(
             data.items[i],
             i < unreadCount,
-            analogueClock,
+            analogClock,
           ),
           childCount: data.items.length,
         ),
@@ -176,11 +175,11 @@ class _Content extends StatelessWidget {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(this.item, this.unread, this.analogueClock);
+  const _NotificationItem(this.item, this.unread, this.analogClock);
 
   final SiteNotification item;
   final bool unread;
-  final bool analogueClock;
+  final bool analogClock;
 
   @override
   Widget build(BuildContext context) {
@@ -245,13 +244,11 @@ class _NotificationItem extends StatelessWidget {
                       ActivityNotification item => context.push(
                           Routes.activity(item.activityId),
                         ),
-                      ThreadNotification item => _redirectToSite(
-                          context,
-                          item.threadSiteUrl,
+                      ThreadNotification item => context.push(
+                          Routes.thread(item.threadId),
                         ),
-                      ThreadCommentNotification item => _redirectToSite(
-                          context,
-                          item.commentSiteUrl,
+                      ThreadCommentNotification item => context.push(
+                          Routes.comment(item.commentId),
                         ),
                       MediaReleaseNotification item => context.push(
                           Routes.media(item.mediaId, item.imageUrl),
@@ -289,12 +286,8 @@ class _NotificationItem extends StatelessWidget {
                                     TextSpan(
                                       text: item.texts[i],
                                       style: (i % 2 == 0)
-                                          ? Theme.of(context)
-                                              .textTheme
-                                              .labelLarge
-                                          : Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium,
+                                          ? TextTheme.of(context).labelLarge
+                                          : TextTheme.of(context).bodyMedium,
                                     ),
                                 ],
                               ),
@@ -302,7 +295,7 @@ class _NotificationItem extends StatelessWidget {
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
-                            child: Timestamp(item.createdAt, analogueClock),
+                            child: Timestamp(item.createdAt, analogClock),
                           ),
                         ],
                       ),
@@ -327,18 +320,6 @@ class _NotificationItem extends StatelessWidget {
       ),
     );
   }
-
-  void _redirectToSite(BuildContext context, String? url) =>
-      ConfirmationDialog.show(
-        context,
-        title: 'Forum is not yet supported',
-        content: 'Open in browser?',
-        primaryAction: 'Open',
-        secondaryAction: 'Cancel',
-        onConfirm: () => url != null
-            ? SnackBarExtension.launch(context, url)
-            : SnackBarExtension.show(context, 'Invalid Link'),
-      );
 }
 
 class _NotificationDialog extends StatelessWidget {

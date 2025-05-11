@@ -169,8 +169,8 @@ class SettingsAppSubview extends ConsumerWidget {
         ),
         StatefulSwitchListTile(
           title: const Text('12 Hour Clock'),
-          value: options.analogueClock,
-          onChanged: (v) => update(options.copyWith(analogueClock: v)),
+          value: options.analogClock,
+          onChanged: (v) => update(options.copyWith(analogClock: v)),
         ),
         StatefulSwitchListTile(
           title: const Text('Confirm Exit'),

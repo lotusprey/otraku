@@ -44,6 +44,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Text(
                     title!,
                     style: TextTheme.of(context).titleLarge,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
                 ),
               ...trailing,

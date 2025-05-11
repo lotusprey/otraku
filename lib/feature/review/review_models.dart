@@ -53,7 +53,7 @@ class Review {
   factory Review(
     Map<String, dynamic> map,
     ImageQuality imageQuality,
-    bool analogueClock,
+    bool analogClock,
   ) =>
       Review._(
         id: map['id'],
@@ -67,7 +67,7 @@ class Review {
         summary: map['summary'] ?? '',
         text: parseMarkdown(map['body'] ?? ''),
         createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'])
-            .formattedDateTimeFromSeconds(analogueClock),
+            .formattedDateTimeFromSeconds(analogClock),
         siteUrl: map['siteUrl'],
         score: map['score'] ?? 0,
         rating: map['rating'] ?? 0,
@@ -103,12 +103,9 @@ class ReviewsFilter {
   final MediaType? mediaType;
   final ReviewsSort sort;
 
-  ReviewsFilter copyWith({
-    MediaType? Function()? mediaType,
-    ReviewsSort? sort,
-  }) =>
+  ReviewsFilter copyWith({(MediaType?,)? mediaType, ReviewsSort? sort}) =>
       ReviewsFilter(
-        mediaType: mediaType == null ? this.mediaType : mediaType(),
+        mediaType: mediaType == null ? this.mediaType : mediaType.$1,
         sort: sort ?? this.sort,
       );
 }

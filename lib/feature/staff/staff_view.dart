@@ -355,7 +355,7 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
       children: [
         if (widget.withOverview)
           ConstrainedView(
-            padding: EdgeInsets.zero,
+            padded: false,
             child: StaffOverviewSubview.asFragment(
               staff: widget.staff,
               scrollCtrl: _scrollCtrl,

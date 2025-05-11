@@ -191,8 +191,8 @@ class _View extends ConsumerWidget {
 
     final viewerId = ref.watch(viewerIdProvider);
 
-    final analogueClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogueClock),
+    final analogClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogClock),
     );
 
     return ref.watch(activityProvider(id)).unwrapPrevious().when(
@@ -212,7 +212,7 @@ class _View extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: ActivityCard(
                       withHeader: false,
-                      analogueClock: analogueClock,
+                      analogClock: analogClock,
                       activity: data.activity,
                       footer: ActivityFooter(
                         viewerId: viewerId,
@@ -232,7 +232,7 @@ class _View extends ConsumerWidget {
                       childCount: data.replies.items.length,
                       (context, i) => ReplyCard(
                         activityId: id,
-                        analogueClock: analogueClock,
+                        analogClock: analogClock,
                         reply: data.replies.items[i],
                         toggleLike: () => ref
                             .read(activityProvider(id).notifier)

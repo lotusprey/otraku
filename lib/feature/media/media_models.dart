@@ -567,6 +567,7 @@ enum MediaTab {
   characters,
   staff,
   reviews,
+  threads,
   following,
   recommendations,
   statistics,

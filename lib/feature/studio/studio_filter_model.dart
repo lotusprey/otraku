@@ -13,12 +13,12 @@ class StudioFilter {
 
   StudioFilter copyWith({
     MediaSort? sort,
-    bool? Function()? inLists,
-    bool? Function()? isMain,
+    (bool?,)? inLists,
+    (bool?,)? isMain,
   }) =>
       StudioFilter(
         sort: sort ?? this.sort,
-        inLists: inLists == null ? this.inLists : inLists(),
-        isMain: isMain == null ? this.isMain : isMain(),
+        inLists: inLists == null ? this.inLists : inLists.$1,
+        isMain: isMain == null ? this.isMain : isMain.$1,
       );
 }

@@ -1,0 +1,5 @@
+- Added forum page with thread filters
+- Added thread pages with navigation, commenting, liking and subscribing (thread writing/editing is not yet done)
+- Added a tab on media pages with related threads
+- Added tabs with user's threads and comments on users' social pages
+- Fixed bugs related to collections, advanced scores and home page search focusing

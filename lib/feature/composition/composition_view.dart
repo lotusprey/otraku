@@ -15,17 +15,14 @@ class CompositionView extends StatelessWidget {
   const CompositionView({
     required this.tag,
     required this.onSaved,
-    this.defaultText,
+    this.defaultText = '',
   });
 
   final CompositionTag tag;
+  final String defaultText;
 
-  /// In rare cases we may want to set default text
-  /// when a new composition is opened.
-  final String? defaultText;
-
-  /// When the edit is saved, a map with the new data is passed back to get
-  /// deserialized.
+  /// When the edit is saved, a map with the new data is passed back
+  /// to get deserialized.
   final void Function(Map<String, dynamic>) onSaved;
 
   @override
@@ -42,8 +39,8 @@ class CompositionView extends StatelessWidget {
                 ),
               ),
               data: (data) {
-                if (defaultText != null && data.text.isEmpty) {
-                  data.text = defaultText!;
+                if (data.text.isEmpty) {
+                  data.text = defaultText;
                 }
 
                 return _CompositionView(

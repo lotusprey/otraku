@@ -23,7 +23,7 @@ class ActivitiesNotifier
   late ActivitiesFilter _filter;
 
   @override
-  FutureOr<Paged<Activity>> build(arg) async {
+  FutureOr<Paged<Activity>> build(arg) {
     if (arg == null) {
       ref.keepAlive();
     }
@@ -32,7 +32,7 @@ class ActivitiesNotifier
     _filter = ref.watch(activitiesFilterProvider(arg));
     _viewerId = ref.watch(viewerIdProvider);
 
-    return await _fetch(const Paged());
+    return _fetch(const Paged());
   }
 
   Future<void> fetch() async {

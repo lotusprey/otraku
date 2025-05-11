@@ -32,7 +32,7 @@ Future<void> showReviewsFilterSheet({
             title: 'Media Type',
             items: MediaType.values.map((v) => (v.label, v)).toList(),
             value: filter.mediaType,
-            onChanged: (v) => filter = filter.copyWith(mediaType: () => v),
+            onChanged: (v) => filter = filter.copyWith(mediaType: (v,)),
           ),
         ],
       ),

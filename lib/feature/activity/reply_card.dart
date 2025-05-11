@@ -20,13 +20,13 @@ class ReplyCard extends StatelessWidget {
   const ReplyCard({
     required this.activityId,
     required this.reply,
-    required this.analogueClock,
+    required this.analogClock,
     required this.toggleLike,
   });
 
   final int activityId;
   final ActivityReply reply;
-  final bool analogueClock;
+  final bool analogClock;
   final Future<Object?> Function() toggleLike;
 
   @override
@@ -73,7 +73,7 @@ class ReplyCard extends StatelessWidget {
                 ),
                 Row(
                   children: [
-                    Timestamp(reply.createdAt, analogueClock),
+                    Timestamp(reply.createdAt, analogClock),
                     const Spacer(),
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
@@ -226,8 +226,7 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
                     ? TextTheme.of(context).labelSmall
-                    : Theme.of(context)
-                        .textTheme
+                    : TextTheme.of(context)
                         .labelSmall!
                         .copyWith(color: ColorScheme.of(context).primary),
               ),

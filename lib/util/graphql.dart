@@ -496,8 +496,9 @@ abstract class GqlQuery {
     fragment studio on StudioConnection {pageInfo {hasNextPage total} nodes {id name}}
   ''';
 
-  static const friends = r'''
-    query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false) {
+  static const social = r'''
+    query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false,
+        $withThreads: Boolean = false, $withComments: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
         pageInfo {hasNextPage total}
         following(userId: $userId, sort: USERNAME) {id name avatar {large}}
@@ -506,8 +507,27 @@ abstract class GqlQuery {
         pageInfo {hasNextPage total}
         followers(userId: $userId, sort: USERNAME) {id name avatar {large}}
       }
+      threads: Page(page: $page) @include(if: $withThreads) {
+        pageInfo {hasNextPage total}
+        threads(userId: $userId, sort: ID_DESC) {...thread}
+      }
+      comments: Page(page: $page) @include(if: $withComments) {
+        pageInfo {hasNextPage total}
+        threadComments(userId: $userId, sort: ID_DESC) {
+          id
+          comment
+          likeCount
+          isLiked
+          isLocked
+          createdAt
+          siteUrl
+          user {id name avatar {large}}
+          thread {id title}
+        }
+      }
     }
-  ''';
+  '''
+      '${_GqlFragment.thread}';
 
   static const activity = r'''
     query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
@@ -523,22 +543,6 @@ abstract class GqlQuery {
     }
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}${_GqlFragment.activityReply}';
-
-  static const activityComposition = r'''
-    query ActivityComposition($id: Int) {
-      Activity(id: $id) {
-        ... on TextActivity {text}
-        ... on ListActivity {id}
-        ... on MessageActivity {message}
-      }
-    }
-  ''';
-
-  static const activityReplyComposition = r'''
-    query ActivityReplyComposition($id: Int) {
-      ActivityReply(id: $id) {text}
-    }
-  ''';
 
   static const activityPage = r'''
     query Activities($userId: Int, $userIdNot: Int, $page: Int = 1, $isFollowing: Boolean,
@@ -556,15 +560,105 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}';
 
+  static const activityComposition = r'''
+    query ActivityComposition($id: Int) {
+      Activity(id: $id) {
+        ... on TextActivity {text}
+        ... on ListActivity {id}
+        ... on MessageActivity {message}
+      }
+    }
+  ''';
+
+  static const activityReplyComposition = r'''
+    query ActivityReplyComposition($id: Int) {
+      ActivityReply(id: $id) {text}
+    }
+  ''';
+
+  static const commentComposition = r'''
+    query CommentComposition($id: Int) {
+      ThreadComment(id: $id) {id comment childComments}
+    }
+  ''';
+
   static const settings = r'''
     query Settings($withData: Boolean = true) {
       Viewer {
         unreadNotificationCount
         ...userSettings @include(if: $withData)
+      }
     }
-  }
   '''
       '${_GqlFragment.userSettings}';
+
+  static const threadPage = r'''
+    query Forum($page: Int = 1, $search: String, $categoryId: Int, $mediaId: Int,
+        $subscribed: Boolean, $userId: Int, $replyUserId: Int, $sort: [ThreadSort]) {
+      Page(page: $page) {
+        pageInfo {hasNextPage}
+        threads(search: $search, categoryId: $categoryId, mediaCategoryId: $mediaId,
+            subscribed: $subscribed, userId: $userId, replyUserId: $replyUserId, sort: $sort) {
+          ...thread
+        }
+      }
+    }
+  '''
+      '${_GqlFragment.thread}';
+
+  static const thread = r'''
+    query Thread($id: Int, $withInfo: Boolean = false, $page: Int = 1) {
+      Thread(id: $id) @include(if: $withInfo) {
+        id
+        title
+        body
+        viewCount
+        likeCount
+        replyCount
+        isLiked
+        isSubscribed
+        isSticky
+        isLocked
+        createdAt
+        siteUrl
+        categories {name}
+        mediaCategories {id title {userPreferred} coverImage {extraLarge large medium}}
+        user {id name avatar {large}}
+      }
+      Page(page: $page, perPage: 15) {
+        pageInfo {currentPage lastPage}
+        threadComments(threadId: $id) {
+          id
+          comment
+          likeCount
+          isLiked
+          isLocked
+          createdAt
+          siteUrl
+          user {id name avatar {large}}
+          thread {id title}
+          childComments
+        }
+      }
+    }
+  ''';
+
+  static const comment = r'''
+    query Comment($id: Int) {
+      ThreadComment(id: $id) {
+        id
+        comment
+        likeCount
+        isLiked
+        isLocked
+        createdAt
+        siteUrl
+        user {id name avatar {large}}
+        thread {id title}
+        childComments
+      }
+    }
+  ''';
 
   static const notifications = r'''
     query Notifications($page: Int = 1, $filter: [NotificationType],
@@ -817,6 +911,23 @@ abstract class GqlMutation {
   '''
       '${_GqlFragment.activityReply}';
 
+  static const saveComment = r'''
+    mutation SaveComment($id: Int, $threadId: Int, $parentCommentId: Int, $text: String) {
+      SaveThreadComment(id: $id, threadId: $threadId, parentCommentId: $parentCommentId, comment: $text) {
+        id
+        comment
+        likeCount
+        isLiked
+        isLocked
+        createdAt
+        siteUrl
+        user {id name avatar {large}}
+        thread {id title}
+        childComments
+      }
+    }
+  ''';
+
   static const toggleLike = r'''
     mutation ToggleLike($id: Int, $type: LikeableType) {
       ToggleLikeV2(id: $id, type: $type) {
@@ -824,6 +935,8 @@ abstract class GqlMutation {
         ... on TextActivity {likeCount isLiked}
         ... on MessageActivity {likeCount isLiked}
         ... on ActivityReply {likeCount isLiked}
+        ... on Thread {likeCount isLiked}
+        ... on ThreadComment {likeCount isLiked}
       }
     }
   ''';
@@ -853,6 +966,22 @@ abstract class GqlMutation {
 
   static const deleteActivityReply = r'''
     mutation DeleteActivityReply($id: Int) {DeleteActivityReply(id: $id) {deleted}}
+  ''';
+
+  static const toggleThreadSubscription = r'''
+    mutation ToggleThreadSubscription($id: Int, $subscribe: Boolean) {
+      ToggleThreadSubscription(threadId: $id, subscribe: $subscribe) {
+        isSubscribed
+      }
+    }
+  ''';
+
+  static const deleteThread = r'''
+    mutation DeleteThread($id: Int) {DeleteThread(id: $id) {deleted}}
+  ''';
+
+  static const deleteComment = r'''
+    mutation DeleteThreadComment($id: Int) {DeleteThreadComment(id: $id) {deleted}}
   ''';
 }
 
@@ -967,6 +1096,26 @@ abstract class _GqlFragment {
       media {id type title {userPreferred} coverImage {extraLarge large medium} format}
       progress
       status
+    }
+  ''';
+
+  static const thread = r'''
+    fragment thread on Thread {
+      id
+      title
+      viewCount
+      likeCount
+      replyCount
+      isSubscribed
+      isSticky
+      isLocked
+      siteUrl
+      createdAt
+      repliedAt
+      categories {name}
+      mediaCategories {title {userPreferred}}
+      user {id name avatar {large}}
+      replyUser {id name avatar {large}}
     }
   ''';
 }

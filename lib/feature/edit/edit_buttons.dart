@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
-import 'package:otraku/feature/edit/edit_providers.dart';
+import 'package:otraku/feature/edit/edit_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/dialogs.dart';

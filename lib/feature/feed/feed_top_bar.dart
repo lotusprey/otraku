@@ -49,11 +49,16 @@ class FeedTopBarTrailingContent extends StatelessWidget {
         return Row(
           children: [
             IconButton(
+              tooltip: 'Forum',
+              icon: const Icon(Ionicons.chatbubbles_outline),
+              onPressed: () => context.push(Routes.forum),
+            ),
+            notificationIcon,
+            IconButton(
               tooltip: 'Filter',
               icon: const Icon(Ionicons.funnel_outline),
               onPressed: () => showActivityFilterSheet(context, ref, null),
             ),
-            notificationIcon,
           ],
         );
       },

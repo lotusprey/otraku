@@ -13,12 +13,12 @@ class StaffFilter {
 
   StaffFilter copyWith({
     MediaSort? sort,
-    bool? Function()? ofAnime,
-    bool? Function()? inLists,
+    (bool?,)? ofAnime,
+    (bool?,)? inLists,
   }) =>
       StaffFilter(
         sort: sort ?? this.sort,
-        ofAnime: ofAnime == null ? this.ofAnime : ofAnime(),
-        inLists: inLists == null ? this.inLists : inLists(),
+        ofAnime: ofAnime == null ? this.ofAnime : ofAnime.$1,
+        inLists: inLists == null ? this.inLists : inLists.$1,
       );
 }

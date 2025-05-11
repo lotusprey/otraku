@@ -12,6 +12,8 @@ import 'package:otraku/feature/media/media_related_view.dart';
 import 'package:otraku/feature/media/media_reviews_view.dart';
 import 'package:otraku/feature/media/media_staff_view.dart';
 import 'package:otraku/feature/media/media_stats_view.dart';
+import 'package:otraku/feature/media/media_threads_view.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
 import 'package:otraku/util/theming.dart';
@@ -299,6 +301,7 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
 
   @override
   void deactivate() {
+    ref.invalidate(mediaThreadsProvider(widget.id));
     ref.invalidate(mediaFollowingProvider(widget.id));
     super.deactivate();
   }
@@ -337,7 +340,9 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
     final index =
         widget.withOverview ? widget.tabCtrl.index : widget.tabCtrl.index + 1;
 
-    if (index == MediaTab.following.index) {
+    if (index == MediaTab.threads.index) {
+      ref.read(mediaThreadsProvider(widget.id).notifier).fetch();
+    } else if (index == MediaTab.following.index) {
       ref.read(mediaFollowingProvider(widget.id).notifier).fetch();
     } else {
       ref
@@ -350,12 +355,16 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
   Widget build(BuildContext context) {
     ref.watch(mediaConnectionsProvider(widget.id).select((_) => null));
 
+    final analogClock = ref.watch(
+      persistenceProvider.select((s) => s.options.analogClock),
+    );
+
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
         if (widget.withOverview)
           ConstrainedView(
-            padding: EdgeInsets.zero,
+            padded: false,
             child: MediaOverviewSubview.asFragment(
               ref: ref,
               info: widget.media.info,
@@ -373,6 +382,11 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
           id: widget.id,
           scrollCtrl: _scrollCtrl,
           bannerUrl: widget.media.info.banner,
+        ),
+        MediaThreadsSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          analogClock: analogClock,
         ),
         MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
         MediaRecommendationsSubview(

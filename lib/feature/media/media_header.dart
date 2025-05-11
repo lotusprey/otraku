@@ -92,6 +92,7 @@ class MediaHeader extends StatelessWidget {
     Tab(text: 'Characters'),
     Tab(text: 'Staff'),
     Tab(text: 'Reviews'),
+    Tab(text: 'Threads'),
     Tab(text: 'Following'),
     Tab(text: 'Recommendations'),
     Tab(text: 'Statistics'),

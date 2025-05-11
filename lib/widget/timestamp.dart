@@ -4,25 +4,34 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 class Timestamp extends StatelessWidget {
-  const Timestamp(this.dateTime, this.analogueClock);
+  const Timestamp(
+    this.dateTime,
+    this.analogClock, {
+    this.leading = const Icon(Icons.history_rounded, size: Theming.iconSmall),
+  });
 
   final DateTime dateTime;
-  final bool analogueClock;
+  final bool analogClock;
+  final Widget leading;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      tooltip: 'Creation Time',
-      child: InkResponse(
-        onTap: () => SnackBarExtension.show(
+    final onTap = () => SnackBarExtension.show(
           context,
-          dateTime.formattedDateTimeFromSeconds(analogueClock),
+          dateTime.formattedDateTimeFromSeconds(analogClock),
           canCopyText: true,
-        ),
+        );
+
+    return Semantics(
+      onTap: onTap,
+      onTapHint: 'show absolute creation time',
+      tooltip: 'Creation Time',
+      child: GestureDetector(
+        onTap: onTap,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.history_rounded, size: Theming.iconSmall),
+            leading,
             const SizedBox(width: 5),
             Text(
               _relativeTime(),

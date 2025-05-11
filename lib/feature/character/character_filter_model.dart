@@ -6,9 +6,9 @@ class CharacterFilter {
   final MediaSort sort;
   final bool? inLists;
 
-  CharacterFilter copyWith({MediaSort? sort, bool? Function()? inLists}) =>
+  CharacterFilter copyWith({MediaSort? sort, (bool?,)? inLists}) =>
       CharacterFilter(
         sort: sort ?? this.sort,
-        inLists: inLists == null ? this.inLists : inLists(),
+        inLists: inLists == null ? this.inLists : inLists.$1,
       );
 }

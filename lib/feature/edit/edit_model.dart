@@ -58,15 +58,18 @@ class EntryEdit {
 
     var listStatus = baseEntry.listStatus;
     var completedAt = baseEntry.completedAt;
+    var progress = baseEntry.progress;
     if (setComplete) {
       listStatus = ListStatus.completed;
-      completedAt = DateTime.now();
+      completedAt ??= DateTime.now();
+
+      if (baseEntry.progressMax != null) progress = baseEntry.progressMax!;
     }
 
     return EntryEdit._(
       baseEntry: baseEntry,
       listStatus: listStatus,
-      progress: baseEntry.progress,
+      progress: progress,
       progressVolumes: baseEntry.progressVolumes,
       score: (map['mediaListEntry']?['score'] ?? 0).toDouble(),
       repeat: map['mediaListEntry']?['repeat'] ?? 0,

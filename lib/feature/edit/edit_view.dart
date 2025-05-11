@@ -8,7 +8,7 @@ import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_buttons.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
-import 'package:otraku/feature/edit/edit_providers.dart';
+import 'package:otraku/feature/edit/edit_provider.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';

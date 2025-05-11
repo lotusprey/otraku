@@ -51,24 +51,26 @@ class CommentTile extends StatelessWidget {
           ),
         ),
         const SizedBox(width: Theming.offset),
-        OverflowBar(
-          spacing: 5,
-          overflowSpacing: 5,
-          children: [
-            Text(
-              comment.userName,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-            Timestamp(
-              comment.createdAt,
-              analogClock,
-              leading: Text(
-                'replied',
-                style: TextTheme.of(context).labelSmall,
+        Expanded(
+          child: OverflowBar(
+            spacing: 5,
+            overflowSpacing: 5,
+            children: [
+              Text(
+                comment.userName,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
               ),
-            ),
-          ],
+              Timestamp(
+                comment.createdAt,
+                analogClock,
+                leading: Text(
+                  'replied',
+                  style: TextTheme.of(context).labelSmall,
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );

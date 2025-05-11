@@ -36,24 +36,26 @@ class ThreadItemList extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: Theming.offset),
-                OverflowBar(
-                  spacing: 5,
-                  overflowSpacing: 5,
-                  children: [
-                    Text(
-                      item.userName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                    Timestamp(
-                      item.userTimestamp,
-                      analogClock,
-                      leading: Text(
-                        item.isUserReplying ? 'replied' : 'posted',
-                        style: TextTheme.of(context).labelSmall,
+                Expanded(
+                  child: OverflowBar(
+                    spacing: 5,
+                    overflowSpacing: 5,
+                    children: [
+                      Text(
+                        item.userName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
-                    ),
-                  ],
+                      Timestamp(
+                        item.userTimestamp,
+                        analogClock,
+                        leading: Text(
+                          item.isUserReplying ? 'replied' : 'posted',
+                          style: TextTheme.of(context).labelSmall,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

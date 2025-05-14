@@ -141,12 +141,12 @@ class ThreadItemList extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: Theming.iconSmall),
-            const SizedBox(width: 5),
             Text(
               value,
               style: Theme.of(context).textTheme.labelSmall,
             ),
+            const SizedBox(width: 5),
+            Icon(icon, size: Theming.iconSmall),
           ],
         ),
       );

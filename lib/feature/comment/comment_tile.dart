@@ -175,14 +175,14 @@ class CommentTile extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.favorite_outline_rounded,
-                          size: Theming.iconSmall,
-                        ),
-                        const SizedBox(width: 5),
                         Text(
                           comment.likeCount.toString(),
                           style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        const SizedBox(width: 5),
+                        Icon(
+                          Icons.favorite_outline_rounded,
+                          size: Theming.iconSmall,
                         ),
                       ],
                     ),

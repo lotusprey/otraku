@@ -391,14 +391,14 @@ class _Content extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: Theming.iconSmall,
-                      ),
-                      const SizedBox(width: 5),
                       Text(
                         info.viewCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.remove_red_eye_outlined,
+                        size: Theming.iconSmall,
                       ),
                     ],
                   ),
@@ -409,14 +409,14 @@ class _Content extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.reply_all_rounded,
-                        size: Theming.iconSmall,
-                      ),
-                      const SizedBox(width: 5),
                       Text(
                         info.replyCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.reply_all_rounded,
+                        size: Theming.iconSmall,
                       ),
                     ],
                   ),

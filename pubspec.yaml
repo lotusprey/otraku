@@ -55,7 +55,7 @@ dependencies:
       ref: main
 
   # Sending device notifications.
-  flutter_local_notifications: ^19.1.0
+  flutter_local_notifications: ^19.2.0
 
   # Parsing html into flutter widgets.
   flutter_widget_from_html_core: ^0.16.0

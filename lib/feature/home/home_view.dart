@@ -42,7 +42,10 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  final _searchFocusNode = FocusNode();
+  final _animeFocusNode = FocusNode();
+  final _mangaFocusNode = FocusNode();
+  final _discoverFocusNode = FocusNode();
+
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
@@ -51,6 +54,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
   );
+
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,
     vsync: this,
@@ -67,8 +71,11 @@ class _HomeViewState extends ConsumerState<HomeView>
     _tabCtrl.addListener(
       () => WidgetsBinding.instance.addPostFrameCallback(
         (_) {
-          _searchFocusNode.unfocus();
-          context.go(Routes.home(HomeTab.values[_tabCtrl.index]));
+          final tab = HomeTab.values[_tabCtrl.index];
+          if (tab != HomeTab.anime) _animeFocusNode.unfocus();
+          if (tab != HomeTab.manga) _mangaFocusNode.unfocus();
+          if (tab != HomeTab.discover) _discoverFocusNode.unfocus();
+          context.go(Routes.home(tab));
         },
       ),
     );
@@ -90,11 +97,15 @@ class _HomeViewState extends ConsumerState<HomeView>
 
   @override
   void dispose() {
-    _searchFocusNode.dispose();
+    _animeFocusNode.dispose();
+    _mangaFocusNode.dispose();
+    _discoverFocusNode.dispose();
+
     _animeScrollCtrl.dispose();
     _mangaScrollCtrl.dispose();
     _feedScrollCtrl.dispose();
     _discoverScrollCtrl.dispose();
+
     _tabCtrl.dispose();
     super.dispose();
   }
@@ -146,7 +157,7 @@ class _HomeViewState extends ConsumerState<HomeView>
             trailing: [
               CollectionTopBarTrailingContent(
                 animeCollectionTag,
-                _searchFocusNode,
+                _animeFocusNode,
               ),
             ],
           ),
@@ -155,14 +166,14 @@ class _HomeViewState extends ConsumerState<HomeView>
             trailing: [
               CollectionTopBarTrailingContent(
                 mangaCollectionTag,
-                _searchFocusNode,
+                _mangaFocusNode,
               ),
             ],
           ),
         3 => TopBar(
             key: const Key('discoverTobBar'),
             trailing: [
-              DiscoverTopBarTrailingContent(_searchFocusNode),
+              DiscoverTopBarTrailingContent(_discoverFocusNode),
             ],
           ),
         _ => const EmptyTopBar() as PreferredSizeWidget,
@@ -185,21 +196,21 @@ class _HomeViewState extends ConsumerState<HomeView>
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_animeFocusNode);
           case HomeTab.manga:
             if (_mangaScrollCtrl.position.pixels > 0) {
               _mangaScrollCtrl.scrollToTop();
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_mangaFocusNode);
           case HomeTab.discover:
             if (_discoverScrollCtrl.position.pixels > 0) {
               _discoverScrollCtrl.scrollToTop();
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_discoverFocusNode);
             return;
           case HomeTab.profile:
             if (primaryScrollCtrl.positions.last.pixels > 0) {
@@ -299,7 +310,6 @@ class _HomeViewState extends ConsumerState<HomeView>
     HomeTab.profile.label: Ionicons.person_outline,
   };
 
-  void _toggleSearchFocus() => _searchFocusNode.hasFocus
-      ? _searchFocusNode.unfocus()
-      : _searchFocusNode.requestFocus();
+  void _toggleSearchFocus(FocusNode node) =>
+      node.hasFocus ? node.unfocus() : node.requestFocus();
 }

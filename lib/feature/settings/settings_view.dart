@@ -117,32 +117,30 @@ class _SettingsViewState extends ConsumerState<SettingsView>
     };
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBarAnimatedSwitcher(
-          switch (_tabCtrl.index) {
-            0 => const TopBar(key: Key('0'), title: 'App'),
-            1 => const TopBar(key: Key('1'), title: 'Content'),
-            2 => const TopBar(key: Key('2'), title: 'Notifications'),
-            _ => const TopBar(key: Key('3'), title: 'About'),
-          },
-        ),
-        floatingAction: floatingAction,
-        navigationConfig: NavigationConfig(
-          selected: _tabCtrl.index,
-          onSame: (_) => _scrollCtrl.scrollToTop(),
-          onChanged: (i) => _tabCtrl.index = i,
-          items: const {
-            'App': Ionicons.color_palette_outline,
-            'Content': Ionicons.tv_outline,
-            'Notifications': Ionicons.notifications_outline,
-            'About': Ionicons.information_outline,
-          },
-        ),
-        child: TabBarView(
-          controller: _tabCtrl,
-          physics: const FastTabBarViewScrollPhysics(),
-          children: tabs,
-        ),
+      topBar: TopBarAnimatedSwitcher(
+        switch (_tabCtrl.index) {
+          0 => const TopBar(key: Key('0'), title: 'App'),
+          1 => const TopBar(key: Key('1'), title: 'Content'),
+          2 => const TopBar(key: Key('2'), title: 'Notifications'),
+          _ => const TopBar(key: Key('3'), title: 'About'),
+        },
+      ),
+      floatingAction: floatingAction,
+      navigationConfig: NavigationConfig(
+        selected: _tabCtrl.index,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
+        onChanged: (i) => _tabCtrl.index = i,
+        items: const {
+          'App': Ionicons.color_palette_outline,
+          'Content': Ionicons.tv_outline,
+          'Notifications': Ionicons.notifications_outline,
+          'About': Ionicons.information_outline,
+        },
+      ),
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
+        children: tabs,
       ),
     );
   }

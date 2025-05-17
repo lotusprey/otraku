@@ -82,196 +82,194 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     );
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBarAnimatedSwitcher(
-          TopBar(
-            key: inEditingMode
-                ? const Key('EditTopBar')
-                : Key('${type.title}TopBar'),
-            title: type.title,
-            trailing: [
-              if (inEditingMode) ...[
-                IconButton(
-                  tooltip: 'Cancel',
-                  icon: const Icon(Icons.close_rounded),
-                  onPressed: () => ref
-                      .read(favoritesProvider(widget.userId).notifier)
-                      .cancelEdit(),
-                ),
-                IconButton(
-                  tooltip: 'Save',
-                  icon: const Icon(Icons.save_outlined),
-                  onPressed: () => ref
-                      .read(favoritesProvider(widget.userId).notifier)
-                      .saveEdit()
-                      .then((err) {
-                    if (err == null || !context.mounted) return;
+      topBar: TopBarAnimatedSwitcher(
+        TopBar(
+          key: inEditingMode
+              ? const Key('EditTopBar')
+              : Key('${type.title}TopBar'),
+          title: type.title,
+          trailing: [
+            if (inEditingMode) ...[
+              IconButton(
+                tooltip: 'Cancel',
+                icon: const Icon(Icons.close_rounded),
+                onPressed: () => ref
+                    .read(favoritesProvider(widget.userId).notifier)
+                    .cancelEdit(),
+              ),
+              IconButton(
+                tooltip: 'Save',
+                icon: const Icon(Icons.save_outlined),
+                onPressed: () => ref
+                    .read(favoritesProvider(widget.userId).notifier)
+                    .saveEdit()
+                    .then((err) {
+                  if (err == null || !context.mounted) return;
 
-                    SnackBarExtension.show(context, 'Failed to reorder: $err');
-                  }),
+                  SnackBarExtension.show(context, 'Failed to reorder: $err');
+                }),
+              ),
+            ] else if (count > 0)
+              Padding(
+                padding: const EdgeInsets.only(right: Theming.offset),
+                child: Text(
+                  count.toString(),
+                  style: TextTheme.of(context).titleSmall,
                 ),
-              ] else if (count > 0)
-                Padding(
-                  padding: const EdgeInsets.only(right: Theming.offset),
-                  child: Text(
-                    count.toString(),
-                    style: TextTheme.of(context).titleSmall,
-                  ),
-                ),
-            ],
-          ),
+              ),
+          ],
         ),
-        floatingAction: !isViewer || inEditingMode
-            ? null
-            : HidingFloatingActionButton(
-                key: const Key('edit'),
-                scrollCtrl: _scrollCtrl,
-                child: FloatingActionButton(
-                  tooltip: 'Edit',
-                  child: const Icon(Icons.edit_outlined),
-                  onPressed: () => ref
-                      .read(favoritesProvider(widget.userId).notifier)
-                      .startEdit(type),
-                ),
+      ),
+      floatingAction: !isViewer || inEditingMode
+          ? null
+          : HidingFloatingActionButton(
+              key: const Key('edit'),
+              scrollCtrl: _scrollCtrl,
+              child: FloatingActionButton(
+                tooltip: 'Edit',
+                child: const Icon(Icons.edit_outlined),
+                onPressed: () => ref
+                    .read(favoritesProvider(widget.userId).notifier)
+                    .startEdit(type),
               ),
-        navigationConfig: inEditingMode
-            ? null
-            : NavigationConfig(
-                selected: _tabCtrl.index,
-                onChanged: (i) => _tabCtrl.index = i,
-                onSame: (_) => _scrollCtrl.scrollToTop(),
-                items: const {
-                  'Anime': Ionicons.film_outline,
-                  'Manga': Ionicons.book_outline,
-                  'Characters': Ionicons.man_outline,
-                  'Staff': Ionicons.briefcase_outline,
-                  'Studios': Ionicons.business_outline,
-                },
+            ),
+      navigationConfig: inEditingMode
+          ? null
+          : NavigationConfig(
+              selected: _tabCtrl.index,
+              onChanged: (i) => _tabCtrl.index = i,
+              onSame: (_) => _scrollCtrl.scrollToTop(),
+              items: const {
+                'Anime': Ionicons.film_outline,
+                'Manga': Ionicons.book_outline,
+                'Characters': Ionicons.man_outline,
+                'Staff': Ionicons.briefcase_outline,
+                'Studios': Ionicons.business_outline,
+              },
+            ),
+      child: AnimatedSwitcher(
+        switchInCurve: Curves.easeOut,
+        duration: const Duration(milliseconds: 200),
+        reverseDuration: const Duration(seconds: 0),
+        transitionBuilder: (child, animation) => SlideTransition(
+          position: Tween(
+            begin: const Offset(0, 0.05),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+        child: TabBarView(
+          key: inEditingMode
+              ? const Key('editTabBarView')
+              : const Key('tabBarView'),
+          controller: _tabCtrl,
+          physics: const FastTabBarViewScrollPhysics(),
+          children: [
+            PagedView<FavoriteItem>(
+              provider: favoritesProvider(widget.userId).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.anime),
               ),
-        child: AnimatedSwitcher(
-          switchInCurve: Curves.easeOut,
-          duration: const Duration(milliseconds: 200),
-          reverseDuration: const Duration(seconds: 0),
-          transitionBuilder: (child, animation) => SlideTransition(
-            position: Tween(
-              begin: const Offset(0, 0.05),
-              end: Offset.zero,
-            ).animate(animation),
-            child: child,
-          ),
-          child: TabBarView(
-            key: inEditingMode
-                ? const Key('editTabBarView')
-                : const Key('tabBarView'),
-            controller: _tabCtrl,
-            physics: const FastTabBarViewScrollPhysics(),
-            children: [
-              PagedView<FavoriteItem>(
-                provider: favoritesProvider(widget.userId).select(
-                  (s) => s.unwrapPrevious().whenData((data) => data.anime),
-                ),
-                scrollCtrl: _scrollCtrl,
-                onRefresh: onRefresh,
-                onData: (data) {
-                  final onTapItem = (FavoriteItem item) => context.push(
-                        Routes.media(item.id, item.imageUrl),
-                      );
-                  final onLongTapItem = (FavoriteItem item) => showSheet(
-                        context,
-                        EditView((id: item.id, setComplete: false)),
-                      );
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              onData: (data) {
+                final onTapItem = (FavoriteItem item) => context.push(
+                      Routes.media(item.id, item.imageUrl),
+                    );
+                final onLongTapItem = (FavoriteItem item) => showSheet(
+                      context,
+                      EditView((id: item.id, setComplete: false)),
+                    );
 
-                  return inEditingMode
-                      ? _EditList(
-                          data.items,
-                          onTapItem,
-                          onLongTapItem,
-                          toggleFavorite,
-                        )
-                      : _ImageGrid(data.items, onTapItem, onLongTapItem);
-                },
+                return inEditingMode
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        onLongTapItem,
+                        toggleFavorite,
+                      )
+                    : _ImageGrid(data.items, onTapItem, onLongTapItem);
+              },
+            ),
+            PagedView<FavoriteItem>(
+              provider: favoritesProvider(widget.userId).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.manga),
               ),
-              PagedView<FavoriteItem>(
-                provider: favoritesProvider(widget.userId).select(
-                  (s) => s.unwrapPrevious().whenData((data) => data.manga),
-                ),
-                scrollCtrl: _scrollCtrl,
-                onRefresh: onRefresh,
-                onData: (data) {
-                  final onTapItem = (FavoriteItem item) => context.push(
-                        Routes.media(item.id, item.imageUrl),
-                      );
-                  final onLongTapItem = (FavoriteItem item) => showSheet(
-                        context,
-                        EditView((id: item.id, setComplete: false)),
-                      );
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              onData: (data) {
+                final onTapItem = (FavoriteItem item) => context.push(
+                      Routes.media(item.id, item.imageUrl),
+                    );
+                final onLongTapItem = (FavoriteItem item) => showSheet(
+                      context,
+                      EditView((id: item.id, setComplete: false)),
+                    );
 
-                  return inEditingMode
-                      ? _EditList(
-                          data.items,
-                          onTapItem,
-                          onLongTapItem,
-                          toggleFavorite,
-                        )
-                      : _ImageGrid(data.items, onTapItem, onLongTapItem);
-                },
+                return inEditingMode
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        onLongTapItem,
+                        toggleFavorite,
+                      )
+                    : _ImageGrid(data.items, onTapItem, onLongTapItem);
+              },
+            ),
+            PagedView<FavoriteItem>(
+              provider: favoritesProvider(widget.userId).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.characters),
               ),
-              PagedView<FavoriteItem>(
-                provider: favoritesProvider(widget.userId).select(
-                  (s) => s.unwrapPrevious().whenData((data) => data.characters),
-                ),
-                scrollCtrl: _scrollCtrl,
-                onRefresh: onRefresh,
-                onData: (data) {
-                  final onTapItem = (FavoriteItem item) => context.push(
-                        Routes.character(item.id, item.imageUrl),
-                      );
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              onData: (data) {
+                final onTapItem = (FavoriteItem item) => context.push(
+                      Routes.character(item.id, item.imageUrl),
+                    );
 
-                  return inEditingMode
-                      ? _EditList(data.items, onTapItem, null, toggleFavorite)
-                      : _ImageGrid(data.items, onTapItem, null);
-                },
+                return inEditingMode
+                    ? _EditList(data.items, onTapItem, null, toggleFavorite)
+                    : _ImageGrid(data.items, onTapItem, null);
+              },
+            ),
+            PagedView<FavoriteItem>(
+              provider: favoritesProvider(widget.userId).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.staff),
               ),
-              PagedView<FavoriteItem>(
-                provider: favoritesProvider(widget.userId).select(
-                  (s) => s.unwrapPrevious().whenData((data) => data.staff),
-                ),
-                scrollCtrl: _scrollCtrl,
-                onRefresh: onRefresh,
-                onData: (data) {
-                  final onTapItem = (FavoriteItem item) => context.push(
-                        Routes.staff(item.id, item.imageUrl),
-                      );
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              onData: (data) {
+                final onTapItem = (FavoriteItem item) => context.push(
+                      Routes.staff(item.id, item.imageUrl),
+                    );
 
-                  return inEditingMode
-                      ? _EditList(data.items, onTapItem, null, toggleFavorite)
-                      : _ImageGrid(data.items, onTapItem, null);
-                },
+                return inEditingMode
+                    ? _EditList(data.items, onTapItem, null, toggleFavorite)
+                    : _ImageGrid(data.items, onTapItem, null);
+              },
+            ),
+            PagedView<FavoriteItem>(
+              provider: favoritesProvider(widget.userId).select(
+                (s) => s.unwrapPrevious().whenData((data) => data.studios),
               ),
-              PagedView<FavoriteItem>(
-                provider: favoritesProvider(widget.userId).select(
-                  (s) => s.unwrapPrevious().whenData((data) => data.studios),
-                ),
-                scrollCtrl: _scrollCtrl,
-                onRefresh: onRefresh,
-                onData: (data) {
-                  final onTapItem = (FavoriteItem item) => context.push(
-                        Routes.studio(item.id, item.imageUrl),
-                      );
+              scrollCtrl: _scrollCtrl,
+              onRefresh: onRefresh,
+              onData: (data) {
+                final onTapItem = (FavoriteItem item) => context.push(
+                      Routes.studio(item.id, item.imageUrl),
+                    );
 
-                  return inEditingMode
-                      ? _EditList(
-                          data.items,
-                          onTapItem,
-                          null,
-                          toggleFavorite,
-                          compact: true,
-                        )
-                      : _TextGrid(data.items, onTapItem);
-                },
-              ),
-            ],
-          ),
+                return inEditingMode
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        null,
+                        toggleFavorite,
+                        compact: true,
+                      )
+                    : _TextGrid(data.items, onTapItem);
+              },
+            ),
+          ],
         ),
       ),
     );

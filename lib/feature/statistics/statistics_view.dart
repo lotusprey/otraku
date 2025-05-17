@@ -98,21 +98,19 @@ class _StatisticsViewState extends State<StatisticsView>
     );
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: _tabCtrl.index == 0
-            ? const TopBar(key: Key('0'), title: 'Anime Statistics')
-            : const TopBar(key: Key('1'), title: 'Manga Statistics'),
-        navigationConfig: NavigationConfig(
-          selected: _tabCtrl.index,
-          onChanged: (i) => _tabCtrl.index = i,
-          onSame: (_) => _scrollCtrl.scrollToTop(),
-          items: const {
-            'Anime': Ionicons.film_outline,
-            'Manga': Ionicons.book_outline,
-          },
-        ),
-        child: child,
+      topBar: _tabCtrl.index == 0
+          ? const TopBar(key: Key('0'), title: 'Anime Statistics')
+          : const TopBar(key: Key('1'), title: 'Manga Statistics'),
+      navigationConfig: NavigationConfig(
+        selected: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
+        items: const {
+          'Anime': Ionicons.film_outline,
+          'Manga': Ionicons.book_outline,
+        },
       ),
+      child: child,
     );
   }
 }

@@ -6,20 +6,32 @@ import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
-  const AdaptiveScaffold(this.configBuilder);
+  const AdaptiveScaffold({
+    required this.child,
+    this.topBar,
+    this.floatingAction,
+    this.navigationConfig,
+    this.bottomBar,
+    this.sheetMode = false,
+  }) : assert(
+          navigationConfig == null || bottomBar == null,
+          'Cannot have both a navigation bar and a custom bottom bar',
+        );
 
-  final ScaffoldConfigBuilder configBuilder;
+  final Widget child;
+  final PreferredSizeWidget? topBar;
+  final HidingFloatingActionButton? floatingAction;
+  final NavigationConfig? navigationConfig;
+  final Widget? bottomBar;
+  final bool sheetMode;
 
   @override
   Widget build(BuildContext context) {
-    final compact =
-        MediaQuery.sizeOf(context).width < Theming.windowWidthMedium;
-
-    final config = configBuilder(context, compact);
+    final formFactor = Theming.of(context).formFactor;
 
     Color? backgroundColor;
     bool? resizeToAvoidBottomInset;
-    if (config.sheetMode) {
+    if (sheetMode) {
       backgroundColor = Colors.transparent;
       resizeToAvoidBottomInset = false;
     }
@@ -27,32 +39,33 @@ class AdaptiveScaffold extends StatelessWidget {
     var startFabLocation = _StartFloatFabLocation.withoutOffset;
     const endFabLocation = FloatingActionButtonLocation.endFloat;
 
-    var child = config.child;
-    var bottomNavigationBar = config.bottomBar;
-    if (config.navigationConfig != null) {
-      if (compact) {
-        bottomNavigationBar = BottomNavigation(
-          selected: config.navigationConfig!.selected,
-          items: config.navigationConfig!.items,
-          onChanged: config.navigationConfig!.onChanged,
-          onSame: config.navigationConfig!.onSame,
-        );
-      } else {
-        final sideNavigation = SideNavigation(
-          selected: config.navigationConfig!.selected,
-          items: config.navigationConfig!.items,
-          onChanged: config.navigationConfig!.onChanged,
-          onSame: config.navigationConfig!.onSame,
-        );
+    var effectiveChild = child;
+    var effectiveBottomBar = bottomBar;
+    if (navigationConfig != null) {
+      switch (formFactor) {
+        case FormFactor.phone:
+          effectiveBottomBar = BottomNavigation(
+            selected: navigationConfig!.selected,
+            items: navigationConfig!.items,
+            onChanged: navigationConfig!.onChanged,
+            onSame: navigationConfig!.onSame,
+          );
+        case FormFactor.tablet:
+          final sideNavigation = SideNavigation(
+            selected: navigationConfig!.selected,
+            items: navigationConfig!.items,
+            onChanged: navigationConfig!.onChanged,
+            onSame: navigationConfig!.onSame,
+          );
 
-        startFabLocation = _StartFloatFabLocation.withOffset;
+          startFabLocation = _StartFloatFabLocation.withOffset;
 
-        child = Expanded(child: child);
-        child = Row(
-          children: Directionality.of(context) == TextDirection.ltr
-              ? [sideNavigation, child]
-              : [child, sideNavigation],
-        );
+          effectiveChild = Expanded(child: effectiveChild);
+          effectiveChild = Row(
+            children: Directionality.of(context) == TextDirection.ltr
+                ? [sideNavigation, effectiveChild]
+                : [effectiveChild, sideNavigation],
+          );
       }
     }
 
@@ -75,43 +88,17 @@ class AdaptiveScaffold extends StatelessWidget {
             extendBodyBehindAppBar: true,
             backgroundColor: backgroundColor,
             resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-            appBar: config.topBar,
-            bottomNavigationBar: bottomNavigationBar,
-            floatingActionButton: config.floatingAction,
+            appBar: topBar,
+            bottomNavigationBar: effectiveBottomBar,
+            floatingActionButton: floatingAction,
             floatingActionButtonLocation: floatingActionButtonLocation,
             body: child,
           ),
         );
       },
-      child: child,
+      child: effectiveChild,
     );
   }
-}
-
-typedef ScaffoldConfigBuilder = ScaffoldConfig Function(
-  BuildContext context,
-  bool compact,
-);
-
-class ScaffoldConfig {
-  const ScaffoldConfig({
-    required this.child,
-    this.topBar,
-    this.floatingAction,
-    this.navigationConfig,
-    this.bottomBar,
-    this.sheetMode = false,
-  }) : assert(
-          navigationConfig == null || bottomBar == null,
-          'Cannot have both a navigation bar and a bottom bar',
-        );
-
-  final Widget child;
-  final PreferredSizeWidget? topBar;
-  final HidingFloatingActionButton? floatingAction;
-  final NavigationConfig? navigationConfig;
-  final Widget? bottomBar;
-  final bool sheetMode;
 }
 
 /// A configuration that can be shared

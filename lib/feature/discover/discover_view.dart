@@ -11,14 +11,15 @@ import 'package:otraku/feature/studio/studio_item_grid.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class DiscoverSubview extends StatelessWidget {
-  const DiscoverSubview(this.scrollCtrl, this.compact);
+  const DiscoverSubview(this.scrollCtrl, this.formFactor);
 
   final ScrollController scrollCtrl;
-  final bool compact;
+  final FormFactor formFactor;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +100,7 @@ class DiscoverSubview extends StatelessWidget {
             ),
         };
 
-        if (compact) return content;
+        if (formFactor == FormFactor.phone) return content;
 
         return Row(
           children: [

@@ -62,61 +62,58 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
     final viewerId = ref.watch(viewerIdProvider);
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(
-          trailing: thread.hasValue
-              ? _topBarTrailingContent(thread.value!, viewerId)
-              : const <Widget>[],
-        ),
-        floatingAction: HidingFloatingActionButton(
-          key: const Key('Reply'),
-          scrollCtrl: _scrollCtrl,
-          child: FloatingActionButton(
-            tooltip: 'New Reply',
-            child: const Icon(Icons.edit_outlined),
-            onPressed: () => showSheet(
-              context,
-              CompositionView(
-                tag: CommentCompositionTag(
-                  threadId: widget.id,
-                  parentCommentId: null,
-                ),
-                onSaved: (map) => ref
-                    .read(threadProvider(widget.id).notifier)
-                    .appendComment(map, null),
+      topBar: TopBar(
+        trailing: thread.hasValue
+            ? _topBarTrailingContent(thread.value!, viewerId)
+            : const <Widget>[],
+      ),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('Reply'),
+        scrollCtrl: _scrollCtrl,
+        child: FloatingActionButton(
+          tooltip: 'New Reply',
+          child: const Icon(Icons.edit_outlined),
+          onPressed: () => showSheet(
+            context,
+            CompositionView(
+              tag: CommentCompositionTag(
+                threadId: widget.id,
+                parentCommentId: null,
               ),
+              onSaved: (map) => ref
+                  .read(threadProvider(widget.id).notifier)
+                  .appendComment(map, null),
             ),
           ),
         ),
-        bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
-            ? _BottomBar(
-                thread: thread.value!,
-                leftHanded: options.leftHanded,
-                changePage: (page) => ref
-                    .read(threadProvider(widget.id).notifier)
-                    .changePage(page),
-              )
-            : null,
-        child: ConstrainedView(
-          child: switch (thread.unwrapPrevious()) {
-            AsyncData(:final value) =>
-              _Content(ref, value, options.analogClock, _scrollCtrl),
-            AsyncError() => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(
-                      threadProvider(widget.id),
-                    ),
+      ),
+      bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
+          ? _BottomBar(
+              thread: thread.value!,
+              leftHanded: options.leftHanded,
+              changePage: (page) =>
+                  ref.read(threadProvider(widget.id).notifier).changePage(page),
+            )
+          : null,
+      child: ConstrainedView(
+        child: switch (thread.unwrapPrevious()) {
+          AsyncData(:final value) =>
+            _Content(ref, value, options.analogClock, _scrollCtrl),
+          AsyncError() => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                SliverRefreshControl(
+                  onRefresh: () => ref.invalidate(
+                    threadProvider(widget.id),
                   ),
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load')),
-                  ),
-                ],
-              ),
-            _ => const Center(child: Loader()),
-          },
-        ),
+                ),
+                const SliverFillRemaining(
+                  child: Center(child: Text('Failed to load')),
+                ),
+              ],
+            ),
+          _ => const Center(child: Loader()),
+        },
       ),
     );
   }

@@ -59,57 +59,55 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       persistenceProvider.select((s) => s.options.analogClock),
     );
 
-    return AdaptiveScaffold(
-      (context, compact) {
-        final content = _Content(
-          unreadCount: unreadCount,
-          analogClock: analogClock,
-          scrollCtrl: _scrollCtrl,
-        );
+    final content = _Content(
+      unreadCount: unreadCount,
+      analogClock: analogClock,
+      scrollCtrl: _scrollCtrl,
+    );
 
-        return ScaffoldConfig(
-          topBar: TopBar(
-            trailing: [
-              Expanded(
-                child: Text(
-                  'Notifications',
-                  style: TextTheme.of(context).titleLarge,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ],
+    final formFactor = Theming.of(context).formFactor;
+
+    return AdaptiveScaffold(
+      topBar: TopBar(
+        trailing: [
+          Expanded(
+            child: Text(
+              'Notifications',
+              style: TextTheme.of(context).titleLarge,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
           ),
-          floatingAction: compact
-              ? HidingFloatingActionButton(
-                  key: const Key('filter'),
-                  scrollCtrl: _scrollCtrl,
-                  child: FloatingActionButton(
-                    tooltip: 'Filter',
-                    onPressed: _showFilterSheet,
-                    child: const Icon(Ionicons.funnel_outline),
-                  ),
-                )
-              : null,
-          child: compact
-              ? content
-              : Row(
-                  children: [
-                    PillSelector(
-                      selected: filter.index,
-                      maxWidth: 120,
-                      onTap: (i) => ref
-                          .read(notificationsFilterProvider.notifier)
-                          .state = NotificationsFilter.values[i],
-                      items: NotificationsFilter.values
-                          .map((v) => Text(v.label))
-                          .toList(),
-                    ),
-                    Expanded(child: content),
-                  ],
+        ],
+      ),
+      floatingAction: formFactor == FormFactor.phone
+          ? HidingFloatingActionButton(
+              key: const Key('filter'),
+              scrollCtrl: _scrollCtrl,
+              child: FloatingActionButton(
+                tooltip: 'Filter',
+                onPressed: _showFilterSheet,
+                child: const Icon(Ionicons.funnel_outline),
+              ),
+            )
+          : null,
+      child: formFactor == FormFactor.phone
+          ? content
+          : Row(
+              children: [
+                PillSelector(
+                  selected: filter.index,
+                  maxWidth: 120,
+                  onTap: (i) => ref
+                      .read(notificationsFilterProvider.notifier)
+                      .state = NotificationsFilter.values[i],
+                  items: NotificationsFilter.values
+                      .map((v) => Text(v.label))
+                      .toList(),
                 ),
-        );
-      },
+                Expanded(child: content),
+              ],
+            ),
     );
   }
 

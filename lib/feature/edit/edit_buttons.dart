@@ -4,7 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_provider.dart';
-import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/dialogs.dart';
 
@@ -25,8 +25,6 @@ class EditButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     final entryEdit = this.entryEdit;
     if (entryEdit == null) return const SizedBox();
-
-    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final saveButton = BottomBarButton(
       text: 'Save',
@@ -77,9 +75,9 @@ class EditButtons extends StatelessWidget {
           );
 
     return BottomBar(
-      options.leftHanded
-          ? [saveButton, removeButton]
-          : [removeButton, saveButton],
+      Theming.of(context).rightButtonOrientation
+          ? [removeButton, saveButton]
+          : [saveButton, removeButton],
     );
   }
 }

@@ -90,7 +90,6 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
           ? _BottomBar(
               thread: thread.value!,
-              leftHanded: options.leftHanded,
               changePage: (page) =>
                   ref.read(threadProvider(widget.id).notifier).changePage(page),
             )
@@ -222,14 +221,9 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
 }
 
 class _BottomBar extends StatefulWidget {
-  const _BottomBar({
-    required this.thread,
-    required this.leftHanded,
-    required this.changePage,
-  });
+  const _BottomBar({required this.thread, required this.changePage});
 
   final Thread thread;
-  final bool leftHanded;
   final void Function(int page) changePage;
 
   @override
@@ -274,9 +268,9 @@ class __BottomBarState extends State<_BottomBar> {
       ),
     );
 
-    final bottomBarItems = widget.leftHanded
-        ? [previousPageButton, currentPageLabel, nextPageButton, pageSlider]
-        : [pageSlider, previousPageButton, currentPageLabel, nextPageButton];
+    final bottomBarItems = Theming.of(context).rightButtonOrientation
+        ? [pageSlider, previousPageButton, currentPageLabel, nextPageButton]
+        : [previousPageButton, currentPageLabel, nextPageButton, pageSlider];
 
     return BottomBar(bottomBarItems);
   }

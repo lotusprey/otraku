@@ -74,12 +74,6 @@ class AppState extends ConsumerState<_App> {
     final platformBrightness = MediaQuery.platformBrightnessOf(context);
     final viewSize = MediaQuery.sizeOf(context);
 
-    final theming = Theming(
-      formFactor: viewSize.width < Theming.windowWidthMedium
-          ? FormFactor.phone
-          : FormFactor.tablet,
-    );
-
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
@@ -152,11 +146,23 @@ class AppState extends ConsumerState<_App> {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
           title: 'Otraku',
-          theme: theming.generateThemeData(lightScheme),
-          darkTheme: theming.generateThemeData(darkScheme),
+          theme: Theming.generateThemeData(lightScheme),
+          darkTheme: Theming.generateThemeData(darkScheme),
           themeMode: options.themeMode,
           routerConfig: _router,
           builder: (context, child) {
+            final directionality = Directionality.of(context);
+
+            final theming = Theming(
+              formFactor: viewSize.width < Theming.windowWidthMedium
+                  ? FormFactor.phone
+                  : FormFactor.tablet,
+              rightButtonOrientation:
+                  options.buttonOrientation == ButtonOrientation.auto
+                      ? directionality == TextDirection.ltr
+                      : options.buttonOrientation == ButtonOrientation.right,
+            );
+
             // Override the [textScaleFactor], because some devices apply
             // too high of a factor and it breaks the app visually.
             final mediaQuery = MediaQuery.of(context);
@@ -165,9 +171,12 @@ class AppState extends ConsumerState<_App> {
               maxScaleFactor: 1,
             );
 
-            return MediaQuery(
-              data: mediaQuery.copyWith(textScaler: scale),
-              child: child!,
+            return Theme(
+              data: Theme.of(context).copyWith(extensions: [theming]),
+              child: MediaQuery(
+                data: mediaQuery.copyWith(textScaler: scale),
+                child: child!,
+              ),
             );
           },
         );

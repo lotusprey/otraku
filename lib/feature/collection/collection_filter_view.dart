@@ -100,9 +100,9 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
 
     return SheetWithButtonRow(
       buttons: BottomBar(
-        options.leftHanded
-            ? [applyButton, revertToDefaultButton, saveButton]
-            : [saveButton, revertToDefaultButton, applyButton],
+        Theming.of(context).rightButtonOrientation
+            ? [saveButton, revertToDefaultButton, applyButton]
+            : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),

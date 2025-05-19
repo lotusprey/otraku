@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
@@ -27,7 +25,7 @@ class AdaptiveScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formFactor = Theming.of(context).formFactor;
+    final theming = Theming.of(context);
 
     Color? backgroundColor;
     bool? resizeToAvoidBottomInset;
@@ -42,7 +40,7 @@ class AdaptiveScaffold extends StatelessWidget {
     var effectiveChild = child;
     var effectiveBottomBar = bottomBar;
     if (navigationConfig != null) {
-      switch (formFactor) {
+      switch (theming.formFactor) {
         case FormFactor.phone:
           effectiveBottomBar = BottomNavigation(
             selected: navigationConfig!.selected,
@@ -69,34 +67,21 @@ class AdaptiveScaffold extends StatelessWidget {
       }
     }
 
-    FloatingActionButtonLocation? floatingActionButtonLocation;
-
-    return Consumer(
-      builder: (context, ref, child) {
-        final leftHanded = ref.watch(
-          persistenceProvider.select((s) => s.options.leftHanded),
-        );
-
-        floatingActionButtonLocation =
-            leftHanded ? startFabLocation : endFabLocation;
-
-        return SafeArea(
-          top: false,
-          bottom: false,
-          child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            backgroundColor: backgroundColor,
-            resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-            appBar: topBar,
-            bottomNavigationBar: effectiveBottomBar,
-            floatingActionButton: floatingAction,
-            floatingActionButtonLocation: floatingActionButtonLocation,
-            body: child,
-          ),
-        );
-      },
-      child: effectiveChild,
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        backgroundColor: backgroundColor,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        appBar: topBar,
+        bottomNavigationBar: effectiveBottomBar,
+        floatingActionButton: floatingAction,
+        floatingActionButtonLocation:
+            theming.rightButtonOrientation ? endFabLocation : startFabLocation,
+        body: effectiveChild,
+      ),
     );
   }
 }

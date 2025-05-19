@@ -88,3 +88,43 @@ class _StatefulCheckboxListTileState extends State<StatefulCheckboxListTile> {
     );
   }
 }
+
+class StatefulSegmentedButton<T> extends StatefulWidget {
+  const StatefulSegmentedButton({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    required this.segments,
+  });
+
+  final T value;
+  final void Function(T) onChanged;
+  final List<ButtonSegment<T>> segments;
+
+  @override
+  State<StatefulSegmentedButton<T>> createState() =>
+      _StatefulSegmentedButtonState<T>();
+}
+
+class _StatefulSegmentedButtonState<T>
+    extends State<StatefulSegmentedButton<T>> {
+  late var _value = widget.value;
+
+  @override
+  void didUpdateWidget(covariant StatefulSegmentedButton<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _value = widget.value;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton(
+      selected: {_value},
+      segments: widget.segments,
+      onSelectionChanged: (value) {
+        setState(() => _value = value.first);
+        widget.onChanged(_value);
+      },
+    );
+  }
+}

@@ -41,19 +41,83 @@ class SettingsAppSubview extends ConsumerWidget {
           initiallyExpanded: true,
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _ThemeModeSelection(
-              value: options.themeMode,
-              onChanged: (themeMode) => update(
-                options.copyWith(themeMode: themeMode),
+            Padding(
+              padding: const EdgeInsets.only(
+                bottom: Theming.offset,
+                left: Theming.offset,
+                right: Theming.offset,
+              ),
+              child: StatefulSegmentedButton(
+                segments: const [
+                  ButtonSegment(
+                    value: ThemeMode.system,
+                    label: Text('System'),
+                    icon: Icon(Icons.sync_outlined),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.light,
+                    label: Text('Light'),
+                    icon: Icon(Icons.wb_sunny_outlined),
+                  ),
+                  ButtonSegment(
+                    value: ThemeMode.dark,
+                    label: Text('Dark'),
+                    icon: Icon(Icons.mode_night_outlined),
+                  ),
+                ],
+                value: options.themeMode,
+                onChanged: (themeMode) => update(
+                  options.copyWith(themeMode: themeMode),
+                ),
               ),
             ),
             ThemePreview(ref: ref, options: options),
+            const SizedBox(height: Theming.offset / 2),
             StatefulSwitchListTile(
               title: const Text('High Contrast'),
               subtitle: const Text('Pure white/black backgrounds'),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
             ),
+            const SizedBox(height: Theming.offset / 2),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: Theming.offset,
+                right: Theming.offset,
+                bottom: Theming.offset,
+              ),
+              child: const Text('Button Orientation'),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: Theming.offset,
+                right: Theming.offset,
+                bottom: Theming.offset,
+              ),
+              child: StatefulSegmentedButton(
+                segments: const [
+                  ButtonSegment(
+                    value: ButtonOrientation.auto,
+                    label: Text('Auto'),
+                    icon: Icon(Icons.align_horizontal_center_rounded),
+                  ),
+                  ButtonSegment(
+                    value: ButtonOrientation.left,
+                    label: Text('Left'),
+                    icon: Icon(Icons.align_horizontal_left_rounded),
+                  ),
+                  ButtonSegment(
+                    value: ButtonOrientation.right,
+                    label: Text('Right'),
+                    icon: Icon(Icons.align_horizontal_right_rounded),
+                  ),
+                ],
+                value: options.buttonOrientation,
+                onChanged: (buttonOrientation) => update(
+                  options.copyWith(buttonOrientation: buttonOrientation),
+                ),
+              ),
+            )
           ],
         ),
         ExpansionTile(
@@ -163,11 +227,6 @@ class SettingsAppSubview extends ConsumerWidget {
           ],
         ),
         StatefulSwitchListTile(
-          title: const Text('Left-Handed Mode'),
-          value: options.leftHanded,
-          onChanged: (v) => update(options.copyWith(leftHanded: v)),
-        ),
-        StatefulSwitchListTile(
           title: const Text('12 Hour Clock'),
           value: options.analogClock,
           onChanged: (v) => update(options.copyWith(analogClock: v)),
@@ -178,45 +237,6 @@ class SettingsAppSubview extends ConsumerWidget {
           onChanged: (v) => update(options.copyWith(confirmExit: v)),
         ),
       ],
-    );
-  }
-}
-
-class _ThemeModeSelection extends StatelessWidget {
-  const _ThemeModeSelection({required this.value, required this.onChanged});
-
-  final ThemeMode value;
-  final void Function(ThemeMode) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(
-        bottom: Theming.offset,
-        left: Theming.offset,
-        right: Theming.offset,
-      ),
-      child: SegmentedButton(
-        segments: const [
-          ButtonSegment(
-            value: ThemeMode.system,
-            label: Text('System'),
-            icon: Icon(Icons.sync_outlined),
-          ),
-          ButtonSegment(
-            value: ThemeMode.light,
-            label: Text('Light'),
-            icon: Icon(Icons.wb_sunny_outlined),
-          ),
-          ButtonSegment(
-            value: ThemeMode.dark,
-            label: Text('Dark'),
-            icon: Icon(Icons.mode_night_outlined),
-          ),
-        ],
-        selected: {value},
-        onSelectionChanged: (v) => onChanged(v.first),
-      ),
     );
   }
 }

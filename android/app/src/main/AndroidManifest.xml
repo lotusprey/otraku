@@ -69,11 +69,5 @@
                </intent-filter>
           </activity>
           <meta-data android:name="flutterEmbedding" android:value="2" />
-
-          <!-- TODO: Remove when black screen is no longer showing. -->
-          <meta-data android:name="io.flutter.embedding.android.DisableSurfaceControl" android:value="true" />
-
-          <!-- TODO: Remove when impeller is fixed. -->
-          <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false" />
      </application>
 </manifest>

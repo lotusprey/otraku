@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # Routing.
-  go_router: ^15.1.2
+  go_router: ^15.2.0
 
   # Data fetching.
   http: ^1.4.0
@@ -46,13 +46,7 @@ dependencies:
   dynamic_color: ^1.7.0
 
   # Background tasks for notification fetching.
-  # TODO We are fetching the dependency from github, because the published version doesn't work
-  # on the newest flutter. As soon as this is fixed, switch to the published version.
-  workmanager:
-    git:
-      url: https://github.com/fluttercommunity/flutter_workmanager.git
-      path: workmanager
-      ref: main
+  workmanager: ^0.6.0
 
   # Sending device notifications.
   flutter_local_notifications: ^19.2.1
@@ -67,7 +61,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
 
 flutter_icons:
   ios: true

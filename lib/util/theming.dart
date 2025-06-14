@@ -97,7 +97,7 @@ class Theming extends ThemeExtension<Theming> {
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           },
         ),
-        cardTheme: const CardTheme(margin: EdgeInsets.all(0)),
+        cardTheme: const CardThemeData(margin: EdgeInsets.all(0)),
         iconTheme: IconThemeData(color: scheme.onSurfaceVariant, size: iconBig),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: scheme.surface.withAlpha(190),
@@ -186,7 +186,7 @@ class Theming extends ThemeExtension<Theming> {
           selectionColor: scheme.primary.withAlpha(50),
         ),
         dividerTheme: const DividerThemeData(thickness: 1),
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: scheme.surface,
           titleTextStyle: TextStyle(
             fontSize: fontMedium,

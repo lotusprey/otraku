@@ -96,7 +96,8 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                     child: Padding(
                       padding: Theming.paddingAll,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
                           Flexible(
                             child: Text(
@@ -104,16 +105,21 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                               overflow: TextOverflow.fade,
                             ),
                           ),
-                          const SizedBox(height: 5),
-                          TextRail(
-                            textRailItems,
-                            style: TextTheme.of(context).labelMedium,
-                          ),
-                          const SizedBox(height: 5),
-                          _RecommendationRating(
-                            mediaId,
-                            items[i],
-                            rateRecommendation,
+                          Row(
+                            spacing: 5,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextRail(
+                                textRailItems,
+                                style: TextTheme.of(context).labelMedium,
+                                maxLines: 2,
+                              ),
+                              _RecommendationRating(
+                                mediaId,
+                                items[i],
+                                rateRecommendation,
+                              ),
+                            ],
                           ),
                         ],
                       ),

@@ -16,7 +16,8 @@ enum DiscoverType {
   staff('Staff'),
   studio('Studio'),
   user('User'),
-  review('Review');
+  review('Review'),
+  recommendation('Recommendation');
 
   const DiscoverType(this.label);
 
@@ -71,6 +72,12 @@ class DiscoverReviewItems extends DiscoverItems {
   final Paged<ReviewItem> pages;
 }
 
+class DiscoverRecommendationItems extends DiscoverItems {
+  const DiscoverRecommendationItems([this.pages = const Paged()]);
+
+  final Paged<DiscoverRecommendationItem> pages;
+}
+
 class DiscoverMediaItem {
   DiscoverMediaItem._({
     required this.id,
@@ -115,4 +122,78 @@ class DiscoverMediaItem {
   final int averageScore;
   final int popularity;
   final bool isAdult;
+}
+
+class DiscoverRecommendationItem {
+  DiscoverRecommendationItem._({
+    required this.rating,
+    required this.userRating,
+    required this.mediaId,
+    required this.mediaTitle,
+    required this.mediaCover,
+    required this.mediaListStatus,
+    required this.isMediaAdult,
+    required this.recommendedMediaId,
+    required this.recommendedMediaTitle,
+    required this.recommendedMediaCover,
+    required this.recommendedMediaListStatus,
+    required this.isRecommendedMediaAdult,
+  });
+
+  factory DiscoverRecommendationItem(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) {
+    final userRating = map['userRating'] == 'RATE_UP'
+        ? true
+        : map['userRating'] == 'RATE_DOWN'
+            ? false
+            : null;
+
+    final media = map['media'];
+    final recommendedMedia = map['mediaRecommendation'];
+
+    final isMediaAnime = switch (media['type']) {
+      'ANIME' => true,
+      'MANGA' => false,
+      _ => null,
+    };
+    final isRecommendedMediaAnime = switch (media['type']) {
+      'ANIME' => true,
+      'MANGA' => false,
+      _ => null,
+    };
+
+    return DiscoverRecommendationItem._(
+      userRating: userRating,
+      rating: map['rating'] ?? 0,
+      mediaId: media['id'] ?? 0,
+      mediaTitle: media['title']['userPreferred'] ?? '?',
+      mediaCover: media['coverImage'][imageQuality.value] ?? '',
+      mediaListStatus: ListStatus.from(media['mediaListEntry']?['status'])
+          ?.label(isMediaAnime),
+      isMediaAdult: media['isAdult'] ?? false,
+      recommendedMediaId: recommendedMedia['id'] ?? 0,
+      recommendedMediaTitle: recommendedMedia['title']['userPreferred'] ?? '?',
+      recommendedMediaCover:
+          recommendedMedia['coverImage'][imageQuality.value] ?? '',
+      recommendedMediaListStatus:
+          ListStatus.from(recommendedMedia['mediaListEntry']?['status'])
+              ?.label(isRecommendedMediaAnime),
+      isRecommendedMediaAdult: recommendedMedia['isAdult'] ?? false,
+    );
+  }
+
+  int rating;
+  bool? userRating;
+  final int mediaId;
+  final String mediaTitle;
+  final String mediaCover;
+  final String? mediaListStatus;
+  final bool isMediaAdult;
+  final int recommendedMediaId;
+  final String recommendedMediaTitle;
+  final String recommendedMediaCover;
+  final String? recommendedMediaListStatus;
+  final bool isRecommendedMediaAdult;
 }

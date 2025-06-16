@@ -13,8 +13,8 @@ import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
-class DiscoverFilterView extends ConsumerStatefulWidget {
-  const DiscoverFilterView({
+class DiscoverMediaFilterView extends ConsumerStatefulWidget {
+  const DiscoverMediaFilterView({
     required this.ofAnime,
     required this.filter,
     required this.onChanged,
@@ -25,10 +25,11 @@ class DiscoverFilterView extends ConsumerStatefulWidget {
   final void Function(DiscoverMediaFilter) onChanged;
 
   @override
-  ConsumerState<DiscoverFilterView> createState() => _DiscoverFilterViewState();
+  ConsumerState<DiscoverMediaFilterView> createState() =>
+      _DiscoverFilterViewState();
 }
 
-class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
+class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
   late final _filter = widget.filter.copy();
 
   @override

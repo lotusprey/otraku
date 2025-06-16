@@ -152,6 +152,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
     final item = widget.item;
 
     return Row(
+      spacing: Theming.offset,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Tooltip(
@@ -206,9 +207,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                   ),
           ),
         ),
-        const SizedBox(width: Theming.offset),
-        Text(item.rating.toString(), overflow: TextOverflow.fade),
-        const SizedBox(width: Theming.offset),
+        Text(item.rating.toString()),
         Tooltip(
           message: 'Disagree',
           child: InkResponse(

@@ -6,6 +6,7 @@ import 'package:otraku/feature/discover/discover_media_grid.dart';
 import 'package:otraku/feature/discover/discover_media_simple_grid.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/discover/discover_provider.dart';
+import 'package:otraku/feature/discover/discover_recommendations_grid.dart';
 import 'package:otraku/feature/staff/staff_item_grid.dart';
 import 'package:otraku/feature/studio/studio_item_grid.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
@@ -98,6 +99,21 @@ class DiscoverSubview extends StatelessWidget {
               ),
               onData: (data) => ReviewGrid(data.items),
             ),
+          DiscoverType.recommendation => PagedView(
+              scrollCtrl: scrollCtrl,
+              onRefresh: onRefresh,
+              provider: discoverProvider.select(
+                (s) => s.whenData(
+                  (data) => (data as DiscoverRecommendationItems).pages,
+                ),
+              ),
+              onData: (data) => DiscoverRecommendationsGrid(
+                data.items,
+                (mediaId, recommendedMediaId, rating) => ref
+                    .read(discoverProvider.notifier)
+                    .rateRecommendation(mediaId, recommendedMediaId, rating),
+              ),
+            ),
         };
 
         if (formFactor == FormFactor.phone) return content;
@@ -106,7 +122,7 @@ class DiscoverSubview extends StatelessWidget {
           children: [
             PillSelector(
               selected: type.index,
-              maxWidth: 130,
+              maxWidth: 180,
               items: DiscoverType.values.map((v) => Text(v.label)).toList(),
               onTap: (i) => ref.read(discoverFilterProvider.notifier).update(
                     (s) => s.copyWith(type: DiscoverType.values[i]),

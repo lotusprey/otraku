@@ -60,5 +60,6 @@ class DiscoverFloatingAction extends StatelessWidget {
         DiscoverType.studio => Ionicons.business_outline,
         DiscoverType.user => Ionicons.person_outline,
         DiscoverType.review => Icons.rate_review_outlined,
+        DiscoverType.recommendation => Icons.thumb_up_outlined,
       };
 }

@@ -1,0 +1,7 @@
+- Added recommendations to discover.
+- Improved the recommendations tab design in the media page.
+- Replaced left-handed mode setting with a more general "button orientation" setting.
+- Fixed some alignment issues in thread views.
+- Fixed search bar freezing when fast-switching tabs.
+
+Important: some people have been facing performance issues after the last update. I upgraded the app engine and I'm hoping that will resolve the regressions these people face, but I can't guarantee it.

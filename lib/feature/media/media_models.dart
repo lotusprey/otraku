@@ -248,9 +248,11 @@ class Recommendation {
   });
 
   factory Recommendation(Map<String, dynamic> map, ImageQuality imageQuality) {
-    bool? userRating;
-    if (map['userRating'] == 'RATE_UP') userRating = true;
-    if (map['userRating'] == 'RATE_DOWN') userRating = false;
+    final userRating = map['userRating'] == 'RATE_UP'
+        ? true
+        : map['userRating'] == 'RATE_DOWN'
+            ? false
+            : null;
 
     return Recommendation._(
       id: map['mediaRecommendation']['id'],

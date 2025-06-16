@@ -23,17 +23,33 @@ enum ThemeBase {
 }
 
 class Theming extends ThemeExtension<Theming> {
-  const Theming({required this.formFactor});
+  const Theming({
+    required this.formFactor,
+    required this.rightButtonOrientation,
+  });
 
+  /// Pages should adapt their layouts, in consideration of the [formFactor].
   final FormFactor formFactor;
+
+  /// Determines whether FAB and prominent buttons should be on the right side,
+  /// with lest important buttons on the left.
+  /// This makes core actions more accessible.
+  final bool rightButtonOrientation;
 
   static Theming of(BuildContext context) =>
       Theme.of(context).extension<Theming>() ??
-      const Theming(formFactor: FormFactor.phone);
+      const Theming(formFactor: FormFactor.phone, rightButtonOrientation: true);
 
   @override
-  ThemeExtension<Theming> copyWith({FormFactor? formFactor}) =>
-      Theming(formFactor: formFactor ?? this.formFactor);
+  ThemeExtension<Theming> copyWith({
+    FormFactor? formFactor,
+    bool? rightButtonOrientation,
+  }) =>
+      Theming(
+        formFactor: formFactor ?? this.formFactor,
+        rightButtonOrientation:
+            rightButtonOrientation ?? this.rightButtonOrientation,
+      );
 
   @override
   ThemeExtension<Theming> lerp(
@@ -67,8 +83,7 @@ class Theming extends ThemeExtension<Theming> {
     parent: BouncingScrollPhysics(),
   );
 
-  ThemeData generateThemeData(ColorScheme scheme) => ThemeData(
-        extensions: [this],
+  static ThemeData generateThemeData(ColorScheme scheme) => ThemeData(
         fontFamily: 'Rubik',
         colorScheme: scheme,
         scaffoldBackgroundColor: scheme.surface,
@@ -82,7 +97,7 @@ class Theming extends ThemeExtension<Theming> {
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           },
         ),
-        cardTheme: const CardTheme(margin: EdgeInsets.all(0)),
+        cardTheme: const CardThemeData(margin: EdgeInsets.all(0)),
         iconTheme: IconThemeData(color: scheme.onSurfaceVariant, size: iconBig),
         navigationBarTheme: NavigationBarThemeData(
           backgroundColor: scheme.surface.withAlpha(190),
@@ -171,7 +186,7 @@ class Theming extends ThemeExtension<Theming> {
           selectionColor: scheme.primary.withAlpha(50),
         ),
         dividerTheme: const DividerThemeData(thickness: 1),
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: scheme.surface,
           titleTextStyle: TextStyle(
             fontSize: fontMedium,

@@ -70,76 +70,74 @@ class _SocialViewState extends ConsumerState<SocialView>
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBarAnimatedSwitcher(
-          TopBar(
-            key: Key('${tab.title}TopBar'),
-            title: tab.title,
-            trailing: [
-              if (count > 0)
-                Padding(
-                  padding: const EdgeInsets.only(right: Theming.offset),
-                  child: Text(
-                    count.toString(),
-                    style: TextTheme.of(context).titleSmall,
-                  ),
+      topBar: TopBarAnimatedSwitcher(
+        TopBar(
+          key: Key('${tab.title}TopBar'),
+          title: tab.title,
+          trailing: [
+            if (count > 0)
+              Padding(
+                padding: const EdgeInsets.only(right: Theming.offset),
+                child: Text(
+                  count.toString(),
+                  style: TextTheme.of(context).titleSmall,
                 ),
-            ],
-          ),
-        ),
-        navigationConfig: NavigationConfig(
-          selected: _tabCtrl.index,
-          onChanged: (i) => _tabCtrl.index = i,
-          onSame: (_) => _scrollCtrl.scrollToTop(),
-          items: {
-            SocialTab.following.title: Ionicons.people_circle,
-            SocialTab.followers.title: Ionicons.person_circle,
-            SocialTab.threads.title: Ionicons.chatbubble_outline,
-            SocialTab.comments.title: Ionicons.chatbubbles_outline,
-          },
-        ),
-        child: TabBarView(
-          controller: _tabCtrl,
-          physics: const FastTabBarViewScrollPhysics(),
-          children: [
-            PagedView(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.following),
               ),
-              onData: (data) => UserItemGrid(data.items),
-            ),
-            PagedView(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.followers),
-              ),
-              onData: (data) => UserItemGrid(data.items),
-            ),
-            PagedView(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.threads),
-              ),
-              onData: (data) => ThreadItemList(data.items, analogClock),
-            ),
-            PagedView(
-              scrollCtrl: _scrollCtrl,
-              onRefresh: onRefresh,
-              provider: socialProvider(widget.id).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.comments),
-              ),
-              onData: (data) => _CommentItemList(
-                data.items,
-                viewerId,
-                analogClock,
-              ),
-            ),
           ],
         ),
+      ),
+      navigationConfig: NavigationConfig(
+        selected: _tabCtrl.index,
+        onChanged: (i) => _tabCtrl.index = i,
+        onSame: (_) => _scrollCtrl.scrollToTop(),
+        items: {
+          SocialTab.following.title: Ionicons.people_circle,
+          SocialTab.followers.title: Ionicons.person_circle,
+          SocialTab.threads.title: Ionicons.chatbubble_outline,
+          SocialTab.comments.title: Ionicons.chatbubbles_outline,
+        },
+      ),
+      child: TabBarView(
+        controller: _tabCtrl,
+        physics: const FastTabBarViewScrollPhysics(),
+        children: [
+          PagedView(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.following),
+            ),
+            onData: (data) => UserItemGrid(data.items),
+          ),
+          PagedView(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.followers),
+            ),
+            onData: (data) => UserItemGrid(data.items),
+          ),
+          PagedView(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.threads),
+            ),
+            onData: (data) => ThreadItemList(data.items, analogClock),
+          ),
+          PagedView(
+            scrollCtrl: _scrollCtrl,
+            onRefresh: onRefresh,
+            provider: socialProvider(widget.id).select(
+              (s) => s.unwrapPrevious().whenData((data) => data.comments),
+            ),
+            onData: (data) => _CommentItemList(
+              data.items,
+              viewerId,
+              analogClock,
+            ),
+          ),
+        ],
       ),
     );
   }

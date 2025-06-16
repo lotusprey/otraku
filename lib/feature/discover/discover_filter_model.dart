@@ -11,18 +11,21 @@ class DiscoverFilter {
     required this.mediaFilter,
     required this.hasBirthday,
     required this.reviewsFilter,
+    required this.recommendationsFilter,
   });
 
   DiscoverFilter(this.type, this.mediaFilter)
       : search = '',
         hasBirthday = false,
-        reviewsFilter = const ReviewsFilter();
+        reviewsFilter = const ReviewsFilter(),
+        recommendationsFilter = const DiscoverRecommendationsFilter();
 
   final DiscoverType type;
   final String search;
   final DiscoverMediaFilter mediaFilter;
   final bool hasBirthday;
   final ReviewsFilter reviewsFilter;
+  final DiscoverRecommendationsFilter recommendationsFilter;
 
   DiscoverFilter copyWith({
     DiscoverType? type,
@@ -30,6 +33,7 @@ class DiscoverFilter {
     DiscoverMediaFilter? mediaFilter,
     bool? hasBirthday,
     ReviewsFilter? reviewsFilter,
+    DiscoverRecommendationsFilter? recommendationsFilter,
   }) =>
       DiscoverFilter._(
         type: type ?? this.type,
@@ -37,6 +41,8 @@ class DiscoverFilter {
         mediaFilter: mediaFilter ?? this.mediaFilter,
         hasBirthday: hasBirthday ?? this.hasBirthday,
         reviewsFilter: reviewsFilter ?? this.reviewsFilter,
+        recommendationsFilter:
+            recommendationsFilter ?? this.recommendationsFilter,
       );
 }
 
@@ -199,4 +205,33 @@ class DiscoverMediaFilter {
         'isAdult': isAdult,
         'isLicensed': isLicensed,
       };
+}
+
+class DiscoverRecommendationsFilter {
+  const DiscoverRecommendationsFilter({
+    this.sort = RecommendationsSort.recent,
+    this.inLists,
+  });
+
+  final RecommendationsSort sort;
+  final bool? inLists;
+
+  DiscoverRecommendationsFilter copyWith({
+    RecommendationsSort? sort,
+    (bool?,)? inLists,
+  }) =>
+      DiscoverRecommendationsFilter(
+        sort: sort ?? this.sort,
+        inLists: inLists == null ? this.inLists : inLists.$1,
+      );
+}
+
+enum RecommendationsSort {
+  recent('ID_DESC'),
+  highestRated('RATING_DESC'),
+  lowestRated('RATING');
+
+  const RecommendationsSort(this.value);
+
+  final String value;
 }

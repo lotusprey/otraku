@@ -47,22 +47,21 @@ class _CollectionViewState extends State<CollectionView> {
   @override
   Widget build(BuildContext context) {
     final tag = (userId: widget.userId, ofAnime: widget.ofAnime);
+    final formFactor = Theming.of(context).formFactor;
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
-        floatingAction: compact
-            ? HidingFloatingActionButton(
-                key: const Key('lists'),
-                scrollCtrl: _ctrl,
-                child: CollectionFloatingAction(tag),
-              )
-            : null,
-        child: CollectionSubview(
-          tag: tag,
-          scrollCtrl: _ctrl,
-          compact: compact,
-        ),
+      topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
+      floatingAction: formFactor == FormFactor.phone
+          ? HidingFloatingActionButton(
+              key: const Key('lists'),
+              scrollCtrl: _ctrl,
+              child: CollectionFloatingAction(tag),
+            )
+          : null,
+      child: CollectionSubview(
+        tag: tag,
+        scrollCtrl: _ctrl,
+        formFactor: formFactor,
       ),
     );
   }
@@ -72,13 +71,13 @@ class CollectionSubview extends StatelessWidget {
   const CollectionSubview({
     required this.tag,
     required this.scrollCtrl,
-    required this.compact,
+    required this.formFactor,
     super.key,
   });
 
   final CollectionTag? tag;
   final ScrollController scrollCtrl;
-  final bool compact;
+  final FormFactor formFactor;
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +149,7 @@ class CollectionSubview extends StatelessWidget {
                   ),
                 );
 
-                if (compact) return content;
+                if (formFactor == FormFactor.phone) return content;
 
                 return switch (data) {
                   PreviewCollection _ => content,

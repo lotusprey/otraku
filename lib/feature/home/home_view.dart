@@ -26,6 +26,7 @@ import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
 import 'package:otraku/util/routes.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/scroll_physics.dart';
@@ -42,7 +43,10 @@ class HomeView extends ConsumerStatefulWidget {
 
 class _HomeViewState extends ConsumerState<HomeView>
     with SingleTickerProviderStateMixin {
-  final _searchFocusNode = FocusNode();
+  final _animeFocusNode = FocusNode();
+  final _mangaFocusNode = FocusNode();
+  final _discoverFocusNode = FocusNode();
+
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
@@ -51,6 +55,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
   );
+
   late final _tabCtrl = TabController(
     length: HomeTab.values.length,
     vsync: this,
@@ -67,8 +72,11 @@ class _HomeViewState extends ConsumerState<HomeView>
     _tabCtrl.addListener(
       () => WidgetsBinding.instance.addPostFrameCallback(
         (_) {
-          _searchFocusNode.unfocus();
-          context.go(Routes.home(HomeTab.values[_tabCtrl.index]));
+          final tab = HomeTab.values[_tabCtrl.index];
+          if (tab != HomeTab.anime) _animeFocusNode.unfocus();
+          if (tab != HomeTab.manga) _mangaFocusNode.unfocus();
+          if (tab != HomeTab.discover) _discoverFocusNode.unfocus();
+          context.go(Routes.home(tab));
         },
       ),
     );
@@ -90,11 +98,15 @@ class _HomeViewState extends ConsumerState<HomeView>
 
   @override
   void dispose() {
-    _searchFocusNode.dispose();
+    _animeFocusNode.dispose();
+    _mangaFocusNode.dispose();
+    _discoverFocusNode.dispose();
+
     _animeScrollCtrl.dispose();
     _mangaScrollCtrl.dispose();
     _feedScrollCtrl.dispose();
     _discoverScrollCtrl.dispose();
+
     _tabCtrl.dispose();
     super.dispose();
   }
@@ -131,6 +143,7 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
     final home = ref.watch(homeProvider);
+    final formFactor = Theming.of(context).formFactor;
 
     final topBar = TopBarAnimatedSwitcher(
       switch (_tabCtrl.index) {
@@ -146,7 +159,7 @@ class _HomeViewState extends ConsumerState<HomeView>
             trailing: [
               CollectionTopBarTrailingContent(
                 animeCollectionTag,
-                _searchFocusNode,
+                _animeFocusNode,
               ),
             ],
           ),
@@ -155,14 +168,14 @@ class _HomeViewState extends ConsumerState<HomeView>
             trailing: [
               CollectionTopBarTrailingContent(
                 mangaCollectionTag,
-                _searchFocusNode,
+                _mangaFocusNode,
               ),
             ],
           ),
         3 => TopBar(
             key: const Key('discoverTobBar'),
             trailing: [
-              DiscoverTopBarTrailingContent(_searchFocusNode),
+              DiscoverTopBarTrailingContent(_discoverFocusNode),
             ],
           ),
         _ => const EmptyTopBar() as PreferredSizeWidget,
@@ -185,21 +198,21 @@ class _HomeViewState extends ConsumerState<HomeView>
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_animeFocusNode);
           case HomeTab.manga:
             if (_mangaScrollCtrl.position.pixels > 0) {
               _mangaScrollCtrl.scrollToTop();
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_mangaFocusNode);
           case HomeTab.discover:
             if (_discoverScrollCtrl.position.pixels > 0) {
               _discoverScrollCtrl.scrollToTop();
               return;
             }
 
-            _toggleSearchFocus();
+            _toggleSearchFocus(_discoverFocusNode);
             return;
           case HomeTab.profile:
             if (primaryScrollCtrl.positions.last.pixels > 0) {
@@ -212,82 +225,70 @@ class _HomeViewState extends ConsumerState<HomeView>
       },
     );
 
-    return AdaptiveScaffold(
-      (context, compact) {
-        final floatingAction = switch (_tabCtrl.index) {
-          0 => HidingFloatingActionButton(
-              key: const Key('feed'),
-              scrollCtrl: _feedScrollCtrl,
-              child: FeedFloatingAction(ref),
-            ),
-          1 => (compact || !home.didExpandAnimeCollection) &&
-                  animeCollectionTag != null
-              ? HidingFloatingActionButton(
-                  key: const Key('anime'),
-                  scrollCtrl: _animeScrollCtrl,
-                  child: CollectionFloatingAction(animeCollectionTag),
-                )
-              : null,
-          2 => (compact || !home.didExpandMangaCollection) &&
-                  mangaCollectionTag != null
-              ? HidingFloatingActionButton(
-                  key: const Key('manga'),
-                  scrollCtrl: _mangaScrollCtrl,
-                  child: CollectionFloatingAction(mangaCollectionTag),
-                )
-              : null,
-          3 => compact
-              ? HidingFloatingActionButton(
-                  key: const Key('discover'),
-                  scrollCtrl: _discoverScrollCtrl,
-                  child: const DiscoverFloatingAction(),
-                )
-              : null,
-          _ => null,
-        };
-
-        final child = TabBarView(
-          controller: _tabCtrl,
-          physics: const FastTabBarViewScrollPhysics(),
-          children: [
-            ActivitiesSubView(null, _feedScrollCtrl),
-            CollectionSubview(
+    final floatingAction = switch (_tabCtrl.index) {
+      0 => HidingFloatingActionButton(
+          key: const Key('feed'),
+          scrollCtrl: _feedScrollCtrl,
+          child: FeedFloatingAction(ref),
+        ),
+      1 => (formFactor == FormFactor.phone || !home.didExpandAnimeCollection) &&
+              animeCollectionTag != null
+          ? HidingFloatingActionButton(
+              key: const Key('anime'),
               scrollCtrl: _animeScrollCtrl,
-              tag: animeCollectionTag,
-              compact: compact,
-              key: Key(true.toString()),
-            ),
-            CollectionSubview(
+              child: CollectionFloatingAction(animeCollectionTag),
+            )
+          : null,
+      2 => (formFactor == FormFactor.phone || !home.didExpandMangaCollection) &&
+              mangaCollectionTag != null
+          ? HidingFloatingActionButton(
+              key: const Key('manga'),
               scrollCtrl: _mangaScrollCtrl,
-              tag: mangaCollectionTag,
-              compact: compact,
-              key: Key(false.toString()),
-            ),
-            DiscoverSubview(_discoverScrollCtrl, compact),
-            UserHomeView(
-              userTag,
-              null,
-              homeScrollCtrl: primaryScrollCtrl,
-              removableTopPadding: topBar.preferredSize.height,
-            ),
-          ],
-        );
+              child: CollectionFloatingAction(mangaCollectionTag),
+            )
+          : null,
+      3 => formFactor == FormFactor.phone
+          ? HidingFloatingActionButton(
+              key: const Key('discover'),
+              scrollCtrl: _discoverScrollCtrl,
+              child: const DiscoverFloatingAction(),
+            )
+          : null,
+      _ => null,
+    };
 
-        return switch (compact) {
-          true => ScaffoldConfig(
-              topBar: topBar,
-              floatingAction: floatingAction,
-              navigationConfig: navigationConfig,
-              child: child,
-            ),
-          false => ScaffoldConfig(
-              topBar: topBar,
-              floatingAction: floatingAction,
-              navigationConfig: navigationConfig,
-              child: child,
-            ),
-        };
-      },
+    final child = TabBarView(
+      controller: _tabCtrl,
+      physics: const FastTabBarViewScrollPhysics(),
+      children: [
+        ActivitiesSubView(null, _feedScrollCtrl),
+        CollectionSubview(
+          scrollCtrl: _animeScrollCtrl,
+          tag: animeCollectionTag,
+          formFactor: formFactor,
+          key: Key(true.toString()),
+        ),
+        CollectionSubview(
+          scrollCtrl: _mangaScrollCtrl,
+          tag: mangaCollectionTag,
+          formFactor: formFactor,
+          key: Key(false.toString()),
+        ),
+        DiscoverSubview(_discoverScrollCtrl, formFactor),
+        UserHomeView(
+          userTag,
+          null,
+          homeScrollCtrl: primaryScrollCtrl,
+          removableTopPadding: topBar.preferredSize.height,
+        ),
+      ],
+    );
+
+    return AdaptiveScaffold(
+      topBar: topBar,
+      floatingAction: floatingAction,
+      navigationConfig: navigationConfig,
+      child: child,
     );
   }
 
@@ -299,7 +300,6 @@ class _HomeViewState extends ConsumerState<HomeView>
     HomeTab.profile.label: Ionicons.person_outline,
   };
 
-  void _toggleSearchFocus() => _searchFocusNode.hasFocus
-      ? _searchFocusNode.unfocus()
-      : _searchFocusNode.requestFocus();
+  void _toggleSearchFocus(FocusNode node) =>
+      node.hasFocus ? node.unfocus() : node.requestFocus();
 }

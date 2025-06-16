@@ -65,32 +65,30 @@ class _MediaViewState extends State<MediaView> {
             ref.read(mediaProvider(widget.id).notifier).toggleFavorite;
 
         return AdaptiveScaffold(
-          (context, compact) => ScaffoldConfig(
-            floatingAction: media.valueOrNull != null
-                ? HidingFloatingActionButton(
-                    key: const Key('edit'),
-                    scrollCtrl: _scrollCtrl,
-                    child: MediaEditButton(media.value!),
-                  )
-                : null,
-            child: switch (compact) {
-              true => _CompactView(
-                  id: widget.id,
-                  coverUrl: widget.coverUrl,
-                  media: media,
+          floatingAction: media.valueOrNull != null
+              ? HidingFloatingActionButton(
+                  key: const Key('edit'),
                   scrollCtrl: _scrollCtrl,
-                  toggleFavorite: toggleFavorite,
-                ),
-              false => _LargeView(
-                  id: widget.id,
-                  coverUrl: widget.coverUrl,
-                  ref: ref,
-                  media: media,
-                  scrollCtrl: _scrollCtrl,
-                  toggleFavorite: toggleFavorite,
-                ),
-            },
-          ),
+                  child: MediaEditButton(media.value!),
+                )
+              : null,
+          child: switch (Theming.of(context).formFactor) {
+            FormFactor.phone => _CompactView(
+                id: widget.id,
+                coverUrl: widget.coverUrl,
+                media: media,
+                scrollCtrl: _scrollCtrl,
+                toggleFavorite: toggleFavorite,
+              ),
+            FormFactor.tablet => _LargeView(
+                id: widget.id,
+                coverUrl: widget.coverUrl,
+                ref: ref,
+                media: media,
+                scrollCtrl: _scrollCtrl,
+                toggleFavorite: toggleFavorite,
+              ),
+          },
         );
       },
     );

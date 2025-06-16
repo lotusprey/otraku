@@ -40,41 +40,39 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
     );
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(
-          title: 'Reviews',
-          trailing: [
-            if (count > 0)
-              Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: TextTheme.of(context).titleSmall,
-                ),
+      topBar: TopBar(
+        title: 'Reviews',
+        trailing: [
+          if (count > 0)
+            Padding(
+              padding: const EdgeInsets.only(right: Theming.offset),
+              child: Text(
+                count.toString(),
+                style: TextTheme.of(context).titleSmall,
               ),
-          ],
-        ),
-        floatingAction: HidingFloatingActionButton(
-          key: const Key('filter'),
-          scrollCtrl: _ctrl,
-          child: FloatingActionButton(
-            tooltip: 'Filter',
-            child: const Icon(Ionicons.funnel_outline),
-            onPressed: () => showReviewsFilterSheet(
-              context: context,
-              filter: ref.read(reviewsFilterProvider(widget.id)),
-              onDone: (filter) => ref
-                  .read(reviewsFilterProvider(widget.id).notifier)
-                  .state = filter,
             ),
+        ],
+      ),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('filter'),
+        scrollCtrl: _ctrl,
+        child: FloatingActionButton(
+          tooltip: 'Filter',
+          child: const Icon(Ionicons.funnel_outline),
+          onPressed: () => showReviewsFilterSheet(
+            context: context,
+            filter: ref.read(reviewsFilterProvider(widget.id)),
+            onDone: (filter) => ref
+                .read(reviewsFilterProvider(widget.id).notifier)
+                .state = filter,
           ),
         ),
-        child: PagedView<ReviewItem>(
-          scrollCtrl: _ctrl,
-          onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
-          provider: reviewsProvider(widget.id),
-          onData: (data) => ReviewGrid(data.items),
-        ),
+      ),
+      child: PagedView<ReviewItem>(
+        scrollCtrl: _ctrl,
+        onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
+        provider: reviewsProvider(widget.id),
+        onData: (data) => ReviewGrid(data.items),
       ),
     );
   }

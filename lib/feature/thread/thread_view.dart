@@ -62,61 +62,57 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
     final viewerId = ref.watch(viewerIdProvider);
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(
-          trailing: thread.hasValue
-              ? _topBarTrailingContent(thread.value!, viewerId)
-              : const <Widget>[],
-        ),
-        floatingAction: HidingFloatingActionButton(
-          key: const Key('Reply'),
-          scrollCtrl: _scrollCtrl,
-          child: FloatingActionButton(
-            tooltip: 'New Reply',
-            child: const Icon(Icons.edit_outlined),
-            onPressed: () => showSheet(
-              context,
-              CompositionView(
-                tag: CommentCompositionTag(
-                  threadId: widget.id,
-                  parentCommentId: null,
-                ),
-                onSaved: (map) => ref
-                    .read(threadProvider(widget.id).notifier)
-                    .appendComment(map, null),
+      topBar: TopBar(
+        trailing: thread.hasValue
+            ? _topBarTrailingContent(thread.value!, viewerId)
+            : const <Widget>[],
+      ),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('Reply'),
+        scrollCtrl: _scrollCtrl,
+        child: FloatingActionButton(
+          tooltip: 'New Reply',
+          child: const Icon(Icons.edit_outlined),
+          onPressed: () => showSheet(
+            context,
+            CompositionView(
+              tag: CommentCompositionTag(
+                threadId: widget.id,
+                parentCommentId: null,
               ),
+              onSaved: (map) => ref
+                  .read(threadProvider(widget.id).notifier)
+                  .appendComment(map, null),
             ),
           ),
         ),
-        bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
-            ? _BottomBar(
-                thread: thread.value!,
-                leftHanded: options.leftHanded,
-                changePage: (page) => ref
-                    .read(threadProvider(widget.id).notifier)
-                    .changePage(page),
-              )
-            : null,
-        child: ConstrainedView(
-          child: switch (thread.unwrapPrevious()) {
-            AsyncData(:final value) =>
-              _Content(ref, value, options.analogClock, _scrollCtrl),
-            AsyncError() => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(
-                      threadProvider(widget.id),
-                    ),
+      ),
+      bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
+          ? _BottomBar(
+              thread: thread.value!,
+              changePage: (page) =>
+                  ref.read(threadProvider(widget.id).notifier).changePage(page),
+            )
+          : null,
+      child: ConstrainedView(
+        child: switch (thread.unwrapPrevious()) {
+          AsyncData(:final value) =>
+            _Content(ref, value, options.analogClock, _scrollCtrl),
+          AsyncError() => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                SliverRefreshControl(
+                  onRefresh: () => ref.invalidate(
+                    threadProvider(widget.id),
                   ),
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load')),
-                  ),
-                ],
-              ),
-            _ => const Center(child: Loader()),
-          },
-        ),
+                ),
+                const SliverFillRemaining(
+                  child: Center(child: Text('Failed to load')),
+                ),
+              ],
+            ),
+          _ => const Center(child: Loader()),
+        },
       ),
     );
   }
@@ -225,14 +221,9 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
 }
 
 class _BottomBar extends StatefulWidget {
-  const _BottomBar({
-    required this.thread,
-    required this.leftHanded,
-    required this.changePage,
-  });
+  const _BottomBar({required this.thread, required this.changePage});
 
   final Thread thread;
-  final bool leftHanded;
   final void Function(int page) changePage;
 
   @override
@@ -277,9 +268,9 @@ class __BottomBarState extends State<_BottomBar> {
       ),
     );
 
-    final bottomBarItems = widget.leftHanded
-        ? [previousPageButton, currentPageLabel, nextPageButton, pageSlider]
-        : [pageSlider, previousPageButton, currentPageLabel, nextPageButton];
+    final bottomBarItems = Theming.of(context).rightButtonOrientation
+        ? [pageSlider, previousPageButton, currentPageLabel, nextPageButton]
+        : [previousPageButton, currentPageLabel, nextPageButton, pageSlider];
 
     return BottomBar(bottomBarItems);
   }
@@ -391,14 +382,14 @@ class _Content extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: Theming.iconSmall,
-                      ),
-                      const SizedBox(width: 5),
                       Text(
                         info.viewCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.remove_red_eye_outlined,
+                        size: Theming.iconSmall,
                       ),
                     ],
                   ),
@@ -409,14 +400,14 @@ class _Content extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.reply_all_rounded,
-                        size: Theming.iconSmall,
-                      ),
-                      const SizedBox(width: 5),
                       Text(
                         info.replyCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      const SizedBox(width: 5),
+                      Icon(
+                        Icons.reply_all_rounded,
+                        size: Theming.iconSmall,
                       ),
                     ],
                   ),

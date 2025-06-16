@@ -50,35 +50,33 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
     );
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(
-          trailing: [if (activity != null) _TopBarContent(activity)],
-        ),
-        floatingAction: HidingFloatingActionButton(
-          key: const Key('Reply'),
-          scrollCtrl: _scrollCtrl,
-          child: FloatingActionButton(
-            tooltip: 'New Reply',
-            child: const Icon(Icons.edit_outlined),
-            onPressed: () => showSheet(
-              context,
-              CompositionView(
-                tag: ActivityReplyCompositionTag(
-                  id: null,
-                  activityId: widget.id,
-                ),
-                onSaved: (map) => ref
-                    .read(activityProvider(widget.id).notifier)
-                    .appendReply(map),
+      topBar: TopBar(
+        trailing: [if (activity != null) _TopBarContent(activity)],
+      ),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('Reply'),
+        scrollCtrl: _scrollCtrl,
+        child: FloatingActionButton(
+          tooltip: 'New Reply',
+          child: const Icon(Icons.edit_outlined),
+          onPressed: () => showSheet(
+            context,
+            CompositionView(
+              tag: ActivityReplyCompositionTag(
+                id: null,
+                activityId: widget.id,
               ),
+              onSaved: (map) => ref
+                  .read(activityProvider(widget.id).notifier)
+                  .appendReply(map),
             ),
           ),
         ),
-        child: _View(
-          id: widget.id,
-          feedId: widget.feedId,
-          scrollCtrl: _scrollCtrl,
-        ),
+      ),
+      child: _View(
+        id: widget.id,
+        feedId: widget.feedId,
+        scrollCtrl: _scrollCtrl,
       ),
     );
   }

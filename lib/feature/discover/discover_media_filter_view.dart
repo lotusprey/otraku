@@ -13,24 +13,23 @@ import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
-class DiscoverFilterView extends ConsumerStatefulWidget {
-  const DiscoverFilterView({
+class DiscoverMediaFilterView extends ConsumerStatefulWidget {
+  const DiscoverMediaFilterView({
     required this.ofAnime,
     required this.filter,
     required this.onChanged,
-    required this.leftHanded,
   });
 
   final bool ofAnime;
   final DiscoverMediaFilter filter;
   final void Function(DiscoverMediaFilter) onChanged;
-  final bool leftHanded;
 
   @override
-  ConsumerState<DiscoverFilterView> createState() => _DiscoverFilterViewState();
+  ConsumerState<DiscoverMediaFilterView> createState() =>
+      _DiscoverFilterViewState();
 }
 
-class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
+class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
   late final _filter = widget.filter.copy();
 
   @override
@@ -77,9 +76,9 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverFilterView> {
 
     return SheetWithButtonRow(
       buttons: BottomBar(
-        widget.leftHanded
-            ? [applyButton, revertToDefaultButton, saveButton]
-            : [saveButton, revertToDefaultButton, applyButton],
+        Theming.of(context).rightButtonOrientation
+            ? [saveButton, revertToDefaultButton, applyButton]
+            : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),

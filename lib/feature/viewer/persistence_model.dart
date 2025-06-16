@@ -10,7 +10,7 @@ import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.8.0';
+const appVersion = '1.9.0';
 
 class Persistence {
   const Persistence({
@@ -192,8 +192,8 @@ class Options {
     required this.animeCollectionPreview,
     required this.mangaCollectionPreview,
     required this.confirmExit,
-    required this.leftHanded,
     required this.analogClock,
+    required this.buttonOrientation,
     required this.discoverItemView,
     required this.collectionItemView,
     required this.collectionPreviewItemView,
@@ -209,8 +209,8 @@ class Options {
         animeCollectionPreview: true,
         mangaCollectionPreview: true,
         confirmExit: false,
-        leftHanded: false,
         analogClock: false,
+        buttonOrientation: ButtonOrientation.auto,
         discoverItemView: DiscoverItemView.detailed,
         collectionItemView: CollectionItemView.detailed,
         collectionPreviewItemView: CollectionItemView.detailed,
@@ -227,8 +227,10 @@ class Options {
         animeCollectionPreview: map['animeCollectionPreview'] ?? true,
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
         confirmExit: map['confirmExit'] ?? false,
-        leftHanded: map['leftHanded'] ?? false,
-        analogClock: map['analogueClock'] ?? false,
+        buttonOrientation: ButtonOrientation.values.getOrFirst(
+          map['buttonOrientation'],
+        ),
+        analogClock: map['analogClock'] ?? false,
         discoverItemView: DiscoverItemView.values.getOrFirst(
           map['discoverItemView'],
         ),
@@ -249,8 +251,8 @@ class Options {
   final bool animeCollectionPreview;
   final bool mangaCollectionPreview;
   final bool confirmExit;
-  final bool leftHanded;
   final bool analogClock;
+  final ButtonOrientation buttonOrientation;
   final DiscoverItemView discoverItemView;
   final CollectionItemView collectionItemView;
   final CollectionItemView collectionPreviewItemView;
@@ -265,8 +267,8 @@ class Options {
     bool? animeCollectionPreview,
     bool? mangaCollectionPreview,
     bool? confirmExit,
-    bool? leftHanded,
     bool? analogClock,
+    ButtonOrientation? buttonOrientation,
     DiscoverItemView? discoverItemView,
     CollectionItemView? collectionItemView,
     CollectionItemView? collectionPreviewItemView,
@@ -283,7 +285,7 @@ class Options {
         mangaCollectionPreview:
             mangaCollectionPreview ?? this.mangaCollectionPreview,
         confirmExit: confirmExit ?? this.confirmExit,
-        leftHanded: leftHanded ?? this.leftHanded,
+        buttonOrientation: buttonOrientation ?? this.buttonOrientation,
         analogClock: analogClock ?? this.analogClock,
         discoverItemView: discoverItemView ?? this.discoverItemView,
         collectionItemView: collectionItemView ?? this.collectionItemView,
@@ -301,8 +303,8 @@ class Options {
         'animeCollectionPreview': animeCollectionPreview,
         'mangaCollectionPreview': mangaCollectionPreview,
         'confirmExit': confirmExit,
-        'leftHanded': leftHanded,
-        'analogueClock': analogClock,
+        'analogClock': analogClock,
+        'buttonOrientation': buttonOrientation.index,
         'discoverItemView': discoverItemView.index,
         'collectionItemView': collectionItemView.index,
         'collectionPreviewItemView': collectionPreviewItemView.index,
@@ -318,6 +320,12 @@ enum ImageQuality {
 
   final String label;
   final String value;
+}
+
+enum ButtonOrientation {
+  auto,
+  left,
+  right,
 }
 
 class AppMeta {

@@ -38,42 +38,40 @@ class _ForumViewState extends ConsumerState<ForumView> {
     );
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(trailing: [
-          Consumer(
-            builder: (context, ref, filterButton) {
-              return Expanded(
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: SearchField(
-                        debounce: Debounce(),
-                        hint: 'Forum',
-                        value: ref
-                            .watch(forumFilterProvider.select((s) => s.search)),
-                        onChanged: (search) => ref
-                            .read(forumFilterProvider.notifier)
-                            .update((s) => s.copyWith(search: search.trim())),
-                      ),
+      topBar: TopBar(trailing: [
+        Consumer(
+          builder: (context, ref, filterButton) {
+            return Expanded(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SearchField(
+                      debounce: Debounce(),
+                      hint: 'Forum',
+                      value: ref
+                          .watch(forumFilterProvider.select((s) => s.search)),
+                      onChanged: (search) => ref
+                          .read(forumFilterProvider.notifier)
+                          .update((s) => s.copyWith(search: search.trim())),
                     ),
-                    filterButton!,
-                  ],
-                ),
-              );
-            },
-            child: IconButton(
-              tooltip: 'Filter',
-              icon: const Icon(Ionicons.funnel_outline),
-              onPressed: () => showForumFilterSheet(context, ref),
-            ),
+                  ),
+                  filterButton!,
+                ],
+              ),
+            );
+          },
+          child: IconButton(
+            tooltip: 'Filter',
+            icon: const Icon(Ionicons.funnel_outline),
+            onPressed: () => showForumFilterSheet(context, ref),
           ),
-        ]),
-        child: PagedView(
-          provider: forumProvider,
-          scrollCtrl: _scrollCtrl,
-          onRefresh: (invalidate) => invalidate(forumProvider),
-          onData: (data) => ThreadItemList(data.items, analogClock),
         ),
+      ]),
+      child: PagedView(
+        provider: forumProvider,
+        scrollCtrl: _scrollCtrl,
+        onRefresh: (invalidate) => invalidate(forumProvider),
+        onData: (data) => ThreadItemList(data.items, analogClock),
       ),
     );
   }

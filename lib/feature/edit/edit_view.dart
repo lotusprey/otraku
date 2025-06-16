@@ -259,10 +259,6 @@ class _EditView extends ConsumerWidget {
   Widget _buildProgressFields(BuildContext context, WidgetRef ref) {
     final readableNotifier = entryEditProvider(tag).notifier;
 
-    final leftHanded = ref.watch(
-      persistenceProvider.select((s) => s.options.leftHanded),
-    );
-
     final progressField = NumberField(
       label: 'Progress',
       value: entryEdit.progress,
@@ -335,16 +331,16 @@ class _EditView extends ConsumerWidget {
               ],
             )
           : Row(
-              children: leftHanded
+              children: Theming.of(context).rightButtonOrientation
                   ? [
-                      Expanded(child: progressField),
-                      const SizedBox(width: Theming.offset),
                       Expanded(child: volumeProgressField),
+                      const SizedBox(width: Theming.offset),
+                      Expanded(child: progressField),
                     ]
                   : [
-                      Expanded(child: volumeProgressField),
-                      const SizedBox(width: Theming.offset),
                       Expanded(child: progressField),
+                      const SizedBox(width: Theming.offset),
+                      Expanded(child: volumeProgressField),
                     ],
             );
     }

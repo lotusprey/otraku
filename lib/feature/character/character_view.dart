@@ -56,31 +56,29 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
         ref.read(characterProvider(widget.id).notifier).toggleFavorite;
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        floatingAction: HidingFloatingActionButton(
-          key: const Key('filter'),
-          scrollCtrl: _scrollCtrl,
-          child: CharacterMediaFilterButton(widget.id, ref),
-        ),
-        child: switch (compact) {
-          true => _CompactView(
-              id: widget.id,
-              imageUrl: widget.imageUrl,
-              ref: ref,
-              character: character,
-              scrollCtrl: _scrollCtrl,
-              toggleFavorite: toggleFavorite,
-            ),
-          false => _LargeView(
-              id: widget.id,
-              imageUrl: widget.imageUrl,
-              ref: ref,
-              character: character,
-              scrollCtrl: _scrollCtrl,
-              toggleFavorite: toggleFavorite,
-            ),
-        },
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('filter'),
+        scrollCtrl: _scrollCtrl,
+        child: CharacterMediaFilterButton(widget.id, ref),
       ),
+      child: switch (Theming.of(context).formFactor) {
+        FormFactor.phone => _CompactView(
+            id: widget.id,
+            imageUrl: widget.imageUrl,
+            ref: ref,
+            character: character,
+            scrollCtrl: _scrollCtrl,
+            toggleFavorite: toggleFavorite,
+          ),
+        FormFactor.tablet => _LargeView(
+            id: widget.id,
+            imageUrl: widget.imageUrl,
+            ref: ref,
+            character: character,
+            scrollCtrl: _scrollCtrl,
+            toggleFavorite: toggleFavorite,
+          ),
+      },
     );
   }
 }

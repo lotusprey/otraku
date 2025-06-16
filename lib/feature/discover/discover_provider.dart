@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/character/character_item_model.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/staff/staff_item_model.dart';
@@ -32,6 +33,8 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
       DiscoverType.studio => _fetchStudios(const DiscoverStudioItems()),
       DiscoverType.user => _fetchUsers(const DiscoverUserItems()),
       DiscoverType.review => _fetchReviews(const DiscoverReviewItems()),
+      DiscoverType.recommendation =>
+        _fetchRecommendations(const DiscoverRecommendationItems()),
     };
   }
 
@@ -72,6 +75,11 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
               (oldValue is DiscoverReviewItems)
                   ? oldValue
                   : const DiscoverReviewItems(),
+            ),
+          DiscoverType.recommendation => _fetchRecommendations(
+              (oldValue is DiscoverRecommendationItems)
+                  ? oldValue
+                  : const DiscoverRecommendationItems(),
             ),
         });
   }
@@ -235,5 +243,50 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
       items,
       data['Page']['pageInfo']['hasNextPage'] ?? false,
     ));
+  }
+
+  Future<DiscoverItems> _fetchRecommendations(
+    DiscoverRecommendationItems oldValue,
+  ) async {
+    final data = await ref.read(repositoryProvider).request(
+      GqlQuery.recommendationsPage,
+      {
+        'page': oldValue.pages.next,
+        'sort': filter.recommendationsFilter.sort.value,
+        if (filter.recommendationsFilter.inLists != null)
+          'onList': filter.recommendationsFilter.inLists,
+      },
+    );
+
+    final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+
+    final items = <DiscoverRecommendationItem>[];
+    for (final r in data['Page']['recommendations']) {
+      items.add(DiscoverRecommendationItem(r, imageQuality));
+    }
+
+    return DiscoverRecommendationItems(oldValue.pages.withNext(
+      items,
+      data['Page']['pageInfo']['hasNextPage'] ?? false,
+    ));
+  }
+
+  Future<Object?> rateRecommendation(
+    int mediaId,
+    int recommendedMediaId,
+    bool? rating,
+  ) {
+    return ref.read(repositoryProvider).request(
+      GqlMutation.rateRecommendation,
+      {
+        'id': mediaId,
+        'recommendedId': recommendedMediaId,
+        'rating': rating == null
+            ? 'NO_RATING'
+            : rating
+                ? 'RATE_UP'
+                : 'RATE_DOWN',
+      },
+    ).getErrorOrNull();
   }
 }

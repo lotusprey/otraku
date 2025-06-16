@@ -69,24 +69,22 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
         : null;
 
     return AdaptiveScaffold(
-      (context, compact) => ScaffoldConfig(
-        topBar: TopBar(
-          title: 'Activities',
-          trailing: [
-            IconButton(
-              tooltip: 'Filter',
-              icon: const Icon(Ionicons.funnel_outline),
-              onPressed: () => showActivityFilterSheet(
-                context,
-                ref,
-                widget.userId,
-              ),
+      topBar: TopBar(
+        title: 'Activities',
+        trailing: [
+          IconButton(
+            tooltip: 'Filter',
+            icon: const Icon(Ionicons.funnel_outline),
+            onPressed: () => showActivityFilterSheet(
+              context,
+              ref,
+              widget.userId,
             ),
-          ],
-        ),
-        floatingAction: floatingAction,
-        child: ActivitiesSubView(widget.userId, _scrollCtrl),
+          ),
+        ],
       ),
+      floatingAction: floatingAction,
+      child: ActivitiesSubView(widget.userId, _scrollCtrl),
     );
   }
 }

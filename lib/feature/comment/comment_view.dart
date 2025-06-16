@@ -80,39 +80,35 @@ class _CommentViewState extends ConsumerState<CommentView> {
     }
 
     return AdaptiveScaffold(
-      (context, compact) {
-        return ScaffoldConfig(
-          topBar: topBar ?? const TopBar(),
-          floatingAction: HidingFloatingActionButton(
-            key: const Key('Reply'),
-            scrollCtrl: _scrollCtrl,
-            child: FloatingActionButton(
-              tooltip: 'New Reply',
-              onPressed: floatingActionOnPressed,
-              child: const Icon(Icons.edit_outlined),
-            ),
-          ),
-          child: ConstrainedView(
-            child: switch (comment.unwrapPrevious()) {
-              AsyncData(:final value) => _Content(ref, value, analogClock),
-              AsyncError() => CustomScrollView(
-                  physics: Theming.bouncyPhysics,
-                  slivers: [
-                    SliverRefreshControl(
-                      onRefresh: () => ref.invalidate(
-                        commentProvider(widget.id),
-                      ),
-                    ),
-                    const SliverFillRemaining(
-                      child: Center(child: Text('Failed to load')),
-                    ),
-                  ],
+      topBar: topBar ?? const TopBar(),
+      floatingAction: HidingFloatingActionButton(
+        key: const Key('Reply'),
+        scrollCtrl: _scrollCtrl,
+        child: FloatingActionButton(
+          tooltip: 'New Reply',
+          onPressed: floatingActionOnPressed,
+          child: const Icon(Icons.edit_outlined),
+        ),
+      ),
+      child: ConstrainedView(
+        child: switch (comment.unwrapPrevious()) {
+          AsyncData(:final value) => _Content(ref, value, analogClock),
+          AsyncError() => CustomScrollView(
+              physics: Theming.bouncyPhysics,
+              slivers: [
+                SliverRefreshControl(
+                  onRefresh: () => ref.invalidate(
+                    commentProvider(widget.id),
+                  ),
                 ),
-              _ => const Center(child: Loader()),
-            },
-          ),
-        );
-      },
+                const SliverFillRemaining(
+                  child: Center(child: Text('Failed to load')),
+                ),
+              ],
+            ),
+          _ => const Center(child: Loader()),
+        },
+      ),
     );
   }
 

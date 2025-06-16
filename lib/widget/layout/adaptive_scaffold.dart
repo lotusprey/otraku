@@ -1,100 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 
 class AdaptiveScaffold extends StatelessWidget {
-  const AdaptiveScaffold(this.configBuilder);
-
-  final ScaffoldConfigBuilder configBuilder;
-
-  @override
-  Widget build(BuildContext context) {
-    final compact =
-        MediaQuery.sizeOf(context).width < Theming.windowWidthMedium;
-
-    final config = configBuilder(context, compact);
-
-    Color? backgroundColor;
-    bool? resizeToAvoidBottomInset;
-    if (config.sheetMode) {
-      backgroundColor = Colors.transparent;
-      resizeToAvoidBottomInset = false;
-    }
-
-    var startFabLocation = _StartFloatFabLocation.withoutOffset;
-    const endFabLocation = FloatingActionButtonLocation.endFloat;
-
-    var child = config.child;
-    var bottomNavigationBar = config.bottomBar;
-    if (config.navigationConfig != null) {
-      if (compact) {
-        bottomNavigationBar = BottomNavigation(
-          selected: config.navigationConfig!.selected,
-          items: config.navigationConfig!.items,
-          onChanged: config.navigationConfig!.onChanged,
-          onSame: config.navigationConfig!.onSame,
-        );
-      } else {
-        final sideNavigation = SideNavigation(
-          selected: config.navigationConfig!.selected,
-          items: config.navigationConfig!.items,
-          onChanged: config.navigationConfig!.onChanged,
-          onSame: config.navigationConfig!.onSame,
-        );
-
-        startFabLocation = _StartFloatFabLocation.withOffset;
-
-        child = Expanded(child: child);
-        child = Row(
-          children: Directionality.of(context) == TextDirection.ltr
-              ? [sideNavigation, child]
-              : [child, sideNavigation],
-        );
-      }
-    }
-
-    FloatingActionButtonLocation? floatingActionButtonLocation;
-
-    return Consumer(
-      builder: (context, ref, child) {
-        final leftHanded = ref.watch(
-          persistenceProvider.select((s) => s.options.leftHanded),
-        );
-
-        floatingActionButtonLocation =
-            leftHanded ? startFabLocation : endFabLocation;
-
-        return SafeArea(
-          top: false,
-          bottom: false,
-          child: Scaffold(
-            extendBody: true,
-            extendBodyBehindAppBar: true,
-            backgroundColor: backgroundColor,
-            resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-            appBar: config.topBar,
-            bottomNavigationBar: bottomNavigationBar,
-            floatingActionButton: config.floatingAction,
-            floatingActionButtonLocation: floatingActionButtonLocation,
-            body: child,
-          ),
-        );
-      },
-      child: child,
-    );
-  }
-}
-
-typedef ScaffoldConfigBuilder = ScaffoldConfig Function(
-  BuildContext context,
-  bool compact,
-);
-
-class ScaffoldConfig {
-  const ScaffoldConfig({
+  const AdaptiveScaffold({
     required this.child,
     this.topBar,
     this.floatingAction,
@@ -103,7 +13,7 @@ class ScaffoldConfig {
     this.sheetMode = false,
   }) : assert(
           navigationConfig == null || bottomBar == null,
-          'Cannot have both a navigation bar and a bottom bar',
+          'Cannot have both a navigation bar and a custom bottom bar',
         );
 
   final Widget child;
@@ -112,6 +22,68 @@ class ScaffoldConfig {
   final NavigationConfig? navigationConfig;
   final Widget? bottomBar;
   final bool sheetMode;
+
+  @override
+  Widget build(BuildContext context) {
+    final theming = Theming.of(context);
+
+    Color? backgroundColor;
+    bool? resizeToAvoidBottomInset;
+    if (sheetMode) {
+      backgroundColor = Colors.transparent;
+      resizeToAvoidBottomInset = false;
+    }
+
+    var startFabLocation = _StartFloatFabLocation.withoutOffset;
+    const endFabLocation = FloatingActionButtonLocation.endFloat;
+
+    var effectiveChild = child;
+    var effectiveBottomBar = bottomBar;
+    if (navigationConfig != null) {
+      switch (theming.formFactor) {
+        case FormFactor.phone:
+          effectiveBottomBar = BottomNavigation(
+            selected: navigationConfig!.selected,
+            items: navigationConfig!.items,
+            onChanged: navigationConfig!.onChanged,
+            onSame: navigationConfig!.onSame,
+          );
+        case FormFactor.tablet:
+          final sideNavigation = SideNavigation(
+            selected: navigationConfig!.selected,
+            items: navigationConfig!.items,
+            onChanged: navigationConfig!.onChanged,
+            onSame: navigationConfig!.onSame,
+          );
+
+          startFabLocation = _StartFloatFabLocation.withOffset;
+
+          effectiveChild = Expanded(child: effectiveChild);
+          effectiveChild = Row(
+            children: Directionality.of(context) == TextDirection.ltr
+                ? [sideNavigation, effectiveChild]
+                : [effectiveChild, sideNavigation],
+          );
+      }
+    }
+
+    return SafeArea(
+      top: false,
+      bottom: false,
+      child: Scaffold(
+        extendBody: true,
+        extendBodyBehindAppBar: true,
+        backgroundColor: backgroundColor,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        appBar: topBar,
+        bottomNavigationBar: effectiveBottomBar,
+        floatingActionButton: floatingAction,
+        floatingActionButtonLocation:
+            theming.rightButtonOrientation ? endFabLocation : startFabLocation,
+        body: effectiveChild,
+      ),
+    );
+  }
 }
 
 /// A configuration that can be shared

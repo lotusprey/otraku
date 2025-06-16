@@ -46,73 +46,71 @@ class _CalendarViewState extends State<CalendarView> {
             date.year == today.year;
 
         return AdaptiveScaffold(
-          (context, compact) => ScaffoldConfig(
-            topBar: const TopBar(title: 'Calendar'),
-            floatingAction: HidingFloatingActionButton(
-              key: const Key('filter'),
-              scrollCtrl: _scrollCtrl,
-              child: FloatingActionButton(
-                tooltip: 'Filter',
-                onPressed: () => showCalendarFilterSheet(context, ref),
-                child: const Icon(Ionicons.funnel_outline),
+          topBar: const TopBar(title: 'Calendar'),
+          floatingAction: HidingFloatingActionButton(
+            key: const Key('filter'),
+            scrollCtrl: _scrollCtrl,
+            child: FloatingActionButton(
+              tooltip: 'Filter',
+              onPressed: () => showCalendarFilterSheet(context, ref),
+              child: const Icon(Ionicons.funnel_outline),
+            ),
+          ),
+          bottomBar: BottomBar([
+            const SizedBox(width: Theming.offset),
+            SizedBox(
+              width: 60,
+              child: isBeforeToday
+                  ? null
+                  : IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_rounded),
+                      onPressed: () => _setDate(
+                        ref,
+                        date.subtract(const Duration(days: 1)),
+                      ),
+                    ),
+            ),
+            Expanded(
+              child: TextButton(
+                onPressed: () => showDatePicker(
+                  context: context,
+                  initialDate: date,
+                  firstDate: today.add(const Duration(days: -1)),
+                  lastDate: today.add(const Duration(days: 150)),
+                ).then((newDate) {
+                  if (newDate != null && newDate != date) {
+                    _setDate(ref, newDate);
+                  }
+                }),
+                child: Text(date.formattedWithWeekDay),
               ),
             ),
-            bottomBar: BottomBar([
-              const SizedBox(width: Theming.offset),
-              SizedBox(
-                width: 60,
-                child: isBeforeToday
-                    ? null
-                    : IconButton(
-                        icon: const Icon(Icons.arrow_back_ios_rounded),
-                        onPressed: () => _setDate(
-                          ref,
-                          date.subtract(const Duration(days: 1)),
-                        ),
-                      ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () => showDatePicker(
-                    context: context,
-                    initialDate: date,
-                    firstDate: today.add(const Duration(days: -1)),
-                    lastDate: today.add(const Duration(days: 150)),
-                  ).then((newDate) {
-                    if (newDate != null && newDate != date) {
-                      _setDate(ref, newDate);
-                    }
-                  }),
-                  child: Text(date.formattedWithWeekDay),
+            SizedBox(
+              width: 60,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_forward_ios_rounded),
+                onPressed: () => _setDate(
+                  ref,
+                  date.add(const Duration(days: 1)),
                 ),
               ),
-              SizedBox(
-                width: 60,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_forward_ios_rounded),
-                  onPressed: () => _setDate(
-                    ref,
-                    date.add(const Duration(days: 1)),
-                  ),
-                ),
+            ),
+            const SizedBox(width: Theming.offset),
+          ]),
+          child: PagedView(
+            provider: calendarProvider,
+            scrollCtrl: _scrollCtrl,
+            onRefresh: (invalidate) => invalidate(calendarProvider),
+            onData: (data) => SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (context, i) => _Tile(data.items[i], options.analogClock),
+                childCount: data.items.length,
               ),
-              const SizedBox(width: Theming.offset),
-            ]),
-            child: PagedView(
-              provider: calendarProvider,
-              scrollCtrl: _scrollCtrl,
-              onRefresh: (invalidate) => invalidate(calendarProvider),
-              onData: (data) => SliverGrid(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) => _Tile(data.items[i], options.analogClock),
-                  childCount: data.items.length,
-                ),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1,
-                  mainAxisExtent: 120,
-                  mainAxisSpacing: Theming.offset,
-                  crossAxisSpacing: Theming.offset,
-                ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1,
+                mainAxisExtent: 120,
+                mainAxisSpacing: Theming.offset,
+                crossAxisSpacing: Theming.offset,
               ),
             ),
           ),

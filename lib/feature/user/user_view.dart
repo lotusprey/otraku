@@ -23,9 +23,8 @@ class UserView extends StatelessWidget {
   final String? avatarUrl;
 
   @override
-  Widget build(BuildContext context) => AdaptiveScaffold(
-        (context, _) => ScaffoldConfig(child: _UserView(tag, avatarUrl)),
-      );
+  Widget build(BuildContext context) =>
+      AdaptiveScaffold(child: _UserView(tag, avatarUrl));
 }
 
 /// The home page has app bars,

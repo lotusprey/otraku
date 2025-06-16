@@ -455,6 +455,34 @@ abstract class GqlQuery {
     }
   ''';
 
+  static const recommendationsPage = r'''
+    query Recommendations($page: Int, $sort: [RecommendationSort], $onList: Boolean) {
+      Page(page: $page, perPage: 30) {
+        pageInfo {hasNextPage}
+        recommendations(sort: $sort, onList: $onList) {
+          rating
+          userRating
+          media {
+            id
+            type
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+            mediaListEntry {status}
+            isAdult
+          }
+          mediaRecommendation {
+            id
+            type
+            title {userPreferred}
+            coverImage {extraLarge large medium}
+            mediaListEntry {status}
+            isAdult
+          }
+        }
+      }
+    }
+  ''';
+
   static const calendar = r'''
     query Calendar($page: Int, $airingFrom: Int, $airingTo: Int) {
       Page(page: $page) {

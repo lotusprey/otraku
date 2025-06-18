@@ -121,13 +121,16 @@ class _Tile extends StatelessWidget {
                 Expanded(
                   child: item.mediaListStatus == null
                       ? const SizedBox()
-                      : Text(item.mediaListStatus!),
+                      : Text(item.mediaListStatus!, textAlign: TextAlign.left),
                 ),
                 _RecommendationButtons(item, onRate),
                 Expanded(
                   child: item.recommendedMediaListStatus == null
                       ? const SizedBox()
-                      : Text(item.recommendedMediaListStatus!),
+                      : Text(
+                          item.recommendedMediaListStatus!,
+                          textAlign: TextAlign.right,
+                        ),
                 ),
               ],
             ),

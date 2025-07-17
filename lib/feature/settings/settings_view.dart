@@ -13,7 +13,6 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layout/scroll_physics.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/loaders.dart';
@@ -139,7 +138,6 @@ class _SettingsViewState extends ConsumerState<SettingsView>
       ),
       child: TabBarView(
         controller: _tabCtrl,
-        physics: const FastTabBarViewScrollPhysics(),
         children: tabs,
       ),
     );

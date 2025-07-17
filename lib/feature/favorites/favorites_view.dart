@@ -17,7 +17,6 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layout/scroll_physics.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/widget/sheets.dart';
@@ -163,7 +162,6 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
               ? const Key('editTabBarView')
               : const Key('tabBarView'),
           controller: _tabCtrl,
-          physics: const FastTabBarViewScrollPhysics(),
           children: [
             PagedView<FavoriteItem>(
               provider: favoritesProvider(widget.userId).select(

@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # Routing.
-  go_router: ^15.2.0
+  go_router: ^16.0.0
 
   # Data fetching.
   http: ^1.4.0
@@ -40,19 +40,19 @@ dependencies:
   cached_network_image: ^3.4.1
 
   # Opening links in the browser.
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.2
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^1.7.0
 
   # Background tasks for notification fetching.
-  workmanager: ^0.6.0
+  workmanager: ^0.8.0
 
   # Sending device notifications.
-  flutter_local_notifications: ^19.2.1
+  flutter_local_notifications: ^19.3.1
 
   # Parsing html into flutter widgets.
-  flutter_widget_from_html_core: ^0.16.0
+  flutter_widget_from_html_core: ^0.17.0
 
   # An addition to the material icons.
   ionicons: ^0.2.2

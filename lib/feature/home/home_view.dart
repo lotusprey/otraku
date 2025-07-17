@@ -29,7 +29,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
-import 'package:otraku/widget/layout/scroll_physics.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 
 class HomeView extends ConsumerStatefulWidget {
@@ -259,7 +258,6 @@ class _HomeViewState extends ConsumerState<HomeView>
 
     final child = TabBarView(
       controller: _tabCtrl,
-      physics: const FastTabBarViewScrollPhysics(),
       children: [
         ActivitiesSubView(null, _feedScrollCtrl),
         CollectionSubview(

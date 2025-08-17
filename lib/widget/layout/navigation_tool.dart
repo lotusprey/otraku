@@ -82,6 +82,7 @@ class _SideNavigationState extends State<SideNavigation> {
   @override
   Widget build(BuildContext context) {
     final rail = NavigationRail(
+      scrollable: true,
       selectedIndex: _selected,
       onDestinationSelected: (i) {
         if (_selected == i) {
@@ -98,23 +99,7 @@ class _SideNavigationState extends State<SideNavigation> {
     );
 
     return ClipRect(
-      child: BackdropFilter(
-        filter: Theming.blurFilter,
-        // [NavigationRail] is not scrollable (https://github.com/flutter/flutter/issues/89167),
-        // so a workaround is used for when the available height is little.
-        child: MediaQuery.sizeOf(context).height >= 450
-            ? rail
-            : LayoutBuilder(
-                builder: (context, constraints) => SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: IntrinsicHeight(child: rail),
-                  ),
-                ),
-              ),
-      ),
+      child: BackdropFilter(filter: Theming.blurFilter, child: rail),
     );
   }
 }

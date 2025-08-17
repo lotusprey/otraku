@@ -93,7 +93,7 @@ class Theming extends ThemeExtension<Theming> {
         highlightColor: Colors.transparent,
         pageTransitionsTheme: const PageTransitionsTheme(
           builders: {
-            TargetPlatform.android: ZoomPageTransitionsBuilder(),
+            TargetPlatform.android: _FastFadeForwardsPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
           },
         ),
@@ -227,4 +227,12 @@ class Theming extends ThemeExtension<Theming> {
           ),
         ),
       );
+}
+
+class _FastFadeForwardsPageTransitionsBuilder
+    extends FadeForwardsPageTransitionsBuilder {
+  const _FastFadeForwardsPageTransitionsBuilder();
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 400);
 }

@@ -1,0 +1,2 @@
+- Fix home page tab scrolling.
+- Use new material page transition on Android.

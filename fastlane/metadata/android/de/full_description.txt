@@ -1,0 +1,10 @@
+<i>Otraku</i> möchte ein voll funktionsfähiger und anpassbarer Client für AniList sein, ohne Werbung. Die App ermöglicht das Betrachten und Bearbeiten Deiner Anime/Manga Listen, das Browses und Filtern von Medien, Interaktionen mit anderen Nutzern, und mehr!
+
+<b>Aktuelle Funktionen:</b>
+
+* Zeigen Sie Ihre Anime- und Manga-Listen an und bearbeiten Sie sie
+* Erkunde Anime, Manga, Charaktere, Mitarbeiter, Studios, Benutzer und Rezensionen
+* Folgende / globale Feeds anzeigen
+* Gefällt mir Aktivitäten und Kommentare (Kommentieren wird noch nicht unterstützt)
+* Wählen Sie verschiedene App-Themen
+* Konfigurieren Sie einige AniList-Einstellungen

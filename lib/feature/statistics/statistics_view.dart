@@ -11,7 +11,6 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
-import 'package:otraku/widget/layout/scroll_physics.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/loaders.dart';
 
@@ -66,7 +65,6 @@ class _StatisticsViewState extends State<StatisticsView>
               data: (data) {
                 return TabBarView(
                   controller: _tabCtrl,
-                  physics: const FastTabBarViewScrollPhysics(),
                   children: [
                     ConstrainedView(
                       child: _StatisticsView(

@@ -16,9 +16,7 @@ if (keystorePropertiesFile.exists()) {
 android {
     namespace = "com.otraku.app"
     compileSdk = flutter.compileSdkVersion
-
-    ndkVersion = "27.2.12479018"
-    // ndkVersion = flutter.ndkVersion
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

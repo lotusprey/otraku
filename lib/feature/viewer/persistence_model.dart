@@ -40,31 +40,35 @@ class Persistence {
   factory Persistence.fromPersistenceMap(
     Map<dynamic, dynamic> map,
     Map<String, String> accessTokens,
-  ) =>
-      Persistence(
-        systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
-        accountGroup: AccountGroup.fromPersistenceMap(
-          map['accountGroup'] ?? const {},
-          accessTokens,
-        ),
-        options: Options.fromPersistenceMap(map['options'] ?? const {}),
-        appMeta: AppMeta.fromPersistenceMap(map['appMeta'] ?? const {}),
-        animeCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
-          map['animeCollectionMediaFilter'] ?? const {},
-        ),
-        mangaCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
-          map['mangaCollectionMediaFilter'] ?? const {},
-        ),
-        discoverMediaFilter: DiscoverMediaFilter.fromPersistenceMap(
-          map['discoverMediaFilter'] ?? const {},
-        ),
-        homeActivitiesFilter: HomeActivitiesFilter.fromPersistenceMap(
-          map['homeActivitiesFilter'] ?? const {},
-        ),
-        calendarFilter: CalendarFilter.fromPersistenceMap(
-          map['calendarFilter'] ?? const {},
-        ),
-      );
+  ) {
+    final accountGroup = AccountGroup.fromPersistenceMap(
+      map['accountGroup'] ?? const {},
+      accessTokens,
+    );
+
+    return Persistence(
+      systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
+      accountGroup: accountGroup,
+      options: Options.fromPersistenceMap(map['options'] ?? const {}),
+      appMeta: AppMeta.fromPersistenceMap(map['appMeta'] ?? const {}),
+      animeCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+        map['animeCollectionMediaFilter'] ?? const {},
+      ),
+      mangaCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+        map['mangaCollectionMediaFilter'] ?? const {},
+      ),
+      discoverMediaFilter: DiscoverMediaFilter.fromPersistenceMap(
+        map['discoverMediaFilter'] ?? const {},
+      ),
+      homeActivitiesFilter: HomeActivitiesFilter.fromPersistenceMap(
+        map['homeActivitiesFilter'] ?? const {},
+        accountGroup.account?.id,
+      ),
+      calendarFilter: CalendarFilter.fromPersistenceMap(
+        map['calendarFilter'] ?? const {},
+      ),
+    );
+  }
 
   final SystemColors systemColors;
   final AccountGroup accountGroup;

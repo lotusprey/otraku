@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
+import 'package:otraku/feature/activity/activities_provider.dart';
+import 'package:otraku/feature/media/media_activities_view.dart';
 import 'package:otraku/feature/media/media_floating_actions.dart';
 import 'package:otraku/feature/media/media_characters_view.dart';
 import 'package:otraku/feature/media/media_following_view.dart';
@@ -282,6 +285,7 @@ class _MediaTabs extends ConsumerStatefulWidget {
 }
 
 class __MediaSubViewState extends ConsumerState<_MediaTabs> {
+  late final _mediaActivitiesTag = MediaActivitiesTag(widget.id);
   late final ScrollController _scrollCtrl;
   double _lastMaxExtent = 0;
 
@@ -299,8 +303,10 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
 
   @override
   void deactivate() {
+    // These pages are lazy-loaded and then kept alive until the media page is popped.
     ref.invalidate(mediaThreadsProvider(widget.id));
     ref.invalidate(mediaFollowingProvider(widget.id));
+    ref.invalidate(activitiesProvider(_mediaActivitiesTag));
     super.deactivate();
   }
 
@@ -342,6 +348,8 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
       ref.read(mediaThreadsProvider(widget.id).notifier).fetch();
     } else if (index == MediaTab.following.index) {
       ref.read(mediaFollowingProvider(widget.id).notifier).fetch();
+    } else if (index == MediaTab.activities.index) {
+      ref.read(activitiesProvider(_mediaActivitiesTag).notifier).fetch();
     } else {
       ref
           .read(mediaConnectionsProvider(widget.id).notifier)
@@ -353,9 +361,8 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
   Widget build(BuildContext context) {
     ref.watch(mediaConnectionsProvider(widget.id).select((_) => null));
 
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
-    );
+    final viewerId = ref.watch(viewerIdProvider);
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     return TabBarView(
       controller: widget.tabCtrl,
@@ -384,9 +391,16 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
         MediaThreadsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
-          analogClock: analogClock,
+          analogClock: options.analogClock,
         ),
         MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaActivitiesSubview(
+          ref: ref,
+          tag: _mediaActivitiesTag,
+          scrollCtrl: _scrollCtrl,
+          viewerId: viewerId,
+          options: options,
+        ),
         MediaRecommendationsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,

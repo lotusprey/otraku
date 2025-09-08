@@ -573,11 +573,11 @@ abstract class GqlQuery {
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}${_GqlFragment.activityReply}';
 
   static const activityPage = r'''
-    query Activities($userId: Int, $userIdNot: Int, $page: Int = 1, $isFollowing: Boolean,
+    query Activities($userId: Int, $userIdNot: Int, $mediaId: Int, $page: Int = 1, $isFollowing: Boolean,
         $hasRepliesOrText: Boolean, $typeIn: [ActivityType]) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(userId: $userId, userId_not: $userIdNot, isFollowing: $isFollowing,
+        activities(userId: $userId, userId_not: $userIdNot, mediaId: $mediaId, isFollowing: $isFollowing,
             hasRepliesOrTypeText: $hasRepliesOrText, type_in: $typeIn, sort: [PINNED, ID_DESC]) {
           ... on TextActivity {...textActivity}
           ... on ListActivity {...listActivity}

@@ -87,6 +87,7 @@ class MediaRelationsNotifier
       MediaTab.relations ||
       MediaTab.threads ||
       MediaTab.following ||
+      MediaTab.activities ||
       MediaTab.statistics =>
         state,
       MediaTab.characters => oldState.characters.hasNext

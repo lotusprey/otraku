@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/comment/comment_view.dart';
 import 'package:otraku/feature/forum/forum_view.dart';
 import 'package:otraku/feature/thread/thread_view.dart';
@@ -68,8 +69,8 @@ class Routes {
   static String review(int id, [String? imageUrl]) =>
       '/review/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String activity(int id, [int? feedId]) =>
-      '/activity/$id${feedId != null ? "?feedId=$feedId" : ""}';
+  static String activity(int id, [ActivitiesTag? tag]) =>
+      '/activity/$id${tag != null ? "?feed=${tag.toQueryParam()}" : ""}';
 
   static const forum = '/forum';
 
@@ -215,9 +216,7 @@ class Routes {
         redirect: _parseIdOr404,
         builder: (context, state) => ActivityView(
           int.parse(state.pathParameters['id']!),
-          state.uri.queryParameters['feedId'] != null
-              ? int.parse(state.uri.queryParameters['feedId']!)
-              : null,
+          ActivitiesTag.fromQueryParam(state.uri.queryParameters['feed'] ?? ''),
         ),
       ),
       GoRoute(
@@ -255,12 +254,12 @@ class Routes {
         ),
       ),
       GoRoute(
-        path: '/activities/:id',
-        redirect: _parseIdOr404,
-        builder: (context, state) => ActivitiesView(
-          int.parse(state.pathParameters['id']!),
-        ),
-      ),
+          path: '/activities/:id',
+          redirect: _parseIdOr404,
+          builder: (context, state) {
+            final userId = int.parse(state.pathParameters['id']!);
+            return ActivitiesView(UserActivitiesTag(userId));
+          }),
       GoRoute(
         path: '/favorites/:id',
         redirect: _parseIdOr404,

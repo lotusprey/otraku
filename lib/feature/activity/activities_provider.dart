@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -11,12 +12,12 @@ import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
 
 final activitiesProvider = AsyncNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, Paged<Activity>, int?>(
+    .family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(
   ActivitiesNotifier.new,
 );
 
 class ActivitiesNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, int?> {
+    extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, ActivitiesTag> {
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
   int? _viewerId;
@@ -24,7 +25,9 @@ class ActivitiesNotifier
 
   @override
   FutureOr<Paged<Activity>> build(arg) {
-    if (arg == null) {
+    // The home feed and the media feeds are lazy-loaded. The home feed is never disposed,
+    // while the media feeds are disposed only when the media page is popped.
+    if (arg is HomeActivitiesTag || arg is MediaActivitiesTag) {
       ref.keepAlive();
     }
 
@@ -44,22 +47,7 @@ class ActivitiesNotifier
   Future<Paged<Activity>> _fetch(Paged<Activity> oldState) async {
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.activityPage,
-      {
-        'typeIn': _filter.typeIn.map((t) => t.value).toList(),
-        ...switch (_filter) {
-          HomeActivitiesFilter filter => {
-              'page': oldState.next,
-              'isFollowing': filter.onFollowing,
-              if (!filter.withViewerActivities && _viewerId != null)
-                'userIdNot': _viewerId,
-              if (!filter.onFollowing) 'hasRepliesOrText': true,
-            },
-          UserActivitiesFilter filter => {
-              'userId': filter.userId,
-              'page': oldState.next,
-            },
-        },
-      },
+      {'page': oldState.next, ..._filter.toGraphQlVariables()},
     );
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;

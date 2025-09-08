@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^2.6.1
 
   # Routing.
-  go_router: ^16.2.0
+  go_router: ^16.2.1
 
   # Data fetching.
   http: ^1.5.0
@@ -46,10 +46,10 @@ dependencies:
   dynamic_color: ^1.8.1
 
   # Background tasks for notification fetching.
-  workmanager: ^0.9.0+2
+  workmanager: ^0.9.0+3
 
   # Sending device notifications.
-  flutter_local_notifications: ^19.4.0
+  flutter_local_notifications: ^19.4.1
 
   # Parsing html into flutter widgets.
   flutter_widget_from_html_core: ^0.17.0

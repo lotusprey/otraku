@@ -571,6 +571,7 @@ enum MediaTab {
   reviews,
   threads,
   following,
+  activities,
   recommendations,
   statistics,
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/activity/activity_filter_sheet.dart';
@@ -19,9 +20,9 @@ import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/paged_view.dart';
 
 class ActivitiesView extends ConsumerStatefulWidget {
-  const ActivitiesView(this.userId);
+  const ActivitiesView(this.tag);
 
-  final int userId;
+  final UserActivitiesTag tag;
 
   @override
   ConsumerState<ActivitiesView> createState() => _ActivitiesViewState();
@@ -29,8 +30,7 @@ class ActivitiesView extends ConsumerStatefulWidget {
 
 class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   late final _scrollCtrl = PagedController(
-    loadMore: () =>
-        ref.read(activitiesProvider(widget.userId).notifier).fetch(),
+    loadMore: () => ref.read(activitiesProvider(widget.tag).notifier).fetch(),
   );
 
   @override
@@ -42,25 +42,26 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   @override
   Widget build(BuildContext context) {
     final viewerId = ref.watch(viewerIdProvider);
+    final userId = widget.tag.userId;
 
     final floatingAction = viewerId != null
         ? HidingFloatingActionButton(
             key: const Key('post'),
             scrollCtrl: _scrollCtrl,
             child: FloatingActionButton(
-              tooltip: widget.userId == viewerId ? 'New Post' : 'New Message',
+              tooltip: userId == viewerId ? 'New Post' : 'New Message',
               child: const Icon(Icons.edit_outlined),
               onPressed: () => showSheet(
                 context,
                 CompositionView(
-                  tag: widget.userId == viewerId
+                  tag: userId == viewerId
                       ? const StatusActivityCompositionTag(id: null)
                       : MessageActivityCompositionTag(
                           id: null,
-                          recipientId: widget.userId,
+                          recipientId: userId,
                         ),
                   onSaved: (map) => ref
-                      .read(activitiesProvider(widget.userId).notifier)
+                      .read(activitiesProvider(widget.tag).notifier)
                       .prepend(map),
                 ),
               ),
@@ -78,21 +79,21 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
             onPressed: () => showActivityFilterSheet(
               context,
               ref,
-              widget.userId,
+              widget.tag,
             ),
           ),
         ],
       ),
       floatingAction: floatingAction,
-      child: ActivitiesSubView(widget.userId, _scrollCtrl),
+      child: ActivitiesSubView(widget.tag, _scrollCtrl),
     );
   }
 }
 
 class ActivitiesSubView extends StatelessWidget {
-  const ActivitiesSubView(this.userId, this.scrollCtrl);
+  const ActivitiesSubView(this.tag, this.scrollCtrl);
 
-  final int? userId;
+  final ActivitiesTag tag;
   final ScrollController scrollCtrl;
 
   @override
@@ -103,13 +104,13 @@ class ActivitiesSubView extends StatelessWidget {
         final options = ref.watch(persistenceProvider.select((s) => s.options));
 
         return PagedView<Activity>(
-          provider: activitiesProvider(userId).select(
+          provider: activitiesProvider(tag).select(
             (s) => s.unwrapPrevious().whenData((data) => data),
           ),
           scrollCtrl: scrollCtrl,
           onRefresh: (invalidate) {
-            invalidate(activitiesProvider(userId));
-            if (userId == null) {
+            invalidate(activitiesProvider(tag));
+            if (tag is HomeActivitiesTag) {
               ref.read(settingsProvider.notifier).refetchUnread();
             }
           },
@@ -124,16 +125,16 @@ class ActivitiesSubView extends StatelessWidget {
                   viewerId: viewerId,
                   activity: data.items[i],
                   toggleLike: () => ref
-                      .read(activitiesProvider(userId).notifier)
+                      .read(activitiesProvider(tag).notifier)
                       .toggleLike(data.items[i]),
                   toggleSubscription: () => ref
-                      .read(activitiesProvider(userId).notifier)
+                      .read(activitiesProvider(tag).notifier)
                       .toggleSubscription(data.items[i]),
                   togglePin: () => ref
-                      .read(activitiesProvider(userId).notifier)
+                      .read(activitiesProvider(tag).notifier)
                       .togglePin(data.items[i]),
                   remove: () => ref
-                      .read(activitiesProvider(userId).notifier)
+                      .read(activitiesProvider(tag).notifier)
                       .remove(data.items[i]),
                   onEdited: (map) {
                     final activity = Activity.maybe(
@@ -145,12 +146,11 @@ class ActivitiesSubView extends StatelessWidget {
                     if (activity == null) return;
 
                     ref
-                        .read(activitiesProvider(userId).notifier)
+                        .read(activitiesProvider(tag).notifier)
                         .replace(activity);
                   },
-                  reply: () => context.push(
-                    Routes.activity(data.items[i].id, userId),
-                  ),
+                  reply: () =>
+                      context.push(Routes.activity(data.items[i].id, tag)),
                 ),
               ),
             ),

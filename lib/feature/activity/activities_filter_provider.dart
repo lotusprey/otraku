@@ -1,18 +1,27 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 
 final activitiesFilterProvider = NotifierProvider.autoDispose
-    .family<ActivitiesFilterNotifier, ActivitiesFilter, int?>(
+    .family<ActivitiesFilterNotifier, ActivitiesFilter, ActivitiesTag>(
   ActivitiesFilterNotifier.new,
 );
 
 class ActivitiesFilterNotifier
-    extends AutoDisposeFamilyNotifier<ActivitiesFilter, int?> {
+    extends AutoDisposeFamilyNotifier<ActivitiesFilter, ActivitiesTag> {
   @override
-  ActivitiesFilter build(arg) => arg == null
-      ? ref.watch(persistenceProvider.select((s) => s.homeActivitiesFilter))
-      : UserActivitiesFilter(ActivityType.values, arg);
+  ActivitiesFilter build(arg) => switch (arg) {
+        HomeActivitiesTag _ => ref.watch(
+            persistenceProvider.select((s) => s.homeActivitiesFilter),
+          ),
+        UserActivitiesTag(:final userId) => UserActivitiesFilter(
+            userId,
+            ActivityType.values,
+          ),
+        MediaActivitiesTag(:final mediaId) =>
+          MediaActivitiesFilter(mediaId, false),
+      };
 
   @override
   set state(ActivitiesFilter newState) {
@@ -23,7 +32,7 @@ class ActivitiesFilterNotifier
         ref
             .read(persistenceProvider.notifier)
             .setHomeActivitiesFilter(homeActivitiesFilter);
-      case UserActivitiesFilter _:
+      case UserActivitiesFilter _ || MediaActivitiesFilter _:
         super.state = newState;
     }
   }

@@ -7,17 +7,14 @@ import 'package:otraku/feature/comment/comment_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final commentProvider =
-    AsyncNotifierProvider.autoDispose.family<CommentNotifier, Comment, int>(
+final commentProvider = AsyncNotifierProvider.autoDispose.family<CommentNotifier, Comment, int>(
   CommentNotifier.new,
 );
 
 class CommentNotifier extends AutoDisposeFamilyAsyncNotifier<Comment, int> {
   @override
   FutureOr<Comment> build(int arg) async {
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.comment, {'id': arg});
+    final data = await ref.read(repositoryProvider).request(GqlQuery.comment, {'id': arg});
 
     // The response is a list of comments that match the filter criteria.
     // Since we're filtering by id, we expect exactly one comment.
@@ -64,7 +61,6 @@ class CommentNotifier extends AutoDisposeFamilyAsyncNotifier<Comment, int> {
     );
   }
 
-  Future<Object?> delete() => ref
-      .read(repositoryProvider)
-      .request(GqlMutation.deleteComment, {'id': arg}).getErrorOrNull();
+  Future<Object?> delete() =>
+      ref.read(repositoryProvider).request(GqlMutation.deleteComment, {'id': arg}).getErrorOrNull();
 }

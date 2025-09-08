@@ -40,13 +40,12 @@ class CharacterNotifier extends AutoDisposeFamilyAsyncNotifier<Character, int> {
   }
 }
 
-final characterMediaProvider = AsyncNotifierProvider.autoDispose
-    .family<CharacterMediaNotifier, CharacterMedia, int>(
+final characterMediaProvider =
+    AsyncNotifierProvider.autoDispose.family<CharacterMediaNotifier, CharacterMedia, int>(
   CharacterMediaNotifier.new,
 );
 
-class CharacterMediaNotifier
-    extends AutoDisposeFamilyAsyncNotifier<CharacterMedia, int> {
+class CharacterMediaNotifier extends AutoDisposeFamilyAsyncNotifier<CharacterMedia, int> {
   late CharacterFilter filter;
 
   @override
@@ -83,9 +82,7 @@ class CharacterMediaNotifier
       variables['page'] = oldState.manga.next;
     }
 
-    var data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.character, variables);
+    var data = await ref.read(repositoryProvider).request(GqlQuery.character, variables);
     data = data['Character'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;

@@ -47,8 +47,7 @@ class Theming extends ThemeExtension<Theming> {
   }) =>
       Theming(
         formFactor: formFactor ?? this.formFactor,
-        rightButtonOrientation:
-            rightButtonOrientation ?? this.rightButtonOrientation,
+        rightButtonOrientation: rightButtonOrientation ?? this.rightButtonOrientation,
       );
 
   @override
@@ -229,8 +228,7 @@ class Theming extends ThemeExtension<Theming> {
       );
 }
 
-class _FastFadeForwardsPageTransitionsBuilder
-    extends FadeForwardsPageTransitionsBuilder {
+class _FastFadeForwardsPageTransitionsBuilder extends FadeForwardsPageTransitionsBuilder {
   const _FastFadeForwardsPageTransitionsBuilder();
 
   @override

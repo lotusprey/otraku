@@ -24,8 +24,7 @@ class SettingsView extends ConsumerStatefulWidget {
   ConsumerState<SettingsView> createState() => _SettingsViewState();
 }
 
-class _SettingsViewState extends ConsumerState<SettingsView>
-    with SingleTickerProviderStateMixin {
+class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(length: 4, vsync: this);
   final _scrollCtrl = ScrollController();
   AsyncValue<Settings>? _settings;
@@ -167,9 +166,7 @@ class __SaveButtonState extends State<_SaveButton> {
               await widget.onTap();
               setState(() => _hidden = false);
             },
-      child: _hidden
-          ? const Icon(Ionicons.time_outline)
-          : const Icon(Ionicons.save_outline),
+      child: _hidden ? const Icon(Ionicons.time_outline) : const Icon(Ionicons.save_outline),
     );
   }
 }

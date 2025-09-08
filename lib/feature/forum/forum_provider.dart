@@ -8,8 +8,7 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
 
-final forumProvider =
-    AsyncNotifierProvider.autoDispose<ForumNotifier, Paged<ThreadItem>>(
+final forumProvider = AsyncNotifierProvider.autoDispose<ForumNotifier, Paged<ThreadItem>>(
   ForumNotifier.new,
 );
 

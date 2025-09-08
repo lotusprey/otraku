@@ -38,8 +38,7 @@ class UserActivitiesTag extends ActivitiesTag {
   final int userId;
 
   @override
-  bool operator ==(Object other) =>
-      other is UserActivitiesTag && userId == other.userId;
+  bool operator ==(Object other) => other is UserActivitiesTag && userId == other.userId;
 
   @override
   int get hashCode => userId.hashCode;
@@ -51,8 +50,7 @@ class MediaActivitiesTag extends ActivitiesTag {
   final int mediaId;
 
   @override
-  bool operator ==(Object other) =>
-      other is MediaActivitiesTag && mediaId == other.mediaId;
+  bool operator ==(Object other) => other is MediaActivitiesTag && mediaId == other.mediaId;
 
   @override
   int get hashCode => mediaId.hashCode;

@@ -60,19 +60,15 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   onPressed: () => context.push(Routes.calendar),
                 ),
               switch (filter.type) {
-                DiscoverType.anime ||
-                DiscoverType.manga =>
-                  filter.mediaFilter.isActive
-                      ? Badge(
-                          smallSize: 10,
-                          alignment: Alignment.topLeft,
-                          backgroundColor: ColorScheme.of(context).primary,
-                          child: _filterIcon(context, ref, filter),
-                        )
-                      : _filterIcon(context, ref, filter),
-                DiscoverType.character ||
-                DiscoverType.staff =>
-                  _BirthdayFilter(ref),
+                DiscoverType.anime || DiscoverType.manga => filter.mediaFilter.isActive
+                    ? Badge(
+                        smallSize: 10,
+                        alignment: Alignment.topLeft,
+                        backgroundColor: ColorScheme.of(context).primary,
+                        child: _filterIcon(context, ref, filter),
+                      )
+                    : _filterIcon(context, ref, filter),
+                DiscoverType.character || DiscoverType.staff => _BirthdayFilter(ref),
                 DiscoverType.review => IconButton(
                     tooltip: 'Filter',
                     icon: const Icon(Ionicons.funnel_outline),
@@ -99,8 +95,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                         final discoverFilter = ref.read(discoverFilterProvider);
                         if (filter != discoverFilter.recommendationsFilter) {
                           ref.read(discoverFilterProvider.notifier).update(
-                                (s) =>
-                                    s.copyWith(recommendationsFilter: filter),
+                                (s) => s.copyWith(recommendationsFilter: filter),
                               );
                         }
                       },
@@ -144,8 +139,7 @@ class _BirthdayFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasBirthday =
-        ref.watch(discoverFilterProvider.select((s) => s.hasBirthday));
+    final hasBirthday = ref.watch(discoverFilterProvider.select((s) => s.hasBirthday));
 
     final icon = IconButton(
       tooltip: 'Birthday Filter',

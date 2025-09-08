@@ -43,8 +43,7 @@ class CachedImage extends StatelessWidget {
       errorWidget: (context, _, __) => IconButton(
         tooltip: 'Error',
         icon: const Icon(Icons.close_outlined),
-        onPressed: () =>
-            SnackBarExtension.show(context, 'Failed to load image'),
+        onPressed: () => SnackBarExtension.show(context, 'Failed to load image'),
       ),
     );
   }

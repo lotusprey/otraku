@@ -12,8 +12,7 @@ class HidingFloatingActionButton extends StatefulWidget {
   final ScrollController scrollCtrl;
 
   @override
-  State<HidingFloatingActionButton> createState() =>
-      _HidingFloatingActionButtonState();
+  State<HidingFloatingActionButton> createState() => _HidingFloatingActionButtonState();
 }
 
 class _HidingFloatingActionButtonState extends State<HidingFloatingActionButton>

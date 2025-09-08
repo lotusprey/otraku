@@ -24,9 +24,7 @@ class CalendarItem {
           streamingServices.add((
             url: link['url'],
             site: link['site'],
-            color: link['color'] != null
-                ? ColorExtension.fromHexString(link['color'])
-                : null,
+            color: link['color'] != null ? ColorExtension.fromHexString(link['color']) : null,
           ));
         }
       }

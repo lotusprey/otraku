@@ -71,8 +71,7 @@ sealed class Activity {
             createdAt: DateTimeExtension.fromSecondsSinceEpoch(
               map['createdAt'],
             ),
-            isOwned: map['messenger']['id'] == viewerId ||
-                map['recipient']['id'] == viewerId,
+            isOwned: map['messenger']['id'] == viewerId || map['recipient']['id'] == viewerId,
             isPrivate: map['isPrivate'] ?? false,
             replyCount: map['replyCount'] ?? 0,
             likeCount: map['likeCount'] ?? 0,
@@ -84,10 +83,9 @@ sealed class Activity {
         case 'MANGA_LIST':
           if (map['user'] == null || map['media'] == null) return null;
 
-          final progress =
-              map['progress'] != null ? '${map['progress']} of ' : '';
-          final status = (map['status'] as String)[0].toUpperCase() +
-              (map['status'] as String).substring(1);
+          final progress = map['progress'] != null ? '${map['progress']} of ' : '';
+          final status =
+              (map['status'] as String)[0].toUpperCase() + (map['status'] as String).substring(1);
 
           return MediaActivity(
             id: map['id'],
@@ -97,8 +95,7 @@ sealed class Activity {
             mediaId: map['media']['id'],
             title: map['media']['title']['userPreferred'],
             coverUrl: map['media']['coverImage'][imageQuality.value],
-            format:
-                StringExtension.tryNoScreamingSnakeCase(map['media']['format']),
+            format: StringExtension.tryNoScreamingSnakeCase(map['media']['format']),
             isAnime: map['type'] == 'ANIME_LIST',
             siteUrl: map['siteUrl'],
             text: '$status $progress',

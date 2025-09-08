@@ -37,10 +37,9 @@ class DiscoverSubview extends StatelessWidget {
               provider: discoverProvider.select(
                 (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
               ),
-              onData: (data) =>
-                  options.discoverItemView == DiscoverItemView.simple
-                      ? DiscoverMediaSimpleGrid(data.items)
-                      : DiscoverMediaGrid(data.items),
+              onData: (data) => options.discoverItemView == DiscoverItemView.simple
+                  ? DiscoverMediaSimpleGrid(data.items)
+                  : DiscoverMediaGrid(data.items),
             ),
           DiscoverType.manga => PagedView(
               scrollCtrl: scrollCtrl,
@@ -48,10 +47,9 @@ class DiscoverSubview extends StatelessWidget {
               provider: discoverProvider.select(
                 (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
               ),
-              onData: (data) =>
-                  options.discoverItemView == DiscoverItemView.simple
-                      ? DiscoverMediaSimpleGrid(data.items)
-                      : DiscoverMediaGrid(data.items),
+              onData: (data) => options.discoverItemView == DiscoverItemView.simple
+                  ? DiscoverMediaSimpleGrid(data.items)
+                  : DiscoverMediaGrid(data.items),
             ),
           DiscoverType.character => PagedView(
               scrollCtrl: scrollCtrl,

@@ -72,8 +72,7 @@ class ContentHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final imageWidth =
-        ((MediaQuery.sizeOf(context).width - Theming.offset * 3) / 2.0)
-            .clamp(0.0, 100.0);
+        ((MediaQuery.sizeOf(context).width - Theming.offset * 3) / 2.0).clamp(0.0, 100.0);
     final imageHeight = imageWidth * imageHeightToWidthRatio;
 
     final content = _ImageContent(
@@ -210,21 +209,17 @@ class _Delegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent =>
-      topPadding +
-      Theming.normalTapTarget +
-      (tabBarConfig != null ? Theming.minTapTarget : 0);
+      topPadding + Theming.normalTapTarget + (tabBarConfig != null ? Theming.minTapTarget : 0);
 
   @override
-  double get maxExtent =>
-      minExtent + content.preferredSize.height + Theming.offset;
+  double get maxExtent => minExtent + content.preferredSize.height + Theming.offset;
 
   @override
   bool shouldRebuild(covariant _Delegate oldDelegate) =>
       topPadding != oldDelegate.topPadding || title != oldDelegate.title;
 
   @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
     final theme = Theme.of(context);
 
     final minHeight = minExtent;
@@ -268,8 +263,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       ],
     );
 
-    final bannerBottomPadding =
-        content.preferredSize.height / 2.0 + Theming.offset / 2;
+    final bannerBottomPadding = content.preferredSize.height / 2.0 + Theming.offset / 2;
 
     Widget body = Stack(
       fit: StackFit.expand,

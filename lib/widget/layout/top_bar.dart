@@ -75,8 +75,7 @@ class EmptyTopBar extends StatelessWidget implements PreferredSizeWidget {
 
 /// An [AnimatedSwitcher] wrapper around any [PreferredSizeWidget].
 /// Used for app bars that change depending on the current page tab.
-class TopBarAnimatedSwitcher extends StatelessWidget
-    implements PreferredSizeWidget {
+class TopBarAnimatedSwitcher extends StatelessWidget implements PreferredSizeWidget {
   const TopBarAnimatedSwitcher(this.child);
 
   final PreferredSizeWidget? child;

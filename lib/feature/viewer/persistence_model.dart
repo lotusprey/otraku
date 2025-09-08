@@ -96,10 +96,8 @@ class Persistence {
         accountGroup: accountGroup ?? this.accountGroup,
         options: options ?? this.options,
         appMeta: appMeta ?? this.appMeta,
-        animeCollectionMediaFilter:
-            animeCollectionMediaFilter ?? this.animeCollectionMediaFilter,
-        mangaCollectionMediaFilter:
-            mangaCollectionMediaFilter ?? this.mangaCollectionMediaFilter,
+        animeCollectionMediaFilter: animeCollectionMediaFilter ?? this.animeCollectionMediaFilter,
+        mangaCollectionMediaFilter: mangaCollectionMediaFilter ?? this.mangaCollectionMediaFilter,
         discoverMediaFilter: discoverMediaFilter ?? this.discoverMediaFilter,
         homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
         calendarFilter: calendarFilter ?? this.calendarFilter,
@@ -131,8 +129,7 @@ class AccountGroup {
     int? accountIndex = map['accountIndex']?.clamp(0, accounts.length - 1);
 
     // Can't use an account whose token has expired.
-    if (accountIndex != null &&
-        accounts[accountIndex].expiration.compareTo(DateTime.now()) <= 0) {
+    if (accountIndex != null && accounts[accountIndex].expiration.compareTo(DateTime.now()) <= 0) {
       accountIndex = null;
     }
 
@@ -159,9 +156,7 @@ class Account {
     required this.accessToken,
   });
 
-  factory Account.fromPersistenceMap(
-          Map<dynamic, dynamic> map, String accessToken) =>
-      Account(
+  factory Account.fromPersistenceMap(Map<dynamic, dynamic> map, String accessToken) => Account(
         id: map['id'],
         name: map['name'],
         avatarUrl: map['avatarUrl'],
@@ -226,8 +221,7 @@ class Options {
         highContrast: map['highContrast'] ?? false,
         homeTab: HomeTab.values.getOrFirst(map['homeTab']),
         discoverType: DiscoverType.values.getOrFirst(map['discoverType']),
-        imageQuality: ImageQuality.values.getOrNull(map['imageQuality']) ??
-            ImageQuality.high,
+        imageQuality: ImageQuality.values.getOrNull(map['imageQuality']) ?? ImageQuality.high,
         animeCollectionPreview: map['animeCollectionPreview'] ?? true,
         mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
         confirmExit: map['confirmExit'] ?? false,
@@ -284,17 +278,14 @@ class Options {
         homeTab: homeTab ?? this.homeTab,
         discoverType: discoverType ?? this.discoverType,
         imageQuality: imageQuality ?? this.imageQuality,
-        animeCollectionPreview:
-            animeCollectionPreview ?? this.animeCollectionPreview,
-        mangaCollectionPreview:
-            mangaCollectionPreview ?? this.mangaCollectionPreview,
+        animeCollectionPreview: animeCollectionPreview ?? this.animeCollectionPreview,
+        mangaCollectionPreview: mangaCollectionPreview ?? this.mangaCollectionPreview,
         confirmExit: confirmExit ?? this.confirmExit,
         buttonOrientation: buttonOrientation ?? this.buttonOrientation,
         analogClock: analogClock ?? this.analogClock,
         discoverItemView: discoverItemView ?? this.discoverItemView,
         collectionItemView: collectionItemView ?? this.collectionItemView,
-        collectionPreviewItemView:
-            collectionPreviewItemView ?? this.collectionPreviewItemView,
+        collectionPreviewItemView: collectionPreviewItemView ?? this.collectionPreviewItemView,
       );
 
   Map<String, dynamic> toPersistenceMap() => {

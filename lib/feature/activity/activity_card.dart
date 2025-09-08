@@ -289,9 +289,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                         ? Icons.favorite_outline_rounded
                         : Icons.favorite_rounded,
                     size: Theming.iconSmall,
-                    color: activity.isLiked
-                        ? ColorScheme.of(context).primary
-                        : null,
+                    color: activity.isLiked ? ColorScheme.of(context).primary : null,
                   ),
                 ],
               ),
@@ -315,8 +313,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (activity.isOwned) {
             if (activity is! MessageActivity) {
               ownershipButtons.add(ListTile(
-                title:
-                    activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                title: activity.isPinned ? const Text('Unpin') : const Text('Pin'),
                 leading: activity.isPinned
                     ? const Icon(Icons.push_pin)
                     : const Icon(Icons.push_pin_outlined),
@@ -383,9 +380,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             [
               ...ownershipButtons,
               ListTile(
-                title: !activity.isSubscribed
-                    ? const Text('Subscribe')
-                    : const Text('Unsubscribe'),
+                title: !activity.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
                 leading: !activity.isSubscribed
                     ? const Icon(Ionicons.notifications_outline)
                     : const Icon(Ionicons.notifications_off_outline),

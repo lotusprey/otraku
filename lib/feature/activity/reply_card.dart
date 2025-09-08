@@ -126,9 +126,7 @@ class ReplyCard extends StatelessWidget {
                   activityId: activityId,
                 ),
                 onSaved: (map) {
-                  ref
-                      .read(activityProvider(activityId).notifier)
-                      .replaceReply(map);
+                  ref.read(activityProvider(activityId).notifier).replaceReply(map);
                   Navigator.pop(context);
                 },
               ),
@@ -143,9 +141,8 @@ class ReplyCard extends StatelessWidget {
               primaryAction: 'Yes',
               secondaryAction: 'No',
               onConfirm: () async {
-                final err = await ref
-                    .read(activityProvider(activityId).notifier)
-                    .removeReply(reply.id);
+                final err =
+                    await ref.read(activityProvider(activityId).notifier).removeReply(reply.id);
 
                 if (err == null) {
                   if (context.mounted) Navigator.pop(context);
@@ -188,9 +185,7 @@ class _ReplyMentionButton extends StatelessWidget {
                 id: null,
                 activityId: activityId,
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(activityId).notifier)
-                  .appendReply(map),
+              onSaved: (map) => ref.read(activityProvider(activityId).notifier).appendReply(map),
             ),
           ),
           child: const Icon(Icons.reply_rounded, size: Theming.iconSmall),
@@ -232,13 +227,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               ),
               const SizedBox(width: 5),
               Icon(
-                !widget.reply.isLiked
-                    ? Icons.favorite_outline_rounded
-                    : Icons.favorite_rounded,
+                !widget.reply.isLiked ? Icons.favorite_outline_rounded : Icons.favorite_rounded,
                 size: Theming.iconSmall,
-                color: widget.reply.isLiked
-                    ? ColorScheme.of(context).primary
-                    : null,
+                color: widget.reply.isLiked ? ColorScheme.of(context).primary : null,
               ),
             ],
           ),

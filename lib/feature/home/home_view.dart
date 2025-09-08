@@ -41,8 +41,7 @@ class HomeView extends ConsumerStatefulWidget {
   ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView>
-    with SingleTickerProviderStateMixin {
+class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderStateMixin {
   final _animeFocusNode = FocusNode();
   final _mangaFocusNode = FocusNode();
   final _discoverFocusNode = FocusNode();
@@ -50,9 +49,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
-    loadMore: () => ref
-        .read(activitiesProvider(HomeActivitiesTag.instance).notifier)
-        .fetch(),
+    loadMore: () => ref.read(activitiesProvider(HomeActivitiesTag.instance).notifier).fetch(),
   );
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
@@ -119,8 +116,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     ref.watch(tagsProvider.select((_) => null));
 
     if (_tabCtrl.index == HomeTab.feed.index) {
-      ref.watch(
-          activitiesProvider(HomeActivitiesTag.instance).select((_) => null));
+      ref.watch(activitiesProvider(HomeActivitiesTag.instance).select((_) => null));
     } else if (_tabCtrl.index == HomeTab.discover.index) {
       ref.watch(discoverProvider.select((_) => null));
     }
@@ -302,6 +298,5 @@ class _HomeViewState extends ConsumerState<HomeView>
     HomeTab.profile.label: Ionicons.person_outline,
   };
 
-  void _toggleSearchFocus(FocusNode node) =>
-      node.hasFocus ? node.unfocus() : node.requestFocus();
+  void _toggleSearchFocus(FocusNode node) => node.hasFocus ? node.unfocus() : node.requestFocus();
 }

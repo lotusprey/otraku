@@ -21,8 +21,7 @@ class PillSelector extends StatelessWidget {
   /// Approximation for a needed base height to display its contents.
   /// Can be used to calculate the initial size of sheets.
   static double expectedMinHeight(int itemCount) =>
-      (Theming.minTapTarget + Theming.offset / 2) * itemCount +
-      Theming.offset * 2;
+      (Theming.minTapTarget + Theming.offset / 2) * itemCount + Theming.offset * 2;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +37,7 @@ class PillSelector extends StatelessWidget {
         ),
         itemBuilder: (context, i) => Material(
           shape: const StadiumBorder(),
-          color:
-              i == selected ? ColorScheme.of(context).secondaryContainer : null,
+          color: i == selected ? ColorScheme.of(context).secondaryContainer : null,
           child: InkWell(
             customBorder: const StadiumBorder(),
             onTap: () => onTap(i),

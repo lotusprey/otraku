@@ -44,8 +44,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Theming.radiusSmall),
+                  borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
                   child: Hero(
                     tag: item.id,
                     child: CachedImage(item.bannerUrl!),

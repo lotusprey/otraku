@@ -142,8 +142,7 @@ class SettingsContentSubview extends StatelessWidget {
               StatefulCheckboxListTile(
                 title: Text('Create ${e.key.label(null)} Activities'),
                 value: !e.value,
-                onChanged: (val) =>
-                    settings.disabledListActivity[e.key] = !val!,
+                onChanged: (val) => settings.disabledListActivity[e.key] = !val!,
               ),
             StatefulSwitchListTile(
               title: const Text('Limit Messages'),

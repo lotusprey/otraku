@@ -58,8 +58,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
             IconButton(
               tooltip: 'Filter',
               icon: const Icon(Ionicons.funnel_outline),
-              onPressed: () => showActivityFilterSheet(
-                  context, ref, HomeActivitiesTag.instance),
+              onPressed: () => showActivityFilterSheet(context, ref, HomeActivitiesTag.instance),
             ),
           ],
         );

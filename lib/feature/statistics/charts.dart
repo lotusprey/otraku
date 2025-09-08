@@ -114,9 +114,8 @@ class PieChart extends StatelessWidget {
             ),
           ),
           child: Row(
-            mainAxisSize: MediaQuery.sizeOf(context).width > 420
-                ? MainAxisSize.min
-                : MainAxisSize.max,
+            mainAxisSize:
+                MediaQuery.sizeOf(context).width > 420 ? MainAxisSize.min : MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Flexible(

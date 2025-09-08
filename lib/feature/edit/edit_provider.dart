@@ -10,22 +10,19 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final entryEditProvider = AsyncNotifierProvider.autoDispose
-    .family<EntryEditNotifier, EntryEdit, EditTag>(
+final entryEditProvider =
+    AsyncNotifierProvider.autoDispose.family<EntryEditNotifier, EntryEdit, EditTag>(
   EntryEditNotifier.new,
 );
 
-class EntryEditNotifier
-    extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTag> {
+class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTag> {
   @override
   FutureOr<EntryEdit> build(arg) async {
     if (ref.exists(mediaProvider(arg.id))) {
       return ref.watch(mediaProvider(arg.id).selectAsync((s) => s.entryEdit));
     }
 
-    final data = await ref
-        .watch(repositoryProvider)
-        .request(GqlQuery.entry, {'mediaId': arg.id});
+    final data = await ref.watch(repositoryProvider).request(GqlQuery.entry, {'mediaId': arg.id});
 
     final settings = await ref.watch(
       settingsProvider.selectAsync((settings) => settings),
@@ -34,8 +31,7 @@ class EntryEditNotifier
     return EntryEdit(data['Media'], settings, arg.setComplete);
   }
 
-  void updateBy(EntryEdit Function(EntryEdit) callback) =>
-      state = switch (state) {
+  void updateBy(EntryEdit Function(EntryEdit) callback) => state = switch (state) {
         AsyncData(:final value) => AsyncData(callback(value)),
         _ => state,
       };
@@ -87,9 +83,7 @@ class EntryEditNotifier
     if (viewerId == null) return null;
 
     final tag = (userId: viewerId, ofAnime: value.baseEntry.isAnime);
-    ref
-        .read(collectionProvider(tag).notifier)
-        .removeEntry(value.baseEntry.mediaId);
+    ref.read(collectionProvider(tag).notifier).removeEntry(value.baseEntry.mediaId);
 
     return null;
   }

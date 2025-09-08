@@ -20,9 +20,8 @@ class FeedFloatingAction extends StatelessWidget {
         context,
         CompositionView(
           tag: const StatusActivityCompositionTag(id: null),
-          onSaved: (map) => ref
-              .read(activitiesProvider(HomeActivitiesTag.instance).notifier)
-              .prepend(map),
+          onSaved: (map) =>
+              ref.read(activitiesProvider(HomeActivitiesTag.instance).notifier).prepend(map),
         ),
       ),
     );

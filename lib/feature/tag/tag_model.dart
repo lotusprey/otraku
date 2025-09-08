@@ -54,9 +54,8 @@ class TagCollection {
     }
 
     for (final t in map['MediaTagCollection']) {
-      String categoryName = t['category'] != null
-          ? (t['category'] as String).replaceFirst('-', '/')
-          : 'Other';
+      String categoryName =
+          t['category'] != null ? (t['category'] as String).replaceFirst('-', '/') : 'Other';
       if (categoryName.isEmpty) categoryName = 'Other';
 
       var category = categories.firstWhereOrNull(

@@ -30,8 +30,7 @@ class FavoritesView extends ConsumerStatefulWidget {
   ConsumerState<FavoritesView> createState() => _FavoritesViewState();
 }
 
-class _FavoritesViewState extends ConsumerState<FavoritesView>
-    with SingleTickerProviderStateMixin {
+class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: FavoritesType.values.length,
     vsync: this,
@@ -67,12 +66,10 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
       ),
     );
 
-    final onRefresh =
-        (invalidate) => invalidate(favoritesProvider(widget.userId));
+    final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.userId));
 
-    final toggleFavorite = (int itemId) => ref
-        .read(favoritesProvider(widget.userId).notifier)
-        .toggleFavorite(itemId);
+    final toggleFavorite =
+        (int itemId) => ref.read(favoritesProvider(widget.userId).notifier).toggleFavorite(itemId);
 
     final inEditingMode = ref.watch(
       favoritesProvider(widget.userId).select(
@@ -83,26 +80,20 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
     return AdaptiveScaffold(
       topBar: TopBarAnimatedSwitcher(
         TopBar(
-          key: inEditingMode
-              ? const Key('EditTopBar')
-              : Key('${type.title}TopBar'),
+          key: inEditingMode ? const Key('EditTopBar') : Key('${type.title}TopBar'),
           title: type.title,
           trailing: [
             if (inEditingMode) ...[
               IconButton(
                 tooltip: 'Cancel',
                 icon: const Icon(Icons.close_rounded),
-                onPressed: () => ref
-                    .read(favoritesProvider(widget.userId).notifier)
-                    .cancelEdit(),
+                onPressed: () => ref.read(favoritesProvider(widget.userId).notifier).cancelEdit(),
               ),
               IconButton(
                 tooltip: 'Save',
                 icon: const Icon(Icons.save_outlined),
-                onPressed: () => ref
-                    .read(favoritesProvider(widget.userId).notifier)
-                    .saveEdit()
-                    .then((err) {
+                onPressed: () =>
+                    ref.read(favoritesProvider(widget.userId).notifier).saveEdit().then((err) {
                   if (err == null || !context.mounted) return;
 
                   SnackBarExtension.show(context, 'Failed to reorder: $err');
@@ -127,9 +118,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
               child: FloatingActionButton(
                 tooltip: 'Edit',
                 child: const Icon(Icons.edit_outlined),
-                onPressed: () => ref
-                    .read(favoritesProvider(widget.userId).notifier)
-                    .startEdit(type),
+                onPressed: () =>
+                    ref.read(favoritesProvider(widget.userId).notifier).startEdit(type),
               ),
             ),
       navigationConfig: inEditingMode
@@ -158,9 +148,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView>
           child: child,
         ),
         child: TabBarView(
-          key: inEditingMode
-              ? const Key('editTabBarView')
-              : const Key('tabBarView'),
+          key: inEditingMode ? const Key('editTabBarView') : const Key('tabBarView'),
           controller: _tabCtrl,
           children: [
             PagedView<FavoriteItem>(

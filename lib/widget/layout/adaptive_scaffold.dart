@@ -102,8 +102,7 @@ class NavigationConfig {
   final void Function(int) onSame;
 }
 
-class _StartFloatFabLocation extends StandardFabLocation
-    with FabStartOffsetX, FabFloatOffsetY {
+class _StartFloatFabLocation extends StandardFabLocation with FabStartOffsetX, FabFloatOffsetY {
   const _StartFloatFabLocation(this.offset);
 
   static const withOffset = _StartFloatFabLocation(
@@ -120,10 +119,8 @@ class _StartFloatFabLocation extends StandardFabLocation
     double adjustment,
   ) {
     return switch (scaffoldGeometry.textDirection) {
-      TextDirection.rtl =>
-        super.getOffsetX(scaffoldGeometry, adjustment + offset),
-      TextDirection.ltr =>
-        super.getOffsetX(scaffoldGeometry, adjustment - offset),
+      TextDirection.rtl => super.getOffsetX(scaffoldGeometry, adjustment + offset),
+      TextDirection.ltr => super.getOffsetX(scaffoldGeometry, adjustment - offset),
     };
   }
 

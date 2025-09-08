@@ -159,9 +159,7 @@ class CollectionSubview extends StatelessWidget {
                           maxWidth: 200,
                           selected: c.index,
                           items: data.lists.map(listToWidget).toList(),
-                          onTap: (i) => ref
-                              .read(collectionProvider(tag!).notifier)
-                              .changeIndex(i),
+                          onTap: (i) => ref.read(collectionProvider(tag!).notifier).changeIndex(i),
                         ),
                         Expanded(child: content)
                       ],
@@ -212,20 +210,17 @@ class _Content extends StatelessWidget {
           );
         }
 
-        final onProgressUpdated = isViewer
-            ? ref.read(collectionProvider(tag).notifier).saveEntryProgress
-            : null;
+        final onProgressUpdated =
+            isViewer ? ref.read(collectionProvider(tag).notifier).saveEntryProgress : null;
 
         final collectionIsExpanded = switch (collection) {
           PreviewCollection _ => false,
           FullCollection _ => true,
         };
 
-        if (collectionIsExpanded &&
-                options.collectionItemView == CollectionItemView.simple ||
+        if (collectionIsExpanded && options.collectionItemView == CollectionItemView.simple ||
             !collectionIsExpanded &&
-                options.collectionPreviewItemView ==
-                    CollectionItemView.simple) {
+                options.collectionPreviewItemView == CollectionItemView.simple) {
           return CollectionGrid(
             items: entries,
             onProgressUpdated: onProgressUpdated,

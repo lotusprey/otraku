@@ -39,8 +39,7 @@ class StudioMedia {
     required this.startDate,
   });
 
-  factory StudioMedia(Map<String, dynamic> map, ImageQuality imageQuality) =>
-      StudioMedia._(
+  factory StudioMedia(Map<String, dynamic> map, ImageQuality imageQuality) => StudioMedia._(
         id: map['id'],
         title: map['title']['userPreferred'],
         cover: map['coverImage'][imageQuality.value],

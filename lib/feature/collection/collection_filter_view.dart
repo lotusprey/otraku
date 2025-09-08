@@ -26,8 +26,7 @@ class CollectionFilterView extends ConsumerStatefulWidget {
   final void Function(CollectionMediaFilter) onChanged;
 
   @override
-  ConsumerState<CollectionFilterView> createState() =>
-      _FilterCollectionViewState();
+  ConsumerState<CollectionFilterView> createState() => _FilterCollectionViewState();
 }
 
 class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
@@ -123,9 +122,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
             ),
             ChipMultiSelector(
               title: 'Formats',
-              items: (widget.tag.ofAnime
-                      ? MediaFormat.animeFormats
-                      : MediaFormat.mangaFormats)
+              items: (widget.tag.ofAnime ? MediaFormat.animeFormats : MediaFormat.mangaFormats)
                   .map((v) => (v.label, v))
                   .toList(),
               values: _filter.formats,
@@ -182,9 +179,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               onChanged: (v) => _filter.hasNotes = v,
             ),
             SizedBox(
-              height: MediaQuery.paddingOf(context).bottom +
-                  BottomBar.height +
-                  Theming.offset,
+              height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,
             ),
           ],
         ),

@@ -8,8 +8,7 @@ import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final socialProvider =
-    AsyncNotifierProvider.autoDispose.family<SocialNotifier, Social, int>(
+final socialProvider = AsyncNotifierProvider.autoDispose.family<SocialNotifier, Social, int>(
   SocialNotifier.new,
 );
 

@@ -98,12 +98,9 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                 PillSelector(
                   selected: filter.index,
                   maxWidth: 120,
-                  onTap: (i) => ref
-                      .read(notificationsFilterProvider.notifier)
-                      .state = NotificationsFilter.values[i],
-                  items: NotificationsFilter.values
-                      .map((v) => Text(v.label))
-                      .toList(),
+                  onTap: (i) => ref.read(notificationsFilterProvider.notifier).state =
+                      NotificationsFilter.values[i],
+                  items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
                 ),
                 Expanded(child: content),
               ],
@@ -116,8 +113,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       context,
       Consumer(
         builder: (context, ref, _) {
-          final index =
-              ref.read(notificationsFilterProvider.notifier).state.index;
+          final index = ref.read(notificationsFilterProvider.notifier).state.index;
 
           return SimpleSheet(
             initialHeight: PillSelector.expectedMinHeight(
@@ -131,8 +127,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     NotificationsFilter.values[i];
                 Navigator.pop(context);
               },
-              items:
-                  NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+              items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
             ),
           );
         },
@@ -251,9 +246,7 @@ class _NotificationItem extends StatelessWidget {
                       MediaReleaseNotification item => context.push(
                           Routes.media(item.mediaId, item.imageUrl),
                         ),
-                      MediaChangeNotification() ||
-                      MediaDeletionNotification() =>
-                        showDialog(
+                      MediaChangeNotification() || MediaDeletionNotification() => showDialog(
                           context: context,
                           builder: (context) => _NotificationDialog(item),
                         ),

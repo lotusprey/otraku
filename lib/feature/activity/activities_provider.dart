@@ -11,13 +11,12 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
 
-final activitiesProvider = AsyncNotifierProvider.autoDispose
-    .family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(
+final activitiesProvider =
+    AsyncNotifierProvider.autoDispose.family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(
   ActivitiesNotifier.new,
 );
 
-class ActivitiesNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, ActivitiesTag> {
+class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, ActivitiesTag> {
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
   int? _viewerId;

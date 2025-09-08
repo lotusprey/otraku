@@ -20,11 +20,7 @@ class HomeActivitiesFilter extends ActivitiesFilter {
         null,
         false,
         false,
-        [
-          ActivityType.animeStatus,
-          ActivityType.mangaStatus,
-          ActivityType.status
-        ],
+        [ActivityType.animeStatus, ActivityType.mangaStatus, ActivityType.status],
       );
 
   factory HomeActivitiesFilter.fromPersistenceMap(

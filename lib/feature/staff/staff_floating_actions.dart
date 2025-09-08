@@ -8,8 +8,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class StaffFilterButton extends StatelessWidget {
-  const StaffFilterButton(this.id, this.ref)
-      : super(key: const Key('filterStaff'));
+  const StaffFilterButton(this.id, this.ref) : super(key: const Key('filterStaff'));
 
   final int id;
   final WidgetRef ref;
@@ -23,15 +22,12 @@ class StaffFilterButton extends StatelessWidget {
       onPressed: () {
         var filter = ref.read(staffFilterProvider(id));
 
-        final onDone =
-            (_) => ref.read(staffFilterProvider(id).notifier).state = filter;
+        final onDone = (_) => ref.read(staffFilterProvider(id).notifier).state = filter;
 
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: Theming.normalTapTarget * 4 +
-                MediaQuery.paddingOf(context).bottom +
-                40,
+            initialHeight: Theming.normalTapTarget * 4 + MediaQuery.paddingOf(context).bottom + 40,
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,

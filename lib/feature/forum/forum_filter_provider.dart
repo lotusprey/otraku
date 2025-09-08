@@ -1,8 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/forum/forum_filter_model.dart';
 
-final forumFilterProvider =
-    NotifierProvider.autoDispose<ForumFilterNotifier, ForumFilter>(
+final forumFilterProvider = NotifierProvider.autoDispose<ForumFilterNotifier, ForumFilter>(
   ForumFilterNotifier.new,
 );
 
@@ -15,6 +14,5 @@ class ForumFilterNotifier extends AutoDisposeNotifier<ForumFilter> {
         sort: ThreadSort.lastRepliedTo,
       );
 
-  void update(ForumFilter Function(ForumFilter) callback) =>
-      state = callback(state);
+  void update(ForumFilter Function(ForumFilter) callback) => state = callback(state);
 }

@@ -5,8 +5,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 
 /// Used to open [DraggableScrollableSheet].
-Future<T?> showSheet<T>(BuildContext context, Widget sheet) =>
-    showModalBottomSheet<T>(
+Future<T?> showSheet<T>(BuildContext context, Widget sheet) => showModalBottomSheet<T>(
       context: context,
       builder: (context) => sheet,
       useSafeArea: true,
@@ -22,8 +21,7 @@ class SimpleSheet extends StatelessWidget {
   });
 
   factory SimpleSheet.list(List<Widget> children) => SimpleSheet(
-        initialHeight:
-            Theming.normalTapTarget * children.length + Theming.offset,
+        initialHeight: Theming.normalTapTarget * children.length + Theming.offset,
         builder: (context, scrollCtrl) => ListView(
           controller: scrollCtrl,
           padding: const EdgeInsets.only(top: Theming.offset),
@@ -66,9 +64,7 @@ class SimpleSheet extends StatelessWidget {
     final screenHeight = MediaQuery.sizeOf(context).height;
     final bottomPadding = MediaQuery.paddingOf(context).bottom;
     final initialFraction = initialHeight != null
-        ? (initialHeight! + bottomPadding + Theming.offset)
-                .clamp(0, screenHeight) /
-            screenHeight
+        ? (initialHeight! + bottomPadding + Theming.offset).clamp(0, screenHeight) / screenHeight
         : 0.5;
 
     return DraggableScrollableSheet(
@@ -122,8 +118,7 @@ class SheetWithButtonRow extends StatelessWidget {
     );
   }
 
-  Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) =>
-      Center(
+  Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) => Center(
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: Theming.windowWidthMedium,

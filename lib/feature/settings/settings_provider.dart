@@ -7,8 +7,7 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 
-final settingsProvider =
-    AsyncNotifierProvider.autoDispose<SettingsNotifier, Settings>(
+final settingsProvider = AsyncNotifierProvider.autoDispose<SettingsNotifier, Settings>(
   SettingsNotifier.new,
 );
 
@@ -43,8 +42,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     bool invalidateAnimeCollection = false;
     bool invalidateMangaCollection = false;
 
-    if (prev.scoreFormat != next.scoreFormat ||
-        prev.titleLanguage != next.titleLanguage) {
+    if (prev.scoreFormat != next.scoreFormat || prev.titleLanguage != next.titleLanguage) {
       invalidateAnimeCollection = true;
       invalidateMangaCollection = true;
     } else {
@@ -67,9 +65,8 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
 
   Future<void> refetchUnread() async {
     try {
-      final data = await ref
-          .read(repositoryProvider)
-          .request(GqlQuery.settings, {'withData': false});
+      final data =
+          await ref.read(repositoryProvider).request(GqlQuery.settings, {'withData': false});
       state = state.whenData(
         (v) => v.copy(
           unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
@@ -78,6 +75,5 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     } catch (_) {}
   }
 
-  void clearUnread() =>
-      state = state.whenData((v) => v.copy(unreadNotifications: 0));
+  void clearUnread() => state = state.whenData((v) => v.copy(unreadNotifications: 0));
 }

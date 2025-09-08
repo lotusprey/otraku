@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
 
-final calendarFilterProvider =
-    NotifierProvider.autoDispose<CalendarFilterNotifier, CalendarFilter>(
+final calendarFilterProvider = NotifierProvider.autoDispose<CalendarFilterNotifier, CalendarFilter>(
   CalendarFilterNotifier.new,
 );
 

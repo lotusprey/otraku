@@ -7,17 +7,15 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final threadProvider =
-    AsyncNotifierProvider.autoDispose.family<ThreadNotifier, Thread, int>(
+final threadProvider = AsyncNotifierProvider.autoDispose.family<ThreadNotifier, Thread, int>(
   ThreadNotifier.new,
 );
 
 class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   @override
   FutureOr<Thread> build(int arg) async {
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.thread, {'id': arg, 'withInfo': true});
+    final data =
+        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'withInfo': true});
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
@@ -32,9 +30,8 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
       state.whenData((data) => data.withChangingCommentPage(page)),
     );
 
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.thread, {'id': arg, 'page': page});
+    final data =
+        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'page': page});
 
     state = AsyncValue.data(value.withChangedCommentPage(data));
   }
@@ -44,8 +41,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
     if (value == null) return;
 
     // If there's a new thread comment, it can only appear on the last page.
-    if (parentCommentId == null &&
-        value.commentPage != value.totalCommentPages) {
+    if (parentCommentId == null && value.commentPage != value.totalCommentPages) {
       return;
     }
 
@@ -90,7 +86,6 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
     return null;
   }
 
-  Future<Object?> delete() => ref
-      .read(repositoryProvider)
-      .request(GqlMutation.deleteThread, {'id': arg}).getErrorOrNull();
+  Future<Object?> delete() =>
+      ref.read(repositoryProvider).request(GqlMutation.deleteThread, {'id': arg}).getErrorOrNull();
 }

@@ -64,12 +64,8 @@ class Staff {
       homeTown: map['homeTown'],
       gender: map['gender'],
       age: map['age']?.toString(),
-      startYear: yearsActive != null && yearsActive.isNotEmpty
-          ? yearsActive[0].toString()
-          : null,
-      endYear: yearsActive != null && yearsActive.length > 1
-          ? yearsActive[1].toString()
-          : null,
+      startYear: yearsActive != null && yearsActive.isNotEmpty ? yearsActive[0].toString() : null,
+      endYear: yearsActive != null && yearsActive.length > 1 ? yearsActive[1].toString() : null,
       siteUrl: map['siteUrl'],
       favorites: map['favourites'] ?? 0,
       isFavorite: map['isFavourite'] ?? false,
@@ -126,8 +122,7 @@ class StaffRelatedItem implements TileModelable {
         role: role,
       );
 
-  factory StaffRelatedItem.character(Map<String, dynamic> map, String? role) =>
-      StaffRelatedItem._(
+  factory StaffRelatedItem.character(Map<String, dynamic> map, String? role) => StaffRelatedItem._(
         id: map['id'],
         name: map['name']['userPreferred'],
         imageUrl: map['image']['large'],

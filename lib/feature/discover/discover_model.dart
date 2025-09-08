@@ -170,16 +170,13 @@ class DiscoverRecommendationItem {
       mediaId: media['id'] ?? 0,
       mediaTitle: media['title']['userPreferred'] ?? '?',
       mediaCover: media['coverImage'][imageQuality.value] ?? '',
-      mediaListStatus: ListStatus.from(media['mediaListEntry']?['status'])
-          ?.label(isMediaAnime),
+      mediaListStatus: ListStatus.from(media['mediaListEntry']?['status'])?.label(isMediaAnime),
       isMediaAdult: media['isAdult'] ?? false,
       recommendedMediaId: recommendedMedia['id'] ?? 0,
       recommendedMediaTitle: recommendedMedia['title']['userPreferred'] ?? '?',
-      recommendedMediaCover:
-          recommendedMedia['coverImage'][imageQuality.value] ?? '',
-      recommendedMediaListStatus:
-          ListStatus.from(recommendedMedia['mediaListEntry']?['status'])
-              ?.label(isRecommendedMediaAnime),
+      recommendedMediaCover: recommendedMedia['coverImage'][imageQuality.value] ?? '',
+      recommendedMediaListStatus: ListStatus.from(recommendedMedia['mediaListEntry']?['status'])
+          ?.label(isRecommendedMediaAnime),
       isRecommendedMediaAdult: recommendedMedia['isAdult'] ?? false,
     );
   }

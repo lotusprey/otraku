@@ -7,13 +7,12 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/reviews_filter_provider.dart';
 
-final reviewsProvider = AsyncNotifierProvider.autoDispose
-    .family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
+final reviewsProvider =
+    AsyncNotifierProvider.autoDispose.family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
   ReviewsNotifier.new,
 );
 
-class ReviewsNotifier
-    extends AutoDisposeFamilyAsyncNotifier<PagedWithTotal<ReviewItem>, int> {
+class ReviewsNotifier extends AutoDisposeFamilyAsyncNotifier<PagedWithTotal<ReviewItem>, int> {
   late ReviewsFilter filter;
 
   @override

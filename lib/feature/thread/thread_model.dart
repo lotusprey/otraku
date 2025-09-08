@@ -40,8 +40,7 @@ class Thread {
         totalCommentPages: totalCommentPages,
       );
 
-  Thread withChangedCommentPage(Map<String, dynamic> map) =>
-      Thread._withInfo(info, map);
+  Thread withChangedCommentPage(Map<String, dynamic> map) => Thread._withInfo(info, map);
 
   Thread withAppendedComment(Map<String, dynamic> map, int? parentCommentId) {
     if (parentCommentId == null) {

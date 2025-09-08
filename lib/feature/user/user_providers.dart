@@ -12,8 +12,7 @@ UserTag idUserTag(int id) => (id: id, name: null);
 
 UserTag nameUserTag(String name) => (id: null, name: name);
 
-final userProvider =
-    AsyncNotifierProvider.autoDispose.family<UserNotifier, User, UserTag>(
+final userProvider = AsyncNotifierProvider.autoDispose.family<UserNotifier, User, UserTag>(
   UserNotifier.new,
 );
 

@@ -66,8 +66,7 @@ class ReviewView extends StatelessWidget {
               SliverPadding(
                 padding: EdgeInsets.only(
                   top: 20,
-                  bottom:
-                      MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
+                  bottom: MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
                 ),
                 sliver: SliverToBoxAdapter(
                   child: Text(
@@ -109,26 +108,18 @@ class _RateButtonsState extends State<_RateButtons> {
             children: [
               IconButton(
                 icon: Icon(
-                  review.viewerRating == true
-                      ? Icons.thumb_up
-                      : Icons.thumb_up_outlined,
+                  review.viewerRating == true ? Icons.thumb_up : Icons.thumb_up_outlined,
                 ),
-                color: review.viewerRating == true
-                    ? ColorScheme.of(context).primary
-                    : null,
+                color: review.viewerRating == true ? ColorScheme.of(context).primary : null,
                 onPressed: () => _rate(
                   review.viewerRating != true ? true : null,
                 ),
               ),
               IconButton(
                 icon: Icon(
-                  review.viewerRating == false
-                      ? Icons.thumb_down
-                      : Icons.thumb_down_outlined,
+                  review.viewerRating == false ? Icons.thumb_down : Icons.thumb_down_outlined,
                 ),
-                color: review.viewerRating == false
-                    ? ColorScheme.of(context).error
-                    : null,
+                color: review.viewerRating == false ? ColorScheme.of(context).error : null,
                 onPressed: () => _rate(
                   review.viewerRating != false ? false : null,
                 ),

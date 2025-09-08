@@ -13,8 +13,7 @@ void showActivityFilterSheet(
   ActivitiesTag tag,
 ) {
   ActivitiesFilter filter = ref.read(activitiesFilterProvider(tag));
-  double initialHeight =
-      Theming.normalTapTarget * ActivityType.values.length + Theming.offset;
+  double initialHeight = Theming.normalTapTarget * ActivityType.values.length + Theming.offset;
 
   if (filter is HomeActivitiesFilter) {
     initialHeight += Theming.normalTapTarget * 2.5;

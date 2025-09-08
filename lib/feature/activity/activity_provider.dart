@@ -8,13 +8,12 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
 
-final activityProvider = AsyncNotifierProvider.autoDispose
-    .family<ActivityNotifier, ExpandedActivity, int>(
+final activityProvider =
+    AsyncNotifierProvider.autoDispose.family<ActivityNotifier, ExpandedActivity, int>(
   ActivityNotifier.new,
 );
 
-class ActivityNotifier
-    extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, int> {
+class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, int> {
   int? _viewerId;
 
   @override

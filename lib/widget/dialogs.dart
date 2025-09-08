@@ -117,8 +117,7 @@ class ImageDialog extends StatefulWidget {
   State<ImageDialog> createState() => _ImageDialogState();
 }
 
-class _ImageDialogState extends State<ImageDialog>
-    with SingleTickerProviderStateMixin {
+class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStateMixin {
   final _transformCtrl = TransformationController();
   late final AnimationController _animationCtrl;
   late final CurvedAnimation _curveWrapper;
@@ -228,8 +227,7 @@ class HtmlDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) =>
-      _DialogColumn(title: title, child: HtmlContent(text));
+  Widget build(BuildContext context) => _DialogColumn(title: title, child: HtmlContent(text));
 }
 
 class _DialogColumn extends StatelessWidget {

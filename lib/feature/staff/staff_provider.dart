@@ -11,13 +11,12 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final staffProvider =
-    AsyncNotifierProvider.autoDispose.family<StaffNotifier, Staff, int>(
+final staffProvider = AsyncNotifierProvider.autoDispose.family<StaffNotifier, Staff, int>(
   StaffNotifier.new,
 );
 
-final staffRelationsProvider = AsyncNotifierProvider.autoDispose
-    .family<StaffRelationsNotifier, StaffRelations, int>(
+final staffRelationsProvider =
+    AsyncNotifierProvider.autoDispose.family<StaffRelationsNotifier, StaffRelations, int>(
   StaffRelationsNotifier.new,
 );
 
@@ -44,8 +43,7 @@ class StaffNotifier extends AutoDisposeFamilyAsyncNotifier<Staff, int> {
   }
 }
 
-class StaffRelationsNotifier
-    extends AutoDisposeFamilyAsyncNotifier<StaffRelations, int> {
+class StaffRelationsNotifier extends AutoDisposeFamilyAsyncNotifier<StaffRelations, int> {
   late StaffFilter filter;
 
   @override

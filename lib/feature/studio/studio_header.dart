@@ -23,9 +23,7 @@ class StudioHeader extends StatelessWidget {
     return CustomContentHeader(
       title: name,
       siteUrl: studio?.siteUrl,
-      trailingTopButtons: studio != null
-          ? [_FavoriteButton(studio!, toggleFavorite)]
-          : const [],
+      trailingTopButtons: studio != null ? [_FavoriteButton(studio!, toggleFavorite)] : const [],
       content: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Column(
@@ -77,9 +75,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
     return IconButton(
       tooltip: studio.isFavorite ? 'Unfavourite' : 'Favourite',
-      icon: studio.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
+      icon: studio.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
       onPressed: () async {
         setState(() => studio.isFavorite = !studio.isFavorite);
 

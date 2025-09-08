@@ -60,9 +60,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
       variables['page'] = oldState.studios.next;
     }
 
-    var data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.favorites, variables);
+    var data = await ref.read(repositoryProvider).request(GqlQuery.favorites, variables);
     data = data['User']['favourites'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;

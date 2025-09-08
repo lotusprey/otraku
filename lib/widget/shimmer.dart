@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Shimmer extends StatefulWidget {
-  static ShimmerState? of(BuildContext context) =>
-      context.findAncestorStateOfType<ShimmerState>();
+  static ShimmerState? of(BuildContext context) => context.findAncestorStateOfType<ShimmerState>();
 
   const Shimmer(this.child);
 

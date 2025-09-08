@@ -67,9 +67,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                 id: null,
                 activityId: widget.id,
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(widget.id).notifier)
-                  .appendReply(map),
+              onSaved: (map) => ref.read(activityProvider(widget.id).notifier).appendReply(map),
             ),
           ),
         ),
@@ -217,8 +215,7 @@ class _View extends ConsumerWidget {
                         viewerId: viewerId,
                         activity: data.activity,
                         toggleLike: () => _toggleLike(ref, data.activity),
-                        toggleSubscription: () =>
-                            _toggleSubscription(ref, data.activity),
+                        toggleSubscription: () => _toggleSubscription(ref, data.activity),
                         togglePin: () => _togglePin(ref, data.activity),
                         remove: () => _remove(context, ref, data.activity),
                         onEdited: (map) => _onEdited(ref, map),
@@ -249,9 +246,7 @@ class _View extends ConsumerWidget {
 
   Future<Object?> _toggleLike(WidgetRef ref, Activity activity) {
     if (sourceTag != null) {
-      return ref
-          .read(activitiesProvider(sourceTag!).notifier)
-          .toggleLike(activity);
+      return ref.read(activitiesProvider(sourceTag!).notifier).toggleLike(activity);
     }
 
     return ref.read(activityProvider(id).notifier).toggleLike();
@@ -259,9 +254,7 @@ class _View extends ConsumerWidget {
 
   Future<Object?> _toggleSubscription(WidgetRef ref, Activity activity) {
     if (sourceTag != null) {
-      return ref
-          .read(activitiesProvider(sourceTag!).notifier)
-          .toggleSubscription(activity);
+      return ref.read(activitiesProvider(sourceTag!).notifier).toggleSubscription(activity);
     }
 
     return ref.read(activityProvider(id).notifier).toggleSubscription();
@@ -269,9 +262,7 @@ class _View extends ConsumerWidget {
 
   Future<Object?> _togglePin(WidgetRef ref, Activity activity) {
     if (sourceTag != null) {
-      return ref
-          .read(activitiesProvider(sourceTag!).notifier)
-          .togglePin(activity);
+      return ref.read(activitiesProvider(sourceTag!).notifier).togglePin(activity);
     }
 
     return ref.read(activityProvider(id).notifier).togglePin();
@@ -318,8 +309,7 @@ class _View extends ConsumerWidget {
       CompositionView(
         defaultText: '@${activity.authorName} ',
         tag: ActivityReplyCompositionTag(id: null, activityId: id),
-        onSaved: (map) =>
-            ref.read(activityProvider(id).notifier).appendReply(map),
+        onSaved: (map) => ref.read(activityProvider(id).notifier).appendReply(map),
       ),
     );
   }

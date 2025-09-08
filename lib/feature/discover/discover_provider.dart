@@ -27,14 +27,12 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
     return switch (filter.type) {
       DiscoverType.anime => _fetchAnime(const DiscoverAnimeItems()),
       DiscoverType.manga => _fetchManga(const DiscoverMangaItems()),
-      DiscoverType.character =>
-        _fetchCharacters(const DiscoverCharacterItems()),
+      DiscoverType.character => _fetchCharacters(const DiscoverCharacterItems()),
       DiscoverType.staff => _fetchStaff(const DiscoverStaffItems()),
       DiscoverType.studio => _fetchStudios(const DiscoverStudioItems()),
       DiscoverType.user => _fetchUsers(const DiscoverUserItems()),
       DiscoverType.review => _fetchReviews(const DiscoverReviewItems()),
-      DiscoverType.recommendation =>
-        _fetchRecommendations(const DiscoverRecommendationItems()),
+      DiscoverType.recommendation => _fetchRecommendations(const DiscoverRecommendationItems()),
     };
   }
 
@@ -42,39 +40,25 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
     final oldValue = state.valueOrNull;
     state = await AsyncValue.guard(() => switch (filter.type) {
           DiscoverType.anime => _fetchAnime(
-              (oldValue is DiscoverAnimeItems)
-                  ? oldValue
-                  : const DiscoverAnimeItems(),
+              (oldValue is DiscoverAnimeItems) ? oldValue : const DiscoverAnimeItems(),
             ),
           DiscoverType.manga => _fetchManga(
-              (oldValue is DiscoverMangaItems)
-                  ? oldValue
-                  : const DiscoverMangaItems(),
+              (oldValue is DiscoverMangaItems) ? oldValue : const DiscoverMangaItems(),
             ),
           DiscoverType.character => _fetchCharacters(
-              (oldValue is DiscoverCharacterItems)
-                  ? oldValue
-                  : const DiscoverCharacterItems(),
+              (oldValue is DiscoverCharacterItems) ? oldValue : const DiscoverCharacterItems(),
             ),
           DiscoverType.staff => _fetchStaff(
-              (oldValue is DiscoverStaffItems)
-                  ? oldValue
-                  : const DiscoverStaffItems(),
+              (oldValue is DiscoverStaffItems) ? oldValue : const DiscoverStaffItems(),
             ),
           DiscoverType.studio => _fetchStudios(
-              (oldValue is DiscoverStudioItems)
-                  ? oldValue
-                  : const DiscoverStudioItems(),
+              (oldValue is DiscoverStudioItems) ? oldValue : const DiscoverStudioItems(),
             ),
           DiscoverType.user => _fetchUsers(
-              (oldValue is DiscoverUserItems)
-                  ? oldValue
-                  : const DiscoverUserItems(),
+              (oldValue is DiscoverUserItems) ? oldValue : const DiscoverUserItems(),
             ),
           DiscoverType.review => _fetchReviews(
-              (oldValue is DiscoverReviewItems)
-                  ? oldValue
-                  : const DiscoverReviewItems(),
+              (oldValue is DiscoverReviewItems) ? oldValue : const DiscoverReviewItems(),
             ),
           DiscoverType.recommendation => _fetchRecommendations(
               (oldValue is DiscoverRecommendationItems)
@@ -92,8 +76,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
         'type': 'ANIME',
         if (filter.search.isNotEmpty) ...{
           'search': filter.search,
-          ...filter.mediaFilter.toGraphQlVariables(ofAnime: true)
-            ..['sort'] = 'SEARCH_MATCH',
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: true)..['sort'] = 'SEARCH_MATCH',
         } else
           ...filter.mediaFilter.toGraphQlVariables(ofAnime: true),
       },
@@ -120,8 +103,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
         'type': 'MANGA',
         if (filter.search.isNotEmpty) ...{
           'search': filter.search,
-          ...filter.mediaFilter.toGraphQlVariables(ofAnime: false)
-            ..['sort'] = 'SEARCH_MATCH',
+          ...filter.mediaFilter.toGraphQlVariables(ofAnime: false)..['sort'] = 'SEARCH_MATCH',
         } else
           ...filter.mediaFilter.toGraphQlVariables(ofAnime: false),
       },
@@ -140,8 +122,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
     ));
   }
 
-  Future<DiscoverItems> _fetchCharacters(
-      DiscoverCharacterItems oldValue) async {
+  Future<DiscoverItems> _fetchCharacters(DiscoverCharacterItems oldValue) async {
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.characterPage,
       {

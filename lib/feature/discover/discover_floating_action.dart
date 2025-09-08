@@ -44,8 +44,7 @@ class DiscoverFloatingAction extends StatelessWidget {
             onChanged: (index) => ref
                 .read(discoverFilterProvider.notifier)
                 .update((s) => s.copyWith(type: DiscoverType.values[index])),
-            children:
-                DiscoverType.values.map((v) => Icon(_typeIcon(v))).toList(),
+            children: DiscoverType.values.map((v) => Icon(_typeIcon(v))).toList(),
           ),
         );
       },

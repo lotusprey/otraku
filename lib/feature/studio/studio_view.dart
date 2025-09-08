@@ -60,8 +60,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
           id: widget.id,
           name: studio?.name ?? widget.name,
           studio: studio,
-          toggleFavorite: () =>
-              ref.read(studioProvider(widget.id).notifier).toggleFavorite(),
+          toggleFavorite: () => ref.read(studioProvider(widget.id).notifier).toggleFavorite(),
         );
 
         final content = studioMedia.unwrapPrevious().when(

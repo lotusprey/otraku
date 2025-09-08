@@ -50,9 +50,8 @@ class BackgroundHandler {
   /// Requests a notifications permission, if not already granted.
   static Future<void> requestPermissionForNotifications() async {
     if (Platform.isAndroid) {
-      final platform =
-          _notificationPlugin.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+      final platform = _notificationPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
       if (platform == null) return;
 
       if (await platform.areNotificationsEnabled() ?? false) return;
@@ -62,9 +61,8 @@ class BackgroundHandler {
     }
 
     if (Platform.isIOS) {
-      final platform =
-          _notificationPlugin.resolvePlatformSpecificImplementation<
-              IOSFlutterLocalNotificationsPlugin>();
+      final platform = _notificationPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
       if (platform == null) return;
 
       final permissions = await platform.checkPermissions();
@@ -108,8 +106,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       }
 
       int count = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final List<dynamic> notifications =
-          data['Page']?['notifications'] ?? const [];
+      final List<dynamic> notifications = data['Page']?['notifications'] ?? const [];
 
       if (count > notifications.length) count = notifications.length;
       if (count == 0) return true;
@@ -123,9 +120,7 @@ void _fetch() => Workmanager().executeTask((_, __) async {
       );
       container.read(persistenceProvider.notifier).setAppMeta(appMeta);
 
-      for (int i = 0;
-          i < count && notifications[i]['id'] != lastNotificationId;
-          i++) {
+      for (int i = 0; i < count && notifications[i]['id'] != lastNotificationId; i++) {
         final notification = SiteNotification.maybe(
           notifications[i],
           persistence.options.imageQuality,

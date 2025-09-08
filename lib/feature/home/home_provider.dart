@@ -17,6 +17,5 @@ class HomeNotifier extends AutoDisposeNotifier<Home> {
     );
   }
 
-  void expandCollection(bool ofAnime) =>
-      state = state.withExpandedCollection(ofAnime);
+  void expandCollection(bool ofAnime) => state = state.withExpandedCollection(ofAnime);
 }

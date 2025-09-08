@@ -38,8 +38,7 @@ class AppState extends ConsumerState<_App> {
   void initState() {
     super.initState();
 
-    final mustConfirmExit =
-        () => ref.read(persistenceProvider).options.confirmExit;
+    final mustConfirmExit = () => ref.read(persistenceProvider).options.confirmExit;
 
     _router = Routes.buildRouter(mustConfirmExit);
 
@@ -154,13 +153,11 @@ class AppState extends ConsumerState<_App> {
             final directionality = Directionality.of(context);
 
             final theming = Theming(
-              formFactor: viewSize.width < Theming.windowWidthMedium
-                  ? FormFactor.phone
-                  : FormFactor.tablet,
-              rightButtonOrientation:
-                  options.buttonOrientation == ButtonOrientation.auto
-                      ? directionality == TextDirection.ltr
-                      : options.buttonOrientation == ButtonOrientation.right,
+              formFactor:
+                  viewSize.width < Theming.windowWidthMedium ? FormFactor.phone : FormFactor.tablet,
+              rightButtonOrientation: options.buttonOrientation == ButtonOrientation.auto
+                  ? directionality == TextDirection.ltr
+                  : options.buttonOrientation == ButtonOrientation.right,
             );
 
             // Override the [textScaleFactor], because some devices apply

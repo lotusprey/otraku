@@ -21,9 +21,7 @@ class MediaCharactersSubview extends StatelessWidget {
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
       provider: mediaConnectionsProvider(id).select(
-        (s) => s
-            .unwrapPrevious()
-            .whenData((data) => data.getCharactersAndVoiceActors()),
+        (s) => s.unwrapPrevious().whenData((data) => data.getCharactersAndVoiceActors()),
       ),
       onData: (data) {
         return SliverMainAxisGroup(
@@ -78,9 +76,7 @@ class _LanguageSelector extends StatelessWidget {
                 onSelected: (selected) {
                   if (!selected) return;
 
-                  ref
-                      .read(mediaConnectionsProvider(id).notifier)
-                      .changeLanguage(i);
+                  ref.read(mediaConnectionsProvider(id).notifier).changeLanguage(i);
                 },
               ),
             ),

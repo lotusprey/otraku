@@ -23,8 +23,7 @@ class UserView extends StatelessWidget {
   final String? avatarUrl;
 
   @override
-  Widget build(BuildContext context) =>
-      AdaptiveScaffold(child: _UserView(tag, avatarUrl));
+  Widget build(BuildContext context) => AdaptiveScaffold(child: _UserView(tag, avatarUrl));
 }
 
 /// The home page has app bars,
@@ -100,8 +99,8 @@ class _UserView extends StatelessWidget {
           persistenceProvider.select((s) => s.accountGroup.account),
         );
 
-        final isViewer = viewer != null &&
-            (tag.id != null ? tag.id == viewer.id : tag.name == viewer.name);
+        final isViewer =
+            viewer != null && (tag.id != null ? tag.id == viewer.id : tag.name == viewer.name);
 
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
@@ -109,9 +108,7 @@ class _UserView extends StatelessWidget {
             data: (data) {
               if (!isViewer) return;
 
-              ref
-                  .read(persistenceProvider.notifier)
-                  .refreshViewerDetails(data.name, data.imageUrl);
+              ref.read(persistenceProvider.notifier).refreshViewerDetails(data.name, data.imageUrl);
             },
             error: (error, _) => SnackBarExtension.show(
               context,
@@ -158,10 +155,7 @@ class _UserView extends StatelessWidget {
                 ],
               ),
               loading: () => CustomScrollView(
-                slivers: [
-                  header,
-                  const SliverFillRemaining(child: Center(child: Loader()))
-                ],
+                slivers: [header, const SliverFillRemaining(child: Center(child: Loader()))],
               ),
               data: (data) => CustomScrollView(
                 controller: scrollCtrl,

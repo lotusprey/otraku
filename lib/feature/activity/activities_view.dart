@@ -60,9 +60,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
                           id: null,
                           recipientId: userId,
                         ),
-                  onSaved: (map) => ref
-                      .read(activitiesProvider(widget.tag).notifier)
-                      .prepend(map),
+                  onSaved: (map) => ref.read(activitiesProvider(widget.tag).notifier).prepend(map),
                 ),
               ),
             ),
@@ -124,18 +122,13 @@ class ActivitiesSubView extends StatelessWidget {
                 footer: ActivityFooter(
                   viewerId: viewerId,
                   activity: data.items[i],
-                  toggleLike: () => ref
-                      .read(activitiesProvider(tag).notifier)
-                      .toggleLike(data.items[i]),
-                  toggleSubscription: () => ref
-                      .read(activitiesProvider(tag).notifier)
-                      .toggleSubscription(data.items[i]),
-                  togglePin: () => ref
-                      .read(activitiesProvider(tag).notifier)
-                      .togglePin(data.items[i]),
-                  remove: () => ref
-                      .read(activitiesProvider(tag).notifier)
-                      .remove(data.items[i]),
+                  toggleLike: () =>
+                      ref.read(activitiesProvider(tag).notifier).toggleLike(data.items[i]),
+                  toggleSubscription: () =>
+                      ref.read(activitiesProvider(tag).notifier).toggleSubscription(data.items[i]),
+                  togglePin: () =>
+                      ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
+                  remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
                   onEdited: (map) {
                     final activity = Activity.maybe(
                       map,
@@ -145,12 +138,9 @@ class ActivitiesSubView extends StatelessWidget {
 
                     if (activity == null) return;
 
-                    ref
-                        .read(activitiesProvider(tag).notifier)
-                        .replace(activity);
+                    ref.read(activitiesProvider(tag).notifier).replace(activity);
                   },
-                  reply: () =>
-                      context.push(Routes.activity(data.items[i].id, tag)),
+                  reply: () => context.push(Routes.activity(data.items[i].id, tag)),
                 ),
               ),
             ),

@@ -164,9 +164,7 @@ class __AccountPickerState extends State<_AccountPicker> {
                       secondaryAction: 'No',
                       onConfirm: () {
                         if (i == accountGroup.accountIndex) {
-                          ref
-                              .read(persistenceProvider.notifier)
-                              .switchAccount(null);
+                          ref.read(persistenceProvider.notifier).switchAccount(null);
                         }
 
                         ref
@@ -277,9 +275,7 @@ class __FollowButtonState extends State<_FollowButton> {
       padding: const EdgeInsets.all(Theming.offset),
       child: ElevatedButton.icon(
         icon: Icon(
-          user.isFollowed
-              ? Ionicons.person_remove_outline
-              : Ionicons.person_add_outline,
+          user.isFollowed ? Ionicons.person_remove_outline : Ionicons.person_add_outline,
           size: Theming.iconSmall,
         ),
         label: Text(

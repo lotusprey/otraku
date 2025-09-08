@@ -10,8 +10,7 @@ import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class CollectionFloatingAction extends StatelessWidget {
-  CollectionFloatingAction(this.tag)
-      : super(key: Key('${tag.userId}${tag.ofAnime}'));
+  CollectionFloatingAction(this.tag) : super(key: Key('${tag.userId}${tag.ofAnime}'));
 
   final CollectionTag tag;
 
@@ -79,8 +78,7 @@ class CollectionFloatingAction extends StatelessWidget {
       child: SwipeSwitcher(
         index: index,
         children: List.filled(lists.length, const Icon(Ionicons.menu_outline)),
-        onChanged: (index) =>
-            ref.read(collectionProvider(tag).notifier).changeIndex(index),
+        onChanged: (index) => ref.read(collectionProvider(tag).notifier).changeIndex(index),
       ),
     );
   }

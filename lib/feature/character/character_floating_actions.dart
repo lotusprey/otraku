@@ -21,15 +21,13 @@ class CharacterMediaFilterButton extends StatelessWidget {
       onPressed: () {
         var filter = ref.read(characterFilterProvider(id));
 
-        final onDone = (_) =>
-            ref.read(characterFilterProvider(id).notifier).state = filter;
+        final onDone = (_) => ref.read(characterFilterProvider(id).notifier).state = filter;
 
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: Theming.normalTapTarget * 2.5 +
-                MediaQuery.paddingOf(context).bottom +
-                40,
+            initialHeight:
+                Theming.normalTapTarget * 2.5 + MediaQuery.paddingOf(context).bottom + 40,
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,

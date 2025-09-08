@@ -104,8 +104,7 @@ class CharacterMedia {
   /// Returns the media, in which the character has participated,
   /// along with the voice actors, corresponding to the current [language].
   /// If there are multiple actors, the given media is repeated for each actor.
-  Paged<(CharacterRelatedItem, CharacterRelatedItem?)>
-      assembleAnimeWithVoiceActors() {
+  Paged<(CharacterRelatedItem, CharacterRelatedItem?)> assembleAnimeWithVoiceActors() {
     if (languageToVoiceActors.isEmpty) {
       return Paged(
         items: anime.items.map((a) => (a, null)).toList(),
@@ -116,8 +115,7 @@ class CharacterMedia {
 
     final actorsPerMedia = languageToVoiceActors[selectedLanguage];
 
-    final animeAndVoiceActors =
-        <(CharacterRelatedItem, CharacterRelatedItem?)>[];
+    final animeAndVoiceActors = <(CharacterRelatedItem, CharacterRelatedItem?)>[];
     for (final a in anime.items) {
       final actors = actorsPerMedia.voiceActors[a.id];
       if (actors == null || actors.isEmpty) {

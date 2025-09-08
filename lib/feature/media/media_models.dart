@@ -86,8 +86,7 @@ class MediaConnections {
         staff: staff ?? this.staff,
         reviews: reviews ?? this.reviews,
         recommendations: recommendations ?? this.recommendations,
-        languageToVoiceActors:
-            languageToVoiceActors ?? this.languageToVoiceActors,
+        languageToVoiceActors: languageToVoiceActors ?? this.languageToVoiceActors,
         selectedLanguage: selectedLanguage ?? this.selectedLanguage,
       );
 }
@@ -109,13 +108,11 @@ class RelatedMedia {
     required this.releaseStatus,
   });
 
-  factory RelatedMedia(Map<String, dynamic> map, ImageQuality imageQuality) =>
-      RelatedMedia._(
+  factory RelatedMedia(Map<String, dynamic> map, ImageQuality imageQuality) => RelatedMedia._(
         id: map['node']['id'],
         title: map['node']['title']['userPreferred'],
         imageUrl: map['node']['coverImage'][imageQuality.value],
-        relationType:
-            StringExtension.tryNoScreamingSnakeCase(map['relationType']),
+        relationType: StringExtension.tryNoScreamingSnakeCase(map['relationType']),
         format: MediaFormat.from(map['node']['format']),
         entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
         releaseStatus: StringExtension.tryNoScreamingSnakeCase(
@@ -142,8 +139,7 @@ class MediaRelatedItem implements TileModelable {
     required this.role,
   });
 
-  factory MediaRelatedItem(Map<String, dynamic> map, String? role) =>
-      MediaRelatedItem._(
+  factory MediaRelatedItem(Map<String, dynamic> map, String? role) => MediaRelatedItem._(
         id: map['id'],
         name: map['name']['userPreferred'],
         imageUrl: map['image']['large'],
@@ -263,8 +259,7 @@ class Recommendation {
       isAnime: map['mediaRecommendation']['type'] == 'ANIME',
       releaseYear: map['mediaRecommendation']['startDate']?['year'],
       format: MediaFormat.from(map['mediaRecommendation']['format']),
-      entryStatus: ListStatus.from(
-          map['mediaRecommendation']['mediaListEntry']?['status']),
+      entryStatus: ListStatus.from(map['mediaRecommendation']['mediaListEntry']?['status']),
     );
   }
 
@@ -360,8 +355,7 @@ class MediaInfo {
       final time = map['duration'];
       final hours = time ~/ 60;
       final minutes = time % 60;
-      duration =
-          '${hours != 0 ? '$hours hours ' : ''}${minutes != 0 ? '$minutes mins' : ''}';
+      duration = '${hours != 0 ? '$hours hours ' : ''}${minutes != 0 ? '$minutes mins' : ''}';
     }
 
     String? season;
@@ -435,16 +429,13 @@ class MediaInfo {
           url: link['url'],
           site: link['site'],
           type: ExternalLinkType.fromString(link['type']),
-          color: link['color'] != null
-              ? ColorExtension.fromHexString(link['color'])
-              : null,
+          color: link['color'] != null ? ColorExtension.fromHexString(link['color']) : null,
           countryCode: StringExtension.languageToCode(link['language']),
         ));
       }
       model.externalLinks.sort(
-        (a, b) => a.type == b.type
-            ? a.site.compareTo(b.site)
-            : a.type.index.compareTo(b.type.index),
+        (a, b) =>
+            a.type == b.type ? a.site.compareTo(b.site) : a.type.index.compareTo(b.type.index),
       );
     }
 

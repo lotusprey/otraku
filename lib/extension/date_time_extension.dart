@@ -27,18 +27,15 @@ extension DateTimeExtension on DateTime {
         '$year';
   }
 
-  Map<String, dynamic> get fuzzyDate =>
-      {'year': year, 'month': month, 'day': day};
+  Map<String, dynamic> get fuzzyDate => {'year': year, 'month': month, 'day': day};
 
-  String get formattedWithWeekDay =>
-      '$formattedDate - ${_weekdayName(weekday)}';
+  String get formattedWithWeekDay => '$formattedDate - ${_weekdayName(weekday)}';
 
   String get formattedDate => '$day ${monthName(month)} $year';
 
   String formattedTime(bool analogClock) {
     if (analogClock) {
-      final (overflows, realHour) =
-          hour > 12 ? (true, hour - 12) : (false, hour);
+      final (overflows, realHour) = hour > 12 ? (true, hour - 12) : (false, hour);
 
       return '${realHour < 10 ? 0 : ''}$realHour'
           ':${minute < 10 ? 0 : ''}$minute '

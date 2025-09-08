@@ -21,9 +21,7 @@ class CharacterAnimeSubview extends StatelessWidget {
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
       provider: characterMediaProvider(id).select(
-        (s) => s
-            .unwrapPrevious()
-            .whenData((data) => data.assembleAnimeWithVoiceActors()),
+        (s) => s.unwrapPrevious().whenData((data) => data.assembleAnimeWithVoiceActors()),
       ),
       onData: (data) {
         return SliverMainAxisGroup(
@@ -78,9 +76,7 @@ class _LanguageSelected extends StatelessWidget {
                 onSelected: (selected) {
                   if (!selected) return;
 
-                  ref
-                      .read(characterMediaProvider(id).notifier)
-                      .changeLanguage(i);
+                  ref.read(characterMediaProvider(id).notifier).changeLanguage(i);
                 },
               ),
             ),

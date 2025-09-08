@@ -64,8 +64,7 @@ class _MediaViewState extends State<MediaView> {
 
         final media = ref.watch(mediaProvider(widget.id));
 
-        final toggleFavorite =
-            ref.read(mediaProvider(widget.id).notifier).toggleFavorite;
+        final toggleFavorite = ref.read(mediaProvider(widget.id).notifier).toggleFavorite;
 
         return AdaptiveScaffold(
           floatingAction: media.valueOrNull != null
@@ -117,8 +116,7 @@ class _CompactView extends StatefulWidget {
   State<_CompactView> createState() => _CompactViewState();
 }
 
-class _CompactViewState extends State<_CompactView>
-    with SingleTickerProviderStateMixin {
+class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: MediaHeader.tabsWithOverview.length,
     vsync: this,
@@ -187,8 +185,7 @@ class _LargeView extends StatefulWidget {
   State<_LargeView> createState() => _LargeViewState();
 }
 
-class _LargeViewState extends State<_LargeView>
-    with SingleTickerProviderStateMixin {
+class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: MediaHeader.tabsWithoutOverview.length,
     vsync: this,
@@ -293,9 +290,7 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
   void initState() {
     super.initState();
     _scrollCtrl = widget.scrollCtrl ??
-        context
-            .findAncestorStateOfType<NestedScrollViewState>()!
-            .innerController;
+        context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);
     widget.tabCtrl.addListener(_tabListener);
@@ -341,8 +336,7 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
   }
 
   void _loadNextPage() {
-    final index =
-        widget.withOverview ? widget.tabCtrl.index : widget.tabCtrl.index + 1;
+    final index = widget.withOverview ? widget.tabCtrl.index : widget.tabCtrl.index + 1;
 
     if (index == MediaTab.threads.index) {
       ref.read(mediaThreadsProvider(widget.id).notifier).fetch();
@@ -404,9 +398,8 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
         MediaRecommendationsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
-          rateRecommendation: ref
-              .read(mediaConnectionsProvider(widget.id).notifier)
-              .rateRecommendation,
+          rateRecommendation:
+              ref.read(mediaConnectionsProvider(widget.id).notifier).rateRecommendation,
         ),
         MediaStatsSubview(
           ref: ref,

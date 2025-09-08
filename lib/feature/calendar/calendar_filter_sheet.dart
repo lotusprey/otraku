@@ -14,9 +14,7 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
   showSheet(
     context,
     SimpleSheet(
-      initialHeight: Theming.normalTapTarget * 2 +
-          MediaQuery.paddingOf(context).bottom +
-          40,
+      initialHeight: Theming.normalTapTarget * 2 + MediaQuery.paddingOf(context).bottom + 40,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
@@ -27,19 +25,13 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
         children: [
           ChipSelector(
             title: 'Season',
-            items: CalendarSeasonFilter.values
-                .skip(1)
-                .map((v) => (v.label, v))
-                .toList(),
+            items: CalendarSeasonFilter.values.skip(1).map((v) => (v.label, v)).toList(),
             value: season != CalendarSeasonFilter.all ? season : null,
             onChanged: (v) => season = v ?? CalendarSeasonFilter.all,
           ),
           ChipSelector(
             title: 'Status',
-            items: CalendarStatusFilter.values
-                .skip(1)
-                .map((v) => (v.label, v))
-                .toList(),
+            items: CalendarStatusFilter.values.skip(1).map((v) => (v.label, v)).toList(),
             value: status != CalendarStatusFilter.all ? status : null,
             onChanged: (v) => status = v ?? CalendarStatusFilter.all,
           ),

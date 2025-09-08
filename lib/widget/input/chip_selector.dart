@@ -117,9 +117,7 @@ class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
           selected: widget.values.contains(value),
           onSelected: (isSelected) {
             setState(
-              () => isSelected
-                  ? widget.values.add(value)
-                  : widget.values.remove(value),
+              () => isSelected ? widget.values.add(value) : widget.values.remove(value),
             );
           },
         );
@@ -178,9 +176,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
         showCheckmark: false,
         avatar: unorderedValue == index
             ? Icon(
-                isDescending
-                    ? Icons.arrow_downward_rounded
-                    : Icons.arrow_upward_rounded,
+                isDescending ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
                 color: ColorScheme.of(context).onPrimaryContainer,
               )
             : null,

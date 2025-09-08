@@ -45,8 +45,7 @@ class Routes {
 
   static const calendar = '/calendar';
 
-  static String home([HomeTab? tab]) =>
-      '/home${tab != null ? "?tab=${tab.name}" : ""}';
+  static String home([HomeTab? tab]) => '/home${tab != null ? "?tab=${tab.name}" : ""}';
 
   static String media(int id, [String? imageUrl]) =>
       '/media/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
@@ -63,8 +62,7 @@ class Routes {
   static String userByName(String name, [String? imageUrl]) =>
       '/user/$name${imageUrl != null ? "?image=$imageUrl" : ""}';
 
-  static String studio(int id, [String? name]) =>
-      '/studio/$id${name != null ? "?name=$name" : ""}';
+  static String studio(int id, [String? name]) => '/studio/$id${name != null ? "?name=$name" : ""}';
 
   static String review(int id, [String? imageUrl]) =>
       '/review/$id${imageUrl != null ? "?image=$imageUrl" : ""}';
@@ -311,8 +309,7 @@ class Routes {
       ),
       GoRoute(
         path: '/character/:id/:_(.*)',
-        redirect: (context, state) =>
-            '/character/${state.pathParameters['id']}',
+        redirect: (context, state) => '/character/${state.pathParameters['id']}',
       ),
       GoRoute(
         path: '/staff/:id/:_(.*)',
@@ -349,9 +346,7 @@ class Routes {
 }
 
 String? _parseIdOr404(BuildContext context, GoRouterState state) =>
-    int.tryParse(state.pathParameters['id'] ?? '') == null
-        ? Routes.notFound
-        : null;
+    int.tryParse(state.pathParameters['id'] ?? '') == null ? Routes.notFound : null;
 
 class NotFoundView extends StatelessWidget {
   const NotFoundView();
@@ -439,9 +434,7 @@ class __AuthViewState extends ConsumerState<_AuthView> {
     final token = widget.credentials!.$1;
     final expiration = widget.credentials!.$2;
 
-    final account = await ref
-        .read(repositoryProvider.notifier)
-        .initAccount(token, expiration);
+    final account = await ref.read(repositoryProvider.notifier).initAccount(token, expiration);
 
     if (account == null) {
       if (mounted) {

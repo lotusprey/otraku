@@ -72,9 +72,8 @@ class _CommentViewState extends ConsumerState<CommentView> {
                 threadId: value.threadId,
                 parentCommentId: value.id,
               ),
-              onSaved: (map) => ref
-                  .read(commentProvider(widget.id).notifier)
-                  .appendComment(map, value.id),
+              onSaved: (map) =>
+                  ref.read(commentProvider(widget.id).notifier).appendComment(map, value.id),
             ),
           );
     }
@@ -141,9 +140,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
                               threadId: comment.threadId,
                             ),
                             onSaved: (map) {
-                              ref
-                                  .read(commentProvider(widget.id).notifier)
-                                  .edit(map);
+                              ref.read(commentProvider(widget.id).notifier).edit(map);
 
                               Navigator.pop(context);
                             },
@@ -162,9 +159,8 @@ class _CommentViewState extends ConsumerState<CommentView> {
                             primaryAction: 'Yes',
                             secondaryAction: 'No',
                             onConfirm: () async {
-                              final err = await ref
-                                  .read(commentProvider(widget.id).notifier)
-                                  .delete();
+                              final err =
+                                  await ref.read(commentProvider(widget.id).notifier).delete();
 
                               if (!context.mounted) return;
 
@@ -227,12 +223,10 @@ class _Content extends StatelessWidget {
             viewerId: ref.watch(viewerIdProvider),
             analogClock: analogClock,
             interaction: (
-              onReplySaved: (map, commentId) => ref
-                  .read(commentProvider(comment.id).notifier)
-                  .appendComment(map, commentId),
-              toggleLike: (commentId) => ref
-                  .read(commentProvider(comment.id).notifier)
-                  .toggleCommentLike(commentId),
+              onReplySaved: (map, commentId) =>
+                  ref.read(commentProvider(comment.id).notifier).appendComment(map, commentId),
+              toggleLike: (commentId) =>
+                  ref.read(commentProvider(comment.id).notifier).toggleCommentLike(commentId),
             ),
           ),
         ),

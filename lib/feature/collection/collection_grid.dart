@@ -100,10 +100,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
       );
     }
 
-    final foregroundColor =
-        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
-            ? ColorScheme.of(context).error
-            : null;
+    final foregroundColor = item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
+        ? ColorScheme.of(context).error
+        : null;
 
     if (widget.onProgressUpdated == null) {
       return Tooltip(
@@ -133,8 +132,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
       onPressed: () {
         _debounce.cancel();
 
-        if (item.progressMax != null &&
-            item.progress >= item.progressMax! - 1) {
+        if (item.progressMax != null && item.progress >= item.progressMax! - 1) {
           _resetProgress();
 
           showSheet(context, EditView((id: item.mediaId, setComplete: true)));

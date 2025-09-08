@@ -34,34 +34,26 @@ class Settings {
         titleLanguage: TitleLanguage.from(map['options']?['titleLanguage']),
         personNaming: PersonNaming.from(map['options']?['staffNameLanguage']),
         activityMergeTime: map['options']?['activityMergeTime'] ?? 720,
-        splitCompletedAnime: map['mediaListOptions']?['animeList']
-                ?['splitCompletedSectionByFormat'] ??
-            false,
-        splitCompletedManga: map['mediaListOptions']?['mangaList']
-                ?['splitCompletedSectionByFormat'] ??
-            false,
+        splitCompletedAnime:
+            map['mediaListOptions']?['animeList']?['splitCompletedSectionByFormat'] ?? false,
+        splitCompletedManga:
+            map['mediaListOptions']?['mangaList']?['splitCompletedSectionByFormat'] ?? false,
         displayAdultContent: map['options']?['displayAdultContent'] ?? false,
         airingNotifications: map['options']?['airingNotifications'] ?? true,
-        advancedScoringEnabled: map['mediaListOptions']?['animeList']
-                ?['advancedScoringEnabled'] ??
-            false,
-        restrictMessagesToFollowing:
-            map['options']?['restrictMessagesToFollowing'] ?? false,
+        advancedScoringEnabled:
+            map['mediaListOptions']?['animeList']?['advancedScoringEnabled'] ?? false,
+        restrictMessagesToFollowing: map['options']?['restrictMessagesToFollowing'] ?? false,
         advancedScores: List<String>.from(
-          map['mediaListOptions']?['animeList']?['advancedScoring'] ??
-              const <String>[],
+          map['mediaListOptions']?['animeList']?['advancedScoring'] ?? const <String>[],
         ),
         animeCustomLists: List<String>.from(
-          map['mediaListOptions']?['animeList']?['customLists'] ??
-              const <String>[],
+          map['mediaListOptions']?['animeList']?['customLists'] ?? const <String>[],
         ),
         mangaCustomLists: List<String>.from(
-          map['mediaListOptions']?['mangaList']?['customLists'] ??
-              const <String>[],
+          map['mediaListOptions']?['mangaList']?['customLists'] ?? const <String>[],
         ),
         disabledListActivity: {
-          for (var activity
-              in map['options']?['disabledListActivity'] ?? const [])
+          for (var activity in map['options']?['disabledListActivity'] ?? const [])
             ListStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {

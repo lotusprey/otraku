@@ -40,8 +40,7 @@ class _ScoreFieldState extends State<ScoreField> {
           ScoreFormat.point3 => _SmileyScorePicker(_value, _onChanged),
           ScoreFormat.point5 => _StarScorePicker(_value, _onChanged),
           ScoreFormat.point10 => _TenScorePicker(_value, _onChanged),
-          ScoreFormat.point10Decimal =>
-            _TenDecimalScorePicker(_value, _onChanged),
+          ScoreFormat.point10Decimal => _TenDecimalScorePicker(_value, _onChanged),
           ScoreFormat.point100 => _HundredScorePicker(_value, _onChanged),
         },
       ),
@@ -79,8 +78,7 @@ class _SmileyScorePicker extends StatelessWidget {
             color: score.floor() != i
                 ? ColorScheme.of(context).surfaceContainerHighest
                 : ColorScheme.of(context).primary,
-            onPressed: () =>
-                score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
+            onPressed: () => score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
           ),
       ],
     );
@@ -106,8 +104,7 @@ class _StarScorePicker extends StatelessWidget {
                 ? const Icon(Icons.star_rounded)
                 : const Icon(Icons.star_outline_rounded),
             color: ColorScheme.of(context).primary,
-            onPressed: () =>
-                score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
+            onPressed: () => score.floor() != i ? onChanged(i.toDouble()) : onChanged(0),
           ),
       ],
     );

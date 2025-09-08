@@ -47,18 +47,14 @@ class MediaActivitiesSubview extends StatelessWidget {
                   footer: ActivityFooter(
                     viewerId: viewerId,
                     activity: data.items[i],
-                    toggleLike: () => ref
-                        .read(activitiesProvider(tag).notifier)
-                        .toggleLike(data.items[i]),
+                    toggleLike: () =>
+                        ref.read(activitiesProvider(tag).notifier).toggleLike(data.items[i]),
                     toggleSubscription: () => ref
                         .read(activitiesProvider(tag).notifier)
                         .toggleSubscription(data.items[i]),
-                    togglePin: () => ref
-                        .read(activitiesProvider(tag).notifier)
-                        .togglePin(data.items[i]),
-                    remove: () => ref
-                        .read(activitiesProvider(tag).notifier)
-                        .remove(data.items[i]),
+                    togglePin: () =>
+                        ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
+                    remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
                     onEdited: (map) {
                       final activity = Activity.maybe(
                         map,
@@ -68,9 +64,7 @@ class MediaActivitiesSubview extends StatelessWidget {
 
                       if (activity == null) return;
 
-                      ref
-                          .read(activitiesProvider(tag).notifier)
-                          .replace(activity);
+                      ref.read(activitiesProvider(tag).notifier).replace(activity);
                     },
                     reply: () => context.push(
                       Routes.activity(data.items[i].id, null),
@@ -104,15 +98,13 @@ class _FollowingFilterButton extends StatelessWidget {
               alignment: Alignment.topLeft,
               child: onlyFollowing
                   ? OutlinedButton(
-                      onPressed: () => ref
-                          .read(activitiesFilterProvider(tag).notifier)
-                          .state = filter.copyWithOnlyFollowing(false),
+                      onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state =
+                          filter.copyWithOnlyFollowing(false),
                       child: const Text('Show All'),
                     )
                   : OutlinedButton(
-                      onPressed: () => ref
-                          .read(activitiesFilterProvider(tag).notifier)
-                          .state = filter.copyWithOnlyFollowing(true),
+                      onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state =
+                          filter.copyWithOnlyFollowing(true),
                       child: const Text('Show Following Only'),
                     ),
             ),

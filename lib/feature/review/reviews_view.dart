@@ -62,9 +62,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
           onPressed: () => showReviewsFilterSheet(
             context: context,
             filter: ref.read(reviewsFilterProvider(widget.id)),
-            onDone: (filter) => ref
-                .read(reviewsFilterProvider(widget.id).notifier)
-                .state = filter,
+            onDone: (filter) => ref.read(reviewsFilterProvider(widget.id).notifier).state = filter,
           ),
         ),
       ),

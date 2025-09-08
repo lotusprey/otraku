@@ -26,8 +26,7 @@ class SettingsAppSubview extends ConsumerWidget {
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final update = (Options options) =>
-        ref.read(persistenceProvider.notifier).setOptions(options);
+    final update = (Options options) => ref.read(persistenceProvider.notifier).setOptions(options);
 
     return ListView(
       controller: scrollCtrl,

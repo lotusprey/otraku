@@ -13,13 +13,12 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
 
-final mediaProvider =
-    AsyncNotifierProvider.autoDispose.family<MediaNotifier, Media, int>(
+final mediaProvider = AsyncNotifierProvider.autoDispose.family<MediaNotifier, Media, int>(
   MediaNotifier.new,
 );
 
-final mediaConnectionsProvider = AsyncNotifierProvider.autoDispose
-    .family<MediaRelationsNotifier, MediaConnections, int>(
+final mediaConnectionsProvider =
+    AsyncNotifierProvider.autoDispose.family<MediaRelationsNotifier, MediaConnections, int>(
   MediaRelationsNotifier.new,
 );
 
@@ -28,17 +27,16 @@ final mediaThreadsProvider =
   MediaThreadsNotifier.new,
 );
 
-final mediaFollowingProvider = AsyncNotifierProvider.family<
-    MediaFollowingNotifier, Paged<MediaFollowing>, int>(
+final mediaFollowingProvider =
+    AsyncNotifierProvider.family<MediaFollowingNotifier, Paged<MediaFollowing>, int>(
   MediaFollowingNotifier.new,
 );
 
 class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
   @override
   FutureOr<Media> build(int arg) async {
-    var data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.media, {'id': arg, 'withInfo': true});
+    var data =
+        await ref.read(repositoryProvider).request(GqlQuery.media, {'id': arg, 'withInfo': true});
     data = data['Media'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
@@ -74,11 +72,9 @@ class MediaNotifier extends AutoDisposeFamilyAsyncNotifier<Media, int> {
   }
 }
 
-class MediaRelationsNotifier
-    extends AutoDisposeFamilyAsyncNotifier<MediaConnections, int> {
+class MediaRelationsNotifier extends AutoDisposeFamilyAsyncNotifier<MediaConnections, int> {
   @override
-  FutureOr<MediaConnections> build(arg) =>
-      _fetch(const MediaConnections(), null);
+  FutureOr<MediaConnections> build(arg) => _fetch(const MediaConnections(), null);
 
   Future<void> fetch(MediaTab tab) async {
     final oldState = state.valueOrNull ?? const MediaConnections();
@@ -90,23 +86,19 @@ class MediaRelationsNotifier
       MediaTab.activities ||
       MediaTab.statistics =>
         state,
-      MediaTab.characters => oldState.characters.hasNext
-          ? await AsyncValue.guard(() => _fetch(oldState, tab))
-          : state,
-      MediaTab.staff => oldState.staff.hasNext
-          ? await AsyncValue.guard(() => _fetch(oldState, tab))
-          : state,
-      MediaTab.reviews => oldState.reviews.hasNext
-          ? await AsyncValue.guard(() => _fetch(oldState, tab))
-          : state,
+      MediaTab.characters =>
+        oldState.characters.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
+      MediaTab.staff =>
+        oldState.staff.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
+      MediaTab.reviews =>
+        oldState.reviews.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
       MediaTab.recommendations => oldState.recommendations.hasNext
           ? await AsyncValue.guard(() => _fetch(oldState, tab))
           : state,
     };
   }
 
-  Future<MediaConnections> _fetch(
-      MediaConnections oldState, MediaTab? tab) async {
+  Future<MediaConnections> _fetch(MediaConnections oldState, MediaTab? tab) async {
     final variables = <String, dynamic>{'id': arg};
     if (tab == null) {
       variables['withRecommendations'] = true;
@@ -293,8 +285,7 @@ class MediaThreadsNotifier extends FamilyAsyncNotifier<Paged<ThreadItem>, int> {
   }
 }
 
-class MediaFollowingNotifier
-    extends FamilyAsyncNotifier<Paged<MediaFollowing>, int> {
+class MediaFollowingNotifier extends FamilyAsyncNotifier<Paged<MediaFollowing>, int> {
   @override
   FutureOr<Paged<MediaFollowing>> build(arg) => _fetch(const Paged());
 

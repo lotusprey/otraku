@@ -132,7 +132,7 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
     final header = StaffHeader.withTabBar(
       id: widget.id,
       imageUrl: widget.imageUrl,
-      staff: widget.staff.valueOrNull,
+      staff: widget.staff.value,
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
       toggleFavorite: widget.toggleFavorite,
@@ -207,7 +207,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
     final header = StaffHeader.withoutTabBar(
       id: widget.id,
       imageUrl: widget.imageUrl,
-      staff: widget.staff.valueOrNull,
+      staff: widget.staff.value,
       toggleFavorite: widget.toggleFavorite,
     );
 

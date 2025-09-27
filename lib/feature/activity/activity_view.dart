@@ -47,7 +47,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
   @override
   Widget build(BuildContext context) {
     final activity = ref.watch(
-      activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
+      activityProvider(widget.id).select((s) => s.value?.activity),
     );
 
     return AdaptiveScaffold(

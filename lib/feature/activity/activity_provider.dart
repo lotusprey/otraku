@@ -13,18 +13,22 @@ final activityProvider =
   ActivityNotifier.new,
 );
 
-class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, int> {
+class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
+  ActivityNotifier(this.arg);
+
+  final int arg;
+
   int? _viewerId;
 
   @override
-  FutureOr<ExpandedActivity> build(arg) async {
+  FutureOr<ExpandedActivity> build() async {
     _viewerId = ref.watch(viewerIdProvider);
     return await _fetch(null);
   }
 
   Future<void> fetch() async {
-    if (!(state.valueOrNull?.replies.hasNext ?? true)) return;
-    state = await AsyncValue.guard(() => _fetch(state.valueOrNull));
+    if (!(state.value?.replies.hasNext ?? true)) return;
+    state = await AsyncValue.guard(() => _fetch(state.value));
   }
 
   Future<ExpandedActivity> _fetch(ExpandedActivity? oldState) async {
@@ -60,14 +64,14 @@ class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, 
   }
 
   void replace(Activity activity) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     state = AsyncValue.data(ExpandedActivity(activity, value.replies));
   }
 
   void appendReply(Map<String, dynamic> map) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     final reply = ActivityReply.maybe(map);
@@ -85,7 +89,7 @@ class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, 
   }
 
   void replaceReply(Map<String, dynamic> map) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     final reply = ActivityReply.maybe(map);
@@ -115,7 +119,7 @@ class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, 
   }
 
   Future<Object?> toggleSubscription() {
-    final isSubscribed = state.valueOrNull?.activity.isSubscribed;
+    final isSubscribed = state.value?.activity.isSubscribed;
     if (isSubscribed == null) return Future.value();
 
     return ref.read(repositoryProvider).request(
@@ -125,7 +129,7 @@ class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, 
   }
 
   Future<Object?> togglePin() {
-    final isPinned = state.valueOrNull?.activity.isPinned;
+    final isPinned = state.value?.activity.isPinned;
     if (isPinned == null) return Future.value();
 
     return ref.read(repositoryProvider).request(
@@ -149,7 +153,7 @@ class ActivityNotifier extends AutoDisposeFamilyAsyncNotifier<ExpandedActivity, 
   }
 
   Future<Object?> removeReply(int replyId) async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return Future.value();
 
     final err = await ref.read(repositoryProvider).request(

@@ -36,7 +36,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
   @override
   Widget build(BuildContext context) {
     final count = ref.watch(
-      reviewsProvider(widget.id).select((s) => s.valueOrNull?.total ?? 0),
+      reviewsProvider(widget.id).select((s) => s.value?.total ?? 0),
     );
 
     return AdaptiveScaffold(

@@ -79,7 +79,7 @@ class BackgroundHandler {
 
 @pragma('vm:entry-point')
 void _fetch() => Workmanager().executeTask((_, __) async {
-      final container = ProviderContainer();
+      final container = ProviderContainer(retry: (retryCount, error) => null);
 
       await container.read(persistenceProvider.notifier).init();
       final persistence = container.read(persistenceProvider);

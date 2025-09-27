@@ -53,7 +53,7 @@ class _LanguageSelected extends StatelessWidget {
     return Consumer(
       builder: (context, ref, child) {
         final selection = ref.watch(characterMediaProvider(id).select((s) {
-          final value = s.valueOrNull;
+          final value = s.value;
           if (value == null) return null;
           return (value.languageToVoiceActors, value.selectedLanguage);
         }));

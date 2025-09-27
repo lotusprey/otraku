@@ -11,7 +11,7 @@ final settingsProvider = AsyncNotifierProvider.autoDispose<SettingsNotifier, Set
   SettingsNotifier.new,
 );
 
-class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
+class SettingsNotifier extends AsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
     final viewerId = ref.watch(viewerIdProvider);
@@ -27,7 +27,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     final viewerId = ref.watch(viewerIdProvider);
     if (viewerId == null) return;
 
-    final prev = state.valueOrNull;
+    final prev = state.value;
     state = await AsyncValue.guard(() async {
       final data = await ref
           .read(repositoryProvider)
@@ -36,7 +36,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
       return Settings(data['UpdateUser']);
     });
 
-    final next = state.valueOrNull;
+    final next = state.value;
     if (prev == null || next == null) return;
 
     bool invalidateAnimeCollection = false;

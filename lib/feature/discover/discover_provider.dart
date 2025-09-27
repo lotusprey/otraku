@@ -37,7 +37,7 @@ class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
   }
 
   Future<void> fetch() async {
-    final oldValue = state.valueOrNull;
+    final oldValue = state.value;
     state = await AsyncValue.guard(() => switch (filter.type) {
           DiscoverType.anime => _fetchAnime(
               (oldValue is DiscoverAnimeItems) ? oldValue : const DiscoverAnimeItems(),

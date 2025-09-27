@@ -79,7 +79,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
               child: Text('Failed to load: ${error.toString()}'),
             ),
           ),
-        _ => const Center(child: Loader()),
+        AsyncLoading() => const Center(child: Loader()),
       },
       switch (_settings) {
         null => const Center(
@@ -98,7 +98,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
               child: Text('Failed to load: ${error.toString()}'),
             ),
           ),
-        _ => const Center(child: Loader()),
+        AsyncLoading() => const Center(child: Loader()),
       },
       ConstrainedView(padded: false, child: SettingsAboutSubview(_scrollCtrl)),
     ];

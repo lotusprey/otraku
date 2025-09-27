@@ -1,7 +1,7 @@
 import 'package:otraku/feature/media/media_models.dart';
 
 class CharacterFilter {
-  CharacterFilter({this.sort = MediaSort.trendingDesc, this.inLists});
+  const CharacterFilter({this.sort = MediaSort.trendingDesc, this.inLists});
 
   final MediaSort sort;
   final bool? inLists;

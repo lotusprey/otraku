@@ -58,7 +58,7 @@ class EditView extends ConsumerWidget {
             ),
           ),
         ),
-      _ => SheetWithButtonRow(
+      AsyncLoading() => SheetWithButtonRow(
           buttons: EditButtons(ref, tag, null, callback),
           builder: (context, scrollCtrl) => const Center(
             child: Padding(
@@ -83,7 +83,7 @@ class _EditView extends ConsumerWidget {
     final readableNotifier = entryEditProvider(tag).notifier;
 
     final settings = ref.watch(
-      settingsProvider.select((s) => s.valueOrNull),
+      settingsProvider.select((s) => s.value),
     );
 
     final statusField = SliverToBoxAdapter(

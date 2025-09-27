@@ -11,9 +11,13 @@ final compositionProvider =
   CompositionNotifier.new,
 );
 
-class CompositionNotifier extends AutoDisposeFamilyAsyncNotifier<Composition, CompositionTag> {
+class CompositionNotifier extends AsyncNotifier<Composition> {
+  CompositionNotifier(this.arg);
+
+  final CompositionTag arg;
+
   @override
-  FutureOr<Composition> build(arg) {
+  FutureOr<Composition> build() {
     if (arg.id == null) {
       return switch (arg) {
         MessageActivityCompositionTag _ => PrivateComposition('', false),
@@ -57,7 +61,7 @@ class CompositionNotifier extends AutoDisposeFamilyAsyncNotifier<Composition, Co
   }
 
   Future<AsyncValue<Map<String, dynamic>>> save() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return const AsyncValue.loading();
 
     return AsyncValue.guard(() async {

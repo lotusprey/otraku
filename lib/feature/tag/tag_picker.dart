@@ -94,7 +94,7 @@ class TagPickerState extends State<TagPicker> {
                       child: Text('Failed to load tags: ${error.toString()}'),
                     ),
                   );
-                case _:
+                case AsyncLoading():
                   return const Center(child: Loader());
               }
 

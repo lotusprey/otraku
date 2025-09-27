@@ -19,7 +19,7 @@ class ReviewView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Consumer(builder: (context, ref, _) {
-        final data = ref.watch(reviewProvider(id).select((s) => s.valueOrNull));
+        final data = ref.watch(reviewProvider(id).select((s) => s.value));
 
         return CustomScrollView(
           slivers: [

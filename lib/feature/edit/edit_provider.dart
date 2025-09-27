@@ -15,9 +15,13 @@ final entryEditProvider =
   EntryEditNotifier.new,
 );
 
-class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTag> {
+class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
+  EntryEditNotifier(this.arg);
+
+  final EditTag arg;
+
   @override
-  FutureOr<EntryEdit> build(arg) async {
+  FutureOr<EntryEdit> build() async {
     if (ref.exists(mediaProvider(arg.id))) {
       return ref.watch(mediaProvider(arg.id).selectAsync((s) => s.entryEdit));
     }
@@ -37,7 +41,7 @@ class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTa
       };
 
   Future<Object?> save() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     state = const AsyncLoading();
@@ -48,7 +52,7 @@ class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTa
         .getErrorOrNull();
 
     if (err != null) {
-      state = AsyncData(value);
+      state = AsyncValue.data(value);
       return err;
     }
 
@@ -64,7 +68,7 @@ class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTa
   }
 
   Future<Object?> remove() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null || value.baseEntry.entryId == null) return null;
 
     state = const AsyncLoading();
@@ -75,7 +79,7 @@ class EntryEditNotifier extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTa
     ).getErrorOrNull();
 
     if (err != null) {
-      state = AsyncData(value);
+      state = AsyncValue.data(value);
       return err;
     }
 

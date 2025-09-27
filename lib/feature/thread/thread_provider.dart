@@ -11,9 +11,13 @@ final threadProvider = AsyncNotifierProvider.autoDispose.family<ThreadNotifier, 
   ThreadNotifier.new,
 );
 
-class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
+class ThreadNotifier extends AsyncNotifier<Thread> {
+  ThreadNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Thread> build(int arg) async {
+  FutureOr<Thread> build() async {
     final data =
         await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'withInfo': true});
 
@@ -23,12 +27,11 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<void> changePage(int page) async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
-    state = const AsyncValue<Thread>.loading().copyWithPrevious(
-      state.whenData((data) => data.withChangingCommentPage(page)),
-    );
+    state = state.whenData((data) => data.withChangingCommentPage(page));
+    state = const AsyncValue.loading();
 
     final data =
         await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'page': page});
@@ -37,7 +40,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   void appendComment(Map<String, dynamic> map, int? parentCommentId) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     // If there's a new thread comment, it can only appear on the last page.
@@ -49,7 +52,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<Object?> toggleThreadLike() {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return Future.value(null);
 
     return ref.read(repositoryProvider).request(
@@ -66,7 +69,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<Object?> toggleThreadSubscription() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     final info = value.info;

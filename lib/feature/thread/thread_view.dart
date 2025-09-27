@@ -107,7 +107,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
                 ),
               ],
             ),
-          _ => const Center(child: Loader()),
+          AsyncLoading() => const Center(child: Loader()),
         },
       ),
     );

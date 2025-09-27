@@ -6,9 +6,13 @@ final staffFilterProvider =
   StaffFilterNotifier.new,
 );
 
-class StaffFilterNotifier extends AutoDisposeFamilyNotifier<StaffFilter, int> {
+class StaffFilterNotifier extends Notifier<StaffFilter> {
+  StaffFilterNotifier(this.arg);
+
+  final int arg;
+
   @override
-  StaffFilter build(arg) => StaffFilter();
+  StaffFilter build() => const StaffFilter();
 
   @override
   set state(StaffFilter newState) => super.state = newState;

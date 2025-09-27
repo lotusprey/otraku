@@ -142,7 +142,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                     child: Text('Failed to load tags: $error'),
                   ),
                 ),
-              _ => const Center(
+              AsyncLoading() => const Center(
                   child: Padding(padding: Theming.paddingAll, child: Loader()),
                 ),
             },

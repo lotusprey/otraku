@@ -5,7 +5,7 @@ final forumFilterProvider = NotifierProvider.autoDispose<ForumFilterNotifier, Fo
   ForumFilterNotifier.new,
 );
 
-class ForumFilterNotifier extends AutoDisposeNotifier<ForumFilter> {
+class ForumFilterNotifier extends Notifier<ForumFilter> {
   @override
   ForumFilter build() => const ForumFilter(
         search: '',

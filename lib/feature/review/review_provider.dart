@@ -11,9 +11,13 @@ final reviewProvider = AsyncNotifierProvider.autoDispose.family<ReviewNotifier, 
   ReviewNotifier.new,
 );
 
-class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
+class ReviewNotifier extends AsyncNotifier<Review> {
+  ReviewNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Review> build(arg) async {
+  FutureOr<Review> build() async {
     final data = await ref.read(repositoryProvider).request(GqlQuery.review, {'id': arg});
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));

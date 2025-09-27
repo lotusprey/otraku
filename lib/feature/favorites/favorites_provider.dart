@@ -12,12 +12,16 @@ final favoritesProvider =
   FavoritesNotifier.new,
 );
 
-class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
+class FavoritesNotifier extends AsyncNotifier<Favorites> {
+  FavoritesNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Favorites> build(int arg) => _fetch(const Favorites(), null);
+  FutureOr<Favorites> build() => _fetch(const Favorites(), null);
 
   Future<void> fetch(FavoritesType type) async {
-    final oldState = state.valueOrNull ?? const Favorites();
+    final oldState = state.value ?? const Favorites();
     switch (type) {
       case FavoritesType.anime:
         if (!oldState.anime.hasNext) return;
@@ -172,7 +176,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
   }
 
   void startEdit(FavoritesType type) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     final edit = FavoritesEdit(
@@ -190,7 +194,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
   }
 
   void cancelEdit() {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     final edit = value.edit;
@@ -218,7 +222,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
   }
 
   Future<Object?> saveEdit() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     final edit = value.edit;
@@ -265,7 +269,7 @@ class FavoritesNotifier extends AutoDisposeFamilyAsyncNotifier<Favorites, int> {
   }
 
   Future<Object?> toggleFavorite(int id) async {
-    final edit = state.valueOrNull?.edit;
+    final edit = state.value?.edit;
     if (edit == null) return null;
 
     final typeKey = switch (edit.editedType) {

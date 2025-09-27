@@ -16,14 +16,18 @@ final activitiesProvider =
   ActivitiesNotifier.new,
 );
 
-class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>, ActivitiesTag> {
+class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
+  ActivitiesNotifier(this.arg);
+
+  final ActivitiesTag arg;
+
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
   int? _viewerId;
   late ActivitiesFilter _filter;
 
   @override
-  FutureOr<Paged<Activity>> build(arg) {
+  FutureOr<Paged<Activity>> build() {
     // The home feed and the media feeds are lazy-loaded. The home feed is never disposed,
     // while the media feeds are disposed only when the media page is popped.
     if (arg is HomeActivitiesTag || arg is MediaActivitiesTag) {
@@ -38,7 +42,7 @@ class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>,
   }
 
   Future<void> fetch() async {
-    final oldState = state.valueOrNull ?? const Paged();
+    final oldState = state.value ?? const Paged();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }
@@ -70,7 +74,7 @@ class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>,
   }
 
   void prepend(Map<String, dynamic> map) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     final activity = Activity.maybe(
@@ -88,7 +92,7 @@ class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>,
   }
 
   void replace(Activity activity) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     for (int i = 0; i < value.items.length; i++) {
@@ -137,7 +141,7 @@ class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>,
 
     if (err != null) return err;
 
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     for (int i = 0; i < value.items.length; i++) {
@@ -173,7 +177,7 @@ class ActivitiesNotifier extends AutoDisposeFamilyAsyncNotifier<Paged<Activity>,
 
     if (err != null) return err;
 
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     for (int i = 0; i < value.items.length; i++) {

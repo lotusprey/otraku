@@ -11,9 +11,13 @@ final commentProvider = AsyncNotifierProvider.autoDispose.family<CommentNotifier
   CommentNotifier.new,
 );
 
-class CommentNotifier extends AutoDisposeFamilyAsyncNotifier<Comment, int> {
+class CommentNotifier extends AsyncNotifier<Comment> {
+  CommentNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Comment> build(int arg) async {
+  FutureOr<Comment> build() async {
     final data = await ref.read(repositoryProvider).request(GqlQuery.comment, {'id': arg});
 
     // The response is a list of comments that match the filter criteria.
@@ -53,7 +57,7 @@ class CommentNotifier extends AutoDisposeFamilyAsyncNotifier<Comment, int> {
   }
 
   void appendComment(Map<String, dynamic> map, int parentCommentId) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     state = AsyncValue.data(

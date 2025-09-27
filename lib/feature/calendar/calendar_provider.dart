@@ -14,7 +14,7 @@ final calendarProvider = AsyncNotifierProvider.autoDispose<CalendarNotifier, Pag
   CalendarNotifier.new,
 );
 
-class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
+class CalendarNotifier extends AsyncNotifier<Paged<CalendarItem>> {
   late CalendarFilter filter;
 
   @override
@@ -24,7 +24,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
   }
 
   Future<void> fetch(bool onAnime) async {
-    final oldState = state.valueOrNull ?? const Paged();
+    final oldState = state.value ?? const Paged();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }

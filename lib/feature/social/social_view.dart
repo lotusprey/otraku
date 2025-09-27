@@ -60,7 +60,7 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
 
     final count = ref.watch(
       socialProvider(widget.id).select(
-        (s) => s.valueOrNull?.getCount(tab) ?? 0,
+        (s) => s.value?.getCount(tab) ?? 0,
       ),
     );
 

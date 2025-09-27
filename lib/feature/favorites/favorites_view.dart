@@ -62,7 +62,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
 
     final count = ref.watch(
       favoritesProvider(widget.userId).select(
-        (s) => s.valueOrNull?.getCount(type) ?? 0,
+        (s) => s.value?.getCount(type) ?? 0,
       ),
     );
 
@@ -73,7 +73,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
 
     final inEditingMode = ref.watch(
       favoritesProvider(widget.userId).select(
-        (s) => s.valueOrNull?.edit != null,
+        (s) => s.value?.edit != null,
       ),
     );
 

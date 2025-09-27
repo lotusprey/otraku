@@ -105,7 +105,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
                 ),
               ],
             ),
-          _ => const Center(child: Loader()),
+          AsyncLoading() => const Center(child: Loader()),
         },
       ),
     );

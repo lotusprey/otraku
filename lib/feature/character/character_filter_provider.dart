@@ -6,9 +6,13 @@ final characterFilterProvider =
   CharacterFilterNotifier.new,
 );
 
-class CharacterFilterNotifier extends AutoDisposeFamilyNotifier<CharacterFilter, int> {
+class CharacterFilterNotifier extends Notifier<CharacterFilter> {
+  CharacterFilterNotifier(this.arg);
+
+  final int arg;
+
   @override
-  CharacterFilter build(arg) => CharacterFilter();
+  CharacterFilter build() => const CharacterFilter();
 
   @override
   set state(CharacterFilter newState) => super.state = newState;

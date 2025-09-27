@@ -67,7 +67,7 @@ class _MediaViewState extends State<MediaView> {
         final toggleFavorite = ref.read(mediaProvider(widget.id).notifier).toggleFavorite;
 
         return AdaptiveScaffold(
-          floatingAction: media.valueOrNull != null
+          floatingAction: media.value != null
               ? HidingFloatingActionButton(
                   key: const Key('edit'),
                   scrollCtrl: _scrollCtrl,
@@ -135,7 +135,7 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
     final header = MediaHeader.withTabBar(
       id: widget.id,
       coverUrl: widget.coverUrl,
-      media: widget.media.valueOrNull,
+      media: widget.media.value,
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
       toggleFavorite: widget.toggleFavorite,
@@ -202,7 +202,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
     final header = MediaHeader.withoutTabBar(
       id: widget.id,
       coverUrl: widget.coverUrl,
-      media: widget.media.valueOrNull,
+      media: widget.media.value,
       toggleFavorite: widget.toggleFavorite,
     );
 

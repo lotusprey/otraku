@@ -12,7 +12,7 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
-  final container = ProviderContainer();
+  final container = ProviderContainer(retry: (retryCount, error) => null);
   await container.read(persistenceProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
 

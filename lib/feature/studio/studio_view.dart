@@ -51,7 +51,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
           ),
         );
 
-        final studio = ref.watch(studioProvider(widget.id)).valueOrNull;
+        final studio = ref.watch(studioProvider(widget.id)).value;
         final studioMedia = ref.watch(studioMediaProvider(widget.id));
 
         final mediaQuery = MediaQuery.of(context);

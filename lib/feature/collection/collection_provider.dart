@@ -14,12 +14,16 @@ final collectionProvider =
   CollectionNotifier.new,
 );
 
-class CollectionNotifier extends AutoDisposeFamilyAsyncNotifier<Collection, CollectionTag> {
+class CollectionNotifier extends AsyncNotifier<Collection> {
+  CollectionNotifier(this.arg);
+
+  final CollectionTag arg;
+
   var _sort = EntrySort.title;
 
   @override
-  FutureOr<Collection> build(arg) async {
-    final index = switch (state.valueOrNull) {
+  FutureOr<Collection> build() async {
+    final index = switch (state.value) {
       FullCollection c => c.index,
       _ => 0,
     };

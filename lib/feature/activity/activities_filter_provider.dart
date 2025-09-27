@@ -8,9 +8,13 @@ final activitiesFilterProvider =
   ActivitiesFilterNotifier.new,
 );
 
-class ActivitiesFilterNotifier extends AutoDisposeFamilyNotifier<ActivitiesFilter, ActivitiesTag> {
+class ActivitiesFilterNotifier extends Notifier<ActivitiesFilter> {
+  ActivitiesFilterNotifier(this.arg);
+
+  final ActivitiesTag arg;
+
   @override
-  ActivitiesFilter build(arg) => switch (arg) {
+  ActivitiesFilter build() => switch (arg) {
         HomeActivitiesTag _ => ref.watch(
             persistenceProvider.select((s) => s.homeActivitiesFilter),
           ),

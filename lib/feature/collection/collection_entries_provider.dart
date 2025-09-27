@@ -17,8 +17,8 @@ final collectionEntriesProvider = Provider.autoDispose.family<List<Entry>, Colle
         .ensureSorted(mediaFilter.sort, mediaFilter.previewSort);
 
     final entries =
-        ref.watch(collectionProvider(tag)).unwrapPrevious().valueOrNull?.list.entries ?? const [];
-    final tags = ref.watch(tagsProvider).valueOrNull;
+        ref.watch(collectionProvider(tag)).unwrapPrevious().value?.list.entries ?? const [];
+    final tags = ref.watch(tagsProvider).value;
 
     return _filter(entries, mediaFilter, search, tags);
   },

@@ -232,7 +232,7 @@ class _Content extends StatelessWidget {
           onProgressUpdated: onProgressUpdated,
           scoreFormat: ref.watch(
             collectionProvider(tag).select(
-              (s) => s.valueOrNull?.scoreFormat ?? ScoreFormat.point10Decimal,
+              (s) => s.value?.scoreFormat ?? ScoreFormat.point10Decimal,
             ),
           ),
         );

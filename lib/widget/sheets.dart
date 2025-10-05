@@ -72,19 +72,17 @@ class SimpleSheet extends StatelessWidget {
       initialChildSize: initialFraction,
       minChildSize: initialFraction < 0.25 ? initialFraction : 0.25,
       builder: (context, scrollCtrl) {
-        sheet ??= Center(
-          child: Container(
-            constraints: const BoxConstraints(
-              maxWidth: Theming.windowWidthMedium,
-            ),
-            decoration: BoxDecoration(
-              color: ColorScheme.of(context).surface,
-              borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: builder(context, scrollCtrl),
-            ),
+        sheet ??= Container(
+          constraints: const BoxConstraints(
+            maxWidth: Theming.windowWidthMedium,
+          ),
+          decoration: BoxDecoration(
+            color: ColorScheme.of(context).surface,
+            borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: builder(context, scrollCtrl),
           ),
         );
 

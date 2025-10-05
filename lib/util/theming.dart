@@ -135,22 +135,21 @@ class Theming extends ThemeExtension<Theming> {
         listTileTheme: const ListTileThemeData(
           contentPadding: EdgeInsets.symmetric(horizontal: offset),
         ),
-        typography: Typography.material2014(),
         textTheme: TextTheme(
           titleLarge: TextStyle(
             fontSize: fontBig,
             color: scheme.onSurface,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           titleMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           titleSmall: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           bodyLarge: TextStyle(
             fontSize: fontMedium,
@@ -221,7 +220,7 @@ class Theming extends ThemeExtension<Theming> {
             fontVariations: const [FontVariation('wght', 400)],
           ),
           border: const OutlineInputBorder(
-            borderRadius: borderRadiusBig,
+            borderRadius: borderRadiusSmall,
             borderSide: BorderSide.none,
           ),
         ),

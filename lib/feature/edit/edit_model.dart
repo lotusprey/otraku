@@ -51,7 +51,7 @@ class EntryEdit {
         advancedScores[e.key] = e.value.toDouble();
       }
     } else if (settings.advancedScoringEnabled) {
-      for (final scoreCategory in settings.advancedScores) {
+      for (final scoreCategory in settings.advancedScoreSections) {
         advancedScores[scoreCategory] = 0;
       }
     }

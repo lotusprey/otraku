@@ -234,10 +234,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_riverpod
-      sha256: ca2480512a8e840291325249f4857e363ffa5d1b77b132e189c9313a9d9fb9e0
+      sha256: "71a420767ae786f9402e4efb74e1119fa95b53e6a3781ab8ab21c121ac1349c6"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -596,10 +596,10 @@ packages:
     dependency: transitive
     description:
       name: riverpod
-      sha256: "135723ec44dfba141bc4696224048a408336e794228a0117439e7ad0a8be6d05"
+      sha256: b21446f04474040479b19004c5b729605cde221bbd14cf16ad0db8804dce4810
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "3.0.1"
   rxdart:
     dependency: transitive
     description:

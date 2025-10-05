@@ -18,7 +18,7 @@ class Settings {
     required this.airingNotifications,
     required this.advancedScoringEnabled,
     required this.restrictMessagesToFollowing,
-    required this.advancedScores,
+    required this.advancedScoreSections,
     required this.animeCustomLists,
     required this.mangaCustomLists,
     required this.disabledListActivity,
@@ -43,7 +43,7 @@ class Settings {
         advancedScoringEnabled:
             map['mediaListOptions']?['animeList']?['advancedScoringEnabled'] ?? false,
         restrictMessagesToFollowing: map['options']?['restrictMessagesToFollowing'] ?? false,
-        advancedScores: List<String>.from(
+        advancedScoreSections: List<String>.from(
           map['mediaListOptions']?['animeList']?['advancedScoring'] ?? const <String>[],
         ),
         animeCustomLists: List<String>.from(
@@ -75,7 +75,7 @@ class Settings {
         airingNotifications: true,
         advancedScoringEnabled: false,
         restrictMessagesToFollowing: false,
-        advancedScores: const [],
+        advancedScoreSections: const [],
         animeCustomLists: const [],
         mangaCustomLists: const [],
         disabledListActivity: const {},
@@ -94,7 +94,7 @@ class Settings {
   bool advancedScoringEnabled;
   bool restrictMessagesToFollowing;
   final int unreadNotifications;
-  final List<String> advancedScores;
+  final List<String> advancedScoreSections;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
   final Map<ListStatus, bool> disabledListActivity;
@@ -113,7 +113,7 @@ class Settings {
         airingNotifications: airingNotifications,
         advancedScoringEnabled: advancedScoringEnabled,
         restrictMessagesToFollowing: restrictMessagesToFollowing,
-        advancedScores: [...advancedScores],
+        advancedScoreSections: [...advancedScoreSections],
         animeCustomLists: [...animeCustomLists],
         mangaCustomLists: [...mangaCustomLists],
         disabledListActivity: {...disabledListActivity},
@@ -127,8 +127,10 @@ class Settings {
         'displayAdultContent': displayAdultContent,
         'scoreFormat': scoreFormat.value,
         'rowOrder': defaultSort.toRowOrder(),
-        'advancedScoring': advancedScores,
+        'advancedScoring': advancedScoreSections,
         'advancedScoringEnabled': advancedScoringEnabled,
+        'animeCustomLists': animeCustomLists,
+        'mangaCustomLists': mangaCustomLists,
         'splitCompletedAnime': splitCompletedAnime,
         'splitCompletedManga': splitCompletedManga,
         'restrictMessagesToFollowing': restrictMessagesToFollowing,

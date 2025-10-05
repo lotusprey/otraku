@@ -861,15 +861,16 @@ abstract class GqlMutation {
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
         $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $restrictMessagesToFollowing: Boolean,
-        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput]) {
+        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput],
+        $animeCustomLists: [String], $mangaCustomLists: [String]) {
       UpdateUser(titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
           activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
           airingNotifications: $airingNotifications, restrictMessagesToFollowing: $restrictMessagesToFollowing,
           scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
           disabledListActivity: $disabledListActivity,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime,
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, customLists: $animeCustomLists,
           advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
-          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
+          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, customLists: $mangaCustomLists}) {
         ...userSettings
       }
     }

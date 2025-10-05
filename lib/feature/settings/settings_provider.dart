@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -39,17 +40,20 @@ class SettingsNotifier extends AsyncNotifier<Settings> {
     final next = state.value;
     if (prev == null || next == null) return;
 
-    bool invalidateAnimeCollection = false;
-    bool invalidateMangaCollection = false;
+    var invalidateAnimeCollection = false;
+    var invalidateMangaCollection = false;
 
     if (prev.scoreFormat != next.scoreFormat || prev.titleLanguage != next.titleLanguage) {
       invalidateAnimeCollection = true;
       invalidateMangaCollection = true;
     } else {
-      if (prev.splitCompletedAnime != next.splitCompletedAnime) {
+      if (prev.splitCompletedAnime != next.splitCompletedAnime ||
+          !listEquals(prev.animeCustomLists, next.animeCustomLists)) {
         invalidateAnimeCollection = true;
       }
-      if (prev.splitCompletedManga != next.splitCompletedManga) {
+
+      if (prev.splitCompletedManga != next.splitCompletedManga ||
+          !listEquals(prev.mangaCustomLists, next.mangaCustomLists)) {
         invalidateMangaCollection = true;
       }
     }

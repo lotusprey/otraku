@@ -4,37 +4,72 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
-class InputDialog extends StatelessWidget {
-  const InputDialog({required this.initial, required this.onChanged});
+class TextInputDialog extends StatefulWidget {
+  const TextInputDialog({
+    required this.title,
+    required this.initialValue,
+    this.validator,
+  });
 
-  final String initial;
-  final void Function(String) onChanged;
+  final String title;
+  final String initialValue;
+  final String? Function(String)? validator;
+
+  @override
+  State<TextInputDialog> createState() => _TextInputDialogState();
+}
+
+class _TextInputDialogState extends State<TextInputDialog> {
+  late final _textCtrl = TextEditingController(text: widget.initialValue);
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    String text = initial;
-
-    return Center(
-      child: Material(
-        color: Colors.transparent,
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Form(
+        key: _formKey,
         child: TextFormField(
-          maxLines: 5,
           autofocus: true,
-          textAlign: TextAlign.center,
-          style: TextTheme.of(context).titleLarge,
-          decoration: const InputDecoration(
-            filled: false,
-            contentPadding: EdgeInsets.symmetric(horizontal: Theming.offset),
+          controller: _textCtrl,
+          decoration: InputDecoration(
+            isDense: true,
+            hint: const Text('Enter'),
+            hintStyle: TextStyle(color: ColorScheme.of(context).onSurfaceVariant),
+            border: const OutlineInputBorder(borderRadius: Theming.borderRadiusSmall),
           ),
-          keyboardType: TextInputType.name,
-          initialValue: initial,
-          onChanged: (t) => text = t,
-          onEditingComplete: () {
-            onChanged(text.trim());
-            Navigator.pop(context);
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          validator: (value) {
+            final text = value?.trim() ?? '';
+            if (text.isEmpty) {
+              return 'The field cannot be empty.';
+            }
+
+            if (widget.validator != null) {
+              return widget.validator!(text);
+            }
+
+            return null;
           },
         ),
       ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              Navigator.pop(context, _textCtrl.text.trim());
+            }
+          },
+          child: const Text('Confirm'),
+        ),
+      ],
     );
   }
 }

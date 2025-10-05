@@ -4,7 +4,7 @@ import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
-import 'package:otraku/widget/grid/chip_grids.dart';
+import 'package:otraku/widget/grid/chip_grid.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
@@ -73,7 +73,7 @@ class TagPickerState extends State<TagPicker> {
       ));
     }
 
-    return ChipGridTemplate(
+    return ChipGrid(
       title: 'Tags',
       placeholder: 'tags',
       children: children,

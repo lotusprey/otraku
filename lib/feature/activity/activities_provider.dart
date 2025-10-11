@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -21,10 +22,11 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
 
   final ActivitiesTag arg;
 
-  // Used to skip activities when fetching outdated pages.
-  int? _lastId;
   int? _viewerId;
   late ActivitiesFilter _filter;
+
+  // Used to skip activities when fetching outdated pages.
+  late int _lastCreatedAt;
 
   @override
   FutureOr<Paged<Activity>> build() {
@@ -34,7 +36,7 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
       ref.keepAlive();
     }
 
-    _lastId = null;
+    _lastCreatedAt = DateTime.now().secondsSinceEpoch;
     _filter = ref.watch(activitiesFilterProvider(arg));
     _viewerId = ref.watch(viewerIdProvider);
 
@@ -50,21 +52,22 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   Future<Paged<Activity>> _fetch(Paged<Activity> oldState) async {
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.activityPage,
-      {'page': oldState.next, ..._filter.toGraphQlVariables()},
+      {'createdBefore': _lastCreatedAt + 1, ..._filter.toGraphQlVariables()},
     );
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
+    final lastId = oldState.items.isNotEmpty ? oldState.items.last.id : null;
 
     final items = <Activity>[];
     for (final a in data['Page']['activities']) {
-      if (_lastId != null && a['id'] >= _lastId) continue;
+      if (lastId != null && a['id'] >= lastId) continue;
 
       final item = Activity.maybe(a, _viewerId, imageQuality);
       if (item != null) items.add(item);
     }
 
-    if (data['Page']['activities'].isNotEmpty) {
-      _lastId = data['Page']['activities'].last['id'];
+    if (items.isNotEmpty) {
+      _lastCreatedAt = items.last.createdAt.secondsSinceEpoch;
     }
 
     return oldState.withNext(

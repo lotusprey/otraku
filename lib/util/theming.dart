@@ -203,6 +203,7 @@ class Theming extends ThemeExtension<Theming> {
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
             borderRadius: borderRadiusSmall,
+            border: Border.all(color: scheme.outline),
             boxShadow: [BoxShadow(color: scheme.surface, blurRadius: 10)],
           ),
         ),

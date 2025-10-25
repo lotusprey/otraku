@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
@@ -21,12 +22,14 @@ class ReplyCard extends StatelessWidget {
     required this.activityId,
     required this.reply,
     required this.analogClock,
+    required this.highContrast,
     required this.toggleLike,
   });
 
   final int activityId;
   final ActivityReply reply;
   final bool analogClock;
+  final bool highContrast;
   final Future<Object?> Function() toggleLike;
 
   @override
@@ -56,7 +59,7 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Card(
+        CardExtension.highContrast(highContrast)(
           margin: const EdgeInsets.only(bottom: Theming.offset),
           child: Padding(
             padding: const EdgeInsets.only(

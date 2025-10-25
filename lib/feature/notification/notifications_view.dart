@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
@@ -55,13 +56,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
     final filter = ref.watch(notificationsFilterProvider);
 
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
+    final options = ref.watch(
+      persistenceProvider.select((s) => s.options),
     );
 
     final content = _Content(
       unreadCount: unreadCount,
-      analogClock: analogClock,
+      analogClock: options.analogClock,
+      highContrast: options.highContrast,
       scrollCtrl: _scrollCtrl,
     );
 
@@ -140,11 +142,13 @@ class _Content extends StatelessWidget {
   const _Content({
     required this.unreadCount,
     required this.analogClock,
+    required this.highContrast,
     required this.scrollCtrl,
   });
 
   final int unreadCount;
   final bool analogClock;
+  final bool highContrast;
   final ScrollController scrollCtrl;
 
   @override
@@ -159,6 +163,7 @@ class _Content extends StatelessWidget {
             data.items[i],
             i < unreadCount,
             analogClock,
+            highContrast,
           ),
           childCount: data.items.length,
         ),
@@ -168,11 +173,12 @@ class _Content extends StatelessWidget {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(this.item, this.unread, this.analogClock);
+  const _NotificationItem(this.item, this.unread, this.analogClock, this.highContrast);
 
   final SiteNotification item;
   final bool unread;
   final bool analogClock;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +188,8 @@ class _NotificationItem extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: SizedBox(
           height: 90,
-          child: Card(
+          child: CardExtension.highContrast(highContrast)(
+            borderOnForeground: false,
             child: Row(
               children: [
                 if (item.imageUrl != null)

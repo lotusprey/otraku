@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
@@ -21,16 +22,18 @@ class ActivityCard extends StatelessWidget {
     required this.footer,
     required this.withHeader,
     required this.analogClock,
+    required this.highContrast,
   });
 
   final Activity activity;
   final ActivityFooter footer;
   final bool withHeader;
   final bool analogClock;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
-    final body = Card(
+    final body = CardExtension.highContrast(highContrast)(
       margin: const EdgeInsets.only(bottom: Theming.offset),
       child: Padding(
         padding: const EdgeInsets.only(

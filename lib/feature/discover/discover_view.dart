@@ -95,7 +95,7 @@ class DiscoverSubview extends StatelessWidget {
                   (data) => (data as DiscoverReviewItems).pages,
                 ),
               ),
-              onData: (data) => ReviewGrid(data.items),
+              onData: (data) => ReviewGrid(data.items, options.highContrast),
             ),
           DiscoverType.recommendation => PagedView(
               scrollCtrl: scrollCtrl,

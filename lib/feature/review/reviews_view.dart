@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/util/theming.dart';
@@ -35,6 +36,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
 
   @override
   Widget build(BuildContext context) {
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
     final count = ref.watch(
       reviewsProvider(widget.id).select((s) => s.value?.total ?? 0),
     );
@@ -70,7 +72,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
         scrollCtrl: _ctrl,
         onRefresh: (invalidate) => invalidate(reviewsProvider(widget.id)),
         provider: reviewsProvider(widget.id),
-        onData: (data) => ReviewGrid(data.items),
+        onData: (data) => ReviewGrid(data.items, options.highContrast),
       ),
     );
   }

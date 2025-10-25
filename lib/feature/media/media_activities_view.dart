@@ -43,6 +43,7 @@ class MediaActivitiesSubview extends StatelessWidget {
                 (context, i) => ActivityCard(
                   withHeader: true,
                   analogClock: options.analogClock,
+                  highContrast: options.highContrast,
                   activity: data.items[i],
                   footer: ActivityFooter(
                     viewerId: viewerId,

@@ -42,7 +42,6 @@ class HtmlContent extends StatelessWidget {
           );
         }
       },
-      factoryBuilder: () => _CustomWidgetFactory(),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => Center(
         child: IconButton(
@@ -146,19 +145,3 @@ final _routeMatchers = {
   RegExp(r'anilist.co\/review\/(\d+)'): (String id) => Routes.review(int.parse(id)),
   RegExp(r'anilist.co\/activity\/(\d+)'): (String id) => Routes.activity(int.parse(id)),
 };
-
-class _CustomWidgetFactory extends WidgetFactory {
-  @override
-  Widget? buildImageWidget(BuildTree meta, ImageSource src) {
-    if (!src.url.startsWith(RegExp('https?://'))) {
-      return super.buildImageWidget(meta, src);
-    }
-
-    return CachedImage(
-      src.url,
-      fit: BoxFit.fill,
-      width: src.width,
-      height: src.height,
-    );
-  }
-}

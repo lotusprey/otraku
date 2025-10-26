@@ -63,8 +63,7 @@ class _MediaRelatedGrid extends StatelessWidget {
   Widget _buildTile(BuildContext context, int i) {
     final textRailItems = <String, bool>{
       if (items[i].relationType != null) items[i].relationType!: true,
-      if (items[i].entryStatus != null)
-        items[i].entryStatus!.label(items[i].isAnime): true,
+      if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
       if (items[i].format != null) items[i].format!.label: false,
       if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
     };

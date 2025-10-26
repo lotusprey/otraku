@@ -30,10 +30,7 @@ class ForumFilter {
         if (search.isNotEmpty) 'search': search,
         if (isSubscribed) 'subscribed': true,
         if (category != null) 'categoryId': category!.id,
-        if (search.isEmpty)
-          'sort': sort.value
-        else
-          'sort': ThreadSort.lastCreated.value,
+        if (search.isEmpty) 'sort': sort.value else 'sort': ThreadSort.lastCreated.value,
       };
 }
 

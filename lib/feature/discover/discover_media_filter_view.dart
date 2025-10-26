@@ -25,8 +25,7 @@ class DiscoverMediaFilterView extends ConsumerStatefulWidget {
   final void Function(DiscoverMediaFilter) onChanged;
 
   @override
-  ConsumerState<DiscoverMediaFilterView> createState() =>
-      _DiscoverFilterViewState();
+  ConsumerState<DiscoverMediaFilterView> createState() => _DiscoverFilterViewState();
 }
 
 class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
@@ -64,9 +63,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
         primaryAction: 'Yes',
         secondaryAction: 'No',
         onConfirm: () {
-          ref
-              .read(persistenceProvider.notifier)
-              .setDiscoverMediaFilter(_filter);
+          ref.read(persistenceProvider.notifier).setDiscoverMediaFilter(_filter);
 
           widget.onChanged(_filter);
           Navigator.pop(context);
@@ -100,15 +97,13 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             if (widget.ofAnime)
               ChipMultiSelector(
                 title: 'Formats',
-                items:
-                    MediaFormat.animeFormats.map((v) => (v.label, v)).toList(),
+                items: MediaFormat.animeFormats.map((v) => (v.label, v)).toList(),
                 values: _filter.animeFormats,
               )
             else
               ChipMultiSelector(
                 title: 'Formats',
-                items:
-                    MediaFormat.mangaFormats.map((v) => (v.label, v)).toList(),
+                items: MediaFormat.mangaFormats.map((v) => (v.label, v)).toList(),
                 values: _filter.mangaFormats,
               ),
             if (widget.ofAnime)
@@ -180,9 +175,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
               onChanged: (v) => _filter.isLicensed = v,
             ),
             SizedBox(
-              height: MediaQuery.paddingOf(context).bottom +
-                  BottomBar.height +
-                  Theming.offset,
+              height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,
             ),
           ],
         ),

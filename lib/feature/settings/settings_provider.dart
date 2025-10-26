@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
@@ -7,12 +8,11 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 
-final settingsProvider =
-    AsyncNotifierProvider.autoDispose<SettingsNotifier, Settings>(
+final settingsProvider = AsyncNotifierProvider.autoDispose<SettingsNotifier, Settings>(
   SettingsNotifier.new,
 );
 
-class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
+class SettingsNotifier extends AsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
     final viewerId = ref.watch(viewerIdProvider);
@@ -28,7 +28,7 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     final viewerId = ref.watch(viewerIdProvider);
     if (viewerId == null) return;
 
-    final prev = state.valueOrNull;
+    final prev = state.value;
     state = await AsyncValue.guard(() async {
       final data = await ref
           .read(repositoryProvider)
@@ -37,21 +37,23 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
       return Settings(data['UpdateUser']);
     });
 
-    final next = state.valueOrNull;
+    final next = state.value;
     if (prev == null || next == null) return;
 
-    bool invalidateAnimeCollection = false;
-    bool invalidateMangaCollection = false;
+    var invalidateAnimeCollection = false;
+    var invalidateMangaCollection = false;
 
-    if (prev.scoreFormat != next.scoreFormat ||
-        prev.titleLanguage != next.titleLanguage) {
+    if (prev.scoreFormat != next.scoreFormat || prev.titleLanguage != next.titleLanguage) {
       invalidateAnimeCollection = true;
       invalidateMangaCollection = true;
     } else {
-      if (prev.splitCompletedAnime != next.splitCompletedAnime) {
+      if (prev.splitCompletedAnime != next.splitCompletedAnime ||
+          !listEquals(prev.animeCustomLists, next.animeCustomLists)) {
         invalidateAnimeCollection = true;
       }
-      if (prev.splitCompletedManga != next.splitCompletedManga) {
+
+      if (prev.splitCompletedManga != next.splitCompletedManga ||
+          !listEquals(prev.mangaCustomLists, next.mangaCustomLists)) {
         invalidateMangaCollection = true;
       }
     }
@@ -67,9 +69,8 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
 
   Future<void> refetchUnread() async {
     try {
-      final data = await ref
-          .read(repositoryProvider)
-          .request(GqlQuery.settings, {'withData': false});
+      final data =
+          await ref.read(repositoryProvider).request(GqlQuery.settings, {'withData': false});
       state = state.whenData(
         (v) => v.copy(
           unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
@@ -78,6 +79,5 @@ class SettingsNotifier extends AutoDisposeAsyncNotifier<Settings> {
     } catch (_) {}
   }
 
-  void clearUnread() =>
-      state = state.whenData((v) => v.copy(unreadNotifications: 0));
+  void clearUnread() => state = state.whenData((v) => v.copy(unreadNotifications: 0));
 }

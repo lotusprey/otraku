@@ -36,9 +36,8 @@ class ThemePreview extends StatelessWidget {
           brightness: brightness,
         ).copyWith(surface: background),
         active: options.themeBase == null,
-        onTap: () => ref
-            .read(persistenceProvider.notifier)
-            .setOptions(options.copyWith(themeBase: (null,))),
+        onTap: () =>
+            ref.read(persistenceProvider.notifier).setOptions(options.copyWith(themeBase: (null,))),
       ));
     }
 
@@ -50,9 +49,8 @@ class ThemePreview extends StatelessWidget {
           brightness: brightness,
         ).copyWith(surface: background),
         active: options.themeBase == tb,
-        onTap: () => ref
-            .read(persistenceProvider.notifier)
-            .setOptions(options.copyWith(themeBase: (tb,))),
+        onTap: () =>
+            ref.read(persistenceProvider.notifier).setOptions(options.copyWith(themeBase: (tb,))),
       ));
     }
 
@@ -82,8 +80,7 @@ class _ThemeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final borderWidth = active ? 3.0 : 1.0;
-    final borderColor =
-        active ? scheme.primary : scheme.surfaceContainerHighest;
+    final borderColor = active ? scheme.primary : scheme.surfaceContainerHighest;
 
     return GestureDetector(
       onTap: onTap,

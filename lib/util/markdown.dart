@@ -270,8 +270,7 @@ class _MentionSyntax extends InlineSyntax {
   bool onMatch(InlineParser parser, Match match) {
     final name = match.group(1)!;
     parser.addNode(
-      Element.text('a', '@$name')
-        ..attributes['href'] = 'https://anilist.co/user/$name',
+      Element.text('a', '@$name')..attributes['href'] = 'https://anilist.co/user/$name',
     );
     return true;
   }

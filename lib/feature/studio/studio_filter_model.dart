@@ -1,7 +1,7 @@
 import 'package:otraku/feature/media/media_models.dart';
 
 class StudioFilter {
-  StudioFilter({
+  const StudioFilter({
     this.sort = MediaSort.startDateDesc,
     this.inLists,
     this.isMain,

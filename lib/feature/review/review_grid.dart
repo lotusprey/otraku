@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -7,9 +8,10 @@ import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
 class ReviewGrid extends StatelessWidget {
-  const ReviewGrid(this.items);
+  const ReviewGrid(this.items, this.highContrast);
 
   final List<ReviewItem> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class ReviewGrid extends StatelessWidget {
         height: 200,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i]),
+        (_, i) => _Tile(items[i], highContrast),
         childCount: items.length,
       ),
     );
@@ -27,13 +29,14 @@ class ReviewGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item);
+  const _Tile(this.item, this.highContrast);
 
   final ReviewItem item;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return CardExtension.highContrast(highContrast)(
       child: InkWell(
         borderRadius: Theming.borderRadiusSmall,
         onTap: () => context.push(Routes.review(item.id, item.bannerUrl)),
@@ -44,8 +47,7 @@ class _Tile extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Theming.radiusSmall),
+                  borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
                   child: Hero(
                     tag: item.id,
                     child: CachedImage(item.bannerUrl!),

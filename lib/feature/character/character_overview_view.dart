@@ -51,11 +51,9 @@ class CharacterOverviewSubview extends StatelessWidget {
               _NameTable(character),
               const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
               SliverTableList([
-                if (character.dateOfBirth != null)
-                  ('Birth', character.dateOfBirth!),
+                if (character.dateOfBirth != null) ('Birth', character.dateOfBirth!),
                 if (character.age != null) ('Age', character.age!),
-                if (character.bloodType != null)
-                  ('Blood Type', character.bloodType!),
+                if (character.bloodType != null) ('Blood Type', character.bloodType!),
               ]),
               if (character.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 15)),
@@ -91,8 +89,7 @@ class __NameTableState extends State<_NameTable> {
       slivers: [
         SliverTableList([
           ('Full', widget.character.fullName),
-          if (widget.character.nativeName != null)
-            ('Native', widget.character.nativeName!),
+          if (widget.character.nativeName != null) ('Native', widget.character.nativeName!),
           ...widget.character.altNames.map((s) => ('Alternative', s)),
           if (_showSpoilers)
             ...widget.character.altNamesSpoilers.map(

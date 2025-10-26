@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -23,10 +24,10 @@ import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class ActivityView extends ConsumerStatefulWidget {
-  const ActivityView(this.id, this.feedId);
+  const ActivityView(this.id, this.sourceTag);
 
   final int id;
-  final int? feedId;
+  final ActivitiesTag? sourceTag;
 
   @override
   ConsumerState<ActivityView> createState() => _ActivityViewState();
@@ -46,7 +47,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
   @override
   Widget build(BuildContext context) {
     final activity = ref.watch(
-      activityProvider(widget.id).select((s) => s.valueOrNull?.activity),
+      activityProvider(widget.id).select((s) => s.value?.activity),
     );
 
     return AdaptiveScaffold(
@@ -66,16 +67,14 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
                 id: null,
                 activityId: widget.id,
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(widget.id).notifier)
-                  .appendReply(map),
+              onSaved: (map) => ref.read(activityProvider(widget.id).notifier).appendReply(map),
             ),
           ),
         ),
       ),
       child: _View(
         id: widget.id,
-        feedId: widget.feedId,
+        sourceTag: widget.sourceTag,
         scrollCtrl: _scrollCtrl,
       ),
     );
@@ -170,12 +169,12 @@ class _TopBarContent extends StatelessWidget {
 class _View extends ConsumerWidget {
   const _View({
     required this.id,
-    required this.feedId,
+    required this.sourceTag,
     required this.scrollCtrl,
   });
 
   final int id;
-  final int? feedId;
+  final ActivitiesTag? sourceTag;
   final PagedController scrollCtrl;
 
   @override
@@ -189,8 +188,8 @@ class _View extends ConsumerWidget {
 
     final viewerId = ref.watch(viewerIdProvider);
 
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
+    final options = ref.watch(
+      persistenceProvider.select((s) => s.options),
     );
 
     return ref.watch(activityProvider(id)).unwrapPrevious().when(
@@ -210,14 +209,14 @@ class _View extends ConsumerWidget {
                   SliverToBoxAdapter(
                     child: ActivityCard(
                       withHeader: false,
-                      analogClock: analogClock,
+                      analogClock: options.analogClock,
+                      highContrast: options.highContrast,
                       activity: data.activity,
                       footer: ActivityFooter(
                         viewerId: viewerId,
                         activity: data.activity,
                         toggleLike: () => _toggleLike(ref, data.activity),
-                        toggleSubscription: () =>
-                            _toggleSubscription(ref, data.activity),
+                        toggleSubscription: () => _toggleSubscription(ref, data.activity),
                         togglePin: () => _togglePin(ref, data.activity),
                         remove: () => _remove(context, ref, data.activity),
                         onEdited: (map) => _onEdited(ref, map),
@@ -230,7 +229,8 @@ class _View extends ConsumerWidget {
                       childCount: data.replies.items.length,
                       (context, i) => ReplyCard(
                         activityId: id,
-                        analogClock: analogClock,
+                        analogClock: options.analogClock,
+                        highContrast: options.highContrast,
                         reply: data.replies.items[i],
                         toggleLike: () => ref
                             .read(activityProvider(id).notifier)
@@ -247,28 +247,24 @@ class _View extends ConsumerWidget {
   }
 
   Future<Object?> _toggleLike(WidgetRef ref, Activity activity) {
-    if (feedId != null) {
-      return ref
-          .read(activitiesProvider(feedId!).notifier)
-          .toggleLike(activity);
+    if (sourceTag != null) {
+      return ref.read(activitiesProvider(sourceTag!).notifier).toggleLike(activity);
     }
 
     return ref.read(activityProvider(id).notifier).toggleLike();
   }
 
   Future<Object?> _toggleSubscription(WidgetRef ref, Activity activity) {
-    if (feedId != null) {
-      return ref
-          .read(activitiesProvider(feedId!).notifier)
-          .toggleSubscription(activity);
+    if (sourceTag != null) {
+      return ref.read(activitiesProvider(sourceTag!).notifier).toggleSubscription(activity);
     }
 
     return ref.read(activityProvider(id).notifier).toggleSubscription();
   }
 
   Future<Object?> _togglePin(WidgetRef ref, Activity activity) {
-    if (feedId != null) {
-      return ref.read(activitiesProvider(feedId!).notifier).togglePin(activity);
+    if (sourceTag != null) {
+      return ref.read(activitiesProvider(sourceTag!).notifier).togglePin(activity);
     }
 
     return ref.read(activityProvider(id).notifier).togglePin();
@@ -281,8 +277,8 @@ class _View extends ConsumerWidget {
   ) {
     Navigator.pop(context);
 
-    if (feedId != null) {
-      return ref.read(activitiesProvider(feedId!).notifier).remove(activity);
+    if (sourceTag != null) {
+      return ref.read(activitiesProvider(sourceTag!).notifier).remove(activity);
     }
 
     return ref.read(activityProvider(id).notifier).remove();
@@ -300,8 +296,8 @@ class _View extends ConsumerWidget {
     if (activity == null) return;
 
     ref.read(activityProvider(id).notifier).replace(activity);
-    if (feedId != null) {
-      ref.read(activitiesProvider(feedId!).notifier).replace(activity);
+    if (sourceTag != null) {
+      ref.read(activitiesProvider(sourceTag!).notifier).replace(activity);
     }
   }
 
@@ -315,8 +311,7 @@ class _View extends ConsumerWidget {
       CompositionView(
         defaultText: '@${activity.authorName} ',
         tag: ActivityReplyCompositionTag(id: null, activityId: id),
-        onSaved: (map) =>
-            ref.read(activityProvider(id).notifier).appendReply(map),
+        onSaved: (map) => ref.read(activityProvider(id).notifier).appendReply(map),
       ),
     );
   }

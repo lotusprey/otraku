@@ -57,8 +57,7 @@ class EditButtons extends StatelessWidget {
               primaryAction: 'Yes',
               secondaryAction: 'No',
               onConfirm: () async {
-                final err =
-                    await ref.read(entryEditProvider(tag).notifier).remove();
+                final err = await ref.read(entryEditProvider(tag).notifier).remove();
 
                 if (err == null) {
                   callback?.call(entryEdit);

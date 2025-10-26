@@ -113,8 +113,7 @@ class CommentTile extends StatelessWidget {
                               threadId: comment.threadId,
                               parentCommentId: comment.id,
                             ),
-                            onSaved: (map) =>
-                                interaction!.onReplySaved(map, comment.id),
+                            onSaved: (map) => interaction!.onReplySaved(map, comment.id),
                           ),
                         ),
                         child: Row(
@@ -224,10 +223,7 @@ class CommentTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         userRow,
-        if (depth == 0)
-          Card(child: contentColumn)
-        else
-          Card.outlined(child: contentColumn),
+        if (depth == 0) Card(child: contentColumn) else Card.outlined(child: contentColumn),
       ],
     );
   }
@@ -285,9 +281,7 @@ class __LikeButtonState extends State<_LikeButton> {
             ),
             const SizedBox(width: 5),
             Icon(
-              !comment.isLiked
-                  ? Icons.favorite_outline_rounded
-                  : Icons.favorite_rounded,
+              !comment.isLiked ? Icons.favorite_outline_rounded : Icons.favorite_rounded,
               size: Theming.iconSmall,
               color: comment.isLiked ? ColorScheme.of(context).primary : null,
             ),

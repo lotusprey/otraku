@@ -4,7 +4,7 @@ import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
-import 'package:otraku/widget/grid/chip_grids.dart';
+import 'package:otraku/widget/grid/chip_grid.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
@@ -73,7 +73,7 @@ class TagPickerState extends State<TagPicker> {
       ));
     }
 
-    return ChipGridTemplate(
+    return ChipGrid(
       title: 'Tags',
       placeholder: 'tags',
       children: children,
@@ -94,7 +94,7 @@ class TagPickerState extends State<TagPicker> {
                       child: Text('Failed to load tags: ${error.toString()}'),
                     ),
                   );
-                case _:
+                case AsyncLoading():
                   return const Center(child: Loader());
               }
 
@@ -385,13 +385,10 @@ class _TagCategoryChip extends StatelessWidget {
       child: Chip(
         label: Text(name),
         labelStyle: selected
-            ? TextTheme.of(context)
-                .bodyMedium
-                ?.copyWith(color: ColorScheme.of(context).surface)
+            ? TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).surface)
             : TextTheme.of(context).bodyMedium,
-        backgroundColor: selected
-            ? ColorScheme.of(context).primary
-            : ColorScheme.of(context).onSecondary,
+        backgroundColor:
+            selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSecondary,
         side: selected
             ? BorderSide(color: ColorScheme.of(context).primary)
             : BorderSide(color: ColorScheme.of(context).onSurface),

@@ -1,7 +1,7 @@
 import 'package:otraku/feature/media/media_models.dart';
 
 class StaffFilter {
-  StaffFilter({
+  const StaffFilter({
     this.sort = MediaSort.startDateDesc,
     this.ofAnime,
     this.inLists,

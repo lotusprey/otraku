@@ -8,17 +8,20 @@ import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final socialProvider =
-    AsyncNotifierProvider.autoDispose.family<SocialNotifier, Social, int>(
+final socialProvider = AsyncNotifierProvider.autoDispose.family<SocialNotifier, Social, int>(
   SocialNotifier.new,
 );
 
-class SocialNotifier extends AutoDisposeFamilyAsyncNotifier<Social, int> {
+class SocialNotifier extends AsyncNotifier<Social> {
+  SocialNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Social> build(int arg) => _fetch(const Social(), null);
+  FutureOr<Social> build() => _fetch(const Social(), null);
 
   Future<void> fetch(SocialTab tab) async {
-    final oldState = state.valueOrNull ?? const Social();
+    final oldState = state.value ?? const Social();
     switch (tab) {
       case SocialTab.following:
         if (!oldState.following.hasNext) return;

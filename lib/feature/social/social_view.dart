@@ -26,16 +26,14 @@ class SocialView extends ConsumerStatefulWidget {
   ConsumerState<SocialView> createState() => _SocialViewState();
 }
 
-class _SocialViewState extends ConsumerState<SocialView>
-    with SingleTickerProviderStateMixin {
+class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: SocialTab.values.length,
     vsync: this,
   );
   late final _scrollCtrl = PagedController(
-    loadMore: () => ref
-        .read(socialProvider(widget.id).notifier)
-        .fetch(SocialTab.values[_tabCtrl.index]),
+    loadMore: () =>
+        ref.read(socialProvider(widget.id).notifier).fetch(SocialTab.values[_tabCtrl.index]),
   );
 
   @override
@@ -62,7 +60,7 @@ class _SocialViewState extends ConsumerState<SocialView>
 
     final count = ref.watch(
       socialProvider(widget.id).select(
-        (s) => s.valueOrNull?.getCount(tab) ?? 0,
+        (s) => s.value?.getCount(tab) ?? 0,
       ),
     );
 

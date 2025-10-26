@@ -26,8 +26,7 @@ class SettingsAppSubview extends ConsumerWidget {
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final update = (Options options) =>
-        ref.read(persistenceProvider.notifier).setOptions(options);
+    final update = (Options options) => ref.read(persistenceProvider.notifier).setOptions(options);
 
     return ListView(
       controller: scrollCtrl,
@@ -75,7 +74,7 @@ class SettingsAppSubview extends ConsumerWidget {
             const SizedBox(height: Theming.offset / 2),
             StatefulSwitchListTile(
               title: const Text('High Contrast'),
-              subtitle: const Text('Pure white/black backgrounds'),
+              subtitle: const Text('Pure backgrounds & outlined cards'),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
             ),

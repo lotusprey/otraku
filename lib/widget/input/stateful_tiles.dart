@@ -59,8 +59,7 @@ class StatefulCheckboxListTile extends StatefulWidget {
   final bool tristate;
 
   @override
-  State<StatefulCheckboxListTile> createState() =>
-      _StatefulCheckboxListTileState();
+  State<StatefulCheckboxListTile> createState() => _StatefulCheckboxListTileState();
 }
 
 class _StatefulCheckboxListTileState extends State<StatefulCheckboxListTile> {
@@ -102,12 +101,10 @@ class StatefulSegmentedButton<T> extends StatefulWidget {
   final List<ButtonSegment<T>> segments;
 
   @override
-  State<StatefulSegmentedButton<T>> createState() =>
-      _StatefulSegmentedButtonState<T>();
+  State<StatefulSegmentedButton<T>> createState() => _StatefulSegmentedButtonState<T>();
 }
 
-class _StatefulSegmentedButtonState<T>
-    extends State<StatefulSegmentedButton<T>> {
+class _StatefulSegmentedButtonState<T> extends State<StatefulSegmentedButton<T>> {
   late var _value = widget.value;
 
   @override

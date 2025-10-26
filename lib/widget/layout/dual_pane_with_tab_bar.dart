@@ -49,9 +49,7 @@ class DualPaneWithTabBar extends StatelessWidget {
                     filter: Theming.blurFilter,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .navigationBarTheme
-                            .backgroundColor,
+                        color: Theme.of(context).navigationBarTheme.backgroundColor,
                       ),
                       child: SizedBox(
                         height: topPadding,

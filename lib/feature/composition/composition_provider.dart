@@ -6,15 +6,18 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 
-final compositionProvider = AsyncNotifierProvider.autoDispose
-    .family<CompositionNotifier, Composition, CompositionTag>(
+final compositionProvider =
+    AsyncNotifierProvider.autoDispose.family<CompositionNotifier, Composition, CompositionTag>(
   CompositionNotifier.new,
 );
 
-class CompositionNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Composition, CompositionTag> {
+class CompositionNotifier extends AsyncNotifier<Composition> {
+  CompositionNotifier(this.arg);
+
+  final CompositionTag arg;
+
   @override
-  FutureOr<Composition> build(arg) {
+  FutureOr<Composition> build() {
     if (arg.id == null) {
       return switch (arg) {
         MessageActivityCompositionTag _ => PrivateComposition('', false),
@@ -23,24 +26,20 @@ class CompositionNotifier
     }
 
     return switch (arg) {
-      StatusActivityCompositionTag(id: var id) => ref
-            .read(repositoryProvider)
-            .request(GqlQuery.activityComposition, {'id': id}).then(
+      StatusActivityCompositionTag(id: var id) =>
+        ref.read(repositoryProvider).request(GqlQuery.activityComposition, {'id': id}).then(
           (data) => Composition(data['Activity']['text']),
         ),
-      MessageActivityCompositionTag(id: var id) => ref
-            .read(repositoryProvider)
-            .request(GqlQuery.activityComposition, {'id': id}).then(
+      MessageActivityCompositionTag(id: var id) =>
+        ref.read(repositoryProvider).request(GqlQuery.activityComposition, {'id': id}).then(
           (data) => Composition(data['Activity']['message']),
         ),
-      ActivityReplyCompositionTag(id: var id) => ref
-            .read(repositoryProvider)
-            .request(GqlQuery.activityReplyComposition, {'id': id}).then(
+      ActivityReplyCompositionTag(id: var id) =>
+        ref.read(repositoryProvider).request(GqlQuery.activityReplyComposition, {'id': id}).then(
           (data) => Composition(data['ActivityReply']['text']),
         ),
-      CommentCompositionTag(id: var id) => ref
-            .read(repositoryProvider)
-            .request(GqlQuery.commentComposition, {'id': id}).then(
+      CommentCompositionTag(id: var id) =>
+        ref.read(repositoryProvider).request(GqlQuery.commentComposition, {'id': id}).then(
           (data) => Composition(_findComment(data['ThreadComment'][0])),
         ),
     };
@@ -62,7 +61,7 @@ class CompositionNotifier
   }
 
   Future<AsyncValue<Map<String, dynamic>>> save() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return const AsyncValue.loading();
 
     return AsyncValue.guard(() async {

@@ -63,9 +63,8 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
 
     return AdaptiveScaffold(
       topBar: TopBar(
-        trailing: thread.hasValue
-            ? _topBarTrailingContent(thread.value!, viewerId)
-            : const <Widget>[],
+        trailing:
+            thread.hasValue ? _topBarTrailingContent(thread.value!, viewerId) : const <Widget>[],
       ),
       floatingAction: HidingFloatingActionButton(
         key: const Key('Reply'),
@@ -80,9 +79,8 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
                 threadId: widget.id,
                 parentCommentId: null,
               ),
-              onSaved: (map) => ref
-                  .read(threadProvider(widget.id).notifier)
-                  .appendComment(map, null),
+              onSaved: (map) =>
+                  ref.read(threadProvider(widget.id).notifier).appendComment(map, null),
             ),
           ),
         ),
@@ -90,14 +88,12 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       bottomBar: thread.hasValue && thread.value!.totalCommentPages > 1
           ? _BottomBar(
               thread: thread.value!,
-              changePage: (page) =>
-                  ref.read(threadProvider(widget.id).notifier).changePage(page),
+              changePage: (page) => ref.read(threadProvider(widget.id).notifier).changePage(page),
             )
           : null,
       child: ConstrainedView(
         child: switch (thread.unwrapPrevious()) {
-          AsyncData(:final value) =>
-            _Content(ref, value, options.analogClock, _scrollCtrl),
+          AsyncData(:final value) => _Content(ref, value, options.analogClock, _scrollCtrl),
           AsyncError() => CustomScrollView(
               physics: Theming.bouncyPhysics,
               slivers: [
@@ -111,7 +107,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
                 ),
               ],
             ),
-          _ => const Center(child: Loader()),
+          AsyncLoading() => const Center(child: Loader()),
         },
       ),
     );
@@ -191,9 +187,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       ];
 
   void _toggleSubscription() async {
-    final err = await ref
-        .read(threadProvider(widget.id).notifier)
-        .toggleThreadSubscription();
+    final err = await ref.read(threadProvider(widget.id).notifier).toggleThreadSubscription();
 
     if (!mounted) return;
 
@@ -247,9 +241,7 @@ class __BottomBarState extends State<_BottomBar> {
     final previousPageButton = IconButton(
       tooltip: 'Previous page',
       icon: const Icon(Icons.arrow_back_ios_rounded),
-      onPressed: thread.commentPage == 1
-          ? null
-          : () => widget.changePage(thread.commentPage - 1),
+      onPressed: thread.commentPage == 1 ? null : () => widget.changePage(thread.commentPage - 1),
     );
     final nextPageButton = IconButton(
       tooltip: 'Next page',
@@ -430,12 +422,10 @@ class _Content extends StatelessWidget {
                 viewerId: viewerId,
                 analogClock: analogClock,
                 interaction: (
-                  onReplySaved: (map, commentId) => ref
-                      .read(threadProvider(info.id).notifier)
-                      .appendComment(map, commentId),
-                  toggleLike: (commentId) => ref
-                      .read(threadProvider(info.id).notifier)
-                      .toggleCommentLike(commentId),
+                  onReplySaved: (map, commentId) =>
+                      ref.read(threadProvider(info.id).notifier).appendComment(map, commentId),
+                  toggleLike: (commentId) =>
+                      ref.read(threadProvider(info.id).notifier).toggleCommentLike(commentId),
                 ),
               ),
             );
@@ -475,9 +465,7 @@ class __LikeButtonState extends State<_LikeButton> {
             info.likeCount = prevLikeCount + 1;
           });
 
-          final err = await widget.ref
-              .read(threadProvider(info.id).notifier)
-              .toggleThreadLike();
+          final err = await widget.ref.read(threadProvider(info.id).notifier).toggleThreadLike();
 
           if (err == null) return;
 
@@ -502,9 +490,7 @@ class __LikeButtonState extends State<_LikeButton> {
             ),
             const SizedBox(width: 5),
             Icon(
-              !info.isLiked
-                  ? Icons.favorite_outline_rounded
-                  : Icons.favorite_rounded,
+              !info.isLiked ? Icons.favorite_outline_rounded : Icons.favorite_rounded,
               size: Theming.iconSmall,
               color: info.isLiked ? ColorScheme.of(context).primary : null,
             ),

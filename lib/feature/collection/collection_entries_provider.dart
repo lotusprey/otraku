@@ -6,8 +6,7 @@ import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/feature/tag/tag_provider.dart';
 
-final collectionEntriesProvider =
-    Provider.autoDispose.family<List<Entry>, CollectionTag>(
+final collectionEntriesProvider = Provider.autoDispose.family<List<Entry>, CollectionTag>(
   (ref, CollectionTag tag) {
     final filter = ref.watch(collectionFilterProvider(tag));
     final mediaFilter = filter.mediaFilter;
@@ -17,14 +16,9 @@ final collectionEntriesProvider =
         .watch(collectionProvider(tag).notifier)
         .ensureSorted(mediaFilter.sort, mediaFilter.previewSort);
 
-    final entries = ref
-            .watch(collectionProvider(tag))
-            .unwrapPrevious()
-            .valueOrNull
-            ?.list
-            .entries ??
-        const [];
-    final tags = ref.watch(tagsProvider).valueOrNull;
+    final entries =
+        ref.watch(collectionProvider(tag)).unwrapPrevious().value?.list.entries ?? const [];
+    final tags = ref.watch(tagsProvider).value;
 
     return _filter(entries, mediaFilter, search, tags);
   },
@@ -37,9 +31,8 @@ List<Entry> _filter(
   TagCollection? tags,
 ) {
   final entries = <Entry>[];
-  final releaseStartFrom = mediaFilter.startYearFrom != null
-      ? DateTime(mediaFilter.startYearFrom!)
-      : DateTime(1920);
+  final releaseStartFrom =
+      mediaFilter.startYearFrom != null ? DateTime(mediaFilter.startYearFrom!) : DateTime(1920);
   final releaseStartTo = mediaFilter.startYearTo != null
       ? DateTime(mediaFilter.startYearTo! + 1)
       : DateTime.now().add(const Duration(days: 900));
@@ -69,18 +62,15 @@ List<Entry> _filter(
       if (!contains) continue;
     }
 
-    if (mediaFilter.country != null &&
-        entry.country != mediaFilter.country!.code) {
+    if (mediaFilter.country != null && entry.country != mediaFilter.country!.code) {
       continue;
     }
 
-    if (mediaFilter.formats.isNotEmpty &&
-        !mediaFilter.formats.contains(entry.format)) {
+    if (mediaFilter.formats.isNotEmpty && !mediaFilter.formats.contains(entry.format)) {
       continue;
     }
 
-    if (mediaFilter.statuses.isNotEmpty &&
-        !mediaFilter.statuses.contains(entry.releaseStatus)) {
+    if (mediaFilter.statuses.isNotEmpty && !mediaFilter.statuses.contains(entry.releaseStatus)) {
       continue;
     }
 
@@ -133,13 +123,11 @@ List<Entry> _filter(
       if (isIn) continue;
     }
 
-    if (mediaFilter.isPrivate != null &&
-        entry.isPrivate != mediaFilter.isPrivate) {
+    if (mediaFilter.isPrivate != null && entry.isPrivate != mediaFilter.isPrivate) {
       continue;
     }
 
-    if (mediaFilter.hasNotes != null &&
-        entry.notes.isNotEmpty != mediaFilter.hasNotes) {
+    if (mediaFilter.hasNotes != null && entry.notes.isNotEmpty != mediaFilter.hasNotes) {
       continue;
     }
 

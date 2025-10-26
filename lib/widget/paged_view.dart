@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -13,6 +14,7 @@ class PagedView<T> extends StatelessWidget {
     required this.onRefresh,
     required this.onData,
     this.padded = true,
+    this.header,
   });
 
   final ProviderListenable<AsyncValue<Paged<T>>> provider;
@@ -30,6 +32,8 @@ class PagedView<T> extends StatelessWidget {
 
   /// If [padded] is true, the result of [onData] will be padded.
   final bool padded;
+
+  final Widget? header;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,7 @@ class PagedView<T> extends StatelessWidget {
                   SliverRefreshControl(
                     onRefresh: () => onRefresh(ref.invalidate),
                   ),
+                  if (header != null) header!,
                   const SliverFillRemaining(
                     child: Center(child: Text('Failed to load')),
                   ),
@@ -68,6 +73,7 @@ class PagedView<T> extends StatelessWidget {
                       SliverRefreshControl(
                         onRefresh: () => onRefresh(ref.invalidate),
                       ),
+                      if (header != null) header!,
                       data.items.isEmpty
                           ? const SliverFillRemaining(
                               child: Center(child: Text('No results')),

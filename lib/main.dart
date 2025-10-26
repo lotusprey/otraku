@@ -12,7 +12,7 @@ import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/theming.dart';
 
 Future<void> main() async {
-  final container = ProviderContainer();
+  final container = ProviderContainer(retry: (retryCount, error) => null);
   await container.read(persistenceProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
 
@@ -38,8 +38,7 @@ class AppState extends ConsumerState<_App> {
   void initState() {
     super.initState();
 
-    final mustConfirmExit =
-        () => ref.read(persistenceProvider).options.confirmExit;
+    final mustConfirmExit = () => ref.read(persistenceProvider).options.confirmExit;
 
     _router = Routes.buildRouter(mustConfirmExit);
 
@@ -154,13 +153,11 @@ class AppState extends ConsumerState<_App> {
             final directionality = Directionality.of(context);
 
             final theming = Theming(
-              formFactor: viewSize.width < Theming.windowWidthMedium
-                  ? FormFactor.phone
-                  : FormFactor.tablet,
-              rightButtonOrientation:
-                  options.buttonOrientation == ButtonOrientation.auto
-                      ? directionality == TextDirection.ltr
-                      : options.buttonOrientation == ButtonOrientation.right,
+              formFactor:
+                  viewSize.width < Theming.windowWidthMedium ? FormFactor.phone : FormFactor.tablet,
+              rightButtonOrientation: options.buttonOrientation == ButtonOrientation.auto
+                  ? directionality == TextDirection.ltr
+                  : options.buttonOrientation == ButtonOrientation.right,
             );
 
             // Override the [textScaleFactor], because some devices apply

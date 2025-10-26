@@ -46,9 +46,7 @@ class CompositionView extends StatelessWidget {
                 return _CompositionView(
                   composition: data,
                   trySave: () async {
-                    final result = await ref
-                        .read(compositionProvider(tag).notifier)
-                        .save();
+                    final result = await ref.read(compositionProvider(tag).notifier).save();
 
                     return result.maybeWhen(
                       data: (data) {
@@ -77,8 +75,7 @@ class _CompositionView extends StatefulWidget {
   State<_CompositionView> createState() => __CompositionViewState();
 }
 
-class __CompositionViewState extends State<_CompositionView>
-    with SingleTickerProviderStateMixin {
+class __CompositionViewState extends State<_CompositionView> with SingleTickerProviderStateMixin {
   late final _textCtrl = TextEditingController(text: widget.composition.text);
   late final _tabCtrl = TabController(length: 2, vsync: this);
   String _parsedText = '';
@@ -402,9 +399,7 @@ class _FormatButton extends StatelessWidget {
 
           final offset = textCtrl.selection.isCollapsed
               ? textCtrl.selection.end + startDelimiter.length
-              : textCtrl.selection.end +
-                  startDelimiter.length +
-                  endDelimiter.length;
+              : textCtrl.selection.end + startDelimiter.length + endDelimiter.length;
           textCtrl.value = TextEditingValue(
             text: text,
             selection: TextSelection.collapsed(offset: offset),
@@ -437,9 +432,7 @@ class __PrivateButtonState extends State<_PrivateButton> {
 
           SnackBarExtension.show(
             context,
-            widget.composition.isPrivate
-                ? 'Message is now private'
-                : 'Message is now public',
+            widget.composition.isPrivate ? 'Message is now private' : 'Message is now public',
           );
         },
       );

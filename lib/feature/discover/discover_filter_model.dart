@@ -41,8 +41,7 @@ class DiscoverFilter {
         mediaFilter: mediaFilter ?? this.mediaFilter,
         hasBirthday: hasBirthday ?? this.hasBirthday,
         reviewsFilter: reviewsFilter ?? this.reviewsFilter,
-        recommendationsFilter:
-            recommendationsFilter ?? this.recommendationsFilter,
+        recommendationsFilter: recommendationsFilter ?? this.recommendationsFilter,
       );
 }
 
@@ -171,8 +170,7 @@ class DiscoverMediaFilter {
           'format_in': animeFormats.map((v) => v.value).toList(),
         if (!ofAnime && mangaFormats.isNotEmpty)
           'format_in': mangaFormats.map((v) => v.value).toList(),
-        if (statuses.isNotEmpty)
-          'status_in': statuses.map((v) => v.value).toList(),
+        if (statuses.isNotEmpty) 'status_in': statuses.map((v) => v.value).toList(),
         if (sources.isNotEmpty) 'sources': sources.map((v) => v.value).toList(),
         if (ofAnime && season != null) 'season': season!.value,
         if (genreIn.isNotEmpty) 'genre_in': genreIn,

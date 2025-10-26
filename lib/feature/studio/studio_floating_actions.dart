@@ -22,15 +22,12 @@ class StudioFilterButton extends StatelessWidget {
       onPressed: () {
         var filter = ref.read(studioFilterProvider(id));
 
-        final onDone =
-            (_) => ref.read(studioFilterProvider(id).notifier).state = filter;
+        final onDone = (_) => ref.read(studioFilterProvider(id).notifier).state = filter;
 
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: Theming.normalTapTarget * 4 +
-                MediaQuery.paddingOf(context).bottom +
-                40,
+            initialHeight: Theming.normalTapTarget * 4 + MediaQuery.paddingOf(context).bottom + 40,
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
@@ -21,16 +22,18 @@ class ActivityCard extends StatelessWidget {
     required this.footer,
     required this.withHeader,
     required this.analogClock,
+    required this.highContrast,
   });
 
   final Activity activity;
   final ActivityFooter footer;
   final bool withHeader;
   final bool analogClock;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
-    final body = Card(
+    final body = CardExtension.highContrast(highContrast)(
       margin: const EdgeInsets.only(bottom: Theming.offset),
       child: Padding(
         padding: const EdgeInsets.only(
@@ -289,9 +292,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                         ? Icons.favorite_outline_rounded
                         : Icons.favorite_rounded,
                     size: Theming.iconSmall,
-                    color: activity.isLiked
-                        ? ColorScheme.of(context).primary
-                        : null,
+                    color: activity.isLiked ? ColorScheme.of(context).primary : null,
                   ),
                 ],
               ),
@@ -315,8 +316,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
           if (activity.isOwned) {
             if (activity is! MessageActivity) {
               ownershipButtons.add(ListTile(
-                title:
-                    activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                title: activity.isPinned ? const Text('Unpin') : const Text('Pin'),
                 leading: activity.isPinned
                     ? const Icon(Icons.push_pin)
                     : const Icon(Icons.push_pin_outlined),
@@ -383,9 +383,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             [
               ...ownershipButtons,
               ListTile(
-                title: !activity.isSubscribed
-                    ? const Text('Subscribe')
-                    : const Text('Unsubscribe'),
+                title: !activity.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
                 leading: !activity.isSubscribed
                     ? const Icon(Ionicons.notifications_outline)
                     : const Icon(Ionicons.notifications_off_outline),

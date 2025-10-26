@@ -66,11 +66,9 @@ class _MediaRecommendationsGrid extends StatelessWidget {
         childCount: items.length,
         (context, i) {
           final textRailItems = <String, bool>{
-            if (items[i].entryStatus != null)
-              items[i].entryStatus!.label(items[i].isAnime): true,
+            if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
             if (items[i].format != null) items[i].format!.label: false,
-            if (items[i].releaseYear != null)
-              items[i].releaseYear!.toString(): false,
+            if (items[i].releaseYear != null) items[i].releaseYear!.toString(): false,
           };
 
           return Card(

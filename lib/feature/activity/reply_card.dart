@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
@@ -21,12 +22,14 @@ class ReplyCard extends StatelessWidget {
     required this.activityId,
     required this.reply,
     required this.analogClock,
+    required this.highContrast,
     required this.toggleLike,
   });
 
   final int activityId;
   final ActivityReply reply;
   final bool analogClock;
+  final bool highContrast;
   final Future<Object?> Function() toggleLike;
 
   @override
@@ -56,7 +59,7 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 5),
-        Card(
+        CardExtension.highContrast(highContrast)(
           margin: const EdgeInsets.only(bottom: Theming.offset),
           child: Padding(
             padding: const EdgeInsets.only(
@@ -126,9 +129,7 @@ class ReplyCard extends StatelessWidget {
                   activityId: activityId,
                 ),
                 onSaved: (map) {
-                  ref
-                      .read(activityProvider(activityId).notifier)
-                      .replaceReply(map);
+                  ref.read(activityProvider(activityId).notifier).replaceReply(map);
                   Navigator.pop(context);
                 },
               ),
@@ -143,9 +144,8 @@ class ReplyCard extends StatelessWidget {
               primaryAction: 'Yes',
               secondaryAction: 'No',
               onConfirm: () async {
-                final err = await ref
-                    .read(activityProvider(activityId).notifier)
-                    .removeReply(reply.id);
+                final err =
+                    await ref.read(activityProvider(activityId).notifier).removeReply(reply.id);
 
                 if (err == null) {
                   if (context.mounted) Navigator.pop(context);
@@ -188,9 +188,7 @@ class _ReplyMentionButton extends StatelessWidget {
                 id: null,
                 activityId: activityId,
               ),
-              onSaved: (map) => ref
-                  .read(activityProvider(activityId).notifier)
-                  .appendReply(map),
+              onSaved: (map) => ref.read(activityProvider(activityId).notifier).appendReply(map),
             ),
           ),
           child: const Icon(Icons.reply_rounded, size: Theming.iconSmall),
@@ -232,13 +230,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
               ),
               const SizedBox(width: 5),
               Icon(
-                !widget.reply.isLiked
-                    ? Icons.favorite_outline_rounded
-                    : Icons.favorite_rounded,
+                !widget.reply.isLiked ? Icons.favorite_outline_rounded : Icons.favorite_rounded,
                 size: Theming.iconSmall,
-                color: widget.reply.isLiked
-                    ? ColorScheme.of(context).primary
-                    : null,
+                color: widget.reply.isLiked ? ColorScheme.of(context).primary : null,
               ),
             ],
           ),

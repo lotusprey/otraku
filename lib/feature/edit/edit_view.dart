@@ -58,7 +58,7 @@ class EditView extends ConsumerWidget {
             ),
           ),
         ),
-      _ => SheetWithButtonRow(
+      AsyncLoading() => SheetWithButtonRow(
           buttons: EditButtons(ref, tag, null, callback),
           builder: (context, scrollCtrl) => const Center(
             child: Padding(
@@ -83,7 +83,7 @@ class _EditView extends ConsumerWidget {
     final readableNotifier = entryEditProvider(tag).notifier;
 
     final settings = ref.watch(
-      settingsProvider.select((s) => s.valueOrNull),
+      settingsProvider.select((s) => s.value),
     );
 
     final statusField = SliverToBoxAdapter(
@@ -91,9 +91,7 @@ class _EditView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
         child: ChipSelector(
           title: 'Status',
-          items: ListStatus.values
-              .map((v) => (v.label(entryEdit.baseEntry.isAnime), v))
-              .toList(),
+          items: ListStatus.values.map((v) => (v.label(entryEdit.baseEntry.isAnime), v)).toList(),
           value: entryEdit.listStatus,
           onChanged: (status) => ref.read(readableNotifier).updateBy(
             (s) {
@@ -142,9 +140,7 @@ class _EditView extends ConsumerWidget {
           onChanged: (startedAt) => ref.read(readableNotifier).updateBy((s) {
             var listStatus = s.listStatus;
 
-            if (startedAt != null &&
-                entryEdit.baseEntry.listStatus == null &&
-                listStatus == null) {
+            if (startedAt != null && entryEdit.baseEntry.listStatus == null && listStatus == null) {
               listStatus = ListStatus.current;
               SnackBarExtension.show(context, 'Status changed');
             }
@@ -166,8 +162,7 @@ class _EditView extends ConsumerWidget {
               listStatus = ListStatus.completed;
               String text = 'Status changed';
 
-              if (s.baseEntry.progressMax != null &&
-                  s.progress < s.baseEntry.progressMax!) {
+              if (s.baseEntry.progressMax != null && s.progress < s.baseEntry.progressMax!) {
                 progress = s.baseEntry.progressMax!;
                 text = 'Status & progress changed';
               }
@@ -247,8 +242,7 @@ class _EditView extends ConsumerWidget {
             ),
           SliverToBoxAdapter(
             child: SizedBox(
-              height:
-                  MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
+              height: MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
             ),
           )
         ],
@@ -271,20 +265,16 @@ class _EditView extends ConsumerWidget {
         String? text;
         if (progress == entryEdit.baseEntry.progressMax &&
             progress != entryEdit.baseEntry.progress) {
-          if (entryEdit.baseEntry.listStatus == status &&
-              status != ListStatus.completed) {
+          if (entryEdit.baseEntry.listStatus == status && status != ListStatus.completed) {
             status = ListStatus.completed;
             text = 'Status changed';
           }
 
           if (entryEdit.baseEntry.completedAt == null && completedAt == null) {
             completedAt = DateTime.now();
-            text = text == null
-                ? 'Completed date changed'
-                : 'Status & Completed date changed';
+            text = text == null ? 'Completed date changed' : 'Status & Completed date changed';
           }
-        } else if (entryEdit.baseEntry.progress == 0 &&
-            entryEdit.baseEntry.progress != progress) {
+        } else if (entryEdit.baseEntry.progress == 0 && entryEdit.baseEntry.progress != progress) {
           if (entryEdit.baseEntry.listStatus == status &&
               (status == null || status == ListStatus.planning)) {
             status = ListStatus.current;
@@ -293,9 +283,7 @@ class _EditView extends ConsumerWidget {
 
           if (entryEdit.baseEntry.startedAt == null && startedAt == null) {
             startedAt = DateTime.now();
-            text = text == null
-                ? 'Start date changed'
-                : 'Status & start date changed';
+            text = text == null ? 'Start date changed' : 'Status & start date changed';
           }
         }
 
@@ -317,8 +305,7 @@ class _EditView extends ConsumerWidget {
         label: 'Volume Progress',
         value: entryEdit.progressVolumes,
         maxValue: entryEdit.baseEntry.progressVolumesMax ?? 100000,
-        onChanged: (progressVolumes) =>
-            entryEdit.progressVolumes = progressVolumes,
+        onChanged: (progressVolumes) => entryEdit.progressVolumes = progressVolumes,
       );
 
       child = MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
@@ -360,8 +347,7 @@ class _EditView extends ConsumerWidget {
     final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
 
     if (!advancedScoringEnabled ||
-        scoreFormat != ScoreFormat.point100 &&
-            scoreFormat != ScoreFormat.point10Decimal) {
+        scoreFormat != ScoreFormat.point100 && scoreFormat != ScoreFormat.point10Decimal) {
       return const SliverToBoxAdapter(child: SizedBox());
     }
 
@@ -383,9 +369,7 @@ class _EditView extends ConsumerWidget {
       if (count > 0) avg /= count;
 
       if (entryEdit.score != avg) {
-        ref
-            .read(entryEditProvider(tag).notifier)
-            .updateBy((s) => s.copyWith(score: avg));
+        ref.read(entryEditProvider(tag).notifier).updateBy((s) => s.copyWith(score: avg));
       }
     };
 

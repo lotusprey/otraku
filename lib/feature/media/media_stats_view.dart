@@ -87,7 +87,7 @@ class _MediaRankGrid extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: Theming.offset),
       sliver: SliverGrid(
         gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Theming.minTapTarget,
+          height: Theming.normalTapTarget,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate(
@@ -98,8 +98,7 @@ class _MediaRankGrid extends StatelessWidget {
                 onTap: () {
                   final notifier = ref.read(discoverFilterProvider.notifier);
                   final filter = notifier.state.copyWith(
-                    type:
-                        info.isAnime ? DiscoverType.anime : DiscoverType.manga,
+                    type: info.isAnime ? DiscoverType.anime : DiscoverType.manga,
                     search: '',
                     mediaFilter: DiscoverMediaFilter(
                       notifier.state.mediaFilter.sort,
@@ -109,9 +108,8 @@ class _MediaRankGrid extends StatelessWidget {
                   filter.mediaFilter.season = ranks[i].season;
                   filter.mediaFilter.startYearFrom = ranks[i].year;
                   filter.mediaFilter.startYearTo = ranks[i].year;
-                  filter.mediaFilter.sort = ranks[i].typeIsScore
-                      ? MediaSort.scoreDesc
-                      : MediaSort.popularityDesc;
+                  filter.mediaFilter.sort =
+                      ranks[i].typeIsScore ? MediaSort.scoreDesc : MediaSort.popularityDesc;
                   if (info.format != null) {
                     if (info.isAnime) {
                       filter.mediaFilter.animeFormats.add(info.format!);
@@ -131,15 +129,14 @@ class _MediaRankGrid extends StatelessWidget {
                   child: Row(
                     children: [
                       Icon(
-                        ranks[i].typeIsScore
-                            ? Ionicons.star
-                            : Icons.favorite_rounded,
+                        ranks[i].typeIsScore ? Ionicons.star : Icons.favorite_rounded,
                         color: ColorScheme.of(context).onSurfaceVariant,
                       ),
                       const SizedBox(width: 5),
                       Expanded(
                         child: Text(
                           ranks[i].text,
+                          style: TextTheme.of(context).bodyMedium,
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
                         ),

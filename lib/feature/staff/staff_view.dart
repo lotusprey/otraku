@@ -52,8 +52,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
 
     final staff = ref.watch(staffProvider(widget.id));
 
-    final toggleFavorite =
-        ref.read(staffProvider(widget.id).notifier).toggleFavorite;
+    final toggleFavorite = ref.read(staffProvider(widget.id).notifier).toggleFavorite;
 
     return AdaptiveScaffold(
       floatingAction: HidingFloatingActionButton(
@@ -104,8 +103,7 @@ class _CompactView extends StatefulWidget {
   State<_CompactView> createState() => _CompactViewState();
 }
 
-class _CompactViewState extends State<_CompactView>
-    with SingleTickerProviderStateMixin {
+class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: StaffHeader.tabsWithOverview.length,
     vsync: this,
@@ -116,9 +114,7 @@ class _CompactViewState extends State<_CompactView>
     super.initState();
     widget.scrollCtrl.loadMore = () {
       if (_tabCtrl.index > 0) {
-        widget.ref
-            .read(staffRelationsProvider(widget.id).notifier)
-            .fetch(_tabCtrl.index == 1);
+        widget.ref.read(staffRelationsProvider(widget.id).notifier).fetch(_tabCtrl.index == 1);
       }
     };
   }
@@ -136,7 +132,7 @@ class _CompactViewState extends State<_CompactView>
     final header = StaffHeader.withTabBar(
       id: widget.id,
       imageUrl: widget.imageUrl,
-      staff: widget.staff.valueOrNull,
+      staff: widget.staff.value,
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
       toggleFavorite: widget.toggleFavorite,
@@ -186,8 +182,7 @@ class _LargeView extends StatefulWidget {
   State<_LargeView> createState() => _LargeViewState();
 }
 
-class _LargeViewState extends State<_LargeView>
-    with SingleTickerProviderStateMixin {
+class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
   late final _tabCtrl = TabController(
     length: StaffHeader.tabsWithoutOverview.length,
     vsync: this,
@@ -197,9 +192,7 @@ class _LargeViewState extends State<_LargeView>
   void initState() {
     super.initState();
     widget.scrollCtrl.loadMore = () {
-      widget.ref
-          .read(staffRelationsProvider(widget.id).notifier)
-          .fetch(_tabCtrl.index == 0);
+      widget.ref.read(staffRelationsProvider(widget.id).notifier).fetch(_tabCtrl.index == 0);
     };
   }
 
@@ -214,7 +207,7 @@ class _LargeViewState extends State<_LargeView>
     final header = StaffHeader.withoutTabBar(
       id: widget.id,
       imageUrl: widget.imageUrl,
-      staff: widget.staff.valueOrNull,
+      staff: widget.staff.value,
       toggleFavorite: widget.toggleFavorite,
     );
 
@@ -297,9 +290,7 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
   void initState() {
     super.initState();
     _scrollCtrl = widget.scrollCtrl ??
-        context
-            .findAncestorStateOfType<NestedScrollViewState>()!
-            .innerController;
+        context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);
     widget.tabCtrl.addListener(_tabListener);
@@ -336,8 +327,7 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
   }
 
   void _loadNextPage() {
-    final index =
-        widget.withOverview ? widget.tabCtrl.index : widget.tabCtrl.index + 1;
+    final index = widget.withOverview ? widget.tabCtrl.index : widget.tabCtrl.index + 1;
 
     if (index > 0) {
       ref.read(staffRelationsProvider(widget.id).notifier).fetch(index == 1);

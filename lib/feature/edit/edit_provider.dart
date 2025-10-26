@@ -10,22 +10,23 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final entryEditProvider = AsyncNotifierProvider.autoDispose
-    .family<EntryEditNotifier, EntryEdit, EditTag>(
+final entryEditProvider =
+    AsyncNotifierProvider.autoDispose.family<EntryEditNotifier, EntryEdit, EditTag>(
   EntryEditNotifier.new,
 );
 
-class EntryEditNotifier
-    extends AutoDisposeFamilyAsyncNotifier<EntryEdit, EditTag> {
+class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
+  EntryEditNotifier(this.arg);
+
+  final EditTag arg;
+
   @override
-  FutureOr<EntryEdit> build(arg) async {
+  FutureOr<EntryEdit> build() async {
     if (ref.exists(mediaProvider(arg.id))) {
       return ref.watch(mediaProvider(arg.id).selectAsync((s) => s.entryEdit));
     }
 
-    final data = await ref
-        .watch(repositoryProvider)
-        .request(GqlQuery.entry, {'mediaId': arg.id});
+    final data = await ref.watch(repositoryProvider).request(GqlQuery.entry, {'mediaId': arg.id});
 
     final settings = await ref.watch(
       settingsProvider.selectAsync((settings) => settings),
@@ -34,14 +35,13 @@ class EntryEditNotifier
     return EntryEdit(data['Media'], settings, arg.setComplete);
   }
 
-  void updateBy(EntryEdit Function(EntryEdit) callback) =>
-      state = switch (state) {
+  void updateBy(EntryEdit Function(EntryEdit) callback) => state = switch (state) {
         AsyncData(:final value) => AsyncData(callback(value)),
         _ => state,
       };
 
   Future<Object?> save() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     state = const AsyncLoading();
@@ -52,7 +52,7 @@ class EntryEditNotifier
         .getErrorOrNull();
 
     if (err != null) {
-      state = AsyncData(value);
+      state = AsyncValue.data(value);
       return err;
     }
 
@@ -68,7 +68,7 @@ class EntryEditNotifier
   }
 
   Future<Object?> remove() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null || value.baseEntry.entryId == null) return null;
 
     state = const AsyncLoading();
@@ -79,7 +79,7 @@ class EntryEditNotifier
     ).getErrorOrNull();
 
     if (err != null) {
-      state = AsyncData(value);
+      state = AsyncValue.data(value);
       return err;
     }
 
@@ -87,9 +87,7 @@ class EntryEditNotifier
     if (viewerId == null) return null;
 
     final tag = (userId: viewerId, ofAnime: value.baseEntry.isAnime);
-    ref
-        .read(collectionProvider(tag).notifier)
-        .removeEntry(value.baseEntry.mediaId);
+    ref.read(collectionProvider(tag).notifier).removeEntry(value.baseEntry.mediaId);
 
     return null;
   }

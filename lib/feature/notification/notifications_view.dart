@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
@@ -50,18 +51,19 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   @override
   Widget build(BuildContext context) {
     final unreadCount = ref.watch(
-      notificationsProvider.select((s) => s.valueOrNull?.total ?? 0),
+      notificationsProvider.select((s) => s.value?.total ?? 0),
     );
 
     final filter = ref.watch(notificationsFilterProvider);
 
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
+    final options = ref.watch(
+      persistenceProvider.select((s) => s.options),
     );
 
     final content = _Content(
       unreadCount: unreadCount,
-      analogClock: analogClock,
+      analogClock: options.analogClock,
+      highContrast: options.highContrast,
       scrollCtrl: _scrollCtrl,
     );
 
@@ -98,12 +100,9 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                 PillSelector(
                   selected: filter.index,
                   maxWidth: 120,
-                  onTap: (i) => ref
-                      .read(notificationsFilterProvider.notifier)
-                      .state = NotificationsFilter.values[i],
-                  items: NotificationsFilter.values
-                      .map((v) => Text(v.label))
-                      .toList(),
+                  onTap: (i) => ref.read(notificationsFilterProvider.notifier).state =
+                      NotificationsFilter.values[i],
+                  items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
                 ),
                 Expanded(child: content),
               ],
@@ -116,8 +115,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
       context,
       Consumer(
         builder: (context, ref, _) {
-          final index =
-              ref.read(notificationsFilterProvider.notifier).state.index;
+          final index = ref.read(notificationsFilterProvider.notifier).state.index;
 
           return SimpleSheet(
             initialHeight: PillSelector.expectedMinHeight(
@@ -131,8 +129,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     NotificationsFilter.values[i];
                 Navigator.pop(context);
               },
-              items:
-                  NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+              items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
             ),
           );
         },
@@ -145,11 +142,13 @@ class _Content extends StatelessWidget {
   const _Content({
     required this.unreadCount,
     required this.analogClock,
+    required this.highContrast,
     required this.scrollCtrl,
   });
 
   final int unreadCount;
   final bool analogClock;
+  final bool highContrast;
   final ScrollController scrollCtrl;
 
   @override
@@ -164,6 +163,7 @@ class _Content extends StatelessWidget {
             data.items[i],
             i < unreadCount,
             analogClock,
+            highContrast,
           ),
           childCount: data.items.length,
         ),
@@ -173,11 +173,12 @@ class _Content extends StatelessWidget {
 }
 
 class _NotificationItem extends StatelessWidget {
-  const _NotificationItem(this.item, this.unread, this.analogClock);
+  const _NotificationItem(this.item, this.unread, this.analogClock, this.highContrast);
 
   final SiteNotification item;
   final bool unread;
   final bool analogClock;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +188,8 @@ class _NotificationItem extends StatelessWidget {
         alignment: Alignment.topCenter,
         child: SizedBox(
           height: 90,
-          child: Card(
+          child: CardExtension.highContrast(highContrast)(
+            borderOnForeground: false,
             child: Row(
               children: [
                 if (item.imageUrl != null)
@@ -251,9 +253,7 @@ class _NotificationItem extends StatelessWidget {
                       MediaReleaseNotification item => context.push(
                           Routes.media(item.mediaId, item.imageUrl),
                         ),
-                      MediaChangeNotification() ||
-                      MediaDeletionNotification() =>
-                        showDialog(
+                      MediaChangeNotification() || MediaDeletionNotification() => showDialog(
                           context: context,
                           builder: (context) => _NotificationDialog(item),
                         ),

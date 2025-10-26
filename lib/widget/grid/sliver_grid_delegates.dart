@@ -31,8 +31,8 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
 
-    int crossAxisCount = (constraints.crossAxisExtent + crossAxisSpacing) ~/
-        (minWidth + crossAxisSpacing);
+    int crossAxisCount =
+        (constraints.crossAxisExtent + crossAxisSpacing) ~/ (minWidth + crossAxisSpacing);
 
     if (crossAxisCount < 1) crossAxisCount = 1;
 
@@ -97,8 +97,8 @@ class SliverGridDelegateWithMinWidthAndExtraHeight extends SliverGridDelegate {
   SliverGridLayout getLayout(SliverConstraints constraints) {
     assert(_debugAssertIsValid());
 
-    int crossAxisCount = (constraints.crossAxisExtent + crossAxisSpacing) ~/
-        (minWidth + crossAxisSpacing);
+    int crossAxisCount =
+        (constraints.crossAxisExtent + crossAxisSpacing) ~/ (minWidth + crossAxisSpacing);
     if (crossAxisCount < 1) crossAxisCount = 1;
 
     double usableCrossAxisExtent =

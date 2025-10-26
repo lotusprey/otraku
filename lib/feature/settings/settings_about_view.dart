@@ -20,8 +20,7 @@ class SettingsAboutSubview extends StatelessWidget {
         final padding = MediaQuery.paddingOf(context);
         final persistence = ref.watch(persistenceProvider);
         final lastBackgroundJob = persistence.appMeta.lastBackgroundJob;
-        final lastJobTimestamp =
-            lastBackgroundJob?.formattedDateTimeFromSeconds(
+        final lastJobTimestamp = lastBackgroundJob?.formattedDateTimeFromSeconds(
           persistence.options.analogClock,
         );
 
@@ -56,20 +55,18 @@ class SettingsAboutSubview extends StatelessWidget {
               ListTile(
                 leading: const Icon(Ionicons.logo_discord),
                 title: const Text('Discord'),
-                onTap: () => SnackBarExtension.launch(
-                    context, 'https://discord.gg/YN2QWVbFef'),
+                onTap: () => SnackBarExtension.launch(context, 'https://discord.gg/YN2QWVbFef'),
               ),
               ListTile(
                 leading: const Icon(Ionicons.logo_github),
                 title: const Text('Source Code'),
-                onTap: () => SnackBarExtension.launch(
-                    context, 'https://github.com/lotusprey/otraku'),
+                onTap: () =>
+                    SnackBarExtension.launch(context, 'https://github.com/lotusprey/otraku'),
               ),
               ListTile(
                 leading: const Icon(Ionicons.cash_outline),
                 title: const Text('Donate'),
-                onTap: () => SnackBarExtension.launch(
-                    context, 'https://ko-fi.com/lotusgate'),
+                onTap: () => SnackBarExtension.launch(context, 'https://ko-fi.com/lotusgate'),
               ),
               ListTile(
                 leading: const Icon(Ionicons.finger_print),
@@ -87,9 +84,7 @@ class SettingsAboutSubview extends StatelessWidget {
               ListTile(
                 leading: Icon(Ionicons.refresh_outline),
                 title: Text('Reset Options'),
-                onTap: () => ref
-                    .read(persistenceProvider.notifier)
-                    .setOptions(Options.empty()),
+                onTap: () => ref.read(persistenceProvider.notifier).setOptions(Options.empty()),
               ),
               if (lastJobTimestamp != null) ...[
                 Padding(

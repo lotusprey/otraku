@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activity_filter_sheet.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
@@ -17,7 +18,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
       builder: (context, ref, _) {
         final count = ref.watch(
           settingsProvider.select(
-            (s) => s.valueOrNull?.unreadNotifications ?? 0,
+            (s) => s.value?.unreadNotifications ?? 0,
           ),
         );
 
@@ -57,7 +58,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
             IconButton(
               tooltip: 'Filter',
               icon: const Icon(Ionicons.funnel_outline),
-              onPressed: () => showActivityFilterSheet(context, ref, null),
+              onPressed: () => showActivityFilterSheet(context, ref, HomeActivitiesTag.instance),
             ),
           ],
         );

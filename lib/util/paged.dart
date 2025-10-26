@@ -34,8 +34,7 @@ class PagedWithTotal<T> extends Paged<T> {
   final int total;
 
   @override
-  PagedWithTotal<T> withNext(List<T> items, bool hasNext, [int? total]) =>
-      PagedWithTotal(
+  PagedWithTotal<T> withNext(List<T> items, bool hasNext, [int? total]) => PagedWithTotal(
         items: [...this.items, ...items],
         hasNext: hasNext,
         next: next + 1,

@@ -41,9 +41,8 @@ class _CalendarViewState extends State<CalendarView> {
         final options = ref.watch(persistenceProvider.select((s) => s.options));
         final date = ref.watch(calendarFilterProvider.select((s) => s.date));
         final today = DateTime.now();
-        final isBeforeToday = date.day < today.day &&
-            date.month == today.month &&
-            date.year == today.year;
+        final isBeforeToday =
+            date.day < today.day && date.month == today.month && date.year == today.year;
 
         return AdaptiveScaffold(
           topBar: const TopBar(title: 'Calendar'),

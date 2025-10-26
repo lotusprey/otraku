@@ -10,22 +10,24 @@ import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final studioProvider =
-    AsyncNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
+final studioProvider = AsyncNotifierProvider.autoDispose.family<StudioNotifier, Studio, int>(
   StudioNotifier.new,
 );
 
-final studioMediaProvider = AsyncNotifierProvider.autoDispose
-    .family<StudioMediaNotifier, Paged<StudioMedia>, int>(
+final studioMediaProvider =
+    AsyncNotifierProvider.autoDispose.family<StudioMediaNotifier, Paged<StudioMedia>, int>(
   StudioMediaNotifier.new,
 );
 
-class StudioNotifier extends AutoDisposeFamilyAsyncNotifier<Studio, int> {
+class StudioNotifier extends AsyncNotifier<Studio> {
+  StudioNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Studio> build(arg) async {
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.studio, {'id': arg, 'withInfo': true});
+  FutureOr<Studio> build() async {
+    final data =
+        await ref.read(repositoryProvider).request(GqlQuery.studio, {'id': arg, 'withInfo': true});
     return Studio(data['Studio']);
   }
 
@@ -37,18 +39,21 @@ class StudioNotifier extends AutoDisposeFamilyAsyncNotifier<Studio, int> {
   }
 }
 
-class StudioMediaNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Paged<StudioMedia>, int> {
+class StudioMediaNotifier extends AsyncNotifier<Paged<StudioMedia>> {
+  StudioMediaNotifier(this.arg);
+
+  final int arg;
+
   late StudioFilter filter;
 
   @override
-  FutureOr<Paged<StudioMedia>> build(arg) async {
+  FutureOr<Paged<StudioMedia>> build() async {
     filter = ref.watch(studioFilterProvider(arg));
     return await _fetch(const Paged());
   }
 
   Future<void> fetch() async {
-    final oldState = state.valueOrNull ?? const Paged();
+    final oldState = state.value ?? const Paged();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }

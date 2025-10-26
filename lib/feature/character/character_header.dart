@@ -85,9 +85,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
 
     return IconButton(
       tooltip: character.isFavorite ? 'Unfavourite' : 'Favourite',
-      icon: character.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border),
+      icon: character.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
       onPressed: () async {
         setState(() => character.isFavorite = !character.isFavorite);
 

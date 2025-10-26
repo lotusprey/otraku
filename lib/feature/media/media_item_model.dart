@@ -7,8 +7,7 @@ class MediaItem {
     required this.imageUrl,
   });
 
-  factory MediaItem(Map<String, dynamic> map, ImageQuality imageQuality) =>
-      MediaItem._(
+  factory MediaItem(Map<String, dynamic> map, ImageQuality imageQuality) => MediaItem._(
         id: map['id'],
         name: map['title']['userPreferred'],
         imageUrl: map['coverImage'][imageQuality.value],

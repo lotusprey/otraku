@@ -10,12 +10,11 @@ import 'package:otraku/feature/calendar/calendar_filter_provider.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 
-final calendarProvider =
-    AsyncNotifierProvider.autoDispose<CalendarNotifier, Paged<CalendarItem>>(
+final calendarProvider = AsyncNotifierProvider.autoDispose<CalendarNotifier, Paged<CalendarItem>>(
   CalendarNotifier.new,
 );
 
-class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
+class CalendarNotifier extends AsyncNotifier<Paged<CalendarItem>> {
   late CalendarFilter filter;
 
   @override
@@ -25,17 +24,14 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
   }
 
   Future<void> fetch(bool onAnime) async {
-    final oldState = state.valueOrNull ?? const Paged();
+    final oldState = state.value ?? const Paged();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }
 
   Future<Paged<CalendarItem>> _fetch(Paged<CalendarItem> oldState) async {
-    final airingFrom =
-        filter.date.copyWith(hour: 0, minute: 0, second: 0).secondsSinceEpoch;
-    final airingTo = filter.date
-        .copyWith(hour: 23, minute: 59, second: 59)
-        .secondsSinceEpoch;
+    final airingFrom = filter.date.copyWith(hour: 0, minute: 0, second: 0).secondsSinceEpoch;
+    final airingTo = filter.date.copyWith(hour: 23, minute: 59, second: 59).secondsSinceEpoch;
 
     final data = await ref.read(repositoryProvider).request(GqlQuery.calendar, {
       'page': oldState.next,
@@ -59,8 +55,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
           if (season != prevSeason || year < filter.date.year - 1) continue;
         case CalendarSeasonFilter.other:
           final (prevSeason, currSeason) = _previousAndCurrentSeason();
-          if ((season == prevSeason || season == currSeason) &&
-              year >= filter.date.year - 1) {
+          if ((season == prevSeason || season == currSeason) && year >= filter.date.year - 1) {
             continue;
           }
           break;
@@ -73,8 +68,7 @@ class CalendarNotifier extends AutoDisposeAsyncNotifier<Paged<CalendarItem>> {
         case CalendarStatusFilter.notInLists:
           if (status != null) continue;
         case CalendarStatusFilter.watchingAndPlanning:
-          if (status != ListStatus.current.value &&
-              status != ListStatus.planning.value) {
+          if (status != ListStatus.current.value && status != ListStatus.planning.value) {
             continue;
           }
         case CalendarStatusFilter.other:

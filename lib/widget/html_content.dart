@@ -42,7 +42,6 @@ class HtmlContent extends StatelessWidget {
           );
         }
       },
-      factoryBuilder: () => _CustomWidgetFactory(),
       onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => Center(
         child: IconButton(
@@ -65,9 +64,8 @@ class HtmlContent extends StatelessWidget {
           'h5' => const {'font-size': '13px', 'font-weight': '400'},
           'h4' || 'h6' => const {'font-weight': '400'},
           'a' => const {'text-decoration': 'none'},
-          'img' => element.attributes['width'] != null
-              ? {'width': element.attributes['width']!}
-              : null,
+          'img' =>
+            element.attributes['width'] != null ? {'width': element.attributes['width']!} : null,
           _ => const {},
         };
       },
@@ -139,34 +137,11 @@ class HtmlContent extends StatelessWidget {
 }
 
 final _routeMatchers = {
-  RegExp(r'anilist.co\/(?:anime|manga)\/(\d+)'): (String id) =>
-      Routes.media(int.parse(id)),
-  RegExp(r'anilist.co\/user\/([A-Za-z0-9]+)'): (String name) =>
-      Routes.userByName(name),
-  RegExp(r'anilist.co\/character\/(\d+)'): (String id) =>
-      Routes.character(int.parse(id)),
-  RegExp(r'anilist.co\/staff\/(\d+)'): (String id) =>
-      Routes.staff(int.parse(id)),
-  RegExp(r'anilist.co\/studio\/(\d+)'): (String id) =>
-      Routes.studio(int.parse(id)),
-  RegExp(r'anilist.co\/review\/(\d+)'): (String id) =>
-      Routes.review(int.parse(id)),
-  RegExp(r'anilist.co\/activity\/(\d+)'): (String id) =>
-      Routes.activity(int.parse(id)),
+  RegExp(r'anilist.co\/(?:anime|manga)\/(\d+)'): (String id) => Routes.media(int.parse(id)),
+  RegExp(r'anilist.co\/user\/([A-Za-z0-9]+)'): (String name) => Routes.userByName(name),
+  RegExp(r'anilist.co\/character\/(\d+)'): (String id) => Routes.character(int.parse(id)),
+  RegExp(r'anilist.co\/staff\/(\d+)'): (String id) => Routes.staff(int.parse(id)),
+  RegExp(r'anilist.co\/studio\/(\d+)'): (String id) => Routes.studio(int.parse(id)),
+  RegExp(r'anilist.co\/review\/(\d+)'): (String id) => Routes.review(int.parse(id)),
+  RegExp(r'anilist.co\/activity\/(\d+)'): (String id) => Routes.activity(int.parse(id)),
 };
-
-class _CustomWidgetFactory extends WidgetFactory {
-  @override
-  Widget? buildImageWidget(BuildTree meta, ImageSource src) {
-    if (!src.url.startsWith(RegExp('https?://'))) {
-      return super.buildImageWidget(meta, src);
-    }
-
-    return CachedImage(
-      src.url,
-      fit: BoxFit.fill,
-      width: src.width,
-      height: src.height,
-    );
-  }
-}

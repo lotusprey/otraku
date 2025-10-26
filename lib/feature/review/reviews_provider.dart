@@ -7,23 +7,26 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/reviews_filter_provider.dart';
 
-final reviewsProvider = AsyncNotifierProvider.autoDispose
-    .family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
+final reviewsProvider =
+    AsyncNotifierProvider.autoDispose.family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
   ReviewsNotifier.new,
 );
 
-class ReviewsNotifier
-    extends AutoDisposeFamilyAsyncNotifier<PagedWithTotal<ReviewItem>, int> {
+class ReviewsNotifier extends AsyncNotifier<PagedWithTotal<ReviewItem>> {
+  ReviewsNotifier(this.arg);
+
+  final int arg;
+
   late ReviewsFilter filter;
 
   @override
-  FutureOr<PagedWithTotal<ReviewItem>> build(arg) {
+  FutureOr<PagedWithTotal<ReviewItem>> build() {
     filter = ref.watch(reviewsFilterProvider(arg));
     return _fetch(const PagedWithTotal());
   }
 
   Future<void> fetch() async {
-    final oldState = state.valueOrNull ?? const PagedWithTotal();
+    final oldState = state.value ?? const PagedWithTotal();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }

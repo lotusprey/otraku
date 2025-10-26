@@ -148,8 +148,7 @@ class _NumberFieldState extends State<NumberField> {
 
     // The value is allowed to go out of bounds while editing,
     // but it should not affect the real state.
-    if (number < widget.minValue ||
-        widget.maxValue != null && number > widget.maxValue!) {
+    if (number < widget.minValue || widget.maxValue != null && number > widget.maxValue!) {
       // Buttons can't make the field invalid, but manual edits can.
       if (_error == null && add == null) {
         setState(

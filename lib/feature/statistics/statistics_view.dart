@@ -23,8 +23,7 @@ class StatisticsView extends StatefulWidget {
   State<StatisticsView> createState() => _StatisticsViewState();
 }
 
-class _StatisticsViewState extends State<StatisticsView>
-    with SingleTickerProviderStateMixin {
+class _StatisticsViewState extends State<StatisticsView> with SingleTickerProviderStateMixin {
   late final tag = idUserTag(widget.id);
   late final _tabCtrl = TabController(length: 2, vsync: this);
   final _scrollCtrl = ScrollController();
@@ -52,8 +51,7 @@ class _StatisticsViewState extends State<StatisticsView>
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
           (_, s) => s.whenOrNull(
-            error: (error, _) =>
-                SnackBarExtension.show(context, error.toString()),
+            error: (error, _) => SnackBarExtension.show(context, error.toString()),
           ),
         );
 

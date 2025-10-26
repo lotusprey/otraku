@@ -18,7 +18,7 @@ class Settings {
     required this.airingNotifications,
     required this.advancedScoringEnabled,
     required this.restrictMessagesToFollowing,
-    required this.advancedScores,
+    required this.advancedScoreSections,
     required this.animeCustomLists,
     required this.mangaCustomLists,
     required this.disabledListActivity,
@@ -34,34 +34,26 @@ class Settings {
         titleLanguage: TitleLanguage.from(map['options']?['titleLanguage']),
         personNaming: PersonNaming.from(map['options']?['staffNameLanguage']),
         activityMergeTime: map['options']?['activityMergeTime'] ?? 720,
-        splitCompletedAnime: map['mediaListOptions']?['animeList']
-                ?['splitCompletedSectionByFormat'] ??
-            false,
-        splitCompletedManga: map['mediaListOptions']?['mangaList']
-                ?['splitCompletedSectionByFormat'] ??
-            false,
+        splitCompletedAnime:
+            map['mediaListOptions']?['animeList']?['splitCompletedSectionByFormat'] ?? false,
+        splitCompletedManga:
+            map['mediaListOptions']?['mangaList']?['splitCompletedSectionByFormat'] ?? false,
         displayAdultContent: map['options']?['displayAdultContent'] ?? false,
         airingNotifications: map['options']?['airingNotifications'] ?? true,
-        advancedScoringEnabled: map['mediaListOptions']?['animeList']
-                ?['advancedScoringEnabled'] ??
-            false,
-        restrictMessagesToFollowing:
-            map['options']?['restrictMessagesToFollowing'] ?? false,
-        advancedScores: List<String>.from(
-          map['mediaListOptions']?['animeList']?['advancedScoring'] ??
-              const <String>[],
+        advancedScoringEnabled:
+            map['mediaListOptions']?['animeList']?['advancedScoringEnabled'] ?? false,
+        restrictMessagesToFollowing: map['options']?['restrictMessagesToFollowing'] ?? false,
+        advancedScoreSections: List<String>.from(
+          map['mediaListOptions']?['animeList']?['advancedScoring'] ?? const <String>[],
         ),
         animeCustomLists: List<String>.from(
-          map['mediaListOptions']?['animeList']?['customLists'] ??
-              const <String>[],
+          map['mediaListOptions']?['animeList']?['customLists'] ?? const <String>[],
         ),
         mangaCustomLists: List<String>.from(
-          map['mediaListOptions']?['mangaList']?['customLists'] ??
-              const <String>[],
+          map['mediaListOptions']?['mangaList']?['customLists'] ?? const <String>[],
         ),
         disabledListActivity: {
-          for (var activity
-              in map['options']?['disabledListActivity'] ?? const [])
+          for (var activity in map['options']?['disabledListActivity'] ?? const [])
             ListStatus.from(activity['type'])!: activity['disabled']
         },
         notificationOptions: {
@@ -83,7 +75,7 @@ class Settings {
         airingNotifications: true,
         advancedScoringEnabled: false,
         restrictMessagesToFollowing: false,
-        advancedScores: const [],
+        advancedScoreSections: const [],
         animeCustomLists: const [],
         mangaCustomLists: const [],
         disabledListActivity: const {},
@@ -102,7 +94,7 @@ class Settings {
   bool advancedScoringEnabled;
   bool restrictMessagesToFollowing;
   final int unreadNotifications;
-  final List<String> advancedScores;
+  final List<String> advancedScoreSections;
   final List<String> animeCustomLists;
   final List<String> mangaCustomLists;
   final Map<ListStatus, bool> disabledListActivity;
@@ -121,7 +113,7 @@ class Settings {
         airingNotifications: airingNotifications,
         advancedScoringEnabled: advancedScoringEnabled,
         restrictMessagesToFollowing: restrictMessagesToFollowing,
-        advancedScores: [...advancedScores],
+        advancedScoreSections: [...advancedScoreSections],
         animeCustomLists: [...animeCustomLists],
         mangaCustomLists: [...mangaCustomLists],
         disabledListActivity: {...disabledListActivity},
@@ -135,8 +127,10 @@ class Settings {
         'displayAdultContent': displayAdultContent,
         'scoreFormat': scoreFormat.value,
         'rowOrder': defaultSort.toRowOrder(),
-        'advancedScoring': advancedScores,
+        'advancedScoring': advancedScoreSections,
         'advancedScoringEnabled': advancedScoringEnabled,
+        'animeCustomLists': animeCustomLists,
+        'mangaCustomLists': mangaCustomLists,
         'splitCompletedAnime': splitCompletedAnime,
         'splitCompletedManga': splitCompletedManga,
         'restrictMessagesToFollowing': restrictMessagesToFollowing,

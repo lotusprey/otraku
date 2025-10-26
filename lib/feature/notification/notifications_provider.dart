@@ -9,13 +9,12 @@ import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final notificationsProvider = AsyncNotifierProvider.autoDispose<
-    NotificationsNotifier, PagedWithTotal<SiteNotification>>(
+final notificationsProvider =
+    AsyncNotifierProvider.autoDispose<NotificationsNotifier, PagedWithTotal<SiteNotification>>(
   NotificationsNotifier.new,
 );
 
-class NotificationsNotifier
-    extends AutoDisposeAsyncNotifier<PagedWithTotal<SiteNotification>> {
+class NotificationsNotifier extends AsyncNotifier<PagedWithTotal<SiteNotification>> {
   late NotificationsFilter filter;
 
   @override
@@ -25,7 +24,7 @@ class NotificationsNotifier
   }
 
   Future<void> fetch() async {
-    final oldState = state.valueOrNull ?? const PagedWithTotal();
+    final oldState = state.value ?? const PagedWithTotal();
     if (!oldState.hasNext) return;
     state = await AsyncValue.guard(() => _fetch(oldState));
   }

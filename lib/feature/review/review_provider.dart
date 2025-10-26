@@ -7,17 +7,18 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final reviewProvider =
-    AsyncNotifierProvider.autoDispose.family<ReviewNotifier, Review, int>(
+final reviewProvider = AsyncNotifierProvider.autoDispose.family<ReviewNotifier, Review, int>(
   ReviewNotifier.new,
 );
 
-class ReviewNotifier extends AutoDisposeFamilyAsyncNotifier<Review, int> {
+class ReviewNotifier extends AsyncNotifier<Review> {
+  ReviewNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Review> build(arg) async {
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.review, {'id': arg});
+  FutureOr<Review> build() async {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.review, {'id': arg});
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 

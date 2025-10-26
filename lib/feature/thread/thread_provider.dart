@@ -7,17 +7,19 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final threadProvider =
-    AsyncNotifierProvider.autoDispose.family<ThreadNotifier, Thread, int>(
+final threadProvider = AsyncNotifierProvider.autoDispose.family<ThreadNotifier, Thread, int>(
   ThreadNotifier.new,
 );
 
-class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
+class ThreadNotifier extends AsyncNotifier<Thread> {
+  ThreadNotifier(this.arg);
+
+  final int arg;
+
   @override
-  FutureOr<Thread> build(int arg) async {
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.thread, {'id': arg, 'withInfo': true});
+  FutureOr<Thread> build() async {
+    final data =
+        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'withInfo': true});
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
@@ -25,27 +27,24 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<void> changePage(int page) async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
-    state = const AsyncValue<Thread>.loading().copyWithPrevious(
-      state.whenData((data) => data.withChangingCommentPage(page)),
-    );
+    state = state.whenData((data) => data.withChangingCommentPage(page));
+    state = const AsyncValue.loading();
 
-    final data = await ref
-        .read(repositoryProvider)
-        .request(GqlQuery.thread, {'id': arg, 'page': page});
+    final data =
+        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'page': page});
 
     state = AsyncValue.data(value.withChangedCommentPage(data));
   }
 
   void appendComment(Map<String, dynamic> map, int? parentCommentId) {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return;
 
     // If there's a new thread comment, it can only appear on the last page.
-    if (parentCommentId == null &&
-        value.commentPage != value.totalCommentPages) {
+    if (parentCommentId == null && value.commentPage != value.totalCommentPages) {
       return;
     }
 
@@ -53,7 +52,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<Object?> toggleThreadLike() {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return Future.value(null);
 
     return ref.read(repositoryProvider).request(
@@ -70,7 +69,7 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
   }
 
   Future<Object?> toggleThreadSubscription() async {
-    final value = state.valueOrNull;
+    final value = state.value;
     if (value == null) return null;
 
     final info = value.info;
@@ -90,7 +89,6 @@ class ThreadNotifier extends AutoDisposeFamilyAsyncNotifier<Thread, int> {
     return null;
   }
 
-  Future<Object?> delete() => ref
-      .read(repositoryProvider)
-      .request(GqlMutation.deleteThread, {'id': arg}).getErrorOrNull();
+  Future<Object?> delete() =>
+      ref.read(repositoryProvider).request(GqlMutation.deleteThread, {'id': arg}).getErrorOrNull();
 }

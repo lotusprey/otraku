@@ -9,18 +9,21 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final collectionProvider = AsyncNotifierProvider.autoDispose
-    .family<CollectionNotifier, Collection, CollectionTag>(
+final collectionProvider =
+    AsyncNotifierProvider.autoDispose.family<CollectionNotifier, Collection, CollectionTag>(
   CollectionNotifier.new,
 );
 
-class CollectionNotifier
-    extends AutoDisposeFamilyAsyncNotifier<Collection, CollectionTag> {
+class CollectionNotifier extends AsyncNotifier<Collection> {
+  CollectionNotifier(this.arg);
+
+  final CollectionTag arg;
+
   var _sort = EntrySort.title;
 
   @override
-  FutureOr<Collection> build(arg) async {
-    final index = switch (state.valueOrNull) {
+  FutureOr<Collection> build() async {
+    final index = switch (state.value) {
       FullCollection c => c.index,
       _ => 0,
     };
@@ -29,9 +32,7 @@ class CollectionNotifier
 
     final isFull = arg.userId != viewerId ||
         ref.watch(homeProvider.select(
-          (s) => arg.ofAnime
-              ? s.didExpandAnimeCollection
-              : s.didExpandMangaCollection,
+          (s) => arg.ofAnime ? s.didExpandAnimeCollection : s.didExpandMangaCollection,
         ));
 
     final data = await ref.read(repositoryProvider).request(
@@ -140,8 +141,7 @@ class CollectionNotifier
           'progress': oldEntry.progress,
           if (setAsCurrent) ...{
             'status': ListStatus.current.value,
-            if (oldEntry.watchStart == null)
-              'startedAt': DateTime.now().fuzzyDate,
+            if (oldEntry.watchStart == null) 'startedAt': DateTime.now().fuzzyDate,
           },
         },
       );
@@ -215,8 +215,7 @@ class CollectionNotifier
     ListStatus? newStatus,
   ) {
     if (newStatus == ListStatus.current || newStatus == ListStatus.repeating) {
-      if (oldStatus == ListStatus.current ||
-          oldStatus == ListStatus.repeating) {
+      if (oldStatus == ListStatus.current || oldStatus == ListStatus.repeating) {
         collection.list.setByMediaId(entry);
         return collection;
       }

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/theming.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
-import 'package:otraku/widget/grid/chip_grids.dart';
+import 'package:otraku/widget/sheets.dart';
 
 class SettingsContentSubview extends StatelessWidget {
   const SettingsContentSubview(this.scrollCtrl, this.settings);
@@ -20,6 +22,8 @@ class SettingsContentSubview extends StatelessWidget {
       left: Theming.offset,
       right: Theming.offset,
     );
+
+    final sheetInitialHeight = MediaQuery.sizeOf(context).height;
 
     return ListView(
       controller: scrollCtrl,
@@ -112,23 +116,62 @@ class SettingsContentSubview extends StatelessWidget {
               value: settings.splitCompletedAnime,
               onChanged: (val) => settings.splitCompletedAnime = val!,
             ),
+            ListTile(
+              title: const Text('Anime Custom Lists'),
+              leading: const Icon(Ionicons.film_outline),
+              onTap: () => showSheet(
+                context,
+                SimpleSheet(
+                  initialHeight: sheetInitialHeight,
+                  builder: (context, scrollCtrl) => _ListManagement(
+                    title: 'Anime Custom Lists',
+                    label: 'Anime custom list',
+                    items: settings.animeCustomLists,
+                    scrollCtrl: scrollCtrl,
+                  ),
+                ),
+              ),
+            ),
             StatefulCheckboxListTile(
               title: const Text('Split Completed Manga'),
               value: settings.splitCompletedManga,
               onChanged: (val) => settings.splitCompletedManga = val!,
+            ),
+            ListTile(
+              title: const Text('Manga Custom Lists'),
+              leading: const Icon(Ionicons.book_outline),
+              onTap: () => showSheet(
+                context,
+                SimpleSheet(
+                  initialHeight: sheetInitialHeight,
+                  builder: (context, scrollCtrl) => _ListManagement(
+                    title: 'Manga Custom Lists',
+                    label: 'Manga custom list',
+                    items: settings.mangaCustomLists,
+                    scrollCtrl: scrollCtrl,
+                  ),
+                ),
+              ),
             ),
             StatefulSwitchListTile(
               title: const Text('Advanced Scoring'),
               value: settings.advancedScoringEnabled,
               onChanged: (val) => settings.advancedScoringEnabled = val,
             ),
-            Padding(
-              padding: tilePadding,
-              child: ChipNamingGrid(
-                title: 'Advanced Scores',
-                placeholder: 'advanced scores',
-                names: settings.advancedScores,
-                onChanged: () {},
+            ListTile(
+              title: const Text('Advanced Score Sections'),
+              leading: const Icon(Ionicons.star_half),
+              onTap: () => showSheet(
+                context,
+                SimpleSheet(
+                  initialHeight: sheetInitialHeight,
+                  builder: (context, scrollCtrl) => _ListManagement(
+                    title: 'Advanced Score Sections',
+                    label: 'Advanced score section',
+                    items: settings.advancedScoreSections,
+                    scrollCtrl: scrollCtrl,
+                  ),
+                ),
               ),
             ),
           ],
@@ -142,8 +185,7 @@ class SettingsContentSubview extends StatelessWidget {
               StatefulCheckboxListTile(
                 title: Text('Create ${e.key.label(null)} Activities'),
                 value: !e.value,
-                onChanged: (val) =>
-                    settings.disabledListActivity[e.key] = !val!,
+                onChanged: (val) => settings.disabledListActivity[e.key] = !val!,
               ),
             StatefulSwitchListTile(
               title: const Text('Limit Messages'),
@@ -153,6 +195,105 @@ class SettingsContentSubview extends StatelessWidget {
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class _ListManagement extends StatefulWidget {
+  const _ListManagement({
+    required this.title,
+    required this.label,
+    required this.items,
+    required this.scrollCtrl,
+  });
+
+  final String title;
+  final String label;
+  final List<String> items;
+  final ScrollController scrollCtrl;
+
+  @override
+  State<_ListManagement> createState() => _ListManagementState();
+}
+
+class _ListManagementState extends State<_ListManagement> {
+  @override
+  Widget build(BuildContext context) {
+    final items = widget.items;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: Theming.offset),
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+                child: Text(widget.title, style: TextTheme.of(context).titleLarge),
+              ),
+              const Spacer(),
+              IconButton(
+                tooltip: 'Add',
+                icon: const Icon(Icons.add_rounded),
+                onPressed: () async {
+                  final newItem = await showDialog<String?>(
+                    context: context,
+                    builder: (context) => TextInputDialog(
+                      title: widget.label,
+                      initialValue: '',
+                      validator: (val) => items.contains(val) ? 'Already exists.' : null,
+                    ),
+                  );
+
+                  if (newItem != null) {
+                    setState(() => items.add(newItem));
+                  }
+                },
+              ),
+            ],
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          controller: widget.scrollCtrl,
+          itemCount: items.length,
+          itemBuilder: (context, i) => ListTile(
+            key: Key(items[i]),
+            title: Text(items[i]),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  tooltip: 'Remove',
+                  icon: const Icon(Icons.delete_rounded),
+                  onPressed: () => setState(() => items.removeAt(i)),
+                ),
+                IconButton(
+                  tooltip: 'Rename',
+                  icon: const Icon(Icons.edit_rounded),
+                  onPressed: () async {
+                    final renamedItem = await showDialog<String?>(
+                      context: context,
+                      builder: (context) => TextInputDialog(
+                        title: widget.label,
+                        initialValue: items[i],
+                        validator: (val) =>
+                            items.contains(val) && val != items[i] ? 'Already exists.' : null,
+                      ),
+                    );
+
+                    if (renamedItem != null) {
+                      setState(() => items[i] = renamedItem);
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }

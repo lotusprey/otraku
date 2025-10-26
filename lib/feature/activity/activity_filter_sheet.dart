@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
 
-void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? userId) {
-  ActivitiesFilter filter = ref.read(activitiesFilterProvider(userId));
-  double initialHeight =
-      Theming.normalTapTarget * ActivityType.values.length + Theming.offset;
+void showActivityFilterSheet(
+  BuildContext context,
+  WidgetRef ref,
+  ActivitiesTag tag,
+) {
+  ActivitiesFilter filter = ref.read(activitiesFilterProvider(tag));
+  double initialHeight = Theming.normalTapTarget * ActivityType.values.length + Theming.offset;
 
   if (filter is HomeActivitiesFilter) {
     initialHeight += Theming.normalTapTarget * 2.5;
@@ -26,7 +30,7 @@ void showActivityFilterSheet(BuildContext context, WidgetRef ref, int? userId) {
       ),
     ),
   ).then((_) {
-    ref.read(activitiesFilterProvider(userId).notifier).state = filter;
+    ref.read(activitiesFilterProvider(tag).notifier).state = filter;
   });
 }
 
@@ -50,6 +54,12 @@ class _FilterListState extends State<_FilterList> {
 
   @override
   Widget build(BuildContext context) {
+    final typeIn = switch (_filter) {
+      HomeActivitiesFilter(:final typeIn) => typeIn,
+      UserActivitiesFilter(:final typeIn) => typeIn,
+      MediaActivitiesFilter _ => [],
+    };
+
     return ListView(
       controller: widget.scrollCtrl,
       physics: Theming.bouncyPhysics,
@@ -58,13 +68,13 @@ class _FilterListState extends State<_FilterList> {
         for (final a in ActivityType.values)
           CheckboxListTile(
             title: Text(a.label),
-            value: _filter.typeIn.contains(a),
+            value: typeIn.contains(a),
             onChanged: (val) {
               setState(() {
                 if (val == true) {
-                  _filter.typeIn.add(a);
+                  typeIn.add(a);
                 } else if (val == false) {
-                  _filter.typeIn.remove(a);
+                  typeIn.remove(a);
                 }
               });
 
@@ -72,7 +82,7 @@ class _FilterListState extends State<_FilterList> {
             },
           ),
         ...switch (_filter) {
-          UserActivitiesFilter _ => [],
+          UserActivitiesFilter _ || MediaActivitiesFilter _ => const [],
           HomeActivitiesFilter filter => [
               const Divider(),
               CheckboxListTile(

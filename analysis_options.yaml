@@ -7,3 +7,6 @@ linter:
 
     # For closures.
     prefer_function_declarations_over_variables: false
+
+formatter:
+  page_width: 100

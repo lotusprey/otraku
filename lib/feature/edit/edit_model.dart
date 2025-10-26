@@ -51,7 +51,7 @@ class EntryEdit {
         advancedScores[e.key] = e.value.toDouble();
       }
     } else if (settings.advancedScoringEnabled) {
-      for (final scoreCategory in settings.advancedScores) {
+      for (final scoreCategory in settings.advancedScoreSections) {
         advancedScores[scoreCategory] = 0;
       }
     }
@@ -77,8 +77,7 @@ class EntryEdit {
       startedAt: baseEntry.startedAt,
       completedAt: completedAt,
       private: map['mediaListEntry']?['private'] ?? false,
-      hiddenFromStatusLists:
-          map['mediaListEntry']?['hiddenFromStatusLists'] ?? false,
+      hiddenFromStatusLists: map['mediaListEntry']?['hiddenFromStatusLists'] ?? false,
       advancedScores: advancedScores,
       customLists: customLists,
     );
@@ -123,8 +122,7 @@ class EntryEdit {
         startedAt: startedAt == null ? this.startedAt : startedAt.$1,
         completedAt: completedAt == null ? this.completedAt : completedAt.$1,
         private: private ?? this.private,
-        hiddenFromStatusLists:
-            hiddenFromStatusLists ?? this.hiddenFromStatusLists,
+        hiddenFromStatusLists: hiddenFromStatusLists ?? this.hiddenFromStatusLists,
         advancedScores: advancedScores ?? this.advancedScores,
         customLists: customLists ?? this.customLists,
       );
@@ -142,10 +140,7 @@ class EntryEdit {
         'private': private,
         'hiddenFromStatusLists': hiddenFromStatusLists,
         'advancedScores': advancedScores.entries.map((e) => e.value).toList(),
-        'customLists': customLists.entries
-            .where((e) => e.value)
-            .map((e) => e.key)
-            .toList(),
+        'customLists': customLists.entries.where((e) => e.value).map((e) => e.key).toList(),
       };
 }
 

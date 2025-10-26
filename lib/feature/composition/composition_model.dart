@@ -11,8 +11,7 @@ class StatusActivityCompositionTag extends CompositionTag {
   const StatusActivityCompositionTag({required super.id});
 
   @override
-  bool operator ==(Object other) =>
-      other is StatusActivityCompositionTag && id == other.id;
+  bool operator ==(Object other) => other is StatusActivityCompositionTag && id == other.id;
 
   @override
   int get hashCode => id.hashCode;
@@ -28,9 +27,7 @@ class MessageActivityCompositionTag extends CompositionTag {
 
   @override
   bool operator ==(Object other) =>
-      other is MessageActivityCompositionTag &&
-      id == other.id &&
-      recipientId == other.recipientId;
+      other is MessageActivityCompositionTag && id == other.id && recipientId == other.recipientId;
 
   @override
   int get hashCode => Object.hash(id, recipientId);
@@ -46,9 +43,7 @@ class ActivityReplyCompositionTag extends CompositionTag {
 
   @override
   bool operator ==(Object other) =>
-      other is ActivityReplyCompositionTag &&
-      id == other.id &&
-      activityId == other.activityId;
+      other is ActivityReplyCompositionTag && id == other.id && activityId == other.activityId;
 
   @override
   int get hashCode => Object.hash(id, activityId);

@@ -1,0 +1,6 @@
+- Added activities to a tab in the media page, with the ability to filter them by people you follow.
+- Added custom list management (reordering not supported yet).
+- Improved advanced score section management.
+- Activities, replies, notifications and reviews are outlined when the high contrast settings is enabled (more of this in the future).
+- Fixed activity feed pagination.
+- Image caching is disabled for markdown text (it bloats the cache).

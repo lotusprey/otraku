@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
@@ -19,9 +20,8 @@ class FeedFloatingAction extends StatelessWidget {
         context,
         CompositionView(
           tag: const StatusActivityCompositionTag(id: null),
-          onSaved: (map) {
-            ref.read(activitiesProvider(null).notifier).prepend(map);
-          },
+          onSaved: (map) =>
+              ref.read(activitiesProvider(HomeActivitiesTag.instance).notifier).prepend(map),
         ),
       ),
     );

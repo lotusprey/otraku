@@ -132,12 +132,10 @@ class MediaOverviewSubview extends StatelessWidget {
               if (info.genres.isNotEmpty)
                 _Wrap(
                   title: 'Genres',
-                  children: info.genres
-                      .map((genre) => _buildGenreActionChip(context, genre))
-                      .toList(),
+                  children:
+                      info.genres.map((genre) => _buildGenreActionChip(context, genre)).toList(),
                 ),
-              if (info.tags.isNotEmpty)
-                _TagsWrap(ref: ref, tags: info.tags, isAnime: info.isAnime),
+              if (info.tags.isNotEmpty) _TagsWrap(ref: ref, tags: info.tags, isAnime: info.isAnime),
               if (info.studios.isNotEmpty)
                 _Wrap(
                   title: 'Studios',
@@ -175,9 +173,7 @@ class MediaOverviewSubview extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: SizedBox(
-            height: MediaQuery.paddingOf(context).bottom +
-                Theming.normalTapTarget +
-                26,
+            height: MediaQuery.paddingOf(context).bottom + Theming.normalTapTarget + 26,
           ),
         ),
       ],
@@ -214,9 +210,7 @@ class MediaOverviewSubview extends StatelessWidget {
 
   Widget _buildExternalLinkChip(BuildContext context, ExternalLink link) {
     return _Chip(
-      label: link.countryCode == null
-          ? Text(link.site)
-          : Text('${link.site} ${link.countryCode}'),
+      label: link.countryCode == null ? Text(link.site) : Text('${link.site} ${link.countryCode}'),
       onTap: () => SnackBarExtension.launch(context, link.url),
       onLongTap: () => SnackBarExtension.copy(context, link.url),
       onTapHint: 'open external link',
@@ -384,10 +378,8 @@ class __TagsWrapState extends State<_TagsWrap> {
         ? widget.tags
         : widget.tags.where((t) => !t.isSpoiler).toList();
 
-    final spoilerTextStyle = Theme.of(context)
-        .textTheme
-        .bodyMedium
-        ?.copyWith(color: ColorScheme.of(context).error);
+    final spoilerTextStyle =
+        Theme.of(context).textTheme.bodyMedium?.copyWith(color: ColorScheme.of(context).error);
 
     return _Wrap(
       title: 'Tags',
@@ -400,8 +392,7 @@ class __TagsWrapState extends State<_TagsWrap> {
               onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
             )
           : null,
-      children:
-          tags.map((tag) => _buildTagChip(tag, spoilerTextStyle)).toList(),
+      children: tags.map((tag) => _buildTagChip(tag, spoilerTextStyle)).toList(),
     );
   }
 

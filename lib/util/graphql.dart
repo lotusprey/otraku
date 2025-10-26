@@ -573,12 +573,12 @@ abstract class GqlQuery {
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}${_GqlFragment.activityReply}';
 
   static const activityPage = r'''
-    query Activities($userId: Int, $userIdNot: Int, $page: Int = 1, $isFollowing: Boolean,
-        $hasRepliesOrText: Boolean, $typeIn: [ActivityType]) {
+    query Activities($userId: Int, $userIdNot: Int, $mediaId: Int, $page: Int = 1, $isFollowing: Boolean,
+        $hasRepliesOrText: Boolean, $typeIn: [ActivityType], $createdBefore: Int) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        activities(userId: $userId, userId_not: $userIdNot, isFollowing: $isFollowing,
-            hasRepliesOrTypeText: $hasRepliesOrText, type_in: $typeIn, sort: [PINNED, ID_DESC]) {
+        activities(userId: $userId, userId_not: $userIdNot, mediaId: $mediaId, isFollowing: $isFollowing,
+            hasRepliesOrTypeText: $hasRepliesOrText, type_in: $typeIn, createdAt_lesser: $createdBefore, sort: [PINNED, ID_DESC]) {
           ... on TextActivity {...textActivity}
           ... on ListActivity {...listActivity}
           ... on MessageActivity {...messageActivity}
@@ -861,15 +861,16 @@ abstract class GqlMutation {
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
         $splitCompletedAnime: Boolean, $splitCompletedManga: Boolean, $restrictMessagesToFollowing: Boolean,
-        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput]) {
+        $advancedScoringEnabled: Boolean, $advancedScoring: [String], $disabledListActivity: [ListActivityOptionInput],
+        $animeCustomLists: [String], $mangaCustomLists: [String]) {
       UpdateUser(titleLanguage: $titleLanguage, staffNameLanguage: $staffNameLanguage,
           activityMergeTime: $activityMergeTime, displayAdultContent: $displayAdultContent, 
           airingNotifications: $airingNotifications, restrictMessagesToFollowing: $restrictMessagesToFollowing,
           scoreFormat: $scoreFormat, rowOrder: $rowOrder, notificationOptions: $notificationOptions,
           disabledListActivity: $disabledListActivity,
-          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime,
+          animeListOptions: {splitCompletedSectionByFormat: $splitCompletedAnime, customLists: $animeCustomLists,
           advancedScoringEnabled: $advancedScoringEnabled, advancedScoring: $advancedScoring},
-          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga}) {
+          mangaListOptions: {splitCompletedSectionByFormat: $splitCompletedManga, customLists: $mangaCustomLists}) {
         ...userSettings
       }
     }

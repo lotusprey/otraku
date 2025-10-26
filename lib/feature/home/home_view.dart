@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
+import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activities_view.dart';
 import 'package:otraku/feature/collection/collection_entries_provider.dart';
@@ -40,8 +41,7 @@ class HomeView extends ConsumerStatefulWidget {
   ConsumerState<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends ConsumerState<HomeView>
-    with SingleTickerProviderStateMixin {
+class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderStateMixin {
   final _animeFocusNode = FocusNode();
   final _mangaFocusNode = FocusNode();
   final _discoverFocusNode = FocusNode();
@@ -49,7 +49,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   final _animeScrollCtrl = ScrollController();
   final _mangaScrollCtrl = ScrollController();
   late final _feedScrollCtrl = PagedController(
-    loadMore: () => ref.read(activitiesProvider(null).notifier).fetch(),
+    loadMore: () => ref.read(activitiesProvider(HomeActivitiesTag.instance).notifier).fetch(),
   );
   late final _discoverScrollCtrl = PagedController(
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
@@ -91,7 +91,7 @@ class _HomeViewState extends ConsumerState<HomeView>
   void deactivate() {
     ref.invalidate(discoverProvider);
     ref.invalidate(discoverFilterProvider);
-    ref.invalidate(activitiesProvider(null));
+    ref.invalidate(activitiesProvider(HomeActivitiesTag.instance));
     super.deactivate();
   }
 
@@ -116,7 +116,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     ref.watch(tagsProvider.select((_) => null));
 
     if (_tabCtrl.index == HomeTab.feed.index) {
-      ref.watch(activitiesProvider(null).select((_) => null));
+      ref.watch(activitiesProvider(HomeActivitiesTag.instance).select((_) => null));
     } else if (_tabCtrl.index == HomeTab.discover.index) {
       ref.watch(discoverProvider.select((_) => null));
     }
@@ -259,7 +259,7 @@ class _HomeViewState extends ConsumerState<HomeView>
     final child = TabBarView(
       controller: _tabCtrl,
       children: [
-        ActivitiesSubView(null, _feedScrollCtrl),
+        ActivitiesSubView(HomeActivitiesTag.instance, _feedScrollCtrl),
         CollectionSubview(
           scrollCtrl: _animeScrollCtrl,
           tag: animeCollectionTag,
@@ -298,6 +298,5 @@ class _HomeViewState extends ConsumerState<HomeView>
     HomeTab.profile.label: Ionicons.person_outline,
   };
 
-  void _toggleSearchFocus(FocusNode node) =>
-      node.hasFocus ? node.unfocus() : node.requestFocus();
+  void _toggleSearchFocus(FocusNode node) => node.hasFocus ? node.unfocus() : node.requestFocus();
 }

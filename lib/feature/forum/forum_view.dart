@@ -48,8 +48,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
                     child: SearchField(
                       debounce: Debounce(),
                       hint: 'Forum',
-                      value: ref
-                          .watch(forumFilterProvider.select((s) => s.search)),
+                      value: ref.watch(forumFilterProvider.select((s) => s.search)),
                       onChanged: (search) => ref
                           .read(forumFilterProvider.notifier)
                           .update((s) => s.copyWith(search: search.trim())),

@@ -2,11 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/home/home_model.dart';
 
-final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(
-  HomeNotifier.new,
-);
+final homeProvider = NotifierProvider.autoDispose<HomeNotifier, Home>(HomeNotifier.new);
 
-class HomeNotifier extends AutoDisposeNotifier<Home> {
+class HomeNotifier extends Notifier<Home> {
   @override
   Home build() {
     final options = ref.watch(persistenceProvider.select((s) => s.options));
@@ -17,6 +15,5 @@ class HomeNotifier extends AutoDisposeNotifier<Home> {
     );
   }
 
-  void expandCollection(bool ofAnime) =>
-      state = state.withExpandedCollection(ofAnime);
+  void expandCollection(bool ofAnime) => state = state.withExpandedCollection(ofAnime);
 }

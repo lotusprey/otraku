@@ -47,8 +47,7 @@ class Theming extends ThemeExtension<Theming> {
   }) =>
       Theming(
         formFactor: formFactor ?? this.formFactor,
-        rightButtonOrientation:
-            rightButtonOrientation ?? this.rightButtonOrientation,
+        rightButtonOrientation: rightButtonOrientation ?? this.rightButtonOrientation,
       );
 
   @override
@@ -136,22 +135,21 @@ class Theming extends ThemeExtension<Theming> {
         listTileTheme: const ListTileThemeData(
           contentPadding: EdgeInsets.symmetric(horizontal: offset),
         ),
-        typography: Typography.material2014(),
         textTheme: TextTheme(
           titleLarge: TextStyle(
             fontSize: fontBig,
             color: scheme.onSurface,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           titleMedium: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurface,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           titleSmall: TextStyle(
             fontSize: fontMedium,
             color: scheme.onSurfaceVariant,
-            fontVariations: const [FontVariation('wght', 500)],
+            fontVariations: const [FontVariation('wght', 400)],
           ),
           bodyLarge: TextStyle(
             fontSize: fontMedium,
@@ -205,6 +203,7 @@ class Theming extends ThemeExtension<Theming> {
           decoration: BoxDecoration(
             color: scheme.surfaceContainerHighest,
             borderRadius: borderRadiusSmall,
+            border: Border.all(color: scheme.outline),
             boxShadow: [BoxShadow(color: scheme.surface, blurRadius: 10)],
           ),
         ),
@@ -222,15 +221,14 @@ class Theming extends ThemeExtension<Theming> {
             fontVariations: const [FontVariation('wght', 400)],
           ),
           border: const OutlineInputBorder(
-            borderRadius: borderRadiusBig,
+            borderRadius: borderRadiusSmall,
             borderSide: BorderSide.none,
           ),
         ),
       );
 }
 
-class _FastFadeForwardsPageTransitionsBuilder
-    extends FadeForwardsPageTransitionsBuilder {
+class _FastFadeForwardsPageTransitionsBuilder extends FadeForwardsPageTransitionsBuilder {
   const _FastFadeForwardsPageTransitionsBuilder();
 
   @override

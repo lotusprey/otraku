@@ -114,8 +114,7 @@ class TypeStatistics {
     required this.value,
   });
 
-  factory TypeStatistics(Map<String, dynamic> map, String key) =>
-      TypeStatistics._(
+  factory TypeStatistics(Map<String, dynamic> map, String key) => TypeStatistics._(
         count: map['count'],
         meanScore: map['meanScore'].toDouble(),
         hoursWatched: map['minutesWatched'] ~/ 60,

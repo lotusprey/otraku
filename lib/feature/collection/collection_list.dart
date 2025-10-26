@@ -121,15 +121,12 @@ class __TileContentState extends State<_TileContent> {
     }
 
     if (widget.item.airingAt != null) {
-      final key =
-          'Ep ${widget.item.nextEpisode} in ${widget.item.airingAt!.timeUntil}';
+      final key = 'Ep ${widget.item.nextEpisode} in ${widget.item.airingAt!.timeUntil}';
       textRailItems[key] = false;
     }
 
-    if (widget.item.nextEpisode != null &&
-        widget.item.nextEpisode! - 1 > widget.item.progress) {
-      final key =
-          '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind';
+    if (widget.item.nextEpisode != null && widget.item.nextEpisode! - 1 > widget.item.progress) {
+      final key = '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind';
       textRailItems[key] = true;
     }
 
@@ -200,10 +197,9 @@ class __TileContentState extends State<_TileContent> {
 
   Widget _buildProgressButton(BuildContext context) {
     final item = widget.item;
-    final foregroundColor =
-        item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
-            ? ColorScheme.of(context).error
-            : ColorScheme.of(context).onSurfaceVariant;
+    final foregroundColor = item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
+        ? ColorScheme.of(context).error
+        : ColorScheme.of(context).onSurfaceVariant;
 
     final text = Text(
       item.progress == item.progressMax
@@ -227,8 +223,7 @@ class __TileContentState extends State<_TileContent> {
       onPressed: () {
         _debounce.cancel();
 
-        if (item.progressMax != null &&
-            item.progress >= item.progressMax! - 1) {
+        if (item.progressMax != null && item.progress >= item.progressMax! - 1) {
           _resetProgress();
 
           showSheet(context, EditView((id: item.mediaId, setComplete: true)));

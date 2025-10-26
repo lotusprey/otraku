@@ -9,8 +9,7 @@ enum NotificationType {
   activityLike('Activity likes', 'ACTIVITY_LIKE'),
   activityReply('Activity replies', 'ACTIVITY_REPLY'),
   acrivityReplyLike('Activity reply likes', 'ACTIVITY_REPLY_LIKE'),
-  activityReplySubscribed(
-      'Subscribed activity replies', 'ACTIVITY_REPLY_SUBSCRIBED'),
+  activityReplySubscribed('Subscribed activity replies', 'ACTIVITY_REPLY_SUBSCRIBED'),
   threadLike('Thread likes', 'THREAD_LIKE'),
   threadReplySubscribed('Subscribed thread replies', 'THREAD_SUBSCRIBED'),
   threadCommentMention('Thread mentions', 'THREAD_COMMENT_MENTION'),
@@ -207,10 +206,7 @@ class ThreadCommentNotification extends SiteNotification {
     final List<String> texts = switch (type) {
       NotificationType.threadReplySubscribed => [
           map['user']?['name'] ?? '?',
-          if (map['thread']?['title'] != null) ...[
-            ' commented in ',
-            map['thread']['title']
-          ] else
+          if (map['thread']?['title'] != null) ...[' commented in ', map['thread']['title']] else
             ' commented in a subscribed thread',
         ],
       NotificationType.threadCommentMention => [

@@ -33,50 +33,42 @@ class MediaActivitiesSubview extends StatelessWidget {
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(activitiesProvider(tag)),
       provider: activitiesProvider(tag),
-      onData: (data) {
-        return SliverMainAxisGroup(
-          slivers: [
-            _FollowingFilterButton(ref, tag),
-            SliverList(
-              delegate: SliverChildBuilderDelegate(
-                childCount: data.items.length,
-                (context, i) => ActivityCard(
-                  withHeader: true,
-                  analogClock: options.analogClock,
-                  highContrast: options.highContrast,
-                  activity: data.items[i],
-                  footer: ActivityFooter(
-                    viewerId: viewerId,
-                    activity: data.items[i],
-                    toggleLike: () =>
-                        ref.read(activitiesProvider(tag).notifier).toggleLike(data.items[i]),
-                    toggleSubscription: () => ref
-                        .read(activitiesProvider(tag).notifier)
-                        .toggleSubscription(data.items[i]),
-                    togglePin: () =>
-                        ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
-                    remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
-                    onEdited: (map) {
-                      final activity = Activity.maybe(
-                        map,
-                        viewerId,
-                        options.imageQuality,
-                      );
+      header: _FollowingFilterButton(ref, tag),
+      onData: (data) => SliverList(
+        delegate: SliverChildBuilderDelegate(
+          childCount: data.items.length,
+          (context, i) => ActivityCard(
+            withHeader: true,
+            analogClock: options.analogClock,
+            highContrast: options.highContrast,
+            activity: data.items[i],
+            footer: ActivityFooter(
+              viewerId: viewerId,
+              activity: data.items[i],
+              toggleLike: () =>
+                  ref.read(activitiesProvider(tag).notifier).toggleLike(data.items[i]),
+              toggleSubscription: () =>
+                  ref.read(activitiesProvider(tag).notifier).toggleSubscription(data.items[i]),
+              togglePin: () => ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
+              remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
+              onEdited: (map) {
+                final activity = Activity.maybe(
+                  map,
+                  viewerId,
+                  options.imageQuality,
+                );
 
-                      if (activity == null) return;
+                if (activity == null) return;
 
-                      ref.read(activitiesProvider(tag).notifier).replace(activity);
-                    },
-                    reply: () => context.push(
-                      Routes.activity(data.items[i].id, null),
-                    ),
-                  ),
-                ),
+                ref.read(activitiesProvider(tag).notifier).replace(activity);
+              },
+              reply: () => context.push(
+                Routes.activity(data.items[i].id, null),
               ),
             ),
-          ],
-        );
-      },
+          ),
+        ),
+      ),
     );
   }
 }

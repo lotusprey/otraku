@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -26,7 +25,7 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   late ActivitiesFilter _filter;
 
   // Used to skip activities when fetching outdated pages.
-  late int _lastCreatedAt;
+  int? _lastId;
 
   @override
   FutureOr<Paged<Activity>> build() {
@@ -36,7 +35,7 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
       ref.keepAlive();
     }
 
-    _lastCreatedAt = DateTime.now().secondsSinceEpoch;
+    _lastId = null;
     _filter = ref.watch(activitiesFilterProvider(arg));
     _viewerId = ref.watch(viewerIdProvider);
 
@@ -52,22 +51,21 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   Future<Paged<Activity>> _fetch(Paged<Activity> oldState) async {
     final data = await ref.read(repositoryProvider).request(
       GqlQuery.activityPage,
-      {'createdBefore': _lastCreatedAt + 1, ..._filter.toGraphQlVariables()},
+      {'page': oldState.next, ..._filter.toGraphQlVariables()},
     );
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
-    final lastId = oldState.items.isNotEmpty ? oldState.items.last.id : null;
 
     final items = <Activity>[];
     for (final a in data['Page']['activities']) {
-      if (lastId != null && a['id'] >= lastId) continue;
+      if (_lastId != null && a['id'] >= _lastId) continue;
 
       final item = Activity.maybe(a, _viewerId, imageQuality);
       if (item != null) items.add(item);
     }
 
-    if (items.isNotEmpty) {
-      _lastCreatedAt = items.last.createdAt.secondsSinceEpoch;
+    if (data['Page']['activities'].isNotEmpty) {
+      _lastId = data['Page']['activities'].last['id'];
     }
 
     return oldState.withNext(

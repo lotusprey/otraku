@@ -34,6 +34,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
         if (count > 0) {
           notificationIcon = Badge.count(
             count: count,
+            maxCount: 99,
             offset: Offset.zero,
             alignment: Alignment.topLeft,
             child: notificationIcon,

@@ -19,21 +19,21 @@ class Favorites {
   final FavoritesEdit? edit;
 
   int getCount(FavoritesType type) => switch (type) {
-        FavoritesType.anime => anime.total,
-        FavoritesType.manga => manga.total,
-        FavoritesType.characters => characters.total,
-        FavoritesType.staff => staff.total,
-        FavoritesType.studios => studios.total,
-      };
+    .anime => anime.total,
+    .manga => manga.total,
+    .characters => characters.total,
+    .staff => staff.total,
+    .studios => studios.total,
+  };
 
   Favorites withEdit(FavoritesEdit? edit) => Favorites(
-        anime: anime,
-        manga: manga,
-        characters: characters,
-        staff: staff,
-        studios: studios,
-        edit: edit,
-      );
+    anime: anime,
+    manga: manga,
+    characters: characters,
+    staff: staff,
+    studios: studios,
+    edit: edit,
+  );
 }
 
 class FavoritesEdit {
@@ -47,39 +47,29 @@ class FavoritesEdit {
 }
 
 class FavoriteItem {
-  FavoriteItem._({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-  }) : isFavorite = true;
+  FavoriteItem._({required this.id, required this.name, required this.imageUrl})
+    : isFavorite = true;
 
-  factory FavoriteItem.media(
-    Map<String, dynamic> map,
-    ImageQuality imageQuality,
-  ) =>
-      FavoriteItem._(
-        id: map['id'],
-        name: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][imageQuality.value],
-      );
+  factory FavoriteItem.media(Map<String, dynamic> map, ImageQuality imageQuality) => FavoriteItem._(
+    id: map['id'],
+    name: map['title']['userPreferred'],
+    imageUrl: map['coverImage'][imageQuality.value],
+  );
 
   factory FavoriteItem.character(Map<String, dynamic> map) => FavoriteItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-      );
+    id: map['id'],
+    name: map['name']['userPreferred'],
+    imageUrl: map['image']['large'],
+  );
 
   factory FavoriteItem.staff(Map<String, dynamic> map) => FavoriteItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-      );
+    id: map['id'],
+    name: map['name']['userPreferred'],
+    imageUrl: map['image']['large'],
+  );
 
-  factory FavoriteItem.studio(Map<String, dynamic> map) => FavoriteItem._(
-        id: map['id'],
-        name: map['name'],
-        imageUrl: null,
-      );
+  factory FavoriteItem.studio(Map<String, dynamic> map) =>
+      FavoriteItem._(id: map['id'], name: map['name'], imageUrl: null);
 
   final int id;
   final String name;
@@ -95,10 +85,10 @@ enum FavoritesType {
   studios;
 
   String get title => switch (this) {
-        FavoritesType.anime => 'Favourite Anime',
-        FavoritesType.manga => 'Favourite Manga',
-        FavoritesType.characters => 'Favourite Characters',
-        FavoritesType.staff => 'Favourite Staff',
-        FavoritesType.studios => 'Favourite Studios',
-      };
+    .anime => 'Favourite Anime',
+    .manga => 'Favourite Manga',
+    .characters => 'Favourite Characters',
+    .staff => 'Favourite Staff',
+    .studios => 'Favourite Studios',
+  };
 }

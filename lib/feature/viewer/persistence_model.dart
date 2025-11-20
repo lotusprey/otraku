@@ -7,7 +7,6 @@ import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
-import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 
 const appVersion = '1.10.1';
@@ -26,16 +25,16 @@ class Persistence {
   });
 
   factory Persistence.empty() => Persistence(
-        systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
-        accountGroup: AccountGroup.empty(),
-        options: Options.empty(),
-        appMeta: AppMeta.empty(),
-        animeCollectionMediaFilter: CollectionMediaFilter(),
-        mangaCollectionMediaFilter: CollectionMediaFilter(),
-        discoverMediaFilter: DiscoverMediaFilter(MediaSort.titleRomaji),
-        homeActivitiesFilter: HomeActivitiesFilter.empty(),
-        calendarFilter: CalendarFilter.empty(),
-      );
+    systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
+    accountGroup: .empty(),
+    options: .empty(),
+    appMeta: .empty(),
+    animeCollectionMediaFilter: CollectionMediaFilter(),
+    mangaCollectionMediaFilter: CollectionMediaFilter(),
+    discoverMediaFilter: DiscoverMediaFilter(.titleRomaji),
+    homeActivitiesFilter: .empty(),
+    calendarFilter: .empty(),
+  );
 
   factory Persistence.fromPersistenceMap(
     Map<dynamic, dynamic> map,
@@ -49,24 +48,20 @@ class Persistence {
     return Persistence(
       systemColors: (lightPrimaryColor: null, darkPrimaryColor: null),
       accountGroup: accountGroup,
-      options: Options.fromPersistenceMap(map['options'] ?? const {}),
-      appMeta: AppMeta.fromPersistenceMap(map['appMeta'] ?? const {}),
-      animeCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+      options: .fromPersistenceMap(map['options'] ?? const {}),
+      appMeta: .fromPersistenceMap(map['appMeta'] ?? const {}),
+      animeCollectionMediaFilter: .fromPersistenceMap(
         map['animeCollectionMediaFilter'] ?? const {},
       ),
-      mangaCollectionMediaFilter: CollectionMediaFilter.fromPersistenceMap(
+      mangaCollectionMediaFilter: .fromPersistenceMap(
         map['mangaCollectionMediaFilter'] ?? const {},
       ),
-      discoverMediaFilter: DiscoverMediaFilter.fromPersistenceMap(
-        map['discoverMediaFilter'] ?? const {},
-      ),
-      homeActivitiesFilter: HomeActivitiesFilter.fromPersistenceMap(
+      discoverMediaFilter: .fromPersistenceMap(map['discoverMediaFilter'] ?? const {}),
+      homeActivitiesFilter: .fromPersistenceMap(
         map['homeActivitiesFilter'] ?? const {},
         accountGroup.account?.id,
       ),
-      calendarFilter: CalendarFilter.fromPersistenceMap(
-        map['calendarFilter'] ?? const {},
-      ),
+      calendarFilter: .fromPersistenceMap(map['calendarFilter'] ?? const {}),
     );
   }
 
@@ -90,18 +85,17 @@ class Persistence {
     DiscoverMediaFilter? discoverMediaFilter,
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
-  }) =>
-      Persistence(
-        systemColors: systemColors ?? this.systemColors,
-        accountGroup: accountGroup ?? this.accountGroup,
-        options: options ?? this.options,
-        appMeta: appMeta ?? this.appMeta,
-        animeCollectionMediaFilter: animeCollectionMediaFilter ?? this.animeCollectionMediaFilter,
-        mangaCollectionMediaFilter: mangaCollectionMediaFilter ?? this.mangaCollectionMediaFilter,
-        discoverMediaFilter: discoverMediaFilter ?? this.discoverMediaFilter,
-        homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
-        calendarFilter: calendarFilter ?? this.calendarFilter,
-      );
+  }) => Persistence(
+    systemColors: systemColors ?? this.systemColors,
+    accountGroup: accountGroup ?? this.accountGroup,
+    options: options ?? this.options,
+    appMeta: appMeta ?? this.appMeta,
+    animeCollectionMediaFilter: animeCollectionMediaFilter ?? this.animeCollectionMediaFilter,
+    mangaCollectionMediaFilter: mangaCollectionMediaFilter ?? this.mangaCollectionMediaFilter,
+    discoverMediaFilter: discoverMediaFilter ?? this.discoverMediaFilter,
+    homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
+    calendarFilter: calendarFilter ?? this.calendarFilter,
+  );
 }
 
 typedef SystemColors = ({Color? lightPrimaryColor, Color? darkPrimaryColor});
@@ -109,10 +103,7 @@ typedef SystemColors = ({Color? lightPrimaryColor, Color? darkPrimaryColor});
 class AccountGroup {
   const AccountGroup({required this.accounts, required this.accountIndex});
 
-  factory AccountGroup.empty() => const AccountGroup(
-        accounts: [],
-        accountIndex: null,
-      );
+  factory AccountGroup.empty() => const AccountGroup(accounts: [], accountIndex: null);
 
   factory AccountGroup.fromPersistenceMap(
     Map<dynamic, dynamic> map,
@@ -123,7 +114,7 @@ class AccountGroup {
       final accessToken = accessTokens[Account.accessTokenKeyById(a['id'])];
       if (accessToken == null) continue;
 
-      accounts.add(Account.fromPersistenceMap(a, accessToken));
+      accounts.add(.fromPersistenceMap(a, accessToken));
     }
 
     int? accountIndex = map['accountIndex']?.clamp(0, accounts.length - 1);
@@ -142,9 +133,9 @@ class AccountGroup {
   Account? get account => accountIndex != null ? accounts[accountIndex!] : null;
 
   Map<String, dynamic> toPersistenceMap() => {
-        'accounts': accounts.map((a) => a.toPersistenceMap()).toList(),
-        'accountIndex': accountIndex,
-      };
+    'accounts': accounts.map((a) => a.toPersistenceMap()).toList(),
+    'accountIndex': accountIndex,
+  };
 }
 
 class Account {
@@ -157,12 +148,12 @@ class Account {
   });
 
   factory Account.fromPersistenceMap(Map<dynamic, dynamic> map, String accessToken) => Account(
-        id: map['id'],
-        name: map['name'],
-        avatarUrl: map['avatarUrl'],
-        expiration: map['expiration'],
-        accessToken: accessToken,
-      );
+    id: map['id'],
+    name: map['name'],
+    avatarUrl: map['avatarUrl'],
+    expiration: map['expiration'],
+    accessToken: accessToken,
+  );
 
   final int id;
   final String name;
@@ -173,11 +164,11 @@ class Account {
   static String accessTokenKeyById(int id) => 'auth$id';
 
   Map<String, dynamic> toPersistenceMap() => {
-        'id': id,
-        'name': name,
-        'avatarUrl': avatarUrl,
-        'expiration': expiration,
-      };
+    'id': id,
+    'name': name,
+    'avatarUrl': avatarUrl,
+    'expiration': expiration,
+  };
 }
 
 class Options {
@@ -199,46 +190,38 @@ class Options {
   });
 
   factory Options.empty() => const Options(
-        themeMode: ThemeMode.system,
-        themeBase: null,
-        highContrast: false,
-        homeTab: HomeTab.feed,
-        discoverType: DiscoverType.anime,
-        imageQuality: ImageQuality.high,
-        animeCollectionPreview: true,
-        mangaCollectionPreview: true,
-        confirmExit: false,
-        analogClock: false,
-        buttonOrientation: ButtonOrientation.auto,
-        discoverItemView: DiscoverItemView.detailed,
-        collectionItemView: CollectionItemView.detailed,
-        collectionPreviewItemView: CollectionItemView.detailed,
-      );
+    themeMode: ThemeMode.system,
+    themeBase: null,
+    highContrast: false,
+    homeTab: .feed,
+    discoverType: .anime,
+    imageQuality: .high,
+    animeCollectionPreview: true,
+    mangaCollectionPreview: true,
+    confirmExit: false,
+    analogClock: false,
+    buttonOrientation: .auto,
+    discoverItemView: .detailed,
+    collectionItemView: .detailed,
+    collectionPreviewItemView: .detailed,
+  );
 
   factory Options.fromPersistenceMap(Map<dynamic, dynamic> map) => Options(
-        themeMode: ThemeMode.values.getOrFirst(map['themeMode']),
-        themeBase: ThemeBase.values.getOrNull(map['themeBase']),
-        highContrast: map['highContrast'] ?? false,
-        homeTab: HomeTab.values.getOrFirst(map['homeTab']),
-        discoverType: DiscoverType.values.getOrFirst(map['discoverType']),
-        imageQuality: ImageQuality.values.getOrNull(map['imageQuality']) ?? ImageQuality.high,
-        animeCollectionPreview: map['animeCollectionPreview'] ?? true,
-        mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
-        confirmExit: map['confirmExit'] ?? false,
-        buttonOrientation: ButtonOrientation.values.getOrFirst(
-          map['buttonOrientation'],
-        ),
-        analogClock: map['analogClock'] ?? false,
-        discoverItemView: DiscoverItemView.values.getOrFirst(
-          map['discoverItemView'],
-        ),
-        collectionItemView: CollectionItemView.values.getOrFirst(
-          map['collectionItemView'],
-        ),
-        collectionPreviewItemView: CollectionItemView.values.getOrFirst(
-          map['collectionPreviewItemView'],
-        ),
-      );
+    themeMode: ThemeMode.values.getOrFirst(map['themeMode']),
+    themeBase: ThemeBase.values.getOrNull(map['themeBase']),
+    highContrast: map['highContrast'] ?? false,
+    homeTab: HomeTab.values.getOrFirst(map['homeTab']),
+    discoverType: DiscoverType.values.getOrFirst(map['discoverType']),
+    imageQuality: ImageQuality.values.getOrNull(map['imageQuality']) ?? .high,
+    animeCollectionPreview: map['animeCollectionPreview'] ?? true,
+    mangaCollectionPreview: map['mangaCollectionPreview'] ?? true,
+    confirmExit: map['confirmExit'] ?? false,
+    buttonOrientation: ButtonOrientation.values.getOrFirst(map['buttonOrientation']),
+    analogClock: map['analogClock'] ?? false,
+    discoverItemView: DiscoverItemView.values.getOrFirst(map['discoverItemView']),
+    collectionItemView: .values.getOrFirst(map['collectionItemView']),
+    collectionPreviewItemView: .values.getOrFirst(map['collectionPreviewItemView']),
+  );
 
   final ThemeMode themeMode;
   final ThemeBase? themeBase;
@@ -270,40 +253,39 @@ class Options {
     DiscoverItemView? discoverItemView,
     CollectionItemView? collectionItemView,
     CollectionItemView? collectionPreviewItemView,
-  }) =>
-      Options(
-        themeMode: themeMode ?? this.themeMode,
-        themeBase: themeBase == null ? this.themeBase : themeBase.$1,
-        highContrast: highContrast ?? this.highContrast,
-        homeTab: homeTab ?? this.homeTab,
-        discoverType: discoverType ?? this.discoverType,
-        imageQuality: imageQuality ?? this.imageQuality,
-        animeCollectionPreview: animeCollectionPreview ?? this.animeCollectionPreview,
-        mangaCollectionPreview: mangaCollectionPreview ?? this.mangaCollectionPreview,
-        confirmExit: confirmExit ?? this.confirmExit,
-        buttonOrientation: buttonOrientation ?? this.buttonOrientation,
-        analogClock: analogClock ?? this.analogClock,
-        discoverItemView: discoverItemView ?? this.discoverItemView,
-        collectionItemView: collectionItemView ?? this.collectionItemView,
-        collectionPreviewItemView: collectionPreviewItemView ?? this.collectionPreviewItemView,
-      );
+  }) => Options(
+    themeMode: themeMode ?? this.themeMode,
+    themeBase: themeBase == null ? this.themeBase : themeBase.$1,
+    highContrast: highContrast ?? this.highContrast,
+    homeTab: homeTab ?? this.homeTab,
+    discoverType: discoverType ?? this.discoverType,
+    imageQuality: imageQuality ?? this.imageQuality,
+    animeCollectionPreview: animeCollectionPreview ?? this.animeCollectionPreview,
+    mangaCollectionPreview: mangaCollectionPreview ?? this.mangaCollectionPreview,
+    confirmExit: confirmExit ?? this.confirmExit,
+    buttonOrientation: buttonOrientation ?? this.buttonOrientation,
+    analogClock: analogClock ?? this.analogClock,
+    discoverItemView: discoverItemView ?? this.discoverItemView,
+    collectionItemView: collectionItemView ?? this.collectionItemView,
+    collectionPreviewItemView: collectionPreviewItemView ?? this.collectionPreviewItemView,
+  );
 
   Map<String, dynamic> toPersistenceMap() => {
-        'themeMode': themeMode.index,
-        'themeBase': themeBase?.index,
-        'highContrast': highContrast,
-        'homeTab': homeTab.index,
-        'discoverType': discoverType.index,
-        'imageQuality': imageQuality.index,
-        'animeCollectionPreview': animeCollectionPreview,
-        'mangaCollectionPreview': mangaCollectionPreview,
-        'confirmExit': confirmExit,
-        'analogClock': analogClock,
-        'buttonOrientation': buttonOrientation.index,
-        'discoverItemView': discoverItemView.index,
-        'collectionItemView': collectionItemView.index,
-        'collectionPreviewItemView': collectionPreviewItemView.index,
-      };
+    'themeMode': themeMode.index,
+    'themeBase': themeBase?.index,
+    'highContrast': highContrast,
+    'homeTab': homeTab.index,
+    'discoverType': discoverType.index,
+    'imageQuality': imageQuality.index,
+    'animeCollectionPreview': animeCollectionPreview,
+    'mangaCollectionPreview': mangaCollectionPreview,
+    'confirmExit': confirmExit,
+    'analogClock': analogClock,
+    'buttonOrientation': buttonOrientation.index,
+    'discoverItemView': discoverItemView.index,
+    'collectionItemView': collectionItemView.index,
+    'collectionPreviewItemView': collectionPreviewItemView.index,
+  };
 }
 
 enum ImageQuality {
@@ -317,11 +299,7 @@ enum ImageQuality {
   final String value;
 }
 
-enum ButtonOrientation {
-  auto,
-  left,
-  right,
-}
+enum ButtonOrientation { auto, left, right }
 
 class AppMeta {
   const AppMeta({
@@ -330,25 +308,22 @@ class AppMeta {
     required this.lastBackgroundJob,
   });
 
-  factory AppMeta.empty() => const AppMeta(
-        lastNotificationId: -1,
-        lastAppVersion: '',
-        lastBackgroundJob: null,
-      );
+  factory AppMeta.empty() =>
+      const AppMeta(lastNotificationId: -1, lastAppVersion: '', lastBackgroundJob: null);
 
   factory AppMeta.fromPersistenceMap(Map<dynamic, dynamic> map) => AppMeta(
-        lastNotificationId: map['lastNotificationId'] ?? -1,
-        lastAppVersion: map['lastAppVersion'] ?? '',
-        lastBackgroundJob: map['lastBackgroundJob'],
-      );
+    lastNotificationId: map['lastNotificationId'] ?? -1,
+    lastAppVersion: map['lastAppVersion'] ?? '',
+    lastBackgroundJob: map['lastBackgroundJob'],
+  );
 
   final int lastNotificationId;
   final String lastAppVersion;
   final DateTime? lastBackgroundJob;
 
   Map<String, dynamic> toPersistenceMap() => {
-        'lastNotificationId': lastNotificationId,
-        'lastAppVersion': lastAppVersion,
-        'lastBackgroundJob': lastBackgroundJob,
-      };
+    'lastNotificationId': lastNotificationId,
+    'lastAppVersion': lastAppVersion,
+    'lastBackgroundJob': lastBackgroundJob,
+  };
 }

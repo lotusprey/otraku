@@ -11,10 +11,8 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
 
-final activitiesProvider =
-    AsyncNotifierProvider.autoDispose.family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(
-  ActivitiesNotifier.new,
-);
+final activitiesProvider = AsyncNotifierProvider.autoDispose
+    .family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(ActivitiesNotifier.new);
 
 class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   ActivitiesNotifier(this.arg);
@@ -49,10 +47,10 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   }
 
   Future<Paged<Activity>> _fetch(Paged<Activity> oldState) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.activityPage,
-      {'page': oldState.next, ..._filter.toGraphQlVariables()},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.activityPage, {
+      'page': oldState.next,
+      ..._filter.toGraphQlVariables(),
+    });
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
 
@@ -68,10 +66,7 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
       _lastId = data['Page']['activities'].last['id'];
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
   }
 
   void prepend(Map<String, dynamic> map) {
@@ -85,11 +80,9 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
     );
     if (activity == null) return;
 
-    state = AsyncValue.data(Paged(
-      items: [activity, ...value.items],
-      hasNext: value.hasNext,
-      next: value.next,
-    ));
+    state = AsyncValue.data(
+      Paged(items: [activity, ...value.items], hasNext: value.hasNext, next: value.next),
+    );
   }
 
   void replace(Activity activity) {
@@ -100,21 +93,19 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
       if (value.items[i].id == activity.id) {
         value.items[i] = activity;
 
-        state = AsyncValue.data(Paged(
-          items: value.items,
-          hasNext: value.hasNext,
-          next: value.next,
-        ));
+        state = AsyncValue.data(
+          Paged(items: value.items, hasNext: value.hasNext, next: value.next),
+        );
         return;
       }
     }
   }
 
   Future<Object?> toggleLike(Activity activity) async {
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': activity.id, 'type': 'ACTIVITY'},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': activity.id,
+      'type': 'ACTIVITY',
+    }).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -123,10 +114,10 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   }
 
   Future<Object?> toggleSubscription(Activity activity) async {
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.toggleActivitySubscription,
-      {'id': activity.id, 'subscribe': activity.isSubscribed},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.toggleActivitySubscription, {
+      'id': activity.id,
+      'subscribe': activity.isSubscribed,
+    }).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -135,10 +126,10 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   }
 
   Future<Object?> togglePin(Activity activity) async {
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.toggleActivityPin,
-      {'id': activity.id, 'pinned': activity.isPinned},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.toggleActivityPin, {
+      'id': activity.id,
+      'pinned': activity.isPinned,
+    }).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -158,11 +149,9 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
         }
         value.items[0] = activity;
 
-        state = AsyncValue.data(Paged(
-          items: value.items,
-          hasNext: value.hasNext,
-          next: value.next,
-        ));
+        state = AsyncValue.data(
+          Paged(items: value.items, hasNext: value.hasNext, next: value.next),
+        );
         break;
       }
     }
@@ -171,10 +160,9 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   }
 
   Future<Object?> remove(Activity activity) async {
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.deleteActivity,
-      {'id': activity.id},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.deleteActivity, {
+      'id': activity.id,
+    }).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -185,11 +173,9 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
       if (value.items[i].id == activity.id) {
         value.items.removeAt(i);
 
-        state = AsyncValue.data(Paged(
-          items: value.items,
-          hasNext: value.hasNext,
-          next: value.next,
-        ));
+        state = AsyncValue.data(
+          Paged(items: value.items, hasNext: value.hasNext, next: value.next),
+        );
         break;
       }
     }

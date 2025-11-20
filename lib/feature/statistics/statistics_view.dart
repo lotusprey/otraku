@@ -50,16 +50,15 @@ class _StatisticsViewState extends State<StatisticsView> with SingleTickerProvid
       builder: (context, ref, _) {
         ref.listen<AsyncValue<User>>(
           userProvider(tag),
-          (_, s) => s.whenOrNull(
-            error: (error, _) => SnackBarExtension.show(context, error.toString()),
-          ),
+          (_, s) =>
+              s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
         );
 
-        return ref.watch(userProvider(tag)).when(
+        return ref
+            .watch(userProvider(tag))
+            .when(
               loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(
-                child: Text('Failed to load statistics'),
-              ),
+              error: (_, _) => const Center(child: Text('Failed to load statistics')),
               data: (data) {
                 return TabBarView(
                   controller: _tabCtrl,
@@ -101,10 +100,7 @@ class _StatisticsViewState extends State<StatisticsView> with SingleTickerProvid
         selected: _tabCtrl.index,
         onChanged: (i) => _tabCtrl.index = i,
         onSame: (_) => _scrollCtrl.scrollToTop(),
-        items: const {
-          'Anime': Ionicons.film_outline,
-          'Manga': Ionicons.book_outline,
-        },
+        items: const {'Anime': Ionicons.film_outline, 'Manga': Ionicons.book_outline},
       ),
       child: child,
     );
@@ -138,9 +134,7 @@ class _StatisticsView extends StatelessWidget {
       controller: scrollCtrl,
       slivers: [
         SliverToBoxAdapter(
-          child: SizedBox(
-            height: MediaQuery.paddingOf(context).top + Theming.offset,
-          ),
+          child: SizedBox(height: MediaQuery.paddingOf(context).top + Theming.offset),
         ),
         _Details(statistics, ofAnime),
         if (statistics.scores.isNotEmpty) ...[
@@ -223,27 +217,18 @@ class _Details extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 190,
-        height: 50,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 190, height: 50),
       delegate: SliverChildBuilderDelegate(
         childCount: titles.length,
         (context, i) => Row(
           children: [
-            Icon(
-              icons[i],
-              color: ColorScheme.of(context).onSurfaceVariant,
-            ),
+            Icon(icons[i], color: ColorScheme.of(context).onSurfaceVariant),
             const SizedBox(width: Theming.offset),
             Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: .center,
+              crossAxisAlignment: .start,
               children: [
-                Text(
-                  titles[i],
-                  style: TextTheme.of(context).labelMedium,
-                ),
+                Text(titles[i], style: TextTheme.of(context).labelMedium),
                 Text(subtitles[i].toString()),
               ],
             ),

@@ -35,59 +35,43 @@ class _MediaFollowingGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 300,
-        height: 70,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: 70),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => context.push(
-            Routes.user(items[i].userId, items[i].userAvatar),
-          ),
+          behavior: .opaque,
+          onTap: () => context.push(Routes.user(items[i].userId, items[i].userAvatar)),
           child: Card(
             child: Row(
               children: [
                 Hero(
                   tag: items[i].userId,
                   child: ClipRRect(
-                    borderRadius: const BorderRadius.horizontal(
-                      left: Theming.radiusSmall,
-                    ),
+                    borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                     child: CachedImage(items[i].userAvatar, width: 70),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.only(
+                    padding: const .only(
                       top: Theming.offset,
                       left: Theming.offset,
                       right: Theming.offset,
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: .spaceBetween,
+                      crossAxisAlignment: .start,
                       children: [
                         Text(items[i].userName),
                         SizedBox(
                           height: 35,
                           child: Row(
                             children: [
-                              Expanded(
-                                child: Text(items[i].entryStatus.label(null)),
-                              ),
-                              Expanded(
-                                child: Center(
-                                  child: NotesLabel(items[i].notes),
-                                ),
-                              ),
+                              Expanded(child: Text(items[i].entryStatus.label(null))),
+                              Expanded(child: Center(child: NotesLabel(items[i].notes))),
                               Expanded(
                                 child: Center(
-                                  child: ScoreLabel(
-                                    items[i].score,
-                                    items[i].scoreFormat,
-                                  ),
+                                  child: ScoreLabel(items[i].score, items[i].scoreFormat),
                                 ),
                               ),
                             ],

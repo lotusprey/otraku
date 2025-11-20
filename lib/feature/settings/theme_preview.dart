@@ -15,51 +15,55 @@ class ThemePreview extends StatelessWidget {
   Widget build(BuildContext context) {
     final brightness = ColorScheme.of(context).brightness;
 
-    final systemPrimaryColor = ref.watch(persistenceProvider.select(
-      (s) => brightness == Brightness.dark
-          ? s.systemColors.darkPrimaryColor
-          : s.systemColors.lightPrimaryColor,
-    ));
+    final systemPrimaryColor = ref.watch(
+      persistenceProvider.select(
+        (s) => brightness == Brightness.dark
+            ? s.systemColors.darkPrimaryColor
+            : s.systemColors.lightPrimaryColor,
+      ),
+    );
 
     final background = options.highContrast
         ? brightness == Brightness.dark
-            ? Colors.black
-            : Colors.white
+              ? Colors.black
+              : Colors.white
         : null;
 
     final children = <_ThemeCard>[];
     if (systemPrimaryColor != null) {
-      children.add(_ThemeCard(
-        name: 'System',
-        scheme: ColorScheme.fromSeed(
-          seedColor: systemPrimaryColor,
-          brightness: brightness,
-        ).copyWith(surface: background),
-        active: options.themeBase == null,
-        onTap: () =>
-            ref.read(persistenceProvider.notifier).setOptions(options.copyWith(themeBase: (null,))),
-      ));
+      children.add(
+        _ThemeCard(
+          name: 'System',
+          scheme: ColorScheme.fromSeed(
+            seedColor: systemPrimaryColor,
+            brightness: brightness,
+          ).copyWith(surface: background),
+          active: options.themeBase == null,
+          onTap: () => ref
+              .read(persistenceProvider.notifier)
+              .setOptions(options.copyWith(themeBase: (null,))),
+        ),
+      );
     }
 
     for (final tb in ThemeBase.values) {
-      children.add(_ThemeCard(
-        name: tb.title,
-        scheme: ColorScheme.fromSeed(
-          seedColor: tb.seed,
-          brightness: brightness,
-        ).copyWith(surface: background),
-        active: options.themeBase == tb,
-        onTap: () =>
-            ref.read(persistenceProvider.notifier).setOptions(options.copyWith(themeBase: (tb,))),
-      ));
+      children.add(
+        _ThemeCard(
+          name: tb.title,
+          scheme: ColorScheme.fromSeed(
+            seedColor: tb.seed,
+            brightness: brightness,
+          ).copyWith(surface: background),
+          active: options.themeBase == tb,
+          onTap: () =>
+              ref.read(persistenceProvider.notifier).setOptions(options.copyWith(themeBase: (tb,))),
+        ),
+      );
     }
 
     return SizedBox(
       height: 195,
-      child: ShadowedOverflowList(
-        itemCount: children.length,
-        itemBuilder: (_, i) => children[i],
-      ),
+      child: ShadowedOverflowList(itemCount: children.length, itemBuilder: (_, i) => children[i]),
     );
   }
 }
@@ -89,16 +93,16 @@ class _ThemeCard extends StatelessWidget {
           Container(
             width: 120,
             height: 170,
-            padding: const EdgeInsets.all(5),
+            padding: const .all(5),
             decoration: BoxDecoration(
               color: scheme.surface,
-              border: Border.all(color: borderColor, width: borderWidth),
+              border: .all(color: borderColor, width: borderWidth),
               borderRadius: Theming.borderRadiusSmall,
             ),
             child: Column(
               children: [
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
                     Container(
                       height: Theming.offset,
@@ -111,13 +115,13 @@ class _ThemeCard extends StatelessWidget {
                     const SizedBox(height: Theming.offset),
                     Container(
                       height: 40,
-                      padding: const EdgeInsets.all(5),
+                      padding: const .all(5),
                       decoration: BoxDecoration(
                         color: scheme.surfaceContainerHighest,
                         borderRadius: Theming.borderRadiusSmall,
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: .start,
                         children: [
                           Container(
                             height: 8,
@@ -143,16 +147,13 @@ class _ThemeCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: .end,
                   children: [
                     Container(
                       width: 16,
                       height: 16,
-                      margin: const EdgeInsets.only(right: 7, bottom: 7),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: scheme.primary,
-                      ),
+                      margin: const .only(right: 7, bottom: 7),
+                      decoration: BoxDecoration(shape: BoxShape.circle, color: scheme.primary),
                       child: Center(
                         child: Container(
                           width: 6,
@@ -170,15 +171,12 @@ class _ThemeCard extends StatelessWidget {
                 SizedBox(
                   height: 15,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: .spaceEvenly,
                     children: [
                       Container(
                         height: 8,
                         width: 8,
-                        decoration: BoxDecoration(
-                          color: scheme.primary,
-                          shape: BoxShape.rectangle,
-                        ),
+                        decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.rectangle),
                       ),
                       Container(
                         height: 8,
@@ -198,7 +196,7 @@ class _ThemeCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),

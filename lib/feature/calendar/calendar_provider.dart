@@ -47,53 +47,50 @@ class CalendarNotifier extends AsyncNotifier<Paged<CalendarItem>> {
       if (season == null || year == null) continue;
 
       switch (filter.season) {
-        case CalendarSeasonFilter.current:
+        case .current:
           final currSeason = _previousAndCurrentSeason().$2;
           if (season != currSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.previous:
+        case .previous:
           final prevSeason = _previousAndCurrentSeason().$1;
           if (season != prevSeason || year < filter.date.year - 1) continue;
-        case CalendarSeasonFilter.other:
+        case .other:
           final (prevSeason, currSeason) = _previousAndCurrentSeason();
           if ((season == prevSeason || season == currSeason) && year >= filter.date.year - 1) {
             continue;
           }
           break;
-        case CalendarSeasonFilter.all:
+        case .all:
           break;
       }
 
       final status = c['media']['mediaListEntry']?['status'];
       switch (filter.status) {
-        case CalendarStatusFilter.notInLists:
+        case .notInLists:
           if (status != null) continue;
-        case CalendarStatusFilter.watchingAndPlanning:
+        case .watchingAndPlanning:
           if (status != ListStatus.current.value && status != ListStatus.planning.value) {
             continue;
           }
-        case CalendarStatusFilter.other:
+        case .other:
           if (status == null ||
               status == ListStatus.current.value ||
               status == ListStatus.planning.value) {
             continue;
           }
-        case CalendarStatusFilter.all:
+        case .all:
           break;
       }
 
       items.add(CalendarItem(c, imageQuality));
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
   }
 
   (String, String) _previousAndCurrentSeason() => switch (filter.date.month) {
-        >= 3 && <= 5 => ('WINTER', 'SPRING'),
-        >= 6 && <= 8 => ('SPRING', 'SUMMER'),
-        >= 9 && <= 11 => ('SUMMER', 'FALL'),
-        _ => ('FALL', 'WINTER'),
-      };
+    >= 3 && <= 5 => ('WINTER', 'SPRING'),
+    >= 6 && <= 8 => ('SPRING', 'SUMMER'),
+    >= 9 && <= 11 => ('SUMMER', 'FALL'),
+    _ => ('FALL', 'WINTER'),
+  };
 }

@@ -29,11 +29,11 @@ class BarChart extends StatelessWidget {
     maxHeight /= maxValue;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: .min,
+      crossAxisAlignment: .stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
+          padding: const .symmetric(vertical: 5),
           child: Text(title, style: TextTheme.of(context).titleSmall),
         ),
         if (toolbar != null) toolbar!,
@@ -43,16 +43,13 @@ class BarChart extends StatelessWidget {
             itemCount: names.length,
             itemExtent: barWidth + 5,
             itemBuilder: (_, i) => Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: .end,
               children: [
-                Text(
-                  values[i].toString(),
-                  style: TextTheme.of(context).labelMedium,
-                ),
+                Text(values[i].toString(), style: TextTheme.of(context).labelMedium),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: values[i] * maxHeight + Theming.offset,
-                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  margin: const .symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
@@ -66,10 +63,7 @@ class BarChart extends StatelessWidget {
                     ),
                   ),
                 ),
-                Text(
-                  names[i],
-                  style: TextTheme.of(context).labelMedium,
-                ),
+                Text(names[i], style: TextTheme.of(context).labelMedium),
               ],
             ),
           ),
@@ -80,11 +74,8 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  const PieChart({
-    required this.title,
-    required this.names,
-    required this.values,
-  }) : assert(names.length == values.length);
+  const PieChart({required this.title, required this.names, required this.values})
+    : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
@@ -93,8 +84,8 @@ class PieChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         Text(title, style: TextTheme.of(context).titleSmall),
         const SizedBox(height: 5),
@@ -114,9 +105,8 @@ class PieChart extends StatelessWidget {
             ),
           ),
           child: Row(
-            mainAxisSize:
-                MediaQuery.sizeOf(context).width > 420 ? MainAxisSize.min : MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MediaQuery.sizeOf(context).width > 420 ? .min : .max,
+            mainAxisAlignment: .spaceBetween,
             children: [
               Flexible(
                 child: AspectRatio(
@@ -135,10 +125,7 @@ class PieChart extends StatelessWidget {
                       ),
                     ),
                     child: CustomPaint(
-                      foregroundPainter: _PieLines(
-                        ColorScheme.of(context).surface,
-                        values,
-                      ),
+                      foregroundPainter: _PieLines(ColorScheme.of(context).surface, values),
                     ),
                   ),
                 ),
@@ -147,17 +134,14 @@ class PieChart extends StatelessWidget {
               SizedBox(
                 width: 140,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: .spaceEvenly,
                   children: [
                     for (int i = 0; i < names.length; i++)
                       Row(
                         children: [
                           Expanded(child: Text(names[i])),
                           const SizedBox(width: 5),
-                          Text(
-                            values[i].toString(),
-                            style: TextTheme.of(context).labelMedium,
-                          ),
+                          Text(values[i].toString(), style: TextTheme.of(context).labelMedium),
                         ],
                       ),
                   ],

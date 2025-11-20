@@ -28,7 +28,7 @@ class SettingsAboutSubview extends StatelessWidget {
           alignment: Alignment.center,
           child: ListView(
             controller: scrollCtrl,
-            padding: EdgeInsets.only(
+            padding: .only(
               top: padding.top + Theming.offset,
               bottom: padding.bottom + Theming.offset,
             ),
@@ -40,17 +40,14 @@ class SettingsAboutSubview extends StatelessWidget {
                 height: 180,
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const .symmetric(vertical: 5),
                 child: Text(
                   'Otraku - v.$appVersion',
-                  textAlign: TextAlign.center,
+                  textAlign: .center,
                   style: TextTheme.of(context).titleMedium,
                 ),
               ),
-              const Text(
-                'An unofficial AniList app',
-                textAlign: TextAlign.center,
-              ),
+              const Text('An unofficial AniList app', textAlign: .center),
               const SizedBox(height: 30),
               ListTile(
                 leading: const Icon(Ionicons.logo_discord),
@@ -84,19 +81,15 @@ class SettingsAboutSubview extends StatelessWidget {
               ListTile(
                 leading: Icon(Ionicons.refresh_outline),
                 title: Text('Reset Options'),
-                onTap: () => ref.read(persistenceProvider.notifier).setOptions(Options.empty()),
+                onTap: () => ref.read(persistenceProvider.notifier).setOptions(.empty()),
               ),
               if (lastJobTimestamp != null) ...[
                 Padding(
-                  padding: const EdgeInsets.only(
-                    left: Theming.offset,
-                    right: Theming.offset,
-                    top: 20,
-                  ),
+                  padding: const .only(left: Theming.offset, right: Theming.offset, top: 20),
                   child: Text(
                     'Performed a notification check around $lastJobTimestamp.',
-                    textAlign: TextAlign.center,
                     style: TextTheme.of(context).labelMedium,
+                    textAlign: .center,
                   ),
                 ),
               ],

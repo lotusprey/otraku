@@ -36,40 +36,29 @@ sealed class SiteNotification {
     required this.type,
     required this.imageUrl,
     required this.texts,
-  })  : id = map['id'],
-        createdAt = DateTimeExtension.fromSecondsSinceEpoch(
-          map['createdAt'] ?? 0,
-        );
+  }) : id = map['id'],
+       createdAt = DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'] ?? 0);
 
-  static SiteNotification? maybe(
-    Map<String, dynamic> map,
-    ImageQuality imageQuality,
-  ) {
+  static SiteNotification? maybe(Map<String, dynamic> map, ImageQuality imageQuality) {
     final type = NotificationType.from(map['type']);
 
     return switch (type) {
       null => null,
-      NotificationType.following => FollowNotification(map, type),
-      NotificationType.activityMention ||
-      NotificationType.activityMessage ||
-      NotificationType.activityLike ||
-      NotificationType.activityReply ||
-      NotificationType.acrivityReplyLike ||
-      NotificationType.activityReplySubscribed =>
-        ActivityNotification(map, type),
-      NotificationType.threadLike => ThreadNotification(map, type),
-      NotificationType.threadReplySubscribed ||
-      NotificationType.threadCommentMention ||
-      NotificationType.threadCommentReply ||
-      NotificationType.threadCommentLike =>
-        ThreadCommentNotification(map, type),
-      NotificationType.airing ||
-      NotificationType.relatedMediaAddition =>
-        MediaReleaseNotification(map, type, imageQuality),
-      NotificationType.mediaDataChange ||
-      NotificationType.mediaMerge =>
-        MediaChangeNotification(map, type, imageQuality),
-      NotificationType.mediaDeletion => MediaDeletionNotification(map, type),
+      .following => FollowNotification(map, type),
+      .activityMention ||
+      .activityMessage ||
+      .activityLike ||
+      .activityReply ||
+      .acrivityReplyLike ||
+      .activityReplySubscribed => ActivityNotification(map, type),
+      .threadLike => ThreadNotification(map, type),
+      .threadReplySubscribed ||
+      .threadCommentMention ||
+      .threadCommentReply ||
+      .threadCommentLike => ThreadCommentNotification(map, type),
+      .airing || .relatedMediaAddition => MediaReleaseNotification(map, type, imageQuality),
+      .mediaDataChange || .mediaMerge => MediaChangeNotification(map, type, imageQuality),
+      .mediaDeletion => MediaDeletionNotification(map, type),
     };
   }
 
@@ -111,35 +100,17 @@ class ActivityNotification extends SiteNotification {
     required this.activityId,
   });
 
-  factory ActivityNotification(
-    Map<String, dynamic> map,
-    NotificationType type,
-  ) {
+  factory ActivityNotification(Map<String, dynamic> map, NotificationType type) {
     final List<String> texts = switch (type) {
-      NotificationType.activityMention => [
-          map['user']?['name'] ?? '?',
-          ' mentioned you in an activity',
-        ],
-      NotificationType.activityMessage => [
-          map['user']?['name'] ?? '?',
-          ' sent you a message',
-        ],
-      NotificationType.activityLike => [
-          map['user']?['name'] ?? '?',
-          ' liked your activity',
-        ],
-      NotificationType.activityReply => [
-          map['user']?['name'] ?? '?',
-          ' replied to your activity',
-        ],
-      NotificationType.acrivityReplyLike => [
-          map['user']?['name'] ?? '?',
-          ' liked your reply',
-        ],
-      NotificationType.activityReplySubscribed => [
-          map['user']?['name'] ?? '?',
-          ' replied to a subscribed activity',
-        ],
+      .activityMention => [map['user']?['name'] ?? '?', ' mentioned you in an activity'],
+      .activityMessage => [map['user']?['name'] ?? '?', ' sent you a message'],
+      .activityLike => [map['user']?['name'] ?? '?', ' liked your activity'],
+      .activityReply => [map['user']?['name'] ?? '?', ' replied to your activity'],
+      .acrivityReplyLike => [map['user']?['name'] ?? '?', ' liked your reply'],
+      .activityReplySubscribed => [
+        map['user']?['name'] ?? '?',
+        ' replied to a subscribed activity',
+      ],
       _ => const [],
     };
 
@@ -173,11 +144,7 @@ class ThreadNotification extends SiteNotification {
         map: map,
         type: type,
         imageUrl: map['user']?['avatar']?['large'],
-        texts: [
-          map['user']?['name'] ?? '?',
-          ' liked your thread ',
-          map['thread']?['title'] ?? '',
-        ],
+        texts: [map['user']?['name'] ?? '?', ' liked your thread ', map['thread']?['title'] ?? ''],
         userId: map['user']?['id'] ?? 0,
         threadId: map['thread']?['id'] ?? 0,
         threadSiteUrl: map['thread']?['siteUrl'],
@@ -199,40 +166,40 @@ class ThreadCommentNotification extends SiteNotification {
     required this.commentSiteUrl,
   });
 
-  factory ThreadCommentNotification(
-    Map<String, dynamic> map,
-    NotificationType type,
-  ) {
+  factory ThreadCommentNotification(Map<String, dynamic> map, NotificationType type) {
     final List<String> texts = switch (type) {
-      NotificationType.threadReplySubscribed => [
-          map['user']?['name'] ?? '?',
-          if (map['thread']?['title'] != null) ...[' commented in ', map['thread']['title']] else
-            ' commented in a subscribed thread',
-        ],
-      NotificationType.threadCommentMention => [
-          map['user']?['name'] ?? '?',
-          if (map['thread']?['title'] != null) ...[
-            ' mentioned you in ',
-            map['thread']['title']
-          ] else
-            ' mentioned you in a subscribed thread',
-        ],
-      NotificationType.threadCommentReply => [
-          map['user']?['name'] ?? '?',
-          if (map['thread']?['title'] != null) ...[
-            ' replied to your comment in ',
-            map['thread']['title']
-          ] else
-            ' replied to your comment in a subscribed thread',
-        ],
-      NotificationType.threadCommentLike => [
-          map['user']?['name'] ?? '?',
-          if (map['thread']?['title'] != null) ...[
-            ' liked your comment in ',
-            map['thread']['title']
-          ] else
-            ' liked your comment in a subscribed thread',
-        ],
+      .threadReplySubscribed => [
+        map['user']?['name'] ?? '?',
+        if (map['thread']?['title'] != null) ...[
+          ' commented in ',
+          map['thread']['title'],
+        ] else
+          ' commented in a subscribed thread',
+      ],
+      .threadCommentMention => [
+        map['user']?['name'] ?? '?',
+        if (map['thread']?['title'] != null) ...[
+          ' mentioned you in ',
+          map['thread']['title'],
+        ] else
+          ' mentioned you in a subscribed thread',
+      ],
+      .threadCommentReply => [
+        map['user']?['name'] ?? '?',
+        if (map['thread']?['title'] != null) ...[
+          ' replied to your comment in ',
+          map['thread']['title'],
+        ] else
+          ' replied to your comment in a subscribed thread',
+      ],
+      .threadCommentLike => [
+        map['user']?['name'] ?? '?',
+        if (map['thread']?['title'] != null) ...[
+          ' liked your comment in ',
+          map['thread']['title'],
+        ] else
+          ' liked your comment in a subscribed thread',
+      ],
       _ => const [],
     };
 
@@ -267,16 +234,16 @@ class MediaReleaseNotification extends SiteNotification {
     ImageQuality imageQuality,
   ) {
     final List<String> texts = switch (type) {
-      NotificationType.airing => [
-          map['media']?['title']?['userPreferred'] ?? '?',
-          ' episode ',
-          map['episode']?.toString() ?? '?',
-          ' aired',
-        ],
-      NotificationType.relatedMediaAddition => [
-          map['media']?['title']?['userPreferred'] ?? '?',
-          ' got added to the site',
-        ],
+      .airing => [
+        map['media']?['title']?['userPreferred'] ?? '?',
+        ' episode ',
+        map['episode']?.toString() ?? '?',
+        ' aired',
+      ],
+      .relatedMediaAddition => [
+        map['media']?['title']?['userPreferred'] ?? '?',
+        ' got added to the site',
+      ],
       _ => const [],
     };
 
@@ -308,18 +275,15 @@ class MediaChangeNotification extends SiteNotification {
     ImageQuality imageQuality,
   ) {
     final List<String> texts = switch (type) {
-      NotificationType.mediaDataChange => [
-          map['media']?['title']?['userPreferred'] ?? '?',
-          ' got site data changes',
-        ],
-      NotificationType.mediaMerge => [
-          List<String>.from(
-            map['deletedMediaTitles'] ?? const [],
-            growable: false,
-          ).join(", "),
-          ' got merged into ',
-          map['media']?['title']?['userPreferred'] ?? '?',
-        ],
+      .mediaDataChange => [
+        map['media']?['title']?['userPreferred'] ?? '?',
+        ' got site data changes',
+      ],
+      .mediaMerge => [
+        List<String>.from(map['deletedMediaTitles'] ?? const [], growable: false).join(", "),
+        ' got merged into ',
+        map['media']?['title']?['userPreferred'] ?? '?',
+      ],
       _ => const [],
     };
 
@@ -346,18 +310,12 @@ class MediaDeletionNotification extends SiteNotification {
     required this.reason,
   });
 
-  factory MediaDeletionNotification(
-    Map<String, dynamic> map,
-    NotificationType type,
-  ) =>
+  factory MediaDeletionNotification(Map<String, dynamic> map, NotificationType type) =>
       MediaDeletionNotification._(
         map: map,
         type: type,
         imageUrl: null,
-        texts: [
-          map['deletedMediaTitle'] ?? '?',
-          ' got deleted from the site',
-        ],
+        texts: [map['deletedMediaTitle'] ?? '?', ' got deleted from the site'],
         reason: map['reason'] ?? '',
       );
 

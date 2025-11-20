@@ -8,17 +8,20 @@ extension SnackBarExtension on SnackBar {
     String text, {
     bool canCopyText = false,
   }) {
-    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(text),
-      behavior: SnackBarBehavior.floating,
-      duration: const Duration(milliseconds: 2000),
-      action: canCopyText
-          ? SnackBarAction(
-              label: 'Copy',
-              onPressed: () => Clipboard.setData(ClipboardData(text: text)),
-            )
-          : null,
-    ));
+    return ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(text),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(milliseconds: 2000),
+        persist: false,
+        action: canCopyText
+            ? SnackBarAction(
+                label: 'Copy',
+                onPressed: () => Clipboard.setData(ClipboardData(text: text)),
+              )
+            : null,
+      ),
+    );
   }
 
   /// Copy [text] to clipboard and notify with a snackbar.

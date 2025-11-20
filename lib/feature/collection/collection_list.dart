@@ -51,20 +51,18 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: Theming.offset),
+      margin: const .only(bottom: Theming.offset),
       child: MediaRouteTile(
         key: ValueKey(entry.mediaId),
         id: entry.mediaId,
         imageUrl: entry.imageUrl,
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             Hero(
               tag: entry.mediaId,
               child: ClipRRect(
-                borderRadius: const BorderRadius.horizontal(
-                  left: Theming.radiusSmall,
-                ),
+                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: Container(
                   width: _tileHeight / Theming.coverHtoWRatio,
                   color: ColorScheme.of(context).surfaceContainerHighest,
@@ -131,20 +129,15 @@ class __TileContentState extends State<_TileContent> {
     }
 
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: .spaceAround,
+      crossAxisAlignment: .start,
       children: [
         Flexible(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
             children: [
-              Flexible(
-                child: Text(
-                  widget.item.titles[0],
-                  overflow: TextOverflow.fade,
-                ),
-              ),
+              Flexible(child: Text(widget.item.titles[0], overflow: .fade)),
               const SizedBox(height: 5),
               TextRail(textRailItems),
             ],
@@ -152,7 +145,7 @@ class __TileContentState extends State<_TileContent> {
         ),
         Container(
           height: 5,
-          margin: const EdgeInsets.symmetric(vertical: 3),
+          margin: const .symmetric(vertical: 3),
           decoration: BoxDecoration(
             borderRadius: Theming.borderRadiusSmall,
             gradient: LinearGradient(
@@ -167,21 +160,18 @@ class __TileContentState extends State<_TileContent> {
           ),
         ),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: .spaceBetween,
           children: [
             ScoreLabel(widget.item.score, widget.scoreFormat),
             if (widget.item.repeat > 0)
               Tooltip(
                 message: 'Repeats',
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     const Icon(Ionicons.repeat, size: Theming.iconSmall),
                     const SizedBox(width: 3),
-                    Text(
-                      widget.item.repeat.toString(),
-                      style: TextTheme.of(context).labelSmall,
-                    ),
+                    Text(widget.item.repeat.toString(), style: TextTheme.of(context).labelSmall),
                   ],
                 ),
               )
@@ -215,7 +205,7 @@ class __TileContentState extends State<_TileContent> {
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 40),
-        padding: const EdgeInsets.only(left: 5),
+        padding: const .only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: foregroundColor,
         iconColor: foregroundColor,
@@ -253,9 +243,9 @@ class __TileContentState extends State<_TileContent> {
     var updateStatus = false;
 
     if (_lastProgress == 0 &&
-        (item.listStatus == ListStatus.planning ||
-            item.listStatus == ListStatus.paused ||
-            item.listStatus == ListStatus.dropped)) {
+        (item.listStatus == .planning ||
+            item.listStatus == .paused ||
+            item.listStatus == .dropped)) {
       await ConfirmationDialog.show(
         context,
         title: 'Update status?',

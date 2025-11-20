@@ -6,10 +6,8 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 
-final compositionProvider =
-    AsyncNotifierProvider.autoDispose.family<CompositionNotifier, Composition, CompositionTag>(
-  CompositionNotifier.new,
-);
+final compositionProvider = AsyncNotifierProvider.autoDispose
+    .family<CompositionNotifier, Composition, CompositionTag>(CompositionNotifier.new);
 
 class CompositionNotifier extends AsyncNotifier<Composition> {
   CompositionNotifier(this.arg);
@@ -27,21 +25,25 @@ class CompositionNotifier extends AsyncNotifier<Composition> {
 
     return switch (arg) {
       StatusActivityCompositionTag(id: var id) =>
-        ref.read(repositoryProvider).request(GqlQuery.activityComposition, {'id': id}).then(
-          (data) => Composition(data['Activity']['text']),
-        ),
+        ref
+            .read(repositoryProvider)
+            .request(GqlQuery.activityComposition, {'id': id})
+            .then((data) => Composition(data['Activity']['text'])),
       MessageActivityCompositionTag(id: var id) =>
-        ref.read(repositoryProvider).request(GqlQuery.activityComposition, {'id': id}).then(
-          (data) => Composition(data['Activity']['message']),
-        ),
+        ref
+            .read(repositoryProvider)
+            .request(GqlQuery.activityComposition, {'id': id})
+            .then((data) => Composition(data['Activity']['message'])),
       ActivityReplyCompositionTag(id: var id) =>
-        ref.read(repositoryProvider).request(GqlQuery.activityReplyComposition, {'id': id}).then(
-          (data) => Composition(data['ActivityReply']['text']),
-        ),
+        ref
+            .read(repositoryProvider)
+            .request(GqlQuery.activityReplyComposition, {'id': id})
+            .then((data) => Composition(data['ActivityReply']['text'])),
       CommentCompositionTag(id: var id) =>
-        ref.read(repositoryProvider).request(GqlQuery.commentComposition, {'id': id}).then(
-          (data) => Composition(_findComment(data['ThreadComment'][0])),
-        ),
+        ref
+            .read(repositoryProvider)
+            .request(GqlQuery.commentComposition, {'id': id})
+            .then((data) => Composition(_findComment(data['ThreadComment'][0]))),
     };
   }
 
@@ -67,49 +69,37 @@ class CompositionNotifier extends AsyncNotifier<Composition> {
     return AsyncValue.guard(() async {
       switch (arg) {
         case StatusActivityCompositionTag(id: var id):
-          final data = await ref.read(repositoryProvider).request(
-            GqlMutation.saveStatusActivity,
-            {
-              if (id != null) 'id': id,
-              'text': value.text.withParsedEmojis,
-            },
-          );
+          final data = await ref.read(repositoryProvider).request(GqlMutation.saveStatusActivity, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+          });
           return data['SaveTextActivity'];
         case MessageActivityCompositionTag(id: var id, recipientId: var rcpId):
-          final data = await ref.read(repositoryProvider).request(
-            GqlMutation.saveMessageActivity,
-            {
-              if (id != null) 'id': id,
-              'text': value.text.withParsedEmojis,
-              'recipientId': rcpId,
-              if (value is PrivateComposition) 'isPrivate': value.isPrivate,
-            },
-          );
+          final data = await ref.read(repositoryProvider).request(GqlMutation.saveMessageActivity, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+            'recipientId': rcpId,
+            if (value is PrivateComposition) 'isPrivate': value.isPrivate,
+          });
           return data['SaveMessageActivity'];
         case ActivityReplyCompositionTag(id: var id, activityId: var actId):
-          final data = await ref.read(repositoryProvider).request(
-            GqlMutation.saveActivityReply,
-            {
-              if (id != null) 'id': id,
-              'text': value.text.withParsedEmojis,
-              'activityId': actId,
-            },
-          );
+          final data = await ref.read(repositoryProvider).request(GqlMutation.saveActivityReply, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+            'activityId': actId,
+          });
           return data['SaveActivityReply'];
         case CommentCompositionTag(
-            id: var id,
-            threadId: var threadId,
-            parentCommentId: var parentCommentId,
-          ):
-          final data = await ref.read(repositoryProvider).request(
-            GqlMutation.saveComment,
-            {
-              if (id != null) 'id': id,
-              'text': value.text.withParsedEmojis,
-              'threadId': threadId,
-              if (parentCommentId != null) 'parentCommentId': parentCommentId,
-            },
-          );
+          id: var id,
+          threadId: var threadId,
+          parentCommentId: var parentCommentId,
+        ):
+          final data = await ref.read(repositoryProvider).request(GqlMutation.saveComment, {
+            if (id != null) 'id': id,
+            'text': value.text.withParsedEmojis,
+            'threadId': threadId,
+            if (parentCommentId != null) 'parentCommentId': parentCommentId,
+          });
           return data['SaveThreadComment'];
       }
     });

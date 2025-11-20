@@ -4,11 +4,7 @@ import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 class DateField extends StatefulWidget {
-  const DateField({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
+  const DateField({required this.label, required this.value, required this.onChanged});
 
   final String label;
   final DateTime? value;
@@ -41,25 +37,26 @@ class _DateFieldState extends State<DateField> {
     return TextField(
       readOnly: true,
       controller: _ctrl,
-      textAlign: TextAlign.center,
-      onTap: () => showDatePicker(
-        context: context,
-        initialDate: _value ?? DateTime.now(),
-        firstDate: DateTime(1920),
-        lastDate: DateTime.now(),
-        errorInvalidText: 'Enter date in valid range',
-        errorFormatText: 'Enter valid date',
-        confirmText: 'Done',
-        cancelText: 'Cancel',
-        fieldLabelText: '',
-        helpText: '',
-      ).then((pickedDate) {
-        if (pickedDate == null) return;
+      textAlign: .center,
+      onTap: () =>
+          showDatePicker(
+            context: context,
+            initialDate: _value ?? DateTime.now(),
+            firstDate: DateTime(1920),
+            lastDate: DateTime.now(),
+            errorInvalidText: 'Enter date in valid range',
+            errorFormatText: 'Enter valid date',
+            confirmText: 'Done',
+            cancelText: 'Cancel',
+            fieldLabelText: '',
+            helpText: '',
+          ).then((pickedDate) {
+            if (pickedDate == null) return;
 
-        _value = pickedDate;
-        _ctrl.text = _value?.formattedDate ?? '';
-        widget.onChanged(pickedDate);
-      }),
+            _value = pickedDate;
+            _ctrl.text = _value?.formattedDate ?? '';
+            widget.onChanged(pickedDate);
+          }),
       decoration: InputDecoration(
         labelText: widget.label,
         border: const OutlineInputBorder(),
@@ -69,10 +66,7 @@ class _DateFieldState extends State<DateField> {
             color: Colors.transparent,
             child: InkResponse(
               radius: Theming.radiusSmall.x,
-              child: const Tooltip(
-                message: 'Clear',
-                child: Icon(Ionicons.close_outline),
-              ),
+              child: const Tooltip(message: 'Clear', child: Icon(Ionicons.close_outline)),
               onTap: () {
                 _ctrl.text = '';
                 widget.onChanged(null);

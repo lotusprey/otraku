@@ -11,8 +11,8 @@ import 'package:otraku/util/graphql.dart';
 
 final notificationsProvider =
     AsyncNotifierProvider.autoDispose<NotificationsNotifier, PagedWithTotal<SiteNotification>>(
-  NotificationsNotifier.new,
-);
+      NotificationsNotifier.new,
+    );
 
 class NotificationsNotifier extends AsyncNotifier<PagedWithTotal<SiteNotification>> {
   late NotificationsFilter filter;
@@ -29,20 +29,15 @@ class NotificationsNotifier extends AsyncNotifier<PagedWithTotal<SiteNotificatio
     state = await AsyncValue.guard(() => _fetch(oldState));
   }
 
-  Future<PagedWithTotal<SiteNotification>> _fetch(
-    PagedWithTotal<SiteNotification> oldState,
-  ) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.notifications,
-      {
-        'page': oldState.next,
-        if (filter == NotificationsFilter.all) ...{
-          'withCount': true,
-          'resetCount': true,
-        } else
-          'filter': filter.vars,
-      },
-    );
+  Future<PagedWithTotal<SiteNotification>> _fetch(PagedWithTotal<SiteNotification> oldState) async {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.notifications, {
+      'page': oldState.next,
+      if (filter == NotificationsFilter.all) ...{
+        'withCount': true,
+        'resetCount': true,
+      } else
+        'filter': filter.vars,
+    });
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
 
@@ -57,10 +52,6 @@ class NotificationsNotifier extends AsyncNotifier<PagedWithTotal<SiteNotificatio
       if (item != null) items.add(item);
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-      unreadCount,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false, unreadCount);
   }
 }

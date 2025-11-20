@@ -31,10 +31,7 @@ class StudioFilterButton extends StatelessWidget {
             builder: (context, scrollCtrl) => ListView(
               controller: scrollCtrl,
               physics: Theming.bouncyPhysics,
-              padding: const EdgeInsets.symmetric(
-                horizontal: Theming.offset,
-                vertical: 20,
-              ),
+              padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
               children: [
                 ChipSelector.ensureSelected(
                   title: 'Sort',
@@ -44,10 +41,7 @@ class StudioFilterButton extends StatelessWidget {
                 ),
                 ChipSelector(
                   title: 'List Presence',
-                  items: const [
-                    ('In Lists', true),
-                    ('Not in Lists', false),
-                  ],
+                  items: const [('In Lists', true), ('Not in Lists', false)],
                   value: filter.inLists,
                   onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
                 ),

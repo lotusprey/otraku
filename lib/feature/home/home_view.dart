@@ -55,10 +55,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     loadMore: () => ref.read(discoverProvider.notifier).fetch(),
   );
 
-  late final _tabCtrl = TabController(
-    length: HomeTab.values.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: HomeTab.values.length, vsync: this);
 
   @override
   void initState() {
@@ -69,15 +66,13 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     if (widget.tab != null) _tabCtrl.index = widget.tab!.index;
 
     _tabCtrl.addListener(
-      () => WidgetsBinding.instance.addPostFrameCallback(
-        (_) {
-          final tab = HomeTab.values[_tabCtrl.index];
-          if (tab != HomeTab.anime) _animeFocusNode.unfocus();
-          if (tab != HomeTab.manga) _mangaFocusNode.unfocus();
-          if (tab != HomeTab.discover) _discoverFocusNode.unfocus();
-          context.go(Routes.home(tab));
-        },
-      ),
+      () => WidgetsBinding.instance.addPostFrameCallback((_) {
+        final tab = HomeTab.values[_tabCtrl.index];
+        if (tab != .anime) _animeFocusNode.unfocus();
+        if (tab != .manga) _mangaFocusNode.unfocus();
+        if (tab != .discover) _discoverFocusNode.unfocus();
+        context.go(Routes.home(tab));
+      }),
     );
   }
 
@@ -132,54 +127,34 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
       mangaCollectionTag = (userId: viewerId, ofAnime: false);
 
       ref.watch(userProvider(userTag).select((_) => null));
-      ref.watch(
-        collectionEntriesProvider(animeCollectionTag).select((_) => null),
-      );
-      ref.watch(
-        collectionEntriesProvider(mangaCollectionTag).select((_) => null),
-      );
+      ref.watch(collectionEntriesProvider(animeCollectionTag).select((_) => null));
+      ref.watch(collectionEntriesProvider(mangaCollectionTag).select((_) => null));
     }
 
     final primaryScrollCtrl = PrimaryScrollController.of(context);
     final home = ref.watch(homeProvider);
     final formFactor = Theming.of(context).formFactor;
 
-    final topBar = TopBarAnimatedSwitcher(
-      switch (_tabCtrl.index) {
-        0 => const TopBar(
-            key: Key('feedTopBar'),
-            title: 'Feed',
-            trailing: [
-              FeedTopBarTrailingContent(),
-            ],
-          ),
-        1 when animeCollectionTag != null => TopBar(
-            key: const Key('animeCollectionTopBar'),
-            trailing: [
-              CollectionTopBarTrailingContent(
-                animeCollectionTag,
-                _animeFocusNode,
-              ),
-            ],
-          ),
-        2 when mangaCollectionTag != null => TopBar(
-            key: const Key('mangaCollectionTopBar'),
-            trailing: [
-              CollectionTopBarTrailingContent(
-                mangaCollectionTag,
-                _mangaFocusNode,
-              ),
-            ],
-          ),
-        3 => TopBar(
-            key: const Key('discoverTobBar'),
-            trailing: [
-              DiscoverTopBarTrailingContent(_discoverFocusNode),
-            ],
-          ),
-        _ => const EmptyTopBar() as PreferredSizeWidget,
-      },
-    );
+    final topBar = TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
+      0 => const TopBar(
+        key: Key('feedTopBar'),
+        title: 'Feed',
+        trailing: [FeedTopBarTrailingContent()],
+      ),
+      1 when animeCollectionTag != null => TopBar(
+        key: const Key('animeCollectionTopBar'),
+        trailing: [CollectionTopBarTrailingContent(animeCollectionTag, _animeFocusNode)],
+      ),
+      2 when mangaCollectionTag != null => TopBar(
+        key: const Key('mangaCollectionTopBar'),
+        trailing: [CollectionTopBarTrailingContent(mangaCollectionTag, _mangaFocusNode)],
+      ),
+      3 => TopBar(
+        key: const Key('discoverTobBar'),
+        trailing: [DiscoverTopBarTrailingContent(_discoverFocusNode)],
+      ),
+      _ => const EmptyTopBar() as PreferredSizeWidget,
+    });
 
     final navigationConfig = NavigationConfig(
       items: _homeTabs,
@@ -189,23 +164,23 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
         final tab = HomeTab.values[i];
 
         switch (tab) {
-          case HomeTab.feed:
+          case .feed:
             _feedScrollCtrl.scrollToTop();
-          case HomeTab.anime:
+          case .anime:
             if (_animeScrollCtrl.position.pixels > 0) {
               _animeScrollCtrl.scrollToTop();
               return;
             }
 
             _toggleSearchFocus(_animeFocusNode);
-          case HomeTab.manga:
+          case .manga:
             if (_mangaScrollCtrl.position.pixels > 0) {
               _mangaScrollCtrl.scrollToTop();
               return;
             }
 
             _toggleSearchFocus(_mangaFocusNode);
-          case HomeTab.discover:
+          case .discover:
             if (_discoverScrollCtrl.position.pixels > 0) {
               _discoverScrollCtrl.scrollToTop();
               return;
@@ -213,7 +188,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
 
             _toggleSearchFocus(_discoverFocusNode);
             return;
-          case HomeTab.profile:
+          case .profile:
             if (primaryScrollCtrl.positions.last.pixels > 0) {
               primaryScrollCtrl.scrollToTop();
               return;
@@ -226,33 +201,34 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
 
     final floatingAction = switch (_tabCtrl.index) {
       0 => HidingFloatingActionButton(
-          key: const Key('feed'),
-          scrollCtrl: _feedScrollCtrl,
-          child: FeedFloatingAction(ref),
-        ),
-      1 => (formFactor == FormFactor.phone || !home.didExpandAnimeCollection) &&
-              animeCollectionTag != null
-          ? HidingFloatingActionButton(
-              key: const Key('anime'),
-              scrollCtrl: _animeScrollCtrl,
-              child: CollectionFloatingAction(animeCollectionTag),
-            )
-          : null,
-      2 => (formFactor == FormFactor.phone || !home.didExpandMangaCollection) &&
-              mangaCollectionTag != null
-          ? HidingFloatingActionButton(
-              key: const Key('manga'),
-              scrollCtrl: _mangaScrollCtrl,
-              child: CollectionFloatingAction(mangaCollectionTag),
-            )
-          : null,
-      3 => formFactor == FormFactor.phone
-          ? HidingFloatingActionButton(
-              key: const Key('discover'),
-              scrollCtrl: _discoverScrollCtrl,
-              child: const DiscoverFloatingAction(),
-            )
-          : null,
+        key: const Key('feed'),
+        scrollCtrl: _feedScrollCtrl,
+        child: FeedFloatingAction(ref),
+      ),
+      1 =>
+        (formFactor == .phone || !home.didExpandAnimeCollection) && animeCollectionTag != null
+            ? HidingFloatingActionButton(
+                key: const Key('anime'),
+                scrollCtrl: _animeScrollCtrl,
+                child: CollectionFloatingAction(animeCollectionTag),
+              )
+            : null,
+      2 =>
+        (formFactor == .phone || !home.didExpandMangaCollection) && mangaCollectionTag != null
+            ? HidingFloatingActionButton(
+                key: const Key('manga'),
+                scrollCtrl: _mangaScrollCtrl,
+                child: CollectionFloatingAction(mangaCollectionTag),
+              )
+            : null,
+      3 =>
+        formFactor == .phone
+            ? HidingFloatingActionButton(
+                key: const Key('discover'),
+                scrollCtrl: _discoverScrollCtrl,
+                child: const DiscoverFloatingAction(),
+              )
+            : null,
       _ => null,
     };
 

@@ -31,90 +31,82 @@ class DiscoverSubview extends StatelessWidget {
         final onRefresh = (invalidate) => invalidate(discoverProvider);
 
         final content = switch (type) {
-          DiscoverType.anime => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
-              ),
-              onData: (data) => options.discoverItemView == DiscoverItemView.simple
-                  ? DiscoverMediaSimpleGrid(data.items)
-                  : DiscoverMediaGrid(data.items),
+          .anime => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
             ),
-          DiscoverType.manga => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
-              ),
-              onData: (data) => options.discoverItemView == DiscoverItemView.simple
-                  ? DiscoverMediaSimpleGrid(data.items)
-                  : DiscoverMediaGrid(data.items),
+            onData: (data) => options.discoverItemView == .simple
+                ? DiscoverMediaSimpleGrid(data.items)
+                : DiscoverMediaGrid(data.items),
+          ),
+          .manga => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
             ),
-          DiscoverType.character => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData(
-                  (data) => (data as DiscoverCharacterItems).pages,
-                ),
-              ),
-              onData: (data) => CharacterItemGrid(data.items),
+            onData: (data) => options.discoverItemView == .simple
+                ? DiscoverMediaSimpleGrid(data.items)
+                : DiscoverMediaGrid(data.items),
+          ),
+          .character => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverCharacterItems).pages),
             ),
-          DiscoverType.staff => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData((data) => (data as DiscoverStaffItems).pages),
-              ),
-              onData: (data) => StaffItemGrid(data.items),
+            onData: (data) => CharacterItemGrid(data.items),
+          ),
+          .staff => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverStaffItems).pages),
             ),
-          DiscoverType.studio => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData(
-                  (data) => (data as DiscoverStudioItems).pages,
-                ),
-              ),
-              onData: (data) => StudioItemGrid(data.items),
+            onData: (data) => StaffItemGrid(data.items),
+          ),
+          .studio => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverStudioItems).pages),
             ),
-          DiscoverType.user => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData((data) => (data as DiscoverUserItems).pages),
-              ),
-              onData: (data) => UserItemGrid(data.items),
+            onData: (data) => StudioItemGrid(data.items),
+          ),
+          .user => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverUserItems).pages),
             ),
-          DiscoverType.review => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData(
-                  (data) => (data as DiscoverReviewItems).pages,
-                ),
-              ),
-              onData: (data) => ReviewGrid(data.items, options.highContrast),
+            onData: (data) => UserItemGrid(data.items),
+          ),
+          .review => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverReviewItems).pages),
             ),
-          DiscoverType.recommendation => PagedView(
-              scrollCtrl: scrollCtrl,
-              onRefresh: onRefresh,
-              provider: discoverProvider.select(
-                (s) => s.whenData(
-                  (data) => (data as DiscoverRecommendationItems).pages,
-                ),
-              ),
-              onData: (data) => DiscoverRecommendationsGrid(
-                data.items,
-                (mediaId, recommendedMediaId, rating) => ref
-                    .read(discoverProvider.notifier)
-                    .rateRecommendation(mediaId, recommendedMediaId, rating),
-              ),
+            onData: (data) => ReviewGrid(data.items, options.highContrast),
+          ),
+          .recommendation => PagedView(
+            scrollCtrl: scrollCtrl,
+            onRefresh: onRefresh,
+            provider: discoverProvider.select(
+              (s) => s.whenData((data) => (data as DiscoverRecommendationItems).pages),
             ),
+            onData: (data) => DiscoverRecommendationsGrid(
+              data.items,
+              (mediaId, recommendedMediaId, rating) => ref
+                  .read(discoverProvider.notifier)
+                  .rateRecommendation(mediaId, recommendedMediaId, rating),
+            ),
+          ),
         };
 
-        if (formFactor == FormFactor.phone) return content;
+        if (formFactor == .phone) return content;
 
         return Row(
           children: [
@@ -122,9 +114,9 @@ class DiscoverSubview extends StatelessWidget {
               selected: type.index,
               maxWidth: 180,
               items: DiscoverType.values.map((v) => Text(v.label)).toList(),
-              onTap: (i) => ref.read(discoverFilterProvider.notifier).update(
-                    (s) => s.copyWith(type: DiscoverType.values[i]),
-                  ),
+              onTap: (i) => ref
+                  .read(discoverFilterProvider.notifier)
+                  .update((s) => s.copyWith(type: DiscoverType.values[i])),
             ),
             Expanded(child: content),
           ],

@@ -1,5 +1,6 @@
 abstract class GqlQuery {
-  static const collection = r'''
+  static const collection =
+      r'''
     query Collection($userId: Int, $type: MediaType, $status_in: [MediaListStatus]) {
       MediaListCollection(userId: $userId, type: $type, status_in: $status_in) {
         lists {name isCustomList isSplitCompletedList status entries {...collectionEntry}}
@@ -16,7 +17,8 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.collectionEntry}';
 
-  static const listEntry = r'''
+  static const listEntry =
+      r'''
     query CollectionEntry($userId: Int, $mediaId: Int) {
       MediaList(userId: $userId, mediaId: $mediaId) {
         ...collectionEntry customLists hiddenFromStatusLists
@@ -524,7 +526,8 @@ abstract class GqlQuery {
     fragment studio on StudioConnection {pageInfo {hasNextPage total} nodes {id name}}
   ''';
 
-  static const social = r'''
+  static const social =
+      r'''
     query Friends($userId: Int!, $page: Int = 1, $withFollowing: Boolean = false, $withFollowers: Boolean = false,
         $withThreads: Boolean = false, $withComments: Boolean = false) {
       following: Page(page: $page) @include(if: $withFollowing) {
@@ -557,7 +560,8 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.thread}';
 
-  static const activity = r'''
+  static const activity =
+      r'''
     query Activity($id: Int, $withActivity: Boolean = false, $page: Int = 1) {
       Activity(id: $id) @include(if: $withActivity) {
         ... on TextActivity {...textActivity}
@@ -572,7 +576,8 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.textActivity}${_GqlFragment.listActivity}${_GqlFragment.messageActivity}${_GqlFragment.activityReply}';
 
-  static const activityPage = r'''
+  static const activityPage =
+      r'''
     query Activities($userId: Int, $userIdNot: Int, $mediaId: Int, $page: Int = 1, $isFollowing: Boolean,
         $hasRepliesOrText: Boolean, $typeIn: [ActivityType], $createdBefore: Int) {
       Page(page: $page) {
@@ -610,7 +615,8 @@ abstract class GqlQuery {
     }
   ''';
 
-  static const settings = r'''
+  static const settings =
+      r'''
     query Settings($withData: Boolean = true) {
       Viewer {
         unreadNotificationCount
@@ -620,7 +626,8 @@ abstract class GqlQuery {
   '''
       '${_GqlFragment.userSettings}';
 
-  static const threadPage = r'''
+  static const threadPage =
+      r'''
     query Forum($page: Int = 1, $search: String, $categoryId: Int, $mediaId: Int,
         $subscribed: Boolean, $userId: Int, $replyUserId: Int, $sort: [ThreadSort]) {
       Page(page: $page) {
@@ -856,7 +863,8 @@ abstract class GqlMutation {
     mutation RemoveEntry($entryId: Int) {DeleteMediaListEntry(id: $entryId) {deleted}}
   ''';
 
-  static const updateSettings = r'''
+  static const updateSettings =
+      r'''
     mutation UpdateSettings($titleLanguage: UserTitleLanguage, $staffNameLanguage: UserStaffNameLanguage, 
         $activityMergeTime: Int, $displayAdultContent: Boolean, $airingNotifications: Boolean, 
         $scoreFormat: ScoreFormat, $rowOrder: String, $notificationOptions: [NotificationOptionInput], 
@@ -919,21 +927,24 @@ abstract class GqlMutation {
     }
   ''';
 
-  static const saveStatusActivity = r'''
+  static const saveStatusActivity =
+      r'''
     mutation SaveStatusActivity($id: Int, $text: String) {
       SaveTextActivity(id: $id, text: $text) {...textActivity}
     }
   '''
       '${_GqlFragment.textActivity}';
 
-  static const saveMessageActivity = r'''
+  static const saveMessageActivity =
+      r'''
     mutation SaveMessageActivity($id: Int, $recipientId: Int, $text: String, $isPrivate: Boolean) {
       SaveMessageActivity(id: $id, recipientId: $recipientId, message: $text, private: $isPrivate) {...messageActivity}
     }
   '''
       '${_GqlFragment.messageActivity}';
 
-  static const saveActivityReply = r'''
+  static const saveActivityReply =
+      r'''
     mutation SaveActivityReply($id: Int, $activityId: Int, $text: String) {
       SaveActivityReply(id: $id, activityId: $activityId, text: $text) {...activityReply}
     }

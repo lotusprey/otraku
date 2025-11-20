@@ -46,32 +46,24 @@ class UserHeader extends StatelessWidget {
       siteUrl: user?.siteUrl,
       title: user?.name,
       details: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+        behavior: .opaque,
         onTap: () {
           if (user?.modRoles.isNotEmpty ?? false) {
             showDialog(
               context: context,
-              builder: (context) => TextDialog(
-                title: 'Roles',
-                text: user!.modRoles.join(', '),
-              ),
+              builder: (context) => TextDialog(title: 'Roles', text: user!.modRoles.join(', ')),
             );
           }
         },
-        child: TextRail(
-          textRailItems,
-          style: TextTheme.of(context).labelMedium,
-        ),
+        child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
       ),
       trailingTopButtons: [
         if (isViewer) ...[
           IconButton(
             tooltip: 'Switch Account',
             icon: const Icon(Icons.manage_accounts_outlined),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => const _AccountPicker(),
-            ),
+            onPressed: () =>
+                showDialog(context: context, builder: (context) => const _AccountPicker()),
           ),
           IconButton(
             tooltip: 'Settings',
@@ -100,103 +92,99 @@ class __AccountPickerState extends State<_AccountPicker> {
 
   @override
   Widget build(BuildContext context) {
-    const divider = SizedBox(
-      height: 40,
-      child: VerticalDivider(width: 10, thickness: 1),
-    );
+    const divider = SizedBox(height: 40, child: VerticalDivider(width: 10, thickness: 1));
     const imagePadding = EdgeInsets.symmetric(horizontal: 5);
 
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(
-        vertical: 24,
-        horizontal: Theming.offset,
-      ),
+      insetPadding: const .symmetric(vertical: 24, horizontal: Theming.offset),
       child: Consumer(
         builder: (context, ref, _) {
-          final accountGroup = ref.watch(
-            persistenceProvider.select((s) => s.accountGroup),
-          );
+          final accountGroup = ref.watch(persistenceProvider.select((s) => s.accountGroup));
           final accounts = accountGroup.accounts;
 
           final items = <Widget>[];
           for (int i = 0; i < accounts.length; i++) {
-            items.add(SizedBox(
+            items.add(
+              SizedBox(
+                height: 60,
+                child: Row(
+                  children: [
+                    Padding(
+                      padding: imagePadding,
+                      child: CachedImage(
+                        accounts[i].avatarUrl,
+                        width: _imageSize,
+                        height: _imageSize,
+                      ),
+                    ),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: .center,
+                        crossAxisAlignment: .start,
+                        children: [
+                          Text(
+                            '${accounts[i].name} ${accounts[i].id}',
+                            overflow: .ellipsis,
+                            maxLines: 2,
+                          ),
+                          Text(
+                            DateTime.now().isBefore(accounts[i].expiration)
+                                ? 'Expires in ${accounts[i].expiration.timeUntil}'
+                                : 'Expired',
+                            style: TextTheme.of(context).labelMedium,
+                            overflow: .ellipsis,
+                            maxLines: 2,
+                          ),
+                        ],
+                      ),
+                    ),
+                    divider,
+                    IconButton(
+                      tooltip: 'Remove Account',
+                      icon: const Icon(Icons.close_rounded),
+                      onPressed: () => ConfirmationDialog.show(
+                        context,
+                        title: 'Remove Account?',
+                        primaryAction: 'Yes',
+                        secondaryAction: 'No',
+                        onConfirm: () {
+                          if (i == accountGroup.accountIndex) {
+                            ref.read(persistenceProvider.notifier).switchAccount(null);
+                          }
+
+                          ref
+                              .read(persistenceProvider.notifier)
+                              .removeAccount(i)
+                              .then((_) => setState(() {}));
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          items.add(
+            SizedBox(
               height: 60,
               child: Row(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: imagePadding,
-                    child: CachedImage(
-                      accounts[i].avatarUrl,
-                      width: _imageSize,
-                      height: _imageSize,
-                    ),
+                    child: Icon(Icons.person_rounded, size: _imageSize),
                   ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${accounts[i].name} ${accounts[i].id}',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        ),
-                        Text(
-                          DateTime.now().isBefore(accounts[i].expiration)
-                              ? 'Expires in ${accounts[i].expiration.timeUntil}'
-                              : 'Expired',
-                          style: TextTheme.of(context).labelMedium,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                        )
-                      ],
-                    ),
-                  ),
+                  const Expanded(child: Text('Guest')),
                   divider,
                   IconButton(
-                    tooltip: 'Remove Account',
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () => ConfirmationDialog.show(
-                      context,
-                      title: 'Remove Account?',
-                      primaryAction: 'Yes',
-                      secondaryAction: 'No',
-                      onConfirm: () {
-                        if (i == accountGroup.accountIndex) {
-                          ref.read(persistenceProvider.notifier).switchAccount(null);
-                        }
-
-                        ref
-                            .read(persistenceProvider.notifier)
-                            .removeAccount(i)
-                            .then((_) => setState(() {}));
-                      },
-                    ),
+                    tooltip: 'Add Account',
+                    icon: const Icon(Icons.add_rounded),
+                    onPressed: () => _addAccount(accounts.isEmpty),
                   ),
                 ],
               ),
-            ));
-          }
-
-          items.add(SizedBox(
-            height: 60,
-            child: Row(
-              children: [
-                const Padding(
-                  padding: imagePadding,
-                  child: Icon(Icons.person_rounded, size: _imageSize),
-                ),
-                const Expanded(child: Text('Guest')),
-                divider,
-                IconButton(
-                  tooltip: 'Add Account',
-                  icon: const Icon(Icons.add_rounded),
-                  onPressed: () => _addAccount(accounts.isEmpty),
-                ),
-              ],
             ),
-          ));
+          );
 
           return PillSelector(
             maxWidth: 380,
@@ -272,7 +260,7 @@ class __FollowButtonState extends State<_FollowButton> {
     final user = widget.user;
 
     return Padding(
-      padding: const EdgeInsets.all(Theming.offset),
+      padding: const .all(Theming.offset),
       child: ElevatedButton.icon(
         icon: Icon(
           user.isFollowed ? Ionicons.person_remove_outline : Ionicons.person_add_outline,
@@ -281,11 +269,11 @@ class __FollowButtonState extends State<_FollowButton> {
         label: Text(
           user.isFollowed
               ? user.isFollower
-                  ? 'Mutual'
-                  : 'Following'
+                    ? 'Mutual'
+                    : 'Following'
               : user.isFollower
-                  ? 'Follower'
-                  : 'Follow',
+              ? 'Follower'
+              : 'Follow',
         ),
         onPressed: () {
           final isFollowed = user.isFollowed;

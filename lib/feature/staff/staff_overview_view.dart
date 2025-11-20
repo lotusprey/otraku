@@ -36,15 +36,13 @@ class StaffOverviewSubview extends StatelessWidget {
         if (header != null) ...[
           header!,
           MediaQuery(
-            data: mediaQuery.copyWith(
-              padding: mediaQuery.padding.copyWith(top: 0),
-            ),
+            data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
             child: refreshControl,
           ),
         ] else
           refreshControl,
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
               SliverTableList([
@@ -58,19 +56,13 @@ class StaffOverviewSubview extends StatelessWidget {
                 if (staff.dateOfDeath != null) ('Death', staff.dateOfDeath!),
                 if (staff.age != null) ('Age', staff.age!),
                 if (staff.startYear != null)
-                  (
-                    'Years Active',
-                    '${staff.startYear} - ${staff.endYear ?? 'Present'}',
-                  ),
+                  ('Years Active', '${staff.startYear} - ${staff.endYear ?? 'Present'}'),
                 if (staff.homeTown != null) ('Home Town', staff.homeTown!),
                 if (staff.bloodType != null) ('Blood Type', staff.bloodType!),
               ]),
               if (staff.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 15)),
-                HtmlContent(
-                  staff.description,
-                  renderMode: RenderMode.sliverList,
-                ),
+                HtmlContent(staff.description, renderMode: RenderMode.sliverList),
               ],
             ],
           ),

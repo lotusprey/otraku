@@ -18,8 +18,10 @@ class ThreadNotifier extends AsyncNotifier<Thread> {
 
   @override
   FutureOr<Thread> build() async {
-    final data =
-        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'withInfo': true});
+    final data = await ref.read(repositoryProvider).request(GqlQuery.thread, {
+      'id': arg,
+      'withInfo': true,
+    });
 
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
@@ -33,8 +35,10 @@ class ThreadNotifier extends AsyncNotifier<Thread> {
     state = state.whenData((data) => data.withChangingCommentPage(page));
     state = const AsyncValue.loading();
 
-    final data =
-        await ref.read(repositoryProvider).request(GqlQuery.thread, {'id': arg, 'page': page});
+    final data = await ref.read(repositoryProvider).request(GqlQuery.thread, {
+      'id': arg,
+      'page': page,
+    });
 
     state = AsyncValue.data(value.withChangedCommentPage(data));
   }
@@ -55,17 +59,17 @@ class ThreadNotifier extends AsyncNotifier<Thread> {
     final value = state.value;
     if (value == null) return Future.value(null);
 
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': value.info.id, 'type': 'THREAD'},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': value.info.id,
+      'type': 'THREAD',
+    }).getErrorOrNull();
   }
 
   Future<Object?> toggleCommentLike(int commentId) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': commentId, 'type': 'THREAD_COMMENT'},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': commentId,
+      'type': 'THREAD_COMMENT',
+    }).getErrorOrNull();
   }
 
   Future<Object?> toggleThreadSubscription() async {
@@ -76,10 +80,10 @@ class ThreadNotifier extends AsyncNotifier<Thread> {
     final prevIsSubscribed = info.isSubscribed;
     info.isSubscribed = !prevIsSubscribed;
 
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.toggleThreadSubscription,
-      {'id': info.id, 'subscribe': info.isSubscribed},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.toggleThreadSubscription, {
+      'id': info.id,
+      'subscribe': info.isSubscribed,
+    }).getErrorOrNull();
 
     if (err != null) {
       info.isSubscribed = prevIsSubscribed;

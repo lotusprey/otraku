@@ -19,14 +19,13 @@ class ChipSelector<T> extends StatefulWidget {
     required List<(String label, T value)> items,
     required T? value,
     required void Function(T?) onChanged,
-  }) =>
-      ChipSelector._(
-        title: title,
-        items: items,
-        value: value,
-        onChanged: onChanged,
-        mustHaveSelected: false,
-      );
+  }) => ChipSelector._(
+    title: title,
+    items: items,
+    value: value,
+    onChanged: onChanged,
+    mustHaveSelected: false,
+  );
 
   /// Requires an option to be selected. [onChanged] will never receive `null`.
   factory ChipSelector.ensureSelected({
@@ -34,14 +33,13 @@ class ChipSelector<T> extends StatefulWidget {
     required List<(String label, T value)> items,
     required T value,
     required void Function(T) onChanged,
-  }) =>
-      ChipSelector._(
-        title: title,
-        items: items,
-        value: value,
-        onChanged: (v) => onChanged(v ?? value),
-        mustHaveSelected: true,
-      );
+  }) => ChipSelector._(
+    title: title,
+    items: items,
+    value: value,
+    onChanged: (v) => onChanged(v ?? value),
+    mustHaveSelected: true,
+  );
 
   final String title;
   final List<(String label, T value)> items;
@@ -89,11 +87,7 @@ class _ChipSelectorState<T> extends State<ChipSelector<T>> {
 /// A horizontal list of chips, where zero or more are selected.
 /// Note: [values] are mutated directly.
 class ChipMultiSelector<T> extends StatefulWidget {
-  const ChipMultiSelector({
-    required this.title,
-    required this.items,
-    required this.values,
-  });
+  const ChipMultiSelector({required this.title, required this.items, required this.values});
 
   final String title;
   final List<(String label, T value)> items;
@@ -116,9 +110,7 @@ class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
           label: Text(label),
           selected: widget.values.contains(value),
           onSelected: (isSelected) {
-            setState(
-              () => isSelected ? widget.values.add(value) : widget.values.remove(value),
-            );
+            setState(() => isSelected ? widget.values.add(value) : widget.values.remove(value));
           },
         );
       },
@@ -127,11 +119,7 @@ class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
 }
 
 class EntrySortChipSelector extends StatefulWidget {
-  const EntrySortChipSelector({
-    required this.title,
-    required this.value,
-    required this.onChanged,
-  });
+  const EntrySortChipSelector({required this.title, required this.value, required this.onChanged});
 
   final String title;
   final EntrySort value;
@@ -169,9 +157,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
       length: _labels.length,
       itemBuilder: (context, index) => FilterChip(
         backgroundColor: ColorScheme.of(context).surface,
-        labelStyle: TextStyle(
-          color: ColorScheme.of(context).onSecondaryContainer,
-        ),
+        labelStyle: TextStyle(color: ColorScheme.of(context).onSecondaryContainer),
         label: Text(_labels[index]),
         showCheckmark: false,
         avatar: unorderedValue == index
@@ -182,17 +168,15 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
             : null,
         selected: unorderedValue == index,
         onSelected: (_) {
-          setState(
-            () {
-              int i = index * 2;
-              if (unorderedValue == index) {
-                if (!isDescending) i++;
-              } else {
-                if (isDescending) i++;
-              }
-              _value = EntrySort.values.elementAt(i);
-            },
-          );
+          setState(() {
+            int i = index * 2;
+            if (unorderedValue == index) {
+              if (!isDescending) i++;
+            } else {
+              if (isDescending) i++;
+            }
+            _value = EntrySort.values.elementAt(i);
+          });
           widget.onChanged(_value);
         },
       ),
@@ -201,11 +185,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
 }
 
 class _ChipSelector extends StatelessWidget {
-  const _ChipSelector({
-    required this.title,
-    required this.length,
-    required this.itemBuilder,
-  });
+  const _ChipSelector({required this.title, required this.length, required this.itemBuilder});
 
   final String title;
   final int length;
@@ -214,11 +194,11 @@ class _ChipSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
+          padding: const .only(
             top: Theming.offset / 2,
             bottom: Theming.offset / 2,
             right: Theming.offset,
@@ -227,10 +207,7 @@ class _ChipSelector extends StatelessWidget {
         ),
         SizedBox(
           height: 40,
-          child: ShadowedOverflowList(
-            itemCount: length,
-            itemBuilder: itemBuilder,
-          ),
+          child: ShadowedOverflowList(itemCount: length, itemBuilder: itemBuilder),
         ),
       ],
     );

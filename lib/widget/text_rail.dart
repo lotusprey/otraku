@@ -16,12 +16,10 @@ class TextRail extends StatelessWidget {
     const spacing = TextSpan(text: ' • ');
 
     final style = this.style ?? TextTheme.of(context).labelSmall;
-    final highlightStyle = style?.copyWith(
-      color: ColorScheme.of(context).primary,
-    );
+    final highlightStyle = style?.copyWith(color: ColorScheme.of(context).primary);
 
     return Text.rich(
-      overflow: TextOverflow.fade,
+      overflow: .fade,
       maxLines: maxLines,
       TextSpan(
         style: style,
@@ -33,10 +31,7 @@ class TextRail extends StatelessWidget {
             ),
             spacing,
           ],
-          TextSpan(
-            text: items.keys.last,
-            style: items.values.last ? highlightStyle : null,
-          ),
+          TextSpan(text: items.keys.last, style: items.values.last ? highlightStyle : null),
         ],
       ),
     );

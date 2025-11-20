@@ -15,11 +15,7 @@ import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class CollectionFilterView extends ConsumerStatefulWidget {
-  const CollectionFilterView({
-    required this.tag,
-    required this.filter,
-    required this.onChanged,
-  });
+  const CollectionFilterView({required this.tag, required this.filter, required this.onChanged});
 
   final CollectionTag tag;
   final CollectionMediaFilter filter;
@@ -104,10 +100,10 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
             : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+        padding: const .symmetric(horizontal: Theming.offset),
         child: ListView(
           controller: scrollCtrl,
-          padding: const EdgeInsets.only(top: 20),
+          padding: const .only(top: 20),
           children: [
             EntrySortChipSelector(
               title: 'Sorting',
@@ -131,20 +127,20 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
             const Divider(),
             switch (ref.watch(tagsProvider)) {
               AsyncData() => TagPicker(
-                  includedGenres: _filter.genreIn,
-                  excludedGenres: _filter.genreNotIn,
-                  includedTags: _filter.tagIn,
-                  excludedTags: _filter.tagNotIn,
-                ),
+                includedGenres: _filter.genreIn,
+                excludedGenres: _filter.genreNotIn,
+                includedTags: _filter.tagIn,
+                excludedTags: _filter.tagNotIn,
+              ),
               AsyncError(:final error) => Center(
-                  child: Padding(
-                    padding: Theming.paddingAll,
-                    child: Text('Failed to load tags: $error'),
-                  ),
+                child: Padding(
+                  padding: Theming.paddingAll,
+                  child: Text('Failed to load tags: $error'),
                 ),
+              ),
               AsyncLoading() => const Center(
-                  child: Padding(padding: Theming.paddingAll, child: Loader()),
-                ),
+                child: Padding(padding: Theming.paddingAll, child: Loader()),
+              ),
             },
             const Divider(),
             const SizedBox(height: Theming.offset),

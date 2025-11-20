@@ -36,21 +36,16 @@ class HtmlContent extends StatelessWidget {
       onTapImage: (metadata) {
         final source = metadata.sources.firstOrNull?.url;
         if (source != null) {
-          showDialog(
-            context: context,
-            builder: (context) => ImageDialog(source),
-          );
+          showDialog(context: context, builder: (context) => ImageDialog(source));
         }
       },
-      onLoadingBuilder: (_, __, ___) => const Center(child: Loader()),
+      onLoadingBuilder: (_, _, _) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => Center(
         child: IconButton(
           tooltip: 'Error',
           icon: const Icon(Icons.close_outlined),
-          onPressed: () => SnackBarExtension.show(
-            context,
-            'Failed to load element ${element.localName}',
-          ),
+          onPressed: () =>
+              SnackBarExtension.show(context, 'Failed to load element ${element.localName}'),
         ),
       ),
       customStylesBuilder: (element) {
@@ -74,7 +69,7 @@ class HtmlContent extends StatelessWidget {
           return Container(
             height: 5,
             width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            margin: const .symmetric(vertical: 5),
             decoration: BoxDecoration(
               color: ColorScheme.of(context).surfaceContainerHighest,
               borderRadius: Theming.borderRadiusSmall,
@@ -84,36 +79,23 @@ class HtmlContent extends StatelessWidget {
 
         if (element.localName == 'youtube') {
           return GestureDetector(
-            onTap: () => SnackBarExtension.launch(
-              context,
-              'https://youtube.com/watch?v=${element.text}',
-            ),
+            onTap: () =>
+                SnackBarExtension.launch(context, 'https://youtube.com/watch?v=${element.text}'),
             child: Stack(
               alignment: Alignment.center,
               children: [
                 ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 240,
-                    maxHeight: 135,
-                  ),
-                  child: CachedImage(
-                    'https://img.youtube.com/vi/${element.text}/0.jpg',
-                  ),
+                  constraints: const BoxConstraints(maxWidth: 240, maxHeight: 135),
+                  child: CachedImage('https://img.youtube.com/vi/${element.text}/0.jpg'),
                 ),
-                const Icon(
-                  Ionicons.logo_youtube,
-                  color: Color(0xFFFF0000),
-                  size: 40,
-                ),
+                const Icon(Ionicons.logo_youtube, color: Color(0xFFFF0000), size: 40),
               ],
             ),
           );
         }
 
         if (element.localName == 'video') {
-          final source = element.children.firstWhere(
-            (e) => e.localName == 'source',
-          );
+          final source = element.children.firstWhere((e) => e.localName == 'source');
           final url = source.attributes['src'] ?? '';
           return SizedBox(
             width: double.infinity,
@@ -121,10 +103,7 @@ class HtmlContent extends StatelessWidget {
               child: IconButton(
                 tooltip: 'WebM Video',
                 icon: const Icon(Ionicons.videocam, size: 50),
-                onPressed: () => showSheet(
-                  context,
-                  SimpleSheet.link(context, url),
-                ),
+                onPressed: () => showSheet(context, SimpleSheet.link(context, url)),
               ),
             ),
           );

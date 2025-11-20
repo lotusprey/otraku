@@ -13,12 +13,12 @@ class Studio {
   });
 
   factory Studio(Map<String, dynamic> map) => Studio._(
-        id: map['id'],
-        name: map['name'],
-        siteUrl: map['siteUrl'],
-        favorites: map['favourites'] ?? 0,
-        isFavorite: map['isFavourite'] ?? false,
-      );
+    id: map['id'],
+    name: map['name'],
+    siteUrl: map['siteUrl'],
+    favorites: map['favourites'] ?? 0,
+    isFavorite: map['isFavourite'] ?? false,
+  );
 
   final int id;
   final String name;
@@ -40,15 +40,15 @@ class StudioMedia {
   });
 
   factory StudioMedia(Map<String, dynamic> map, ImageQuality imageQuality) => StudioMedia._(
-        id: map['id'],
-        title: map['title']['userPreferred'],
-        cover: map['coverImage'][imageQuality.value],
-        format: MediaFormat.from(map['format']),
-        releaseStatus: ReleaseStatus.from(map['status']),
-        weightedAverageScore: map['averageScore'] ?? 0,
-        entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
-        startDate: DateTimeExtension.fuzzyDateString(map['startDate']),
-      );
+    id: map['id'],
+    title: map['title']['userPreferred'],
+    cover: map['coverImage'][imageQuality.value],
+    format: MediaFormat.from(map['format']),
+    releaseStatus: ReleaseStatus.from(map['status']),
+    weightedAverageScore: map['averageScore'] ?? 0,
+    entryStatus: ListStatus.from(map['mediaListEntry']?['status']),
+    startDate: DateTimeExtension.fuzzyDateString(map['startDate']),
+  );
 
   final int id;
   final String title;

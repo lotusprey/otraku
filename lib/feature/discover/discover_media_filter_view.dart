@@ -78,10 +78,10 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+        padding: const .symmetric(horizontal: Theming.offset),
         child: ListView(
           controller: scrollCtrl,
-          padding: const EdgeInsets.only(top: 20),
+          padding: const .only(top: 20),
           children: [
             ChipSelector.ensureSelected(
               title: 'Sorting',
@@ -116,11 +116,11 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             const SizedBox(height: 5),
             const Divider(),
             Consumer(
-              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+              builder: (context, ref, _) => ref
+                  .watch(tagsProvider)
+                  .when(
                     loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load tags'),
-                    ),
+                    error: (_, _) => const Center(child: Text('Failed to load tags')),
                     data: (tags) => TagPicker(
                       includedGenres: _filter.genreIn,
                       excludedGenres: _filter.genreNotIn,
@@ -155,10 +155,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             ),
             ChipSelector(
               title: 'List Presence',
-              items: const [
-                ('In Lists', true),
-                ('Not in Lists', false),
-              ],
+              items: const [('In Lists', true), ('Not in Lists', false)],
               value: _filter.inLists,
               onChanged: (v) => _filter.inLists = v,
             ),

@@ -41,26 +41,21 @@ class PagedView<T> extends StatelessWidget {
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
           provider,
-          (_, s) => s.whenOrNull(
-            error: (error, _) => SnackBarExtension.show(
-              context,
-              error.toString(),
-            ),
-          ),
+          (_, s) =>
+              s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
         );
 
-        return ref.watch(provider).unwrapPrevious().when(
+        return ref
+            .watch(provider)
+            .unwrapPrevious()
+            .when(
               loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(
+              error: (_, _) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () => onRefresh(ref.invalidate),
-                  ),
+                  SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
                   if (header != null) header!,
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load')),
-                  ),
+                  const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
                 ],
               ),
               data: (data) {
@@ -70,14 +65,10 @@ class PagedView<T> extends StatelessWidget {
                     physics: Theming.bouncyPhysics,
                     controller: scrollCtrl,
                     slivers: [
-                      SliverRefreshControl(
-                        onRefresh: () => onRefresh(ref.invalidate),
-                      ),
+                      SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
                       if (header != null) header!,
                       data.items.isEmpty
-                          ? const SliverFillRemaining(
-                              child: Center(child: Text('No results')),
-                            )
+                          ? const SliverFillRemaining(child: Center(child: Text('No results')))
                           : onData(data),
                       SliverFooter(loading: data.hasNext),
                     ],

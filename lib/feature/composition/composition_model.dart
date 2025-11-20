@@ -18,10 +18,7 @@ class StatusActivityCompositionTag extends CompositionTag {
 }
 
 class MessageActivityCompositionTag extends CompositionTag {
-  const MessageActivityCompositionTag({
-    required super.id,
-    required this.recipientId,
-  });
+  const MessageActivityCompositionTag({required super.id, required this.recipientId});
 
   final int recipientId;
 
@@ -34,10 +31,7 @@ class MessageActivityCompositionTag extends CompositionTag {
 }
 
 class ActivityReplyCompositionTag extends CompositionTag {
-  const ActivityReplyCompositionTag({
-    required super.id,
-    required this.activityId,
-  });
+  const ActivityReplyCompositionTag({required super.id, required this.activityId});
 
   final int activityId;
 
@@ -50,13 +44,11 @@ class ActivityReplyCompositionTag extends CompositionTag {
 }
 
 class CommentCompositionTag extends CompositionTag {
-  const CommentCompositionTag({
-    required this.threadId,
-    required this.parentCommentId,
-  }) : super(id: null);
+  const CommentCompositionTag({required this.threadId, required this.parentCommentId})
+    : super(id: null);
 
   const CommentCompositionTag.edit({required super.id, required this.threadId})
-      : parentCommentId = null;
+    : parentCommentId = null;
 
   final int threadId;
   final int? parentCommentId;

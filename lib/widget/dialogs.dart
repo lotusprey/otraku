@@ -5,11 +5,7 @@ import 'package:otraku/widget/html_content.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class TextInputDialog extends StatefulWidget {
-  const TextInputDialog({
-    required this.title,
-    required this.initialValue,
-    this.validator,
-  });
+  const TextInputDialog({required this.title, required this.initialValue, this.validator});
 
   final String title;
   final String initialValue;
@@ -83,7 +79,7 @@ class DialogBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+      insetPadding: const .symmetric(horizontal: 30, vertical: 50),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
         child: child,
@@ -112,16 +108,15 @@ class ConfirmationDialog extends StatelessWidget {
     String primaryAction = 'Ok',
     String? secondaryAction,
     void Function()? onConfirm,
-  }) =>
-      showDialog(
-        context: context,
-        builder: (context) => ConfirmationDialog._(
-          title: title,
-          content: content,
-          primaryAction: primaryAction,
-          secondaryAction: secondaryAction,
-        ),
-      ).then((ok) => ok == true ? onConfirm?.call() : null);
+  }) => showDialog(
+    context: context,
+    builder: (context) => ConfirmationDialog._(
+      title: title,
+      content: content,
+      primaryAction: primaryAction,
+      secondaryAction: secondaryAction,
+    ),
+  ).then((ok) => ok == true ? onConfirm?.call() : null);
 
   @override
   Widget build(BuildContext context) {
@@ -130,14 +125,8 @@ class ConfirmationDialog extends StatelessWidget {
       content: content != null ? Text(content!) : null,
       actions: [
         if (secondaryAction != null)
-          TextButton(
-            child: Text(secondaryAction!),
-            onPressed: () => Navigator.pop(context, false),
-          ),
-        TextButton(
-          child: Text(primaryAction),
-          onPressed: () => Navigator.pop(context, true),
-        ),
+          TextButton(child: Text(secondaryAction!), onPressed: () => Navigator.pop(context, false)),
+        TextButton(child: Text(primaryAction), onPressed: () => Navigator.pop(context, true)),
       ],
     );
   }
@@ -164,14 +153,8 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
   @override
   void initState() {
     super.initState();
-    _animationCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 200),
-    );
-    _curveWrapper = CurvedAnimation(
-      parent: _animationCtrl,
-      curve: Curves.easeOutExpo,
-    );
+    _animationCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 200));
+    _curveWrapper = CurvedAnimation(parent: _animationCtrl, curve: Curves.easeOutExpo);
   }
 
   @override
@@ -191,10 +174,7 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
 
   void _animateMatrixTo(Matrix4 goal) {
     _endAnimation();
-    _animation = Matrix4Tween(
-      begin: _transformCtrl.value,
-      end: goal,
-    ).animate(_curveWrapper);
+    _animation = Matrix4Tween(begin: _transformCtrl.value, end: goal).animate(_curveWrapper);
     _animation!.addListener(_updateState);
     _animationCtrl.forward();
   }
@@ -202,7 +182,7 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      insetPadding: EdgeInsets.zero,
+      insetPadding: .zero,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       child: GestureDetector(
@@ -219,23 +199,14 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
 
           // If zoomed out, zoom in towards the tapped spot.
           final zoomed = _transformCtrl.value.clone();
-          zoomed.translateByVector3(
-            Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0),
-          );
-          zoomed.scaleByVector3(
-            Vector3(2.0, 2.0, 1.0),
-          );
+          zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
+          zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
           _animateMatrixTo(zoomed);
         },
         child: InteractiveViewer(
           clipBehavior: Clip.none,
           transformationController: _transformCtrl,
-          child: CachedImage(
-            widget.url,
-            fit: BoxFit.contain,
-            width: null,
-            height: null,
-          ),
+          child: CachedImage(widget.url, fit: BoxFit.contain, width: null, height: null),
         ),
       ),
     );
@@ -249,10 +220,7 @@ class TextDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => _DialogColumn(
-        title: title,
-        child: SelectableText(text),
-      );
+  Widget build(BuildContext context) => _DialogColumn(title: title, child: SelectableText(text));
 }
 
 class HtmlDialog extends StatelessWidget {
@@ -275,24 +243,21 @@ class _DialogColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return DialogBox(
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const .symmetric(horizontal: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: .start,
+          mainAxisSize: .min,
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: Theming.offset),
-              child: Text(
-                title,
-                style: TextTheme.of(context).titleMedium,
-              ),
+              padding: const .symmetric(vertical: Theming.offset),
+              child: Text(title, style: TextTheme.of(context).titleMedium),
             ),
             const Divider(height: 2, thickness: 2),
             Flexible(
               fit: FlexFit.loose,
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+                  padding: const .symmetric(vertical: Theming.offset),
                   child: child,
                 ),
               ),

@@ -18,20 +18,19 @@ class ForumFilter {
     (ThreadCategory?,)? category,
     bool? isSubscribed,
     ThreadSort? sort,
-  }) =>
-      ForumFilter(
-        search: search ?? this.search,
-        category: category == null ? this.category : category.$1,
-        isSubscribed: isSubscribed ?? this.isSubscribed,
-        sort: sort ?? this.sort,
-      );
+  }) => ForumFilter(
+    search: search ?? this.search,
+    category: category == null ? this.category : category.$1,
+    isSubscribed: isSubscribed ?? this.isSubscribed,
+    sort: sort ?? this.sort,
+  );
 
   Map<String, dynamic> toGraphQlVariables() => {
-        if (search.isNotEmpty) 'search': search,
-        if (isSubscribed) 'subscribed': true,
-        if (category != null) 'categoryId': category!.id,
-        if (search.isEmpty) 'sort': sort.value else 'sort': ThreadSort.lastCreated.value,
-      };
+    if (search.isNotEmpty) 'search': search,
+    if (isSubscribed) 'subscribed': true,
+    if (category != null) 'categoryId': category!.id,
+    if (search.isEmpty) 'sort': sort.value else 'sort': ThreadSort.lastCreated.value,
+  };
 }
 
 enum ThreadCategory {

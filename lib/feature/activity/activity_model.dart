@@ -28,11 +28,7 @@ sealed class Activity {
     required this.isPinned,
   });
 
-  static Activity? maybe(
-    Map<String, dynamic> map,
-    int? viewerId,
-    ImageQuality imageQuality,
-  ) {
+  static Activity? maybe(Map<String, dynamic> map, int? viewerId, ImageQuality imageQuality) {
     try {
       switch (map['type']) {
         case 'TEXT':
@@ -45,9 +41,7 @@ sealed class Activity {
             authorAvatarUrl: map['user']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['text'] ?? ''),
-            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
-              map['createdAt'],
-            ),
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
             isOwned: map['user']['id'] == viewerId,
             replyCount: map['replyCount'] ?? 0,
             likeCount: map['likeCount'] ?? 0,
@@ -68,9 +62,7 @@ sealed class Activity {
             recipientAvatarUrl: map['recipient']['avatar']['large'],
             siteUrl: map['siteUrl'],
             text: parseMarkdown(map['message'] ?? ''),
-            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
-              map['createdAt'],
-            ),
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
             isOwned: map['messenger']['id'] == viewerId || map['recipient']['id'] == viewerId,
             isPrivate: map['isPrivate'] ?? false,
             replyCount: map['replyCount'] ?? 0,
@@ -99,9 +91,7 @@ sealed class Activity {
             isAnime: map['type'] == 'ANIME_LIST',
             siteUrl: map['siteUrl'],
             text: '$status $progress',
-            createdAt: DateTimeExtension.fromSecondsSinceEpoch(
-              map['createdAt'],
-            ),
+            createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
             isOwned: map['user']['id'] == viewerId,
             replyCount: map['replyCount'] ?? 0,
             likeCount: map['likeCount'] ?? 0,

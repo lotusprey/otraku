@@ -9,12 +9,7 @@ import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/dialogs.dart';
 
 class EditButtons extends StatelessWidget {
-  const EditButtons(
-    this.ref,
-    this.tag,
-    this.entryEdit,
-    this.callback,
-  );
+  const EditButtons(this.ref, this.tag, this.entryEdit, this.callback);
 
   final WidgetRef ref;
   final EditTag tag;

@@ -38,17 +38,11 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue>(
-      characterProvider(widget.id),
-      (_, s) {
-        if (s.hasError) {
-          SnackBarExtension.show(
-            context,
-            'Failed to load character: ${s.error}',
-          );
-        }
-      },
-    );
+    ref.listen<AsyncValue>(characterProvider(widget.id), (_, s) {
+      if (s.hasError) {
+        SnackBarExtension.show(context, 'Failed to load character: ${s.error}');
+      }
+    });
 
     final character = ref.watch(characterProvider(widget.id));
 
@@ -61,22 +55,22 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
         child: CharacterMediaFilterButton(widget.id, ref),
       ),
       child: switch (Theming.of(context).formFactor) {
-        FormFactor.phone => _CompactView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            character: character,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
-        FormFactor.tablet => _LargeView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            character: character,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
+        .phone => _CompactView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          character: character,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+        ),
+        .tablet => _LargeView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          character: character,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+        ),
       },
     );
   }
@@ -104,10 +98,7 @@ class _CompactView extends StatefulWidget {
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: CharacterHeader.tabsWithOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: CharacterHeader.tabsWithOverview.length, vsync: this);
 
   @override
   void initState() {
@@ -142,20 +133,13 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
       controller: widget.scrollCtrl,
       headerSliverBuilder: (context, _) => [header],
       body: MediaQuery(
-        data: mediaQuery.copyWith(
-          padding: mediaQuery.padding.copyWith(top: 0),
-        ),
+        data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.character.unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(
-                child: Text('Failed to load character'),
-              ),
-              data: (data) => _CharacterTabs.withOverview(
-                id: widget.id,
-                character: data,
-                tabCtrl: _tabCtrl,
-              ),
-            ),
+          loading: () => const Center(child: Loader()),
+          error: (_, _) => const Center(child: Text('Failed to load character')),
+          data: (data) =>
+              _CharacterTabs.withOverview(id: widget.id, character: data, tabCtrl: _tabCtrl),
+        ),
       ),
     );
   }
@@ -216,43 +200,35 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       scrollToTop: widget.scrollCtrl.scrollToTop,
       tabs: CharacterHeader.tabsWithoutOverview,
       leftPane: widget.character.unwrapPrevious().when(
-            loading: () => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                ),
-              ],
-            ),
-            error: (_, __) => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Text('Failed to load character'),
-                  ),
-                ),
-              ],
-            ),
-            data: (data) => CharacterOverviewSubview.withHeader(
-              character: data,
-              header: header,
-              invalidate: () => widget.ref.invalidate(
-                characterProvider(widget.id),
-              ),
-            ),
-          ),
+        loading: () => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Loader())),
+          ],
+        ),
+        error: (_, _) => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Text('Failed to load character'))),
+          ],
+        ),
+        data: (data) => CharacterOverviewSubview.withHeader(
+          character: data,
+          header: header,
+          invalidate: () => widget.ref.invalidate(characterProvider(widget.id)),
+        ),
+      ),
       rightPane: widget.character.unwrapPrevious().maybeWhen(
-            data: (data) => _CharacterTabs.withoutOverview(
-              id: widget.id,
-              character: data,
-              tabCtrl: _tabCtrl,
-              scrollCtrl: widget.scrollCtrl,
-            ),
-            orElse: () => const SizedBox(),
-          ),
+        data: (data) => _CharacterTabs.withoutOverview(
+          id: widget.id,
+          character: data,
+          tabCtrl: _tabCtrl,
+          scrollCtrl: widget.scrollCtrl,
+        ),
+        orElse: () => const SizedBox(),
+      ),
     );
   }
 }
@@ -262,8 +238,8 @@ class _CharacterTabs extends ConsumerStatefulWidget {
     required this.id,
     required this.character,
     required this.tabCtrl,
-  })  : withOverview = true,
-        scrollCtrl = null;
+  }) : withOverview = true,
+       scrollCtrl = null;
 
   const _CharacterTabs.withoutOverview({
     required this.id,
@@ -289,7 +265,8 @@ class __CharacterViewContentState extends ConsumerState<_CharacterTabs> {
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = widget.scrollCtrl ??
+    _scrollCtrl =
+        widget.scrollCtrl ??
         context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);

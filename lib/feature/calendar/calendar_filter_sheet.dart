@@ -18,22 +18,19 @@ void showCalendarFilterSheet(BuildContext context, WidgetRef ref) {
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
-        padding: const EdgeInsets.symmetric(
-          horizontal: Theming.offset,
-          vertical: 20,
-        ),
+        padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
         children: [
           ChipSelector(
             title: 'Season',
             items: CalendarSeasonFilter.values.skip(1).map((v) => (v.label, v)).toList(),
-            value: season != CalendarSeasonFilter.all ? season : null,
-            onChanged: (v) => season = v ?? CalendarSeasonFilter.all,
+            value: season != .all ? season : null,
+            onChanged: (v) => season = v ?? .all,
           ),
           ChipSelector(
             title: 'Status',
             items: CalendarStatusFilter.values.skip(1).map((v) => (v.label, v)).toList(),
-            value: status != CalendarStatusFilter.all ? status : null,
-            onChanged: (v) => status = v ?? CalendarStatusFilter.all,
+            value: status != .all ? status : null,
+            onChanged: (v) => status = v ?? .all,
           ),
         ],
       ),

@@ -20,10 +20,7 @@ class DualRelationGrid extends StatelessWidget {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 300,
-        height: 115,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: 115),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => _Tile(
@@ -55,29 +52,23 @@ class _Tile extends StatelessWidget {
     late final Widget centerContent;
     if (secondaryItem != null) {
       centerContent = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: .stretch,
+        mainAxisAlignment: .spaceBetween,
         children: [
           Flexible(
             child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
+              behavior: .opaque,
               onTap: () => onTapPrimary(primaryItem),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: .min,
+                crossAxisAlignment: .start,
                 children: [
-                  Flexible(
-                    child: Text(
-                      primaryItem.tileTitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.fade,
-                    ),
-                  ),
+                  Flexible(child: Text(primaryItem.tileTitle, maxLines: 2, overflow: .fade)),
                   if (primaryItem.tileSubtitle != null)
                     Text(
                       primaryItem.tileSubtitle!,
                       maxLines: 2,
-                      overflow: TextOverflow.fade,
+                      overflow: .fade,
                       style: TextTheme.of(context).labelSmall,
                     ),
                 ],
@@ -85,25 +76,25 @@ class _Tile extends StatelessWidget {
             ),
           ),
           GestureDetector(
-            behavior: HitTestBehavior.opaque,
+            behavior: .opaque,
             onTap: () => onTapSecondary(secondaryItem!),
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisSize: .min,
+              crossAxisAlignment: .end,
               children: [
                 Flexible(
                   child: Text(
                     secondaryItem!.tileTitle,
                     maxLines: 2,
-                    textAlign: TextAlign.end,
-                    overflow: TextOverflow.fade,
+                    textAlign: .end,
+                    overflow: .fade,
                   ),
                 ),
                 if (secondaryItem!.tileSubtitle != null)
                   Text(
                     secondaryItem!.tileSubtitle!,
                     maxLines: 2,
-                    overflow: TextOverflow.fade,
+                    overflow: .fade,
                     style: TextTheme.of(context).labelSmall,
                   ),
               ],
@@ -113,20 +104,18 @@ class _Tile extends StatelessWidget {
       );
     } else {
       centerContent = GestureDetector(
-        behavior: HitTestBehavior.opaque,
+        behavior: .opaque,
         onTap: () => onTapPrimary(primaryItem),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: .start,
+          crossAxisAlignment: .start,
           children: [
-            Flexible(
-              child: Text(primaryItem.tileTitle, overflow: TextOverflow.fade),
-            ),
+            Flexible(child: Text(primaryItem.tileTitle, overflow: .fade)),
             if (primaryItem.tileSubtitle != null)
               Text(
                 primaryItem.tileSubtitle!,
                 maxLines: 4,
-                overflow: TextOverflow.fade,
+                overflow: .fade,
                 style: TextTheme.of(context).labelSmall,
               ),
           ],
@@ -138,7 +127,7 @@ class _Tile extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            behavior: HitTestBehavior.opaque,
+            behavior: .opaque,
             onTap: () => onTapPrimary(primaryItem),
             child: ClipRRect(
               borderRadius: Theming.borderRadiusSmall,
@@ -150,7 +139,7 @@ class _Tile extends StatelessWidget {
           ),
           if (secondaryItem != null)
             GestureDetector(
-              behavior: HitTestBehavior.opaque,
+              behavior: .opaque,
               key: ValueKey(secondaryItem!.tileId),
               onTap: () => onTapSecondary(secondaryItem!),
               child: ClipRRect(

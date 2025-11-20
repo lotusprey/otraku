@@ -20,7 +20,7 @@ class ChipGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: .min,
       children: [
         Row(
           children: [
@@ -35,9 +35,7 @@ class ChipGrid extends StatelessWidget {
                   tooltip: 'Clear',
                   onPressed: onClear!,
                   color: ColorScheme.of(context).onSurface,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: Theming.offset,
-                  ),
+                  padding: const .symmetric(horizontal: Theming.offset),
                 ),
               ),
             SizedBox(
@@ -47,7 +45,7 @@ class ChipGrid extends StatelessWidget {
                 tooltip: 'Edit',
                 onPressed: onEdit,
                 color: ColorScheme.of(context).onSurface,
-                padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+                padding: const .symmetric(horizontal: Theming.offset),
               ),
             ),
           ],
@@ -57,10 +55,7 @@ class ChipGrid extends StatelessWidget {
             : SizedBox(
                 height: Theming.minTapTarget,
                 child: Center(
-                  child: Text(
-                    'No $placeholder',
-                    style: TextTheme.of(context).labelMedium,
-                  ),
+                  child: Text('No $placeholder', style: TextTheme.of(context).labelMedium),
                 ),
               ),
       ],

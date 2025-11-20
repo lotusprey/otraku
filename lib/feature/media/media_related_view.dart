@@ -43,20 +43,12 @@ class _MediaRelatedGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const SliverFillRemaining(
-        child: Center(child: Text('No results')),
-      );
+      return const SliverFillRemaining(child: Center(child: Text('No results')));
     }
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 270,
-        height: 100,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        childCount: items.length,
-        _buildTile,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: 100),
+      delegate: SliverChildBuilderDelegate(childCount: items.length, _buildTile),
     );
   }
 
@@ -73,7 +65,7 @@ class _MediaRelatedGrid extends StatelessWidget {
         id: items[i].id,
         imageUrl: items[i].imageUrl,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: .start,
           children: [
             Hero(
               tag: items[i].id,
@@ -81,10 +73,7 @@ class _MediaRelatedGrid extends StatelessWidget {
                 borderRadius: Theming.borderRadiusSmall,
                 child: Container(
                   color: ColorScheme.of(context).surfaceContainerHighest,
-                  child: CachedImage(
-                    items[i].imageUrl,
-                    width: 100 / Theming.coverHtoWRatio,
-                  ),
+                  child: CachedImage(items[i].imageUrl, width: 100 / Theming.coverHtoWRatio),
                 ),
               ),
             ),
@@ -92,20 +81,12 @@ class _MediaRelatedGrid extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: .spaceEvenly,
+                  crossAxisAlignment: .start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        items[i].title,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ),
+                    Flexible(child: Text(items[i].title, overflow: .fade)),
                     const SizedBox(height: 5),
-                    TextRail(
-                      textRailItems,
-                      style: TextTheme.of(context).labelMedium,
-                    ),
+                    TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
                   ],
                 ),
               ),

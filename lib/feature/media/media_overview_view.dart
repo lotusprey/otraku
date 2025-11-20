@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
 import 'package:otraku/util/routes.dart';
@@ -12,7 +11,6 @@ import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -83,15 +81,13 @@ class MediaOverviewSubview extends StatelessWidget {
         if (header != null) ...[
           header!,
           MediaQuery(
-            data: mediaQuery.copyWith(
-              padding: mediaQuery.padding.copyWith(top: 0),
-            ),
+            data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
             child: refreshControl,
           ),
         ] else
           refreshControl,
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
               if (info.description.isNotEmpty) _Description(info.description),
@@ -100,7 +96,7 @@ class MediaOverviewSubview extends StatelessWidget {
                   child: Padding(
                     padding: Theming.paddingAll,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      mainAxisAlignment: .spaceEvenly,
                       children: [
                         _IconTile(
                           text: info.favourites.toString(),
@@ -132,30 +128,23 @@ class MediaOverviewSubview extends StatelessWidget {
               if (info.genres.isNotEmpty)
                 _Wrap(
                   title: 'Genres',
-                  children:
-                      info.genres.map((genre) => _buildGenreActionChip(context, genre)).toList(),
+                  children: info.genres
+                      .map((genre) => _buildGenreActionChip(context, genre))
+                      .toList(),
                 ),
               if (info.tags.isNotEmpty) _TagsWrap(ref: ref, tags: info.tags, isAnime: info.isAnime),
               if (info.studios.isNotEmpty)
                 _Wrap(
                   title: 'Studios',
                   children: info.studios.entries
-                      .map((studio) => _buildStudioActionChip(
-                            context,
-                            studio.key,
-                            studio.value,
-                          ))
+                      .map((studio) => _buildStudioActionChip(context, studio.key, studio.value))
                       .toList(),
                 ),
               if (info.producers.isNotEmpty)
                 _Wrap(
                   title: 'Producers',
                   children: info.producers.entries
-                      .map((studio) => _buildStudioActionChip(
-                            context,
-                            studio.key,
-                            studio.value,
-                          ))
+                      .map((studio) => _buildStudioActionChip(context, studio.key, studio.value))
                       .toList(),
                 ),
               if (info.externalLinks.isNotEmpty)
@@ -187,15 +176,13 @@ class MediaOverviewSubview extends StatelessWidget {
       onPressed: () {
         final notifier = ref.read(discoverFilterProvider.notifier);
         final filter = notifier.state.copyWith(
-          type: info.isAnime ? DiscoverType.anime : DiscoverType.manga,
+          type: info.isAnime ? .anime : .manga,
           search: '',
-          mediaFilter: DiscoverMediaFilter(
-            notifier.state.mediaFilter.sort,
-          ),
+          mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
         )..mediaFilter.genreIn.add(genre);
         notifier.state = filter;
 
-        context.go(Routes.home(HomeTab.discover));
+        context.go(Routes.home(.discover));
       },
     );
   }
@@ -218,10 +205,7 @@ class MediaOverviewSubview extends StatelessWidget {
       leading: Container(
         width: 15,
         height: 15,
-        decoration: BoxDecoration(
-          borderRadius: Theming.borderRadiusSmall,
-          color: link.color,
-        ),
+        decoration: BoxDecoration(borderRadius: Theming.borderRadiusSmall, color: link.color),
       ),
     );
   }
@@ -257,7 +241,7 @@ class _DescriptionState extends State<_Description> {
 
     return SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.only(bottom: Theming.offset),
+        padding: const .only(bottom: Theming.offset),
         child: Card.outlined(
           child: InkWell(
             borderRadius: Theming.borderRadiusSmall,
@@ -266,10 +250,7 @@ class _DescriptionState extends State<_Description> {
               final text = widget.text.replaceAll(RegExp(r'<br>'), '');
               SnackBarExtension.copy(context, text);
             },
-            child: Padding(
-              padding: const EdgeInsets.all(Theming.offset),
-              child: content,
-            ),
+            child: Padding(padding: const .all(Theming.offset), child: content),
           ),
         ),
       ),
@@ -278,11 +259,7 @@ class _DescriptionState extends State<_Description> {
 }
 
 class _IconTile extends StatelessWidget {
-  const _IconTile({
-    required this.text,
-    required this.tooltip,
-    required this.icon,
-  });
+  const _IconTile({required this.text, required this.tooltip, required this.icon});
 
   final String text;
   final String tooltip;
@@ -294,13 +271,9 @@ class _IconTile extends StatelessWidget {
       message: tooltip,
       triggerMode: TooltipTriggerMode.tap,
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [
-          Icon(
-            icon,
-            size: Theming.iconSmall,
-            color: ColorScheme.of(context).onSurfaceVariant,
-          ),
+          Icon(icon, size: Theming.iconSmall, color: ColorScheme.of(context).onSurfaceVariant),
           const SizedBox(height: 5),
           Text(text),
         ],
@@ -310,11 +283,7 @@ class _IconTile extends StatelessWidget {
 }
 
 class _Wrap extends StatelessWidget {
-  const _Wrap({
-    required this.title,
-    required this.children,
-    this.trailingAction,
-  });
+  const _Wrap({required this.title, required this.children, this.trailingAction});
 
   final String title;
   final Widget? trailingAction;
@@ -324,8 +293,8 @@ class _Wrap extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: .min,
+        crossAxisAlignment: .stretch,
         children: [
           SizedBox(
             height: Theming.minTapTarget,
@@ -344,11 +313,7 @@ class _Wrap extends StatelessWidget {
 }
 
 class _TagsWrap extends StatefulWidget {
-  const _TagsWrap({
-    required this.ref,
-    required this.tags,
-    required this.isAnime,
-  });
+  const _TagsWrap({required this.ref, required this.tags, required this.isAnime});
 
   final WidgetRef ref;
   final List<Tag> tags;
@@ -378,8 +343,9 @@ class __TagsWrapState extends State<_TagsWrap> {
         ? widget.tags
         : widget.tags.where((t) => !t.isSpoiler).toList();
 
-    final spoilerTextStyle =
-        Theme.of(context).textTheme.bodyMedium?.copyWith(color: ColorScheme.of(context).error);
+    final spoilerTextStyle = Theme.of(
+      context,
+    ).textTheme.bodyMedium?.copyWith(color: ColorScheme.of(context).error);
 
     return _Wrap(
       title: 'Tags',
@@ -398,22 +364,19 @@ class __TagsWrapState extends State<_TagsWrap> {
 
   Widget _buildTagChip(Tag tag, TextStyle? spoilerTextStyle) {
     return _Chip(
-      label: Text(
-        '${tag.name} ${tag.rank}%',
-        style: tag.isSpoiler ? spoilerTextStyle : null,
-      ),
+      label: Text('${tag.name} ${tag.rank}%', style: tag.isSpoiler ? spoilerTextStyle : null),
       onTapHint: 'filter by this tag',
       onLongTapHint: 'show tag description',
       onTap: () {
         final notifier = widget.ref.read(discoverFilterProvider.notifier);
         final filter = notifier.state.copyWith(
-          type: widget.isAnime ? DiscoverType.anime : DiscoverType.manga,
+          type: widget.isAnime ? .anime : .manga,
           search: '',
           mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
         )..mediaFilter.tagIn.add(tag.name);
         notifier.state = filter;
 
-        context.go(Routes.home(HomeTab.discover));
+        context.go(Routes.home(.discover));
       },
       onLongTap: () => showDialog(
         context: context,
@@ -448,11 +411,7 @@ class _Chip extends StatelessWidget {
         onLongPressHint: onLongTapHint,
         child: GestureDetector(
           onLongPress: onLongTap,
-          child: RawChip(
-            label: label,
-            avatar: leading,
-            onPressed: onTap,
-          ),
+          child: RawChip(label: label, avatar: leading, onPressed: onTap),
         ),
       ),
     );

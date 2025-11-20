@@ -46,12 +46,12 @@ class CollectionGrid extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
+                  padding: const .only(left: 5, right: 5, top: 5),
                   child: SizedBox(
                     height: 35,
                     child: Text(
                       items[i].titles[0],
-                      overflow: TextOverflow.fade,
+                      overflow: .fade,
                       maxLines: 2,
                       style: TextTheme.of(context).bodyMedium,
                     ),
@@ -91,10 +91,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
         child: SizedBox(
           height: 30,
           child: Center(
-            child: Text(
-              item.progress.toString(),
-              style: TextTheme.of(context).labelSmall,
-            ),
+            child: Text(item.progress.toString(), style: TextTheme.of(context).labelSmall),
           ),
         ),
       );
@@ -112,9 +109,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           child: Center(
             child: Text(
               '${item.progress}/${item.progressMax ?? "?"}',
-              style: TextTheme.of(context).labelSmall?.copyWith(
-                    color: foregroundColor,
-                  ),
+              style: TextTheme.of(context).labelSmall?.copyWith(color: foregroundColor),
             ),
           ),
         ),
@@ -124,7 +119,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 30),
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const .symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: foregroundColor,
         iconColor: foregroundColor,
@@ -147,7 +142,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: .center,
           children: [
             Text(
               '${item.progress}/${item.progressMax ?? "?"}',
@@ -166,9 +161,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
     var updateStatus = false;
 
     if (_lastProgress == 0 &&
-        (item.listStatus == ListStatus.planning ||
-            item.listStatus == ListStatus.paused ||
-            item.listStatus == ListStatus.dropped)) {
+        (item.listStatus == .planning ||
+            item.listStatus == .paused ||
+            item.listStatus == .dropped)) {
       await ConfirmationDialog.show(
         context,
         title: 'Update status?',

@@ -24,10 +24,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
         filter: Theming.blurFilter,
         child: Container(
           height: topPadding + preferredSize.height,
-          decoration: BoxDecoration(
-            color: Theme.of(context).navigationBarTheme.backgroundColor,
-          ),
-          padding: EdgeInsets.only(top: topPadding),
+          decoration: BoxDecoration(color: Theme.of(context).navigationBarTheme.backgroundColor),
+          padding: .only(top: topPadding),
           alignment: Alignment.center,
           child: Row(
             children: [
@@ -44,7 +42,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   child: Text(
                     title!,
                     style: TextTheme.of(context).titleLarge,
-                    overflow: TextOverflow.ellipsis,
+                    overflow: .ellipsis,
                     maxLines: 2,
                   ),
                 ),
@@ -67,9 +65,7 @@ class EmptyTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.paddingOf(context).top + _preferredSize.height,
-    );
+    return SizedBox(height: MediaQuery.paddingOf(context).top + _preferredSize.height);
   }
 }
 
@@ -85,9 +81,6 @@ class TopBarAnimatedSwitcher extends StatelessWidget implements PreferredSizeWid
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 200),
-      child: child,
-    );
+    return AnimatedSwitcher(duration: const Duration(milliseconds: 200), child: child);
   }
 }

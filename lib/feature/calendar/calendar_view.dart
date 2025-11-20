@@ -63,24 +63,22 @@ class _CalendarViewState extends State<CalendarView> {
                   ? null
                   : IconButton(
                       icon: const Icon(Icons.arrow_back_ios_rounded),
-                      onPressed: () => _setDate(
-                        ref,
-                        date.subtract(const Duration(days: 1)),
-                      ),
+                      onPressed: () => _setDate(ref, date.subtract(const Duration(days: 1))),
                     ),
             ),
             Expanded(
               child: TextButton(
-                onPressed: () => showDatePicker(
-                  context: context,
-                  initialDate: date,
-                  firstDate: today.add(const Duration(days: -1)),
-                  lastDate: today.add(const Duration(days: 150)),
-                ).then((newDate) {
-                  if (newDate != null && newDate != date) {
-                    _setDate(ref, newDate);
-                  }
-                }),
+                onPressed: () =>
+                    showDatePicker(
+                      context: context,
+                      initialDate: date,
+                      firstDate: today.add(const Duration(days: -1)),
+                      lastDate: today.add(const Duration(days: 150)),
+                    ).then((newDate) {
+                      if (newDate != null && newDate != date) {
+                        _setDate(ref, newDate);
+                      }
+                    }),
                 child: Text(date.formattedWithWeekDay),
               ),
             ),
@@ -88,10 +86,7 @@ class _CalendarViewState extends State<CalendarView> {
               width: 60,
               child: IconButton(
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
-                onPressed: () => _setDate(
-                  ref,
-                  date.add(const Duration(days: 1)),
-                ),
+                onPressed: () => _setDate(ref, date.add(const Duration(days: 1))),
               ),
             ),
             const SizedBox(width: Theming.offset),
@@ -120,9 +115,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   void _setDate(WidgetRef ref, DateTime date) {
     final filter = ref.read(calendarFilterProvider);
-    ref.read(calendarFilterProvider.notifier).state = filter.copyWith(
-      date: date,
-    );
+    ref.read(calendarFilterProvider.notifier).state = filter.copyWith(date: date);
   }
 }
 
@@ -157,9 +150,7 @@ class _Tile extends StatelessWidget {
             Hero(
               tag: item.mediaId,
               child: ClipRRect(
-                borderRadius: const BorderRadius.horizontal(
-                  left: Theming.radiusSmall,
-                ),
+                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: Container(
                   width: 120 / Theming.coverHtoWRatio,
                   color: ColorScheme.of(context).surfaceContainerHighest,
@@ -169,32 +160,23 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
+                padding: const .symmetric(vertical: 5),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .spaceAround,
                   children: [
                     Flexible(
                       child: Padding(
                         padding: contentPadding,
-                        child: Text(
-                          item.title,
-                          overflow: TextOverflow.fade,
-                        ),
+                        child: Text(item.title, overflow: .fade),
                       ),
                     ),
                     Padding(
                       padding: contentPadding,
-                      child: TextRail(
-                        textRailItems,
-                        style: TextTheme.of(context).labelMedium,
-                      ),
+                      child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
                     ),
                     if (item.streamingServices.isNotEmpty)
-                      SizedBox(
-                        height: 35,
-                        child: _ExternalLinkList(item.streamingServices),
-                      ),
+                      SizedBox(height: 35, child: _ExternalLinkList(item.streamingServices)),
                   ],
                 ),
               ),
@@ -215,14 +197,11 @@ class _ExternalLinkList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.only(
-        left: Theming.offset,
-        right: Theming.offset / 2,
-      ),
+      padding: const .only(left: Theming.offset, right: Theming.offset / 2),
       itemCount: links.length,
       itemBuilder: (context, i) {
         return Padding(
-          padding: const EdgeInsets.only(right: Theming.offset / 2),
+          padding: const .only(right: Theming.offset / 2),
           child: ActionChip(
             onPressed: () => SnackBarExtension.launch(context, links[i].url),
             label: Text(links[i].site),

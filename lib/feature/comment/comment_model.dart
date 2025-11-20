@@ -56,27 +56,24 @@ class Comment {
   final List<Comment> childComments;
 
   Comment _copyWith({String? text, List<Comment>? childComments}) => Comment._(
-        id: id,
-        text: text ?? this.text,
-        likeCount: likeCount,
-        isLiked: isLiked,
-        isLocked: isLocked,
-        createdAt: createdAt,
-        siteUrl: siteUrl,
-        userId: userId,
-        userName: userName,
-        userAvatarUrl: userAvatarUrl,
-        threadId: threadId,
-        threadTitle: threadTitle,
-        childComments: childComments ?? this.childComments,
-      );
+    id: id,
+    text: text ?? this.text,
+    likeCount: likeCount,
+    isLiked: isLiked,
+    isLocked: isLocked,
+    createdAt: createdAt,
+    siteUrl: siteUrl,
+    userId: userId,
+    userName: userName,
+    userAvatarUrl: userAvatarUrl,
+    threadId: threadId,
+    threadTitle: threadTitle,
+    childComments: childComments ?? this.childComments,
+  );
 
   Comment withEditedText(String text) => _copyWith(text: text);
 
-  Comment withAppendedChildComment(
-    Map<String, dynamic> map,
-    int parentCommentId,
-  ) {
+  Comment withAppendedChildComment(Map<String, dynamic> map, int parentCommentId) {
     if (id == parentCommentId) {
       return _copyWith(childComments: [...childComments, Comment(map)]);
     }

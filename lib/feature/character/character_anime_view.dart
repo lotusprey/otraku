@@ -20,21 +20,17 @@ class CharacterAnimeSubview extends StatelessWidget {
     return PagedView<(CharacterRelatedItem, CharacterRelatedItem?)>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
-      provider: characterMediaProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.assembleAnimeWithVoiceActors()),
-      ),
+      provider: characterMediaProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.assembleAnimeWithVoiceActors())),
       onData: (data) {
         return SliverMainAxisGroup(
           slivers: [
             _LanguageSelected(id),
             DualRelationGrid(
               items: data.items,
-              onTapPrimary: (item) => context.push(
-                Routes.media(item.tileId, item.tileImageUrl),
-              ),
-              onTapSecondary: (item) => context.push(
-                Routes.staff(item.tileId, item.tileImageUrl),
-              ),
+              onTapPrimary: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+              onTapSecondary: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
             ),
           ],
         );
@@ -52,11 +48,13 @@ class _LanguageSelected extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selection = ref.watch(characterMediaProvider(id).select((s) {
-          final value = s.value;
-          if (value == null) return null;
-          return (value.languageToVoiceActors, value.selectedLanguage);
-        }));
+        final selection = ref.watch(
+          characterMediaProvider(id).select((s) {
+            final value = s.value;
+            if (value == null) return null;
+            return (value.languageToVoiceActors, value.selectedLanguage);
+          }),
+        );
 
         if (selection == null) return const SliverToBoxAdapter();
 

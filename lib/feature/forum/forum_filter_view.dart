@@ -16,10 +16,10 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
       initialHeight: Theming.normalTapTarget * 4,
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
-        padding: const EdgeInsets.only(top: Theming.offset),
+        padding: const .only(top: Theming.offset),
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+            padding: const .symmetric(horizontal: Theming.offset),
             child: ChipSelector.ensureSelected(
               title: 'Sort',
               items: ThreadSort.values.map((v) => (v.label, v)).toList(),
@@ -28,7 +28,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+            padding: const .symmetric(horizontal: Theming.offset),
             child: ChipSelector(
               title: 'Category',
               items: ThreadCategory.values.map((v) => (v.label, v)).toList(),

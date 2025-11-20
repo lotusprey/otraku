@@ -2,16 +2,16 @@ import 'package:otraku/extension/date_time_extension.dart';
 
 extension StringExtension on String {
   static String? languageToCode(String? language) => switch (language) {
-        'Japanese' => 'JP',
-        'Chinese' => 'CN',
-        'Korean' => 'KR',
-        'French' => 'FR',
-        'Spanish' => 'ES',
-        'Italian' => 'IT',
-        'Portuguese' => 'PT',
-        'German' => 'DE',
-        _ => null,
-      };
+    'Japanese' => 'JP',
+    'Chinese' => 'CN',
+    'Korean' => 'KR',
+    'French' => 'FR',
+    'Spanish' => 'ES',
+    'Italian' => 'IT',
+    'Portuguese' => 'PT',
+    'German' => 'DE',
+    _ => null,
+  };
 
   static String? tryNoScreamingSnakeCase(dynamic str) =>
       str is String ? str.noScreamingSnakeCase : null;
@@ -27,9 +27,7 @@ extension StringExtension on String {
     final parsedRunes = <int>[];
     for (final c in runes.toList()) {
       if (c > 0xFFFF) {
-        parsedRunes.addAll(
-          [_ampersand, _hashtag, ...c.toString().codeUnits, _semicolon],
-        );
+        parsedRunes.addAll([_ampersand, _hashtag, ...c.toString().codeUnits, _semicolon]);
       } else {
         parsedRunes.add(c);
       }
@@ -39,10 +37,10 @@ extension StringExtension on String {
   }
 
   String get noScreamingSnakeCase => splitMapJoin(
-        '_',
-        onMatch: (_) => ' ',
-        onNonMatch: (s) => s[0].toUpperCase() + s.substring(1).toLowerCase(),
-      );
+    '_',
+    onMatch: (_) => ' ',
+    onNonMatch: (s) => s[0].toUpperCase() + s.substring(1).toLowerCase(),
+  );
 
   static String? fromFuzzyDate(Map<String, dynamic>? map) {
     if (map?['year'] == null) return null;

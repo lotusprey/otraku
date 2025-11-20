@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/discover/discover_media_filter_view.dart';
 import 'package:otraku/feature/discover/discover_recommendations_filter_sheet.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
@@ -30,77 +29,78 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
             children: [
               Expanded(
                 child: switch (filter.type) {
-                  DiscoverType.review => Text(
-                      'Reviews',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).titleLarge,
-                    ),
-                  DiscoverType.recommendation => Text(
-                      'Recommendations',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextTheme.of(context).titleLarge,
-                    ),
+                  .review => Text(
+                    'Reviews',
+                    maxLines: 1,
+                    overflow: .ellipsis,
+                    style: TextTheme.of(context).titleLarge,
+                  ),
+                  .recommendation => Text(
+                    'Recommendations',
+                    maxLines: 1,
+                    overflow: .ellipsis,
+                    style: TextTheme.of(context).titleLarge,
+                  ),
                   _ => SearchField(
-                      debounce: Debounce(),
-                      focusNode: focusNode,
-                      hint: filter.type.label,
-                      value: filter.search,
-                      onChanged: (search) => ref
-                          .read(discoverFilterProvider.notifier)
-                          .update((s) => s.copyWith(search: search)),
-                    ),
+                    debounce: Debounce(),
+                    focusNode: focusNode,
+                    hint: filter.type.label,
+                    value: filter.search,
+                    onChanged: (search) => ref
+                        .read(discoverFilterProvider.notifier)
+                        .update((s) => s.copyWith(search: search)),
+                  ),
                 },
               ),
-              if (filter.type == DiscoverType.anime)
+              if (filter.type == .anime)
                 IconButton(
                   tooltip: 'Calendar',
                   icon: const Icon(Ionicons.calendar_outline),
                   onPressed: () => context.push(Routes.calendar),
                 ),
               switch (filter.type) {
-                DiscoverType.anime || DiscoverType.manga => filter.mediaFilter.isActive
-                    ? Badge(
-                        smallSize: 10,
-                        alignment: Alignment.topLeft,
-                        backgroundColor: ColorScheme.of(context).primary,
-                        child: _filterIcon(context, ref, filter),
-                      )
-                    : _filterIcon(context, ref, filter),
-                DiscoverType.character || DiscoverType.staff => _BirthdayFilter(ref),
-                DiscoverType.review => IconButton(
-                    tooltip: 'Filter',
-                    icon: const Icon(Ionicons.funnel_outline),
-                    onPressed: () => showReviewsFilterSheet(
-                      context: context,
-                      filter: filter.reviewsFilter,
-                      onDone: (filter) {
-                        final discoverFilter = ref.read(discoverFilterProvider);
-                        if (filter != discoverFilter.reviewsFilter) {
-                          ref
-                              .read(discoverFilterProvider.notifier)
-                              .update((s) => s.copyWith(reviewsFilter: filter));
-                        }
-                      },
-                    ),
+                .anime || .manga =>
+                  filter.mediaFilter.isActive
+                      ? Badge(
+                          smallSize: 10,
+                          alignment: Alignment.topLeft,
+                          backgroundColor: ColorScheme.of(context).primary,
+                          child: _filterIcon(context, ref, filter),
+                        )
+                      : _filterIcon(context, ref, filter),
+                .character || .staff => _BirthdayFilter(ref),
+                .review => IconButton(
+                  tooltip: 'Filter',
+                  icon: const Icon(Ionicons.funnel_outline),
+                  onPressed: () => showReviewsFilterSheet(
+                    context: context,
+                    filter: filter.reviewsFilter,
+                    onDone: (filter) {
+                      final discoverFilter = ref.read(discoverFilterProvider);
+                      if (filter != discoverFilter.reviewsFilter) {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(reviewsFilter: filter));
+                      }
+                    },
                   ),
-                DiscoverType.recommendation => IconButton(
-                    tooltip: 'Filter',
-                    icon: const Icon(Ionicons.funnel_outline),
-                    onPressed: () => showRecommendationsFilterSheet(
-                      context: context,
-                      filter: filter.recommendationsFilter,
-                      onDone: (filter) {
-                        final discoverFilter = ref.read(discoverFilterProvider);
-                        if (filter != discoverFilter.recommendationsFilter) {
-                          ref.read(discoverFilterProvider.notifier).update(
-                                (s) => s.copyWith(recommendationsFilter: filter),
-                              );
-                        }
-                      },
-                    ),
+                ),
+                .recommendation => IconButton(
+                  tooltip: 'Filter',
+                  icon: const Icon(Ionicons.funnel_outline),
+                  onPressed: () => showRecommendationsFilterSheet(
+                    context: context,
+                    filter: filter.recommendationsFilter,
+                    onDone: (filter) {
+                      final discoverFilter = ref.read(discoverFilterProvider);
+                      if (filter != discoverFilter.recommendationsFilter) {
+                        ref
+                            .read(discoverFilterProvider.notifier)
+                            .update((s) => s.copyWith(recommendationsFilter: filter));
+                      }
+                    },
                   ),
+                ),
                 _ => const SizedBox(width: Theming.offset),
               },
             ],
@@ -110,18 +110,14 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     );
   }
 
-  Widget _filterIcon(
-    BuildContext context,
-    WidgetRef ref,
-    DiscoverFilter filter,
-  ) {
+  Widget _filterIcon(BuildContext context, WidgetRef ref, DiscoverFilter filter) {
     return IconButton(
       tooltip: 'Filter',
       icon: const Icon(Ionicons.funnel_outline),
       onPressed: () => showSheet(
         context,
         DiscoverMediaFilterView(
-          ofAnime: filter.type == DiscoverType.anime,
+          ofAnime: filter.type == .anime,
           filter: filter.mediaFilter,
           onChanged: (mediaFilter) => ref
               .read(discoverFilterProvider.notifier)

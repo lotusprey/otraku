@@ -18,14 +18,12 @@ class MediaStaffSubview extends StatelessWidget {
     return PagedView<MediaRelatedItem>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
-      provider: mediaConnectionsProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.staff),
-      ),
+      provider: mediaConnectionsProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.staff)),
       onData: (data) => MonoRelationGrid(
         items: data.items,
-        onTap: (item) => context.push(
-          Routes.staff(item.tileId, item.tileImageUrl),
-        ),
+        onTap: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
       ),
     );
   }

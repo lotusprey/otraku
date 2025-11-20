@@ -56,10 +56,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
                 CompositionView(
                   tag: userId == viewerId
                       ? const StatusActivityCompositionTag(id: null)
-                      : MessageActivityCompositionTag(
-                          id: null,
-                          recipientId: userId,
-                        ),
+                      : MessageActivityCompositionTag(id: null, recipientId: userId),
                   onSaved: (map) => ref.read(activitiesProvider(widget.tag).notifier).prepend(map),
                 ),
               ),
@@ -74,11 +71,7 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
           IconButton(
             tooltip: 'Filter',
             icon: const Icon(Ionicons.funnel_outline),
-            onPressed: () => showActivityFilterSheet(
-              context,
-              ref,
-              widget.tag,
-            ),
+            onPressed: () => showActivityFilterSheet(context, ref, widget.tag),
           ),
         ],
       ),
@@ -102,9 +95,9 @@ class ActivitiesSubView extends StatelessWidget {
         final options = ref.watch(persistenceProvider.select((s) => s.options));
 
         return PagedView<Activity>(
-          provider: activitiesProvider(tag).select(
-            (s) => s.unwrapPrevious().whenData((data) => data),
-          ),
+          provider: activitiesProvider(
+            tag,
+          ).select((s) => s.unwrapPrevious().whenData((data) => data)),
           scrollCtrl: scrollCtrl,
           onRefresh: (invalidate) {
             invalidate(activitiesProvider(tag));
@@ -131,11 +124,7 @@ class ActivitiesSubView extends StatelessWidget {
                       ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
                   remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
                   onEdited: (map) {
-                    final activity = Activity.maybe(
-                      map,
-                      viewerId,
-                      options.imageQuality,
-                    );
+                    final activity = Activity.maybe(map, viewerId, options.imageQuality);
 
                     if (activity == null) return;
 

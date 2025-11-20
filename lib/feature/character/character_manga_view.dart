@@ -18,14 +18,12 @@ class CharacterMangaSubview extends StatelessWidget {
     return PagedView<CharacterRelatedItem>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
-      provider: characterMediaProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.manga),
-      ),
+      provider: characterMediaProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.manga)),
       onData: (data) => MonoRelationGrid(
         items: data.items,
-        onTap: (item) => context.push(
-          Routes.media(item.tileId, item.tileImageUrl),
-        ),
+        onTap: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
       ),
     );
   }

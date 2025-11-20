@@ -62,7 +62,7 @@ class _SearchFieldState extends State<SearchField> {
           hintText: widget.hint,
           filled: true,
           fillColor: ColorScheme.of(context).surfaceContainerHighest,
-          contentPadding: const EdgeInsets.only(left: 15),
+          contentPadding: const .only(left: 15),
           constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
@@ -70,7 +70,7 @@ class _SearchFieldState extends State<SearchField> {
                   iconSize: Theming.iconSmall,
                   icon: const Icon(Icons.close_rounded),
                   color: ColorScheme.of(context).onSurface,
-                  padding: const EdgeInsets.all(0),
+                  padding: const .all(0),
                   onPressed: () {
                     _ctrl.clear();
                     widget.debounce?.cancel();

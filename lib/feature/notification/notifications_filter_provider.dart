@@ -3,8 +3,8 @@ import 'package:otraku/feature/notification/notifications_filter_model.dart';
 
 final notificationsFilterProvider =
     NotifierProvider.autoDispose<NotificationsFilterNotifier, NotificationsFilter>(
-  NotificationsFilterNotifier.new,
-);
+      NotificationsFilterNotifier.new,
+    );
 
 class NotificationsFilterNotifier extends Notifier<NotificationsFilter> {
   @override

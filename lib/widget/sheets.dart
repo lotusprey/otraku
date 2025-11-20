@@ -6,34 +6,27 @@ import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) => showModalBottomSheet<T>(
-      context: context,
-      builder: (context) => sheet,
-      useSafeArea: true,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-    );
+  context: context,
+  builder: (context) => sheet,
+  useSafeArea: true,
+  isScrollControlled: true,
+  backgroundColor: Colors.transparent,
+);
 
 /// An implementation of [DraggableScrollableSheet] with opaque background.
 class SimpleSheet extends StatelessWidget {
-  const SimpleSheet({
-    required this.builder,
-    this.initialHeight,
-  });
+  const SimpleSheet({required this.builder, this.initialHeight});
 
   factory SimpleSheet.list(List<Widget> children) => SimpleSheet(
-        initialHeight: Theming.normalTapTarget * children.length + Theming.offset,
-        builder: (context, scrollCtrl) => ListView(
-          controller: scrollCtrl,
-          padding: const EdgeInsets.only(top: Theming.offset),
-          children: children,
-        ),
-      );
+    initialHeight: Theming.normalTapTarget * children.length + Theming.offset,
+    builder: (context, scrollCtrl) => ListView(
+      controller: scrollCtrl,
+      padding: const .only(top: Theming.offset),
+      children: children,
+    ),
+  );
 
-  factory SimpleSheet.link(
-    BuildContext context,
-    String link, [
-    List<Widget> children = const [],
-  ]) =>
+  factory SimpleSheet.link(BuildContext context, String link, [List<Widget> children = const []]) =>
       SimpleSheet.list([
         ...children,
         ListTile(
@@ -73,17 +66,12 @@ class SimpleSheet extends StatelessWidget {
       minChildSize: initialFraction < 0.25 ? initialFraction : 0.25,
       builder: (context, scrollCtrl) {
         sheet ??= Container(
-          constraints: const BoxConstraints(
-            maxWidth: Theming.windowWidthMedium,
-          ),
+          constraints: const BoxConstraints(maxWidth: Theming.windowWidthMedium),
           decoration: BoxDecoration(
             color: ColorScheme.of(context).surface,
             borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: builder(context, scrollCtrl),
-          ),
+          child: Material(color: Colors.transparent, child: builder(context, scrollCtrl)),
         );
 
         return sheet!;
@@ -117,21 +105,19 @@ class SheetWithButtonRow extends StatelessWidget {
   }
 
   Widget _sheetBody(BuildContext context, ScrollController scrollCtrl) => Center(
-        child: Container(
-          constraints: const BoxConstraints(
-            maxWidth: Theming.windowWidthMedium,
-          ),
-          decoration: BoxDecoration(
-            color: ColorScheme.of(context).surface,
-            borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
-          ),
-          child: ScaffoldMessenger(
-            child: AdaptiveScaffold(
-              sheetMode: true,
-              bottomBar: buttons,
-              child: builder(context, scrollCtrl),
-            ),
-          ),
+    child: Container(
+      constraints: const BoxConstraints(maxWidth: Theming.windowWidthMedium),
+      decoration: BoxDecoration(
+        color: ColorScheme.of(context).surface,
+        borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
+      ),
+      child: ScaffoldMessenger(
+        child: AdaptiveScaffold(
+          sheetMode: true,
+          bottomBar: buttons,
+          child: builder(context, scrollCtrl),
         ),
-      );
+      ),
+    ),
+  );
 }

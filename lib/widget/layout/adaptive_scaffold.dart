@@ -12,9 +12,9 @@ class AdaptiveScaffold extends StatelessWidget {
     this.bottomBar,
     this.sheetMode = false,
   }) : assert(
-          navigationConfig == null || bottomBar == null,
-          'Cannot have both a navigation bar and a custom bottom bar',
-        );
+         navigationConfig == null || bottomBar == null,
+         'Cannot have both a navigation bar and a custom bottom bar',
+       );
 
   final Widget child;
   final PreferredSizeWidget? topBar;
@@ -41,14 +41,14 @@ class AdaptiveScaffold extends StatelessWidget {
     var effectiveBottomBar = bottomBar;
     if (navigationConfig != null) {
       switch (theming.formFactor) {
-        case FormFactor.phone:
+        case .phone:
           effectiveBottomBar = BottomNavigation(
             selected: navigationConfig!.selected,
             items: navigationConfig!.items,
             onChanged: navigationConfig!.onChanged,
             onSame: navigationConfig!.onSame,
           );
-        case FormFactor.tablet:
+        case .tablet:
           final sideNavigation = SideNavigation(
             selected: navigationConfig!.selected,
             items: navigationConfig!.items,
@@ -78,8 +78,9 @@ class AdaptiveScaffold extends StatelessWidget {
         appBar: topBar,
         bottomNavigationBar: effectiveBottomBar,
         floatingActionButton: floatingAction,
-        floatingActionButtonLocation:
-            theming.rightButtonOrientation ? endFabLocation : startFabLocation,
+        floatingActionButtonLocation: theming.rightButtonOrientation
+            ? endFabLocation
+            : startFabLocation,
         body: effectiveChild,
       ),
     );
@@ -105,19 +106,14 @@ class NavigationConfig {
 class _StartFloatFabLocation extends StandardFabLocation with FabStartOffsetX, FabFloatOffsetY {
   const _StartFloatFabLocation(this.offset);
 
-  static const withOffset = _StartFloatFabLocation(
-    Theming.normalTapTarget * 1.5,
-  );
+  static const withOffset = _StartFloatFabLocation(Theming.normalTapTarget * 1.5);
 
   static const withoutOffset = _StartFloatFabLocation(0);
 
   final double offset;
 
   @override
-  double getOffsetX(
-    ScaffoldPrelayoutGeometry scaffoldGeometry,
-    double adjustment,
-  ) {
+  double getOffsetX(ScaffoldPrelayoutGeometry scaffoldGeometry, double adjustment) {
     return switch (scaffoldGeometry.textDirection) {
       TextDirection.rtl => super.getOffsetX(scaffoldGeometry, adjustment + offset),
       TextDirection.ltr => super.getOffsetX(scaffoldGeometry, adjustment - offset),

@@ -41,19 +41,13 @@ class _CommentViewState extends ConsumerState<CommentView> {
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
       commentProvider(widget.id),
-      (_, s) => s.whenOrNull(
-        error: (error, _) => SnackBarExtension.show(
-          context,
-          error.toString(),
-        ),
-      ),
+      (_, s) =>
+          s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
     );
 
     final comment = ref.watch(commentProvider(widget.id));
     final viewerId = ref.watch(viewerIdProvider);
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
-    );
+    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
 
     TopBar? topBar;
     void Function()? floatingActionOnPressed;
@@ -61,21 +55,16 @@ class _CommentViewState extends ConsumerState<CommentView> {
     if (comment.hasValue) {
       final value = comment.value!;
 
-      topBar = TopBar(
-        trailing: _topBarTrailingContent(context, ref, value, viewerId),
-      );
+      topBar = TopBar(trailing: _topBarTrailingContent(context, ref, value, viewerId));
 
       floatingActionOnPressed = () => showSheet(
-            context,
-            CompositionView(
-              tag: CommentCompositionTag(
-                threadId: value.threadId,
-                parentCommentId: value.id,
-              ),
-              onSaved: (map) =>
-                  ref.read(commentProvider(widget.id).notifier).appendComment(map, value.id),
-            ),
-          );
+        context,
+        CompositionView(
+          tag: CommentCompositionTag(threadId: value.threadId, parentCommentId: value.id),
+          onSaved: (map) =>
+              ref.read(commentProvider(widget.id).notifier).appendComment(map, value.id),
+        ),
+      );
     }
 
     return AdaptiveScaffold(
@@ -93,18 +82,12 @@ class _CommentViewState extends ConsumerState<CommentView> {
         child: switch (comment.unwrapPrevious()) {
           AsyncData(:final value) => _Content(ref, value, analogClock),
           AsyncError() => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                SliverRefreshControl(
-                  onRefresh: () => ref.invalidate(
-                    commentProvider(widget.id),
-                  ),
-                ),
-                const SliverFillRemaining(
-                  child: Center(child: Text('Failed to load')),
-                ),
-              ],
-            ),
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              SliverRefreshControl(onRefresh: () => ref.invalidate(commentProvider(widget.id))),
+              const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+            ],
+          ),
           AsyncLoading() => const Center(child: Loader()),
         },
       ),
@@ -116,73 +99,65 @@ class _CommentViewState extends ConsumerState<CommentView> {
     WidgetRef ref,
     Comment comment,
     int? viewerId,
-  ) =>
-      [
-        const Spacer(),
-        IconButton(
-          tooltip: 'More',
-          icon: const Icon(Ionicons.ellipsis_horizontal),
-          onPressed: () => showSheet(
-            context,
-            SimpleSheet.link(
-              context,
-              comment.siteUrl,
-              viewerId == comment.userId
-                  ? [
-                      ListTile(
-                        title: const Text('Edit'),
-                        leading: const Icon(Icons.edit_outlined),
-                        onTap: () => showSheet(
-                          context,
-                          CompositionView(
-                            tag: CommentCompositionTag.edit(
-                              id: comment.id,
-                              threadId: comment.threadId,
-                            ),
-                            onSaved: (map) {
-                              ref.read(commentProvider(widget.id).notifier).edit(map);
+  ) => [
+    const Spacer(),
+    IconButton(
+      tooltip: 'More',
+      icon: const Icon(Ionicons.ellipsis_horizontal),
+      onPressed: () => showSheet(
+        context,
+        SimpleSheet.link(
+          context,
+          comment.siteUrl,
+          viewerId == comment.userId
+              ? [
+                  ListTile(
+                    title: const Text('Edit'),
+                    leading: const Icon(Icons.edit_outlined),
+                    onTap: () => showSheet(
+                      context,
+                      CompositionView(
+                        tag: CommentCompositionTag.edit(id: comment.id, threadId: comment.threadId),
+                        onSaved: (map) {
+                          ref.read(commentProvider(widget.id).notifier).edit(map);
 
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ),
-                      ),
-                      ListTile(
-                        title: const Text('Delete'),
-                        leading: const Icon(Ionicons.trash_outline),
-                        onTap: () {
                           Navigator.pop(context);
-
-                          ConfirmationDialog.show(
-                            context,
-                            title: 'Delete?',
-                            primaryAction: 'Yes',
-                            secondaryAction: 'No',
-                            onConfirm: () async {
-                              final err =
-                                  await ref.read(commentProvider(widget.id).notifier).delete();
-
-                              if (!context.mounted) return;
-
-                              if (err == null) {
-                                Navigator.pop(context);
-                                return;
-                              }
-
-                              SnackBarExtension.show(
-                                context,
-                                'Failed deleting comment: $err',
-                              );
-                            },
-                          );
                         },
                       ),
-                    ]
-                  : const [],
-            ),
-          ),
+                    ),
+                  ),
+                  ListTile(
+                    title: const Text('Delete'),
+                    leading: const Icon(Ionicons.trash_outline),
+                    onTap: () {
+                      Navigator.pop(context);
+
+                      ConfirmationDialog.show(
+                        context,
+                        title: 'Delete?',
+                        primaryAction: 'Yes',
+                        secondaryAction: 'No',
+                        onConfirm: () async {
+                          final err = await ref.read(commentProvider(widget.id).notifier).delete();
+
+                          if (!context.mounted) return;
+
+                          if (err == null) {
+                            Navigator.pop(context);
+                            return;
+                          }
+
+                          SnackBarExtension.show(context, 'Failed deleting comment: $err');
+                        },
+                      );
+                    },
+                  ),
+                ]
+              : const [],
         ),
-      ];
+      ),
+    ),
+  ];
 }
 
 class _Content extends StatelessWidget {
@@ -199,20 +174,15 @@ class _Content extends StatelessWidget {
     return CustomScrollView(
       physics: Theming.bouncyPhysics,
       slivers: [
-        SliverRefreshControl(
-          onRefresh: () => ref.invalidate(commentProvider(comment.id)),
-        ),
+        SliverRefreshControl(onRefresh: () => ref.invalidate(commentProvider(comment.id))),
         SliverToBoxAdapter(
           child: Semantics(
             onTap: openThread,
             onTapHint: 'open thread',
             child: GestureDetector(
               onTap: openThread,
-              behavior: HitTestBehavior.opaque,
-              child: Text(
-                comment.threadTitle,
-                style: TextTheme.of(context).titleLarge,
-              ),
+              behavior: .opaque,
+              child: Text(comment.threadTitle, style: TextTheme.of(context).titleLarge),
             ),
           ),
         ),

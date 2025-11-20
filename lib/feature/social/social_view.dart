@@ -27,10 +27,7 @@ class SocialView extends ConsumerStatefulWidget {
 }
 
 class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: SocialTab.values.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: SocialTab.values.length, vsync: this);
   late final _scrollCtrl = PagedController(
     loadMore: () =>
         ref.read(socialProvider(widget.id).notifier).fetch(SocialTab.values[_tabCtrl.index]),
@@ -54,15 +51,9 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
     final tab = SocialTab.values[_tabCtrl.index];
 
     final viewerId = ref.watch(viewerIdProvider);
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
-    );
+    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
 
-    final count = ref.watch(
-      socialProvider(widget.id).select(
-        (s) => s.value?.getCount(tab) ?? 0,
-      ),
-    );
+    final count = ref.watch(socialProvider(widget.id).select((s) => s.value?.getCount(tab) ?? 0));
 
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
@@ -74,11 +65,8 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
           trailing: [
             if (count > 0)
               Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: TextTheme.of(context).titleSmall,
-                ),
+                padding: const .only(right: Theming.offset),
+                child: Text(count.toString(), style: TextTheme.of(context).titleSmall),
               ),
           ],
         ),
@@ -100,38 +88,34 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.following),
-            ),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.following)),
             onData: (data) => UserItemGrid(data.items),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.followers),
-            ),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.followers)),
             onData: (data) => UserItemGrid(data.items),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.threads),
-            ),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.threads)),
             onData: (data) => ThreadItemList(data.items, analogClock),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.comments),
-            ),
-            onData: (data) => _CommentItemList(
-              data.items,
-              viewerId,
-              analogClock,
-            ),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.comments)),
+            onData: (data) => _CommentItemList(data.items, viewerId, analogClock),
           ),
         ],
       ),
@@ -156,18 +140,15 @@ class _CommentItemList extends StatelessWidget {
         final openThread = () => context.push(Routes.thread(item.threadId));
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             Semantics(
               onTap: openThread,
               onTapHint: 'open thread',
               child: GestureDetector(
                 onTap: openThread,
-                behavior: HitTestBehavior.opaque,
-                child: Text(
-                  item.threadTitle,
-                  style: TextTheme.of(context).titleMedium,
-                ),
+                behavior: .opaque,
+                child: Text(item.threadTitle, style: TextTheme.of(context).titleMedium),
               ),
             ),
             const SizedBox(height: Theming.offset),

@@ -34,43 +34,51 @@ class TagPickerState extends State<TagPicker> {
     final children = <Widget>[];
 
     for (final name in widget.includedGenres) {
-      children.add(_DualStateTagChip(
-        key: Key(name),
-        label: name,
-        positive: true,
-        onChanged: (positive) => _toggleGenre(name, positive),
-        onRemoved: () => setState(() => widget.includedGenres.remove(name)),
-      ));
+      children.add(
+        _DualStateTagChip(
+          key: Key(name),
+          label: name,
+          positive: true,
+          onChanged: (positive) => _toggleGenre(name, positive),
+          onRemoved: () => setState(() => widget.includedGenres.remove(name)),
+        ),
+      );
     }
 
     for (final name in widget.excludedGenres) {
-      children.add(_DualStateTagChip(
-        key: Key(name),
-        label: name,
-        positive: false,
-        onChanged: (positive) => _toggleGenre(name, positive),
-        onRemoved: () => setState(() => widget.excludedGenres.remove(name)),
-      ));
+      children.add(
+        _DualStateTagChip(
+          key: Key(name),
+          label: name,
+          positive: false,
+          onChanged: (positive) => _toggleGenre(name, positive),
+          onRemoved: () => setState(() => widget.excludedGenres.remove(name)),
+        ),
+      );
     }
 
     for (final name in widget.includedTags) {
-      children.add(_DualStateTagChip(
-        key: Key(name),
-        label: name,
-        positive: true,
-        onChanged: (positive) => _toggleTag(name, positive),
-        onRemoved: () => setState(() => widget.includedTags.remove(name)),
-      ));
+      children.add(
+        _DualStateTagChip(
+          key: Key(name),
+          label: name,
+          positive: true,
+          onChanged: (positive) => _toggleTag(name, positive),
+          onRemoved: () => setState(() => widget.includedTags.remove(name)),
+        ),
+      );
     }
 
     for (final name in widget.excludedTags) {
-      children.add(_DualStateTagChip(
-        key: Key(name),
-        label: name,
-        positive: false,
-        onChanged: (positive) => _toggleTag(name, positive),
-        onRemoved: () => setState(() => widget.excludedTags.remove(name)),
-      ));
+      children.add(
+        _DualStateTagChip(
+          key: Key(name),
+          label: name,
+          positive: false,
+          onChanged: (positive) => _toggleTag(name, positive),
+          onRemoved: () => setState(() => widget.excludedTags.remove(name)),
+        ),
+      );
     }
 
     return ChipGrid(
@@ -237,10 +245,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
           Material(
             color: Colors.transparent,
             child: ListView.builder(
-              padding: EdgeInsets.only(
-                top: 110,
-                bottom: MediaQuery.paddingOf(context).bottom,
-              ),
+              padding: .only(top: 110, bottom: MediaQuery.paddingOf(context).bottom),
               controller: widget.scrollCtrl,
               itemCount: _itemIndexes.length,
               itemExtent: 56,
@@ -252,8 +257,8 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                   value: included.contains(name)
                       ? true
                       : excluded.contains(name)
-                          ? null
-                          : false,
+                      ? null
+                      : false,
                   onChanged: (v) {
                     if (v == null) {
                       included.remove(name);
@@ -277,20 +282,16 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
             child: Container(
               height: 110,
               color: Theme.of(context).navigationBarTheme.backgroundColor,
-              padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+              padding: const .symmetric(vertical: Theming.offset),
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(
+                    padding: const .only(
                       left: Theming.offset,
                       right: Theming.offset,
                       bottom: Theming.offset,
                     ),
-                    child: SearchField(
-                      hint: 'Tag',
-                      value: _filter,
-                      onChanged: _onSearch,
-                    ),
+                    child: SearchField(hint: 'Tag', value: _filter, onChanged: _onSearch),
                   ),
                   SizedBox(
                     height: 40,
@@ -368,11 +369,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
 }
 
 class _TagCategoryChip extends StatelessWidget {
-  const _TagCategoryChip({
-    required this.name,
-    required this.selected,
-    required this.onTap,
-  });
+  const _TagCategoryChip({required this.name, required this.selected, required this.onTap});
 
   final String name;
   final bool selected;
@@ -387,8 +384,9 @@ class _TagCategoryChip extends StatelessWidget {
         labelStyle: selected
             ? TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).surface)
             : TextTheme.of(context).bodyMedium,
-        backgroundColor:
-            selected ? ColorScheme.of(context).primary : ColorScheme.of(context).onSecondary,
+        backgroundColor: selected
+            ? ColorScheme.of(context).primary
+            : ColorScheme.of(context).onSecondary,
         side: selected
             ? BorderSide(color: ColorScheme.of(context).primary)
             : BorderSide(color: ColorScheme.of(context).onSurface),

@@ -15,10 +15,7 @@ class MonoRelationGrid extends StatelessWidget {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 240,
-        height: 115,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 240, height: 115),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => _Tile(item: items[i], onTap: onTap),
@@ -49,20 +46,15 @@ class _Tile extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: .spaceEvenly,
+                  crossAxisAlignment: .start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        item.tileTitle,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ),
+                    Flexible(child: Text(item.tileTitle, overflow: .fade)),
                     if (item.tileSubtitle != null)
                       Text(
                         item.tileSubtitle!,
                         maxLines: 4,
-                        overflow: TextOverflow.fade,
+                        overflow: .fade,
                         style: TextTheme.of(context).labelSmall,
                       ),
                   ],

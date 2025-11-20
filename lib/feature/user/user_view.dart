@@ -63,7 +63,7 @@ class UserHomeView extends StatelessWidget {
                     padding: Theming.paddingAll,
                     child: Text(
                       'Log in with the profile icon at the top to view your account',
-                      textAlign: TextAlign.center,
+                      textAlign: .center,
                     ),
                   ),
                 ),
@@ -75,9 +75,7 @@ class UserHomeView extends StatelessWidget {
     final mediaQuery = MediaQuery.of(context);
     return MediaQuery(
       data: mediaQuery.copyWith(
-        padding: mediaQuery.padding.copyWith(
-          top: mediaQuery.padding.top - removableTopPadding,
-        ),
+        padding: mediaQuery.padding.copyWith(top: mediaQuery.padding.top - removableTopPadding),
       ),
       child: body,
     );
@@ -95,9 +93,7 @@ class _UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final viewer = ref.watch(
-          persistenceProvider.select((s) => s.accountGroup.account),
-        );
+        final viewer = ref.watch(persistenceProvider.select((s) => s.accountGroup.account));
 
         final isViewer =
             viewer != null && (tag.id != null ? tag.id == viewer.id : tag.name == viewer.name);
@@ -110,10 +106,7 @@ class _UserView extends StatelessWidget {
 
               ref.read(persistenceProvider.notifier).refreshViewerDetails(data.name, data.imageUrl);
             },
-            error: (error, _) => SnackBarExtension.show(
-              context,
-              error.toString(),
-            ),
+            error: (error, _) => SnackBarExtension.show(context, error.toString()),
           ),
         );
 
@@ -135,50 +128,42 @@ class _UserView extends StatelessWidget {
         final mediaQuery = MediaQuery.of(context);
 
         final refreshControl = MediaQuery(
-          data: mediaQuery.copyWith(
-            padding: mediaQuery.padding.copyWith(top: 0),
-          ),
-          child: SliverRefreshControl(
-            onRefresh: () => ref.invalidate(userProvider(tag)),
-          ),
+          data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
+          child: SliverRefreshControl(onRefresh: () => ref.invalidate(userProvider(tag))),
         );
 
         return user.unwrapPrevious().when(
-              error: (_, __) => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  header,
-                  refreshControl,
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load user')),
-                  )
-                ],
-              ),
-              loading: () => CustomScrollView(
-                slivers: [header, const SliverFillRemaining(child: Center(child: Loader()))],
-              ),
-              data: (data) => CustomScrollView(
-                controller: scrollCtrl,
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  header,
-                  refreshControl,
-                  _ButtonRow(data.id, isViewer),
-                  if (data.description.isNotEmpty) ...[
-                    const SliverToBoxAdapter(
-                      child: SizedBox(height: Theming.offset),
-                    ),
-                    SliverConstrainedView(
-                      sliver: HtmlContent(
-                        data.description,
-                        renderMode: RenderMode.sliverList,
-                      ),
-                    ),
-                  ],
-                  const SliverFooter(),
-                ],
-              ),
-            );
+          error: (_, _) => CustomScrollView(
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              header,
+              refreshControl,
+              const SliverFillRemaining(child: Center(child: Text('Failed to load user'))),
+            ],
+          ),
+          loading: () => CustomScrollView(
+            slivers: [
+              header,
+              const SliverFillRemaining(child: Center(child: Loader())),
+            ],
+          ),
+          data: (data) => CustomScrollView(
+            controller: scrollCtrl,
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              header,
+              refreshControl,
+              _ButtonRow(data.id, isViewer),
+              if (data.description.isNotEmpty) ...[
+                const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
+                SliverConstrainedView(
+                  sliver: HtmlContent(data.description, renderMode: RenderMode.sliverList),
+                ),
+              ],
+              const SliverFooter(),
+            ],
+          ),
+        );
       },
     );
   }
@@ -236,7 +221,7 @@ class _ButtonRow extends StatelessWidget {
       child: ConstrainedView(
         child: Container(
           height: 60,
-          margin: const EdgeInsets.symmetric(vertical: Theming.offset),
+          margin: const .symmetric(vertical: Theming.offset),
           alignment: Alignment.center,
           child: ShadowedOverflowList(
             itemCount: buttons.length,
@@ -260,10 +245,7 @@ class _Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton.tonal(
       onPressed: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [Icon(icon), Text(label)],
-      ),
+      child: Column(mainAxisAlignment: .spaceEvenly, children: [Icon(icon), Text(label)]),
     );
   }
 }

@@ -11,6 +11,7 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/theming.dart';
 
+// TODO https://docs.flutter.dev/release/breaking-changes/uiscenedelegate
 Future<void> main() async {
   final container = ProviderContainer(retry: (retryCount, error) => null);
   await container.read(persistenceProvider.notifier).init();
@@ -75,7 +76,7 @@ class AppState extends ConsumerState<_App> {
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
+        Color lightSeed = (options.themeBase ?? .navy).seed;
         Color darkSeed = lightSeed;
         if (lightDynamic != null && darkDynamic != null) {
           _systemLightPrimaryColor = lightDynamic.primary;
@@ -133,14 +134,16 @@ class AppState extends ConsumerState<_App> {
         }
 
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarBrightness: scheme.brightness,
-          statusBarIconBrightness: overlayBrightness,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarContrastEnforced: false,
-          systemNavigationBarIconBrightness: overlayBrightness,
-        ));
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: scheme.brightness,
+            statusBarIconBrightness: overlayBrightness,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            systemNavigationBarIconBrightness: overlayBrightness,
+          ),
+        );
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
@@ -153,20 +156,16 @@ class AppState extends ConsumerState<_App> {
             final directionality = Directionality.of(context);
 
             final theming = Theming(
-              formFactor:
-                  viewSize.width < Theming.windowWidthMedium ? FormFactor.phone : FormFactor.tablet,
-              rightButtonOrientation: options.buttonOrientation == ButtonOrientation.auto
+              formFactor: viewSize.width < Theming.windowWidthMedium ? .phone : .tablet,
+              rightButtonOrientation: options.buttonOrientation == .auto
                   ? directionality == TextDirection.ltr
-                  : options.buttonOrientation == ButtonOrientation.right,
+                  : options.buttonOrientation == .right,
             );
 
             // Override the [textScaleFactor], because some devices apply
             // too high of a factor and it breaks the app visually.
             final mediaQuery = MediaQuery.of(context);
-            final scale = mediaQuery.textScaler.clamp(
-              minScaleFactor: 0.8,
-              maxScaleFactor: 1,
-            );
+            final scale = mediaQuery.textScaler.clamp(minScaleFactor: 0.8, maxScaleFactor: 1);
 
             return Theme(
               data: Theme.of(context).copyWith(extensions: [theming]),

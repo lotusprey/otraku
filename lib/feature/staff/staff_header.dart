@@ -20,8 +20,8 @@ class StaffHeader extends StatelessWidget {
     required this.imageUrl,
     required this.staff,
     required this.toggleFavorite,
-  })  : tabCtrl = null,
-        scrollToTop = null;
+  }) : tabCtrl = null,
+       scrollToTop = null;
 
   final int id;
   final String? imageUrl;
@@ -45,27 +45,15 @@ class StaffHeader extends StatelessWidget {
             ])
           : null,
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (
-              tabCtrl: tabCtrl!,
-              scrollToTop: scrollToTop!,
-              tabs: tabsWithOverview,
-            )
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,
-      trailingTopButtons: [
-        if (staff != null) _FavoriteButton(staff!, toggleFavorite),
-      ],
+      trailingTopButtons: [if (staff != null) _FavoriteButton(staff!, toggleFavorite)],
     );
   }
 
-  static const tabsWithoutOverview = [
-    Tab(text: 'Characters'),
-    Tab(text: 'Roles'),
-  ];
+  static const tabsWithoutOverview = [Tab(text: 'Characters'), Tab(text: 'Roles')];
 
-  static const tabsWithOverview = [
-    Tab(text: 'Overview'),
-    ...tabsWithoutOverview,
-  ];
+  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
 }
 
 class _FavoriteButton extends StatefulWidget {

@@ -27,7 +27,7 @@ class StudioHeader extends StatelessWidget {
       content: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: .stretch,
           children: [
             if (name != null)
               Flexible(
@@ -37,20 +37,15 @@ class StudioHeader extends StatelessWidget {
                     tag: id,
                     child: Text(
                       name,
-                      overflow: TextOverflow.fade,
-                      textAlign: TextAlign.center,
+                      overflow: .fade,
+                      textAlign: .center,
                       style: TextTheme.of(context).titleLarge,
                     ),
                   ),
                 ),
               ),
             if (studio != null)
-              Flexible(
-                child: Text(
-                  '${studio!.favorites} Favorites',
-                  textAlign: TextAlign.center,
-                ),
-              ),
+              Flexible(child: Text('${studio!.favorites} Favorites', textAlign: .center)),
           ],
         ),
       ),

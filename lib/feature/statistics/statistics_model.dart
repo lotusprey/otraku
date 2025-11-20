@@ -87,11 +87,7 @@ class AmountStatistics {
     required this.type,
   });
 
-  factory AmountStatistics(
-    Map<String, dynamic> map,
-    String key,
-    bool ofAnime,
-  ) =>
+  factory AmountStatistics(Map<String, dynamic> map, String key, bool ofAnime) =>
       AmountStatistics._(
         count: map['count'],
         meanScore: map['meanScore'].toDouble(),
@@ -115,12 +111,12 @@ class TypeStatistics {
   });
 
   factory TypeStatistics(Map<String, dynamic> map, String key) => TypeStatistics._(
-        count: map['count'],
-        meanScore: map['meanScore'].toDouble(),
-        hoursWatched: map['minutesWatched'] ~/ 60,
-        chaptersRead: map['chaptersRead'],
-        value: (map[key] as String).noScreamingSnakeCase,
-      );
+    count: map['count'],
+    meanScore: map['meanScore'].toDouble(),
+    hoursWatched: map['minutesWatched'] ~/ 60,
+    chaptersRead: map['chaptersRead'],
+    value: (map[key] as String).noScreamingSnakeCase,
+  );
 
   final int count;
   final double meanScore;

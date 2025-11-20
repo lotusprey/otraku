@@ -33,39 +33,39 @@ class _ForumViewState extends ConsumerState<ForumView> {
 
   @override
   Widget build(BuildContext context) {
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
-    );
+    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
 
     return AdaptiveScaffold(
-      topBar: TopBar(trailing: [
-        Consumer(
-          builder: (context, ref, filterButton) {
-            return Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: SearchField(
-                      debounce: Debounce(),
-                      hint: 'Forum',
-                      value: ref.watch(forumFilterProvider.select((s) => s.search)),
-                      onChanged: (search) => ref
-                          .read(forumFilterProvider.notifier)
-                          .update((s) => s.copyWith(search: search.trim())),
+      topBar: TopBar(
+        trailing: [
+          Consumer(
+            builder: (context, ref, filterButton) {
+              return Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: SearchField(
+                        debounce: Debounce(),
+                        hint: 'Forum',
+                        value: ref.watch(forumFilterProvider.select((s) => s.search)),
+                        onChanged: (search) => ref
+                            .read(forumFilterProvider.notifier)
+                            .update((s) => s.copyWith(search: search.trim())),
+                      ),
                     ),
-                  ),
-                  filterButton!,
-                ],
-              ),
-            );
-          },
-          child: IconButton(
-            tooltip: 'Filter',
-            icon: const Icon(Ionicons.funnel_outline),
-            onPressed: () => showForumFilterSheet(context, ref),
+                    filterButton!,
+                  ],
+                ),
+              );
+            },
+            child: IconButton(
+              tooltip: 'Filter',
+              icon: const Icon(Ionicons.funnel_outline),
+              onPressed: () => showForumFilterSheet(context, ref),
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
       child: PagedView(
         provider: forumProvider,
         scrollCtrl: _scrollCtrl,

@@ -26,24 +26,16 @@ class MediaRecommendationsSubview extends StatelessWidget {
     return PagedView<Recommendation>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
-      provider: mediaConnectionsProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.recommendations),
-      ),
-      onData: (data) => _MediaRecommendationsGrid(
+      provider: mediaConnectionsProvider(
         id,
-        data.items,
-        rateRecommendation,
-      ),
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.recommendations)),
+      onData: (data) => _MediaRecommendationsGrid(id, data.items, rateRecommendation),
     );
   }
 }
 
 class _MediaRecommendationsGrid extends StatelessWidget {
-  const _MediaRecommendationsGrid(
-    this.mediaId,
-    this.items,
-    this.rateRecommendation,
-  );
+  const _MediaRecommendationsGrid(this.mediaId, this.items, this.rateRecommendation);
 
   final int mediaId;
   final List<Recommendation> items;
@@ -52,83 +44,63 @@ class _MediaRecommendationsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const SliverFillRemaining(
-        child: Center(child: Text('No results')),
-      );
+      return const SliverFillRemaining(child: Center(child: Text('No results')));
     }
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 270,
-        height: 100,
-      ),
-      delegate: SliverChildBuilderDelegate(
-        childCount: items.length,
-        (context, i) {
-          final textRailItems = <String, bool>{
-            if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
-            if (items[i].format != null) items[i].format!.label: false,
-            if (items[i].releaseYear != null) items[i].releaseYear!.toString(): false,
-          };
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: 100),
+      delegate: SliverChildBuilderDelegate(childCount: items.length, (context, i) {
+        final textRailItems = <String, bool>{
+          if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
+          if (items[i].format != null) items[i].format!.label: false,
+          if (items[i].releaseYear != null) items[i].releaseYear!.toString(): false,
+        };
 
-          return Card(
-            child: MediaRouteTile(
-              id: items[i].id,
-              imageUrl: items[i].imageUrl,
-              child: Row(
-                children: [
-                  Hero(
-                    tag: items[i].id,
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: Container(
-                        color: ColorScheme.of(context).surfaceContainerHighest,
-                        child: CachedImage(
-                          items[i].imageUrl,
-                          width: 100 / Theming.coverHtoWRatio,
-                        ),
-                      ),
+        return Card(
+          child: MediaRouteTile(
+            id: items[i].id,
+            imageUrl: items[i].imageUrl,
+            child: Row(
+              children: [
+                Hero(
+                  tag: items[i].id,
+                  child: ClipRRect(
+                    borderRadius: Theming.borderRadiusSmall,
+                    child: Container(
+                      color: ColorScheme.of(context).surfaceContainerHighest,
+                      child: CachedImage(items[i].imageUrl, width: 100 / Theming.coverHtoWRatio),
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: Theming.paddingAll,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              items[i].title,
-                              overflow: TextOverflow.fade,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: Theming.paddingAll,
+                    child: Column(
+                      crossAxisAlignment: .start,
+                      mainAxisAlignment: .spaceAround,
+                      children: [
+                        Flexible(child: Text(items[i].title, overflow: .fade)),
+                        Row(
+                          spacing: 5,
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            TextRail(
+                              textRailItems,
+                              style: TextTheme.of(context).labelMedium,
+                              maxLines: 2,
                             ),
-                          ),
-                          Row(
-                            spacing: 5,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              TextRail(
-                                textRailItems,
-                                style: TextTheme.of(context).labelMedium,
-                                maxLines: 2,
-                              ),
-                              _RecommendationRating(
-                                mediaId,
-                                items[i],
-                                rateRecommendation,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                            _RecommendationRating(mediaId, items[i], rateRecommendation),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      }),
     );
   }
 }
@@ -151,7 +123,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
 
     return Row(
       spacing: Theming.offset,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         Tooltip(
           message: 'Agree',
@@ -177,10 +149,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                 }
               });
 
-              final err = await widget.rateRecommendation(
-                item.id,
-                item.userRating,
-              );
+              final err = await widget.rateRecommendation(item.id, item.userRating);
               if (err == null) return;
 
               setState(() {
@@ -230,10 +199,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                 }
               });
 
-              final err = await widget.rateRecommendation(
-                item.id,
-                item.userRating,
-              );
+              final err = await widget.rateRecommendation(item.id, item.userRating);
               if (err == null) return;
 
               setState(() {

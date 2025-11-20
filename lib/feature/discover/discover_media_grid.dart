@@ -18,10 +18,7 @@ class DiscoverMediaGrid extends StatelessWidget {
     }
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 290,
-        height: 110,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 290, height: 110),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, index) => _Tile(items[index]),
@@ -63,9 +60,7 @@ class _Tile extends StatelessWidget {
             Hero(
               tag: item.id,
               child: ClipRRect(
-                borderRadius: const BorderRadius.horizontal(
-                  left: Theming.radiusSmall,
-                ),
+                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: Container(
                   width: 120 / Theming.coverHtoWRatio,
                   color: ColorScheme.of(context).surfaceContainerHighest,
@@ -77,25 +72,17 @@ class _Tile extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: .start,
+                  mainAxisAlignment: .spaceAround,
                   children: [
                     Flexible(
                       child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: .min,
+                        crossAxisAlignment: .start,
                         children: [
-                          Flexible(
-                            child: Text(
-                              item.name,
-                              overflow: TextOverflow.fade,
-                            ),
-                          ),
+                          Flexible(child: Text(item.name, overflow: .fade)),
                           const SizedBox(height: 5),
-                          TextRail(
-                            textRailItems,
-                            style: TextTheme.of(context).labelMedium,
-                          ),
+                          TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
                         ],
                       ),
                     ),
@@ -108,10 +95,7 @@ class _Tile extends StatelessWidget {
                           color: ColorScheme.of(context).onSurfaceVariant,
                         ),
                         const SizedBox(width: 5),
-                        Text(
-                          item.averageScore.toString(),
-                          style: detailTextStyle,
-                        ),
+                        Text(item.averageScore.toString(), style: detailTextStyle),
                         const SizedBox(width: 15),
                         Icon(
                           Icons.person_outline_rounded,
@@ -119,10 +103,7 @@ class _Tile extends StatelessWidget {
                           color: ColorScheme.of(context).onSurfaceVariant,
                         ),
                         const SizedBox(width: 5),
-                        Text(
-                          item.popularity.toString(),
-                          style: detailTextStyle,
-                        ),
+                        Text(item.popularity.toString(), style: detailTextStyle),
                       ],
                     ),
                   ],

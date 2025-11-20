@@ -25,15 +25,14 @@ class CollectionFloatingAction extends StatelessWidget {
         return switch (collection) {
           null => const SizedBox(),
           PreviewCollection _ => FloatingActionButton(
-              tooltip: 'Load Entire Collection',
-              child: const Icon(Ionicons.enter_outline),
-              onPressed: () => ref.read(homeProvider.notifier).expandCollection(
-                    tag.ofAnime,
-                  ),
-            ),
-          FullCollection c => c.lists.length < 2
-              ? const SizedBox()
-              : _fullCollectionActionButton(context, ref, c.lists, c.index),
+            tooltip: 'Load Entire Collection',
+            child: const Icon(Ionicons.enter_outline),
+            onPressed: () => ref.read(homeProvider.notifier).expandCollection(tag.ofAnime),
+          ),
+          FullCollection c =>
+            c.lists.length < 2
+                ? const SizedBox()
+                : _fullCollectionActionButton(context, ref, c.lists, c.index),
         };
       },
     );
@@ -46,15 +45,15 @@ class CollectionFloatingAction extends StatelessWidget {
     int index,
   ) {
     final listToWidget = (EntryList l) => Row(
-          children: [
-            Expanded(child: Text(l.name)),
-            const SizedBox(width: Theming.offset / 2),
-            DefaultTextStyle(
-              style: TextTheme.of(context).labelMedium!,
-              child: Text(l.entries.length.toString()),
-            ),
-          ],
-        );
+      children: [
+        Expanded(child: Text(l.name)),
+        const SizedBox(width: Theming.offset / 2),
+        DefaultTextStyle(
+          style: TextTheme.of(context).labelMedium!,
+          child: Text(l.entries.length.toString()),
+        ),
+      ],
+    );
 
     return FloatingActionButton(
       tooltip: 'Lists',

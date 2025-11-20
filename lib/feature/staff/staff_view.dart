@@ -38,17 +38,11 @@ class _StaffViewState extends ConsumerState<StaffView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue>(
-      staffProvider(widget.id),
-      (_, s) {
-        if (s.hasError) {
-          SnackBarExtension.show(
-            context,
-            'Failed to load staff: ${s.error}',
-          );
-        }
-      },
-    );
+    ref.listen<AsyncValue>(staffProvider(widget.id), (_, s) {
+      if (s.hasError) {
+        SnackBarExtension.show(context, 'Failed to load staff: ${s.error}');
+      }
+    });
 
     final staff = ref.watch(staffProvider(widget.id));
 
@@ -61,22 +55,22 @@ class _StaffViewState extends ConsumerState<StaffView> {
         child: StaffFilterButton(widget.id, ref),
       ),
       child: switch (Theming.of(context).formFactor) {
-        FormFactor.phone => _CompactView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            staff: staff,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
-        FormFactor.tablet => _LargeView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            staff: staff,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
+        .phone => _CompactView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          staff: staff,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+        ),
+        .tablet => _LargeView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          staff: staff,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+        ),
       },
     );
   }
@@ -104,10 +98,7 @@ class _CompactView extends StatefulWidget {
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: StaffHeader.tabsWithOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: StaffHeader.tabsWithOverview.length, vsync: this);
 
   @override
   void initState() {
@@ -142,20 +133,12 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
       controller: widget.scrollCtrl,
       headerSliverBuilder: (context, _) => [header],
       body: MediaQuery(
-        data: mediaQuery.copyWith(
-          padding: mediaQuery.padding.copyWith(top: 0),
-        ),
+        data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.staff.unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(
-                child: Text('Failed to load staff'),
-              ),
-              data: (data) => _StaffTabs.withOverview(
-                id: widget.id,
-                staff: data,
-                tabCtrl: _tabCtrl,
-              ),
-            ),
+          loading: () => const Center(child: Loader()),
+          error: (_, _) => const Center(child: Text('Failed to load staff')),
+          data: (data) => _StaffTabs.withOverview(id: widget.id, staff: data, tabCtrl: _tabCtrl),
+        ),
       ),
     );
   }
@@ -183,10 +166,7 @@ class _LargeView extends StatefulWidget {
 }
 
 class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: StaffHeader.tabsWithoutOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: StaffHeader.tabsWithoutOverview.length, vsync: this);
 
   @override
   void initState() {
@@ -216,54 +196,43 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       scrollToTop: widget.scrollCtrl.scrollToTop,
       tabs: StaffHeader.tabsWithoutOverview,
       leftPane: widget.staff.unwrapPrevious().when(
-            loading: () => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                ),
-              ],
-            ),
-            error: (_, __) => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Text('Failed to load staff'),
-                  ),
-                ),
-              ],
-            ),
-            data: (data) => StaffOverviewSubview.withHeader(
-              staff: data,
-              header: header,
-              invalidate: () => widget.ref.invalidate(
-                staffProvider(widget.id),
-              ),
-            ),
-          ),
+        loading: () => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Loader())),
+          ],
+        ),
+        error: (_, _) => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Text('Failed to load staff'))),
+          ],
+        ),
+        data: (data) => StaffOverviewSubview.withHeader(
+          staff: data,
+          header: header,
+          invalidate: () => widget.ref.invalidate(staffProvider(widget.id)),
+        ),
+      ),
       rightPane: widget.staff.unwrapPrevious().maybeWhen(
-            data: (data) => _StaffTabs.withoutOverview(
-              id: widget.id,
-              staff: data,
-              tabCtrl: _tabCtrl,
-              scrollCtrl: widget.scrollCtrl,
-            ),
-            orElse: () => const SizedBox(),
-          ),
+        data: (data) => _StaffTabs.withoutOverview(
+          id: widget.id,
+          staff: data,
+          tabCtrl: _tabCtrl,
+          scrollCtrl: widget.scrollCtrl,
+        ),
+        orElse: () => const SizedBox(),
+      ),
     );
   }
 }
 
 class _StaffTabs extends ConsumerStatefulWidget {
-  const _StaffTabs.withOverview({
-    required this.id,
-    required this.staff,
-    required this.tabCtrl,
-  })  : withOverview = true,
-        scrollCtrl = null;
+  const _StaffTabs.withOverview({required this.id, required this.staff, required this.tabCtrl})
+    : withOverview = true,
+      scrollCtrl = null;
 
   const _StaffTabs.withoutOverview({
     required this.id,
@@ -289,7 +258,8 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = widget.scrollCtrl ??
+    _scrollCtrl =
+        widget.scrollCtrl ??
         context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);

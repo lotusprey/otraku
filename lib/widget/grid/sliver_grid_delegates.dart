@@ -9,10 +9,10 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
     required this.height,
     this.mainAxisSpacing = Theming.offset,
     this.crossAxisSpacing = Theming.offset,
-  })  : assert(minWidth > 0),
-        assert(height > 0),
-        assert(mainAxisSpacing >= 0),
-        assert(crossAxisSpacing >= 0);
+  }) : assert(minWidth > 0),
+       assert(height > 0),
+       assert(mainAxisSpacing >= 0),
+       assert(crossAxisSpacing >= 0);
 
   final double minWidth;
   final double height;
@@ -53,9 +53,7 @@ class SliverGridDelegateWithMinWidthAndFixedHeight extends SliverGridDelegate {
   }
 
   @override
-  bool shouldRelayout(
-    SliverGridDelegateWithMinWidthAndFixedHeight oldDelegate,
-  ) =>
+  bool shouldRelayout(SliverGridDelegateWithMinWidthAndFixedHeight oldDelegate) =>
       oldDelegate.height != height ||
       oldDelegate.minWidth != minWidth ||
       oldDelegate.mainAxisSpacing != mainAxisSpacing ||
@@ -72,11 +70,11 @@ class SliverGridDelegateWithMinWidthAndExtraHeight extends SliverGridDelegate {
     this.crossAxisSpacing = Theming.offset,
     this.extraHeight = 0.0,
     this.rawHWRatio = 1.0,
-  })  : assert(minWidth >= 0),
-        assert(mainAxisSpacing >= 0),
-        assert(crossAxisSpacing >= 0),
-        assert(extraHeight >= 0),
-        assert(rawHWRatio > 0);
+  }) : assert(minWidth >= 0),
+       assert(mainAxisSpacing >= 0),
+       assert(crossAxisSpacing >= 0),
+       assert(extraHeight >= 0),
+       assert(rawHWRatio > 0);
 
   final double minWidth;
   final double mainAxisSpacing;
@@ -120,9 +118,7 @@ class SliverGridDelegateWithMinWidthAndExtraHeight extends SliverGridDelegate {
   }
 
   @override
-  bool shouldRelayout(
-    SliverGridDelegateWithMinWidthAndExtraHeight oldDelegate,
-  ) =>
+  bool shouldRelayout(SliverGridDelegateWithMinWidthAndExtraHeight oldDelegate) =>
       oldDelegate.minWidth != minWidth ||
       oldDelegate.mainAxisSpacing != mainAxisSpacing ||
       oldDelegate.crossAxisSpacing != crossAxisSpacing ||

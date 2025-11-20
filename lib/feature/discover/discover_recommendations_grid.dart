@@ -8,11 +8,8 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
-typedef RateRecommendation = Future<Object?> Function(
-  int mediaId,
-  int recommendedMediaId,
-  bool? rating,
-);
+typedef RateRecommendation =
+    Future<Object?> Function(int mediaId, int recommendedMediaId, bool? rating);
 
 class DiscoverRecommendationsGrid extends StatelessWidget {
   const DiscoverRecommendationsGrid(this.items, this.onRate);
@@ -27,10 +24,7 @@ class DiscoverRecommendationsGrid extends StatelessWidget {
     }
 
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 300,
-        height: 163,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: 163),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => _Tile(items[i], onRate),
@@ -64,35 +58,28 @@ class _Tile extends StatelessWidget {
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(Theming.offset),
+                    padding: const .all(Theming.offset),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: .stretch,
+                      mainAxisAlignment: .spaceBetween,
                       children: [
                         Flexible(
                           child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => context.push(
-                              Routes.media(item.mediaId, item.mediaCover),
-                            ),
-                            child: Text(
-                              item.mediaTitle,
-                              overflow: TextOverflow.fade,
-                              maxLines: 3,
-                            ),
+                            behavior: .opaque,
+                            onTap: () => context.push(Routes.media(item.mediaId, item.mediaCover)),
+                            child: Text(item.mediaTitle, overflow: .fade, maxLines: 3),
                           ),
                         ),
                         Flexible(
                           child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => context.push(Routes.media(
-                              item.recommendedMediaId,
-                              item.recommendedMediaCover,
-                            )),
+                            behavior: .opaque,
+                            onTap: () => context.push(
+                              Routes.media(item.recommendedMediaId, item.recommendedMediaCover),
+                            ),
                             child: Text(
                               item.recommendedMediaTitle,
-                              overflow: TextOverflow.fade,
-                              textAlign: TextAlign.end,
+                              overflow: .fade,
+                              textAlign: .end,
                               maxLines: 3,
                             ),
                           ),
@@ -113,24 +100,21 @@ class _Tile extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+            padding: const .symmetric(horizontal: Theming.offset),
             child: Row(
               spacing: 5,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: .spaceBetween,
               children: [
                 Expanded(
                   child: item.mediaListStatus == null
                       ? const SizedBox()
-                      : Text(item.mediaListStatus!, textAlign: TextAlign.left),
+                      : Text(item.mediaListStatus!, textAlign: .left),
                 ),
                 _RecommendationButtons(item, onRate),
                 Expanded(
                   child: item.recommendedMediaListStatus == null
                       ? const SizedBox()
-                      : Text(
-                          item.recommendedMediaListStatus!,
-                          textAlign: TextAlign.right,
-                        ),
+                      : Text(item.recommendedMediaListStatus!, textAlign: .right),
                 ),
               ],
             ),
@@ -158,7 +142,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
 
     return Row(
       spacing: 5,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         IconButton(
           tooltip: 'Agree',
@@ -194,11 +178,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
               }
             });
 
-            final err = await widget.onRate(
-              item.mediaId,
-              item.recommendedMediaId,
-              item.userRating,
-            );
+            final err = await widget.onRate(item.mediaId, item.recommendedMediaId, item.userRating);
             if (err == null) return;
 
             setState(() {
@@ -246,11 +226,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
               }
             });
 
-            final err = await widget.onRate(
-              item.mediaId,
-              item.recommendedMediaId,
-              item.userRating,
-            );
+            final err = await widget.onRate(item.mediaId, item.recommendedMediaId, item.userRating);
             if (err == null) return;
 
             setState(() {

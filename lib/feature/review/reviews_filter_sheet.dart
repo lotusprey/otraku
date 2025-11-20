@@ -17,10 +17,7 @@ Future<void> showReviewsFilterSheet({
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
-        padding: const EdgeInsets.symmetric(
-          horizontal: Theming.offset,
-          vertical: 20,
-        ),
+        padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
         children: [
           ChipSelector.ensureSelected(
             title: 'Sort',

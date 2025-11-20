@@ -10,7 +10,6 @@ import 'package:otraku/feature/edit/edit_buttons.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_provider.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
-import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/widget/input/date_field.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -32,41 +31,31 @@ class EditView extends ConsumerWidget {
     if (viewerId == null) {
       return SimpleSheet(
         builder: (context, scrollCtrl) => const Center(
-          child: Padding(
-            padding: Theming.paddingAll,
-            child: Text('Log in to edit media'),
-          ),
+          child: Padding(padding: Theming.paddingAll, child: Text('Log in to edit media')),
         ),
       );
     }
 
     return switch (ref.watch(entryEditProvider(tag))) {
       AsyncData(:final value) => SheetWithButtonRow(
-          buttons: EditButtons(ref, tag, value, callback),
-          builder: (context, scrollCtrl) => _EditView(
-            scrollCtrl,
-            tag,
-            value,
-          ),
-        ),
+        buttons: EditButtons(ref, tag, value, callback),
+        builder: (context, scrollCtrl) => _EditView(scrollCtrl, tag, value),
+      ),
       AsyncError(:final error) => SheetWithButtonRow(
-          buttons: EditButtons(ref, tag, null, callback),
-          builder: (context, scrollCtrl) => Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Text('Failed to load edit sheet: $error'),
-            ),
+        buttons: EditButtons(ref, tag, null, callback),
+        builder: (context, scrollCtrl) => Center(
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Failed to load edit sheet: $error'),
           ),
         ),
+      ),
       AsyncLoading() => SheetWithButtonRow(
-          buttons: EditButtons(ref, tag, null, callback),
-          builder: (context, scrollCtrl) => const Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Loader(),
-            ),
-          ),
+        buttons: EditButtons(ref, tag, null, callback),
+        builder: (context, scrollCtrl) => const Center(
+          child: Padding(padding: Theming.paddingAll, child: Loader()),
         ),
+      ),
     };
   }
 }
@@ -82,51 +71,44 @@ class _EditView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final readableNotifier = entryEditProvider(tag).notifier;
 
-    final settings = ref.watch(
-      settingsProvider.select((s) => s.value),
-    );
+    final settings = ref.watch(settingsProvider.select((s) => s.value));
 
     final statusField = SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+        padding: const .symmetric(horizontal: Theming.offset),
         child: ChipSelector(
           title: 'Status',
           items: ListStatus.values.map((v) => (v.label(entryEdit.baseEntry.isAnime), v)).toList(),
           value: entryEdit.listStatus,
-          onChanged: (status) => ref.read(readableNotifier).updateBy(
-            (s) {
-              var startedAt = s.startedAt;
-              var completedAt = s.completedAt;
-              var progress = s.progress;
+          onChanged: (status) => ref.read(readableNotifier).updateBy((s) {
+            var startedAt = s.startedAt;
+            var completedAt = s.completedAt;
+            var progress = s.progress;
 
-              if (entryEdit.baseEntry.listStatus == null &&
-                  status == ListStatus.current &&
-                  startedAt == null) {
-                startedAt = DateTime.now();
-                SnackBarExtension.show(context, 'Start date changed');
-              } else if (entryEdit.baseEntry.listStatus != status &&
-                  status == ListStatus.completed &&
-                  completedAt == null) {
-                completedAt = DateTime.now();
-                var text = 'Completed date changed';
+            if (entryEdit.baseEntry.listStatus == null && status == .current && startedAt == null) {
+              startedAt = DateTime.now();
+              SnackBarExtension.show(context, 'Start date changed');
+            } else if (entryEdit.baseEntry.listStatus != status &&
+                status == .completed &&
+                completedAt == null) {
+              completedAt = DateTime.now();
+              var text = 'Completed date changed';
 
-                if (entryEdit.baseEntry.progressMax != null &&
-                    progress < s.baseEntry.progressMax!) {
-                  progress = s.baseEntry.progressMax!;
-                  text = 'Completed date & progress changed';
-                }
-
-                SnackBarExtension.show(context, text);
+              if (entryEdit.baseEntry.progressMax != null && progress < s.baseEntry.progressMax!) {
+                progress = s.baseEntry.progressMax!;
+                text = 'Completed date & progress changed';
               }
 
-              return s.copyWith(
-                listStatus: status,
-                progress: progress,
-                startedAt: (startedAt,),
-                completedAt: (completedAt,),
-              );
-            },
-          ),
+              SnackBarExtension.show(context, text);
+            }
+
+            return s.copyWith(
+              listStatus: status,
+              progress: progress,
+              startedAt: (startedAt,),
+              completedAt: (completedAt,),
+            );
+          }),
         ),
       ),
     );
@@ -141,7 +123,7 @@ class _EditView extends ConsumerWidget {
             var listStatus = s.listStatus;
 
             if (startedAt != null && entryEdit.baseEntry.listStatus == null && listStatus == null) {
-              listStatus = ListStatus.current;
+              listStatus = .current;
               SnackBarExtension.show(context, 'Status changed');
             }
 
@@ -156,10 +138,10 @@ class _EditView extends ConsumerWidget {
             var progress = s.progress;
 
             if (completedAt != null &&
-                entryEdit.baseEntry.listStatus != ListStatus.completed &&
-                entryEdit.baseEntry.listStatus != ListStatus.repeating &&
+                entryEdit.baseEntry.listStatus != .completed &&
+                entryEdit.baseEntry.listStatus != .repeating &&
                 entryEdit.baseEntry.listStatus == listStatus) {
-              listStatus = ListStatus.completed;
+              listStatus = .completed;
               String text = 'Status changed';
 
               if (s.baseEntry.progressMax != null && s.progress < s.baseEntry.progressMax!) {
@@ -204,10 +186,7 @@ class _EditView extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
           _buildAdvancedScoringFields(ref, settings),
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
-          _Notes(
-            value: entryEdit.notes,
-            onChanged: (notes) => entryEdit.notes = notes,
-          ),
+          _Notes(value: entryEdit.notes, onChanged: (notes) => entryEdit.notes = notes),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           timelineFields,
           SliverToBoxAdapter(
@@ -241,10 +220,8 @@ class _EditView extends ConsumerWidget {
               ),
             ),
           SliverToBoxAdapter(
-            child: SizedBox(
-              height: MediaQuery.paddingOf(context).bottom + BottomBar.height + 10,
-            ),
-          )
+            child: SizedBox(height: MediaQuery.paddingOf(context).bottom + BottomBar.height + 10),
+          ),
         ],
       ),
     );
@@ -265,8 +242,8 @@ class _EditView extends ConsumerWidget {
         String? text;
         if (progress == entryEdit.baseEntry.progressMax &&
             progress != entryEdit.baseEntry.progress) {
-          if (entryEdit.baseEntry.listStatus == status && status != ListStatus.completed) {
-            status = ListStatus.completed;
+          if (entryEdit.baseEntry.listStatus == status && status != .completed) {
+            status = .completed;
             text = 'Status changed';
           }
 
@@ -275,9 +252,8 @@ class _EditView extends ConsumerWidget {
             text = text == null ? 'Completed date changed' : 'Status & Completed date changed';
           }
         } else if (entryEdit.baseEntry.progress == 0 && entryEdit.baseEntry.progress != progress) {
-          if (entryEdit.baseEntry.listStatus == status &&
-              (status == null || status == ListStatus.planning)) {
-            status = ListStatus.current;
+          if (entryEdit.baseEntry.listStatus == status && (status == null || status == .planning)) {
+            status = .current;
             text = 'Status changed';
           }
 
@@ -310,12 +286,8 @@ class _EditView extends ConsumerWidget {
 
       child = MediaQuery.sizeOf(context).width < Theming.windowWidthMedium
           ? Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                progressField,
-                const SizedBox(height: 20),
-                volumeProgressField,
-              ],
+              mainAxisSize: .min,
+              children: [progressField, const SizedBox(height: 20), volumeProgressField],
             )
           : Row(
               children: Theming.of(context).rightButtonOrientation
@@ -333,26 +305,21 @@ class _EditView extends ConsumerWidget {
     }
 
     return SliverPadding(
-      padding: const EdgeInsets.only(
-        left: Theming.offset,
-        right: Theming.offset,
-        bottom: Theming.offset,
-      ),
+      padding: const .only(left: Theming.offset, right: Theming.offset, bottom: Theming.offset),
       sliver: SliverToBoxAdapter(child: child),
     );
   }
 
   Widget _buildAdvancedScoringFields(WidgetRef ref, Settings? settings) {
     final advancedScoringEnabled = settings?.advancedScoringEnabled ?? false;
-    final scoreFormat = settings?.scoreFormat ?? ScoreFormat.point10;
+    final scoreFormat = settings?.scoreFormat ?? .point10;
 
-    if (!advancedScoringEnabled ||
-        scoreFormat != ScoreFormat.point100 && scoreFormat != ScoreFormat.point10Decimal) {
+    if (!advancedScoringEnabled || scoreFormat != .point100 && scoreFormat != .point10Decimal) {
       return const SliverToBoxAdapter(child: SizedBox());
     }
 
     final scores = entryEdit.advancedScores;
-    final isDecimal = scoreFormat == ScoreFormat.point10Decimal;
+    final isDecimal = scoreFormat == .point10Decimal;
 
     final onChanged = (entry, score) {
       scores[entry.key] = score.toDouble();
@@ -404,13 +371,10 @@ class _FieldGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverPadding(
-      padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+      padding: const .symmetric(horizontal: Theming.offset),
       sliver: SliverGrid(
         delegate: SliverChildListDelegate.fixed(children),
-        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-          minWidth: minWidth,
-          height: 58,
-        ),
+        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: minWidth, height: 58),
       ),
     );
   }
@@ -437,19 +401,16 @@ class _NotesState extends State<_Notes> {
 
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-          child: TextField(
-            minLines: 1,
-            maxLines: 10,
-            controller: _ctrl,
-            style: TextTheme.of(context).bodyMedium,
-            decoration: const InputDecoration(
-              labelText: 'Notes',
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) => widget.onChanged(value),
-          ),
-        ),
-      );
+    child: Padding(
+      padding: const .symmetric(horizontal: Theming.offset),
+      child: TextField(
+        minLines: 1,
+        maxLines: 10,
+        controller: _ctrl,
+        style: TextTheme.of(context).bodyMedium,
+        decoration: const InputDecoration(labelText: 'Notes', border: OutlineInputBorder()),
+        onChanged: (value) => widget.onChanged(value),
+      ),
+    ),
+  );
 }

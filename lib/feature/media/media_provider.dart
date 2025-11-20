@@ -17,20 +17,18 @@ final mediaProvider = AsyncNotifierProvider.autoDispose.family<MediaNotifier, Me
   MediaNotifier.new,
 );
 
-final mediaConnectionsProvider =
-    AsyncNotifierProvider.autoDispose.family<MediaRelationsNotifier, MediaConnections, int>(
-  MediaRelationsNotifier.new,
-);
+final mediaConnectionsProvider = AsyncNotifierProvider.autoDispose
+    .family<MediaRelationsNotifier, MediaConnections, int>(MediaRelationsNotifier.new);
 
 final mediaThreadsProvider =
     AsyncNotifierProvider.family<MediaThreadsNotifier, Paged<ThreadItem>, int>(
-  MediaThreadsNotifier.new,
-);
+      MediaThreadsNotifier.new,
+    );
 
 final mediaFollowingProvider =
     AsyncNotifierProvider.family<MediaFollowingNotifier, Paged<MediaFollowing>, int>(
-  MediaFollowingNotifier.new,
-);
+      MediaFollowingNotifier.new,
+    );
 
 class MediaNotifier extends AsyncNotifier<Media> {
   MediaNotifier(this.arg);
@@ -39,8 +37,10 @@ class MediaNotifier extends AsyncNotifier<Media> {
 
   @override
   FutureOr<Media> build() async {
-    var data =
-        await ref.read(repositoryProvider).request(GqlQuery.media, {'id': arg, 'withInfo': true});
+    var data = await ref.read(repositoryProvider).request(GqlQuery.media, {
+      'id': arg,
+      'withInfo': true,
+    });
     data = data['Media'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
@@ -52,9 +52,7 @@ class MediaNotifier extends AsyncNotifier<Media> {
       }
     }
 
-    final settings = await ref.watch(
-      settingsProvider.selectAsync((settings) => settings),
-    );
+    final settings = await ref.watch(settingsProvider.selectAsync((settings) => settings));
 
     return Media(
       EntryEdit(data, settings, false),
@@ -69,10 +67,9 @@ class MediaNotifier extends AsyncNotifier<Media> {
     if (value == null) return Future.value('User not yet loaded');
 
     final typeKey = value.info.isAnime ? 'anime' : 'manga';
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleFavorite,
-      {typeKey: arg},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleFavorite, {
+      typeKey: arg,
+    }).getErrorOrNull();
   }
 }
 
@@ -87,22 +84,17 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
   Future<void> fetch(MediaTab tab) async {
     final oldState = state.value ?? const MediaConnections();
     state = switch (tab) {
-      MediaTab.info ||
-      MediaTab.relations ||
-      MediaTab.threads ||
-      MediaTab.following ||
-      MediaTab.activities ||
-      MediaTab.statistics =>
-        state,
-      MediaTab.characters =>
+      .info || .relations || .threads || .following || .activities || .statistics => state,
+      .characters =>
         oldState.characters.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
-      MediaTab.staff =>
+      .staff =>
         oldState.staff.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
-      MediaTab.reviews =>
+      .reviews =>
         oldState.reviews.hasNext ? await AsyncValue.guard(() => _fetch(oldState, tab)) : state,
-      MediaTab.recommendations => oldState.recommendations.hasNext
-          ? await AsyncValue.guard(() => _fetch(oldState, tab))
-          : state,
+      .recommendations =>
+        oldState.recommendations.hasNext
+            ? await AsyncValue.guard(() => _fetch(oldState, tab))
+            : state,
     };
   }
 
@@ -113,24 +105,21 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
       variables['withCharacters'] = true;
       variables['withStaff'] = true;
       variables['withReviews'] = true;
-    } else if (tab == MediaTab.recommendations) {
+    } else if (tab == .recommendations) {
       variables['withRecommendations'] = true;
       variables['page'] = oldState.recommendations.next;
-    } else if (tab == MediaTab.characters) {
+    } else if (tab == .characters) {
       variables['withCharacters'] = true;
       variables['page'] = oldState.characters.next;
-    } else if (tab == MediaTab.staff) {
+    } else if (tab == .staff) {
       variables['withStaff'] = true;
       variables['page'] = oldState.staff.next;
-    } else if (tab == MediaTab.reviews) {
+    } else if (tab == .reviews) {
       variables['withReviews'] = true;
       variables['page'] = oldState.reviews.next;
     }
 
-    var data = await ref.read(repositoryProvider).request(
-          GqlQuery.media,
-          variables,
-        );
+    var data = await ref.read(repositoryProvider).request(GqlQuery.media, variables);
     data = data['Media'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
@@ -142,7 +131,7 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
     var languageToVoiceActors = [...oldState.languageToVoiceActors];
     var selectedLanguage = oldState.selectedLanguage;
 
-    if (tab == null || tab == MediaTab.characters) {
+    if (tab == null || tab == .characters) {
       final map = data['characters'];
       final items = <MediaRelatedItem>[];
       for (final c in map['edges']) {
@@ -155,9 +144,7 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
           final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
           if (l == null) continue;
 
-          var languageMapping = languageToVoiceActors.firstWhereOrNull(
-            (lm) => lm.language == l,
-          );
+          var languageMapping = languageToVoiceActors.firstWhereOrNull((lm) => lm.language == l);
 
           if (languageMapping == null) {
             languageMapping = (language: l, voiceActors: {});
@@ -179,13 +166,10 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
         return a.language.compareTo(b.language);
       });
 
-      characters = characters.withNext(
-        items,
-        map['pageInfo']['hasNextPage'] ?? false,
-      );
+      characters = characters.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
-    if (tab == null || tab == MediaTab.staff) {
+    if (tab == null || tab == .staff) {
       final map = data['staff'];
       final items = <MediaRelatedItem>[];
       for (final s in map['edges']) {
@@ -195,7 +179,7 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
       staff = staff.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
-    if (tab == null || tab == MediaTab.reviews) {
+    if (tab == null || tab == .reviews) {
       final map = data['reviews'];
       final items = <RelatedReview>[];
       for (final r in map['nodes']) {
@@ -203,13 +187,10 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
         if (item != null) items.add(item);
       }
 
-      reviews = reviews.withNext(
-        items,
-        map['pageInfo']['hasNextPage'] ?? false,
-      );
+      reviews = reviews.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
-    if (tab == null || tab == MediaTab.recommendations) {
+    if (tab == null || tab == .recommendations) {
       final map = data['recommendations'];
       final items = <Recommendation>[];
       for (final r in map['nodes']) {
@@ -218,10 +199,7 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
         }
       }
 
-      recommendations = recommendations.withNext(
-        items,
-        map['pageInfo']['hasNextPage'] ?? false,
-      );
+      recommendations = recommendations.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
     return oldState.copyWith(
@@ -234,34 +212,31 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
     );
   }
 
-  void changeLanguage(int selectedLanguage) => state.whenData(
-        (data) {
-          if (selectedLanguage >= data.languageToVoiceActors.length) return;
+  void changeLanguage(int selectedLanguage) => state.whenData((data) {
+    if (selectedLanguage >= data.languageToVoiceActors.length) return;
 
-          state = AsyncValue.data(MediaConnections(
-            recommendations: data.recommendations,
-            characters: data.characters,
-            staff: data.staff,
-            reviews: data.reviews,
-            languageToVoiceActors: data.languageToVoiceActors,
-            selectedLanguage: selectedLanguage,
-          ));
-        },
-      );
+    state = AsyncValue.data(
+      MediaConnections(
+        recommendations: data.recommendations,
+        characters: data.characters,
+        staff: data.staff,
+        reviews: data.reviews,
+        languageToVoiceActors: data.languageToVoiceActors,
+        selectedLanguage: selectedLanguage,
+      ),
+    );
+  });
 
   Future<Object?> rateRecommendation(int recId, bool? rating) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.rateRecommendation,
-      {
-        'id': arg,
-        'recommendedId': recId,
-        'rating': rating == null
-            ? 'NO_RATING'
-            : rating
-                ? 'RATE_UP'
-                : 'RATE_DOWN',
-      },
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.rateRecommendation, {
+      'id': arg,
+      'recommendedId': recId,
+      'rating': rating == null
+          ? 'NO_RATING'
+          : rating
+          ? 'RATE_UP'
+          : 'RATE_DOWN',
+    }).getErrorOrNull();
   }
 }
 
@@ -280,20 +255,18 @@ class MediaThreadsNotifier extends AsyncNotifier<Paged<ThreadItem>> {
   }
 
   Future<Paged<ThreadItem>> _fetch(Paged<ThreadItem> oldState) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.threadPage,
-      {'mediaId': arg, 'page': oldState.next, 'sort': 'ID_DESC'},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.threadPage, {
+      'mediaId': arg,
+      'page': oldState.next,
+      'sort': 'ID_DESC',
+    });
 
     final items = <ThreadItem>[];
     for (final t in data['Page']['threads']) {
       items.add(ThreadItem(t));
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
   }
 }
 
@@ -312,19 +285,16 @@ class MediaFollowingNotifier extends AsyncNotifier<Paged<MediaFollowing>> {
   }
 
   Future<Paged<MediaFollowing>> _fetch(Paged<MediaFollowing> oldState) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.mediaFollowing,
-      {'mediaId': arg, 'page': oldState.next},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.mediaFollowing, {
+      'mediaId': arg,
+      'page': oldState.next,
+    });
 
     final items = <MediaFollowing>[];
     for (final f in data['Page']['mediaList']) {
       items.add(MediaFollowing(f));
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
   }
 }

@@ -35,23 +35,17 @@ class ReplyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => context.push(
-            Routes.user(reply.authorId, reply.authorAvatarUrl),
-          ),
+          behavior: .opaque,
+          onTap: () => context.push(Routes.user(reply.authorId, reply.authorAvatarUrl)),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: .min,
             children: [
               ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(
-                  reply.authorAvatarUrl,
-                  height: 50,
-                  width: 50,
-                ),
+                child: CachedImage(reply.authorAvatarUrl, height: 50, width: 50),
               ),
               const SizedBox(width: Theming.offset),
               Text(reply.authorName),
@@ -60,13 +54,9 @@ class ReplyCard extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         CardExtension.highContrast(highContrast)(
-          margin: const EdgeInsets.only(bottom: Theming.offset),
+          margin: const .only(bottom: Theming.offset),
           child: Padding(
-            padding: const EdgeInsets.only(
-              top: Theming.offset,
-              left: Theming.offset,
-              right: Theming.offset,
-            ),
+            padding: const .only(top: Theming.offset, left: Theming.offset, right: Theming.offset),
             child: Column(
               children: [
                 UnconstrainedBox(
@@ -93,11 +83,7 @@ class ReplyCard extends StatelessWidget {
                                   ),
                                 ),
                               )
-                            : _ReplyMentionButton(
-                                ref,
-                                activityId,
-                                reply.authorName,
-                              ),
+                            : _ReplyMentionButton(ref, activityId, reply.authorName),
                       ),
                     ),
                     const SizedBox(width: Theming.offset),
@@ -116,51 +102,47 @@ class ReplyCard extends StatelessWidget {
   void _showMoreSheet(BuildContext context, WidgetRef ref) {
     showSheet(
       context,
-      SimpleSheet.list(
-        [
-          ListTile(
-            title: const Text('Edit'),
-            leading: const Icon(Icons.edit_outlined),
-            onTap: () => showSheet(
-              context,
-              CompositionView(
-                tag: ActivityReplyCompositionTag(
-                  id: reply.id,
-                  activityId: activityId,
-                ),
-                onSaved: (map) {
-                  ref.read(activityProvider(activityId).notifier).replaceReply(map);
-                  Navigator.pop(context);
-                },
-              ),
-            ),
-          ),
-          ListTile(
-            title: const Text('Delete'),
-            leading: const Icon(Ionicons.trash_outline),
-            onTap: () => ConfirmationDialog.show(
-              context,
-              title: 'Delete?',
-              primaryAction: 'Yes',
-              secondaryAction: 'No',
-              onConfirm: () async {
-                final err =
-                    await ref.read(activityProvider(activityId).notifier).removeReply(reply.id);
-
-                if (err == null) {
-                  if (context.mounted) Navigator.pop(context);
-                  return;
-                }
-
-                if (context.mounted) {
-                  SnackBarExtension.show(context, err.toString());
-                  Navigator.pop(context);
-                }
+      SimpleSheet.list([
+        ListTile(
+          title: const Text('Edit'),
+          leading: const Icon(Icons.edit_outlined),
+          onTap: () => showSheet(
+            context,
+            CompositionView(
+              tag: ActivityReplyCompositionTag(id: reply.id, activityId: activityId),
+              onSaved: (map) {
+                ref.read(activityProvider(activityId).notifier).replaceReply(map);
+                Navigator.pop(context);
               },
             ),
           ),
-        ],
-      ),
+        ),
+        ListTile(
+          title: const Text('Delete'),
+          leading: const Icon(Ionicons.trash_outline),
+          onTap: () => ConfirmationDialog.show(
+            context,
+            title: 'Delete?',
+            primaryAction: 'Yes',
+            secondaryAction: 'No',
+            onConfirm: () async {
+              final err = await ref
+                  .read(activityProvider(activityId).notifier)
+                  .removeReply(reply.id);
+
+              if (err == null) {
+                if (context.mounted) Navigator.pop(context);
+                return;
+              }
+
+              if (context.mounted) {
+                SnackBarExtension.show(context, err.toString());
+                Navigator.pop(context);
+              }
+            },
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -184,10 +166,7 @@ class _ReplyMentionButton extends StatelessWidget {
             context,
             CompositionView(
               defaultText: '@$username ',
-              tag: ActivityReplyCompositionTag(
-                id: null,
-                activityId: activityId,
-              ),
+              tag: ActivityReplyCompositionTag(id: null, activityId: activityId),
               onSaved: (map) => ref.read(activityProvider(activityId).notifier).appendReply(map),
             ),
           ),
@@ -224,9 +203,9 @@ class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
                 widget.reply.likeCount.toString(),
                 style: !widget.reply.isLiked
                     ? TextTheme.of(context).labelSmall
-                    : TextTheme.of(context)
-                        .labelSmall!
-                        .copyWith(color: ColorScheme.of(context).primary),
+                    : TextTheme.of(
+                        context,
+                      ).labelSmall!.copyWith(color: ColorScheme.of(context).primary),
               ),
               const SizedBox(width: 5),
               Icon(

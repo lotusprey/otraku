@@ -18,10 +18,7 @@ class UserItemGrid extends StatelessWidget {
         minWidth: 100,
         extraHeight: 40,
       ),
-      delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i]),
-        childCount: items.length,
-      ),
+      delegate: SliverChildBuilderDelegate((_, i) => _Tile(items[i]), childCount: items.length),
     );
   }
 }
@@ -53,7 +50,7 @@ class _Tile extends StatelessWidget {
             child: Text(
               item.name,
               maxLines: 2,
-              overflow: TextOverflow.fade,
+              overflow: .fade,
               style: TextTheme.of(context).bodyMedium,
             ),
           ),

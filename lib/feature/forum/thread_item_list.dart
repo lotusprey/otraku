@@ -21,15 +21,13 @@ class ThreadItemList extends StatelessWidget {
         final item = items[i];
 
         return Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
           children: [
             Row(
               children: [
                 GestureDetector(
-                  onTap: () => context.push(
-                    Routes.user(item.userId, item.userAvatar),
-                  ),
+                  onTap: () => context.push(Routes.user(item.userId, item.userAvatar)),
                   child: ClipRRect(
                     borderRadius: Theming.borderRadiusSmall,
                     child: CachedImage(item.userAvatar, height: 50, width: 50),
@@ -41,11 +39,7 @@ class ThreadItemList extends StatelessWidget {
                     spacing: 5,
                     overflowSpacing: 5,
                     children: [
-                      Text(
-                        item.userName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
+                      Text(item.userName, overflow: .ellipsis, maxLines: 1),
                       Timestamp(
                         item.userTimestamp,
                         analogClock,
@@ -68,13 +62,11 @@ class ThreadItemList extends StatelessWidget {
                   padding: Theming.paddingAll,
                   child: Column(
                     spacing: Theming.offset,
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: .min,
+                    crossAxisAlignment: .start,
                     children: [
                       Text(item.title),
-                      TextRail({
-                        for (final topic in item.topics) topic: false,
-                      }),
+                      TextRail({for (final topic in item.topics) topic: false}),
                       Row(
                         spacing: Theming.offset,
                         children: [
@@ -82,19 +74,13 @@ class ThreadItemList extends StatelessWidget {
                             Tooltip(
                               message: 'Pinned',
                               triggerMode: TooltipTriggerMode.tap,
-                              child: Icon(
-                                Icons.push_pin_outlined,
-                                size: Theming.iconSmall,
-                              ),
+                              child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                             ),
                           if (item.isLocked)
                             Tooltip(
                               message: 'Locked',
                               triggerMode: TooltipTriggerMode.tap,
-                              child: Icon(
-                                Icons.lock_outline_rounded,
-                                size: Theming.iconSmall,
-                              ),
+                              child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                             ),
                           const Spacer(),
                           _buildInfoIcon(
@@ -129,25 +115,16 @@ class ThreadItemList extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoIcon(
-    BuildContext context,
-    String label,
-    String value,
-    IconData icon,
-  ) =>
-      Tooltip(
-        message: label,
-        triggerMode: TooltipTriggerMode.tap,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              value,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
-            const SizedBox(width: 5),
-            Icon(icon, size: Theming.iconSmall),
-          ],
-        ),
-      );
+  Widget _buildInfoIcon(BuildContext context, String label, String value, IconData icon) => Tooltip(
+    message: label,
+    triggerMode: TooltipTriggerMode.tap,
+    child: Row(
+      mainAxisSize: .min,
+      children: [
+        Text(value, style: Theme.of(context).textTheme.labelSmall),
+        const SizedBox(width: 5),
+        Icon(icon, size: Theming.iconSmall),
+      ],
+    ),
+  );
 }

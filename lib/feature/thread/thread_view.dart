@@ -49,12 +49,8 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
   Widget build(BuildContext context) {
     ref.listen<AsyncValue>(
       threadProvider(widget.id),
-      (_, s) => s.whenOrNull(
-        error: (error, _) => SnackBarExtension.show(
-          context,
-          error.toString(),
-        ),
-      ),
+      (_, s) =>
+          s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
     );
 
     final thread = ref.watch(threadProvider(widget.id));
@@ -63,8 +59,9 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
 
     return AdaptiveScaffold(
       topBar: TopBar(
-        trailing:
-            thread.hasValue ? _topBarTrailingContent(thread.value!, viewerId) : const <Widget>[],
+        trailing: thread.hasValue
+            ? _topBarTrailingContent(thread.value!, viewerId)
+            : const <Widget>[],
       ),
       floatingAction: HidingFloatingActionButton(
         key: const Key('Reply'),
@@ -75,10 +72,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
           onPressed: () => showSheet(
             context,
             CompositionView(
-              tag: CommentCompositionTag(
-                threadId: widget.id,
-                parentCommentId: null,
-              ),
+              tag: CommentCompositionTag(threadId: widget.id, parentCommentId: null),
               onSaved: (map) =>
                   ref.read(threadProvider(widget.id).notifier).appendComment(map, null),
             ),
@@ -95,18 +89,12 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
         child: switch (thread.unwrapPrevious()) {
           AsyncData(:final value) => _Content(ref, value, options.analogClock, _scrollCtrl),
           AsyncError() => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                SliverRefreshControl(
-                  onRefresh: () => ref.invalidate(
-                    threadProvider(widget.id),
-                  ),
-                ),
-                const SliverFillRemaining(
-                  child: Center(child: Text('Failed to load')),
-                ),
-              ],
-            ),
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              SliverRefreshControl(onRefresh: () => ref.invalidate(threadProvider(widget.id))),
+              const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+            ],
+          ),
           AsyncLoading() => const Center(child: Loader()),
         },
       ),
@@ -114,77 +102,59 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
   }
 
   List<Widget> _topBarTrailingContent(Thread thread, int? viewerId) => [
-        Expanded(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => context.push(
-              Routes.user(thread.info.userId, thread.info.userAvatarUrl),
+    Expanded(
+      child: GestureDetector(
+        behavior: .opaque,
+        onTap: () => context.push(Routes.user(thread.info.userId, thread.info.userAvatarUrl)),
+        child: Row(
+          mainAxisSize: .min,
+          children: [
+            Hero(
+              tag: thread.info.userId,
+              child: ClipRRect(
+                borderRadius: Theming.borderRadiusSmall,
+                child: CachedImage(thread.info.userAvatarUrl, height: 40, width: 40),
+              ),
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Hero(
-                  tag: thread.info.userId,
-                  child: ClipRRect(
-                    borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(
-                      thread.info.userAvatarUrl,
-                      height: 40,
-                      width: 40,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: Theming.offset),
-                Flexible(
-                  child: Text(
-                    thread.info.userName,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-              ],
-            ),
-          ),
+            const SizedBox(width: Theming.offset),
+            Flexible(child: Text(thread.info.userName, overflow: .ellipsis, maxLines: 1)),
+          ],
         ),
-        IconButton(
-          tooltip: 'More',
-          icon: const Icon(Ionicons.ellipsis_horizontal),
-          onPressed: () => showSheet(
-            context,
-            SimpleSheet.link(
-              context,
-              thread.info.siteUrl,
-              [
-                ListTile(
-                  title: !thread.info.isSubscribed
-                      ? const Text('Subscribe')
-                      : const Text('Unsubscribe'),
-                  leading: !thread.info.isSubscribed
-                      ? const Icon(Ionicons.notifications_outline)
-                      : const Icon(Ionicons.notifications_off_outline),
-                  onTap: _toggleSubscription,
-                ),
-                if (viewerId == thread.info.userId)
-                  ListTile(
-                    title: const Text('Delete'),
-                    leading: const Icon(Ionicons.trash_outline),
-                    onTap: () {
-                      Navigator.pop(context);
+      ),
+    ),
+    IconButton(
+      tooltip: 'More',
+      icon: const Icon(Ionicons.ellipsis_horizontal),
+      onPressed: () => showSheet(
+        context,
+        SimpleSheet.link(context, thread.info.siteUrl, [
+          ListTile(
+            title: !thread.info.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
+            leading: !thread.info.isSubscribed
+                ? const Icon(Ionicons.notifications_outline)
+                : const Icon(Ionicons.notifications_off_outline),
+            onTap: _toggleSubscription,
+          ),
+          if (viewerId == thread.info.userId)
+            ListTile(
+              title: const Text('Delete'),
+              leading: const Icon(Ionicons.trash_outline),
+              onTap: () {
+                Navigator.pop(context);
 
-                      ConfirmationDialog.show(
-                        context,
-                        title: 'Delete?',
-                        primaryAction: 'Yes',
-                        secondaryAction: 'No',
-                        onConfirm: _delete,
-                      );
-                    },
-                  ),
-              ],
+                ConfirmationDialog.show(
+                  context,
+                  title: 'Delete?',
+                  primaryAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: _delete,
+                );
+              },
             ),
-          ),
-        ),
-      ];
+        ]),
+      ),
+    ),
+  ];
 
   void _toggleSubscription() async {
     final err = await ref.read(threadProvider(widget.id).notifier).toggleThreadSubscription();
@@ -286,17 +256,10 @@ class _Content extends StatelessWidget {
       controller: scrollCtrl,
       physics: Theming.bouncyPhysics,
       slivers: [
-        SliverRefreshControl(
-          onRefresh: () => ref.invalidate(threadProvider(thread.info.id)),
-        ),
+        SliverRefreshControl(onRefresh: () => ref.invalidate(threadProvider(thread.info.id))),
         SliverToBoxAdapter(child: Timestamp(info.createdAt, analogClock)),
         spacing,
-        SliverToBoxAdapter(
-          child: Text(
-            thread.info.title,
-            style: TextTheme.of(context).titleLarge,
-          ),
-        ),
+        SliverToBoxAdapter(child: Text(thread.info.title, style: TextTheme.of(context).titleLarge)),
         spacing,
         HtmlContent(thread.info.body, renderMode: RenderMode.sliverList),
         spacing,
@@ -332,10 +295,10 @@ class _Content extends StatelessWidget {
                     context.push(Routes.forum);
 
                     ref.invalidate(forumFilterProvider);
-                    ref.read(forumFilterProvider.notifier).update(
-                          (filter) => filter.copyWith(
-                            category: (ThreadCategory.from(label),),
-                          ),
+                    ref
+                        .read(forumFilterProvider.notifier)
+                        .update(
+                          (filter) => filter.copyWith(category: (ThreadCategory.from(label),)),
                         );
                   },
                 );
@@ -345,7 +308,7 @@ class _Content extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+            padding: const .symmetric(vertical: Theming.offset),
             child: Row(
               spacing: Theming.offset,
               children: [
@@ -353,36 +316,27 @@ class _Content extends StatelessWidget {
                   Tooltip(
                     message: 'Pinned',
                     triggerMode: TooltipTriggerMode.tap,
-                    child: Icon(
-                      Icons.push_pin_outlined,
-                      size: Theming.iconSmall,
-                    ),
+                    child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                   ),
                 if (info.isLocked)
                   Tooltip(
                     message: 'Locked',
                     triggerMode: TooltipTriggerMode.tap,
-                    child: Icon(
-                      Icons.lock_outline_rounded,
-                      size: Theming.iconSmall,
-                    ),
+                    child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                   ),
                 const Spacer(),
                 Tooltip(
                   message: 'Views',
                   triggerMode: TooltipTriggerMode.tap,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: .min,
                     children: [
                       Text(
                         info.viewCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       const SizedBox(width: 5),
-                      Icon(
-                        Icons.remove_red_eye_outlined,
-                        size: Theming.iconSmall,
-                      ),
+                      Icon(Icons.remove_red_eye_outlined, size: Theming.iconSmall),
                     ],
                   ),
                 ),
@@ -390,17 +344,14 @@ class _Content extends StatelessWidget {
                   message: 'Replies',
                   triggerMode: TooltipTriggerMode.tap,
                   child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisSize: .min,
                     children: [
                       Text(
                         info.replyCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                       const SizedBox(width: 5),
-                      Icon(
-                        Icons.reply_all_rounded,
-                        size: Theming.iconSmall,
-                      ),
+                      Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
                     ],
                   ),
                 ),
@@ -416,7 +367,7 @@ class _Content extends StatelessWidget {
             final comment = thread.comments[i];
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: Theming.offset),
+              padding: const .only(bottom: Theming.offset),
               child: CommentTile(
                 comment,
                 viewerId: viewerId,
@@ -484,9 +435,9 @@ class __LikeButtonState extends State<_LikeButton> {
               info.likeCount.toString(),
               style: !info.isLiked
                   ? TextTheme.of(context).labelSmall
-                  : TextTheme.of(context).labelSmall!.copyWith(
-                        color: ColorScheme.of(context).primary,
-                      ),
+                  : TextTheme.of(
+                      context,
+                    ).labelSmall!.copyWith(color: ColorScheme.of(context).primary),
             ),
             const SizedBox(width: 5),
             Icon(

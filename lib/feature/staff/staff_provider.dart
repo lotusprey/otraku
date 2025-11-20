@@ -15,10 +15,8 @@ final staffProvider = AsyncNotifierProvider.autoDispose.family<StaffNotifier, St
   StaffNotifier.new,
 );
 
-final staffRelationsProvider =
-    AsyncNotifierProvider.autoDispose.family<StaffRelationsNotifier, StaffRelations, int>(
-  StaffRelationsNotifier.new,
-);
+final staffRelationsProvider = AsyncNotifierProvider.autoDispose
+    .family<StaffRelationsNotifier, StaffRelations, int>(StaffRelationsNotifier.new);
 
 class StaffNotifier extends AsyncNotifier<Staff> {
   StaffNotifier(this.arg);
@@ -27,10 +25,10 @@ class StaffNotifier extends AsyncNotifier<Staff> {
 
   @override
   FutureOr<Staff> build() async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.staff,
-      {'id': arg, 'withInfo': true},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.staff, {
+      'id': arg,
+      'withInfo': true,
+    });
 
     final personNaming = await ref.watch(
       settingsProvider.selectAsync((settings) => settings.personNaming),
@@ -40,10 +38,9 @@ class StaffNotifier extends AsyncNotifier<Staff> {
   }
 
   Future<Object?> toggleFavorite() {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleFavorite,
-      {'staff': arg},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleFavorite, {
+      'staff': arg,
+    }).getErrorOrNull();
   }
 }
 
@@ -70,10 +67,7 @@ class StaffRelationsNotifier extends AsyncNotifier<StaffRelations> {
     state = await AsyncValue.guard(() => _fetch(oldState, onCharacters));
   }
 
-  Future<StaffRelations> _fetch(
-    StaffRelations oldState,
-    bool? onCharacters,
-  ) async {
+  Future<StaffRelations> _fetch(StaffRelations oldState, bool? onCharacters) async {
     final variables = {
       'id': arg,
       'onList': filter.inLists,
@@ -92,10 +86,7 @@ class StaffRelationsNotifier extends AsyncNotifier<StaffRelations> {
       variables['page'] = oldState.roles.next;
     }
 
-    var data = await ref.read(repositoryProvider).request(
-          GqlQuery.staff,
-          variables,
-        );
+    var data = await ref.read(repositoryProvider).request(GqlQuery.staff, variables);
     data = data['Staff'];
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
@@ -136,17 +127,10 @@ class StaffRelationsNotifier extends AsyncNotifier<StaffRelations> {
       final map = data['staffMedia'];
       final items = <StaffRelatedItem>[];
       for (final s in map['edges']) {
-        items.add(StaffRelatedItem.media(
-          s['node'],
-          s['staffRole'],
-          imageQuality,
-        ));
+        items.add(StaffRelatedItem.media(s['node'], s['staffRole'], imageQuality));
       }
 
-      roles = roles.withNext(
-        items,
-        map['pageInfo']['hasNextPage'] ?? false,
-      );
+      roles = roles.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
     }
 
     return StaffRelations(charactersAndMedia: charactersAndMedia, roles: roles);

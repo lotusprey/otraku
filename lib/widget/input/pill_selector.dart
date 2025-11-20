@@ -32,9 +32,7 @@ class PillSelector extends StatelessWidget {
         shrinkWrap: shrinkWrap,
         padding: MediaQuery.paddingOf(context).add(Theming.paddingAll),
         itemCount: items.length,
-        separatorBuilder: (context, _) => const SizedBox(
-          height: Theming.offset / 2,
-        ),
+        separatorBuilder: (context, _) => const SizedBox(height: Theming.offset / 2),
         itemBuilder: (context, i) => Material(
           shape: const StadiumBorder(),
           color: i == selected ? ColorScheme.of(context).secondaryContainer : null,
@@ -42,18 +40,13 @@ class PillSelector extends StatelessWidget {
             customBorder: const StadiumBorder(),
             onTap: () => onTap(i),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                minHeight: Theming.minTapTarget,
-              ),
+              constraints: const BoxConstraints(minHeight: Theming.minTapTarget),
               child: Padding(
-                padding: const EdgeInsets.symmetric(
+                padding: const .symmetric(
                   horizontal: Theming.offset * 1.5,
                   vertical: Theming.offset * 0.5,
                 ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: items[i],
-                ),
+                child: Align(alignment: Alignment.centerLeft, child: items[i]),
               ),
             ),
           ),

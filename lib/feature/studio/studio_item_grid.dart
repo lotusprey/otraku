@@ -25,10 +25,7 @@ class StudioItemGrid extends StatelessWidget {
           borderRadius: Theming.borderRadiusSmall,
           onTap: () => context.push(Routes.studio(items[i].id, items[i].name)),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Theming.offset,
-              vertical: Theming.offset / 2,
-            ),
+            padding: const .symmetric(horizontal: Theming.offset, vertical: Theming.offset / 2),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Hero(
@@ -36,7 +33,7 @@ class StudioItemGrid extends StatelessWidget {
                 child: Text(
                   items[i].name,
                   maxLines: 2,
-                  overflow: TextOverflow.fade,
+                  overflow: .fade,
                   style: TextTheme.of(context).titleLarge,
                 ),
               ),

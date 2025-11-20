@@ -16,7 +16,7 @@ class SettingsNotifier extends AsyncNotifier<Settings> {
   @override
   FutureOr<Settings> build() async {
     final viewerId = ref.watch(viewerIdProvider);
-    if (viewerId == null) return Settings.empty();
+    if (viewerId == null) return .empty();
 
     final data = await ref.read(repositoryProvider).request(GqlQuery.settings);
     return Settings(data['Viewer']);
@@ -69,12 +69,11 @@ class SettingsNotifier extends AsyncNotifier<Settings> {
 
   Future<void> refetchUnread() async {
     try {
-      final data =
-          await ref.read(repositoryProvider).request(GqlQuery.settings, {'withData': false});
+      final data = await ref.read(repositoryProvider).request(GqlQuery.settings, {
+        'withData': false,
+      });
       state = state.whenData(
-        (v) => v.copy(
-          unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0,
-        ),
+        (v) => v.copy(unreadNotifications: data['Viewer']['unreadNotificationCount'] ?? 0),
       );
     } catch (_) {}
   }

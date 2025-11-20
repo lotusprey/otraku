@@ -8,10 +8,8 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/util/paged.dart';
 
-final activityProvider =
-    AsyncNotifierProvider.autoDispose.family<ActivityNotifier, ExpandedActivity, int>(
-  ActivityNotifier.new,
-);
+final activityProvider = AsyncNotifierProvider.autoDispose
+    .family<ActivityNotifier, ExpandedActivity, int>(ActivityNotifier.new);
 
 class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
   ActivityNotifier(this.arg);
@@ -46,7 +44,8 @@ class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
       if (item != null) items.add(item);
     }
 
-    final activity = oldState?.activity ??
+    final activity =
+        oldState?.activity ??
         Activity.maybe(
           data['Activity'],
           _viewerId,
@@ -56,10 +55,7 @@ class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
 
     return ExpandedActivity(
       activity,
-      replies.withNext(
-        items,
-        data['Page']['pageInfo']['hasNextPage'] ?? false,
-      ),
+      replies.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false),
     );
   }
 
@@ -78,14 +74,16 @@ class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
     if (reply == null) return;
 
     value.activity.replyCount++;
-    state = AsyncValue.data(ExpandedActivity(
-      value.activity,
-      Paged(
-        items: [...value.replies.items, reply],
-        hasNext: value.replies.hasNext,
-        next: value.replies.next,
+    state = AsyncValue.data(
+      ExpandedActivity(
+        value.activity,
+        Paged(
+          items: [...value.replies.items, reply],
+          hasNext: value.replies.hasNext,
+          next: value.replies.next,
+        ),
       ),
-    ));
+    );
   }
 
   void replaceReply(Map<String, dynamic> map) {
@@ -98,68 +96,68 @@ class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
     for (int i = 0; i < value.replies.items.length; i++) {
       if (value.replies.items[i].id == reply.id) {
         value.replies.items[i] = reply;
-        state = AsyncValue.data(ExpandedActivity(
-          value.activity,
-          Paged(
-            items: value.replies.items,
-            hasNext: value.replies.hasNext,
-            next: value.replies.next,
+        state = AsyncValue.data(
+          ExpandedActivity(
+            value.activity,
+            Paged(
+              items: value.replies.items,
+              hasNext: value.replies.hasNext,
+              next: value.replies.next,
+            ),
           ),
-        ));
+        );
         return;
       }
     }
   }
 
   Future<Object?> toggleLike() {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': arg, 'type': 'ACTIVITY'},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': arg,
+      'type': 'ACTIVITY',
+    }).getErrorOrNull();
   }
 
   Future<Object?> toggleSubscription() {
     final isSubscribed = state.value?.activity.isSubscribed;
     if (isSubscribed == null) return Future.value();
 
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleActivitySubscription,
-      {'id': arg, 'subscribe': isSubscribed},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleActivitySubscription, {
+      'id': arg,
+      'subscribe': isSubscribed,
+    }).getErrorOrNull();
   }
 
   Future<Object?> togglePin() {
     final isPinned = state.value?.activity.isPinned;
     if (isPinned == null) return Future.value();
 
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleActivityPin,
-      {'id': arg, 'pinned': isPinned},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleActivityPin, {
+      'id': arg,
+      'pinned': isPinned,
+    }).getErrorOrNull();
   }
 
   Future<Object?> toggleReplyLike(int replyId) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': replyId, 'type': 'ACTIVITY_REPLY'},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': replyId,
+      'type': 'ACTIVITY_REPLY',
+    }).getErrorOrNull();
   }
 
   Future<Object?> remove() {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.deleteActivity,
-      {'id': arg},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.deleteActivity, {
+      'id': arg,
+    }).getErrorOrNull();
   }
 
   Future<Object?> removeReply(int replyId) async {
     final value = state.value;
     if (value == null) return Future.value();
 
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.deleteActivityReply,
-      {'id': replyId},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.deleteActivityReply, {
+      'id': replyId,
+    }).getErrorOrNull();
 
     if (err != null) return err;
 
@@ -168,14 +166,16 @@ class ActivityNotifier extends AsyncNotifier<ExpandedActivity> {
         value.replies.items.removeAt(i);
         value.activity.replyCount--;
 
-        state = AsyncValue.data(ExpandedActivity(
-          value.activity,
-          Paged(
-            items: value.replies.items,
-            hasNext: value.replies.hasNext,
-            next: value.replies.next,
+        state = AsyncValue.data(
+          ExpandedActivity(
+            value.activity,
+            Paged(
+              items: value.replies.items,
+              hasNext: value.replies.hasNext,
+              next: value.replies.next,
+            ),
           ),
-        ));
+        );
         break;
       }
     }

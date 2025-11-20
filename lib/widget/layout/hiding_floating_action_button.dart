@@ -50,10 +50,7 @@ class _HidingFloatingActionButtonState extends State<HidingFloatingActionButton>
       vsync: this,
       value: 1,
     );
-    _slideAnimation = Tween(
-      begin: const Offset(0, 0.2),
-      end: Offset.zero,
-    ).animate(_animationCtrl);
+    _slideAnimation = Tween(begin: const Offset(0, 0.2), end: Offset.zero).animate(_animationCtrl);
     _fadeAnimation = Tween(begin: 0.3, end: 1.0).animate(_animationCtrl);
   }
 
@@ -80,10 +77,7 @@ class _HidingFloatingActionButtonState extends State<HidingFloatingActionButton>
 
     return SlideTransition(
       position: _slideAnimation,
-      child: FadeTransition(
-        opacity: _fadeAnimation,
-        child: widget.child,
-      ),
+      child: FadeTransition(opacity: _fadeAnimation, child: widget.child),
     );
   }
 }

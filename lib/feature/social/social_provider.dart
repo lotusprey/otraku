@@ -23,13 +23,13 @@ class SocialNotifier extends AsyncNotifier<Social> {
   Future<void> fetch(SocialTab tab) async {
     final oldState = state.value ?? const Social();
     switch (tab) {
-      case SocialTab.following:
+      case .following:
         if (!oldState.following.hasNext) return;
-      case SocialTab.followers:
+      case .followers:
         if (!oldState.followers.hasNext) return;
-      case SocialTab.threads:
+      case .threads:
         if (!oldState.threads.hasNext) return;
-      case SocialTab.comments:
+      case .comments:
         if (!oldState.comments.hasNext) return;
     }
     state = await AsyncValue.guard(() => _fetch(oldState, tab));
@@ -45,35 +45,32 @@ class SocialNotifier extends AsyncNotifier<Social> {
         variables['withThreads'] = true;
         variables['withComments'] = true;
         break;
-      case SocialTab.following:
+      case .following:
         variables['withFollowing'] = true;
         variables['page'] = oldState.following.next;
         break;
-      case SocialTab.followers:
+      case .followers:
         variables['withFollowers'] = true;
         variables['page'] = oldState.followers.next;
         break;
-      case SocialTab.threads:
+      case .threads:
         variables['withThreads'] = true;
         variables['page'] = oldState.threads.next;
         break;
-      case SocialTab.comments:
+      case .comments:
         variables['withComments'] = true;
         variables['page'] = oldState.comments.next;
         break;
     }
 
-    final data = await ref.read(repositoryProvider).request(
-          GqlQuery.social,
-          variables,
-        );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.social, variables);
 
     var following = oldState.following;
     var followers = oldState.followers;
     var threads = oldState.threads;
     var comments = oldState.comments;
 
-    if (tab == null || tab == SocialTab.following) {
+    if (tab == null || tab == .following) {
       final map = data['following'];
       final items = <UserItem>[];
       for (final u in map['following']) {
@@ -87,7 +84,7 @@ class SocialNotifier extends AsyncNotifier<Social> {
       );
     }
 
-    if (tab == null || tab == SocialTab.followers) {
+    if (tab == null || tab == .followers) {
       final map = data['followers'];
       final items = <UserItem>[];
       for (final u in map['followers']) {
@@ -101,7 +98,7 @@ class SocialNotifier extends AsyncNotifier<Social> {
       );
     }
 
-    if (tab == null || tab == SocialTab.threads) {
+    if (tab == null || tab == .threads) {
       final map = data['threads'];
       final items = <ThreadItem>[];
       for (final u in map['threads']) {
@@ -115,7 +112,7 @@ class SocialNotifier extends AsyncNotifier<Social> {
       );
     }
 
-    if (tab == null || tab == SocialTab.comments) {
+    if (tab == null || tab == .comments) {
       final map = data['comments'];
       final items = <Comment>[];
       for (final u in map['threadComments']) {
@@ -129,11 +126,6 @@ class SocialNotifier extends AsyncNotifier<Social> {
       );
     }
 
-    return Social(
-      following: following,
-      followers: followers,
-      threads: threads,
-      comments: comments,
-    );
+    return Social(following: following, followers: followers, threads: threads, comments: comments);
   }
 }

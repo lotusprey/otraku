@@ -5,11 +5,7 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 
 class ReviewHeader extends StatelessWidget {
-  const ReviewHeader({
-    required this.id,
-    required this.review,
-    required this.bannerUrl,
-  });
+  const ReviewHeader({required this.id, required this.review, required this.bannerUrl});
 
   final int id;
   final Review? review;
@@ -24,37 +20,30 @@ class ReviewHeader extends StatelessWidget {
       content: PreferredSize(
         preferredSize: const Size.fromHeight(100),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: .stretch,
           children: review != null
               ? [
                   Flexible(
                     child: GestureDetector(
-                      onTap: () => context.push(
-                        Routes.media(review!.mediaId, review!.mediaCover),
-                      ),
+                      onTap: () => context.push(Routes.media(review!.mediaId, review!.mediaCover)),
                       child: Text(
                         review!.mediaTitle,
-                        overflow: TextOverflow.fade,
-                        textAlign: TextAlign.center,
+                        overflow: .fade,
+                        textAlign: .center,
                         style: TextTheme.of(context).titleLarge,
                       ),
                     ),
                   ),
                   Flexible(
                     child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () => context.push(
-                        Routes.user(review!.userId, review!.userAvatar),
-                      ),
+                      behavior: .opaque,
+                      onTap: () => context.push(Routes.user(review!.userId, review!.userAvatar)),
                       child: Text.rich(
-                        textAlign: TextAlign.center,
+                        textAlign: .center,
                         TextSpan(
                           style: TextTheme.of(context).titleMedium,
                           children: [
-                            TextSpan(
-                              text: 'review by ',
-                              style: TextTheme.of(context).labelMedium,
-                            ),
+                            TextSpan(text: 'review by ', style: TextTheme.of(context).labelMedium),
                             TextSpan(text: review!.userName),
                           ],
                         ),

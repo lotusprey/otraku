@@ -43,9 +43,7 @@ final document = Document(
 class _HeaderSyntax extends HeaderSyntax {
   const _HeaderSyntax();
 
-  static final _pattern = RegExp(
-    r'^ {0,3}(#{1,6})(?:.*?)?(?:(#*)\s*)?$',
-  );
+  static final _pattern = RegExp(r'^ {0,3}(#{1,6})(?:.*?)?(?:(#*)\s*)?$');
 
   @override
   RegExp get pattern => _pattern;
@@ -57,10 +55,9 @@ class _HeaderSyntax extends HeaderSyntax {
     // Directly parse inner content.
     final children = node.children;
     if (children != null && children.isNotEmpty) {
-      final parsedContent = BlockParser(
-        [Line(children[0].textContent)],
-        parser.document,
-      ).parseLines();
+      final parsedContent = BlockParser([
+        Line(children[0].textContent),
+      ], parser.document).parseLines();
 
       children.clear();
       children.addAll(parsedContent);
@@ -94,10 +91,7 @@ abstract class _DelimitedBlockSyntax extends BlockSyntax {
     final postfix = lines.last.content.isNotEmpty
         ? BlockParser([lines.last], parser.document).parseLines()
         : const [];
-    final children = BlockParser(
-      lines.sublist(1, lines.length - 1),
-      parser.document,
-    ).parseLines();
+    final children = BlockParser(lines.sublist(1, lines.length - 1), parser.document).parseLines();
 
     final element = Element(tag, children);
     finalizeElement(element);
@@ -149,11 +143,7 @@ abstract class _DelimitedBlockSyntax extends BlockSyntax {
 
 class _SpoilerBlockSyntax extends _DelimitedBlockSyntax {
   const _SpoilerBlockSyntax()
-      : super(
-          tag: 'details',
-          startDelimiter: _startDelimiter,
-          endDelimiter: '!~',
-        );
+    : super(tag: 'details', startDelimiter: _startDelimiter, endDelimiter: '!~');
 
   static const _startDelimiter = '~!';
   static final _pattern = RegExp(_startDelimiter);
@@ -169,11 +159,7 @@ class _SpoilerBlockSyntax extends _DelimitedBlockSyntax {
 
 class _CenterBlockSyntax extends _DelimitedBlockSyntax {
   const _CenterBlockSyntax()
-      : super(
-          tag: 'center',
-          startDelimiter: _delimiter,
-          endDelimiter: _delimiter,
-        );
+    : super(tag: 'center', startDelimiter: _delimiter, endDelimiter: _delimiter);
 
   static const _delimiter = '~~~';
   static final _pattern = RegExp(_delimiter);
@@ -190,9 +176,7 @@ class _CenterBlockSyntax extends _DelimitedBlockSyntax {
 class _FencedCodeBlockSyntax extends FencedCodeBlockSyntax {
   const _FencedCodeBlockSyntax();
 
-  static final _pattern = RegExp(
-    r'^([ ]{0,3})(?<backtick>`{3,})(?<backtickInfo>[^`]*)$',
-  );
+  static final _pattern = RegExp(r'^([ ]{0,3})(?<backtick>`{3,})(?<backtickInfo>[^`]*)$');
 
   @override
   RegExp get pattern => _pattern;
@@ -212,11 +196,7 @@ class _LineBreakSyntax extends InlineSyntax {
 /// Besides the standard markdown image syntax,
 /// AniList allows for an additional way to embed images.
 class _ImageSyntax extends InlineSyntax {
-  _ImageSyntax()
-      : super(
-          r'img((?:\d+%?)?)\(((?:https:\/\/)[^)]+)\)',
-          caseSensitive: false,
-        );
+  _ImageSyntax() : super(r'img((?:\d+%?)?)\(((?:https:\/\/)[^)]+)\)', caseSensitive: false);
 
   @override
   bool onMatch(InlineParser parser, Match match) {
@@ -232,10 +212,10 @@ class _ImageSyntax extends InlineSyntax {
 /// YouTube videos are embedded with syntax different from other web videos.
 class _YouTubeSyntax extends InlineSyntax {
   _YouTubeSyntax()
-      : super(
-          r'youtube\s?\(\s*(?:(?:https:\/\/)?(?:www\.)?(?:(?:(?:music\.)?youtube\.com\/watch\?v=)|(?:youtu\.be\/)))?([^?&#)]+)(?:[^)]*)\)',
-          caseSensitive: false,
-        );
+    : super(
+        r'youtube\s?\(\s*(?:(?:https:\/\/)?(?:www\.)?(?:(?:(?:music\.)?youtube\.com\/watch\?v=)|(?:youtu\.be\/)))?([^?&#)]+)(?:[^)]*)\)',
+        caseSensitive: false,
+      );
 
   @override
   bool onMatch(InlineParser parser, Match match) {
@@ -245,19 +225,12 @@ class _YouTubeSyntax extends InlineSyntax {
 }
 
 class _VideoSyntax extends InlineSyntax {
-  _VideoSyntax()
-      : super(
-          r'webm\(([^)]+)\)',
-          caseSensitive: false,
-        );
+  _VideoSyntax() : super(r'webm\(([^)]+)\)', caseSensitive: false);
 
   @override
   bool onMatch(InlineParser parser, Match match) {
     parser.addNode(
-      Element(
-        'video',
-        [Element.empty('source')..attributes['src'] = match.group(1)!],
-      ),
+      Element('video', [Element.empty('source')..attributes['src'] = match.group(1)!]),
     );
     return true;
   }

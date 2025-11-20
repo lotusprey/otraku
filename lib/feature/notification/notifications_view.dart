@@ -50,15 +50,11 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
-    final unreadCount = ref.watch(
-      notificationsProvider.select((s) => s.value?.total ?? 0),
-    );
+    final unreadCount = ref.watch(notificationsProvider.select((s) => s.value?.total ?? 0));
 
     final filter = ref.watch(notificationsFilterProvider);
 
-    final options = ref.watch(
-      persistenceProvider.select((s) => s.options),
-    );
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final content = _Content(
       unreadCount: unreadCount,
@@ -76,13 +72,13 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
             child: Text(
               'Notifications',
               style: TextTheme.of(context).titleLarge,
-              overflow: TextOverflow.ellipsis,
+              overflow: .ellipsis,
               maxLines: 1,
             ),
           ),
         ],
       ),
-      floatingAction: formFactor == FormFactor.phone
+      floatingAction: formFactor == .phone
           ? HidingFloatingActionButton(
               key: const Key('filter'),
               scrollCtrl: _scrollCtrl,
@@ -93,7 +89,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
               ),
             )
           : null,
-      child: formFactor == FormFactor.phone
+      child: formFactor == .phone
           ? content
           : Row(
               children: [
@@ -118,9 +114,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
           final index = ref.read(notificationsFilterProvider.notifier).state.index;
 
           return SimpleSheet(
-            initialHeight: PillSelector.expectedMinHeight(
-              NotificationsFilter.values.length,
-            ),
+            initialHeight: PillSelector.expectedMinHeight(NotificationsFilter.values.length),
             builder: (context, scrollCtrl) => PillSelector(
               scrollCtrl: scrollCtrl,
               selected: index,
@@ -159,12 +153,8 @@ class _Content extends StatelessWidget {
       provider: notificationsProvider,
       onData: (data) => SliverList(
         delegate: SliverChildBuilderDelegate(
-          (context, i) => _NotificationItem(
-            data.items[i],
-            i < unreadCount,
-            analogClock,
-            highContrast,
-          ),
+          (context, i) =>
+              _NotificationItem(data.items[i], i < unreadCount, analogClock, highContrast),
           childCount: data.items.length,
         ),
       ),
@@ -194,90 +184,84 @@ class _NotificationItem extends StatelessWidget {
               children: [
                 if (item.imageUrl != null)
                   GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                    behavior: .opaque,
                     onTap: () => switch (item) {
                       FollowNotification item => context.push(
-                          Routes.user(item.userId, item.imageUrl),
-                        ),
+                        Routes.user(item.userId, item.imageUrl),
+                      ),
                       ActivityNotification item => context.push(
-                          Routes.user(item.userId, item.imageUrl),
-                        ),
+                        Routes.user(item.userId, item.imageUrl),
+                      ),
                       ThreadNotification item => context.push(
-                          Routes.user(item.userId, item.imageUrl),
-                        ),
+                        Routes.user(item.userId, item.imageUrl),
+                      ),
                       ThreadCommentNotification item => context.push(
-                          Routes.user(item.userId, item.imageUrl),
-                        ),
+                        Routes.user(item.userId, item.imageUrl),
+                      ),
                       MediaReleaseNotification item => context.push(
-                          Routes.media(item.mediaId, item.imageUrl),
-                        ),
+                        Routes.media(item.mediaId, item.imageUrl),
+                      ),
                       MediaChangeNotification item => context.push(
-                          Routes.media(item.mediaId, item.imageUrl),
-                        ),
+                        Routes.media(item.mediaId, item.imageUrl),
+                      ),
                       MediaDeletionNotification _ => null,
                     },
                     onLongPress: () => switch (item) {
                       MediaReleaseNotification item => showSheet(
-                          context,
-                          EditView((id: item.mediaId, setComplete: false)),
-                        ),
+                        context,
+                        EditView((id: item.mediaId, setComplete: false)),
+                      ),
                       MediaChangeNotification item => showSheet(
-                          context,
-                          EditView((id: item.mediaId, setComplete: false)),
-                        ),
+                        context,
+                        EditView((id: item.mediaId, setComplete: false)),
+                      ),
                       _ => null,
                     },
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.horizontal(
-                        left: Theming.radiusSmall,
-                      ),
+                      borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                       child: CachedImage(item.imageUrl!, width: 70),
                     ),
                   ),
                 Flexible(
                   child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
+                    behavior: .opaque,
                     onTap: () => switch (item) {
                       FollowNotification item => context.push(
-                          Routes.user(item.userId, item.imageUrl),
-                        ),
-                      ActivityNotification item => context.push(
-                          Routes.activity(item.activityId),
-                        ),
-                      ThreadNotification item => context.push(
-                          Routes.thread(item.threadId),
-                        ),
+                        Routes.user(item.userId, item.imageUrl),
+                      ),
+                      ActivityNotification item => context.push(Routes.activity(item.activityId)),
+                      ThreadNotification item => context.push(Routes.thread(item.threadId)),
                       ThreadCommentNotification item => context.push(
-                          Routes.comment(item.commentId),
-                        ),
+                        Routes.comment(item.commentId),
+                      ),
                       MediaReleaseNotification item => context.push(
-                          Routes.media(item.mediaId, item.imageUrl),
-                        ),
+                        Routes.media(item.mediaId, item.imageUrl),
+                      ),
                       MediaChangeNotification() || MediaDeletionNotification() => showDialog(
-                          context: context,
-                          builder: (context) => _NotificationDialog(item),
-                        ),
+                        context: context,
+                        builder: (context) => _NotificationDialog(item),
+                      ),
                     },
                     onLongPress: () => switch (item) {
                       MediaReleaseNotification item => showSheet(
-                          context,
-                          EditView((id: item.mediaId, setComplete: false)),
-                        ),
+                        context,
+                        EditView((id: item.mediaId, setComplete: false)),
+                      ),
                       MediaChangeNotification item => showSheet(
-                          context,
-                          EditView((id: item.mediaId, setComplete: false)),
-                        ),
+                        context,
+                        EditView((id: item.mediaId, setComplete: false)),
+                      ),
                       _ => null,
                     },
                     child: Padding(
                       padding: Theming.paddingAll,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: .spaceEvenly,
+                        crossAxisAlignment: .stretch,
                         children: [
                           Flexible(
                             child: Text.rich(
-                              overflow: TextOverflow.fade,
+                              overflow: .fade,
                               TextSpan(
                                 children: [
                                   for (int i = 0; i < item.texts.length; i++)
@@ -306,9 +290,7 @@ class _NotificationItem extends StatelessWidget {
                     height: double.infinity,
                     decoration: BoxDecoration(
                       color: ColorScheme.of(context).primary,
-                      borderRadius: const BorderRadius.horizontal(
-                        right: Theming.radiusSmall,
-                      ),
+                      borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
                     ),
                   ),
               ],
@@ -328,7 +310,7 @@ class _NotificationDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final title = Text.rich(
-      overflow: TextOverflow.fade,
+      overflow: .fade,
       TextSpan(
         children: [
           for (int i = 0; i < item.texts.length; i++)
@@ -363,18 +345,18 @@ class _NotificationDialog extends StatelessWidget {
             ],
             Expanded(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: .min,
                 children: [
                   Flexible(child: title),
                   ...switch (item) {
                     MediaChangeNotification item => [
-                        const SizedBox(height: Theming.offset),
-                        HtmlContent(item.reason),
-                      ],
+                      const SizedBox(height: Theming.offset),
+                      HtmlContent(item.reason),
+                    ],
                     MediaDeletionNotification item => [
-                        const SizedBox(height: Theming.offset),
-                        HtmlContent(item.reason),
-                      ],
+                      const SizedBox(height: Theming.offset),
+                      HtmlContent(item.reason),
+                    ],
                     _ => const [],
                   },
                 ],

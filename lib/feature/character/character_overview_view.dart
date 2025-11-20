@@ -37,15 +37,13 @@ class CharacterOverviewSubview extends StatelessWidget {
         if (header != null) ...[
           header!,
           MediaQuery(
-            data: mediaQuery.copyWith(
-              padding: mediaQuery.padding.copyWith(top: 0),
-            ),
+            data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
             child: refreshControl,
           ),
         ] else
           refreshControl,
         SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+          padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
               _NameTable(character),
@@ -57,10 +55,7 @@ class CharacterOverviewSubview extends StatelessWidget {
               ]),
               if (character.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 15)),
-                HtmlContent(
-                  character.description,
-                  renderMode: RenderMode.sliverList,
-                ),
+                HtmlContent(character.description, renderMode: RenderMode.sliverList),
               ],
             ],
           ),
@@ -92,9 +87,7 @@ class __NameTableState extends State<_NameTable> {
           if (widget.character.nativeName != null) ('Native', widget.character.nativeName!),
           ...widget.character.altNames.map((s) => ('Alternative', s)),
           if (_showSpoilers)
-            ...widget.character.altNamesSpoilers.map(
-              (s) => ('Alternative Spoiler', s),
-            ),
+            ...widget.character.altNamesSpoilers.map((s) => ('Alternative Spoiler', s)),
         ]),
         if (widget.character.altNamesSpoilers.isNotEmpty && !_showSpoilers)
           SliverToBoxAdapter(

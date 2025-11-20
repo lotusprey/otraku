@@ -29,12 +29,10 @@ class BackgroundHandler {
     );
 
     // Check if the app was launched by a notification.
-    _notificationPlugin.getNotificationAppLaunchDetails().then(
-      (launchDetails) {
-        if (launchDetails?.notificationResponse?.payload == null) return;
-        notificationCtrl.add(launchDetails!.notificationResponse!.payload!);
-      },
-    );
+    _notificationPlugin.getNotificationAppLaunchDetails().then((launchDetails) {
+      if (launchDetails?.notificationResponse?.payload == null) return;
+      notificationCtrl.add(launchDetails!.notificationResponse!.payload!);
+    });
 
     await Workmanager().initialize(_fetch);
 
@@ -78,175 +76,137 @@ class BackgroundHandler {
 }
 
 @pragma('vm:entry-point')
-void _fetch() => Workmanager().executeTask((_, __) async {
-      final container = ProviderContainer(retry: (retryCount, error) => null);
+void _fetch() => Workmanager().executeTask((_, _) async {
+  final container = ProviderContainer(retry: (retryCount, error) => null);
 
-      await container.read(persistenceProvider.notifier).init();
-      final persistence = container.read(persistenceProvider);
+  await container.read(persistenceProvider.notifier).init();
+  final persistence = container.read(persistenceProvider);
 
-      // No notifications are fetched in guest mode.
-      if (persistence.accountGroup.accountIndex == null) return true;
+  // No notifications are fetched in guest mode.
+  if (persistence.accountGroup.accountIndex == null) return true;
 
-      var appMeta = AppMeta(
-        lastBackgroundJob: DateTime.now(),
-        lastNotificationId: persistence.appMeta.lastNotificationId,
-        lastAppVersion: persistence.appMeta.lastAppVersion,
-      );
-      container.read(persistenceProvider.notifier).setAppMeta(appMeta);
+  var appMeta = AppMeta(
+    lastBackgroundJob: DateTime.now(),
+    lastNotificationId: persistence.appMeta.lastNotificationId,
+    lastAppVersion: persistence.appMeta.lastAppVersion,
+  );
+  container.read(persistenceProvider.notifier).setAppMeta(appMeta);
 
-      final repository = container.read(repositoryProvider);
-      Map<String, dynamic> data;
-      try {
-        data = await repository.request(
-          GqlQuery.notifications,
-          const {'withCount': true},
-        );
-      } catch (_) {
-        return true;
-      }
+  final repository = container.read(repositoryProvider);
+  Map<String, dynamic> data;
+  try {
+    data = await repository.request(GqlQuery.notifications, const {'withCount': true});
+  } catch (_) {
+    return true;
+  }
 
-      int count = data['Viewer']?['unreadNotificationCount'] ?? 0;
-      final List<dynamic> notifications = data['Page']?['notifications'] ?? const [];
+  int count = data['Viewer']?['unreadNotificationCount'] ?? 0;
+  final List<dynamic> notifications = data['Page']?['notifications'] ?? const [];
 
-      if (count > notifications.length) count = notifications.length;
-      if (count == 0) return true;
+  if (count > notifications.length) count = notifications.length;
+  if (count == 0) return true;
 
-      final lastNotificationId = persistence.appMeta.lastNotificationId;
+  final lastNotificationId = persistence.appMeta.lastNotificationId;
 
-      appMeta = AppMeta(
-        lastNotificationId: notifications[0]['id'] ?? -1,
-        lastBackgroundJob: persistence.appMeta.lastBackgroundJob,
-        lastAppVersion: persistence.appMeta.lastAppVersion,
-      );
-      container.read(persistenceProvider.notifier).setAppMeta(appMeta);
+  appMeta = AppMeta(
+    lastNotificationId: notifications[0]['id'] ?? -1,
+    lastBackgroundJob: persistence.appMeta.lastBackgroundJob,
+    lastAppVersion: persistence.appMeta.lastAppVersion,
+  );
+  container.read(persistenceProvider.notifier).setAppMeta(appMeta);
 
-      for (int i = 0; i < count && notifications[i]['id'] != lastNotificationId; i++) {
-        final notification = SiteNotification.maybe(
-          notifications[i],
-          persistence.options.imageQuality,
-        );
+  for (int i = 0; i < count && notifications[i]['id'] != lastNotificationId; i++) {
+    final notification = SiteNotification.maybe(notifications[i], persistence.options.imageQuality);
 
-        if (notification == null) continue;
+    if (notification == null) continue;
 
-        (switch (notification.type) {
-          NotificationType.following => _show(
-              notification,
-              'New Follow',
-              Routes.user((notification as FollowNotification).userId),
-            ),
-          NotificationType.activityMention => _show(
-              notification,
-              'New Mention',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.activityMessage => _show(
-              notification,
-              'New Message',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.activityReply => _show(
-              notification,
-              'New Reply',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.activityReplySubscribed => _show(
-              notification,
-              'New Reply To Subscribed Activity',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.activityLike => _show(
-              notification,
-              'New Activity Like',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.acrivityReplyLike => _show(
-              notification,
-              'New Reply Like',
-              Routes.activity(
-                (notification as ActivityNotification).activityId,
-              ),
-            ),
-          NotificationType.threadLike => _show(
-              notification,
-              'New Forum Like',
-              Routes.thread((notification as ThreadNotification).threadId),
-            ),
-          NotificationType.threadCommentReply => _show(
-              notification,
-              'New Forum Reply',
-              Routes.comment(
-                (notification as ThreadCommentNotification).commentId,
-              ),
-            ),
-          NotificationType.threadCommentMention => _show(
-              notification,
-              'New Forum Mention',
-              Routes.comment(
-                (notification as ThreadCommentNotification).commentId,
-              ),
-            ),
-          NotificationType.threadReplySubscribed => _show(
-              notification,
-              'New Forum Comment',
-              Routes.comment(
-                (notification as ThreadCommentNotification).commentId,
-              ),
-            ),
-          NotificationType.threadCommentLike => _show(
-              notification,
-              'New Forum Comment Like',
-              Routes.comment(
-                (notification as ThreadCommentNotification).commentId,
-              ),
-            ),
-          NotificationType.airing => _show(
-              notification,
-              'New Episode',
-              Routes.media(
-                (notification as MediaReleaseNotification).mediaId,
-              ),
-            ),
-          NotificationType.relatedMediaAddition => _show(
-              notification,
-              'Added Media',
-              Routes.media(
-                (notification as MediaReleaseNotification).mediaId,
-              ),
-            ),
-          NotificationType.mediaDataChange => _show(
-              notification,
-              'Modified Media',
-              Routes.media(
-                (notification as MediaChangeNotification).mediaId,
-              ),
-            ),
-          NotificationType.mediaMerge => _show(
-              notification,
-              'Merged Media',
-              Routes.media(
-                (notification as MediaChangeNotification).mediaId,
-              ),
-            ),
-          NotificationType.mediaDeletion => _show(
-              notification,
-              'Deleted Media',
-              Routes.notifications,
-            ),
-        });
-      }
-
-      return true;
+    (switch (notification.type) {
+      .following => _show(
+        notification,
+        'New Follow',
+        Routes.user((notification as FollowNotification).userId),
+      ),
+      .activityMention => _show(
+        notification,
+        'New Mention',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .activityMessage => _show(
+        notification,
+        'New Message',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .activityReply => _show(
+        notification,
+        'New Reply',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .activityReplySubscribed => _show(
+        notification,
+        'New Reply To Subscribed Activity',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .activityLike => _show(
+        notification,
+        'New Activity Like',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .acrivityReplyLike => _show(
+        notification,
+        'New Reply Like',
+        Routes.activity((notification as ActivityNotification).activityId),
+      ),
+      .threadLike => _show(
+        notification,
+        'New Forum Like',
+        Routes.thread((notification as ThreadNotification).threadId),
+      ),
+      .threadCommentReply => _show(
+        notification,
+        'New Forum Reply',
+        Routes.comment((notification as ThreadCommentNotification).commentId),
+      ),
+      .threadCommentMention => _show(
+        notification,
+        'New Forum Mention',
+        Routes.comment((notification as ThreadCommentNotification).commentId),
+      ),
+      .threadReplySubscribed => _show(
+        notification,
+        'New Forum Comment',
+        Routes.comment((notification as ThreadCommentNotification).commentId),
+      ),
+      .threadCommentLike => _show(
+        notification,
+        'New Forum Comment Like',
+        Routes.comment((notification as ThreadCommentNotification).commentId),
+      ),
+      .airing => _show(
+        notification,
+        'New Episode',
+        Routes.media((notification as MediaReleaseNotification).mediaId),
+      ),
+      .relatedMediaAddition => _show(
+        notification,
+        'Added Media',
+        Routes.media((notification as MediaReleaseNotification).mediaId),
+      ),
+      .mediaDataChange => _show(
+        notification,
+        'Modified Media',
+        Routes.media((notification as MediaChangeNotification).mediaId),
+      ),
+      .mediaMerge => _show(
+        notification,
+        'Merged Media',
+        Routes.media((notification as MediaChangeNotification).mediaId),
+      ),
+      .mediaDeletion => _show(notification, 'Deleted Media', Routes.notifications),
     });
+  }
+
+  return true;
+});
 
 () _show(SiteNotification notification, String title, String payload) {
   _notificationPlugin.show(

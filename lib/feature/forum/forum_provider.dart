@@ -28,19 +28,16 @@ class ForumNotifier extends AsyncNotifier<Paged<ThreadItem>> {
   }
 
   Future<Paged<ThreadItem>> _fetch(Paged<ThreadItem> oldState) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.threadPage,
-      {'page': oldState.next, ..._filter.toGraphQlVariables()},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.threadPage, {
+      'page': oldState.next,
+      ..._filter.toGraphQlVariables(),
+    });
 
     final items = <ThreadItem>[];
     for (final t in data['Page']['threads']) {
       items.add(ThreadItem(t));
     }
 
-    return oldState.withNext(
-      items,
-      data['Page']['pageInfo']['hasNextPage'] ?? false,
-    );
+    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
   }
 }

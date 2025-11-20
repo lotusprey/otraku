@@ -31,10 +31,7 @@ class FavoritesView extends ConsumerStatefulWidget {
 }
 
 class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: FavoritesType.values.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: FavoritesType.values.length, vsync: this);
   late final _scrollCtrl = PagedController(
     loadMore: () => ref
         .read(favoritesProvider(widget.userId).notifier)
@@ -61,20 +58,16 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
     final isViewer = ref.watch(viewerIdProvider) == widget.userId;
 
     final count = ref.watch(
-      favoritesProvider(widget.userId).select(
-        (s) => s.value?.getCount(type) ?? 0,
-      ),
+      favoritesProvider(widget.userId).select((s) => s.value?.getCount(type) ?? 0),
     );
 
     final onRefresh = (invalidate) => invalidate(favoritesProvider(widget.userId));
 
-    final toggleFavorite =
-        (int itemId) => ref.read(favoritesProvider(widget.userId).notifier).toggleFavorite(itemId);
+    final toggleFavorite = (int itemId) =>
+        ref.read(favoritesProvider(widget.userId).notifier).toggleFavorite(itemId);
 
     final inEditingMode = ref.watch(
-      favoritesProvider(widget.userId).select(
-        (s) => s.value?.edit != null,
-      ),
+      favoritesProvider(widget.userId).select((s) => s.value?.edit != null),
     );
 
     return AdaptiveScaffold(
@@ -94,18 +87,15 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                 icon: const Icon(Icons.save_outlined),
                 onPressed: () =>
                     ref.read(favoritesProvider(widget.userId).notifier).saveEdit().then((err) {
-                  if (err == null || !context.mounted) return;
+                      if (err == null || !context.mounted) return;
 
-                  SnackBarExtension.show(context, 'Failed to reorder: $err');
-                }),
+                      SnackBarExtension.show(context, 'Failed to reorder: $err');
+                    }),
               ),
             ] else if (count > 0)
               Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: TextTheme.of(context).titleSmall,
-                ),
+                padding: const .only(right: Theming.offset),
+                child: Text(count.toString(), style: TextTheme.of(context).titleSmall),
               ),
           ],
         ),
@@ -141,10 +131,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
         duration: const Duration(milliseconds: 200),
         reverseDuration: const Duration(seconds: 0),
         transitionBuilder: (child, animation) => SlideTransition(
-          position: Tween(
-            begin: const Offset(0, 0.05),
-            end: Offset.zero,
-          ).animate(animation),
+          position: Tween(begin: const Offset(0, 0.05), end: Offset.zero).animate(animation),
           child: child,
         ),
         child: TabBarView(
@@ -152,65 +139,48 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
           controller: _tabCtrl,
           children: [
             PagedView<FavoriteItem>(
-              provider: favoritesProvider(widget.userId).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.anime),
-              ),
+              provider: favoritesProvider(
+                widget.userId,
+              ).select((s) => s.unwrapPrevious().whenData((data) => data.anime)),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               onData: (data) {
-                final onTapItem = (FavoriteItem item) => context.push(
-                      Routes.media(item.id, item.imageUrl),
-                    );
-                final onLongTapItem = (FavoriteItem item) => showSheet(
-                      context,
-                      EditView((id: item.id, setComplete: false)),
-                    );
+                final onTapItem = (FavoriteItem item) =>
+                    context.push(Routes.media(item.id, item.imageUrl));
+                final onLongTapItem = (FavoriteItem item) =>
+                    showSheet(context, EditView((id: item.id, setComplete: false)));
 
                 return inEditingMode
-                    ? _EditList(
-                        data.items,
-                        onTapItem,
-                        onLongTapItem,
-                        toggleFavorite,
-                      )
+                    ? _EditList(data.items, onTapItem, onLongTapItem, toggleFavorite)
                     : _ImageGrid(data.items, onTapItem, onLongTapItem);
               },
             ),
             PagedView<FavoriteItem>(
-              provider: favoritesProvider(widget.userId).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.manga),
-              ),
+              provider: favoritesProvider(
+                widget.userId,
+              ).select((s) => s.unwrapPrevious().whenData((data) => data.manga)),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               onData: (data) {
-                final onTapItem = (FavoriteItem item) => context.push(
-                      Routes.media(item.id, item.imageUrl),
-                    );
-                final onLongTapItem = (FavoriteItem item) => showSheet(
-                      context,
-                      EditView((id: item.id, setComplete: false)),
-                    );
+                final onTapItem = (FavoriteItem item) =>
+                    context.push(Routes.media(item.id, item.imageUrl));
+                final onLongTapItem = (FavoriteItem item) =>
+                    showSheet(context, EditView((id: item.id, setComplete: false)));
 
                 return inEditingMode
-                    ? _EditList(
-                        data.items,
-                        onTapItem,
-                        onLongTapItem,
-                        toggleFavorite,
-                      )
+                    ? _EditList(data.items, onTapItem, onLongTapItem, toggleFavorite)
                     : _ImageGrid(data.items, onTapItem, onLongTapItem);
               },
             ),
             PagedView<FavoriteItem>(
-              provider: favoritesProvider(widget.userId).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.characters),
-              ),
+              provider: favoritesProvider(
+                widget.userId,
+              ).select((s) => s.unwrapPrevious().whenData((data) => data.characters)),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               onData: (data) {
-                final onTapItem = (FavoriteItem item) => context.push(
-                      Routes.character(item.id, item.imageUrl),
-                    );
+                final onTapItem = (FavoriteItem item) =>
+                    context.push(Routes.character(item.id, item.imageUrl));
 
                 return inEditingMode
                     ? _EditList(data.items, onTapItem, null, toggleFavorite)
@@ -218,15 +188,14 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
               },
             ),
             PagedView<FavoriteItem>(
-              provider: favoritesProvider(widget.userId).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.staff),
-              ),
+              provider: favoritesProvider(
+                widget.userId,
+              ).select((s) => s.unwrapPrevious().whenData((data) => data.staff)),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               onData: (data) {
-                final onTapItem = (FavoriteItem item) => context.push(
-                      Routes.staff(item.id, item.imageUrl),
-                    );
+                final onTapItem = (FavoriteItem item) =>
+                    context.push(Routes.staff(item.id, item.imageUrl));
 
                 return inEditingMode
                     ? _EditList(data.items, onTapItem, null, toggleFavorite)
@@ -234,24 +203,17 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
               },
             ),
             PagedView<FavoriteItem>(
-              provider: favoritesProvider(widget.userId).select(
-                (s) => s.unwrapPrevious().whenData((data) => data.studios),
-              ),
+              provider: favoritesProvider(
+                widget.userId,
+              ).select((s) => s.unwrapPrevious().whenData((data) => data.studios)),
               scrollCtrl: _scrollCtrl,
               onRefresh: onRefresh,
               onData: (data) {
-                final onTapItem = (FavoriteItem item) => context.push(
-                      Routes.studio(item.id, item.imageUrl),
-                    );
+                final onTapItem = (FavoriteItem item) =>
+                    context.push(Routes.studio(item.id, item.imageUrl));
 
                 return inEditingMode
-                    ? _EditList(
-                        data.items,
-                        onTapItem,
-                        null,
-                        toggleFavorite,
-                        compact: true,
-                      )
+                    ? _EditList(data.items, onTapItem, null, toggleFavorite, compact: true)
                     : _TextGrid(data.items, onTapItem);
               },
             ),
@@ -322,7 +284,7 @@ class _ImageGridState extends State<_ImageGrid> {
                 child: Text(
                   _items[i].name,
                   maxLines: 2,
-                  overflow: TextOverflow.fade,
+                  overflow: .fade,
                   style: TextTheme.of(context).bodyMedium,
                 ),
               ),
@@ -376,10 +338,7 @@ class _TextGridState extends State<_TextGrid> {
           borderRadius: Theming.borderRadiusSmall,
           onTap: () => widget.onTapItem(_items[i]),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: Theming.offset,
-              vertical: Theming.offset / 2,
-            ),
+            padding: const .symmetric(horizontal: Theming.offset, vertical: Theming.offset / 2),
             child: Align(
               alignment: Alignment.centerLeft,
               child: Hero(
@@ -387,7 +346,7 @@ class _TextGridState extends State<_TextGrid> {
                 child: Text(
                   _items[i].name,
                   maxLines: 2,
-                  overflow: TextOverflow.fade,
+                  overflow: .fade,
                   style: TextTheme.of(context).titleLarge,
                 ),
               ),
@@ -450,7 +409,7 @@ class _EditListState extends State<_EditList> {
           onTap: () => widget.onTapItem(item),
           onLongPress: () => widget.onLongTapItem?.call(item),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
+            padding: const .symmetric(vertical: 5),
             child: Row(
               children: [
                 if (item.imageUrl != null) ...[

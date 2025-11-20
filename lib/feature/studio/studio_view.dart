@@ -27,9 +27,11 @@ class StudioView extends ConsumerStatefulWidget {
 }
 
 class _StudioViewState extends ConsumerState<StudioView> {
-  late final _scrollCtrl = PagedController(loadMore: () {
-    ref.read(studioMediaProvider(widget.id).notifier).fetch();
-  });
+  late final _scrollCtrl = PagedController(
+    loadMore: () {
+      ref.read(studioMediaProvider(widget.id).notifier).fetch();
+    },
+  );
 
   @override
   void dispose() {
@@ -43,12 +45,8 @@ class _StudioViewState extends ConsumerState<StudioView> {
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
           studioMediaProvider(widget.id),
-          (_, s) => s.whenOrNull(
-            error: (error, _) => SnackBarExtension.show(
-              context,
-              error.toString(),
-            ),
-          ),
+          (_, s) =>
+              s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
         );
 
         final studio = ref.watch(studioProvider(widget.id)).value;
@@ -64,45 +62,39 @@ class _StudioViewState extends ConsumerState<StudioView> {
         );
 
         final content = studioMedia.unwrapPrevious().when(
-              loading: () => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  header,
-                  const SliverFillRemaining(
-                    child: Center(child: Loader()),
-                  ),
-                ],
+          loading: () => CustomScrollView(
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              header,
+              const SliverFillRemaining(child: Center(child: Loader())),
+            ],
+          ),
+          error: (_, _) => CustomScrollView(
+            physics: Theming.bouncyPhysics,
+            slivers: [
+              header,
+              const SliverFillRemaining(child: Center(child: Text('Failed to load studio'))),
+            ],
+          ),
+          data: (data) => CustomScrollView(
+            physics: Theming.bouncyPhysics,
+            controller: _scrollCtrl,
+            slivers: [
+              header,
+              MediaQuery(
+                data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
+                child: SliverRefreshControl(
+                  onRefresh: () {
+                    ref.invalidate(studioProvider(widget.id));
+                    ref.invalidate(studioMediaProvider(widget.id));
+                  },
+                ),
               ),
-              error: (_, __) => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                slivers: [
-                  header,
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load studio')),
-                  ),
-                ],
-              ),
-              data: (data) => CustomScrollView(
-                physics: Theming.bouncyPhysics,
-                controller: _scrollCtrl,
-                slivers: [
-                  header,
-                  MediaQuery(
-                    data: mediaQuery.copyWith(
-                      padding: mediaQuery.padding.copyWith(top: 0),
-                    ),
-                    child: SliverRefreshControl(
-                      onRefresh: () {
-                        ref.invalidate(studioProvider(widget.id));
-                        ref.invalidate(studioMediaProvider(widget.id));
-                      },
-                    ),
-                  ),
-                  SliverConstrainedView(sliver: _StudioMediaGrid(data.items)),
-                  SliverFooter(loading: data.hasNext),
-                ],
-              ),
-            );
+              SliverConstrainedView(sliver: _StudioMediaGrid(data.items)),
+              SliverFooter(loading: data.hasNext),
+            ],
+          ),
+        );
 
         return AdaptiveScaffold(
           floatingAction: studio != null
@@ -127,10 +119,7 @@ class _StudioMediaGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 260,
-        height: 100,
-      ),
+      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 260, height: 100),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => _MediaTile(items[i]),
@@ -159,20 +148,15 @@ class _MediaTile extends StatelessWidget {
       imageUrl: item.cover,
       child: Card(
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: .start,
           children: [
             Hero(
               tag: item.id,
               child: ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
                 child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest,
-                  ),
-                  child: CachedImage(
-                    item.cover,
-                    width: 100 / Theming.coverHtoWRatio,
-                  ),
+                  decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest),
+                  child: CachedImage(item.cover, width: 100 / Theming.coverHtoWRatio),
                 ),
               ),
             ),
@@ -180,20 +164,12 @@ class _MediaTile extends StatelessWidget {
               child: Padding(
                 padding: Theming.paddingAll,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: .spaceEvenly,
+                  crossAxisAlignment: .start,
                   children: [
-                    Flexible(
-                      child: Text(
-                        item.title,
-                        overflow: TextOverflow.fade,
-                      ),
-                    ),
+                    Flexible(child: Text(item.title, overflow: .fade)),
                     const SizedBox(height: 5),
-                    TextRail(
-                      textRailItems,
-                      style: theme.textTheme.labelMedium,
-                    ),
+                    TextRail(textRailItems, style: theme.textTheme.labelMedium),
                     if (item.startDate != null) ...[
                       const SizedBox(height: 5),
                       Row(
@@ -208,7 +184,7 @@ class _MediaTile extends StatelessWidget {
                           ),
                           Expanded(
                             child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                              mainAxisSize: .min,
                               children: [
                                 Icon(
                                   Icons.percent_rounded,

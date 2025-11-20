@@ -27,7 +27,7 @@ class SettingsContentSubview extends StatelessWidget {
 
     return ListView(
       controller: scrollCtrl,
-      padding: EdgeInsets.only(
+      padding: .only(
         top: listPadding.top + Theming.offset,
         bottom: listPadding.bottom + Theming.offset,
       ),
@@ -179,7 +179,7 @@ class SettingsContentSubview extends StatelessWidget {
         ExpansionTile(
           title: const Text('Social'),
           initiallyExpanded: true,
-          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          expandedCrossAxisAlignment: .stretch,
           children: [
             for (final e in settings.disabledListActivity.entries)
               StatefulCheckboxListTile(
@@ -223,15 +223,15 @@ class _ListManagementState extends State<_ListManagement> {
     final items = widget.items;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: .min,
+      crossAxisAlignment: .stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: Theming.offset),
+          padding: const .only(top: Theming.offset),
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+                padding: const .symmetric(horizontal: Theming.offset),
                 child: Text(widget.title, style: TextTheme.of(context).titleLarge),
               ),
               const Spacer(),
@@ -264,7 +264,7 @@ class _ListManagementState extends State<_ListManagement> {
             key: Key(items[i]),
             title: Text(items[i]),
             trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 IconButton(
                   tooltip: 'Remove',
@@ -293,7 +293,7 @@ class _ListManagementState extends State<_ListManagement> {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

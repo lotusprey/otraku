@@ -23,17 +23,15 @@ class UserNotifier extends AsyncNotifier<User> {
 
   @override
   FutureOr<User> build() async {
-    final data = await ref.read(repositoryProvider).request(
-          GqlQuery.user,
-          arg.id != null ? {'id': arg.id} : {'name': arg.name},
-        );
+    final data = await ref
+        .read(repositoryProvider)
+        .request(GqlQuery.user, arg.id != null ? {'id': arg.id} : {'name': arg.name});
     return User(data['User']);
   }
 
   Future<Object?> toggleFollow(int userId) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleFollow,
-      {'userId': userId},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleFollow, {
+      'userId': userId,
+    }).getErrorOrNull();
   }
 }

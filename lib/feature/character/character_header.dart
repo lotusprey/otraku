@@ -20,8 +20,8 @@ class CharacterHeader extends StatelessWidget {
     required this.imageUrl,
     required this.character,
     required this.toggleFavorite,
-  })  : tabCtrl = null,
-        scrollToTop = null;
+  }) : tabCtrl = null,
+       scrollToTop = null;
 
   final int id;
   final String? imageUrl;
@@ -45,27 +45,15 @@ class CharacterHeader extends StatelessWidget {
             ])
           : null,
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (
-              tabCtrl: tabCtrl!,
-              scrollToTop: scrollToTop!,
-              tabs: tabsWithOverview,
-            )
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,
-      trailingTopButtons: [
-        if (character != null) _FavoriteButton(character!, toggleFavorite),
-      ],
+      trailingTopButtons: [if (character != null) _FavoriteButton(character!, toggleFavorite)],
     );
   }
 
-  static const tabsWithoutOverview = [
-    Tab(text: 'Anime'),
-    Tab(text: 'Manga'),
-  ];
+  static const tabsWithoutOverview = [Tab(text: 'Anime'), Tab(text: 'Manga')];
 
-  static const tabsWithOverview = [
-    Tab(text: 'Overview'),
-    ...tabsWithoutOverview,
-  ];
+  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
 }
 
 class _FavoriteButton extends StatefulWidget {

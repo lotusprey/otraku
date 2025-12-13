@@ -8,10 +8,15 @@ import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 
 class StaffCharactersSubview extends StatelessWidget {
-  const StaffCharactersSubview({required this.id, required this.scrollCtrl});
+  const StaffCharactersSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.highContrast,
+  });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -25,6 +30,7 @@ class StaffCharactersSubview extends StatelessWidget {
         items: data.items,
         onTapPrimary: (item) => context.push(Routes.character(item.tileId, item.tileImageUrl)),
         onTapSecondary: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+        highContrast: highContrast,
       ),
     );
   }

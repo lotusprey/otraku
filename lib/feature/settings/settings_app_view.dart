@@ -149,6 +149,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 items: HomeTab.values.map((v) => (v.label, v)).toList(),
                 value: options.homeTab,
                 onChanged: (v) => update(options.copyWith(homeTab: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -158,6 +159,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 items: DiscoverType.values.map((v) => (v.label, v)).toList(),
                 value: options.discoverType,
                 onChanged: (v) => update(options.copyWith(discoverType: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -167,6 +169,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 items: ImageQuality.values.map((v) => (v.label, v)).toList(),
                 value: options.imageQuality,
                 onChanged: (v) => update(options.copyWith(imageQuality: v)),
+                highContrast: options.highContrast,
               ),
             ),
           ],
@@ -184,6 +187,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 ],
                 value: options.discoverItemView,
                 onChanged: (v) => update(options.copyWith(discoverItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -196,6 +200,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 ],
                 value: options.collectionItemView,
                 onChanged: (v) => update(options.copyWith(collectionItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -208,6 +213,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 ],
                 value: options.collectionPreviewItemView,
                 onChanged: (v) => update(options.copyWith(collectionPreviewItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
           ],

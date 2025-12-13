@@ -13,6 +13,7 @@ class CharacterHeader extends StatelessWidget {
     required TabController this.tabCtrl,
     required void Function() this.scrollToTop,
     required this.toggleFavorite,
+    required this.highContrast,
   });
 
   const CharacterHeader.withoutTabBar({
@@ -20,6 +21,7 @@ class CharacterHeader extends StatelessWidget {
     required this.imageUrl,
     required this.character,
     required this.toggleFavorite,
+    required this.highContrast,
   }) : tabCtrl = null,
        scrollToTop = null;
 
@@ -29,6 +31,7 @@ class CharacterHeader extends StatelessWidget {
   final TabController? tabCtrl;
   final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +45,7 @@ class CharacterHeader extends StatelessWidget {
           ? TableList([
               ('Favorites', character!.favorites.toString()),
               if (character!.gender != null) ('Gender', character!.gender!),
-            ])
+            ], highContrast: highContrast)
           : null,
       tabBarConfig: tabCtrl != null && scrollToTop != null
           ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)

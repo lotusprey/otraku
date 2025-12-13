@@ -1,9 +1,11 @@
-import 'dart:ui';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
@@ -56,6 +58,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
     final type = FavoritesType.values[_tabCtrl.index];
 
     final isViewer = ref.watch(viewerIdProvider) == widget.userId;
+
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final count = ref.watch(
       favoritesProvider(widget.userId).select((s) => s.value?.getCount(type) ?? 0),
@@ -151,8 +155,14 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                     showSheet(context, EditView((id: item.id, setComplete: false)));
 
                 return inEditingMode
-                    ? _EditList(data.items, onTapItem, onLongTapItem, toggleFavorite)
-                    : _ImageGrid(data.items, onTapItem, onLongTapItem);
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        onLongTapItem,
+                        toggleFavorite,
+                        options.highContrast,
+                      )
+                    : _ImageGrid(data.items, onTapItem, onLongTapItem, options.highContrast);
               },
             ),
             PagedView<FavoriteItem>(
@@ -168,8 +178,14 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                     showSheet(context, EditView((id: item.id, setComplete: false)));
 
                 return inEditingMode
-                    ? _EditList(data.items, onTapItem, onLongTapItem, toggleFavorite)
-                    : _ImageGrid(data.items, onTapItem, onLongTapItem);
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        onLongTapItem,
+                        toggleFavorite,
+                        options.highContrast,
+                      )
+                    : _ImageGrid(data.items, onTapItem, onLongTapItem, options.highContrast);
               },
             ),
             PagedView<FavoriteItem>(
@@ -183,8 +199,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                     context.push(Routes.character(item.id, item.imageUrl));
 
                 return inEditingMode
-                    ? _EditList(data.items, onTapItem, null, toggleFavorite)
-                    : _ImageGrid(data.items, onTapItem, null);
+                    ? _EditList(data.items, onTapItem, null, toggleFavorite, options.highContrast)
+                    : _ImageGrid(data.items, onTapItem, null, options.highContrast);
               },
             ),
             PagedView<FavoriteItem>(
@@ -198,8 +214,8 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                     context.push(Routes.staff(item.id, item.imageUrl));
 
                 return inEditingMode
-                    ? _EditList(data.items, onTapItem, null, toggleFavorite)
-                    : _ImageGrid(data.items, onTapItem, null);
+                    ? _EditList(data.items, onTapItem, null, toggleFavorite, options.highContrast)
+                    : _ImageGrid(data.items, onTapItem, null, options.highContrast);
               },
             ),
             PagedView<FavoriteItem>(
@@ -213,8 +229,15 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
                     context.push(Routes.studio(item.id, item.imageUrl));
 
                 return inEditingMode
-                    ? _EditList(data.items, onTapItem, null, toggleFavorite, compact: true)
-                    : _TextGrid(data.items, onTapItem);
+                    ? _EditList(
+                        data.items,
+                        onTapItem,
+                        null,
+                        toggleFavorite,
+                        options.highContrast,
+                        compact: true,
+                      )
+                    : _TextGrid(data.items, onTapItem, options.highContrast);
               },
             ),
           ],
@@ -225,11 +248,12 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
 }
 
 class _ImageGrid extends StatefulWidget {
-  const _ImageGrid(this.items, this.onTapItem, this.onLongTapItem);
+  const _ImageGrid(this.items, this.onTapItem, this.onLongTapItem, this.highContrast);
 
   final List<FavoriteItem> items;
   final void Function(FavoriteItem) onTapItem;
   final void Function(FavoriteItem)? onLongTapItem;
+  final bool highContrast;
 
   @override
   State<_ImageGrid> createState() => _ImageGridState();
@@ -254,41 +278,43 @@ class _ImageGridState extends State<_ImageGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final lineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final textHeight = lineHeight * 2 + 10;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+      gridDelegate: SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
-        extraHeight: 40,
+        extraHeight: textHeight,
         rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: _items.length,
         (_, i) => InkWell(
           borderRadius: Theming.borderRadiusSmall,
-          onTap: () => widget.onTapItem(_items[i]),
-          onLongPress: () => widget.onLongTapItem?.call(_items[i]),
-          child: Column(
-            children: [
-              if (_items[i].imageUrl != null)
-                Expanded(
-                  child: Hero(
-                    tag: _items[i].id,
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(_items[i].imageUrl!),
+          onTap: () => context.push(Routes.character(_items[i].id, _items[i].imageUrl)),
+          child: CardExtension.highContrast(widget.highContrast)(
+            child: Column(
+              crossAxisAlignment: .stretch,
+              children: [
+                if (_items[i].imageUrl != null)
+                  Expanded(
+                    child: Hero(
+                      tag: _items[i].id,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
+                        child: CachedImage(_items[i].imageUrl!),
+                      ),
                     ),
                   ),
+                SizedBox(
+                  height: textHeight,
+                  child: Padding(
+                    padding: const .all(5),
+                    child: Text(_items[i].name, maxLines: 2, overflow: .ellipsis),
+                  ),
                 ),
-              const SizedBox(height: 5),
-              SizedBox(
-                height: 35,
-                child: Text(
-                  _items[i].name,
-                  maxLines: 2,
-                  overflow: .fade,
-                  style: TextTheme.of(context).bodyMedium,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -297,10 +323,11 @@ class _ImageGridState extends State<_ImageGrid> {
 }
 
 class _TextGrid extends StatefulWidget {
-  const _TextGrid(this.items, this.onTapItem);
+  const _TextGrid(this.items, this.onTapItem, this.highContrast);
 
   final List<FavoriteItem> items;
   final void Function(FavoriteItem) onTapItem;
+  final bool highContrast;
 
   @override
   State<_TextGrid> createState() => _TextGridState();
@@ -325,29 +352,30 @@ class _TextGridState extends State<_TextGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final lineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
         minWidth: 230,
-        height: 60,
-        mainAxisSpacing: 0,
-        crossAxisSpacing: 0,
+        height: lineHeight + 20,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: _items.length,
         (_, i) => InkWell(
           borderRadius: Theming.borderRadiusSmall,
-          onTap: () => widget.onTapItem(_items[i]),
-          child: Padding(
-            padding: const .symmetric(horizontal: Theming.offset, vertical: Theming.offset / 2),
-            child: Align(
-              alignment: Alignment.centerLeft,
+          onTap: () => context.push(Routes.studio(_items[i].id, _items[i].name)),
+          child: CardExtension.highContrast(widget.highContrast)(
+            child: Padding(
+              padding: Theming.paddingAll,
               child: Hero(
                 tag: _items[i].id,
                 child: Text(
                   _items[i].name,
-                  maxLines: 2,
-                  overflow: .fade,
-                  style: TextTheme.of(context).titleLarge,
+                  style: TextTheme.of(context).bodyMedium,
+                  overflow: .ellipsis,
+                  maxLines: 1,
                 ),
               ),
             ),
@@ -363,7 +391,8 @@ class _EditList extends StatefulWidget {
     this.items,
     this.onTapItem,
     this.onLongTapItem,
-    this.toggleFavorite, {
+    this.toggleFavorite,
+    this.highContrast, {
     this.compact = false,
   });
 
@@ -371,6 +400,7 @@ class _EditList extends StatefulWidget {
   final void Function(FavoriteItem) onTapItem;
   final void Function(FavoriteItem)? onLongTapItem;
   final Future<Object?> Function(int) toggleFavorite;
+  final bool highContrast;
   final bool compact;
 
   @override
@@ -380,8 +410,12 @@ class _EditList extends StatefulWidget {
 class _EditListState extends State<_EditList> {
   @override
   Widget build(BuildContext context) {
+    final lineCount = widget.compact ? 1 : 4;
+    final lineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final itemExtent = max(lineHeight * lineCount, Theming.iconBig + 20) + 20;
+
     return SliverReorderableList(
-      itemExtent: widget.compact ? 50 : 100,
+      itemExtent: itemExtent,
       itemCount: widget.items.length,
       onReorder: (oldIndex, newIndex) => setState(() {
         if (oldIndex < newIndex) {
@@ -392,66 +426,80 @@ class _EditListState extends State<_EditList> {
         widget.items.insert(newIndex, item);
       }),
       proxyDecorator: (child, index, animation) {
-        final value = (animation.value * 2).clamp(0.0, 1.0);
-
-        return Material(
-          borderRadius: Theming.borderRadiusSmall,
-          elevation: lerpDouble(0, 6, value) ?? 0,
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: ColorScheme.of(context).surface,
+                blurRadius: 12,
+                spreadRadius: 1,
+                // offset: Offset(0, 4 * animation.value),
+              ),
+            ],
+          ),
           child: child,
         );
       },
       itemBuilder: (context, i) {
         final item = widget.items[i];
 
-        return InkWell(
+        Widget content = Padding(
+          padding: const .only(left: 10, top: 5, bottom: 5),
+          child: Row(
+            spacing: Theming.offset,
+            children: [
+              Expanded(
+                child: Text(item.name, overflow: .ellipsis, maxLines: lineCount),
+              ),
+              IconButton(
+                icon: item.isFavorite
+                    ? const Icon(Icons.favorite)
+                    : const Icon(Icons.favorite_border_rounded),
+                tooltip: item.isFavorite ? 'Unfavorite' : 'Favorite',
+                onPressed: () async {
+                  final isFavorite = item.isFavorite;
+                  setState(() => item.isFavorite = !isFavorite);
+
+                  final err = await widget.toggleFavorite(item.id);
+                  if (err == null) return;
+
+                  setState(() => item.isFavorite = isFavorite);
+                  if (context.mounted) {
+                    SnackBarExtension.show(context, err.toString());
+                  }
+                },
+              ),
+              ReorderableDragStartListener(
+                index: i,
+                child: Padding(
+                  padding: Theming.paddingAll,
+                  child: Icon(Icons.drag_handle_rounded, size: Theming.iconBig),
+                ),
+              ),
+            ],
+          ),
+        );
+
+        if (item.imageUrl != null) {
+          content = Row(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+                child: CachedImage(item.imageUrl!, width: itemExtent / Theming.coverHtoWRatio),
+              ),
+              Expanded(child: content),
+            ],
+          );
+        }
+
+        return CardExtension.highContrast(widget.highContrast)(
           key: Key('$i'),
-          borderRadius: Theming.borderRadiusSmall,
-          onTap: () => widget.onTapItem(item),
-          onLongPress: () => widget.onLongTapItem?.call(item),
-          child: Padding(
-            padding: const .symmetric(vertical: 5),
-            child: Row(
-              children: [
-                if (item.imageUrl != null) ...[
-                  const SizedBox(width: 10),
-                  ClipRRect(
-                    borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(
-                      item.imageUrl!,
-                      width: 90 / Theming.coverHtoWRatio,
-                      height: 90,
-                    ),
-                  ),
-                ],
-                const SizedBox(width: Theming.offset),
-                Expanded(child: Text(item.name)),
-                IconButton(
-                  icon: item.isFavorite
-                      ? const Icon(Icons.favorite)
-                      : const Icon(Icons.favorite_border_rounded),
-                  tooltip: item.isFavorite ? 'Unfavorite' : 'Favorite',
-                  onPressed: () async {
-                    final isFavorite = item.isFavorite;
-                    setState(() => item.isFavorite = !isFavorite);
-
-                    final err = await widget.toggleFavorite(item.id);
-                    if (err == null) return;
-
-                    setState(() => item.isFavorite = isFavorite);
-                    if (context.mounted) {
-                      SnackBarExtension.show(context, err.toString());
-                    }
-                  },
-                ),
-                ReorderableDragStartListener(
-                  index: i,
-                  child: Padding(
-                    padding: Theming.paddingAll,
-                    child: Icon(Icons.drag_handle_rounded),
-                  ),
-                ),
-              ],
-            ),
+          margin: const .only(bottom: Theming.offset),
+          child: InkWell(
+            borderRadius: Theming.borderRadiusSmall,
+            onTap: () => widget.onTapItem(item),
+            onLongPress: () => widget.onLongTapItem?.call(item),
+            child: content,
           ),
         );
       },

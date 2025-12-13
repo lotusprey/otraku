@@ -1,11 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/statistics/charts.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -54,6 +59,8 @@ class _StatisticsViewState extends State<StatisticsView> with SingleTickerProvid
               s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
         );
 
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
+
         return ref
             .watch(userProvider(tag))
             .when(
@@ -72,6 +79,7 @@ class _StatisticsViewState extends State<StatisticsView> with SingleTickerProvid
                         secondaryBarChartTab: () => _secondaryBarChartTab,
                         onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
                         onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                        highContrast: options.highContrast,
                       ),
                     ),
                     ConstrainedView(
@@ -83,6 +91,7 @@ class _StatisticsViewState extends State<StatisticsView> with SingleTickerProvid
                         secondaryBarChartTab: () => _secondaryBarChartTab,
                         onPrimaryTabChanged: (i) => _primaryBarChartTab = i,
                         onSecondaryTabChanged: (i) => _secondaryBarChartTab = i,
+                        highContrast: options.highContrast,
                       ),
                     ),
                   ],
@@ -116,6 +125,7 @@ class _StatisticsView extends StatelessWidget {
     required this.secondaryBarChartTab,
     required this.onPrimaryTabChanged,
     required this.onSecondaryTabChanged,
+    required this.highContrast,
   });
 
   final Statistics statistics;
@@ -125,6 +135,7 @@ class _StatisticsView extends StatelessWidget {
   final int Function() secondaryBarChartTab;
   final void Function(int) onPrimaryTabChanged;
   final void Function(int) onSecondaryTabChanged;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +147,7 @@ class _StatisticsView extends StatelessWidget {
         SliverToBoxAdapter(
           child: SizedBox(height: MediaQuery.paddingOf(context).top + Theming.offset),
         ),
-        _Details(statistics, ofAnime),
+        _Details(statistics, ofAnime, highContrast),
         if (statistics.scores.isNotEmpty) ...[
           spacing,
           _BarChart(
@@ -166,12 +177,12 @@ class _StatisticsView extends StatelessWidget {
           SliverGrid(
             gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
               minWidth: 340,
-              height: 250,
+              height: 200,
             ),
             delegate: SliverChildListDelegate([
-              _PieChart('Format Distribution', statistics.formats),
-              _PieChart('Status Distribution', statistics.statuses),
-              _PieChart('Country Distribution', statistics.countries),
+              _PieChart('Format Distribution', statistics.formats, highContrast),
+              _PieChart('Status Distribution', statistics.statuses, highContrast),
+              _PieChart('Country Distribution', statistics.countries, highContrast),
             ]),
           ),
         ],
@@ -182,7 +193,7 @@ class _StatisticsView extends StatelessWidget {
 }
 
 class _Details extends StatelessWidget {
-  _Details(Statistics statistics, bool ofAnime) {
+  _Details(Statistics statistics, bool ofAnime, this.highContrast) {
     subtitles.add(statistics.count);
     subtitles.add(statistics.partsConsumed);
     if (ofAnime) {
@@ -213,26 +224,47 @@ class _Details extends StatelessWidget {
   final icons = <IconData>[];
   final titles = <String>[];
   final subtitles = <num>[];
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final tileHeight = max(bodyMediumLineHeight + labelMediumLineHeight, Theming.iconBig) + 10;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 190, height: 50),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 190,
+        height: tileHeight,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+      ),
       delegate: SliverChildBuilderDelegate(
         childCount: titles.length,
-        (context, i) => Row(
-          children: [
-            Icon(icons[i], color: ColorScheme.of(context).onSurfaceVariant),
-            const SizedBox(width: Theming.offset),
-            Column(
-              mainAxisAlignment: .center,
-              crossAxisAlignment: .start,
+        (context, i) => CardExtension.highContrast(highContrast)(
+          child: Padding(
+            padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+            child: Row(
+              spacing: Theming.offset,
               children: [
-                Text(titles[i], style: TextTheme.of(context).labelMedium),
-                Text(subtitles[i].toString()),
+                Icon(icons[i], size: Theming.iconBig),
+                Column(
+                  mainAxisAlignment: .center,
+                  crossAxisAlignment: .start,
+                  children: [
+                    Text(
+                      titles[i],
+                      style: TextTheme.of(context).labelMedium,
+                      overflow: .ellipsis,
+                      maxLines: 1,
+                    ),
+                    Text(subtitles[i].toString()),
+                  ],
+                ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -320,15 +352,16 @@ class _BarChartState extends State<_BarChart> {
 }
 
 class _PieChart extends StatelessWidget {
-  const _PieChart(this.title, this.stats);
+  const _PieChart(this.title, this.stats, this.highContrast);
 
   final String title;
   final List<TypeStatistics> stats;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     final names = stats.map((s) => s.value).toList();
     final values = stats.map((s) => s.count).toList();
-    return PieChart(title: title, names: names, values: values);
+    return PieChart(title: title, names: names, values: values, highContrast: highContrast);
   }
 }

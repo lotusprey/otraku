@@ -25,27 +25,27 @@ class ScoreLabel extends StatelessWidget {
       case .point5:
         content = Row(
           mainAxisSize: .min,
+          spacing: 3,
           children: [
             Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
-            const SizedBox(width: 3),
             const Icon(Icons.star_rounded, size: Theming.iconSmall),
           ],
         );
       case .point10Decimal:
         content = Row(
           mainAxisSize: .min,
+          spacing: 3,
           children: [
             const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            const SizedBox(width: 3),
             Text(score.toStringAsFixed(1), style: TextTheme.of(context).labelSmall),
           ],
         );
       default:
         content = Row(
           mainAxisSize: .min,
+          spacing: 3,
           children: [
             const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            const SizedBox(width: 3),
             Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
           ],
         );

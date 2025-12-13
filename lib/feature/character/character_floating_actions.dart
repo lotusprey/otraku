@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
@@ -20,8 +21,8 @@ class CharacterMediaFilterButton extends StatelessWidget {
       child: const Icon(Ionicons.funnel_outline),
       onPressed: () {
         var filter = ref.read(characterFilterProvider(id));
-
         final onDone = (_) => ref.read(characterFilterProvider(id).notifier).state = filter;
+        final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
         showSheet(
           context,
@@ -38,12 +39,14 @@ class CharacterMediaFilterButton extends StatelessWidget {
                   items: MediaSort.values.map((v) => (v.label, v)).toList(),
                   value: filter.sort,
                   onChanged: (v) => filter = filter.copyWith(sort: v),
+                  highContrast: highContrast,
                 ),
                 ChipSelector(
                   title: 'List Presence',
                   items: const [('In Lists', true), ('Not in Lists', false)],
                   value: filter.inLists,
                   onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
+                  highContrast: highContrast,
                 ),
               ],
             ),

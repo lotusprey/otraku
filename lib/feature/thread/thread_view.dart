@@ -87,7 +87,13 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
           : null,
       child: ConstrainedView(
         child: switch (thread.unwrapPrevious()) {
-          AsyncData(:final value) => _Content(ref, value, options.analogClock, _scrollCtrl),
+          AsyncData(:final value) => _Content(
+            ref,
+            value,
+            options.highContrast,
+            options.analogClock,
+            _scrollCtrl,
+          ),
           AsyncError() => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
@@ -239,10 +245,11 @@ class __BottomBarState extends State<_BottomBar> {
 }
 
 class _Content extends StatelessWidget {
-  const _Content(this.ref, this.thread, this.analogClock, this.scrollCtrl);
+  const _Content(this.ref, this.thread, this.highContrast, this.analogClock, this.scrollCtrl);
 
   final WidgetRef ref;
   final Thread thread;
+  final bool highContrast;
   final bool analogClock;
   final ScrollController scrollCtrl;
 
@@ -259,7 +266,7 @@ class _Content extends StatelessWidget {
         SliverRefreshControl(onRefresh: () => ref.invalidate(threadProvider(thread.info.id))),
         SliverToBoxAdapter(child: Timestamp(info.createdAt, analogClock)),
         spacing,
-        SliverToBoxAdapter(child: Text(thread.info.title, style: TextTheme.of(context).titleLarge)),
+        SliverToBoxAdapter(child: Text(thread.info.title, style: TextTheme.of(context).bodyMedium)),
         spacing,
         HtmlContent(thread.info.body, renderMode: RenderMode.sliverList),
         spacing,
@@ -315,19 +322,19 @@ class _Content extends StatelessWidget {
                 if (info.isPinned)
                   Tooltip(
                     message: 'Pinned',
-                    triggerMode: TooltipTriggerMode.tap,
+                    triggerMode: .tap,
                     child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                   ),
                 if (info.isLocked)
                   Tooltip(
                     message: 'Locked',
-                    triggerMode: TooltipTriggerMode.tap,
+                    triggerMode: .tap,
                     child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                   ),
                 const Spacer(),
                 Tooltip(
                   message: 'Views',
-                  triggerMode: TooltipTriggerMode.tap,
+                  triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,
                     children: [
@@ -342,15 +349,15 @@ class _Content extends StatelessWidget {
                 ),
                 Tooltip(
                   message: 'Replies',
-                  triggerMode: TooltipTriggerMode.tap,
+                  triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,
+                    spacing: 5,
                     children: [
                       Text(
                         info.replyCount.toString(),
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
-                      const SizedBox(width: 5),
                       Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
                     ],
                   ),
@@ -371,6 +378,7 @@ class _Content extends StatelessWidget {
               child: CommentTile(
                 comment,
                 viewerId: viewerId,
+                highContrast: highContrast,
                 analogClock: analogClock,
                 interaction: (
                   onReplySaved: (map, commentId) =>

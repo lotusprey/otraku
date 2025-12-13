@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -45,6 +48,7 @@ class ActivityCard extends StatelessWidget {
               HtmlContent(activity.text),
             Row(
               mainAxisAlignment: .spaceBetween,
+              spacing: 5,
               children: [
                 Flexible(child: Timestamp(activity.createdAt, analogClock)),
                 footer,
@@ -57,6 +61,8 @@ class ActivityCard extends StatelessWidget {
 
     if (!withHeader) return body;
 
+    const avatarSize = 50.0;
+
     return Column(
       crossAxisAlignment: .start,
       children: [
@@ -68,12 +74,16 @@ class ActivityCard extends StatelessWidget {
                 onTap: () => context.push(Routes.user(activity.authorId, activity.authorAvatarUrl)),
                 child: Row(
                   mainAxisSize: .min,
+                  spacing: Theming.offset,
                   children: [
                     ClipRRect(
                       borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(activity.authorAvatarUrl, height: 50, width: 50),
+                      child: CachedImage(
+                        activity.authorAvatarUrl,
+                        height: avatarSize,
+                        width: avatarSize,
+                      ),
                     ),
-                    const SizedBox(width: Theming.offset),
                     Flexible(child: Text(activity.authorName, overflow: .ellipsis, maxLines: 1)),
                   ],
                 ),
@@ -96,7 +106,11 @@ class ActivityCard extends StatelessWidget {
                       context.push(Routes.user(message.recipientId, message.recipientAvatarUrl)),
                   child: ClipRRect(
                     borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(message.recipientAvatarUrl, height: 50, width: 50),
+                    child: CachedImage(
+                      message.recipientAvatarUrl,
+                      height: avatarSize,
+                      width: avatarSize,
+                    ),
                   ),
                 ),
               ],
@@ -124,39 +138,47 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final height = bodyMediumLineHeight * 3 + labelMediumLineHeight + 5;
+
     return MediaRouteTile(
       id: item.mediaId,
       imageUrl: item.coverUrl,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 108),
+      child: SizedBox(
+        height: height,
         child: Row(
           children: [
             ClipRRect(
               borderRadius: Theming.borderRadiusSmall,
-              child: CachedImage(item.coverUrl, width: 70),
+              child: CachedImage(item.coverUrl, width: height / Theming.coverHtoWRatio),
             ),
             Expanded(
               child: Padding(
-                padding: Theming.paddingAll,
+                padding: const .symmetric(horizontal: Theming.offset),
                 child: Column(
                   mainAxisAlignment: .spaceEvenly,
                   crossAxisAlignment: .start,
+                  spacing: 5,
                   children: [
-                    Flexible(
-                      child: Text.rich(
-                        overflow: .fade,
-                        TextSpan(
-                          children: [
-                            TextSpan(text: item.text, style: TextTheme.of(context).labelMedium),
-                            TextSpan(text: item.title, style: TextTheme.of(context).bodyMedium),
-                          ],
-                        ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: item.text, style: textTheme.labelMedium),
+                          TextSpan(text: item.title, style: textTheme.bodyMedium),
+                        ],
                       ),
+                      overflow: .ellipsis,
+                      maxLines: 3,
                     ),
-                    if (item.format != null) ...[
-                      const SizedBox(height: 5),
-                      Text(item.format!, style: TextTheme.of(context).labelMedium),
-                    ],
+                    if (item.format != null)
+                      Text(
+                        item.format!,
+                        style: textTheme.labelMedium,
+                        overflow: .ellipsis,
+                        maxLines: 1,
+                      ),
                   ],
                 ),
               ),

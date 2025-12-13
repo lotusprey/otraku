@@ -9,6 +9,7 @@ import 'package:otraku/feature/character/character_anime_view.dart';
 import 'package:otraku/feature/character/character_manga_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/character/character_overview_view.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
@@ -45,8 +46,10 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
     });
 
     final character = ref.watch(characterProvider(widget.id));
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final toggleFavorite = ref.read(characterProvider(widget.id).notifier).toggleFavorite;
+    final toggleFavorite = () async =>
+        ref.read(characterProvider(widget.id).notifier).toggleFavorite;
 
     return AdaptiveScaffold(
       floatingAction: HidingFloatingActionButton(
@@ -59,6 +62,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           id: widget.id,
           imageUrl: widget.imageUrl,
           ref: ref,
+          highContrast: options.highContrast,
           character: character,
           scrollCtrl: _scrollCtrl,
           toggleFavorite: toggleFavorite,
@@ -67,6 +71,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           id: widget.id,
           imageUrl: widget.imageUrl,
           ref: ref,
+          highContrast: options.highContrast,
           character: character,
           scrollCtrl: _scrollCtrl,
           toggleFavorite: toggleFavorite,
@@ -81,6 +86,7 @@ class _CompactView extends StatefulWidget {
     required this.id,
     required this.imageUrl,
     required this.ref,
+    required this.highContrast,
     required this.character,
     required this.scrollCtrl,
     required this.toggleFavorite,
@@ -89,6 +95,7 @@ class _CompactView extends StatefulWidget {
   final int id;
   final String? imageUrl;
   final WidgetRef ref;
+  final bool highContrast;
   final AsyncValue<Character> character;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
@@ -127,6 +134,7 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
       toggleFavorite: widget.toggleFavorite,
+      highContrast: widget.highContrast,
     );
 
     return NestedScrollView(
@@ -137,8 +145,12 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
         child: widget.character.unwrapPrevious().when(
           loading: () => const Center(child: Loader()),
           error: (_, _) => const Center(child: Text('Failed to load character')),
-          data: (data) =>
-              _CharacterTabs.withOverview(id: widget.id, character: data, tabCtrl: _tabCtrl),
+          data: (data) => _CharacterTabs.withOverview(
+            id: widget.id,
+            character: data,
+            tabCtrl: _tabCtrl,
+            highContrast: widget.highContrast,
+          ),
         ),
       ),
     );
@@ -150,6 +162,7 @@ class _LargeView extends StatefulWidget {
     required this.id,
     required this.imageUrl,
     required this.ref,
+    required this.highContrast,
     required this.character,
     required this.scrollCtrl,
     required this.toggleFavorite,
@@ -158,6 +171,7 @@ class _LargeView extends StatefulWidget {
   final int id;
   final String? imageUrl;
   final WidgetRef ref;
+  final bool highContrast;
   final AsyncValue<Character> character;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
@@ -193,6 +207,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       imageUrl: widget.imageUrl,
       character: widget.character.value,
       toggleFavorite: widget.toggleFavorite,
+      highContrast: widget.highContrast,
     );
 
     return DualPaneWithTabBar(
@@ -217,6 +232,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
         data: (data) => CharacterOverviewSubview.withHeader(
           character: data,
           header: header,
+          highContrast: widget.highContrast,
           invalidate: () => widget.ref.invalidate(characterProvider(widget.id)),
         ),
       ),
@@ -226,6 +242,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
           character: data,
           tabCtrl: _tabCtrl,
           scrollCtrl: widget.scrollCtrl,
+          highContrast: widget.highContrast,
         ),
         orElse: () => const SizedBox(),
       ),
@@ -238,6 +255,7 @@ class _CharacterTabs extends ConsumerStatefulWidget {
     required this.id,
     required this.character,
     required this.tabCtrl,
+    required this.highContrast,
   }) : withOverview = true,
        scrollCtrl = null;
 
@@ -245,6 +263,7 @@ class _CharacterTabs extends ConsumerStatefulWidget {
     required this.id,
     required this.character,
     required this.tabCtrl,
+    required this.highContrast,
     required ScrollController this.scrollCtrl,
   }) : withOverview = false;
 
@@ -252,6 +271,7 @@ class _CharacterTabs extends ConsumerStatefulWidget {
   final Character character;
   final TabController tabCtrl;
   final ScrollController? scrollCtrl;
+  final bool highContrast;
   final bool withOverview;
 
   @override
@@ -315,6 +335,8 @@ class __CharacterViewContentState extends ConsumerState<_CharacterTabs> {
   Widget build(BuildContext context) {
     ref.watch(characterMediaProvider(widget.id).select((_) => null));
 
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
@@ -325,10 +347,19 @@ class __CharacterViewContentState extends ConsumerState<_CharacterTabs> {
               character: widget.character,
               scrollCtrl: _scrollCtrl,
               invalidate: () => ref.invalidate(characterProvider(widget.id)),
+              highContrast: widget.highContrast,
             ),
           ),
-        CharacterAnimeSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-        CharacterMangaSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        CharacterAnimeSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
+        CharacterMangaSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
       ],
     );
   }

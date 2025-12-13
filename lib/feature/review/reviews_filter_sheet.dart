@@ -9,6 +9,7 @@ Future<void> showReviewsFilterSheet({
   required BuildContext context,
   required ReviewsFilter filter,
   required void Function(ReviewsFilter) onDone,
+  required bool highContrast,
 }) {
   return showSheet(
     context,
@@ -24,12 +25,14 @@ Future<void> showReviewsFilterSheet({
             items: ReviewsSort.values.map((v) => (v.label, v)).toList(),
             value: filter.sort,
             onChanged: (v) => filter = filter.copyWith(sort: v),
+            highContrast: highContrast,
           ),
           ChipSelector(
             title: 'Media Type',
             items: MediaType.values.map((v) => (v.label, v)).toList(),
             value: filter.mediaType,
             onChanged: (v) => filter = filter.copyWith(mediaType: (v,)),
+            highContrast: highContrast,
           ),
         ],
       ),

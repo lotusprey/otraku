@@ -72,6 +72,7 @@ class _EditView extends ConsumerWidget {
     final readableNotifier = entryEditProvider(tag).notifier;
 
     final settings = ref.watch(settingsProvider.select((s) => s.value));
+    final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
     final statusField = SliverToBoxAdapter(
       child: Padding(
@@ -80,6 +81,7 @@ class _EditView extends ConsumerWidget {
           title: 'Status',
           items: ListStatus.values.map((v) => (v.label(entryEdit.baseEntry.isAnime), v)).toList(),
           value: entryEdit.listStatus,
+          highContrast: highContrast,
           onChanged: (status) => ref.read(readableNotifier).updateBy((s) {
             var startedAt = s.startedAt;
             var completedAt = s.completedAt;

@@ -2,12 +2,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/forum/forum_filter_model.dart';
 import 'package:otraku/feature/forum/forum_filter_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/sheets.dart';
 
 void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
+  final highContrast = ref.read(persistenceProvider.select((s) => s.options.highContrast));
   var filter = ref.read(forumFilterProvider);
 
   await showSheet(
@@ -25,6 +27,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
               items: ThreadSort.values.map((v) => (v.label, v)).toList(),
               value: filter.sort,
               onChanged: (v) => filter = filter.copyWith(sort: v),
+              highContrast: highContrast,
             ),
           ),
           Padding(
@@ -34,6 +37,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
               items: ThreadCategory.values.map((v) => (v.label, v)).toList(),
               value: filter.category,
               onChanged: (v) => filter = filter.copyWith(category: (v,)),
+              highContrast: highContrast,
             ),
           ),
           StatefulSwitchListTile(

@@ -51,7 +51,7 @@ class ReviewView extends StatelessWidget {
                         '${data.score}/100',
                         style: TextTheme.of(
                           context,
-                        ).titleLarge?.copyWith(color: ColorScheme.of(context).onPrimary),
+                        ).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
                       ),
                     ),
                   ),

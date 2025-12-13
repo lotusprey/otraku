@@ -60,6 +60,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
       );
     }
 
+    final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
+
     final tabs = [
       ConstrainedView(padded: false, child: SettingsAppSubview(_scrollCtrl)),
       switch (_settings) {
@@ -69,7 +71,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
             child: Text('Log in to view content settings'),
           ),
         ),
-        AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value),
+        AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value, highContrast),
         AsyncError(:final error) => Center(
           child: Padding(
             padding: Theming.paddingAll,

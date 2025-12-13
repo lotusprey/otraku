@@ -11,12 +11,14 @@ class CharacterOverviewSubview extends StatelessWidget {
   const CharacterOverviewSubview.asFragment({
     required this.character,
     required this.invalidate,
+    required this.highContrast,
     required ScrollController this.scrollCtrl,
   }) : header = null;
 
   const CharacterOverviewSubview.withHeader({
     required this.character,
     required this.invalidate,
+    required this.highContrast,
     required Widget this.header,
   }) : scrollCtrl = null;
 
@@ -24,6 +26,7 @@ class CharacterOverviewSubview extends StatelessWidget {
   final void Function() invalidate;
   final Widget? header;
   final ScrollController? scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +49,13 @@ class CharacterOverviewSubview extends StatelessWidget {
           padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
-              _NameTable(character),
+              _NameTable(character, highContrast),
               const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
               SliverTableList([
                 if (character.dateOfBirth != null) ('Birth', character.dateOfBirth!),
                 if (character.age != null) ('Age', character.age!),
                 if (character.bloodType != null) ('Blood Type', character.bloodType!),
-              ]),
+              ], highContrast: highContrast),
               if (character.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 15)),
                 HtmlContent(character.description, renderMode: RenderMode.sliverList),
@@ -67,9 +70,10 @@ class CharacterOverviewSubview extends StatelessWidget {
 }
 
 class _NameTable extends StatefulWidget {
-  const _NameTable(this.character);
+  const _NameTable(this.character, this.highContrast);
 
   final Character character;
+  final bool highContrast;
 
   @override
   State<_NameTable> createState() => __NameTableState();
@@ -88,7 +92,7 @@ class __NameTableState extends State<_NameTable> {
           ...widget.character.altNames.map((s) => ('Alternative', s)),
           if (_showSpoilers)
             ...widget.character.altNamesSpoilers.map((s) => ('Alternative Spoiler', s)),
-        ]),
+        ], highContrast: widget.highContrast),
         if (widget.character.altNamesSpoilers.isNotEmpty && !_showSpoilers)
           SliverToBoxAdapter(
             child: TextButton.icon(

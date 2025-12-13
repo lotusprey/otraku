@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
@@ -21,8 +22,8 @@ class StudioFilterButton extends StatelessWidget {
       child: const Icon(Ionicons.funnel_outline),
       onPressed: () {
         var filter = ref.read(studioFilterProvider(id));
-
         final onDone = (_) => ref.read(studioFilterProvider(id).notifier).state = filter;
+        final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
         showSheet(
           context,
@@ -38,18 +39,21 @@ class StudioFilterButton extends StatelessWidget {
                   items: MediaSort.values.map((v) => (v.label, v)).toList(),
                   value: filter.sort,
                   onChanged: (v) => filter = filter.copyWith(sort: v),
+                  highContrast: highContrast,
                 ),
                 ChipSelector(
                   title: 'List Presence',
                   items: const [('In Lists', true), ('Not in Lists', false)],
                   value: filter.inLists,
                   onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
+                  highContrast: highContrast,
                 ),
                 ChipSelector(
                   title: 'Main Studio',
                   items: const [('Is Main', true), ('Is Not Main', false)],
                   value: filter.isMain,
                   onChanged: (v) => filter = filter.copyWith(isMain: (v,)),
+                  highContrast: highContrast,
                 ),
               ],
             ),

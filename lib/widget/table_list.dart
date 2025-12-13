@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
 class TableList extends StatelessWidget {
-  const TableList(this.items);
+  const TableList(this.items, {required this.highContrast});
 
   final List<(String, String)> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SizedBox();
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: Theming.borderRadiusSmall,
-        border: .all(color: ColorScheme.of(context).outlineVariant),
-      ),
+    return CardExtension.highContrast(highContrast)(
       child: Padding(
         padding: const .symmetric(vertical: Theming.offset),
         child: ListView.separated(
@@ -46,18 +44,22 @@ class TableList extends StatelessWidget {
 }
 
 class SliverTableList extends StatelessWidget {
-  const SliverTableList(this.items);
+  const SliverTableList(this.items, {required this.highContrast});
 
   final List<(String, String)> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
+    final colorScheme = ColorScheme.of(context);
+
     return DecoratedSliver(
       decoration: BoxDecoration(
         borderRadius: Theming.borderRadiusSmall,
-        border: .all(color: ColorScheme.of(context).outlineVariant),
+        color: highContrast ? null : colorScheme.surfaceContainerLow,
+        border: highContrast ? .all(color: colorScheme.outlineVariant) : null,
       ),
       sliver: SliverPadding(
         padding: const .symmetric(vertical: Theming.offset),

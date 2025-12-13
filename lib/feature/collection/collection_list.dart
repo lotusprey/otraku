@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
@@ -15,42 +19,61 @@ import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/text_rail.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
-const _tileHeight = 140.0;
-
 class CollectionList extends StatelessWidget {
   const CollectionList({
     required this.items,
     required this.scoreFormat,
     required this.onProgressUpdated,
+    required this.highContrast,
   });
 
   final List<Entry> items;
   final ScoreFormat scoreFormat;
   final Future<String?> Function(Entry, bool)? onProgressUpdated;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final tileHeight = bodyMediumLineHeight * 2 + labelMediumLineHeight + Theming.offset + 69;
+
     return SliverFixedExtentList(
       delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i], scoreFormat, onProgressUpdated),
+        (_, i) => _Tile(
+          items[i],
+          scoreFormat,
+          onProgressUpdated,
+          highContrast,
+          tileHeight / Theming.coverHtoWRatio,
+        ),
         childCount: items.length,
       ),
       // The added pixels are for the bottom margin.
-      itemExtent: _tileHeight + Theming.offset,
+      itemExtent: tileHeight,
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.entry, this.scoreFormat, this.onProgressUpdated);
+  const _Tile(
+    this.entry,
+    this.scoreFormat,
+    this.onProgressUpdated,
+    this.highContrast,
+    this.coverWidth,
+  );
 
   final Entry entry;
   final ScoreFormat scoreFormat;
   final Future<String?> Function(Entry, bool)? onProgressUpdated;
+  final bool highContrast;
+  final double coverWidth;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    return CardExtension.highContrast(highContrast)(
       margin: const .only(bottom: Theming.offset),
       child: MediaRouteTile(
         key: ValueKey(entry.mediaId),
@@ -63,10 +86,9 @@ class _Tile extends StatelessWidget {
               tag: entry.mediaId,
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                child: Container(
-                  width: _tileHeight / Theming.coverHtoWRatio,
-                  color: ColorScheme.of(context).surfaceContainerHighest,
-                  child: CachedImage(entry.imageUrl),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: ColorScheme.of(context).surfaceContainerHighest),
+                  child: CachedImage(entry.imageUrl, width: coverWidth),
                 ),
               ),
             ),
@@ -102,6 +124,7 @@ class __TileContentState extends State<_TileContent> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
     final item = widget.item;
 
     double progressPercent = 0;
@@ -114,64 +137,59 @@ class __TileContentState extends State<_TileContent> {
     }
 
     final textRailItems = <String, bool>{};
-    if (widget.item.format != null) {
-      textRailItems[widget.item.format!.label] = false;
+    if (item.format != null) {
+      textRailItems[item.format!.label] = false;
     }
 
-    if (widget.item.airingAt != null) {
-      final key = 'Ep ${widget.item.nextEpisode} in ${widget.item.airingAt!.timeUntil}';
+    if (item.airingAt != null) {
+      final key = 'Ep ${item.nextEpisode} in ${item.airingAt!.timeUntil}';
       textRailItems[key] = false;
     }
 
-    if (widget.item.nextEpisode != null && widget.item.nextEpisode! - 1 > widget.item.progress) {
-      final key = '${widget.item.nextEpisode! - 1 - widget.item.progress} ep behind';
+    if (item.nextEpisode != null && item.nextEpisode! - 1 > item.progress) {
+      final key = '${item.nextEpisode! - 1 - item.progress} ep behind';
       textRailItems[key] = true;
     }
 
     return Column(
       mainAxisAlignment: .spaceAround,
-      crossAxisAlignment: .start,
+      crossAxisAlignment: .stretch,
       children: [
-        Flexible(
-          child: Column(
-            mainAxisSize: .min,
-            crossAxisAlignment: .stretch,
-            children: [
-              Flexible(child: Text(widget.item.titles[0], overflow: .fade)),
-              const SizedBox(height: 5),
-              TextRail(textRailItems),
-            ],
-          ),
-        ),
-        Container(
-          height: 5,
-          margin: const .symmetric(vertical: 3),
-          decoration: BoxDecoration(
-            borderRadius: Theming.borderRadiusSmall,
-            gradient: LinearGradient(
-              colors: [
-                ColorScheme.of(context).onSurfaceVariant,
-                ColorScheme.of(context).onSurfaceVariant,
-                ColorScheme.of(context).surface,
-                ColorScheme.of(context).surface,
-              ],
-              stops: [0.0, progressPercent, progressPercent, 1.0],
+        Flexible(child: Text(widget.item.titles[0], overflow: .ellipsis, maxLines: 2)),
+        TextRail(textRailItems, maxLines: 1),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 3),
+          child: SizedBox(
+            height: 3,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: Theming.borderRadiusSmall,
+                gradient: LinearGradient(
+                  colors: [
+                    colorScheme.onSurfaceVariant,
+                    colorScheme.onSurfaceVariant,
+                    colorScheme.surfaceContainerHighest,
+                    colorScheme.surfaceContainerHighest,
+                  ],
+                  stops: [0.0, progressPercent, progressPercent, 1.0],
+                ),
+              ),
             ),
           ),
         ),
         Row(
           mainAxisAlignment: .spaceBetween,
           children: [
-            ScoreLabel(widget.item.score, widget.scoreFormat),
-            if (widget.item.repeat > 0)
+            ScoreLabel(item.score, widget.scoreFormat),
+            if (item.repeat > 0)
               Tooltip(
                 message: 'Repeats',
                 child: Row(
                   mainAxisSize: .min,
+                  spacing: 3,
                   children: [
                     const Icon(Ionicons.repeat, size: Theming.iconSmall),
-                    const SizedBox(width: 3),
-                    Text(widget.item.repeat.toString(), style: TextTheme.of(context).labelSmall),
+                    Text(item.repeat.toString(), style: TextTheme.of(context).labelSmall),
                   ],
                 ),
               )
@@ -205,7 +223,6 @@ class __TileContentState extends State<_TileContent> {
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 40),
-        padding: const .only(left: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: foregroundColor,
         iconColor: foregroundColor,
@@ -228,9 +245,9 @@ class __TileContentState extends State<_TileContent> {
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
+          spacing: 3,
           children: [
             text,
-            const SizedBox(width: 3),
             const Icon(Ionicons.add_outline, size: Theming.iconSmall),
           ],
         ),

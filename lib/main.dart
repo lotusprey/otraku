@@ -162,17 +162,9 @@ class AppState extends ConsumerState<_App> {
                   : options.buttonOrientation == .right,
             );
 
-            // Override the [textScaleFactor], because some devices apply
-            // too high of a factor and it breaks the app visually.
-            final mediaQuery = MediaQuery.of(context);
-            final scale = mediaQuery.textScaler.clamp(minScaleFactor: 0.8, maxScaleFactor: 1);
-
             return Theme(
               data: Theme.of(context).copyWith(extensions: [theming]),
-              child: MediaQuery(
-                data: mediaQuery.copyWith(textScaler: scale),
-                child: child!,
-              ),
+              child: child!,
             );
           },
         );

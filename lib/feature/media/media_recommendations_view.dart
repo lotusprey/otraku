@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -15,11 +19,13 @@ class MediaRecommendationsSubview extends StatelessWidget {
     required this.id,
     required this.scrollCtrl,
     required this.rateRecommendation,
+    required this.highContrast,
   });
 
   final int id;
   final ScrollController scrollCtrl;
   final Future<Object?> Function(int, bool?) rateRecommendation;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -29,17 +35,23 @@ class MediaRecommendationsSubview extends StatelessWidget {
       provider: mediaConnectionsProvider(
         id,
       ).select((s) => s.unwrapPrevious().whenData((data) => data.recommendations)),
-      onData: (data) => _MediaRecommendationsGrid(id, data.items, rateRecommendation),
+      onData: (data) => _MediaRecommendationsGrid(id, data.items, rateRecommendation, highContrast),
     );
   }
 }
 
 class _MediaRecommendationsGrid extends StatelessWidget {
-  const _MediaRecommendationsGrid(this.mediaId, this.items, this.rateRecommendation);
+  const _MediaRecommendationsGrid(
+    this.mediaId,
+    this.items,
+    this.rateRecommendation,
+    this.highContrast,
+  );
 
   final int mediaId;
   final List<Recommendation> items;
   final Future<Object?> Function(int, bool?) rateRecommendation;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +59,14 @@ class _MediaRecommendationsGrid extends StatelessWidget {
       return const SliverFillRemaining(child: Center(child: Text('No results')));
     }
 
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final tileHeight =
+        bodyMediumLineHeight * 2 + max(labelMediumLineHeight * 2, Theming.iconSmall) + 10;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: 100),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: tileHeight),
       delegate: SliverChildBuilderDelegate(childCount: items.length, (context, i) {
         final textRailItems = <String, bool>{
           if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
@@ -56,7 +74,7 @@ class _MediaRecommendationsGrid extends StatelessWidget {
           if (items[i].releaseYear != null) items[i].releaseYear!.toString(): false,
         };
 
-        return Card(
+        return CardExtension.highContrast(highContrast)(
           child: MediaRouteTile(
             id: items[i].id,
             imageUrl: items[i].imageUrl,
@@ -65,21 +83,24 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                 Hero(
                   tag: items[i].id,
                   child: ClipRRect(
-                    borderRadius: Theming.borderRadiusSmall,
+                    borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                     child: Container(
                       color: ColorScheme.of(context).surfaceContainerHighest,
-                      child: CachedImage(items[i].imageUrl, width: 100 / Theming.coverHtoWRatio),
+                      child: CachedImage(
+                        items[i].imageUrl,
+                        width: tileHeight / Theming.coverHtoWRatio,
+                      ),
                     ),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: Theming.paddingAll,
+                    padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
                     child: Column(
                       crossAxisAlignment: .start,
                       mainAxisAlignment: .spaceAround,
                       children: [
-                        Flexible(child: Text(items[i].title, overflow: .fade)),
+                        Flexible(child: Text(items[i].title, overflow: .ellipsis, maxLines: 2)),
                         Row(
                           spacing: 5,
                           mainAxisAlignment: .spaceBetween,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/tile_modelable.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -9,18 +11,26 @@ class DualRelationGrid extends StatelessWidget {
     required this.items,
     required this.onTapPrimary,
     required this.onTapSecondary,
+    required this.highContrast,
   });
 
   final List<(TileModelable, TileModelable?)> items;
   final void Function(TileModelable item) onTapPrimary;
   final void Function(TileModelable item) onTapSecondary;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelSmallLineHeight = context.lineHeight(textTheme.labelSmall!);
+    final tileHeight = bodyMediumLineHeight * 3 + labelSmallLineHeight * 2 + 13;
+    final imageWidth = tileHeight / Theming.coverHtoWRatio;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: 115),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
         (context, i) => _Tile(
@@ -28,6 +38,8 @@ class DualRelationGrid extends StatelessWidget {
           secondaryItem: items[i].$2,
           onTapPrimary: onTapPrimary,
           onTapSecondary: onTapSecondary,
+          highContrast: highContrast,
+          imageWidth: imageWidth,
         ),
       ),
     );
@@ -40,12 +52,16 @@ class _Tile extends StatelessWidget {
     required this.secondaryItem,
     required this.onTapPrimary,
     required this.onTapSecondary,
+    required this.highContrast,
+    required this.imageWidth,
   });
 
   final TileModelable primaryItem;
   final TileModelable? secondaryItem;
   final void Function(TileModelable item) onTapPrimary;
   final void Function(TileModelable item) onTapSecondary;
+  final bool highContrast;
+  final double imageWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -63,18 +79,19 @@ class _Tile extends StatelessWidget {
                 mainAxisSize: .min,
                 crossAxisAlignment: .start,
                 children: [
-                  Flexible(child: Text(primaryItem.tileTitle, maxLines: 2, overflow: .fade)),
+                  Flexible(child: Text(primaryItem.tileTitle, overflow: .ellipsis, maxLines: 2)),
                   if (primaryItem.tileSubtitle != null)
                     Text(
                       primaryItem.tileSubtitle!,
-                      maxLines: 2,
-                      overflow: .fade,
                       style: TextTheme.of(context).labelSmall,
+                      overflow: .ellipsis,
+                      maxLines: 1,
                     ),
                 ],
               ),
             ),
           ),
+          const Divider(height: 3),
           GestureDetector(
             behavior: .opaque,
             onTap: () => onTapSecondary(secondaryItem!),
@@ -85,17 +102,17 @@ class _Tile extends StatelessWidget {
                 Flexible(
                   child: Text(
                     secondaryItem!.tileTitle,
-                    maxLines: 2,
+                    overflow: .ellipsis,
                     textAlign: .end,
-                    overflow: .fade,
+                    maxLines: 1,
                   ),
                 ),
                 if (secondaryItem!.tileSubtitle != null)
                   Text(
                     secondaryItem!.tileSubtitle!,
-                    maxLines: 2,
-                    overflow: .fade,
                     style: TextTheme.of(context).labelSmall,
+                    overflow: .ellipsis,
+                    maxLines: 1,
                   ),
               ],
             ),
@@ -110,32 +127,35 @@ class _Tile extends StatelessWidget {
           mainAxisAlignment: .start,
           crossAxisAlignment: .start,
           children: [
-            Flexible(child: Text(primaryItem.tileTitle, overflow: .fade)),
+            Flexible(child: Text(primaryItem.tileTitle, overflow: .ellipsis, maxLines: 2)),
             if (primaryItem.tileSubtitle != null)
               Text(
                 primaryItem.tileSubtitle!,
-                maxLines: 4,
-                overflow: .fade,
                 style: TextTheme.of(context).labelSmall,
+                overflow: .ellipsis,
+                maxLines: 2,
               ),
           ],
         ),
       );
     }
 
-    return Card(
+    return CardExtension.highContrast(highContrast)(
       child: Row(
         children: [
           GestureDetector(
             behavior: .opaque,
             onTap: () => onTapPrimary(primaryItem),
             child: ClipRRect(
-              borderRadius: Theming.borderRadiusSmall,
-              child: CachedImage(primaryItem.tileImageUrl, width: 80),
+              borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+              child: CachedImage(primaryItem.tileImageUrl, width: imageWidth),
             ),
           ),
           Expanded(
-            child: Padding(padding: Theming.paddingAll, child: centerContent),
+            child: Padding(
+              padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+              child: centerContent,
+            ),
           ),
           if (secondaryItem != null)
             GestureDetector(
@@ -143,8 +163,8 @@ class _Tile extends StatelessWidget {
               key: ValueKey(secondaryItem!.tileId),
               onTap: () => onTapSecondary(secondaryItem!),
               child: ClipRRect(
-                borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(secondaryItem!.tileImageUrl, width: 80),
+                borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
+                child: CachedImage(secondaryItem!.tileImageUrl, width: imageWidth),
               ),
             ),
         ],

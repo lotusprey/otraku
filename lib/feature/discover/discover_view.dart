@@ -38,8 +38,8 @@ class DiscoverSubview extends StatelessWidget {
               (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
             ),
             onData: (data) => options.discoverItemView == .simple
-                ? DiscoverMediaSimpleGrid(data.items)
-                : DiscoverMediaGrid(data.items),
+                ? DiscoverMediaSimpleGrid(data.items, highContrast: options.highContrast)
+                : DiscoverMediaGrid(data.items, highContrast: options.highContrast),
           ),
           .manga => PagedView(
             scrollCtrl: scrollCtrl,
@@ -48,8 +48,8 @@ class DiscoverSubview extends StatelessWidget {
               (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
             ),
             onData: (data) => options.discoverItemView == .simple
-                ? DiscoverMediaSimpleGrid(data.items)
-                : DiscoverMediaGrid(data.items),
+                ? DiscoverMediaSimpleGrid(data.items, highContrast: options.highContrast)
+                : DiscoverMediaGrid(data.items, highContrast: options.highContrast),
           ),
           .character => PagedView(
             scrollCtrl: scrollCtrl,
@@ -57,7 +57,7 @@ class DiscoverSubview extends StatelessWidget {
             provider: discoverProvider.select(
               (s) => s.whenData((data) => (data as DiscoverCharacterItems).pages),
             ),
-            onData: (data) => CharacterItemGrid(data.items),
+            onData: (data) => CharacterItemGrid(data.items, highContrast: options.highContrast),
           ),
           .staff => PagedView(
             scrollCtrl: scrollCtrl,
@@ -65,7 +65,7 @@ class DiscoverSubview extends StatelessWidget {
             provider: discoverProvider.select(
               (s) => s.whenData((data) => (data as DiscoverStaffItems).pages),
             ),
-            onData: (data) => StaffItemGrid(data.items),
+            onData: (data) => StaffItemGrid(data.items, highContrast: options.highContrast),
           ),
           .studio => PagedView(
             scrollCtrl: scrollCtrl,
@@ -73,7 +73,7 @@ class DiscoverSubview extends StatelessWidget {
             provider: discoverProvider.select(
               (s) => s.whenData((data) => (data as DiscoverStudioItems).pages),
             ),
-            onData: (data) => StudioItemGrid(data.items),
+            onData: (data) => StudioItemGrid(data.items, highContrast: options.highContrast),
           ),
           .user => PagedView(
             scrollCtrl: scrollCtrl,
@@ -81,7 +81,7 @@ class DiscoverSubview extends StatelessWidget {
             provider: discoverProvider.select(
               (s) => s.whenData((data) => (data as DiscoverUserItems).pages),
             ),
-            onData: (data) => UserItemGrid(data.items),
+            onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           .review => PagedView(
             scrollCtrl: scrollCtrl,
@@ -99,9 +99,10 @@ class DiscoverSubview extends StatelessWidget {
             ),
             onData: (data) => DiscoverRecommendationsGrid(
               data.items,
-              (mediaId, recommendedMediaId, rating) => ref
+              onRate: (mediaId, recommendedMediaId, rating) => ref
                   .read(discoverProvider.notifier)
                   .rateRecommendation(mediaId, recommendedMediaId, rating),
+              highContrast: options.highContrast,
             ),
           ),
         };

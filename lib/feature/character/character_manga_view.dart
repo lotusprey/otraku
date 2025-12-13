@@ -8,10 +8,15 @@ import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 
 class CharacterMangaSubview extends StatelessWidget {
-  const CharacterMangaSubview({required this.id, required this.scrollCtrl});
+  const CharacterMangaSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.highContrast,
+  });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +29,7 @@ class CharacterMangaSubview extends StatelessWidget {
       onData: (data) => MonoRelationGrid(
         items: data.items,
         onTap: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+        highContrast: highContrast,
       ),
     );
   }

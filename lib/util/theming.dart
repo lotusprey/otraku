@@ -64,8 +64,8 @@ class Theming extends ThemeExtension<Theming> {
   static const iconSmall = 20.0;
 
   static const paddingAll = EdgeInsets.all(offset);
-  static const radiusSmall = Radius.circular(10);
-  static const radiusBig = Radius.circular(20);
+  static const radiusSmall = Radius.circular(12);
+  static const radiusBig = Radius.circular(24);
   static const borderRadiusSmall = BorderRadius.all(radiusSmall);
   static const borderRadiusBig = BorderRadius.all(radiusBig);
   static final blurFilter = ImageFilter.blur(sigmaX: 5, sigmaY: 5);
@@ -88,14 +88,6 @@ class Theming extends ThemeExtension<Theming> {
       labelType: NavigationRailLabelType.all,
       groupAlignment: 0,
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: scheme.primary,
-        foregroundColor: scheme.onPrimary,
-        iconColor: scheme.onPrimary,
-        textStyle: const TextStyle(fontVariations: [FontVariation('wght', 500)]),
-      ),
-    ),
     chipTheme: ChipThemeData(
       labelStyle: TextStyle(
         color: scheme.onSecondaryContainer,
@@ -112,22 +104,56 @@ class Theming extends ThemeExtension<Theming> {
       thumbShape: HandleThumbShape(),
       thumbSize: WidgetStatePropertyAll(Size(4, 44)),
     ),
-    listTileTheme: const ListTileThemeData(contentPadding: .symmetric(horizontal: offset)),
-    textTheme: TextTheme(
-      titleLarge: TextStyle(
-        fontSize: fontBig,
-        color: scheme.onSurface,
-        fontVariations: const [FontVariation('wght', 400)],
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: scheme.primary,
+        foregroundColor: scheme.onPrimary,
+        iconColor: scheme.onPrimary,
+        textStyle: const TextStyle(
+          fontSize: fontMedium,
+          fontVariations: [FontVariation('wght', 500)],
+        ),
       ),
-      titleMedium: TextStyle(
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        textStyle: const TextStyle(
+          fontSize: fontMedium,
+          fontVariations: [FontVariation('wght', 400)],
+        ),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        textStyle: const TextStyle(
+          fontSize: fontMedium,
+          fontVariations: [FontVariation('wght', 400)],
+        ),
+      ),
+    ),
+    listTileTheme: ListTileThemeData(
+      contentPadding: const .symmetric(horizontal: offset),
+      titleTextStyle: TextStyle(
         fontSize: fontMedium,
         color: scheme.onSurface,
         fontVariations: const [FontVariation('wght', 400)],
+      ),
+      subtitleTextStyle: TextStyle(
+        fontSize: fontSmall,
+        color: scheme.onSurfaceVariant,
+        fontVariations: const [FontVariation('wght', 350)],
+      ),
+    ),
+    textTheme: TextTheme(
+      titleMedium: TextStyle(
+        fontSize: fontBig,
+        color: scheme.onSurface,
+        fontVariations: const [FontVariation('wght', 450)],
       ),
       titleSmall: TextStyle(
         fontSize: fontMedium,
-        color: scheme.onSurfaceVariant,
-        fontVariations: const [FontVariation('wght', 400)],
+        color: scheme.onSurface,
+        fontVariations: const [FontVariation('wght', 450)],
       ),
       bodyLarge: TextStyle(
         fontSize: fontMedium,
@@ -137,11 +163,6 @@ class Theming extends ThemeExtension<Theming> {
       bodyMedium: TextStyle(
         fontSize: fontMedium,
         color: scheme.onSurface,
-        fontVariations: const [FontVariation('wght', 400)],
-      ),
-      labelLarge: TextStyle(
-        fontSize: fontMedium,
-        color: scheme.primary,
         fontVariations: const [FontVariation('wght', 400)],
       ),
       labelMedium: TextStyle(

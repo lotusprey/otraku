@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
@@ -66,18 +69,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     final formFactor = Theming.of(context).formFactor;
 
     return AdaptiveScaffold(
-      topBar: TopBar(
-        trailing: [
-          Expanded(
-            child: Text(
-              'Notifications',
-              style: TextTheme.of(context).titleLarge,
-              overflow: .ellipsis,
-              maxLines: 1,
-            ),
-          ),
-        ],
-      ),
+      topBar: const TopBar(title: 'Notifications'),
       floatingAction: formFactor == .phone
           ? HidingFloatingActionButton(
               key: const Key('filter'),
@@ -172,130 +164,121 @@ class _NotificationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumStyle = textTheme.bodyMedium!;
+    final accentedStyle = bodyMediumStyle.copyWith(color: ColorScheme.of(context).primary);
+
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelSmallLineHeight = context.lineHeight(textTheme.labelSmall!);
+    final height = bodyMediumLineHeight * 2 + max(labelSmallLineHeight, Theming.iconSmall) + 23;
+
     return SizedBox(
-      height: 100,
-      child: Align(
-        alignment: Alignment.topCenter,
-        child: SizedBox(
-          height: 90,
-          child: CardExtension.highContrast(highContrast)(
-            borderOnForeground: false,
-            child: Row(
-              children: [
-                if (item.imageUrl != null)
-                  GestureDetector(
-                    behavior: .opaque,
-                    onTap: () => switch (item) {
-                      FollowNotification item => context.push(
-                        Routes.user(item.userId, item.imageUrl),
-                      ),
-                      ActivityNotification item => context.push(
-                        Routes.user(item.userId, item.imageUrl),
-                      ),
-                      ThreadNotification item => context.push(
-                        Routes.user(item.userId, item.imageUrl),
-                      ),
-                      ThreadCommentNotification item => context.push(
-                        Routes.user(item.userId, item.imageUrl),
-                      ),
-                      MediaReleaseNotification item => context.push(
-                        Routes.media(item.mediaId, item.imageUrl),
-                      ),
-                      MediaChangeNotification item => context.push(
-                        Routes.media(item.mediaId, item.imageUrl),
-                      ),
-                      MediaDeletionNotification _ => null,
-                    },
-                    onLongPress: () => switch (item) {
-                      MediaReleaseNotification item => showSheet(
-                        context,
-                        EditView((id: item.mediaId, setComplete: false)),
-                      ),
-                      MediaChangeNotification item => showSheet(
-                        context,
-                        EditView((id: item.mediaId, setComplete: false)),
-                      ),
-                      _ => null,
-                    },
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                      child: CachedImage(item.imageUrl!, width: 70),
-                    ),
+      height: height + 10,
+      child: CardExtension.highContrast(highContrast)(
+        margin: const .only(bottom: Theming.offset),
+        child: Row(
+          children: [
+            if (item.imageUrl != null)
+              GestureDetector(
+                behavior: .opaque,
+                onTap: () => switch (item) {
+                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                  ActivityNotification item => context.push(
+                    Routes.user(item.userId, item.imageUrl),
                   ),
-                Flexible(
-                  child: GestureDetector(
-                    behavior: .opaque,
-                    onTap: () => switch (item) {
-                      FollowNotification item => context.push(
-                        Routes.user(item.userId, item.imageUrl),
-                      ),
-                      ActivityNotification item => context.push(Routes.activity(item.activityId)),
-                      ThreadNotification item => context.push(Routes.thread(item.threadId)),
-                      ThreadCommentNotification item => context.push(
-                        Routes.comment(item.commentId),
-                      ),
-                      MediaReleaseNotification item => context.push(
-                        Routes.media(item.mediaId, item.imageUrl),
-                      ),
-                      MediaChangeNotification() || MediaDeletionNotification() => showDialog(
-                        context: context,
-                        builder: (context) => _NotificationDialog(item),
-                      ),
-                    },
-                    onLongPress: () => switch (item) {
-                      MediaReleaseNotification item => showSheet(
-                        context,
-                        EditView((id: item.mediaId, setComplete: false)),
-                      ),
-                      MediaChangeNotification item => showSheet(
-                        context,
-                        EditView((id: item.mediaId, setComplete: false)),
-                      ),
-                      _ => null,
-                    },
-                    child: Padding(
-                      padding: Theming.paddingAll,
-                      child: Column(
-                        mainAxisAlignment: .spaceEvenly,
-                        crossAxisAlignment: .stretch,
-                        children: [
-                          Flexible(
-                            child: Text.rich(
-                              overflow: .fade,
-                              TextSpan(
-                                children: [
-                                  for (int i = 0; i < item.texts.length; i++)
-                                    TextSpan(
-                                      text: item.texts[i],
-                                      style: (i % 2 == 0)
-                                          ? TextTheme.of(context).labelLarge
-                                          : TextTheme.of(context).bodyMedium,
-                                    ),
-                                ],
-                              ),
-                            ),
+                  ThreadNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                  ThreadCommentNotification item => context.push(
+                    Routes.user(item.userId, item.imageUrl),
+                  ),
+                  MediaReleaseNotification item => context.push(
+                    Routes.media(item.mediaId, item.imageUrl),
+                  ),
+                  MediaChangeNotification item => context.push(
+                    Routes.media(item.mediaId, item.imageUrl),
+                  ),
+                  MediaDeletionNotification _ => null,
+                },
+                onLongPress: () => switch (item) {
+                  MediaReleaseNotification item => showSheet(
+                    context,
+                    EditView((id: item.mediaId, setComplete: false)),
+                  ),
+                  MediaChangeNotification item => showSheet(
+                    context,
+                    EditView((id: item.mediaId, setComplete: false)),
+                  ),
+                  _ => null,
+                },
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+                  child: CachedImage(item.imageUrl!, width: height / Theming.coverHtoWRatio),
+                ),
+              ),
+            Flexible(
+              child: GestureDetector(
+                behavior: .opaque,
+                onTap: () => switch (item) {
+                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                  ActivityNotification item => context.push(Routes.activity(item.activityId)),
+                  ThreadNotification item => context.push(Routes.thread(item.threadId)),
+                  ThreadCommentNotification item => context.push(Routes.comment(item.commentId)),
+                  MediaReleaseNotification item => context.push(
+                    Routes.media(item.mediaId, item.imageUrl),
+                  ),
+                  MediaChangeNotification() || MediaDeletionNotification() => showDialog(
+                    context: context,
+                    builder: (context) => _NotificationDialog(item),
+                  ),
+                },
+                onLongPress: () => switch (item) {
+                  MediaReleaseNotification item => showSheet(
+                    context,
+                    EditView((id: item.mediaId, setComplete: false)),
+                  ),
+                  MediaChangeNotification item => showSheet(
+                    context,
+                    EditView((id: item.mediaId, setComplete: false)),
+                  ),
+                  _ => null,
+                },
+                child: Padding(
+                  padding: Theming.paddingAll,
+                  child: Column(
+                    mainAxisAlignment: .spaceEvenly,
+                    crossAxisAlignment: .stretch,
+                    spacing: 3,
+                    children: [
+                      Flexible(
+                        child: Text.rich(
+                          overflow: .ellipsis,
+                          maxLines: 2,
+                          TextSpan(
+                            children: [
+                              for (int i = 0; i < item.texts.length; i++)
+                                TextSpan(
+                                  text: item.texts[i],
+                                  style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
+                                ),
+                            ],
                           ),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Timestamp(item.createdAt, analogClock),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
+                      Timestamp(item.createdAt, analogClock),
+                    ],
                   ),
                 ),
-                if (unread)
-                  Container(
-                    width: Theming.offset,
-                    height: double.infinity,
-                    decoration: BoxDecoration(
-                      color: ColorScheme.of(context).primary,
-                      borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
-                    ),
-                  ),
-              ],
+              ),
             ),
-          ),
+            if (unread)
+              Container(
+                height: height,
+                width: Theming.offset,
+                decoration: BoxDecoration(
+                  color: ColorScheme.of(context).primary,
+                  borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -309,17 +292,15 @@ class _NotificationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bodyMediumStyle = TextTheme.of(context).bodyMedium!;
+    final accentedStyle = bodyMediumStyle.copyWith(color: ColorScheme.of(context).primary);
+
     final title = Text.rich(
-      overflow: .fade,
+      overflow: .ellipsis,
       TextSpan(
         children: [
           for (int i = 0; i < item.texts.length; i++)
-            TextSpan(
-              text: item.texts[i],
-              style: (i % 2 == 0)
-                  ? TextTheme.of(context).labelLarge
-                  : TextTheme.of(context).bodyMedium,
-            ),
+            TextSpan(text: item.texts[i], style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle),
         ],
       ),
     );
@@ -331,8 +312,9 @@ class _NotificationDialog extends StatelessWidget {
       Padding(
         padding: Theming.paddingAll,
         child: Row(
+          spacing: Theming.offset,
           children: [
-            if (item.imageUrl != null) ...[
+            if (item.imageUrl != null)
               ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
                 child: CachedImage(
@@ -341,22 +323,15 @@ class _NotificationDialog extends StatelessWidget {
                   height: imageWidth * Theming.coverHtoWRatio,
                 ),
               ),
-              const SizedBox(width: Theming.offset),
-            ],
             Expanded(
               child: Column(
                 mainAxisSize: .min,
+                spacing: Theming.offset,
                 children: [
                   Flexible(child: title),
                   ...switch (item) {
-                    MediaChangeNotification item => [
-                      const SizedBox(height: Theming.offset),
-                      HtmlContent(item.reason),
-                    ],
-                    MediaDeletionNotification item => [
-                      const SizedBox(height: Theming.offset),
-                      HtmlContent(item.reason),
-                    ],
+                    MediaChangeNotification item => [HtmlContent(item.reason)],
+                    MediaDeletionNotification item => [HtmlContent(item.reason)],
                     _ => const [],
                   },
                 ],

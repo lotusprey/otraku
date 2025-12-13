@@ -179,6 +179,8 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+    final options = widget.ref.read(persistenceProvider.select((s) => s.options));
+
     final header = MediaHeader.withoutTabBar(
       id: widget.id,
       coverUrl: widget.coverUrl,
@@ -205,8 +207,12 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
             const SliverFillRemaining(child: Center(child: Text('Failed to load media'))),
           ],
         ),
-        data: (data) =>
-            MediaOverviewSubview.withHeader(ref: widget.ref, info: data.info, header: header),
+        data: (data) => MediaOverviewSubview.withHeader(
+          ref: widget.ref,
+          info: data.info,
+          header: header,
+          highContrast: options.highContrast,
+        ),
       ),
       rightPane: widget.media.unwrapPrevious().maybeWhen(
         data: (data) => _MediaTabs.withoutOverview(
@@ -337,26 +343,42 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
               ref: ref,
               info: widget.media.info,
               scrollCtrl: _scrollCtrl,
+              highContrast: options.highContrast,
             ),
           ),
         MediaRelatedSubview(
           relations: widget.media.related,
           scrollCtrl: _scrollCtrl,
           invalidate: () => ref.invalidate(mediaProvider(widget.id)),
+          highContrast: options.highContrast,
         ),
-        MediaCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-        MediaStaffSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaCharactersSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
+        MediaStaffSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
         MediaReviewsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
           bannerUrl: widget.media.info.banner,
+          highContrast: options.highContrast,
         ),
         MediaThreadsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
           analogClock: options.analogClock,
         ),
-        MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaFollowingSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
         MediaActivitiesSubview(
           ref: ref,
           tag: _mediaActivitiesTag,
@@ -370,12 +392,14 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
           rateRecommendation: ref
               .read(mediaConnectionsProvider(widget.id).notifier)
               .rateRecommendation,
+          highContrast: options.highContrast,
         ),
         MediaStatsSubview(
           ref: ref,
           info: widget.media.info,
           stats: widget.media.stats,
           scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
         ),
       ],
     );

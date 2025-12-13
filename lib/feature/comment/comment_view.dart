@@ -47,7 +47,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
 
     final comment = ref.watch(commentProvider(widget.id));
     final viewerId = ref.watch(viewerIdProvider);
-    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     TopBar? topBar;
     void Function()? floatingActionOnPressed;
@@ -80,7 +80,12 @@ class _CommentViewState extends ConsumerState<CommentView> {
       ),
       child: ConstrainedView(
         child: switch (comment.unwrapPrevious()) {
-          AsyncData(:final value) => _Content(ref, value, analogClock),
+          AsyncData(:final value) => _Content(
+            ref,
+            value,
+            options.highContrast,
+            options.analogClock,
+          ),
           AsyncError() => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
@@ -161,10 +166,11 @@ class _CommentViewState extends ConsumerState<CommentView> {
 }
 
 class _Content extends StatelessWidget {
-  const _Content(this.ref, this.comment, this.analogClock);
+  const _Content(this.ref, this.comment, this.highContrast, this.analogClock);
 
   final WidgetRef ref;
   final Comment comment;
+  final bool highContrast;
   final bool analogClock;
 
   @override
@@ -182,7 +188,7 @@ class _Content extends StatelessWidget {
             child: GestureDetector(
               onTap: openThread,
               behavior: .opaque,
-              child: Text(comment.threadTitle, style: TextTheme.of(context).titleLarge),
+              child: Text(comment.threadTitle, style: TextTheme.of(context).bodyMedium),
             ),
           ),
         ),
@@ -191,6 +197,7 @@ class _Content extends StatelessWidget {
           child: CommentTile(
             comment,
             viewerId: ref.watch(viewerIdProvider),
+            highContrast: highContrast,
             analogClock: analogClock,
             interaction: (
               onReplySaved: (map, commentId) =>

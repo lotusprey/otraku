@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
@@ -36,6 +38,12 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final tileHeight = bodyMediumLineHeight * 2 + labelMediumLineHeight + 55;
+    final coverWidth = tileHeight / Theming.coverHtoWRatio;
+
     return Consumer(
       builder: (context, ref, _) {
         final options = ref.watch(persistenceProvider.select((s) => s.options));
@@ -97,12 +105,13 @@ class _CalendarViewState extends State<CalendarView> {
             onRefresh: (invalidate) => invalidate(calendarProvider),
             onData: (data) => SliverGrid(
               delegate: SliverChildBuilderDelegate(
-                (context, i) => _Tile(data.items[i], options.analogClock),
+                (context, i) =>
+                    _Tile(data.items[i], coverWidth, options.highContrast, options.analogClock),
                 childCount: data.items.length,
               ),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 1,
-                mainAxisExtent: 120,
+                mainAxisExtent: tileHeight,
                 mainAxisSpacing: Theming.offset,
                 crossAxisSpacing: Theming.offset,
               ),
@@ -120,9 +129,11 @@ class _CalendarViewState extends State<CalendarView> {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item, this.analogClock);
+  const _Tile(this.item, this.coverWidth, this.highContrast, this.analogClock);
 
   final CalendarItem item;
+  final double coverWidth;
+  final bool highContrast;
   final bool analogClock;
 
   @override
@@ -139,9 +150,7 @@ class _Tile extends StatelessWidget {
       textRailItems[item.entryStatus!.label(true)] = true;
     }
 
-    const contentPadding = EdgeInsets.symmetric(horizontal: Theming.offset);
-
-    return Card(
+    return CardExtension.highContrast(highContrast)(
       child: MediaRouteTile(
         id: item.mediaId,
         imageUrl: item.cover,
@@ -152,7 +161,7 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: Container(
-                  width: 120 / Theming.coverHtoWRatio,
+                  width: coverWidth,
                   color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(item.cover),
                 ),
@@ -167,13 +176,17 @@ class _Tile extends StatelessWidget {
                   children: [
                     Flexible(
                       child: Padding(
-                        padding: contentPadding,
-                        child: Text(item.title, overflow: .fade),
+                        padding: const .symmetric(horizontal: Theming.offset),
+                        child: Text(item.title, overflow: .ellipsis, maxLines: 2),
                       ),
                     ),
                     Padding(
-                      padding: contentPadding,
-                      child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
+                      padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+                      child: TextRail(
+                        textRailItems,
+                        style: TextTheme.of(context).labelMedium,
+                        maxLines: 1,
+                      ),
                     ),
                     if (item.streamingServices.isNotEmpty)
                       SizedBox(height: 35, child: _ExternalLinkList(item.streamingServices)),

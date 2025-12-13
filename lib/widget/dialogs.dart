@@ -250,7 +250,7 @@ class _DialogColumn extends StatelessWidget {
           children: [
             Padding(
               padding: const .symmetric(vertical: Theming.offset),
-              child: Text(title, style: TextTheme.of(context).titleMedium),
+              child: Text(title, style: TextTheme.of(context).bodyMedium),
             ),
             const Divider(height: 2, thickness: 2),
             Flexible(

@@ -90,6 +90,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
         title: 'Preview Sorting',
         value: _filter.previewSort,
         onChanged: (v) => _filter.previewSort = v,
+        highContrast: options.highContrast,
       );
     }
 
@@ -109,12 +110,14 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               title: 'Sorting',
               value: _filter.sort,
               onChanged: (v) => _filter.sort = v,
+              highContrast: options.highContrast,
             ),
             if (previewSortPicker != null) previewSortPicker,
             ChipMultiSelector(
               title: 'Statuses',
               items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
               values: _filter.statuses,
+              highContrast: options.highContrast,
             ),
             ChipMultiSelector(
               title: 'Formats',
@@ -122,6 +125,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                   .map((v) => (v.label, v))
                   .toList(),
               values: _filter.formats,
+              highContrast: options.highContrast,
             ),
             const SizedBox(height: 5),
             const Divider(),
@@ -160,6 +164,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               items: OriginCountry.values.map((v) => (v.label, v)).toList(),
               value: _filter.country,
               onChanged: (v) => _filter.country = v,
+              highContrast: options.highContrast,
             ),
             if (ofViewer)
               ChipSelector(
@@ -167,12 +172,14 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                 items: const [('Private', true), ('Public', false)],
                 value: _filter.isPrivate,
                 onChanged: (v) => _filter.isPrivate = v,
+                highContrast: options.highContrast,
               ),
             ChipSelector(
               title: 'Notes',
               items: const [('With Notes', true), ('Without Notes', false)],
               value: _filter.hasNotes,
               onChanged: (v) => _filter.hasNotes = v,
+              highContrast: options.highContrast,
             ),
             SizedBox(
               height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,

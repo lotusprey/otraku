@@ -22,6 +22,7 @@ class CommentTile extends StatelessWidget {
   const CommentTile(
     this.comment, {
     required this.viewerId,
+    required this.highContrast,
     required this.analogClock,
     this.interaction,
     this.depth = 0,
@@ -30,12 +31,14 @@ class CommentTile extends StatelessWidget {
   final Comment comment;
   final CommentTileInteraction? interaction;
   final int? viewerId;
+  final bool highContrast;
   final bool analogClock;
   final int depth;
 
   @override
   Widget build(BuildContext context) {
     final userRow = Row(
+      spacing: Theming.offset,
       children: [
         GestureDetector(
           onTap: () => context.push(Routes.user(comment.userId, comment.userAvatarUrl)),
@@ -44,7 +47,6 @@ class CommentTile extends StatelessWidget {
             child: CachedImage(comment.userAvatarUrl, height: 50, width: 50),
           ),
         ),
-        const SizedBox(width: Theming.offset),
         Expanded(
           child: OverflowBar(
             spacing: 5,
@@ -77,7 +79,7 @@ class CommentTile extends StatelessWidget {
                 if (comment.isLocked)
                   Tooltip(
                     message: 'Locked',
-                    triggerMode: TooltipTriggerMode.tap,
+                    triggerMode: .tap,
                     child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                   ),
                 const Spacer(),
@@ -98,12 +100,12 @@ class CommentTile extends StatelessWidget {
                           ),
                         ),
                         child: Row(
+                          spacing: 5,
                           children: [
                             Text(
                               comment.childComments.length.toString(),
                               style: TextTheme.of(context).labelSmall,
                             ),
-                            const SizedBox(width: 5),
                             const Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
                           ],
                         ),
@@ -116,12 +118,12 @@ class CommentTile extends StatelessWidget {
                         radius: Theming.radiusSmall.x,
                         onTap: () => context.push(Routes.comment(comment.id)),
                         child: Row(
+                          spacing: 5,
                           children: [
                             Text(
                               comment.childComments.length.toString(),
                               style: TextTheme.of(context).labelSmall,
                             ),
-                            const SizedBox(width: 5),
                             const Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
                           ],
                         ),
@@ -142,7 +144,7 @@ class CommentTile extends StatelessWidget {
                   ),
                   Tooltip(
                     message: 'Likes',
-                    triggerMode: TooltipTriggerMode.tap,
+                    triggerMode: .tap,
                     child: Row(
                       mainAxisSize: .min,
                       children: [
@@ -169,6 +171,7 @@ class CommentTile extends StatelessWidget {
                           (c) => CommentTile(
                             c,
                             viewerId: viewerId,
+                            highContrast: highContrast,
                             analogClock: analogClock,
                             interaction: interaction,
                             depth: depth + 1,
@@ -194,7 +197,13 @@ class CommentTile extends StatelessWidget {
       crossAxisAlignment: .start,
       children: [
         userRow,
-        if (depth == 0) Card(child: contentColumn) else Card.outlined(child: contentColumn),
+        if (highContrast)
+          Card.outlined(child: contentColumn)
+        else
+          Card(
+            color: depth % 2 == 0 ? null : ColorScheme.of(context).surfaceContainerHigh,
+            child: contentColumn,
+          ),
       ],
     );
   }

@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
@@ -93,24 +96,29 @@ class __AccountPickerState extends State<_AccountPicker> {
   @override
   Widget build(BuildContext context) {
     const divider = SizedBox(height: 40, child: VerticalDivider(width: 10, thickness: 1));
-    const imagePadding = EdgeInsets.symmetric(horizontal: 5);
+
+    final bodyMediumTextHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final labelSmallTextHeight = context.lineHeight(TextTheme.of(context).labelSmall!);
+    final rowHeight = max(_imageSize, bodyMediumTextHeight + labelSmallTextHeight * 2) + 10;
 
     return Dialog(
       insetPadding: const .symmetric(vertical: 24, horizontal: Theming.offset),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadiusGeometry.all(Radius.circular(32)),
+      ),
       child: Consumer(
         builder: (context, ref, _) {
           final accountGroup = ref.watch(persistenceProvider.select((s) => s.accountGroup));
           final accounts = accountGroup.accounts;
 
-          final items = <Widget>[];
-          for (int i = 0; i < accounts.length; i++) {
-            items.add(
+          final items = <Widget>[
+            for (int i = 0; i < accounts.length; i++)
               SizedBox(
-                height: 60,
+                height: rowHeight,
                 child: Row(
                   children: [
                     Padding(
-                      padding: imagePadding,
+                      padding: .all(5),
                       child: CachedImage(
                         accounts[i].avatarUrl,
                         width: _imageSize,
@@ -125,13 +133,13 @@ class __AccountPickerState extends State<_AccountPicker> {
                           Text(
                             '${accounts[i].name} ${accounts[i].id}',
                             overflow: .ellipsis,
-                            maxLines: 2,
+                            maxLines: 1,
                           ),
                           Text(
                             DateTime.now().isBefore(accounts[i].expiration)
                                 ? 'Expires in ${accounts[i].expiration.timeUntil}'
                                 : 'Expired',
-                            style: TextTheme.of(context).labelMedium,
+                            style: TextTheme.of(context).labelSmall,
                             overflow: .ellipsis,
                             maxLines: 2,
                           ),
@@ -162,16 +170,15 @@ class __AccountPickerState extends State<_AccountPicker> {
                   ],
                 ),
               ),
-            );
-          }
+          ];
 
           items.add(
             SizedBox(
-              height: 60,
+              height: rowHeight,
               child: Row(
                 children: [
                   const Padding(
-                    padding: imagePadding,
+                    padding: .all(5),
                     child: Icon(Icons.person_rounded, size: _imageSize),
                   ),
                   const Expanded(child: Text('Guest')),

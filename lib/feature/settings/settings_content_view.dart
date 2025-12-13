@@ -9,10 +9,11 @@ import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class SettingsContentSubview extends StatelessWidget {
-  const SettingsContentSubview(this.scrollCtrl, this.settings);
+  const SettingsContentSubview(this.scrollCtrl, this.settings, this.highContrast);
 
   final ScrollController scrollCtrl;
   final Settings settings;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +44,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: TitleLanguage.values.map((v) => (v.label, v)).toList(),
                 value: settings.titleLanguage,
                 onChanged: (v) => settings.titleLanguage = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -52,6 +54,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: PersonNaming.values.map((v) => (v.label, v)).toList(),
                 value: settings.personNaming,
                 onChanged: (v) => settings.personNaming = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -75,6 +78,7 @@ class SettingsContentSubview extends StatelessWidget {
                 ],
                 value: settings.activityMergeTime,
                 onChanged: (v) => settings.activityMergeTime = v,
+                highContrast: highContrast,
               ),
             ),
             StatefulSwitchListTile(
@@ -100,6 +104,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: ScoreFormat.values.map((v) => (v.label, v)).toList(),
                 value: settings.scoreFormat,
                 onChanged: (v) => settings.scoreFormat = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -109,6 +114,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: EntrySort.rowOrders.map((v) => (v.label, v)).toList(),
                 value: settings.defaultSort,
                 onChanged: (v) => settings.defaultSort = v,
+                highContrast: highContrast,
               ),
             ),
             StatefulCheckboxListTile(
@@ -232,7 +238,7 @@ class _ListManagementState extends State<_ListManagement> {
             children: [
               Padding(
                 padding: const .symmetric(horizontal: Theming.offset),
-                child: Text(widget.title, style: TextTheme.of(context).titleLarge),
+                child: Text(widget.title, style: TextTheme.of(context).bodyMedium),
               ),
               const Spacer(),
               IconButton(

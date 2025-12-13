@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/util/theming.dart';
+
+const _previewHeight = 170.0;
 
 class ThemePreview extends StatelessWidget {
   const ThemePreview({required this.ref, required this.options});
@@ -28,6 +31,8 @@ class ThemePreview extends StatelessWidget {
               ? Colors.black
               : Colors.white
         : null;
+
+    final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
 
     final children = <_ThemeCard>[];
     if (systemPrimaryColor != null) {
@@ -62,8 +67,12 @@ class ThemePreview extends StatelessWidget {
     }
 
     return SizedBox(
-      height: 195,
-      child: ShadowedOverflowList(itemCount: children.length, itemBuilder: (_, i) => children[i]),
+      height: _previewHeight + bodyMediumLineHeight + 5,
+      child: ShadowedOverflowList(
+        itemCount: children.length,
+        itemExtent: 125,
+        itemBuilder: (_, i) => children[i],
+      ),
     );
   }
 }
@@ -89,10 +98,10 @@ class _ThemeCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Column(
+        spacing: 5,
         children: [
           Container(
-            width: 120,
-            height: 170,
+            height: _previewHeight,
             padding: const .all(5),
             decoration: BoxDecoration(
               color: scheme.surface,
@@ -153,13 +162,13 @@ class _ThemeCard extends StatelessWidget {
                       width: 16,
                       height: 16,
                       margin: const .only(right: 7, bottom: 7),
-                      decoration: BoxDecoration(shape: BoxShape.circle, color: scheme.primary),
+                      decoration: BoxDecoration(shape: .circle, color: scheme.primary),
                       child: Center(
                         child: Container(
                           width: 6,
                           height: 2,
                           decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
+                            shape: .rectangle,
                             borderRadius: Theming.borderRadiusSmall,
                             color: scheme.onPrimary,
                           ),
@@ -176,14 +185,14 @@ class _ThemeCard extends StatelessWidget {
                       Container(
                         height: 8,
                         width: 8,
-                        decoration: BoxDecoration(color: scheme.primary, shape: BoxShape.rectangle),
+                        decoration: BoxDecoration(color: scheme.primary, shape: .rectangle),
                       ),
                       Container(
                         height: 8,
                         width: 8,
                         decoration: BoxDecoration(
                           color: scheme.surfaceContainerHighest,
-                          shape: BoxShape.circle,
+                          shape: .circle,
                         ),
                       ),
                       Container(
@@ -191,7 +200,7 @@ class _ThemeCard extends StatelessWidget {
                         width: 8,
                         decoration: BoxDecoration(
                           color: scheme.surfaceContainerHighest,
-                          shape: BoxShape.circle,
+                          shape: .circle,
                         ),
                       ),
                     ],
@@ -200,8 +209,7 @@ class _ThemeCard extends StatelessWidget {
               ],
             ),
           ),
-          const Spacer(),
-          Text(name),
+          Text(name, overflow: .ellipsis, maxLines: 1),
         ],
       ),
     );

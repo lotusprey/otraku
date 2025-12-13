@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -18,12 +22,14 @@ class MediaStatsSubview extends StatelessWidget {
     required this.info,
     required this.stats,
     required this.scrollCtrl,
+    required this.highContrast,
   });
 
   final WidgetRef ref;
   final MediaInfo info;
   final MediaStats stats;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +38,8 @@ class MediaStatsSubview extends StatelessWidget {
         controller: scrollCtrl,
         slivers: [
           SliverToBoxAdapter(child: SizedBox(height: MediaQuery.paddingOf(context).top)),
-          if (stats.ranks.isNotEmpty) _MediaRankGrid(ref: ref, info: info, ranks: stats.ranks),
+          if (stats.ranks.isNotEmpty)
+            _MediaRankGrid(ref: ref, info: info, highContrast: highContrast, ranks: stats.ranks),
           if (stats.scoreNames.isNotEmpty)
             SliverToBoxAdapter(
               child: BarChart(
@@ -45,10 +52,14 @@ class MediaStatsSubview extends StatelessWidget {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const .only(top: Theming.offset),
-                child: PieChart(
-                  title: 'Status Distribution',
-                  names: stats.statusNames,
-                  values: stats.statusValues,
+                child: SizedBox(
+                  height: 200,
+                  child: PieChart(
+                    title: 'Status Distribution',
+                    names: stats.statusNames,
+                    values: stats.statusValues,
+                    highContrast: highContrast,
+                  ),
                 ),
               ),
             ),
@@ -60,23 +71,32 @@ class MediaStatsSubview extends StatelessWidget {
 }
 
 class _MediaRankGrid extends StatelessWidget {
-  const _MediaRankGrid({required this.ref, required this.info, required this.ranks});
+  const _MediaRankGrid({
+    required this.ref,
+    required this.info,
+    required this.highContrast,
+    required this.ranks,
+  });
 
   final WidgetRef ref;
   final MediaInfo info;
+  final bool highContrast;
   final List<MediaRank> ranks;
 
   @override
   Widget build(BuildContext context) {
+    final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final tileHeight = max(bodyMediumLineHeight * 2, Theming.iconBig) + 10;
+
     return SliverPadding(
       padding: const .symmetric(vertical: Theming.offset),
       sliver: SliverGrid(
-        gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-          height: Theming.normalTapTarget,
+        gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+          height: tileHeight,
           minWidth: 185,
         ),
         delegate: SliverChildBuilderDelegate((_, i) {
-          return Card(
+          return CardExtension.highContrast(highContrast)(
             child: InkWell(
               borderRadius: Theming.borderRadiusSmall,
               onTap: () {
@@ -105,20 +125,13 @@ class _MediaRankGrid extends StatelessWidget {
               child: Padding(
                 padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
                 child: Row(
+                  spacing: Theming.offset,
                   children: [
                     Icon(
                       ranks[i].typeIsScore ? Ionicons.star : Icons.favorite_rounded,
                       color: ColorScheme.of(context).onSurfaceVariant,
                     ),
-                    const SizedBox(width: 5),
-                    Expanded(
-                      child: Text(
-                        ranks[i].text,
-                        style: TextTheme.of(context).bodyMedium,
-                        overflow: .ellipsis,
-                        maxLines: 2,
-                      ),
-                    ),
+                    Expanded(child: Text(ranks[i].text, overflow: .ellipsis, maxLines: 2)),
                   ],
                 ),
               ),

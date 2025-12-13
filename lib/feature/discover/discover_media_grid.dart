@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';
@@ -7,9 +9,10 @@ import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/text_rail.dart';
 
 class DiscoverMediaGrid extends StatelessWidget {
-  const DiscoverMediaGrid(this.items);
+  const DiscoverMediaGrid(this.items, {required this.highContrast});
 
   final List<DiscoverMediaItem> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -17,20 +20,28 @@ class DiscoverMediaGrid extends StatelessWidget {
       return const SliverFillRemaining(child: Center(child: Text('No Media')));
     }
 
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final labelSmallLineHeight = context.lineHeight(textTheme.labelSmall!);
+    final tileHeight = bodyMediumLineHeight + labelMediumLineHeight * 2 + labelSmallLineHeight + 16;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 290, height: 110),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 290, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, index) => _Tile(items[index]),
+        (context, index) => _Tile(items[index], highContrast, tileHeight),
       ),
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item);
+  const _Tile(this.item, this.highContrast, this.tileHeight);
 
   final DiscoverMediaItem item;
+  final bool highContrast;
+  final double tileHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +62,7 @@ class _Tile extends StatelessWidget {
 
     final detailTextStyle = TextTheme.of(context).labelSmall;
 
-    return Card(
+    return CardExtension.highContrast(highContrast)(
       child: MediaRouteTile(
         id: item.id,
         imageUrl: item.imageUrl,
@@ -62,7 +73,7 @@ class _Tile extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: Container(
-                  width: 120 / Theming.coverHtoWRatio,
+                  width: tileHeight / Theming.coverHtoWRatio,
                   color: ColorScheme.of(context).surfaceContainerHighest,
                   child: CachedImage(item.imageUrl),
                 ),
@@ -70,39 +81,43 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: Theming.paddingAll,
+                padding: .symmetric(horizontal: Theming.offset, vertical: Theming.offset / 2),
                 child: Column(
                   crossAxisAlignment: .start,
                   mainAxisAlignment: .spaceAround,
+                  spacing: 3,
                   children: [
                     Flexible(
                       child: Column(
                         mainAxisSize: .min,
                         crossAxisAlignment: .start,
+                        mainAxisAlignment: .spaceBetween,
+                        spacing: 3,
                         children: [
-                          Flexible(child: Text(item.name, overflow: .fade)),
-                          const SizedBox(height: 5),
+                          Flexible(child: Text(item.name, overflow: .ellipsis, maxLines: 2)),
                           TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 5),
                     Row(
+                      spacing: 5,
                       children: [
                         Icon(
                           Icons.percent_rounded,
                           size: 15,
                           color: ColorScheme.of(context).onSurfaceVariant,
                         ),
-                        const SizedBox(width: 5),
-                        Text(item.averageScore.toString(), style: detailTextStyle),
-                        const SizedBox(width: 15),
+                        Text(
+                          item.averageScore.toString(),
+                          style: detailTextStyle,
+                          overflow: .ellipsis,
+                          maxLines: 1,
+                        ),
                         Icon(
                           Icons.person_outline_rounded,
                           size: 15,
                           color: ColorScheme.of(context).onSurfaceVariant,
                         ),
-                        const SizedBox(width: 5),
                         Text(item.popularity.toString(), style: detailTextStyle),
                       ],
                     ),

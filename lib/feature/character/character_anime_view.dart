@@ -10,10 +10,15 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class CharacterAnimeSubview extends StatelessWidget {
-  const CharacterAnimeSubview({required this.id, required this.scrollCtrl});
+  const CharacterAnimeSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.highContrast,
+  });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -31,6 +36,7 @@ class CharacterAnimeSubview extends StatelessWidget {
               items: data.items,
               onTapPrimary: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
               onTapSecondary: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
+              highContrast: highContrast,
             ),
           ],
         );

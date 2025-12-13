@@ -34,30 +34,34 @@ class ReplyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const avatarSize = 50.0;
+
     return Column(
+      mainAxisSize: .min,
       crossAxisAlignment: .start,
+      spacing: 5,
       children: [
         GestureDetector(
           behavior: .opaque,
           onTap: () => context.push(Routes.user(reply.authorId, reply.authorAvatarUrl)),
           child: Row(
             mainAxisSize: .min,
+            spacing: Theming.offset,
             children: [
               ClipRRect(
                 borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(reply.authorAvatarUrl, height: 50, width: 50),
+                child: CachedImage(reply.authorAvatarUrl, height: avatarSize, width: avatarSize),
               ),
-              const SizedBox(width: Theming.offset),
-              Text(reply.authorName),
+              Flexible(child: Text(reply.authorName, overflow: .ellipsis, maxLines: 1)),
             ],
           ),
         ),
-        const SizedBox(height: 5),
         CardExtension.highContrast(highContrast)(
           margin: const .only(bottom: Theming.offset),
           child: Padding(
             padding: const .only(top: Theming.offset, left: Theming.offset, right: Theming.offset),
             child: Column(
+              mainAxisSize: .min,
               children: [
                 UnconstrainedBox(
                   constrainedAxis: Axis.horizontal,
@@ -65,9 +69,10 @@ class ReplyCard extends StatelessWidget {
                   child: HtmlContent(reply.text),
                 ),
                 Row(
+                  mainAxisAlignment: .spaceBetween,
+                  spacing: 5,
                   children: [
-                    Timestamp(reply.createdAt, analogClock),
-                    const Spacer(),
+                    Expanded(child: Timestamp(reply.createdAt, analogClock)),
                     Consumer(
                       builder: (context, ref, _) => SizedBox(
                         height: 40,
@@ -86,7 +91,6 @@ class ReplyCard extends StatelessWidget {
                             : _ReplyMentionButton(ref, activityId, reply.authorName),
                       ),
                     ),
-                    const SizedBox(width: Theming.offset),
                     _ReplyLikeButton(reply: reply, toggleLike: toggleLike),
                   ],
                 ),

@@ -30,10 +30,15 @@ class Timestamp extends StatelessWidget {
         onTap: onTap,
         child: Row(
           mainAxisSize: .min,
+          spacing: 5,
           children: [
             leading,
-            const SizedBox(width: 5),
-            Text(_relativeTime(), style: TextTheme.of(context).labelSmall),
+            Text(
+              _relativeTime(),
+              style: TextTheme.of(context).labelSmall,
+              overflow: .ellipsis,
+              maxLines: 1,
+            ),
           ],
         ),
       ),

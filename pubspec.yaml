@@ -16,7 +16,7 @@ dependencies:
   flutter_riverpod: ^3.0.3
 
   # Routing.
-  go_router: ^17.0.0
+  go_router: ^17.0.1
 
   # Data fetching.
   http: ^1.6.0
@@ -28,7 +28,7 @@ dependencies:
   path_provider: ^2.1.5
 
   # Secure storage for the access tokens.
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^10.0.0
 
   # Markdown to HTML parsing.
   markdown: ^7.3.0

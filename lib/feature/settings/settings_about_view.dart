@@ -44,7 +44,7 @@ class SettingsAboutSubview extends StatelessWidget {
                 child: Text(
                   'Otraku - v.$appVersion',
                   textAlign: .center,
-                  style: TextTheme.of(context).titleMedium,
+                  style: TextTheme.of(context).bodyMedium,
                 ),
               ),
               const Text('An unofficial AniList app', textAlign: .center),

@@ -33,7 +33,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
 
   @override
   Widget build(BuildContext context) {
-    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     return AdaptiveScaffold(
       topBar: TopBar(
@@ -70,7 +70,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
         provider: forumProvider,
         scrollCtrl: _scrollCtrl,
         onRefresh: (invalidate) => invalidate(forumProvider),
-        onData: (data) => ThreadItemList(data.items, analogClock),
+        onData: (data) => ThreadItemList(data.items, options.highContrast, options.analogClock),
       ),
     );
   }

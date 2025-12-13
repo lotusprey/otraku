@@ -37,9 +37,9 @@ class StudioHeader extends StatelessWidget {
                     tag: id,
                     child: Text(
                       name,
-                      overflow: .fade,
                       textAlign: .center,
-                      style: TextTheme.of(context).titleLarge,
+                      overflow: .ellipsis,
+                      style: TextTheme.of(context).bodyMedium,
                     ),
                   ),
                 ),

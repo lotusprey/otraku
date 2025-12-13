@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/util/routes.dart';
@@ -15,8 +18,19 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(TextTheme.of(context).labelMedium!);
+    final detailsHeight = max(
+      labelMediumLineHeight * 2,
+      labelMediumLineHeight + Theming.iconSmall + 5,
+    );
+    final textHeight = bodyMediumLineHeight * 2 + detailsHeight + 15;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: 200),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
+        minWidth: 270,
+        height: textHeight + 100,
+      ),
       delegate: SliverChildBuilderDelegate(
         (_, i) => _Tile(items[i], highContrast),
         childCount: items.length,
@@ -34,64 +48,62 @@ class _Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CardExtension.highContrast(highContrast)(
-      borderOnForeground: false,
       child: InkWell(
         borderRadius: Theming.borderRadiusSmall,
         onTap: () => context.push(Routes.review(item.id, item.bannerUrl)),
         child: Column(
           crossAxisAlignment: .stretch,
           children: [
-            if (item.bannerUrl != null)
-              Expanded(
-                flex: 2,
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
-                  child: Hero(tag: item.id, child: CachedImage(item.bannerUrl!)),
-                ),
-              ),
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: Theming.paddingAll,
-                child: Column(
-                  crossAxisAlignment: .stretch,
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Align(
-                        alignment: Alignment.bottomLeft,
-                        child: Text(
-                          'Review of ${item.mediaTitle} by ${item.userName}',
-                          style: TextTheme.of(context).titleMedium,
-                          overflow: .fade,
+            SizedBox(
+              height: 100,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
+                child: item.bannerUrl != null
+                    ? Hero(tag: item.id, child: CachedImage(item.bannerUrl!))
+                    : DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: ColorScheme.of(context).surfaceContainerHighest,
                         ),
                       ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: .symmetric(horizontal: Theming.offset, vertical: 5),
+                child: Column(
+                  crossAxisAlignment: .stretch,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  spacing: 5,
+                  children: [
+                    Text(
+                      'Review of ${item.mediaTitle} by ${item.userName}',
+                      style: TextTheme.of(context).bodyMedium,
+                      overflow: .ellipsis,
+                      maxLines: 2,
                     ),
-                    const SizedBox(height: 5),
-                    Expanded(
-                      flex: 3,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              item.summary,
-                              style: TextTheme.of(context).labelMedium,
-                              overflow: .fade,
-                            ),
+                    Row(
+                      mainAxisAlignment: .spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.summary,
+                            style: TextTheme.of(context).labelMedium,
+                            overflow: .ellipsis,
+                            maxLines: 2,
                           ),
-                          Padding(
-                            padding: const .symmetric(horizontal: 5),
-                            child: Column(
-                              mainAxisAlignment: .center,
-                              children: [
-                                const Icon(Icons.thumb_up_outlined, size: Theming.iconSmall),
-                                const SizedBox(height: 5),
-                                Text(item.rating, style: TextTheme.of(context).labelMedium),
-                              ],
-                            ),
+                        ),
+                        Padding(
+                          padding: const .symmetric(horizontal: 5),
+                          child: Column(
+                            mainAxisAlignment: .center,
+                            spacing: 5,
+                            children: [
+                              const Icon(Icons.thumb_up_outlined, size: Theming.iconSmall),
+                              Text(item.rating, style: TextTheme.of(context).labelMedium),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/action_chip_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
@@ -19,12 +21,14 @@ class MediaOverviewSubview extends StatelessWidget {
   const MediaOverviewSubview.asFragment({
     required this.info,
     required this.ref,
+    required this.highContrast,
     required ScrollController this.scrollCtrl,
   }) : header = null;
 
   const MediaOverviewSubview.withHeader({
     required this.info,
     required this.ref,
+    required this.highContrast,
     required Widget this.header,
   }) : scrollCtrl = null;
 
@@ -32,6 +36,7 @@ class MediaOverviewSubview extends StatelessWidget {
   final MediaInfo info;
   final Widget? header;
   final ScrollController? scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -90,9 +95,9 @@ class MediaOverviewSubview extends StatelessWidget {
           padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
-              if (info.description.isNotEmpty) _Description(info.description),
+              if (info.description.isNotEmpty) _Description(info.description, highContrast),
               SliverToBoxAdapter(
-                child: Card.outlined(
+                child: CardExtension.highContrast(highContrast)(
                   child: Padding(
                     padding: Theming.paddingAll,
                     child: Row(
@@ -124,39 +129,51 @@ class MediaOverviewSubview extends StatelessWidget {
                 ),
               ),
               spacing,
-              SliverTableList(details),
+              SliverTableList(details, highContrast: highContrast),
               if (info.genres.isNotEmpty)
                 _Wrap(
                   title: 'Genres',
                   children: info.genres
-                      .map((genre) => _buildGenreActionChip(context, genre))
+                      .map((genre) => _buildGenreActionChip(context, genre, highContrast))
                       .toList(),
                 ),
-              if (info.tags.isNotEmpty) _TagsWrap(ref: ref, tags: info.tags, isAnime: info.isAnime),
+              if (info.tags.isNotEmpty)
+                _TagsWrap(
+                  ref: ref,
+                  tags: info.tags,
+                  isAnime: info.isAnime,
+                  highContrast: highContrast,
+                ),
               if (info.studios.isNotEmpty)
                 _Wrap(
                   title: 'Studios',
                   children: info.studios.entries
-                      .map((studio) => _buildStudioActionChip(context, studio.key, studio.value))
+                      .map(
+                        (studio) =>
+                            _buildStudioActionChip(context, studio.key, studio.value, highContrast),
+                      )
                       .toList(),
                 ),
               if (info.producers.isNotEmpty)
                 _Wrap(
                   title: 'Producers',
                   children: info.producers.entries
-                      .map((studio) => _buildStudioActionChip(context, studio.key, studio.value))
+                      .map(
+                        (studio) =>
+                            _buildStudioActionChip(context, studio.key, studio.value, highContrast),
+                      )
                       .toList(),
                 ),
               if (info.externalLinks.isNotEmpty)
                 _Wrap(
                   title: 'External links',
                   children: info.externalLinks
-                      .map((link) => _buildExternalLinkChip(context, link))
+                      .map((link) => _buildExternalLinkChip(context, link, highContrast))
                       .toList(),
                 ),
               spacing,
               spacing,
-              SliverTableList(titles),
+              SliverTableList(titles, highContrast: highContrast),
             ],
           ),
         ),
@@ -169,8 +186,8 @@ class MediaOverviewSubview extends StatelessWidget {
     );
   }
 
-  Widget _buildGenreActionChip(BuildContext context, String genre) {
-    return ActionChip(
+  Widget _buildGenreActionChip(BuildContext context, String genre, bool highContrast) {
+    return ActionChipExtension.highContrast(highContrast)(
       label: Text(genre),
       tooltip: 'Filter By Genre',
       onPressed: () {
@@ -187,21 +204,22 @@ class MediaOverviewSubview extends StatelessWidget {
     );
   }
 
-  Widget _buildStudioActionChip(BuildContext context, String name, int id) {
-    return ActionChip(
+  Widget _buildStudioActionChip(BuildContext context, String name, int id, bool highContrast) {
+    return ActionChipExtension.highContrast(highContrast)(
       label: Text(name),
       tooltip: 'Open Studio',
       onPressed: () => context.push(Routes.studio(id, name)),
     );
   }
 
-  Widget _buildExternalLinkChip(BuildContext context, ExternalLink link) {
+  Widget _buildExternalLinkChip(BuildContext context, ExternalLink link, bool highContrast) {
     return _Chip(
       label: link.countryCode == null ? Text(link.site) : Text('${link.site} ${link.countryCode}'),
       onTap: () => SnackBarExtension.launch(context, link.url),
       onLongTap: () => SnackBarExtension.copy(context, link.url),
       onTapHint: 'open external link',
       onLongTapHint: 'copy external link',
+      highContrast: highContrast,
       leading: Container(
         width: 15,
         height: 15,
@@ -212,9 +230,10 @@ class MediaOverviewSubview extends StatelessWidget {
 }
 
 class _Description extends StatefulWidget {
-  const _Description(this.text);
+  const _Description(this.text, this.highContrast);
 
   final String text;
+  final bool highContrast;
 
   @override
   State<_Description> createState() => _DescriptionState();
@@ -242,7 +261,7 @@ class _DescriptionState extends State<_Description> {
     return SliverToBoxAdapter(
       child: Padding(
         padding: const .only(bottom: Theming.offset),
-        child: Card.outlined(
+        child: CardExtension.highContrast(widget.highContrast)(
           child: InkWell(
             borderRadius: Theming.borderRadiusSmall,
             onTap: () => setState(() => _expanded = !_expanded),
@@ -269,12 +288,12 @@ class _IconTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Tooltip(
       message: tooltip,
-      triggerMode: TooltipTriggerMode.tap,
+      triggerMode: .tap,
       child: Column(
         mainAxisSize: .min,
+        spacing: 5,
         children: [
           Icon(icon, size: Theming.iconSmall, color: ColorScheme.of(context).onSurfaceVariant),
-          const SizedBox(height: 5),
           Text(text),
         ],
       ),
@@ -296,14 +315,14 @@ class _Wrap extends StatelessWidget {
         mainAxisSize: .min,
         crossAxisAlignment: .stretch,
         children: [
-          SizedBox(
-            height: Theming.minTapTarget,
-            child: Row(
-              children: [
-                Expanded(child: Text(title)),
-                if (trailingAction != null) trailingAction!,
-              ],
-            ),
+          Row(
+            children: [
+              Expanded(child: Text(title)),
+              if (trailingAction != null)
+                trailingAction!
+              else
+                const SizedBox(height: Theming.minTapTarget),
+            ],
           ),
           Wrap(spacing: 5, children: children),
         ],
@@ -313,11 +332,17 @@ class _Wrap extends StatelessWidget {
 }
 
 class _TagsWrap extends StatefulWidget {
-  const _TagsWrap({required this.ref, required this.tags, required this.isAnime});
+  const _TagsWrap({
+    required this.ref,
+    required this.tags,
+    required this.isAnime,
+    required this.highContrast,
+  });
 
   final WidgetRef ref;
   final List<Tag> tags;
   final bool isAnime;
+  final bool highContrast;
 
   @override
   State<_TagsWrap> createState() => __TagsWrapState();
@@ -343,9 +368,7 @@ class __TagsWrapState extends State<_TagsWrap> {
         ? widget.tags
         : widget.tags.where((t) => !t.isSpoiler).toList();
 
-    final spoilerTextStyle = Theme.of(
-      context,
-    ).textTheme.bodyMedium?.copyWith(color: ColorScheme.of(context).error);
+    final spoilerColor = ColorScheme.of(context).error;
 
     return _Wrap(
       title: 'Tags',
@@ -358,15 +381,19 @@ class __TagsWrapState extends State<_TagsWrap> {
               onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
             )
           : null,
-      children: tags.map((tag) => _buildTagChip(tag, spoilerTextStyle)).toList(),
+      children: tags.map((tag) => _buildTagChip(tag, spoilerColor)).toList(),
     );
   }
 
-  Widget _buildTagChip(Tag tag, TextStyle? spoilerTextStyle) {
+  Widget _buildTagChip(Tag tag, Color spoilerColor) {
     return _Chip(
-      label: Text('${tag.name} ${tag.rank}%', style: tag.isSpoiler ? spoilerTextStyle : null),
+      label: Text(
+        '${tag.name} ${tag.rank}%',
+        style: tag.isSpoiler ? TextStyle(color: spoilerColor) : null,
+      ),
       onTapHint: 'filter by this tag',
       onLongTapHint: 'show tag description',
+      highContrast: widget.highContrast,
       onTap: () {
         final notifier = widget.ref.read(discoverFilterProvider.notifier);
         final filter = notifier.state.copyWith(
@@ -389,6 +416,7 @@ class __TagsWrapState extends State<_TagsWrap> {
 class _Chip extends StatelessWidget {
   const _Chip({
     required this.label,
+    required this.highContrast,
     this.leading,
     this.onTap,
     this.onLongTap,
@@ -402,6 +430,7 @@ class _Chip extends StatelessWidget {
   final void Function()? onLongTap;
   final String? onTapHint;
   final String? onLongTapHint;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -411,7 +440,11 @@ class _Chip extends StatelessWidget {
         onLongPressHint: onLongTapHint,
         child: GestureDetector(
           onLongPress: onLongTap,
-          child: RawChip(label: label, avatar: leading, onPressed: onTap),
+          child: ActionChipExtension.highContrast(highContrast)(
+            label: label,
+            avatar: leading,
+            onPressed: onTap,
+          ),
         ),
       ),
     );

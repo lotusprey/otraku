@@ -60,6 +60,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
             context: context,
             filter: ref.read(reviewsFilterProvider(widget.id)),
             onDone: (filter) => ref.read(reviewsFilterProvider(widget.id).notifier).state = filter,
+            highContrast: options.highContrast,
           ),
         ),
       ),

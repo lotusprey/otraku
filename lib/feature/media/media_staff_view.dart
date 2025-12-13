@@ -8,10 +8,11 @@ import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 
 class MediaStaffSubview extends StatelessWidget {
-  const MediaStaffSubview({required this.id, required this.scrollCtrl});
+  const MediaStaffSubview({required this.id, required this.scrollCtrl, required this.highContrast});
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +25,7 @@ class MediaStaffSubview extends StatelessWidget {
       onData: (data) => MonoRelationGrid(
         items: data.items,
         onTap: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
+        highContrast: highContrast,
       ),
     );
   }

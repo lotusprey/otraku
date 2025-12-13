@@ -164,7 +164,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                     GestureDetector(
                       behavior: .opaque,
                       onTap: () => SnackBarExtension.copy(context, title!),
-                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).titleLarge),
+                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyMedium),
                     ),
                   if (details != null) ...[const SizedBox(height: 5), details!],
                 ],
@@ -231,7 +231,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           Expanded(
             child: Opacity(
               opacity: transition,
-              child: Text(title!, style: theme.textTheme.titleMedium, overflow: .ellipsis),
+              child: Text(title!, style: theme.textTheme.bodyMedium, overflow: .ellipsis),
             ),
           ),
         ...trailingTopButtons,

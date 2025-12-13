@@ -30,7 +30,7 @@ class ReviewHeader extends StatelessWidget {
                         review!.mediaTitle,
                         overflow: .fade,
                         textAlign: .center,
-                        style: TextTheme.of(context).titleLarge,
+                        style: TextTheme.of(context).bodyMedium,
                       ),
                     ),
                   ),
@@ -41,7 +41,7 @@ class ReviewHeader extends StatelessWidget {
                       child: Text.rich(
                         textAlign: .center,
                         TextSpan(
-                          style: TextTheme.of(context).titleMedium,
+                          style: TextTheme.of(context).bodyMedium,
                           children: [
                             TextSpan(text: 'review by ', style: TextTheme.of(context).labelMedium),
                             TextSpan(text: review!.userName),

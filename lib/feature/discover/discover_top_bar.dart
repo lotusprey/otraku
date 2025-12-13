@@ -7,6 +7,7 @@ import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_media_filter_view.dart';
 import 'package:otraku/feature/discover/discover_recommendations_filter_sheet.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/debounce.dart';
@@ -23,6 +24,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final filter = ref.watch(discoverFilterProvider);
+        final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
         return Expanded(
           child: Row(
@@ -33,13 +35,13 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                     'Reviews',
                     maxLines: 1,
                     overflow: .ellipsis,
-                    style: TextTheme.of(context).titleLarge,
+                    style: TextTheme.of(context).bodyMedium,
                   ),
                   .recommendation => Text(
                     'Recommendations',
                     maxLines: 1,
                     overflow: .ellipsis,
-                    style: TextTheme.of(context).titleLarge,
+                    style: TextTheme.of(context).bodyMedium,
                   ),
                   _ => SearchField(
                     debounce: Debounce(),
@@ -75,6 +77,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   onPressed: () => showReviewsFilterSheet(
                     context: context,
                     filter: filter.reviewsFilter,
+                    highContrast: highContrast,
                     onDone: (filter) {
                       final discoverFilter = ref.read(discoverFilterProvider);
                       if (filter != discoverFilter.reviewsFilter) {
@@ -91,6 +94,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   onPressed: () => showRecommendationsFilterSheet(
                     context: context,
                     filter: filter.recommendationsFilter,
+                    highContrast: highContrast,
                     onDone: (filter) {
                       final discoverFilter = ref.read(discoverFilterProvider);
                       if (filter != discoverFilter.recommendationsFilter) {

@@ -51,7 +51,7 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
     final tab = SocialTab.values[_tabCtrl.index];
 
     final viewerId = ref.watch(viewerIdProvider);
-    final analogClock = ref.watch(persistenceProvider.select((s) => s.options.analogClock));
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final count = ref.watch(socialProvider(widget.id).select((s) => s.value?.getCount(tab) ?? 0));
 
@@ -91,7 +91,7 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
             provider: socialProvider(
               widget.id,
             ).select((s) => s.unwrapPrevious().whenData((data) => data.following)),
-            onData: (data) => UserItemGrid(data.items),
+            onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
@@ -99,7 +99,7 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
             provider: socialProvider(
               widget.id,
             ).select((s) => s.unwrapPrevious().whenData((data) => data.followers)),
-            onData: (data) => UserItemGrid(data.items),
+            onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
@@ -107,7 +107,7 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
             provider: socialProvider(
               widget.id,
             ).select((s) => s.unwrapPrevious().whenData((data) => data.threads)),
-            onData: (data) => ThreadItemList(data.items, analogClock),
+            onData: (data) => ThreadItemList(data.items, options.highContrast, options.analogClock),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
@@ -115,7 +115,8 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
             provider: socialProvider(
               widget.id,
             ).select((s) => s.unwrapPrevious().whenData((data) => data.comments)),
-            onData: (data) => _CommentItemList(data.items, viewerId, analogClock),
+            onData: (data) =>
+                _CommentItemList(data.items, viewerId, options.highContrast, options.analogClock),
           ),
         ],
       ),
@@ -124,10 +125,11 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
 }
 
 class _CommentItemList extends StatelessWidget {
-  const _CommentItemList(this.items, this.viewerId, this.analogClock);
+  const _CommentItemList(this.items, this.viewerId, this.highContrast, this.analogClock);
 
   final List<Comment> items;
   final int? viewerId;
+  final bool highContrast;
   final bool analogClock;
 
   @override
@@ -139,22 +141,29 @@ class _CommentItemList extends StatelessWidget {
 
         final openThread = () => context.push(Routes.thread(item.threadId));
 
-        return Column(
-          crossAxisAlignment: .start,
-          children: [
-            Semantics(
-              onTap: openThread,
-              onTapHint: 'open thread',
-              child: GestureDetector(
+        return Padding(
+          padding: const .only(bottom: Theming.offset),
+          child: Column(
+            crossAxisAlignment: .start,
+            spacing: Theming.offset,
+            children: [
+              Semantics(
                 onTap: openThread,
-                behavior: .opaque,
-                child: Text(item.threadTitle, style: TextTheme.of(context).titleMedium),
+                onTapHint: 'open thread',
+                child: GestureDetector(
+                  onTap: openThread,
+                  behavior: .opaque,
+                  child: Text(item.threadTitle, style: TextTheme.of(context).bodyMedium),
+                ),
               ),
-            ),
-            const SizedBox(height: Theming.offset),
-            CommentTile(item, viewerId: viewerId, analogClock: analogClock),
-            const SizedBox(height: Theming.offset),
-          ],
+              CommentTile(
+                item,
+                viewerId: viewerId,
+                highContrast: highContrast,
+                analogClock: analogClock,
+              ),
+            ],
+          ),
         );
       },
     );

@@ -202,7 +202,11 @@ class _Content extends StatelessWidget {
 
         if (collectionIsExpanded && options.collectionItemView == .simple ||
             !collectionIsExpanded && options.collectionPreviewItemView == .simple) {
-          return CollectionGrid(items: entries, onProgressUpdated: onProgressUpdated);
+          return CollectionGrid(
+            items: entries,
+            onProgressUpdated: onProgressUpdated,
+            highContrast: options.highContrast,
+          );
         }
 
         return CollectionList(
@@ -211,6 +215,7 @@ class _Content extends StatelessWidget {
           scoreFormat: ref.watch(
             collectionProvider(tag).select((s) => s.value?.scoreFormat ?? .point10Decimal),
           ),
+          highContrast: options.highContrast,
         );
       },
     );

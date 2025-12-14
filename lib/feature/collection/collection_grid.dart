@@ -45,14 +45,11 @@ class CollectionGrid extends StatelessWidget {
               crossAxisAlignment: .stretch,
               children: [
                 Expanded(
-                  child: Hero(
-                    tag: items[i].mediaId,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
-                      child: Container(
-                        color: ColorScheme.of(context).surfaceContainerHighest,
-                        child: CachedImage(items[i].imageUrl),
-                      ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
+                    child: Container(
+                      color: ColorScheme.of(context).surfaceContainerHighest,
+                      child: CachedImage(items[i].imageUrl),
                     ),
                   ),
                 ),

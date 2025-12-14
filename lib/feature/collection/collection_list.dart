@@ -82,14 +82,11 @@ class _Tile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: .start,
           children: [
-            Hero(
-              tag: entry.mediaId,
-              child: ClipRRect(
-                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(color: ColorScheme.of(context).surfaceContainerHighest),
-                  child: CachedImage(entry.imageUrl, width: coverWidth),
-                ),
+            ClipRRect(
+              borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: ColorScheme.of(context).surfaceContainerHighest),
+                child: CachedImage(entry.imageUrl, width: coverWidth),
               ),
             ),
             Expanded(

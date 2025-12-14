@@ -83,17 +83,6 @@ class CollectionSubview extends StatelessWidget {
       );
     }
 
-    final listToWidget = (EntryList l) => Row(
-      children: [
-        Expanded(child: Text(l.name)),
-        const SizedBox(width: Theming.offset / 2),
-        DefaultTextStyle(
-          style: TextTheme.of(context).labelMedium!,
-          child: Text(l.entries.length.toString()),
-        ),
-      ],
-    );
-
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
@@ -140,9 +129,10 @@ class CollectionSubview extends StatelessWidget {
                     children: [
                       PillSelector(
                         maxWidth: 200,
-                        selected: c.index,
-                        items: data.lists.map(listToWidget).toList(),
-                        onTap: (i) => ref.read(collectionProvider(tag!).notifier).changeIndex(i),
+                        selected: c.index + 1,
+                        items: buildFullCollectionSelectionItems(context, data.lists),
+                        onTap: (i) =>
+                            ref.read(collectionProvider(tag!).notifier).changeIndex(i - 1),
                       ),
                       Expanded(child: content),
                     ],
@@ -165,12 +155,12 @@ class _Content extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final entries = ref.watch(collectionEntriesProvider(tag));
+        final lists = ref.watch(collectionEntriesProvider(tag));
 
         final options = ref.watch(persistenceProvider.select((s) => s.options));
         final isViewer = ref.watch(viewerIdProvider) == tag.userId;
 
-        if (entries.isEmpty) {
+        if (lists.isEmpty) {
           if (!isViewer) {
             return const SliverFillRemaining(child: Center(child: Text('No results')));
           }
@@ -195,27 +185,60 @@ class _Content extends StatelessWidget {
             ? ref.read(collectionProvider(tag).notifier).saveEntryProgress
             : null;
 
-        final collectionIsExpanded = switch (collection) {
-          PreviewCollection _ => false,
-          FullCollection _ => true,
+        // TODO fix indexing
+        final (collectionIsExpanded, listIndex) = switch (collection) {
+          PreviewCollection _ => (false, 0),
+          FullCollection c => (true, c.index),
         };
 
-        if (collectionIsExpanded && options.collectionItemView == .simple ||
-            !collectionIsExpanded && options.collectionPreviewItemView == .simple) {
-          return CollectionGrid(
-            items: entries,
-            onProgressUpdated: onProgressUpdated,
-            highContrast: options.highContrast,
-          );
+        final useSimpleGrid =
+            collectionIsExpanded && options.collectionItemView == .simple ||
+            !collectionIsExpanded && options.collectionPreviewItemView == .simple;
+
+        if (!collectionIsExpanded || listIndex > -1) {
+          return useSimpleGrid
+              ? CollectionGrid(
+                  items: lists[listIndex].entries,
+                  onProgressUpdated: onProgressUpdated,
+                  highContrast: options.highContrast,
+                )
+              : CollectionList(
+                  items: lists[listIndex].entries,
+                  onProgressUpdated: onProgressUpdated,
+                  scoreFormat: ref.watch(
+                    collectionProvider(tag).select((s) => s.value?.scoreFormat ?? .point10Decimal),
+                  ),
+                  highContrast: options.highContrast,
+                );
         }
 
-        return CollectionList(
-          items: entries,
-          onProgressUpdated: onProgressUpdated,
-          scoreFormat: ref.watch(
-            collectionProvider(tag).select((s) => s.value?.scoreFormat ?? .point10Decimal),
-          ),
-          highContrast: options.highContrast,
+        return SliverMainAxisGroup(
+          slivers: [
+            for (final l in lists) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const .only(bottom: Theming.offset),
+                  child: Text(l.name, style: TextTheme.of(context).titleMedium),
+                ),
+              ),
+              useSimpleGrid
+                  ? CollectionGrid(
+                      items: l.entries,
+                      onProgressUpdated: onProgressUpdated,
+                      highContrast: options.highContrast,
+                    )
+                  : CollectionList(
+                      items: l.entries,
+                      onProgressUpdated: onProgressUpdated,
+                      scoreFormat: ref.watch(
+                        collectionProvider(
+                          tag,
+                        ).select((s) => s.value?.scoreFormat ?? .point10Decimal),
+                      ),
+                      highContrast: options.highContrast,
+                    ),
+            ],
+          ],
         );
       },
     );

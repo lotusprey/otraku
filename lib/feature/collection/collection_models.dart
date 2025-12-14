@@ -12,7 +12,7 @@ sealed class Collection {
 
   final ScoreFormat scoreFormat;
 
-  EntryList get list;
+  String get listName;
 
   void sort(EntrySort s);
 }
@@ -41,8 +41,10 @@ class PreviewCollection extends Collection {
     );
   }
 
-  @override
   final EntryList list;
+
+  @override
+  String get listName => 'Preview';
 
   @override
   void sort(EntrySort s) {
@@ -90,9 +92,7 @@ class FullCollection extends Collection {
   final int index;
 
   @override
-  EntryList get list => lists.isNotEmpty
-      ? lists[index]
-      : const EntryList._(name: '', entries: [], status: null, splitCompletedListFormat: null);
+  String get listName => index < 0 ? 'All' : lists[index].name;
 
   @override
   void sort(EntrySort s) {
@@ -170,6 +170,13 @@ class EntryList {
   }
 
   void sort(EntrySort s) => entries.sort(_entryComparator(s));
+
+  EntryList copyWithEntries(List<Entry> entries) => EntryList._(
+    name: name,
+    entries: entries,
+    status: status,
+    splitCompletedListFormat: splitCompletedListFormat,
+  );
 }
 
 /// Returns a [Comparator] for [Entry], based on an [EntrySort].

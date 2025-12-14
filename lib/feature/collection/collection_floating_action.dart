@@ -4,7 +4,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/home/home_provider.dart';
-import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/swipe_switcher.dart';
 import 'package:otraku/widget/sheets.dart';
@@ -29,10 +28,7 @@ class CollectionFloatingAction extends StatelessWidget {
             child: const Icon(Ionicons.enter_outline),
             onPressed: () => ref.read(homeProvider.notifier).expandCollection(tag.ofAnime),
           ),
-          FullCollection c =>
-            c.lists.length < 2
-                ? const SizedBox()
-                : _fullCollectionActionButton(context, ref, c.lists, c.index),
+          FullCollection c => _fullCollectionActionButton(context, ref, c.lists, c.index),
         };
       },
     );
@@ -44,16 +40,7 @@ class CollectionFloatingAction extends StatelessWidget {
     List<EntryList> lists,
     int index,
   ) {
-    final listToWidget = (EntryList l) => Row(
-      children: [
-        Expanded(child: Text(l.name)),
-        const SizedBox(width: Theming.offset / 2),
-        DefaultTextStyle(
-          style: TextTheme.of(context).labelMedium!,
-          child: Text(l.entries.length.toString()),
-        ),
-      ],
-    );
+    final items = buildFullCollectionSelectionItems(context, lists);
 
     return FloatingActionButton(
       tooltip: 'Lists',
@@ -64,10 +51,10 @@ class CollectionFloatingAction extends StatelessWidget {
             initialHeight: PillSelector.expectedMinHeight(lists.length),
             builder: (context, scrollCtrl) => PillSelector(
               scrollCtrl: scrollCtrl,
-              selected: index,
-              items: lists.map(listToWidget).toList(),
-              onTap: (i) {
-                ref.read(collectionProvider(tag).notifier).changeIndex(i);
+              selected: index + 1,
+              items: items,
+              onTap: (index) {
+                ref.read(collectionProvider(tag).notifier).changeIndex(index - 1);
                 Navigator.pop(context);
               },
             ),
@@ -75,10 +62,27 @@ class CollectionFloatingAction extends StatelessWidget {
         );
       },
       child: SwipeSwitcher(
-        index: index,
-        children: List.filled(lists.length, const Icon(Ionicons.menu_outline)),
-        onChanged: (index) => ref.read(collectionProvider(tag).notifier).changeIndex(index),
+        index: index + 1,
+        children: List.filled(lists.length + 1, const Icon(Ionicons.menu_outline)),
+        onChanged: (index) => ref.read(collectionProvider(tag).notifier).changeIndex(index - 1),
       ),
     );
   }
+}
+
+List<Widget> buildFullCollectionSelectionItems(BuildContext context, List<EntryList> lists) {
+  final listItems = [
+    (name: 'All', count: lists.fold(0, (v, l) => v + l.entries.length).toString()),
+    ...lists.map((l) => (name: l.name, count: l.entries.length.toString())),
+  ];
+
+  final listItemToWidget = (({String name, String count}) item) => Row(
+    spacing: 5,
+    children: [
+      Expanded(child: Text(item.name)),
+      Text(item.count, style: TextTheme.of(context).labelMedium),
+    ],
+  );
+
+  return listItems.map(listItemToWidget).toList();
 }

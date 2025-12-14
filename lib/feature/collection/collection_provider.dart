@@ -21,9 +21,9 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
 
   @override
   FutureOr<Collection> build() async {
-    final index = switch (state.value) {
+    final fullCollectionIndex = switch (state.value) {
       FullCollection c => c.index,
-      _ => 0,
+      _ => -1,
     };
 
     final viewerId = ref.watch(viewerIdProvider);
@@ -45,7 +45,12 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
 
     final collection = isFull
-        ? FullCollection(data['MediaListCollection'], arg.ofAnime, index, imageQuality)
+        ? FullCollection(
+            data['MediaListCollection'],
+            arg.ofAnime,
+            fullCollectionIndex,
+            imageQuality,
+          )
         : PreviewCollection(data['MediaListCollection'], imageQuality);
     collection.sort(_sort);
     return collection;
@@ -213,7 +218,7 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
 
     for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.isEmpty) {
-        if (i <= index && index != 0) index--;
+        if (i <= index) index--;
         lists.removeAt(i--);
       }
     }

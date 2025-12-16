@@ -156,8 +156,6 @@ class _Content extends StatelessWidget {
     return Consumer(
       builder: (context, ref, _) {
         final lists = ref.watch(collectionEntriesProvider(tag));
-
-        final options = ref.watch(persistenceProvider.select((s) => s.options));
         final isViewer = ref.watch(viewerIdProvider) == tag.userId;
 
         if (lists.isEmpty) {
@@ -181,29 +179,32 @@ class _Content extends StatelessWidget {
           );
         }
 
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
+
         final onProgressUpdated = isViewer
-            ? ref.read(collectionProvider(tag).notifier).saveEntryProgress
+            ? (oldEntry, setAsCurrent) => ref
+                  .read(collectionProvider(tag).notifier)
+                  .saveEntryProgress(oldEntry, setAsCurrent)
             : null;
 
-        // TODO fix indexing
-        final (collectionIsExpanded, listIndex) = switch (collection) {
-          PreviewCollection _ => (false, 0),
-          FullCollection c => (true, c.index),
+        final (collectionIsExpanded, showAllLists) = switch (collection) {
+          PreviewCollection _ => (false, false),
+          FullCollection c => (true, c.index < 0),
         };
 
         final useSimpleGrid =
             collectionIsExpanded && options.collectionItemView == .simple ||
             !collectionIsExpanded && options.collectionPreviewItemView == .simple;
 
-        if (!collectionIsExpanded || listIndex > -1) {
+        if (!showAllLists) {
           return useSimpleGrid
               ? CollectionGrid(
-                  items: lists[listIndex].entries,
+                  items: lists[0].entries,
                   onProgressUpdated: onProgressUpdated,
                   highContrast: options.highContrast,
                 )
               : CollectionList(
-                  items: lists[listIndex].entries,
+                  items: lists[0].entries,
                   onProgressUpdated: onProgressUpdated,
                   scoreFormat: ref.watch(
                     collectionProvider(tag).select((s) => s.value?.scoreFormat ?? .point10Decimal),

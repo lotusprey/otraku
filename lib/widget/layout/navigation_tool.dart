@@ -127,7 +127,7 @@ class BottomBar extends StatelessWidget {
             shadowColor: Colors.transparent,
             child: Padding(
               padding: .only(bottom: bottomPadding),
-              child: Row(children: items),
+              child: Row(mainAxisAlignment: .spaceBetween, children: items),
             ),
           ),
         ),
@@ -151,18 +151,16 @@ class BottomBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const .symmetric(horizontal: Theming.offset),
-        child: TextButton.icon(
-          label: Text(text),
-          icon: Icon(icon),
-          onPressed: onTap,
-          style: TextButton.styleFrom(
-            foregroundColor: foregroundColor,
-            iconColor: foregroundColor,
-            iconSize: Theming.iconBig,
-          ),
+    return Padding(
+      padding: const .symmetric(horizontal: Theming.offset),
+      child: TextButton.icon(
+        label: Text(text),
+        icon: Icon(icon),
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          foregroundColor: foregroundColor,
+          iconColor: foregroundColor,
+          iconSize: Theming.iconBig,
         ),
       ),
     );

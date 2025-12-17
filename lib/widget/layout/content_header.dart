@@ -133,6 +133,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: .end,
+      spacing: Theming.offset,
       children: [
         Hero(
           tag: imageHeroTag,
@@ -153,7 +154,6 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        const SizedBox(width: Theming.offset),
         Expanded(
           child: Center(
             child: SingleChildScrollView(
@@ -164,7 +164,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                     GestureDetector(
                       behavior: .opaque,
                       onTap: () => SnackBarExtension.copy(context, title!),
-                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyMedium),
+                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).titleSmall),
                     ),
                   if (details != null) ...[const SizedBox(height: 5), details!],
                 ],

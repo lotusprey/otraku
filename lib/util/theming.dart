@@ -56,7 +56,7 @@ class Theming extends ThemeExtension<Theming> {
   static const normalTapTarget = 56.0;
   static const coverHtoWRatio = 1.53;
 
-  static const fontBig = 20.0;
+  static const fontBig = 18.0;
   static const fontMedium = 15.0;
   static const fontSmall = 13.0;
 
@@ -127,7 +127,7 @@ class Theming extends ThemeExtension<Theming> {
       style: TextButton.styleFrom(
         textStyle: const TextStyle(
           fontSize: fontMedium,
-          fontVariations: [FontVariation('wght', 400)],
+          fontVariations: [FontVariation('wght', 450)],
         ),
       ),
     ),
@@ -156,13 +156,18 @@ class Theming extends ThemeExtension<Theming> {
         fontVariations: const [FontVariation('wght', 450)],
       ),
       bodyLarge: TextStyle(
-        fontSize: fontMedium,
+        fontSize: fontBig,
         color: scheme.onSurface,
         fontVariations: const [FontVariation('wght', 400)],
       ),
       bodyMedium: TextStyle(
         fontSize: fontMedium,
         color: scheme.onSurface,
+        fontVariations: const [FontVariation('wght', 400)],
+      ),
+      labelLarge: TextStyle(
+        fontSize: fontMedium,
+        color: scheme.onSurfaceVariant,
         fontVariations: const [FontVariation('wght', 400)],
       ),
       labelMedium: TextStyle(

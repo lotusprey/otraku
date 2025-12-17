@@ -219,7 +219,7 @@ class _Content extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const .only(bottom: Theming.offset),
-                  child: Text(l.name, style: TextTheme.of(context).titleMedium),
+                  child: Text(l.name, style: TextTheme.of(context).bodyLarge),
                 ),
               ),
               useSimpleGrid

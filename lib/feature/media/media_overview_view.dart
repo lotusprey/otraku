@@ -248,7 +248,7 @@ class _DescriptionState extends State<_Description> {
         ? HtmlContent(widget.text)
         : ShaderMask(
             shaderCallback: (bounds) => const LinearGradient(
-              begin: Alignment(0.0, 0.5),
+              begin: Alignment(0.0, 0.3),
               end: Alignment(0.0, 1.0),
               colors: [Colors.white, Colors.transparent],
             ).createShader(bounds),

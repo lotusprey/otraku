@@ -1,0 +1,3 @@
+- Expanded collections now show and filter all lists at once, though you can still view individual lists.
+- High contrast mode now affects all tiles in the UI.
+- Text scaling is now unconstrained and tiles adjust size to accommodate the text.

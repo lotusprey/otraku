@@ -56,11 +56,16 @@ class SliverTableList extends StatelessWidget {
     final colorScheme = ColorScheme.of(context);
 
     return DecoratedSliver(
-      decoration: BoxDecoration(
-        borderRadius: Theming.borderRadiusSmall,
-        color: highContrast ? null : colorScheme.surfaceContainerLow,
-        border: highContrast ? .all(color: colorScheme.outlineVariant) : null,
-      ),
+      decoration: highContrast
+          ? BoxDecoration(
+              borderRadius: Theming.borderRadiusSmall,
+              border: .all(color: colorScheme.outlineVariant),
+            )
+          : BoxDecoration(
+              borderRadius: Theming.borderRadiusSmall,
+              color: colorScheme.surfaceContainerLow,
+              boxShadow: kElevationToShadow[1],
+            ),
       sliver: SliverPadding(
         padding: const .symmetric(vertical: Theming.offset),
         sliver: SliverList.separated(

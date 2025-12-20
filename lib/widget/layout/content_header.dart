@@ -164,7 +164,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                     GestureDetector(
                       behavior: .opaque,
                       onTap: () => SnackBarExtension.copy(context, title!),
-                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).titleSmall),
+                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyLarge),
                     ),
                   if (details != null) ...[const SizedBox(height: 5), details!],
                 ],

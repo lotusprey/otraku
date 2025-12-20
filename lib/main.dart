@@ -11,7 +11,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/background_handler.dart';
 import 'package:otraku/util/theming.dart';
 
-// TODO https://docs.flutter.dev/release/breaking-changes/uiscenedelegate
 Future<void> main() async {
   final container = ProviderContainer(retry: (retryCount, error) => null);
   await container.read(persistenceProvider.notifier).init();

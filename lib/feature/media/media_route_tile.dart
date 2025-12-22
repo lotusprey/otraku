@@ -6,12 +6,7 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class MediaRouteTile extends StatelessWidget {
-  const MediaRouteTile({
-    super.key,
-    required this.id,
-    required this.imageUrl,
-    required this.child,
-  });
+  const MediaRouteTile({super.key, required this.id, required this.imageUrl, required this.child});
 
   final int id;
   final String? imageUrl;
@@ -22,10 +17,7 @@ class MediaRouteTile extends StatelessWidget {
     return InkWell(
       borderRadius: Theming.borderRadiusSmall,
       onTap: () => context.push(Routes.media(id, imageUrl)),
-      onLongPress: () => showSheet(
-        context,
-        EditView((id: id, setComplete: false)),
-      ),
+      onLongPress: () => showSheet(context, EditView((id: id, setComplete: false))),
       child: child,
     );
   }

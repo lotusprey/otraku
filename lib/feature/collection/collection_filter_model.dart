@@ -9,10 +9,7 @@ class CollectionFilter {
   final String search;
   final CollectionMediaFilter mediaFilter;
 
-  CollectionFilter copyWith({
-    String? search,
-    CollectionMediaFilter? mediaFilter,
-  }) =>
+  CollectionFilter copyWith({String? search, CollectionMediaFilter? mediaFilter}) =>
       CollectionFilter._(
         search: search ?? this.search,
         mediaFilter: mediaFilter ?? this.mediaFilter,
@@ -20,13 +17,9 @@ class CollectionFilter {
 }
 
 class CollectionMediaFilter {
-  CollectionMediaFilter()
-      : sort = EntrySort.title,
-        previewSort = EntrySort.title;
+  CollectionMediaFilter() : sort = .title, previewSort = .title;
 
-  factory CollectionMediaFilter.fromPersistenceMap(
-    Map<dynamic, dynamic> map,
-  ) {
+  factory CollectionMediaFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
     final sort = EntrySort.values.getOrFirst(map['sort']);
     final previewSort = EntrySort.values.getOrFirst(map['previewSort']);
 
@@ -104,18 +97,18 @@ class CollectionMediaFilter {
     ..hasNotes = hasNotes;
 
   Map<String, dynamic> toPersistenceMap() => {
-        'statuses': statuses.map((e) => e.index).toList(),
-        'formats': formats.map((e) => e.index).toList(),
-        'genreIn': genreIn,
-        'genreNotIn': genreNotIn,
-        'tagIn': tagIn,
-        'tagNotIn': tagNotIn,
-        'sort': sort.index,
-        'previewSort': previewSort.index,
-        'startYearFrom': startYearFrom,
-        'startYearTo': startYearTo,
-        'country': country?.index,
-        'isPrivate': isPrivate,
-        'hasNotes': hasNotes,
-      };
+    'statuses': statuses.map((e) => e.index).toList(),
+    'formats': formats.map((e) => e.index).toList(),
+    'genreIn': genreIn,
+    'genreNotIn': genreNotIn,
+    'tagIn': tagIn,
+    'tagNotIn': tagNotIn,
+    'sort': sort.index,
+    'previewSort': previewSort.index,
+    'startYearFrom': startYearFrom,
+    'startYearTo': startYearTo,
+    'country': country?.index,
+    'isPrivate': isPrivate,
+    'hasNotes': hasNotes,
+  };
 }

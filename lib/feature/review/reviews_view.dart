@@ -37,9 +37,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
   @override
   Widget build(BuildContext context) {
     final options = ref.watch(persistenceProvider.select((s) => s.options));
-    final count = ref.watch(
-      reviewsProvider(widget.id).select((s) => s.value?.total ?? 0),
-    );
+    final count = ref.watch(reviewsProvider(widget.id).select((s) => s.value?.total ?? 0));
 
     return AdaptiveScaffold(
       topBar: TopBar(
@@ -47,11 +45,8 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
         trailing: [
           if (count > 0)
             Padding(
-              padding: const EdgeInsets.only(right: Theming.offset),
-              child: Text(
-                count.toString(),
-                style: TextTheme.of(context).titleSmall,
-              ),
+              padding: const .only(right: Theming.offset),
+              child: Text(count.toString(), style: TextTheme.of(context).titleSmall),
             ),
         ],
       ),
@@ -65,6 +60,7 @@ class _ReviewsViewState extends ConsumerState<ReviewsView> {
             context: context,
             filter: ref.read(reviewsFilterProvider(widget.id)),
             onDone: (filter) => ref.read(reviewsFilterProvider(widget.id).notifier).state = filter,
+            highContrast: options.highContrast,
           ),
         ),
       ),

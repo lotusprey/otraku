@@ -4,6 +4,7 @@ import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/staff/staff_header.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
@@ -38,21 +39,16 @@ class _StaffViewState extends ConsumerState<StaffView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue>(
-      staffProvider(widget.id),
-      (_, s) {
-        if (s.hasError) {
-          SnackBarExtension.show(
-            context,
-            'Failed to load staff: ${s.error}',
-          );
-        }
-      },
-    );
+    ref.listen<AsyncValue>(staffProvider(widget.id), (_, s) {
+      if (s.hasError) {
+        SnackBarExtension.show(context, 'Failed to load staff: ${s.error}');
+      }
+    });
 
     final staff = ref.watch(staffProvider(widget.id));
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final toggleFavorite = ref.read(staffProvider(widget.id).notifier).toggleFavorite;
+    final toggleFavorite = () async => ref.read(staffProvider(widget.id).notifier).toggleFavorite;
 
     return AdaptiveScaffold(
       floatingAction: HidingFloatingActionButton(
@@ -61,22 +57,24 @@ class _StaffViewState extends ConsumerState<StaffView> {
         child: StaffFilterButton(widget.id, ref),
       ),
       child: switch (Theming.of(context).formFactor) {
-        FormFactor.phone => _CompactView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            staff: staff,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
-        FormFactor.tablet => _LargeView(
-            id: widget.id,
-            imageUrl: widget.imageUrl,
-            ref: ref,
-            staff: staff,
-            scrollCtrl: _scrollCtrl,
-            toggleFavorite: toggleFavorite,
-          ),
+        .phone => _CompactView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          staff: staff,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+          highContrast: options.highContrast,
+        ),
+        .tablet => _LargeView(
+          id: widget.id,
+          imageUrl: widget.imageUrl,
+          ref: ref,
+          staff: staff,
+          scrollCtrl: _scrollCtrl,
+          toggleFavorite: toggleFavorite,
+          highContrast: options.highContrast,
+        ),
       },
     );
   }
@@ -87,6 +85,7 @@ class _CompactView extends StatefulWidget {
     required this.id,
     required this.imageUrl,
     required this.ref,
+    required this.highContrast,
     required this.staff,
     required this.scrollCtrl,
     required this.toggleFavorite,
@@ -95,6 +94,7 @@ class _CompactView extends StatefulWidget {
   final int id;
   final String? imageUrl;
   final WidgetRef ref;
+  final bool highContrast;
   final AsyncValue<Staff> staff;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
@@ -104,10 +104,7 @@ class _CompactView extends StatefulWidget {
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: StaffHeader.tabsWithOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: StaffHeader.tabsWithOverview.length, vsync: this);
 
   @override
   void initState() {
@@ -136,26 +133,24 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
       toggleFavorite: widget.toggleFavorite,
+      highContrast: widget.highContrast,
     );
 
     return NestedScrollView(
       controller: widget.scrollCtrl,
       headerSliverBuilder: (context, _) => [header],
       body: MediaQuery(
-        data: mediaQuery.copyWith(
-          padding: mediaQuery.padding.copyWith(top: 0),
-        ),
+        data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.staff.unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(
-                child: Text('Failed to load staff'),
-              ),
-              data: (data) => _StaffTabs.withOverview(
-                id: widget.id,
-                staff: data,
-                tabCtrl: _tabCtrl,
-              ),
-            ),
+          loading: () => const Center(child: Loader()),
+          error: (_, _) => const Center(child: Text('Failed to load staff')),
+          data: (data) => _StaffTabs.withOverview(
+            id: widget.id,
+            staff: data,
+            tabCtrl: _tabCtrl,
+            highContrast: widget.highContrast,
+          ),
+        ),
       ),
     );
   }
@@ -166,6 +161,7 @@ class _LargeView extends StatefulWidget {
     required this.id,
     required this.imageUrl,
     required this.ref,
+    required this.highContrast,
     required this.staff,
     required this.scrollCtrl,
     required this.toggleFavorite,
@@ -174,6 +170,7 @@ class _LargeView extends StatefulWidget {
   final int id;
   final String? imageUrl;
   final WidgetRef ref;
+  final bool highContrast;
   final AsyncValue<Staff> staff;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
@@ -183,10 +180,7 @@ class _LargeView extends StatefulWidget {
 }
 
 class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: StaffHeader.tabsWithoutOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: StaffHeader.tabsWithoutOverview.length, vsync: this);
 
   @override
   void initState() {
@@ -209,6 +203,7 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       imageUrl: widget.imageUrl,
       staff: widget.staff.value,
       toggleFavorite: widget.toggleFavorite,
+      highContrast: widget.highContrast,
     );
 
     return DualPaneWithTabBar(
@@ -216,43 +211,37 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       scrollToTop: widget.scrollCtrl.scrollToTop,
       tabs: StaffHeader.tabsWithoutOverview,
       leftPane: widget.staff.unwrapPrevious().when(
-            loading: () => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                ),
-              ],
-            ),
-            error: (_, __) => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Text('Failed to load staff'),
-                  ),
-                ),
-              ],
-            ),
-            data: (data) => StaffOverviewSubview.withHeader(
-              staff: data,
-              header: header,
-              invalidate: () => widget.ref.invalidate(
-                staffProvider(widget.id),
-              ),
-            ),
-          ),
+        loading: () => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Loader())),
+          ],
+        ),
+        error: (_, _) => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Text('Failed to load staff'))),
+          ],
+        ),
+        data: (data) => StaffOverviewSubview.withHeader(
+          staff: data,
+          header: header,
+          invalidate: () => widget.ref.invalidate(staffProvider(widget.id)),
+          highContrast: widget.highContrast,
+        ),
+      ),
       rightPane: widget.staff.unwrapPrevious().maybeWhen(
-            data: (data) => _StaffTabs.withoutOverview(
-              id: widget.id,
-              staff: data,
-              tabCtrl: _tabCtrl,
-              scrollCtrl: widget.scrollCtrl,
-            ),
-            orElse: () => const SizedBox(),
-          ),
+        data: (data) => _StaffTabs.withoutOverview(
+          id: widget.id,
+          staff: data,
+          tabCtrl: _tabCtrl,
+          scrollCtrl: widget.scrollCtrl,
+          highContrast: widget.highContrast,
+        ),
+        orElse: () => const SizedBox(),
+      ),
     );
   }
 }
@@ -262,13 +251,15 @@ class _StaffTabs extends ConsumerStatefulWidget {
     required this.id,
     required this.staff,
     required this.tabCtrl,
-  })  : withOverview = true,
-        scrollCtrl = null;
+    required this.highContrast,
+  }) : withOverview = true,
+       scrollCtrl = null;
 
   const _StaffTabs.withoutOverview({
     required this.id,
     required this.staff,
     required this.tabCtrl,
+    required this.highContrast,
     required ScrollController this.scrollCtrl,
   }) : withOverview = false;
 
@@ -276,6 +267,7 @@ class _StaffTabs extends ConsumerStatefulWidget {
   final Staff staff;
   final TabController tabCtrl;
   final ScrollController? scrollCtrl;
+  final bool highContrast;
   final bool withOverview;
 
   @override
@@ -289,7 +281,8 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = widget.scrollCtrl ??
+    _scrollCtrl =
+        widget.scrollCtrl ??
         context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);
@@ -338,6 +331,8 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
   Widget build(BuildContext context) {
     ref.watch(staffRelationsProvider(widget.id).select((_) => null));
 
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
+
     return TabBarView(
       controller: widget.tabCtrl,
       children: [
@@ -348,10 +343,19 @@ class __StaffViewContentState extends ConsumerState<_StaffTabs> {
               staff: widget.staff,
               scrollCtrl: _scrollCtrl,
               invalidate: () => ref.invalidate(staffProvider(widget.id)),
+              highContrast: widget.highContrast,
             ),
           ),
-        StaffCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-        StaffRolesSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        StaffCharactersSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
+        StaffRolesSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
       ],
     );
   }

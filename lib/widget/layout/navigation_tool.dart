@@ -45,7 +45,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
           },
           destinations: [
             for (final e in widget.items.entries)
-              NavigationDestination(label: e.key, icon: Icon(e.value))
+              NavigationDestination(label: e.key, icon: Icon(e.value)),
           ],
         ),
       ),
@@ -94,7 +94,7 @@ class _SideNavigationState extends State<SideNavigation> {
       },
       destinations: [
         for (final e in widget.items.entries)
-          NavigationRailDestination(label: Text(e.key), icon: Icon(e.value))
+          NavigationRailDestination(label: Text(e.key), icon: Icon(e.value)),
       ],
     );
 
@@ -126,8 +126,8 @@ class BottomBar extends StatelessWidget {
             surfaceTintColor: ColorScheme.of(context).surfaceTint,
             shadowColor: Colors.transparent,
             child: Padding(
-              padding: EdgeInsets.only(bottom: bottomPadding),
-              child: Row(children: items),
+              padding: .only(bottom: bottomPadding),
+              child: Row(mainAxisAlignment: .spaceBetween, children: items),
             ),
           ),
         ),
@@ -151,18 +151,16 @@ class BottomBarButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-        child: TextButton.icon(
-          label: Text(text),
-          icon: Icon(icon),
-          onPressed: onTap,
-          style: TextButton.styleFrom(
-            foregroundColor: foregroundColor,
-            iconColor: foregroundColor,
-            iconSize: Theming.iconBig,
-          ),
+    return Padding(
+      padding: const .symmetric(horizontal: Theming.offset),
+      child: TextButton.icon(
+        label: Text(text),
+        icon: Icon(icon),
+        onPressed: onTap,
+        style: TextButton.styleFrom(
+          foregroundColor: foregroundColor,
+          iconColor: foregroundColor,
+          iconSize: Theming.iconBig,
         ),
       ),
     );

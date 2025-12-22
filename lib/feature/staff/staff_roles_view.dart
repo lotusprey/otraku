@@ -8,27 +8,24 @@ import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/staff/staff_provider.dart';
 
 class StaffRolesSubview extends StatelessWidget {
-  const StaffRolesSubview({
-    required this.id,
-    required this.scrollCtrl,
-  });
+  const StaffRolesSubview({required this.id, required this.scrollCtrl, required this.highContrast});
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     return PagedView<StaffRelatedItem>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(staffRelationsProvider(id)),
-      provider: staffRelationsProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.roles),
-      ),
+      provider: staffRelationsProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.roles)),
       onData: (data) => MonoRelationGrid(
         items: data.items,
-        onTap: (item) => context.push(
-          Routes.media(item.tileId, item.tileImageUrl),
-        ),
+        onTap: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+        highContrast: highContrast,
       ),
     );
   }

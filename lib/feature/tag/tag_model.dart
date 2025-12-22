@@ -16,11 +16,11 @@ class Tag {
   });
 
   factory Tag(Map<String, dynamic> map) => Tag._(
-        name: map['name'],
-        rank: map['rank'],
-        desciption: map['description'] ?? 'No description',
-        isSpoiler: map['isMediaSpoiler'] ?? false,
-      );
+    name: map['name'],
+    rank: map['rank'],
+    desciption: map['description'] ?? 'No description',
+    isSpoiler: map['isMediaSpoiler'] ?? false,
+  );
 }
 
 /// Stores all tags (genres as treated as tags too).
@@ -54,13 +54,12 @@ class TagCollection {
     }
 
     for (final t in map['MediaTagCollection']) {
-      String categoryName =
-          t['category'] != null ? (t['category'] as String).replaceFirst('-', '/') : 'Other';
+      String categoryName = t['category'] != null
+          ? (t['category'] as String).replaceFirst('-', '/')
+          : 'Other';
       if (categoryName.isEmpty) categoryName = 'Other';
 
-      var category = categories.firstWhereOrNull(
-        (c) => c.name == categoryName,
-      );
+      var category = categories.firstWhereOrNull((c) => c.name == categoryName);
 
       if (category == null) {
         category = (name: categoryName, indexes: []);

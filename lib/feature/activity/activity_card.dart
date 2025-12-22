@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
@@ -34,13 +37,9 @@ class ActivityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = CardExtension.highContrast(highContrast)(
-      margin: const EdgeInsets.only(bottom: Theming.offset),
+      margin: const .only(bottom: Theming.offset),
       child: Padding(
-        padding: const EdgeInsets.only(
-          top: Theming.offset,
-          left: Theming.offset,
-          right: Theming.offset,
-        ),
+        padding: const .only(top: Theming.offset, left: Theming.offset, right: Theming.offset),
         child: Column(
           children: [
             if (activity is MediaActivity)
@@ -48,7 +47,8 @@ class ActivityCard extends StatelessWidget {
             else
               HtmlContent(activity.text),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: .spaceBetween,
+              spacing: 5,
               children: [
                 Flexible(child: Timestamp(activity.createdAt, analogClock)),
                 footer,
@@ -61,75 +61,65 @@ class ActivityCard extends StatelessWidget {
 
     if (!withHeader) return body;
 
+    const avatarSize = 50.0;
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [
         Row(
           children: [
             Flexible(
               child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () => context.push(
-                  Routes.user(activity.authorId, activity.authorAvatarUrl),
-                ),
+                behavior: .opaque,
+                onTap: () => context.push(Routes.user(activity.authorId, activity.authorAvatarUrl)),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
+                  spacing: Theming.offset,
                   children: [
                     ClipRRect(
                       borderRadius: Theming.borderRadiusSmall,
                       child: CachedImage(
                         activity.authorAvatarUrl,
-                        height: 50,
-                        width: 50,
+                        height: avatarSize,
+                        width: avatarSize,
                       ),
                     ),
-                    const SizedBox(width: Theming.offset),
-                    Flexible(
-                      child: Text(
-                        activity.authorName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                      ),
-                    ),
+                    Flexible(child: Text(activity.authorName, overflow: .ellipsis, maxLines: 1)),
                   ],
                 ),
               ),
             ),
             ...switch (activity) {
               MessageActivity message => [
-                  if (message.isPrivate)
-                    const Padding(
-                      padding: EdgeInsets.only(left: Theming.offset),
-                      child: Icon(Ionicons.eye_off_outline),
-                    ),
+                if (message.isPrivate)
                   const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Theming.offset),
-                    child: Icon(Icons.arrow_right_alt),
+                    padding: .only(left: Theming.offset),
+                    child: Icon(Ionicons.eye_off_outline),
                   ),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => context.push(
-                      Routes.user(
-                        message.recipientId,
-                        message.recipientAvatarUrl,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(
-                        message.recipientAvatarUrl,
-                        height: 50,
-                        width: 50,
-                      ),
+                const Padding(
+                  padding: .symmetric(horizontal: Theming.offset),
+                  child: Icon(Icons.arrow_right_alt),
+                ),
+                GestureDetector(
+                  behavior: .opaque,
+                  onTap: () =>
+                      context.push(Routes.user(message.recipientId, message.recipientAvatarUrl)),
+                  child: ClipRRect(
+                    borderRadius: Theming.borderRadiusSmall,
+                    child: CachedImage(
+                      message.recipientAvatarUrl,
+                      height: avatarSize,
+                      width: avatarSize,
                     ),
                   ),
-                ],
+                ),
+              ],
               _ when activity.isPinned => const [
-                  Padding(
-                    padding: EdgeInsets.only(left: Theming.offset),
-                    child: Icon(Icons.push_pin_outlined),
-                  ),
-                ],
+                Padding(
+                  padding: .only(left: Theming.offset),
+                  child: Icon(Icons.push_pin_outlined),
+                ),
+              ],
               _ => const [],
             },
           ],
@@ -148,48 +138,47 @@ class _ActivityMediaBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final height = bodyMediumLineHeight * 3 + labelMediumLineHeight + 5;
+
     return MediaRouteTile(
       id: item.mediaId,
       imageUrl: item.coverUrl,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: 108),
+      child: SizedBox(
+        height: height,
         child: Row(
           children: [
             ClipRRect(
               borderRadius: Theming.borderRadiusSmall,
-              child: CachedImage(item.coverUrl, width: 70),
+              child: CachedImage(item.coverUrl, width: height / Theming.coverHtoWRatio),
             ),
             Expanded(
               child: Padding(
-                padding: Theming.paddingAll,
+                padding: const .symmetric(horizontal: Theming.offset),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: .spaceEvenly,
+                  crossAxisAlignment: .start,
+                  spacing: 5,
                   children: [
-                    Flexible(
-                      child: Text.rich(
-                        overflow: TextOverflow.fade,
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: item.text,
-                              style: TextTheme.of(context).labelMedium,
-                            ),
-                            TextSpan(
-                              text: item.title,
-                              style: TextTheme.of(context).bodyMedium,
-                            ),
-                          ],
-                        ),
+                    Text.rich(
+                      TextSpan(
+                        children: [
+                          TextSpan(text: item.text, style: textTheme.labelMedium),
+                          TextSpan(text: item.title, style: textTheme.bodyMedium),
+                        ],
                       ),
+                      overflow: .ellipsis,
+                      maxLines: 3,
                     ),
-                    if (item.format != null) ...[
-                      const SizedBox(height: 5),
+                    if (item.format != null)
                       Text(
                         item.format!,
-                        style: TextTheme.of(context).labelMedium,
+                        style: textTheme.labelMedium,
+                        overflow: .ellipsis,
+                        maxLines: 1,
                       ),
-                    ],
                   ],
                 ),
               ),
@@ -240,10 +229,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
             child: InkResponse(
               radius: Theming.radiusSmall.x,
               onTap: _showMoreSheet,
-              child: const Icon(
-                Ionicons.ellipsis_horizontal,
-                size: Theming.iconSmall,
-              ),
+              child: const Icon(Ionicons.ellipsis_horizontal, size: Theming.iconSmall),
             ),
           ),
         ),
@@ -257,10 +243,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
               onTap: widget.reply,
               child: Row(
                 children: [
-                  Text(
-                    activity.replyCount.toString(),
-                    style: TextTheme.of(context).labelSmall,
-                  ),
+                  Text(activity.replyCount.toString(), style: TextTheme.of(context).labelSmall),
                   const SizedBox(width: 5),
                   const Icon(Icons.reply_all_rounded, size: Theming.iconSmall),
                 ],
@@ -282,9 +265,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
                     activity.likeCount.toString(),
                     style: !activity.isLiked
                         ? TextTheme.of(context).labelSmall
-                        : TextTheme.of(context).labelSmall!.copyWith(
-                              color: ColorScheme.of(context).primary,
-                            ),
+                        : TextTheme.of(
+                            context,
+                          ).labelSmall!.copyWith(color: ColorScheme.of(context).primary),
                   ),
                   const SizedBox(width: 5),
                   Icon(
@@ -315,82 +298,86 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
           if (activity.isOwned) {
             if (activity is! MessageActivity) {
-              ownershipButtons.add(ListTile(
-                title: activity.isPinned ? const Text('Unpin') : const Text('Pin'),
-                leading: activity.isPinned
-                    ? const Icon(Icons.push_pin)
-                    : const Icon(Icons.push_pin_outlined),
-                onTap: _togglePin,
-              ));
+              ownershipButtons.add(
+                ListTile(
+                  title: activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                  leading: activity.isPinned
+                      ? const Icon(Icons.push_pin)
+                      : const Icon(Icons.push_pin_outlined),
+                  onTap: _togglePin,
+                ),
+              );
             }
 
             if (activity.authorId == widget.viewerId) {
               switch (activity) {
                 case StatusActivity _:
-                  ownershipButtons.add(ListTile(
-                    title: const Text('Edit'),
-                    leading: const Icon(Icons.edit_outlined),
-                    onTap: () => showSheet(
-                      context,
-                      CompositionView(
-                        tag: StatusActivityCompositionTag(id: activity.id),
-                        onSaved: (map) {
-                          widget.onEdited?.call(map);
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ),
-                  ));
-                case MessageActivity _:
-                  ownershipButtons.add(ListTile(
-                    title: const Text('Edit'),
-                    leading: const Icon(Icons.edit_outlined),
-                    onTap: () => showSheet(
-                      context,
-                      CompositionView(
-                        tag: MessageActivityCompositionTag(
-                          id: activity.id,
-                          recipientId: activity.recipientId,
+                  ownershipButtons.add(
+                    ListTile(
+                      title: const Text('Edit'),
+                      leading: const Icon(Icons.edit_outlined),
+                      onTap: () => showSheet(
+                        context,
+                        CompositionView(
+                          tag: StatusActivityCompositionTag(id: activity.id),
+                          onSaved: (map) {
+                            widget.onEdited?.call(map);
+                            Navigator.pop(context);
+                          },
                         ),
-                        onSaved: (map) {
-                          widget.onEdited?.call(map);
-                          Navigator.pop(context);
-                        },
                       ),
                     ),
-                  ));
+                  );
+                case MessageActivity _:
+                  ownershipButtons.add(
+                    ListTile(
+                      title: const Text('Edit'),
+                      leading: const Icon(Icons.edit_outlined),
+                      onTap: () => showSheet(
+                        context,
+                        CompositionView(
+                          tag: MessageActivityCompositionTag(
+                            id: activity.id,
+                            recipientId: activity.recipientId,
+                          ),
+                          onSaved: (map) {
+                            widget.onEdited?.call(map);
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ),
+                  );
                 case MediaActivity _:
                   break;
               }
             }
 
-            ownershipButtons.add(ListTile(
-              title: const Text('Delete'),
-              leading: const Icon(Ionicons.trash_outline),
-              onTap: () => ConfirmationDialog.show(
-                context,
-                title: 'Delete?',
-                primaryAction: 'Yes',
-                secondaryAction: 'No',
-                onConfirm: _remove,
+            ownershipButtons.add(
+              ListTile(
+                title: const Text('Delete'),
+                leading: const Icon(Ionicons.trash_outline),
+                onTap: () => ConfirmationDialog.show(
+                  context,
+                  title: 'Delete?',
+                  primaryAction: 'Yes',
+                  secondaryAction: 'No',
+                  onConfirm: _remove,
+                ),
               ),
-            ));
+            );
           }
 
-          return SimpleSheet.link(
-            context,
-            activity.siteUrl,
-            [
-              ...ownershipButtons,
-              ListTile(
-                title: !activity.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
-                leading: !activity.isSubscribed
-                    ? const Icon(Ionicons.notifications_outline)
-                    : const Icon(Ionicons.notifications_off_outline),
-                onTap: _toggleSubscription,
-              ),
-            ],
-          );
+          return SimpleSheet.link(context, activity.siteUrl, [
+            ...ownershipButtons,
+            ListTile(
+              title: !activity.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
+              leading: !activity.isSubscribed
+                  ? const Icon(Ionicons.notifications_outline)
+                  : const Icon(Ionicons.notifications_off_outline),
+              onTap: _toggleSubscription,
+            ),
+          ]);
         },
       ),
     );

@@ -47,12 +47,12 @@ class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
   Listenable get animation => _ctrl;
 
   LinearGradient get gradient => LinearGradient(
-        transform: _SlidingGradientTransform(_ctrl.value),
-        colors: _gradient.colors,
-        stops: _gradient.stops,
-        begin: _gradient.begin,
-        end: _gradient.end,
-      );
+    transform: _SlidingGradientTransform(_ctrl.value),
+    colors: _gradient.colors,
+    stops: _gradient.stops,
+    begin: _gradient.begin,
+    end: _gradient.end,
+  );
 
   Size? get size {
     final box = context.findRenderObject() as RenderBox?;
@@ -60,10 +60,8 @@ class ShimmerState extends State<Shimmer> with SingleTickerProviderStateMixin {
     return box.size;
   }
 
-  Offset getOffset(RenderBox descendant) => descendant.localToGlobal(
-        Offset.zero,
-        ancestor: context.findRenderObject() as RenderBox,
-      );
+  Offset getOffset(RenderBox descendant) =>
+      descendant.localToGlobal(Offset.zero, ancestor: context.findRenderObject() as RenderBox);
 
   @override
   Widget build(BuildContext context) => widget.child;

@@ -1,8 +1,5 @@
 class Home {
-  const Home({
-    required this.didExpandAnimeCollection,
-    required this.didExpandMangaCollection,
-  });
+  const Home({required this.didExpandAnimeCollection, required this.didExpandMangaCollection});
 
   /// In preview mode, user's collections first load only current media.
   /// The rest is loaded by a manual request from the user
@@ -13,14 +10,8 @@ class Home {
   final bool didExpandMangaCollection;
 
   Home withExpandedCollection(bool ofAnime) => ofAnime
-      ? Home(
-          didExpandAnimeCollection: true,
-          didExpandMangaCollection: didExpandMangaCollection,
-        )
-      : Home(
-          didExpandAnimeCollection: didExpandAnimeCollection,
-          didExpandMangaCollection: true,
-        );
+      ? Home(didExpandAnimeCollection: true, didExpandMangaCollection: didExpandMangaCollection)
+      : Home(didExpandAnimeCollection: didExpandAnimeCollection, didExpandMangaCollection: true);
 }
 
 enum HomeTab {

@@ -9,10 +9,11 @@ import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class SettingsContentSubview extends StatelessWidget {
-  const SettingsContentSubview(this.scrollCtrl, this.settings);
+  const SettingsContentSubview(this.scrollCtrl, this.settings, this.highContrast);
 
   final ScrollController scrollCtrl;
   final Settings settings;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,7 @@ class SettingsContentSubview extends StatelessWidget {
 
     return ListView(
       controller: scrollCtrl,
-      padding: EdgeInsets.only(
+      padding: .only(
         top: listPadding.top + Theming.offset,
         bottom: listPadding.bottom + Theming.offset,
       ),
@@ -43,6 +44,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: TitleLanguage.values.map((v) => (v.label, v)).toList(),
                 value: settings.titleLanguage,
                 onChanged: (v) => settings.titleLanguage = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -52,6 +54,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: PersonNaming.values.map((v) => (v.label, v)).toList(),
                 value: settings.personNaming,
                 onChanged: (v) => settings.personNaming = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -75,6 +78,7 @@ class SettingsContentSubview extends StatelessWidget {
                 ],
                 value: settings.activityMergeTime,
                 onChanged: (v) => settings.activityMergeTime = v,
+                highContrast: highContrast,
               ),
             ),
             StatefulSwitchListTile(
@@ -100,6 +104,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: ScoreFormat.values.map((v) => (v.label, v)).toList(),
                 value: settings.scoreFormat,
                 onChanged: (v) => settings.scoreFormat = v,
+                highContrast: highContrast,
               ),
             ),
             Padding(
@@ -109,6 +114,7 @@ class SettingsContentSubview extends StatelessWidget {
                 items: EntrySort.rowOrders.map((v) => (v.label, v)).toList(),
                 value: settings.defaultSort,
                 onChanged: (v) => settings.defaultSort = v,
+                highContrast: highContrast,
               ),
             ),
             StatefulCheckboxListTile(
@@ -179,7 +185,7 @@ class SettingsContentSubview extends StatelessWidget {
         ExpansionTile(
           title: const Text('Social'),
           initiallyExpanded: true,
-          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          expandedCrossAxisAlignment: .stretch,
           children: [
             for (final e in settings.disabledListActivity.entries)
               StatefulCheckboxListTile(
@@ -223,16 +229,16 @@ class _ListManagementState extends State<_ListManagement> {
     final items = widget.items;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: .min,
+      crossAxisAlignment: .stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: Theming.offset),
+          padding: const .only(top: Theming.offset),
           child: Row(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
-                child: Text(widget.title, style: TextTheme.of(context).titleLarge),
+                padding: const .symmetric(horizontal: Theming.offset),
+                child: Text(widget.title, style: TextTheme.of(context).bodyMedium),
               ),
               const Spacer(),
               IconButton(
@@ -264,7 +270,7 @@ class _ListManagementState extends State<_ListManagement> {
             key: Key(items[i]),
             title: Text(items[i]),
             trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+              mainAxisSize: .min,
               children: [
                 IconButton(
                   tooltip: 'Remove',
@@ -293,7 +299,7 @@ class _ListManagementState extends State<_ListManagement> {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

@@ -26,61 +26,59 @@ class Settings {
   });
 
   factory Settings(Map<String, dynamic> map) => Settings._(
-        unreadNotifications: map['unreadNotificationCount'] ?? 0,
-        scoreFormat: ScoreFormat.from(map['mediaListOptions']?['scoreFormat']),
-        defaultSort: EntrySort.fromRowOrder(
-          map['mediaListOptions']?['rowOrder'],
-        ),
-        titleLanguage: TitleLanguage.from(map['options']?['titleLanguage']),
-        personNaming: PersonNaming.from(map['options']?['staffNameLanguage']),
-        activityMergeTime: map['options']?['activityMergeTime'] ?? 720,
-        splitCompletedAnime:
-            map['mediaListOptions']?['animeList']?['splitCompletedSectionByFormat'] ?? false,
-        splitCompletedManga:
-            map['mediaListOptions']?['mangaList']?['splitCompletedSectionByFormat'] ?? false,
-        displayAdultContent: map['options']?['displayAdultContent'] ?? false,
-        airingNotifications: map['options']?['airingNotifications'] ?? true,
-        advancedScoringEnabled:
-            map['mediaListOptions']?['animeList']?['advancedScoringEnabled'] ?? false,
-        restrictMessagesToFollowing: map['options']?['restrictMessagesToFollowing'] ?? false,
-        advancedScoreSections: List<String>.from(
-          map['mediaListOptions']?['animeList']?['advancedScoring'] ?? const <String>[],
-        ),
-        animeCustomLists: List<String>.from(
-          map['mediaListOptions']?['animeList']?['customLists'] ?? const <String>[],
-        ),
-        mangaCustomLists: List<String>.from(
-          map['mediaListOptions']?['mangaList']?['customLists'] ?? const <String>[],
-        ),
-        disabledListActivity: {
-          for (var activity in map['options']?['disabledListActivity'] ?? const [])
-            ListStatus.from(activity['type'])!: activity['disabled']
-        },
-        notificationOptions: {
-          for (var option in map['options']?['notificationOptions'] ?? const [])
-            NotificationType.from(option['type'])!: option['enabled']
-        },
-      );
+    unreadNotifications: map['unreadNotificationCount'] ?? 0,
+    scoreFormat: ScoreFormat.from(map['mediaListOptions']?['scoreFormat']),
+    defaultSort: EntrySort.fromRowOrder(map['mediaListOptions']?['rowOrder']),
+    titleLanguage: TitleLanguage.from(map['options']?['titleLanguage']),
+    personNaming: PersonNaming.from(map['options']?['staffNameLanguage']),
+    activityMergeTime: map['options']?['activityMergeTime'] ?? 720,
+    splitCompletedAnime:
+        map['mediaListOptions']?['animeList']?['splitCompletedSectionByFormat'] ?? false,
+    splitCompletedManga:
+        map['mediaListOptions']?['mangaList']?['splitCompletedSectionByFormat'] ?? false,
+    displayAdultContent: map['options']?['displayAdultContent'] ?? false,
+    airingNotifications: map['options']?['airingNotifications'] ?? true,
+    advancedScoringEnabled:
+        map['mediaListOptions']?['animeList']?['advancedScoringEnabled'] ?? false,
+    restrictMessagesToFollowing: map['options']?['restrictMessagesToFollowing'] ?? false,
+    advancedScoreSections: List<String>.from(
+      map['mediaListOptions']?['animeList']?['advancedScoring'] ?? const <String>[],
+    ),
+    animeCustomLists: List<String>.from(
+      map['mediaListOptions']?['animeList']?['customLists'] ?? const <String>[],
+    ),
+    mangaCustomLists: List<String>.from(
+      map['mediaListOptions']?['mangaList']?['customLists'] ?? const <String>[],
+    ),
+    disabledListActivity: {
+      for (var activity in map['options']?['disabledListActivity'] ?? const [])
+        ListStatus.from(activity['type'])!: activity['disabled'],
+    },
+    notificationOptions: {
+      for (var option in map['options']?['notificationOptions'] ?? const [])
+        NotificationType.from(option['type'])!: option['enabled'],
+    },
+  );
 
   factory Settings.empty() => Settings._(
-        unreadNotifications: 0,
-        scoreFormat: ScoreFormat.point10,
-        defaultSort: EntrySort.title,
-        titleLanguage: TitleLanguage.romaji,
-        personNaming: PersonNaming.romajiWestern,
-        activityMergeTime: 720,
-        splitCompletedAnime: false,
-        splitCompletedManga: false,
-        displayAdultContent: false,
-        airingNotifications: true,
-        advancedScoringEnabled: false,
-        restrictMessagesToFollowing: false,
-        advancedScoreSections: const [],
-        animeCustomLists: const [],
-        mangaCustomLists: const [],
-        disabledListActivity: const {},
-        notificationOptions: const {},
-      );
+    unreadNotifications: 0,
+    scoreFormat: .point10,
+    defaultSort: .title,
+    titleLanguage: .romaji,
+    personNaming: .romajiWestern,
+    activityMergeTime: 720,
+    splitCompletedAnime: false,
+    splitCompletedManga: false,
+    displayAdultContent: false,
+    airingNotifications: true,
+    advancedScoringEnabled: false,
+    restrictMessagesToFollowing: false,
+    advancedScoreSections: const [],
+    animeCustomLists: const [],
+    mangaCustomLists: const [],
+    disabledListActivity: const {},
+    notificationOptions: const {},
+  );
 
   ScoreFormat scoreFormat;
   EntrySort defaultSort;
@@ -101,47 +99,47 @@ class Settings {
   final Map<NotificationType, bool> notificationOptions;
 
   Settings copy({int unreadNotifications = 0}) => Settings._(
-        unreadNotifications: unreadNotifications,
-        scoreFormat: scoreFormat,
-        defaultSort: defaultSort,
-        titleLanguage: titleLanguage,
-        personNaming: personNaming,
-        activityMergeTime: activityMergeTime,
-        splitCompletedAnime: splitCompletedAnime,
-        splitCompletedManga: splitCompletedManga,
-        displayAdultContent: displayAdultContent,
-        airingNotifications: airingNotifications,
-        advancedScoringEnabled: advancedScoringEnabled,
-        restrictMessagesToFollowing: restrictMessagesToFollowing,
-        advancedScoreSections: [...advancedScoreSections],
-        animeCustomLists: [...animeCustomLists],
-        mangaCustomLists: [...mangaCustomLists],
-        disabledListActivity: {...disabledListActivity},
-        notificationOptions: {...notificationOptions},
-      );
+    unreadNotifications: unreadNotifications,
+    scoreFormat: scoreFormat,
+    defaultSort: defaultSort,
+    titleLanguage: titleLanguage,
+    personNaming: personNaming,
+    activityMergeTime: activityMergeTime,
+    splitCompletedAnime: splitCompletedAnime,
+    splitCompletedManga: splitCompletedManga,
+    displayAdultContent: displayAdultContent,
+    airingNotifications: airingNotifications,
+    advancedScoringEnabled: advancedScoringEnabled,
+    restrictMessagesToFollowing: restrictMessagesToFollowing,
+    advancedScoreSections: [...advancedScoreSections],
+    animeCustomLists: [...animeCustomLists],
+    mangaCustomLists: [...mangaCustomLists],
+    disabledListActivity: {...disabledListActivity},
+    notificationOptions: {...notificationOptions},
+  );
 
   Map<String, dynamic> toGraphQlVariables() => {
-        'titleLanguage': titleLanguage.value,
-        'staffNameLanguage': personNaming.value,
-        'activityMergeTime': activityMergeTime,
-        'displayAdultContent': displayAdultContent,
-        'scoreFormat': scoreFormat.value,
-        'rowOrder': defaultSort.toRowOrder(),
-        'advancedScoring': advancedScoreSections,
-        'advancedScoringEnabled': advancedScoringEnabled,
-        'animeCustomLists': animeCustomLists,
-        'mangaCustomLists': mangaCustomLists,
-        'splitCompletedAnime': splitCompletedAnime,
-        'splitCompletedManga': splitCompletedManga,
-        'restrictMessagesToFollowing': restrictMessagesToFollowing,
-        'airingNotifications': airingNotifications,
-        'disabledListActivity': disabledListActivity.entries
-            .map((e) => {'type': e.key.value, 'disabled': e.value})
-            .toList(),
-        'notificationOptions': notificationOptions.entries
-            .map((e) => {'type': e.key.value, 'enabled': e.value})
-            .toList(),
-      };
+    'titleLanguage': titleLanguage.value,
+    'staffNameLanguage': personNaming.value,
+    'activityMergeTime': activityMergeTime,
+    'displayAdultContent': displayAdultContent,
+    'scoreFormat': scoreFormat.value,
+    'rowOrder': defaultSort.toRowOrder(),
+    'advancedScoring': advancedScoreSections,
+    'advancedScoringEnabled': advancedScoringEnabled,
+    'animeCustomLists': animeCustomLists,
+    'mangaCustomLists': mangaCustomLists,
+    'splitCompletedAnime': splitCompletedAnime,
+    'splitCompletedManga': splitCompletedManga,
+    'restrictMessagesToFollowing': restrictMessagesToFollowing,
+    'airingNotifications': airingNotifications,
+    'disabledListActivity': disabledListActivity.entries
+        .map((e) => {'type': e.key.value, 'disabled': e.value})
+        .toList(),
+    'notificationOptions': notificationOptions.entries
+        .map((e) => {'type': e.key.value, 'enabled': e.value})
+        .toList(),
+  };
 }
 
 enum TitleLanguage {
@@ -154,10 +152,8 @@ enum TitleLanguage {
   final String label;
   final String value;
 
-  static TitleLanguage from(String? value) => TitleLanguage.values.firstWhere(
-        (v) => v.value == value,
-        orElse: () => romaji,
-      );
+  static TitleLanguage from(String? value) =>
+      TitleLanguage.values.firstWhere((v) => v.value == value, orElse: () => romaji);
 }
 
 enum PersonNaming {
@@ -170,8 +166,6 @@ enum PersonNaming {
   final String label;
   final String value;
 
-  static PersonNaming from(String? value) => PersonNaming.values.firstWhere(
-        (v) => v.value == value,
-        orElse: () => romajiWestern,
-      );
+  static PersonNaming from(String? value) =>
+      PersonNaming.values.firstWhere((v) => v.value == value, orElse: () => romajiWestern);
 }

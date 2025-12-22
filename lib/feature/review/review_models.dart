@@ -14,13 +14,13 @@ class ReviewItem {
   });
 
   factory ReviewItem(Map<String, dynamic> map) => ReviewItem._(
-        id: map['id'],
-        mediaTitle: map['media']['title']['userPreferred'],
-        userName: map['user']['name'],
-        summary: map['summary'],
-        rating: '${map['rating']}/${map['ratingAmount']}',
-        bannerUrl: map['media']['bannerImage'],
-      );
+    id: map['id'],
+    mediaTitle: map['media']['title']['userPreferred'],
+    userName: map['user']['name'],
+    summary: map['summary'],
+    rating: '${map['rating']}/${map['ratingAmount']}',
+    bannerUrl: map['media']['bannerImage'],
+  );
 
   final int id;
   final String mediaTitle;
@@ -50,34 +50,30 @@ class Review {
     required this.viewerRating,
   });
 
-  factory Review(
-    Map<String, dynamic> map,
-    ImageQuality imageQuality,
-    bool analogClock,
-  ) =>
-      Review._(
-        id: map['id'],
-        userId: map['user']['id'],
-        mediaId: map['media']['id'],
-        userName: map['user']['name'] ?? '',
-        userAvatar: map['user']['avatar']['large'],
-        mediaTitle: map['media']['title']['userPreferred'] ?? '',
-        mediaCover: map['media']['coverImage'][imageQuality.value],
-        banner: map['media']['bannerImage'],
-        summary: map['summary'] ?? '',
-        text: parseMarkdown(map['body'] ?? ''),
-        createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt'])
-            .formattedDateTimeFromSeconds(analogClock),
-        siteUrl: map['siteUrl'],
-        score: map['score'] ?? 0,
-        rating: map['rating'] ?? 0,
-        totalRating: map['ratingAmount'] ?? 0,
-        viewerRating: map['userRating'] == 'UP_VOTE'
-            ? true
-            : map['userRating'] == 'DOWN_VOTE'
-                ? false
-                : null,
-      );
+  factory Review(Map<String, dynamic> map, ImageQuality imageQuality, bool analogClock) => Review._(
+    id: map['id'],
+    userId: map['user']['id'],
+    mediaId: map['media']['id'],
+    userName: map['user']['name'] ?? '',
+    userAvatar: map['user']['avatar']['large'],
+    mediaTitle: map['media']['title']['userPreferred'] ?? '',
+    mediaCover: map['media']['coverImage'][imageQuality.value],
+    banner: map['media']['bannerImage'],
+    summary: map['summary'] ?? '',
+    text: parseMarkdown(map['body'] ?? ''),
+    createdAt: DateTimeExtension.fromSecondsSinceEpoch(
+      map['createdAt'],
+    ).formattedDateTimeFromSeconds(analogClock),
+    siteUrl: map['siteUrl'],
+    score: map['score'] ?? 0,
+    rating: map['rating'] ?? 0,
+    totalRating: map['ratingAmount'] ?? 0,
+    viewerRating: map['userRating'] == 'UP_VOTE'
+        ? true
+        : map['userRating'] == 'DOWN_VOTE'
+        ? false
+        : null,
+  );
 
   final int id;
   final int userId;
@@ -98,15 +94,15 @@ class Review {
 }
 
 class ReviewsFilter {
-  const ReviewsFilter({this.mediaType, this.sort = ReviewsSort.createdAtDesc});
+  const ReviewsFilter({this.mediaType, this.sort = .createdAtDesc});
 
   final MediaType? mediaType;
   final ReviewsSort sort;
 
   ReviewsFilter copyWith({(MediaType?,)? mediaType, ReviewsSort? sort}) => ReviewsFilter(
-        mediaType: mediaType == null ? this.mediaType : mediaType.$1,
-        sort: sort ?? this.sort,
-      );
+    mediaType: mediaType == null ? this.mediaType : mediaType.$1,
+    sort: sort ?? this.sort,
+  );
 }
 
 enum ReviewsSort {

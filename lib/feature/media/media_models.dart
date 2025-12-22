@@ -80,21 +80,17 @@ class MediaConnections {
     Paged<Recommendation>? recommendations,
     List<MediaLanguageMapping>? languageToVoiceActors,
     int? selectedLanguage,
-  }) =>
-      MediaConnections(
-        characters: characters ?? this.characters,
-        staff: staff ?? this.staff,
-        reviews: reviews ?? this.reviews,
-        recommendations: recommendations ?? this.recommendations,
-        languageToVoiceActors: languageToVoiceActors ?? this.languageToVoiceActors,
-        selectedLanguage: selectedLanguage ?? this.selectedLanguage,
-      );
+  }) => MediaConnections(
+    characters: characters ?? this.characters,
+    staff: staff ?? this.staff,
+    reviews: reviews ?? this.reviews,
+    recommendations: recommendations ?? this.recommendations,
+    languageToVoiceActors: languageToVoiceActors ?? this.languageToVoiceActors,
+    selectedLanguage: selectedLanguage ?? this.selectedLanguage,
+  );
 }
 
-typedef MediaLanguageMapping = ({
-  String language,
-  Map<int, List<MediaRelatedItem>> voiceActors,
-});
+typedef MediaLanguageMapping = ({String language, Map<int, List<MediaRelatedItem>> voiceActors});
 
 class RelatedMedia {
   const RelatedMedia._({
@@ -109,17 +105,15 @@ class RelatedMedia {
   });
 
   factory RelatedMedia(Map<String, dynamic> map, ImageQuality imageQuality) => RelatedMedia._(
-        id: map['node']['id'],
-        title: map['node']['title']['userPreferred'],
-        imageUrl: map['node']['coverImage'][imageQuality.value],
-        relationType: StringExtension.tryNoScreamingSnakeCase(map['relationType']),
-        format: MediaFormat.from(map['node']['format']),
-        entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
-        releaseStatus: StringExtension.tryNoScreamingSnakeCase(
-          map['node']['status'],
-        ),
-        isAnime: map['node']['type'] == 'ANIME',
-      );
+    id: map['node']['id'],
+    title: map['node']['title']['userPreferred'],
+    imageUrl: map['node']['coverImage'][imageQuality.value],
+    relationType: StringExtension.tryNoScreamingSnakeCase(map['relationType']),
+    format: MediaFormat.from(map['node']['format']),
+    entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
+    releaseStatus: StringExtension.tryNoScreamingSnakeCase(map['node']['status']),
+    isAnime: map['node']['type'] == 'ANIME',
+  );
 
   final int id;
   final bool isAnime;
@@ -140,11 +134,11 @@ class MediaRelatedItem implements TileModelable {
   });
 
   factory MediaRelatedItem(Map<String, dynamic> map, String? role) => MediaRelatedItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-        role: role,
-      );
+    id: map['id'],
+    name: map['name']['userPreferred'],
+    imageUrl: map['image']['large'],
+    role: role,
+  );
 
   final int id;
   final String name;
@@ -210,16 +204,14 @@ class MediaFollowing {
   });
 
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
-        entryStatus: ListStatus.from(map['status'])!,
-        score: (map['score'] ?? 0).toDouble(),
-        notes: map['notes'] ?? '',
-        userId: map['user']['id'],
-        userName: map['user']['name'],
-        userAvatar: map['user']['avatar']['large'],
-        scoreFormat: ScoreFormat.from(
-          map['user']['mediaListOptions']?['scoreFormat'],
-        ),
-      );
+    entryStatus: ListStatus.from(map['status'])!,
+    score: (map['score'] ?? 0).toDouble(),
+    notes: map['notes'] ?? '',
+    userId: map['user']['id'],
+    userName: map['user']['name'],
+    userAvatar: map['user']['avatar']['large'],
+    scoreFormat: ScoreFormat.from(map['user']['mediaListOptions']?['scoreFormat']),
+  );
 
   final ListStatus entryStatus;
   final double score;
@@ -247,8 +239,8 @@ class Recommendation {
     final userRating = map['userRating'] == 'RATE_UP'
         ? true
         : map['userRating'] == 'RATE_DOWN'
-            ? false
-            : null;
+        ? false
+        : null;
 
     return Recommendation._(
       id: map['mediaRecommendation']['id'],
@@ -383,9 +375,7 @@ class MediaInfo {
       format: MediaFormat.from(map['format']),
       status: ReleaseStatus.from(map['status']),
       nextEpisode: map['nextAiringEpisode']?['episode'],
-      airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(
-        map['nextAiringEpisode']?['airingAt'],
-      ),
+      airingAt: DateTimeExtension.tryFromSecondsSinceEpoch(map['nextAiringEpisode']?['airingAt']),
       episodes: map['episodes'],
       duration: duration,
       chapters: map['chapters'],
@@ -460,10 +450,10 @@ enum ExternalLinkType {
   streaming;
 
   static ExternalLinkType fromString(String? str) => switch (str) {
-        'SOCIAL' => ExternalLinkType.social,
-        'STREAMING' => ExternalLinkType.streaming,
-        _ => ExternalLinkType.info,
-      };
+    'SOCIAL' => .social,
+    'STREAMING' => .streaming,
+    _ => .info,
+  };
 }
 
 class MediaRank {
@@ -503,18 +493,20 @@ class MediaStats {
         final String when = (r['allTime'] ?? false)
             ? 'Ever'
             : season != null
-                ? '${season.label} ${r['year'] ?? ''}'
-                : (r['year'] ?? '').toString();
+            ? '${season.label} ${r['year'] ?? ''}'
+            : (r['year'] ?? '').toString();
         if (when.isEmpty) continue;
 
-        model.ranks.add(MediaRank(
-          text: r['type'] == 'RATED'
-              ? '#${r["rank"]} Highest Rated $when'
-              : '#${r["rank"]} Most Popular $when',
-          typeIsScore: r['type'] == 'RATED',
-          season: season,
-          year: r['year'],
-        ));
+        model.ranks.add(
+          MediaRank(
+            text: r['type'] == 'RATED'
+                ? '#${r["rank"]} Highest Rated $when'
+                : '#${r["rank"]} Most Popular $when',
+            typeIsScore: r['type'] == 'RATED',
+            season: season,
+            year: r['year'],
+          ),
+        );
       }
     }
 
@@ -686,10 +678,8 @@ enum ScoreFormat {
   final String label;
   final String value;
 
-  static ScoreFormat from(String? value) => ScoreFormat.values.firstWhere(
-        (v) => v.value == value,
-        orElse: () => point10,
-      );
+  static ScoreFormat from(String? value) =>
+      ScoreFormat.values.firstWhere((v) => v.value == value, orElse: () => point10);
 }
 
 enum MediaSort {
@@ -745,19 +735,19 @@ enum EntrySort {
 
   /// Serialize to API row order.
   String toRowOrder() => switch (this) {
-        scoreDesc => 'score',
-        updatedDesc => 'updatedAt',
-        addedDesc => 'id',
-        title => 'title',
-        _ => 'title',
-      };
+    scoreDesc => 'score',
+    updatedDesc => 'updatedAt',
+    addedDesc => 'id',
+    title => 'title',
+    _ => 'title',
+  };
 
   /// Deserialize from API row order.
   static EntrySort fromRowOrder(String key) => switch (key) {
-        'score' => scoreDesc,
-        'updatedAt' => updatedDesc,
-        'id' => addedDesc,
-        'title' => title,
-        _ => title,
-      };
+    'score' => scoreDesc,
+    'updatedAt' => updatedDesc,
+    'id' => addedDesc,
+    'title' => title,
+    _ => title,
+  };
 }

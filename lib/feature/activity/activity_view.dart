@@ -46,14 +46,10 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
-    final activity = ref.watch(
-      activityProvider(widget.id).select((s) => s.value?.activity),
-    );
+    final activity = ref.watch(activityProvider(widget.id).select((s) => s.value?.activity));
 
     return AdaptiveScaffold(
-      topBar: TopBar(
-        trailing: [if (activity != null) _TopBarContent(activity)],
-      ),
+      topBar: TopBar(trailing: [if (activity != null) _TopBarContent(activity)]),
       floatingAction: HidingFloatingActionButton(
         key: const Key('Reply'),
         scrollCtrl: _scrollCtrl,
@@ -63,20 +59,13 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
           onPressed: () => showSheet(
             context,
             CompositionView(
-              tag: ActivityReplyCompositionTag(
-                id: null,
-                activityId: widget.id,
-              ),
+              tag: ActivityReplyCompositionTag(id: null, activityId: widget.id),
               onSaved: (map) => ref.read(activityProvider(widget.id).notifier).appendReply(map),
             ),
           ),
         ),
       ),
-      child: _View(
-        id: widget.id,
-        sourceTag: widget.sourceTag,
-        scrollCtrl: _scrollCtrl,
-      ),
+      child: _View(id: widget.id, sourceTag: widget.sourceTag, scrollCtrl: _scrollCtrl),
     );
   }
 }
@@ -93,71 +82,51 @@ class _TopBarContent extends StatelessWidget {
         children: [
           Flexible(
             child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () => context.push(
-                Routes.user(activity.authorId, activity.authorAvatarUrl),
-              ),
+              behavior: .opaque,
+              onTap: () => context.push(Routes.user(activity.authorId, activity.authorAvatarUrl)),
               child: Row(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: .min,
                 children: [
                   Hero(
                     tag: activity.authorId,
                     child: ClipRRect(
                       borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(
-                        activity.authorAvatarUrl,
-                        height: 40,
-                        width: 40,
-                      ),
+                      child: CachedImage(activity.authorAvatarUrl, height: 40, width: 40),
                     ),
                   ),
                   const SizedBox(width: Theming.offset),
-                  Flexible(
-                    child: Text(
-                      activity.authorName,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ),
+                  Flexible(child: Text(activity.authorName, overflow: .ellipsis, maxLines: 1)),
                 ],
               ),
             ),
           ),
           ...switch (activity) {
             MessageActivity message => [
-                if (message.isPrivate)
-                  const Padding(
-                    padding: EdgeInsets.only(left: Theming.offset),
-                    child: Icon(Ionicons.eye_off_outline),
-                  ),
+              if (message.isPrivate)
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: Theming.offset),
-                  child: Icon(Icons.arrow_right_alt),
+                  padding: .only(left: Theming.offset),
+                  child: Icon(Ionicons.eye_off_outline),
                 ),
-                GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () => context.push(
-                    Routes.user(
-                      message.recipientId,
-                      message.recipientAvatarUrl,
-                    ),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(
-                      message.recipientAvatarUrl,
-                      height: 40,
-                      width: 40,
-                    ),
-                  ),
+              const Padding(
+                padding: .symmetric(horizontal: Theming.offset),
+                child: Icon(Icons.arrow_right_alt),
+              ),
+              GestureDetector(
+                behavior: .opaque,
+                onTap: () =>
+                    context.push(Routes.user(message.recipientId, message.recipientAvatarUrl)),
+                child: ClipRRect(
+                  borderRadius: Theming.borderRadiusSmall,
+                  child: CachedImage(message.recipientAvatarUrl, height: 40, width: 40),
                 ),
-              ],
+              ),
+            ],
             _ when activity.isPinned => const [
-                Padding(
-                  padding: EdgeInsets.only(left: Theming.offset),
-                  child: Icon(Icons.push_pin_outlined),
-                ),
-              ],
+              Padding(
+                padding: .only(left: Theming.offset),
+                child: Icon(Icons.push_pin_outlined),
+              ),
+            ],
             _ => const [],
           },
         ],
@@ -167,11 +136,7 @@ class _TopBarContent extends StatelessWidget {
 }
 
 class _View extends ConsumerWidget {
-  const _View({
-    required this.id,
-    required this.sourceTag,
-    required this.scrollCtrl,
-  });
+  const _View({required this.id, required this.sourceTag, required this.scrollCtrl});
 
   final int id;
   final ActivitiesTag? sourceTag;
@@ -181,31 +146,27 @@ class _View extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue>(
       activityProvider(id),
-      (_, s) => s.whenOrNull(
-        error: (error, _) => SnackBarExtension.show(context, error.toString()),
-      ),
+      (_, s) =>
+          s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
     );
 
     final viewerId = ref.watch(viewerIdProvider);
 
-    final options = ref.watch(
-      persistenceProvider.select((s) => s.options),
-    );
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    return ref.watch(activityProvider(id)).unwrapPrevious().when(
+    return ref
+        .watch(activityProvider(id))
+        .unwrapPrevious()
+        .when(
           loading: () => const Center(child: Loader()),
-          error: (_, __) => const Center(
-            child: Text('Failed to load activity'),
-          ),
+          error: (_, _) => const Center(child: Text('Failed to load activity')),
           data: (data) {
             return ConstrainedView(
               child: CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 controller: scrollCtrl,
                 slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(activityProvider(id)),
-                  ),
+                  SliverRefreshControl(onRefresh: () => ref.invalidate(activityProvider(id))),
                   SliverToBoxAdapter(
                     child: ActivityCard(
                       withHeader: false,
@@ -270,11 +231,7 @@ class _View extends ConsumerWidget {
     return ref.read(activityProvider(id).notifier).togglePin();
   }
 
-  Future<Object?> _remove(
-    BuildContext context,
-    WidgetRef ref,
-    Activity activity,
-  ) {
+  Future<Object?> _remove(BuildContext context, WidgetRef ref, Activity activity) {
     Navigator.pop(context);
 
     if (sourceTag != null) {
@@ -301,11 +258,7 @@ class _View extends ConsumerWidget {
     }
   }
 
-  Future<void> _reply(
-    BuildContext context,
-    WidgetRef ref,
-    Activity activity,
-  ) {
+  Future<void> _reply(BuildContext context, WidgetRef ref, Activity activity) {
     return showSheet(
       context,
       CompositionView(

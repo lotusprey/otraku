@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
@@ -12,49 +14,50 @@ import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class CollectionGrid extends StatelessWidget {
-  const CollectionGrid({required this.items, required this.onProgressUpdated});
+  const CollectionGrid({
+    required this.items,
+    required this.onProgressUpdated,
+    required this.highContrast,
+  });
 
   final List<Entry> items;
   final Future<String?> Function(Entry, bool)? onProgressUpdated;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
+    final lineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final extraHeight = lineHeight * 2 + 38;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndExtraHeight(
+      gridDelegate: SliverGridDelegateWithMinWidthAndExtraHeight(
         minWidth: 100,
-        extraHeight: 70,
+        extraHeight: extraHeight,
         rawHWRatio: Theming.coverHtoWRatio,
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => Card(
+        (context, i) => CardExtension.highContrast(highContrast)(
           child: MediaRouteTile(
             id: items[i].mediaId,
             imageUrl: items[i].imageUrl,
             child: Column(
+              crossAxisAlignment: .stretch,
               children: [
                 Expanded(
-                  child: Hero(
-                    tag: items[i].mediaId,
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: Container(
-                        color: ColorScheme.of(context).surfaceContainerHighest,
-                        child: CachedImage(items[i].imageUrl),
-                      ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Theming.radiusSmall),
+                    child: Container(
+                      color: ColorScheme.of(context).surfaceContainerHighest,
+                      child: CachedImage(items[i].imageUrl),
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 5, right: 5, top: 5),
-                  child: SizedBox(
-                    height: 35,
-                    child: Text(
-                      items[i].titles[0],
-                      overflow: TextOverflow.fade,
-                      maxLines: 2,
-                      style: TextTheme.of(context).bodyMedium,
-                    ),
+                SizedBox(
+                  height: lineHeight * 2 + 8,
+                  child: Padding(
+                    padding: const .only(left: 5, right: 5, top: 5, bottom: 3),
+                    child: Text(items[i].titles[0], overflow: .ellipsis, maxLines: 2),
                   ),
                 ),
                 _IncrementButton(items[i], onProgressUpdated),
@@ -91,10 +94,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
         child: SizedBox(
           height: 30,
           child: Center(
-            child: Text(
-              item.progress.toString(),
-              style: TextTheme.of(context).labelSmall,
-            ),
+            child: Text(item.progress.toString(), style: TextTheme.of(context).labelSmall),
           ),
         ),
       );
@@ -112,9 +112,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
           child: Center(
             child: Text(
               '${item.progress}/${item.progressMax ?? "?"}',
-              style: TextTheme.of(context).labelSmall?.copyWith(
-                    color: foregroundColor,
-                  ),
+              style: TextTheme.of(context).labelSmall?.copyWith(color: foregroundColor),
             ),
           ),
         ),
@@ -124,7 +122,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
     return TextButton(
       style: TextButton.styleFrom(
         minimumSize: const Size(0, 30),
-        padding: const EdgeInsets.symmetric(horizontal: 5),
+        padding: const .symmetric(horizontal: 5),
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
         foregroundColor: foregroundColor,
         iconColor: foregroundColor,
@@ -147,7 +145,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
       child: Tooltip(
         message: 'Increment Progress',
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: .center,
           children: [
             Text(
               '${item.progress}/${item.progressMax ?? "?"}',
@@ -166,9 +164,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
     var updateStatus = false;
 
     if (_lastProgress == 0 &&
-        (item.listStatus == ListStatus.planning ||
-            item.listStatus == ListStatus.paused ||
-            item.listStatus == ListStatus.dropped)) {
+        (item.listStatus == .planning ||
+            item.listStatus == .paused ||
+            item.listStatus == .dropped)) {
       await ConfirmationDialog.show(
         context,
         title: 'Update status?',

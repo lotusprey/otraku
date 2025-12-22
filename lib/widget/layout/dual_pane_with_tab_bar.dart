@@ -27,9 +27,7 @@ class DualPaneWithTabBar extends StatelessWidget {
       children: [
         Flexible(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: Theming.windowWidthMedium,
-            ),
+            constraints: const BoxConstraints(maxWidth: Theming.windowWidthMedium),
             child: leftPane,
           ),
         ),
@@ -37,9 +35,7 @@ class DualPaneWithTabBar extends StatelessWidget {
           child: Stack(
             children: [
               MediaQuery(
-                data: mediaQuery.copyWith(
-                  padding: mediaQuery.padding.copyWith(top: topPadding),
-                ),
+                data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: topPadding)),
                 child: rightPane,
               ),
               Align(
@@ -75,7 +71,7 @@ class DualPaneWithTabBar extends StatelessWidget {
                     ),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

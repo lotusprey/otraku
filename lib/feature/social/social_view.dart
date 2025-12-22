@@ -27,10 +27,7 @@ class SocialView extends ConsumerStatefulWidget {
 }
 
 class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: SocialTab.values.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: SocialTab.values.length, vsync: this);
   late final _scrollCtrl = PagedController(
     loadMore: () =>
         ref.read(socialProvider(widget.id).notifier).fetch(SocialTab.values[_tabCtrl.index]),
@@ -54,15 +51,9 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
     final tab = SocialTab.values[_tabCtrl.index];
 
     final viewerId = ref.watch(viewerIdProvider);
-    final analogClock = ref.watch(
-      persistenceProvider.select((s) => s.options.analogClock),
-    );
+    final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final count = ref.watch(
-      socialProvider(widget.id).select(
-        (s) => s.value?.getCount(tab) ?? 0,
-      ),
-    );
+    final count = ref.watch(socialProvider(widget.id).select((s) => s.value?.getCount(tab) ?? 0));
 
     final onRefresh = (invalidate) => invalidate(socialProvider(widget.id));
 
@@ -74,11 +65,8 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
           trailing: [
             if (count > 0)
               Padding(
-                padding: const EdgeInsets.only(right: Theming.offset),
-                child: Text(
-                  count.toString(),
-                  style: TextTheme.of(context).titleSmall,
-                ),
+                padding: const .only(right: Theming.offset),
+                child: Text(count.toString(), style: TextTheme.of(context).titleSmall),
               ),
           ],
         ),
@@ -100,38 +88,35 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.following),
-            ),
-            onData: (data) => UserItemGrid(data.items),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.following)),
+            onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.followers),
-            ),
-            onData: (data) => UserItemGrid(data.items),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.followers)),
+            onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.threads),
-            ),
-            onData: (data) => ThreadItemList(data.items, analogClock),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.threads)),
+            onData: (data) => ThreadItemList(data.items, options.highContrast, options.analogClock),
           ),
           PagedView(
             scrollCtrl: _scrollCtrl,
             onRefresh: onRefresh,
-            provider: socialProvider(widget.id).select(
-              (s) => s.unwrapPrevious().whenData((data) => data.comments),
-            ),
-            onData: (data) => _CommentItemList(
-              data.items,
-              viewerId,
-              analogClock,
-            ),
+            provider: socialProvider(
+              widget.id,
+            ).select((s) => s.unwrapPrevious().whenData((data) => data.comments)),
+            onData: (data) =>
+                _CommentItemList(data.items, viewerId, options.highContrast, options.analogClock),
           ),
         ],
       ),
@@ -140,10 +125,11 @@ class _SocialViewState extends ConsumerState<SocialView> with SingleTickerProvid
 }
 
 class _CommentItemList extends StatelessWidget {
-  const _CommentItemList(this.items, this.viewerId, this.analogClock);
+  const _CommentItemList(this.items, this.viewerId, this.highContrast, this.analogClock);
 
   final List<Comment> items;
   final int? viewerId;
+  final bool highContrast;
   final bool analogClock;
 
   @override
@@ -155,25 +141,29 @@ class _CommentItemList extends StatelessWidget {
 
         final openThread = () => context.push(Routes.thread(item.threadId));
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Semantics(
-              onTap: openThread,
-              onTapHint: 'open thread',
-              child: GestureDetector(
+        return Padding(
+          padding: const .only(bottom: Theming.offset),
+          child: Column(
+            crossAxisAlignment: .start,
+            spacing: Theming.offset,
+            children: [
+              Semantics(
                 onTap: openThread,
-                behavior: HitTestBehavior.opaque,
-                child: Text(
-                  item.threadTitle,
-                  style: TextTheme.of(context).titleMedium,
+                onTapHint: 'open thread',
+                child: GestureDetector(
+                  onTap: openThread,
+                  behavior: .opaque,
+                  child: Text(item.threadTitle, style: TextTheme.of(context).bodyMedium),
                 ),
               ),
-            ),
-            const SizedBox(height: Theming.offset),
-            CommentTile(item, viewerId: viewerId, analogClock: analogClock),
-            const SizedBox(height: Theming.offset),
-          ],
+              CommentTile(
+                item,
+                viewerId: viewerId,
+                highContrast: highContrast,
+                analogClock: analogClock,
+              ),
+            ],
+          ),
         );
       },
     );

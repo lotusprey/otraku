@@ -18,68 +18,63 @@ class ReviewView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer(builder: (context, ref, _) {
-        final data = ref.watch(reviewProvider(id).select((s) => s.value));
+      body: Consumer(
+        builder: (context, ref, _) {
+          final data = ref.watch(reviewProvider(id).select((s) => s.value));
 
-        return CustomScrollView(
-          slivers: [
-            ReviewHeader(
-              id: id,
-              review: data,
-              bannerUrl: bannerUrl,
-            ),
-            if (data != null) ...[
-              SliverConstrainedView(
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    data.summary,
-                    style: TextTheme.of(context).labelMedium,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SliverConstrainedView(
-                sliver: HtmlContent(
-                  data.text,
-                  renderMode: RenderMode.sliverList,
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Center(
-                  child: Container(
-                    margin: Theming.paddingAll,
-                    padding: Theming.paddingAll,
-                    decoration: BoxDecoration(
-                      color: ColorScheme.of(context).primary,
-                      borderRadius: Theming.borderRadiusBig,
-                    ),
+          return CustomScrollView(
+            slivers: [
+              ReviewHeader(id: id, review: data, bannerUrl: bannerUrl),
+              if (data != null) ...[
+                SliverConstrainedView(
+                  sliver: SliverToBoxAdapter(
                     child: Text(
-                      '${data.score}/100',
-                      style: TextTheme.of(context).titleLarge?.copyWith(
-                            color: ColorScheme.of(context).onPrimary,
-                          ),
+                      data.summary,
+                      style: TextTheme.of(context).labelMedium,
+                      textAlign: .center,
                     ),
                   ),
                 ),
-              ),
-              _RateButtons(data, ref.read(reviewProvider(id).notifier).rate),
-              SliverPadding(
-                padding: EdgeInsets.only(
-                  top: 20,
-                  bottom: MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
+                SliverConstrainedView(
+                  sliver: HtmlContent(data.text, renderMode: RenderMode.sliverList),
                 ),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    data.createdAt,
-                    style: TextTheme.of(context).labelMedium,
-                    textAlign: TextAlign.center,
+                SliverToBoxAdapter(
+                  child: Center(
+                    child: Container(
+                      margin: Theming.paddingAll,
+                      padding: Theming.paddingAll,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).primary,
+                        borderRadius: Theming.borderRadiusBig,
+                      ),
+                      child: Text(
+                        '${data.score}/100',
+                        style: TextTheme.of(
+                          context,
+                        ).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                _RateButtons(data, ref.read(reviewProvider(id).notifier).rate),
+                SliverPadding(
+                  padding: .only(
+                    top: 20,
+                    bottom: MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: Text(
+                      data.createdAt,
+                      style: TextTheme.of(context).labelMedium,
+                      textAlign: .center,
+                    ),
+                  ),
+                ),
+              ],
             ],
-          ],
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }
@@ -101,35 +96,29 @@ class _RateButtonsState extends State<_RateButtons> {
 
     return SliverToBoxAdapter(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: .min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: .center,
             children: [
               IconButton(
-                icon: Icon(
-                  review.viewerRating == true ? Icons.thumb_up : Icons.thumb_up_outlined,
-                ),
+                icon: Icon(review.viewerRating == true ? Icons.thumb_up : Icons.thumb_up_outlined),
                 color: review.viewerRating == true ? ColorScheme.of(context).primary : null,
-                onPressed: () => _rate(
-                  review.viewerRating != true ? true : null,
-                ),
+                onPressed: () => _rate(review.viewerRating != true ? true : null),
               ),
               IconButton(
                 icon: Icon(
                   review.viewerRating == false ? Icons.thumb_down : Icons.thumb_down_outlined,
                 ),
                 color: review.viewerRating == false ? ColorScheme.of(context).error : null,
-                onPressed: () => _rate(
-                  review.viewerRating != false ? false : null,
-                ),
+                onPressed: () => _rate(review.viewerRating != false ? false : null),
               ),
             ],
           ),
           Text(
             '${review.rating}/${review.totalRating} users liked this review',
             style: TextTheme.of(context).labelMedium,
-            textAlign: TextAlign.center,
+            textAlign: .center,
           ),
         ],
       ),

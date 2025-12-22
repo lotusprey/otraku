@@ -5,8 +5,6 @@ import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/collection/collection_top_bar.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
-import 'package:otraku/feature/discover/discover_model.dart';
-import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
@@ -23,7 +21,6 @@ import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
 import 'package:otraku/widget/layout/top_bar.dart';
 import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/feature/collection/collection_list.dart';
-import 'package:otraku/feature/media/media_models.dart';
 
 class CollectionView extends StatefulWidget {
   const CollectionView(this.userId, this.ofAnime);
@@ -51,18 +48,14 @@ class _CollectionViewState extends State<CollectionView> {
 
     return AdaptiveScaffold(
       topBar: TopBar(trailing: [CollectionTopBarTrailingContent(tag, null)]),
-      floatingAction: formFactor == FormFactor.phone
+      floatingAction: formFactor == .phone
           ? HidingFloatingActionButton(
               key: const Key('lists'),
               scrollCtrl: _ctrl,
               child: CollectionFloatingAction(tag),
             )
           : null,
-      child: CollectionSubview(
-        tag: tag,
-        scrollCtrl: _ctrl,
-        formFactor: formFactor,
-      ),
+      child: CollectionSubview(tag: tag, scrollCtrl: _ctrl, formFactor: formFactor),
     );
   }
 }
@@ -85,48 +78,29 @@ class CollectionSubview extends StatelessWidget {
       return const Center(
         child: Padding(
           padding: Theming.paddingAll,
-          child: Text(
-            'Log in from the profile tab to view your collections',
-            textAlign: TextAlign.center,
-          ),
+          child: Text('Log in from the profile tab to view your collections', textAlign: .center),
         ),
       );
     }
-
-    final listToWidget = (EntryList l) => Row(
-          children: [
-            Expanded(child: Text(l.name)),
-            const SizedBox(width: Theming.offset / 2),
-            DefaultTextStyle(
-              style: TextTheme.of(context).labelMedium!,
-              child: Text(l.entries.length.toString()),
-            ),
-          ],
-        );
 
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
           collectionProvider(tag!),
-          (_, s) => s.whenOrNull(
-            error: (error, _) => SnackBarExtension.show(
-              context,
-              error.toString(),
-            ),
-          ),
+          (_, s) =>
+              s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
         );
 
-        return ref.watch(collectionProvider(tag!)).unwrapPrevious().when(
+        return ref
+            .watch(collectionProvider(tag!))
+            .unwrapPrevious()
+            .when(
               loading: () => const Center(child: Loader()),
-              error: (_, __) => CustomScrollView(
+              error: (_, _) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
-                  SliverRefreshControl(
-                    onRefresh: () => ref.invalidate(collectionProvider(tag!)),
-                  ),
-                  const SliverFillRemaining(
-                    child: Center(child: Text('Failed to load')),
-                  ),
+                  SliverRefreshControl(onRefresh: () => ref.invalidate(collectionProvider(tag!))),
+                  const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
                 ],
               ),
               data: (data) {
@@ -138,9 +112,7 @@ class CollectionSubview extends StatelessWidget {
                       controller: scrollCtrl,
                       slivers: [
                         SliverRefreshControl(
-                          onRefresh: () => ref.invalidate(
-                            collectionProvider(tag!),
-                          ),
+                          onRefresh: () => ref.invalidate(collectionProvider(tag!)),
                         ),
                         _Content(tag!, data),
                         const SliverFooter(),
@@ -149,21 +121,22 @@ class CollectionSubview extends StatelessWidget {
                   ),
                 );
 
-                if (formFactor == FormFactor.phone) return content;
+                if (formFactor == .phone) return content;
 
                 return switch (data) {
                   PreviewCollection _ => content,
                   FullCollection c => Row(
-                      children: [
-                        PillSelector(
-                          maxWidth: 200,
-                          selected: c.index,
-                          items: data.lists.map(listToWidget).toList(),
-                          onTap: (i) => ref.read(collectionProvider(tag!).notifier).changeIndex(i),
-                        ),
-                        Expanded(child: content)
-                      ],
-                    ),
+                    children: [
+                      PillSelector(
+                        maxWidth: 200,
+                        selected: c.index + 1,
+                        items: buildFullCollectionSelectionItems(context, data.lists),
+                        onTap: (i) =>
+                            ref.read(collectionProvider(tag!).notifier).changeIndex(i - 1),
+                      ),
+                      Expanded(child: content),
+                    ],
+                  ),
                 };
               },
             );
@@ -182,22 +155,18 @@ class _Content extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final entries = ref.watch(collectionEntriesProvider(tag));
-
-        final options = ref.watch(persistenceProvider.select((s) => s.options));
+        final lists = ref.watch(collectionEntriesProvider(tag));
         final isViewer = ref.watch(viewerIdProvider) == tag.userId;
 
-        if (entries.isEmpty) {
+        if (lists.isEmpty) {
           if (!isViewer) {
-            return const SliverFillRemaining(
-              child: Center(child: Text('No results')),
-            );
+            return const SliverFillRemaining(child: Center(child: Text('No results')));
           }
 
           return SliverFillRemaining(
             child: Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: .min,
                 children: [
                   const Text('No results'),
                   TextButton(
@@ -210,31 +179,67 @@ class _Content extends StatelessWidget {
           );
         }
 
-        final onProgressUpdated =
-            isViewer ? ref.read(collectionProvider(tag).notifier).saveEntryProgress : null;
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-        final collectionIsExpanded = switch (collection) {
-          PreviewCollection _ => false,
-          FullCollection _ => true,
+        final onProgressUpdated = isViewer
+            ? (oldEntry, setAsCurrent) => ref
+                  .read(collectionProvider(tag).notifier)
+                  .saveEntryProgress(oldEntry, setAsCurrent)
+            : null;
+
+        final (collectionIsExpanded, showAllLists) = switch (collection) {
+          PreviewCollection _ => (false, false),
+          FullCollection c => (true, c.index < 0),
         };
 
-        if (collectionIsExpanded && options.collectionItemView == CollectionItemView.simple ||
-            !collectionIsExpanded &&
-                options.collectionPreviewItemView == CollectionItemView.simple) {
-          return CollectionGrid(
-            items: entries,
-            onProgressUpdated: onProgressUpdated,
-          );
+        final useSimpleGrid =
+            collectionIsExpanded && options.collectionItemView == .simple ||
+            !collectionIsExpanded && options.collectionPreviewItemView == .simple;
+
+        if (!showAllLists) {
+          return useSimpleGrid
+              ? CollectionGrid(
+                  items: lists[0].entries,
+                  onProgressUpdated: onProgressUpdated,
+                  highContrast: options.highContrast,
+                )
+              : CollectionList(
+                  items: lists[0].entries,
+                  onProgressUpdated: onProgressUpdated,
+                  scoreFormat: ref.watch(
+                    collectionProvider(tag).select((s) => s.value?.scoreFormat ?? .point10Decimal),
+                  ),
+                  highContrast: options.highContrast,
+                );
         }
 
-        return CollectionList(
-          items: entries,
-          onProgressUpdated: onProgressUpdated,
-          scoreFormat: ref.watch(
-            collectionProvider(tag).select(
-              (s) => s.value?.scoreFormat ?? ScoreFormat.point10Decimal,
-            ),
-          ),
+        return SliverMainAxisGroup(
+          slivers: [
+            for (final l in lists) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const .only(bottom: Theming.offset),
+                  child: Text(l.name, style: TextTheme.of(context).bodyLarge),
+                ),
+              ),
+              useSimpleGrid
+                  ? CollectionGrid(
+                      items: l.entries,
+                      onProgressUpdated: onProgressUpdated,
+                      highContrast: options.highContrast,
+                    )
+                  : CollectionList(
+                      items: l.entries,
+                      onProgressUpdated: onProgressUpdated,
+                      scoreFormat: ref.watch(
+                        collectionProvider(
+                          tag,
+                        ).select((s) => s.value?.scoreFormat ?? .point10Decimal),
+                      ),
+                      highContrast: options.highContrast,
+                    ),
+            ],
+          ],
         );
       },
     );
@@ -244,17 +249,21 @@ class _Content extends StatelessWidget {
     final collectionFilter = ref.read(collectionFilterProvider(tag));
     final sort = ref.read(persistenceProvider).discoverMediaFilter.sort;
 
-    ref.read(discoverFilterProvider.notifier).update((f) => f.copyWith(
-          type: tag.ofAnime ? DiscoverType.anime : DiscoverType.manga,
-          search: collectionFilter.search,
-          mediaFilter: DiscoverMediaFilter.fromCollection(
-            filter: collectionFilter.mediaFilter,
-            sort: sort,
-            ofAnime: tag.ofAnime,
+    ref
+        .read(discoverFilterProvider.notifier)
+        .update(
+          (f) => f.copyWith(
+            type: tag.ofAnime ? .anime : .manga,
+            search: collectionFilter.search,
+            mediaFilter: DiscoverMediaFilter.fromCollection(
+              filter: collectionFilter.mediaFilter,
+              sort: sort,
+              ofAnime: tag.ofAnime,
+            ),
           ),
-        ));
+        );
 
-    context.go(Routes.home(HomeTab.discover));
+    context.go(Routes.home(.discover));
     ref.invalidate(collectionFilterProvider(tag));
   }
 }

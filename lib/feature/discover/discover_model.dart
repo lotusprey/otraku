@@ -93,10 +93,7 @@ class DiscoverMediaItem {
     required this.isAdult,
   });
 
-  factory DiscoverMediaItem(
-    Map<String, dynamic> map,
-    ImageQuality imageQuality,
-  ) =>
+  factory DiscoverMediaItem(Map<String, dynamic> map, ImageQuality imageQuality) =>
       DiscoverMediaItem._(
         id: map['id'],
         name: map['title']['userPreferred'],
@@ -140,15 +137,12 @@ class DiscoverRecommendationItem {
     required this.isRecommendedMediaAdult,
   });
 
-  factory DiscoverRecommendationItem(
-    Map<String, dynamic> map,
-    ImageQuality imageQuality,
-  ) {
+  factory DiscoverRecommendationItem(Map<String, dynamic> map, ImageQuality imageQuality) {
     final userRating = map['userRating'] == 'RATE_UP'
         ? true
         : map['userRating'] == 'RATE_DOWN'
-            ? false
-            : null;
+        ? false
+        : null;
 
     final media = map['media'];
     final recommendedMedia = map['mediaRecommendation'];
@@ -175,8 +169,9 @@ class DiscoverRecommendationItem {
       recommendedMediaId: recommendedMedia['id'] ?? 0,
       recommendedMediaTitle: recommendedMedia['title']['userPreferred'] ?? '?',
       recommendedMediaCover: recommendedMedia['coverImage'][imageQuality.value] ?? '',
-      recommendedMediaListStatus: ListStatus.from(recommendedMedia['mediaListEntry']?['status'])
-          ?.label(isRecommendedMediaAnime),
+      recommendedMediaListStatus: ListStatus.from(
+        recommendedMedia['mediaListEntry']?['status'],
+      )?.label(isRecommendedMediaAnime),
       isRecommendedMediaAdult: recommendedMedia['isAdult'] ?? false,
     );
   }

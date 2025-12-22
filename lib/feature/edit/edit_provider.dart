@@ -10,10 +10,8 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final entryEditProvider =
-    AsyncNotifierProvider.autoDispose.family<EntryEditNotifier, EntryEdit, EditTag>(
-  EntryEditNotifier.new,
-);
+final entryEditProvider = AsyncNotifierProvider.autoDispose
+    .family<EntryEditNotifier, EntryEdit, EditTag>(EntryEditNotifier.new);
 
 class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
   EntryEditNotifier(this.arg);
@@ -28,17 +26,15 @@ class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
 
     final data = await ref.watch(repositoryProvider).request(GqlQuery.entry, {'mediaId': arg.id});
 
-    final settings = await ref.watch(
-      settingsProvider.selectAsync((settings) => settings),
-    );
+    final settings = await ref.watch(settingsProvider.selectAsync((settings) => settings));
 
     return EntryEdit(data['Media'], settings, arg.setComplete);
   }
 
   void updateBy(EntryEdit Function(EntryEdit) callback) => state = switch (state) {
-        AsyncData(:final value) => AsyncData(callback(value)),
-        _ => state,
-      };
+    AsyncData(:final value) => AsyncData(callback(value)),
+    _ => state,
+  };
 
   Future<Object?> save() async {
     final value = state.value;
@@ -73,10 +69,9 @@ class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
 
     state = const AsyncLoading();
 
-    final err = await ref.read(repositoryProvider).request(
-      GqlMutation.removeEntry,
-      {'entryId': value.baseEntry.entryId},
-    ).getErrorOrNull();
+    final err = await ref.read(repositoryProvider).request(GqlMutation.removeEntry, {
+      'entryId': value.baseEntry.entryId,
+    }).getErrorOrNull();
 
     if (err != null) {
       state = AsyncValue.data(value);

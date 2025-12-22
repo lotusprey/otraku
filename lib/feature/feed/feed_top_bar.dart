@@ -16,21 +16,14 @@ class FeedTopBarTrailingContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final count = ref.watch(
-          settingsProvider.select(
-            (s) => s.value?.unreadNotifications ?? 0,
-          ),
-        );
+        final count = ref.watch(settingsProvider.select((s) => s.value?.unreadNotifications ?? 0));
 
         final openNotifications = ref.watch(viewerIdProvider) != null
             ? () {
                 ref.read(settingsProvider.notifier).clearUnread();
                 context.push(Routes.notifications);
               }
-            : () => SnackBarExtension.show(
-                  context,
-                  'Log in to view notifications',
-                );
+            : () => SnackBarExtension.show(context, 'Log in to view notifications');
 
         Widget notificationIcon = IconButton(
           tooltip: 'Notifications',
@@ -41,6 +34,7 @@ class FeedTopBarTrailingContent extends StatelessWidget {
         if (count > 0) {
           notificationIcon = Badge.count(
             count: count,
+            maxCount: 99,
             offset: Offset.zero,
             alignment: Alignment.topLeft,
             child: notificationIcon,

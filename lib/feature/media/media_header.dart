@@ -21,8 +21,8 @@ class MediaHeader extends StatelessWidget {
     required this.coverUrl,
     required this.media,
     required this.toggleFavorite,
-  })  : tabCtrl = null,
-        scrollToTop = null;
+  }) : tabCtrl = null,
+       scrollToTop = null;
 
   final int id;
   final String? coverUrl;
@@ -50,14 +50,16 @@ class MediaHeader extends StatelessWidget {
 
       if (info.airingAt != null) {
         textRailItems['Ep ${info.nextEpisode} in '
-            '${info.airingAt!.timeUntil}'] = true;
+                '${info.airingAt!.timeUntil}'] =
+            true;
       }
 
       if (media!.entryEdit.listStatus != null) {
         final progress = media!.entryEdit.progress;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
           textRailItems['${info.nextEpisode! - 1 - progress}'
-              ' ep behind'] = true;
+                  ' ep behind'] =
+              true;
         }
       }
     }
@@ -70,20 +72,11 @@ class MediaHeader extends StatelessWidget {
       imageHeroTag: id,
       siteUrl: media?.info.siteUrl,
       title: media?.info.preferredTitle,
-      details: TextRail(
-        textRailItems,
-        style: TextTheme.of(context).labelMedium,
-      ),
+      details: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (
-              tabCtrl: tabCtrl!,
-              scrollToTop: scrollToTop!,
-              tabs: tabsWithOverview,
-            )
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,
-      trailingTopButtons: [
-        if (media != null) _FavoriteButton(media!.info, toggleFavorite),
-      ],
+      trailingTopButtons: [if (media != null) _FavoriteButton(media!.info, toggleFavorite)],
     );
   }
 
@@ -99,10 +92,7 @@ class MediaHeader extends StatelessWidget {
     Tab(text: 'Statistics'),
   ];
 
-  static const tabsWithOverview = [
-    Tab(text: 'Overview'),
-    ...tabsWithoutOverview,
-  ];
+  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
 }
 
 class _FavoriteButton extends StatefulWidget {

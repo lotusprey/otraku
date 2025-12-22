@@ -9,10 +9,8 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final collectionProvider =
-    AsyncNotifierProvider.autoDispose.family<CollectionNotifier, Collection, CollectionTag>(
-  CollectionNotifier.new,
-);
+final collectionProvider = AsyncNotifierProvider.autoDispose
+    .family<CollectionNotifier, Collection, CollectionTag>(CollectionNotifier.new);
 
 class CollectionNotifier extends AsyncNotifier<Collection> {
   CollectionNotifier(this.arg);
@@ -23,26 +21,26 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
 
   @override
   FutureOr<Collection> build() async {
-    final index = switch (state.value) {
+    final fullCollectionIndex = switch (state.value) {
       FullCollection c => c.index,
-      _ => 0,
+      _ => -1,
     };
 
     final viewerId = ref.watch(viewerIdProvider);
 
-    final isFull = arg.userId != viewerId ||
-        ref.watch(homeProvider.select(
-          (s) => arg.ofAnime ? s.didExpandAnimeCollection : s.didExpandMangaCollection,
-        ));
+    final isFull =
+        arg.userId != viewerId ||
+        ref.watch(
+          homeProvider.select(
+            (s) => arg.ofAnime ? s.didExpandAnimeCollection : s.didExpandMangaCollection,
+          ),
+        );
 
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.collection,
-      {
-        'userId': arg.userId,
-        'type': arg.ofAnime ? 'ANIME' : 'MANGA',
-        if (!isFull) 'status_in': ['CURRENT', 'REPEATING'],
-      },
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.collection, {
+      'userId': arg.userId,
+      'type': arg.ofAnime ? 'ANIME' : 'MANGA',
+      if (!isFull) 'status_in': ['CURRENT', 'REPEATING'],
+    });
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;
 
@@ -50,7 +48,7 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
         ? FullCollection(
             data['MediaListCollection'],
             arg.ofAnime,
-            index,
+            fullCollectionIndex,
             imageQuality,
           )
         : PreviewCollection(data['MediaListCollection'], imageQuality);
@@ -74,19 +72,19 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
   }
 
   void changeIndex(int newIndex) => _updateState(
-        (collection) => switch (collection) {
-          FullCollection _ => collection.withIndex(newIndex),
-          PreviewCollection _ => collection,
-        },
-      );
+    (collection) => switch (collection) {
+      FullCollection _ => collection.withIndex(newIndex),
+      PreviewCollection _ => collection,
+    },
+  );
 
   void removeEntry(int mediaId) {
     _updateState(
       (collection) => switch (collection) {
         PreviewCollection c => c..list.removeByMediaId(mediaId),
         FullCollection c => _withRemovedEmptyLists(
-            c..lists.forEach((list) => list.removeByMediaId(mediaId)),
-          ),
+          c..lists.forEach((list) => list.removeByMediaId(mediaId)),
+        ),
       },
     );
   }
@@ -96,31 +94,23 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
   /// This is why [saveEntry] additionally fetches the updated entry.
   Future<void> saveEntry(int mediaId, ListStatus? oldStatus) async {
     try {
-      var data = await ref.read(repositoryProvider).request(
-        GqlQuery.listEntry,
-        {'userId': arg.userId, 'mediaId': mediaId},
-      );
+      var data = await ref.read(repositoryProvider).request(GqlQuery.listEntry, {
+        'userId': arg.userId,
+        'mediaId': mediaId,
+      });
       data = data['MediaList'];
 
-      final entry = Entry(
-        data,
-        ref.read(persistenceProvider).options.imageQuality,
-      );
+      final entry = Entry(data, ref.read(persistenceProvider).options.imageQuality);
 
       _updateState(
         (collection) => switch (collection) {
-          FullCollection _ => _saveEntryInFullCollection(
-              collection,
-              entry,
-              oldStatus,
-              data,
-            ),
+          FullCollection _ => _saveEntryInFullCollection(collection, entry, oldStatus, data),
           PreviewCollection _ => _saveEntryInPreviewCollection(
-              collection,
-              entry,
-              oldStatus,
-              entry.listStatus,
-            ),
+            collection,
+            entry,
+            oldStatus,
+            entry.listStatus,
+          ),
         },
       );
     } catch (_) {}
@@ -129,22 +119,16 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
   /// An alternative to [saveEntry],
   /// that only updates the progress and potentially, the list status.
   /// When incrementing to last episode, [saveEntry] should be called instead.
-  Future<String?> saveEntryProgress(
-    Entry oldEntry,
-    bool setAsCurrent,
-  ) async {
+  Future<String?> saveEntryProgress(Entry oldEntry, bool setAsCurrent) async {
     try {
-      await ref.read(repositoryProvider).request(
-        GqlMutation.updateProgress,
-        {
-          'mediaId': oldEntry.mediaId,
-          'progress': oldEntry.progress,
-          if (setAsCurrent) ...{
-            'status': ListStatus.current.value,
-            if (oldEntry.watchStart == null) 'startedAt': DateTime.now().fuzzyDate,
-          },
+      await ref.read(repositoryProvider).request(GqlMutation.updateProgress, {
+        'mediaId': oldEntry.mediaId,
+        'progress': oldEntry.progress,
+        if (setAsCurrent) ...{
+          'status': ListStatus.current.value,
+          if (oldEntry.watchStart == null) 'startedAt': DateTime.now().fuzzyDate,
         },
-      );
+      });
 
       await saveEntry(oldEntry.mediaId, oldEntry.listStatus);
 
@@ -214,8 +198,8 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
     ListStatus? oldStatus,
     ListStatus? newStatus,
   ) {
-    if (newStatus == ListStatus.current || newStatus == ListStatus.repeating) {
-      if (oldStatus == ListStatus.current || oldStatus == ListStatus.repeating) {
+    if (newStatus == .current || newStatus == .repeating) {
+      if (oldStatus == .current || oldStatus == .repeating) {
         collection.list.setByMediaId(entry);
         return collection;
       }
@@ -234,7 +218,7 @@ class CollectionNotifier extends AsyncNotifier<Collection> {
 
     for (int i = 0; i < lists.length; i++) {
       if (lists[i].entries.isEmpty) {
-        if (i <= index && index != 0) index--;
+        if (i <= index) index--;
         lists.removeAt(i--);
       }
     }

@@ -8,6 +8,7 @@ Future<void> showRecommendationsFilterSheet({
   required BuildContext context,
   required DiscoverRecommendationsFilter filter,
   required void Function(DiscoverRecommendationsFilter) onDone,
+  required bool highContrast,
 }) {
   return showSheet(
     context,
@@ -16,10 +17,7 @@ Future<void> showRecommendationsFilterSheet({
       builder: (context, scrollCtrl) => ListView(
         controller: scrollCtrl,
         physics: Theming.bouncyPhysics,
-        padding: const EdgeInsets.symmetric(
-          horizontal: Theming.offset,
-          vertical: 20,
-        ),
+        padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
         children: [
           ChipSelector.ensureSelected(
             title: 'Sort',
@@ -30,15 +28,14 @@ Future<void> showRecommendationsFilterSheet({
             ],
             value: filter.sort,
             onChanged: (v) => filter = filter.copyWith(sort: v),
+            highContrast: highContrast,
           ),
           ChipSelector(
             title: 'List Presence',
-            items: const [
-              ('In Lists', true),
-              ('Not in Lists', false),
-            ],
+            items: const [('In Lists', true), ('Not in Lists', false)],
             value: filter.inLists,
             onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
+            highContrast: highContrast,
           ),
         ],
       ),

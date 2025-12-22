@@ -13,6 +13,7 @@ class CharacterHeader extends StatelessWidget {
     required TabController this.tabCtrl,
     required void Function() this.scrollToTop,
     required this.toggleFavorite,
+    required this.highContrast,
   });
 
   const CharacterHeader.withoutTabBar({
@@ -20,8 +21,9 @@ class CharacterHeader extends StatelessWidget {
     required this.imageUrl,
     required this.character,
     required this.toggleFavorite,
-  })  : tabCtrl = null,
-        scrollToTop = null;
+    required this.highContrast,
+  }) : tabCtrl = null,
+       scrollToTop = null;
 
   final int id;
   final String? imageUrl;
@@ -29,6 +31,7 @@ class CharacterHeader extends StatelessWidget {
   final TabController? tabCtrl;
   final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +45,18 @@ class CharacterHeader extends StatelessWidget {
           ? TableList([
               ('Favorites', character!.favorites.toString()),
               if (character!.gender != null) ('Gender', character!.gender!),
-            ])
+            ], highContrast: highContrast)
           : null,
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (
-              tabCtrl: tabCtrl!,
-              scrollToTop: scrollToTop!,
-              tabs: tabsWithOverview,
-            )
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,
-      trailingTopButtons: [
-        if (character != null) _FavoriteButton(character!, toggleFavorite),
-      ],
+      trailingTopButtons: [if (character != null) _FavoriteButton(character!, toggleFavorite)],
     );
   }
 
-  static const tabsWithoutOverview = [
-    Tab(text: 'Anime'),
-    Tab(text: 'Manga'),
-  ];
+  static const tabsWithoutOverview = [Tab(text: 'Anime'), Tab(text: 'Manga')];
 
-  static const tabsWithOverview = [
-    Tab(text: 'Overview'),
-    ...tabsWithoutOverview,
-  ];
+  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
 }
 
 class _FavoriteButton extends StatefulWidget {

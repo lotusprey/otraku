@@ -8,11 +8,11 @@ class Repository {
   static final _url = Uri.parse('https://graphql.anilist.co');
 
   Repository(String? accessToken)
-      : _headers = {
-          'Accept': 'application/json',
-          'Content-type': 'application/json',
-          if (accessToken != null) 'Authorization': 'Bearer $accessToken',
-        };
+    : _headers = {
+        'Accept': 'application/json',
+        'Content-type': 'application/json',
+        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+      };
 
   final Map<String, String> _headers;
 
@@ -30,9 +30,7 @@ class Repository {
       final Map<String, dynamic> body = json.decode(response.body);
 
       if (body.containsKey('errors')) {
-        throw StateError(
-          (body['errors'] as List).map((e) => e['message'].toString()).join(', '),
-        );
+        throw StateError((body['errors'] as List).map((e) => e['message'].toString()).join(', '));
       }
 
       return body['data'];

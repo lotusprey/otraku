@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/filter_chip_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -11,6 +12,7 @@ class ChipSelector<T> extends StatefulWidget {
     required this.value,
     required this.onChanged,
     required this.mustHaveSelected,
+    required this.highContrast,
   });
 
   /// Allows for nothing to be selected.
@@ -19,14 +21,15 @@ class ChipSelector<T> extends StatefulWidget {
     required List<(String label, T value)> items,
     required T? value,
     required void Function(T?) onChanged,
-  }) =>
-      ChipSelector._(
-        title: title,
-        items: items,
-        value: value,
-        onChanged: onChanged,
-        mustHaveSelected: false,
-      );
+    required bool highContrast,
+  }) => ChipSelector._(
+    title: title,
+    items: items,
+    value: value,
+    onChanged: onChanged,
+    highContrast: highContrast,
+    mustHaveSelected: false,
+  );
 
   /// Requires an option to be selected. [onChanged] will never receive `null`.
   factory ChipSelector.ensureSelected({
@@ -34,20 +37,22 @@ class ChipSelector<T> extends StatefulWidget {
     required List<(String label, T value)> items,
     required T value,
     required void Function(T) onChanged,
-  }) =>
-      ChipSelector._(
-        title: title,
-        items: items,
-        value: value,
-        onChanged: (v) => onChanged(v ?? value),
-        mustHaveSelected: true,
-      );
+    required bool highContrast,
+  }) => ChipSelector._(
+    title: title,
+    items: items,
+    value: value,
+    onChanged: (v) => onChanged(v ?? value),
+    highContrast: highContrast,
+    mustHaveSelected: true,
+  );
 
   final String title;
   final List<(String label, T value)> items;
   final T? value;
   final void Function(T?) onChanged;
   final bool mustHaveSelected;
+  final bool highContrast;
 
   @override
   State<ChipSelector<T>> createState() => _ChipSelectorState<T>();
@@ -70,7 +75,7 @@ class _ChipSelectorState<T> extends State<ChipSelector<T>> {
       itemBuilder: (context, i) {
         final (label, value) = widget.items[i];
 
-        return FilterChip(
+        return FilterChipExtension.highContrast(widget.highContrast)(
           label: Text(label),
           selected: value == _value,
           onSelected: (selected) {
@@ -93,11 +98,13 @@ class ChipMultiSelector<T> extends StatefulWidget {
     required this.title,
     required this.items,
     required this.values,
+    required this.highContrast,
   });
 
   final String title;
   final List<(String label, T value)> items;
   final List<T> values;
+  final bool highContrast;
 
   @override
   State<ChipMultiSelector<T>> createState() => _ChipMultiSelectorState<T>();
@@ -112,13 +119,11 @@ class _ChipMultiSelectorState<T> extends State<ChipMultiSelector<T>> {
       itemBuilder: (context, i) {
         final (label, value) = widget.items[i];
 
-        return FilterChip(
+        return FilterChipExtension.highContrast(widget.highContrast)(
           label: Text(label),
           selected: widget.values.contains(value),
           onSelected: (isSelected) {
-            setState(
-              () => isSelected ? widget.values.add(value) : widget.values.remove(value),
-            );
+            setState(() => isSelected ? widget.values.add(value) : widget.values.remove(value));
           },
         );
       },
@@ -131,11 +136,13 @@ class EntrySortChipSelector extends StatefulWidget {
     required this.title,
     required this.value,
     required this.onChanged,
+    required this.highContrast,
   });
 
   final String title;
   final EntrySort value;
   final void Function(EntrySort) onChanged;
+  final bool highContrast;
 
   @override
   State<EntrySortChipSelector> createState() => _EntrySortChipSelectorState();
@@ -163,36 +170,31 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
   Widget build(BuildContext context) {
     final unorderedValue = _value.index ~/ 2;
     final isDescending = _value.index % 2 != 0;
+    final colorScheme = ColorScheme.of(context);
 
     return _ChipSelector(
       title: widget.title,
       length: _labels.length,
-      itemBuilder: (context, index) => FilterChip(
-        backgroundColor: ColorScheme.of(context).surface,
-        labelStyle: TextStyle(
-          color: ColorScheme.of(context).onSecondaryContainer,
-        ),
+      itemBuilder: (context, index) => FilterChipExtension.highContrast(widget.highContrast)(
         label: Text(_labels[index]),
         showCheckmark: false,
         avatar: unorderedValue == index
             ? Icon(
                 isDescending ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
-                color: ColorScheme.of(context).onPrimaryContainer,
+                color: colorScheme.onPrimaryContainer,
               )
             : null,
         selected: unorderedValue == index,
         onSelected: (_) {
-          setState(
-            () {
-              int i = index * 2;
-              if (unorderedValue == index) {
-                if (!isDescending) i++;
-              } else {
-                if (isDescending) i++;
-              }
-              _value = EntrySort.values.elementAt(i);
-            },
-          );
+          setState(() {
+            int i = index * 2;
+            if (unorderedValue == index) {
+              if (!isDescending) i++;
+            } else {
+              if (isDescending) i++;
+            }
+            _value = EntrySort.values.elementAt(i);
+          });
           widget.onChanged(_value);
         },
       ),
@@ -201,11 +203,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
 }
 
 class _ChipSelector extends StatelessWidget {
-  const _ChipSelector({
-    required this.title,
-    required this.length,
-    required this.itemBuilder,
-  });
+  const _ChipSelector({required this.title, required this.length, required this.itemBuilder});
 
   final String title;
   final int length;
@@ -214,11 +212,11 @@ class _ChipSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
+          padding: const .only(
             top: Theming.offset / 2,
             bottom: Theming.offset / 2,
             right: Theming.offset,
@@ -227,10 +225,7 @@ class _ChipSelector extends StatelessWidget {
         ),
         SizedBox(
           height: 40,
-          child: ShadowedOverflowList(
-            itemCount: length,
-            itemBuilder: itemBuilder,
-          ),
+          child: ShadowedOverflowList(itemCount: length, itemBuilder: itemBuilder),
         ),
       ],
     );

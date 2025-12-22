@@ -34,11 +34,11 @@ class Thread {
   final int totalCommentPages;
 
   Thread withChangingCommentPage(int commentPage) => Thread._(
-        info: info,
-        comments: comments,
-        commentPage: commentPage,
-        totalCommentPages: totalCommentPages,
-      );
+    info: info,
+    comments: comments,
+    commentPage: commentPage,
+    totalCommentPages: totalCommentPages,
+  );
 
   Thread withChangedCommentPage(Map<String, dynamic> map) => Thread._withInfo(info, map);
 

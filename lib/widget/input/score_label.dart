@@ -14,57 +14,39 @@ class ScoreLabel extends StatelessWidget {
 
     Widget content;
     switch (scoreFormat) {
-      case ScoreFormat.point3:
+      case .point3:
         if (score == 3) {
-          content = const Icon(
-            Icons.sentiment_very_satisfied,
-            size: Theming.iconSmall,
-          );
+          content = const Icon(Icons.sentiment_very_satisfied, size: Theming.iconSmall);
         } else if (score == 2) {
-          content = const Icon(
-            Icons.sentiment_neutral,
-            size: Theming.iconSmall,
-          );
+          content = const Icon(Icons.sentiment_neutral, size: Theming.iconSmall);
         } else {
-          content = const Icon(
-            Icons.sentiment_very_dissatisfied,
-            size: Theming.iconSmall,
-          );
+          content = const Icon(Icons.sentiment_very_dissatisfied, size: Theming.iconSmall);
         }
-      case ScoreFormat.point5:
+      case .point5:
         content = Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
+          spacing: 3,
           children: [
-            Text(
-              score.toStringAsFixed(0),
-              style: TextTheme.of(context).labelSmall,
-            ),
-            const SizedBox(width: 3),
+            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
             const Icon(Icons.star_rounded, size: Theming.iconSmall),
           ],
         );
-      case ScoreFormat.point10Decimal:
+      case .point10Decimal:
         content = Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
+          spacing: 3,
           children: [
             const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              score.toStringAsFixed(1),
-              style: TextTheme.of(context).labelSmall,
-            ),
+            Text(score.toStringAsFixed(1), style: TextTheme.of(context).labelSmall),
           ],
         );
       default:
         content = Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
+          spacing: 3,
           children: [
             const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            const SizedBox(width: 3),
-            Text(
-              score.toStringAsFixed(0),
-              style: TextTheme.of(context).labelSmall,
-            ),
+            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
           ],
         );
     }

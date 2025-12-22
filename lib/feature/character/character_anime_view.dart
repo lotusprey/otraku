@@ -10,31 +10,33 @@ import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class CharacterAnimeSubview extends StatelessWidget {
-  const CharacterAnimeSubview({required this.id, required this.scrollCtrl});
+  const CharacterAnimeSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.highContrast,
+  });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     return PagedView<(CharacterRelatedItem, CharacterRelatedItem?)>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(characterMediaProvider(id)),
-      provider: characterMediaProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.assembleAnimeWithVoiceActors()),
-      ),
+      provider: characterMediaProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.assembleAnimeWithVoiceActors())),
       onData: (data) {
         return SliverMainAxisGroup(
           slivers: [
             _LanguageSelected(id),
             DualRelationGrid(
               items: data.items,
-              onTapPrimary: (item) => context.push(
-                Routes.media(item.tileId, item.tileImageUrl),
-              ),
-              onTapSecondary: (item) => context.push(
-                Routes.staff(item.tileId, item.tileImageUrl),
-              ),
+              onTapPrimary: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+              onTapSecondary: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
+              highContrast: highContrast,
             ),
           ],
         );
@@ -52,11 +54,13 @@ class _LanguageSelected extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selection = ref.watch(characterMediaProvider(id).select((s) {
-          final value = s.value;
-          if (value == null) return null;
-          return (value.languageToVoiceActors, value.selectedLanguage);
-        }));
+        final selection = ref.watch(
+          characterMediaProvider(id).select((s) {
+            final value = s.value;
+            if (value == null) return null;
+            return (value.languageToVoiceActors, value.selectedLanguage);
+          }),
+        );
 
         if (selection == null) return const SliverToBoxAdapter();
 

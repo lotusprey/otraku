@@ -7,12 +7,8 @@ final forumFilterProvider = NotifierProvider.autoDispose<ForumFilterNotifier, Fo
 
 class ForumFilterNotifier extends Notifier<ForumFilter> {
   @override
-  ForumFilter build() => const ForumFilter(
-        search: '',
-        category: null,
-        isSubscribed: false,
-        sort: ThreadSort.lastRepliedTo,
-      );
+  ForumFilter build() =>
+      const ForumFilter(search: '', category: null, isSubscribed: false, sort: .lastRepliedTo);
 
   void update(ForumFilter Function(ForumFilter) callback) => state = callback(state);
 }

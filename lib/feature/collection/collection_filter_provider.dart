@@ -3,10 +3,10 @@ import 'package:otraku/feature/collection/collection_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 
-final collectionFilterProvider =
-    NotifierProvider.autoDispose.family<CollectionFilterNotifier, CollectionFilter, CollectionTag>(
-  CollectionFilterNotifier.new,
-);
+final collectionFilterProvider = NotifierProvider.autoDispose
+    .family<CollectionFilterNotifier, CollectionFilter, CollectionTag>(
+      CollectionFilterNotifier.new,
+    );
 
 class CollectionFilterNotifier extends Notifier<CollectionFilter> {
   CollectionFilterNotifier(this.arg);
@@ -15,15 +15,15 @@ class CollectionFilterNotifier extends Notifier<CollectionFilter> {
 
   @override
   CollectionFilter build() {
-    final mediaFilter = ref.watch(persistenceProvider.select(
-      (s) => arg.ofAnime ? s.animeCollectionMediaFilter : s.mangaCollectionMediaFilter,
-    ));
+    final mediaFilter = ref.watch(
+      persistenceProvider.select(
+        (s) => arg.ofAnime ? s.animeCollectionMediaFilter : s.mangaCollectionMediaFilter,
+      ),
+    );
 
     return CollectionFilter(mediaFilter.copy());
   }
 
-  CollectionFilter update(
-    CollectionFilter Function(CollectionFilter) callback,
-  ) =>
+  CollectionFilter update(CollectionFilter Function(CollectionFilter) callback) =>
       state = callback(state);
 }

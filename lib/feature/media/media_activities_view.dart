@@ -52,19 +52,13 @@ class MediaActivitiesSubview extends StatelessWidget {
               togglePin: () => ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
               remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
               onEdited: (map) {
-                final activity = Activity.maybe(
-                  map,
-                  viewerId,
-                  options.imageQuality,
-                );
+                final activity = Activity.maybe(map, viewerId, options.imageQuality);
 
                 if (activity == null) return;
 
                 ref.read(activitiesProvider(tag).notifier).replace(activity);
               },
-              reply: () => context.push(
-                Routes.activity(data.items[i].id, null),
-              ),
+              reply: () => context.push(Routes.activity(data.items[i].id, null)),
             ),
           ),
         ),
@@ -86,22 +80,22 @@ class _FollowingFilterButton extends StatelessWidget {
     return SliverToBoxAdapter(
       child: switch (filter) {
         MediaActivitiesFilter(:final onlyFollowing) => SizedBox(
-            height: Theming.normalTapTarget,
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: onlyFollowing
-                  ? OutlinedButton(
-                      onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state =
-                          filter.copyWithOnlyFollowing(false),
-                      child: const Text('Show All'),
-                    )
-                  : OutlinedButton(
-                      onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state =
-                          filter.copyWithOnlyFollowing(true),
-                      child: const Text('Show Following Only'),
-                    ),
-            ),
+          height: Theming.normalTapTarget,
+          child: Align(
+            alignment: Alignment.topLeft,
+            child: onlyFollowing
+                ? OutlinedButton(
+                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                        .copyWithOnlyFollowing(false),
+                    child: const Text('Show All'),
+                  )
+                : OutlinedButton(
+                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                        .copyWithOnlyFollowing(true),
+                    child: const Text('Show Following Only'),
+                  ),
           ),
+        ),
         _ => const SizedBox.shrink(),
       },
     );

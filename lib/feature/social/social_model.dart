@@ -17,11 +17,11 @@ class Social {
   final PagedWithTotal<Comment> comments;
 
   int getCount(SocialTab tab) => switch (tab) {
-        SocialTab.following => following.total,
-        SocialTab.followers => followers.total,
-        SocialTab.threads => threads.total,
-        SocialTab.comments => comments.total,
-      };
+    .following => following.total,
+    .followers => followers.total,
+    .threads => threads.total,
+    .comments => comments.total,
+  };
 }
 
 enum SocialTab {
@@ -31,9 +31,9 @@ enum SocialTab {
   comments;
 
   String get title => switch (this) {
-        SocialTab.following => 'Following',
-        SocialTab.followers => 'Followers',
-        SocialTab.threads => 'Threads',
-        SocialTab.comments => 'Comments',
-      };
+    .following => 'Following',
+    .followers => 'Followers',
+    .threads => 'Threads',
+    .comments => 'Comments',
+  };
 }

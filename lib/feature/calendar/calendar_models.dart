@@ -50,24 +50,13 @@ class CalendarItem {
   final List<StreamingService> streamingServices;
 }
 
-typedef StreamingService = ({
-  String url,
-  String site,
-  Color? color,
-});
+typedef StreamingService = ({String url, String site, Color? color});
 
 class CalendarFilter {
-  const CalendarFilter({
-    required this.date,
-    required this.season,
-    required this.status,
-  });
+  const CalendarFilter({required this.date, required this.season, required this.status});
 
-  factory CalendarFilter.empty() => CalendarFilter(
-        date: DateTime.now(),
-        season: CalendarSeasonFilter.all,
-        status: CalendarStatusFilter.all,
-      );
+  factory CalendarFilter.empty() =>
+      CalendarFilter(date: DateTime.now(), season: .all, status: .all);
 
   factory CalendarFilter.fromPersistenceMap(Map<dynamic, dynamic> map) {
     final season = CalendarSeasonFilter.values.getOrFirst(map['season']);
@@ -84,17 +73,13 @@ class CalendarFilter {
     DateTime? date,
     CalendarSeasonFilter? season,
     CalendarStatusFilter? status,
-  }) =>
-      CalendarFilter(
-        date: date ?? this.date,
-        season: season ?? this.season,
-        status: status ?? this.status,
-      );
+  }) => CalendarFilter(
+    date: date ?? this.date,
+    season: season ?? this.season,
+    status: status ?? this.status,
+  );
 
-  Map<String, dynamic> toPersistenceMap() => {
-        'season': season.index,
-        'status': status.index,
-      };
+  Map<String, dynamic> toPersistenceMap() => {'season': season.index, 'status': status.index};
 }
 
 enum CalendarSeasonFilter {

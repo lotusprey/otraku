@@ -58,27 +58,27 @@ extension DateTimeExtension on DateTime {
   }
 
   static String monthName(int month) => switch (month) {
-        1 => 'Jan',
-        2 => 'Feb',
-        3 => 'Mar',
-        4 => 'Apr',
-        5 => 'May',
-        6 => 'Jun',
-        7 => 'Jul',
-        8 => 'Aug',
-        9 => 'Sep',
-        10 => 'Oct',
-        11 => 'Nov',
-        _ => 'Dec',
-      };
+    1 => 'Jan',
+    2 => 'Feb',
+    3 => 'Mar',
+    4 => 'Apr',
+    5 => 'May',
+    6 => 'Jun',
+    7 => 'Jul',
+    8 => 'Aug',
+    9 => 'Sep',
+    10 => 'Oct',
+    11 => 'Nov',
+    _ => 'Dec',
+  };
 
   static String _weekdayName(int weekday) => switch (weekday) {
-        1 => 'Mon',
-        2 => 'Tue',
-        3 => 'Wed',
-        4 => 'Thu',
-        5 => 'Fri',
-        6 => 'Sat',
-        _ => 'Sun',
-      };
+    1 => 'Mon',
+    2 => 'Tue',
+    3 => 'Wed',
+    4 => 'Thu',
+    5 => 'Fri',
+    6 => 'Sat',
+    _ => 'Sun',
+  };
 }

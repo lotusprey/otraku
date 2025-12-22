@@ -7,10 +7,8 @@ import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/review/review_models.dart';
 import 'package:otraku/feature/review/reviews_filter_provider.dart';
 
-final reviewsProvider =
-    AsyncNotifierProvider.autoDispose.family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(
-  ReviewsNotifier.new,
-);
+final reviewsProvider = AsyncNotifierProvider.autoDispose
+    .family<ReviewsNotifier, PagedWithTotal<ReviewItem>, int>(ReviewsNotifier.new);
 
 class ReviewsNotifier extends AsyncNotifier<PagedWithTotal<ReviewItem>> {
   ReviewsNotifier(this.arg);
@@ -31,18 +29,13 @@ class ReviewsNotifier extends AsyncNotifier<PagedWithTotal<ReviewItem>> {
     state = await AsyncValue.guard(() => _fetch(oldState));
   }
 
-  Future<PagedWithTotal<ReviewItem>> _fetch(
-    PagedWithTotal<ReviewItem> oldState,
-  ) async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.reviewPage,
-      {
-        'userId': arg,
-        'page': oldState.next,
-        'sort': filter.sort.value,
-        if (filter.mediaType != null) 'mediaType': filter.mediaType!.value,
-      },
-    );
+  Future<PagedWithTotal<ReviewItem>> _fetch(PagedWithTotal<ReviewItem> oldState) async {
+    final data = await ref.read(repositoryProvider).request(GqlQuery.reviewPage, {
+      'userId': arg,
+      'page': oldState.next,
+      'sort': filter.sort.value,
+      if (filter.mediaType != null) 'mediaType': filter.mediaType!.value,
+    });
 
     final items = <ReviewItem>[];
     for (final r in data['Page']['reviews']) {

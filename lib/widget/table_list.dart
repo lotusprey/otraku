@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 
 class TableList extends StatelessWidget {
-  const TableList(this.items);
+  const TableList(this.items, {required this.highContrast});
 
   final List<(String, String)> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SizedBox();
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: Theming.borderRadiusSmall,
-        border: Border.all(
-          color: ColorScheme.of(context).outlineVariant,
-        ),
-      ),
+    return CardExtension.highContrast(highContrast)(
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+        padding: const .symmetric(vertical: Theming.offset),
         child: ListView.separated(
           shrinkWrap: true,
           itemCount: items.length,
-          padding: EdgeInsets.zero,
+          padding: .zero,
           physics: const NeverScrollableScrollPhysics(),
           separatorBuilder: (context, _) => const Divider(),
           itemBuilder: (context, i) => Row(
@@ -33,9 +29,9 @@ class TableList extends StatelessWidget {
               const SizedBox(width: Theming.offset),
               Expanded(
                 child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                  behavior: .opaque,
                   onTap: () => SnackBarExtension.copy(context, items[i].$2),
-                  child: Text(items[i].$2, textAlign: TextAlign.end),
+                  child: Text(items[i].$2, textAlign: .end),
                 ),
               ),
               const SizedBox(width: Theming.offset),
@@ -48,23 +44,30 @@ class TableList extends StatelessWidget {
 }
 
 class SliverTableList extends StatelessWidget {
-  const SliverTableList(this.items);
+  const SliverTableList(this.items, {required this.highContrast});
 
   final List<(String, String)> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) return const SliverToBoxAdapter();
 
+    final colorScheme = ColorScheme.of(context);
+
     return DecoratedSliver(
-      decoration: BoxDecoration(
-        borderRadius: Theming.borderRadiusSmall,
-        border: Border.all(
-          color: ColorScheme.of(context).outlineVariant,
-        ),
-      ),
+      decoration: highContrast
+          ? BoxDecoration(
+              borderRadius: Theming.borderRadiusSmall,
+              border: .all(color: colorScheme.outlineVariant),
+            )
+          : BoxDecoration(
+              borderRadius: Theming.borderRadiusSmall,
+              color: colorScheme.surfaceContainerLow,
+              boxShadow: kElevationToShadow[1],
+            ),
       sliver: SliverPadding(
-        padding: const EdgeInsets.symmetric(vertical: Theming.offset),
+        padding: const .symmetric(vertical: Theming.offset),
         sliver: SliverList.separated(
           itemCount: items.length,
           separatorBuilder: (context, _) => const Divider(),
@@ -75,9 +78,9 @@ class SliverTableList extends StatelessWidget {
               const SizedBox(width: Theming.offset),
               Expanded(
                 child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+                  behavior: .opaque,
                   onTap: () => SnackBarExtension.copy(context, items[i].$2),
-                  child: Text(items[i].$2, textAlign: TextAlign.end),
+                  child: Text(items[i].$2, textAlign: .end),
                 ),
               ),
               const SizedBox(width: Theming.offset),

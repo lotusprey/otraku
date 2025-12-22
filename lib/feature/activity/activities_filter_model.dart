@@ -16,23 +16,13 @@ class HomeActivitiesFilter extends ActivitiesFilter {
     this.typeIn,
   );
 
-  factory HomeActivitiesFilter.empty() => const HomeActivitiesFilter(
-        null,
-        false,
-        false,
-        [ActivityType.animeStatus, ActivityType.mangaStatus, ActivityType.status],
-      );
+  factory HomeActivitiesFilter.empty() =>
+      const HomeActivitiesFilter(null, false, false, [.animeStatus, .mangaStatus, .status]);
 
-  factory HomeActivitiesFilter.fromPersistenceMap(
-    Map<dynamic, dynamic> map,
-    int? viewerId,
-  ) {
-    final List<int> typeIn = map['activityTypeIn'] ??
-        [
-          ActivityType.status.index,
-          ActivityType.animeStatus.index,
-          ActivityType.mangaStatus.index,
-        ];
+  factory HomeActivitiesFilter.fromPersistenceMap(Map<dynamic, dynamic> map, int? viewerId) {
+    final List<int> typeIn =
+        map['activityTypeIn'] ??
+        [ActivityType.status.index, ActivityType.animeStatus.index, ActivityType.mangaStatus.index];
 
     return HomeActivitiesFilter(
       viewerId,
@@ -48,38 +38,33 @@ class HomeActivitiesFilter extends ActivitiesFilter {
   final List<ActivityType> typeIn;
 
   @override
-  HomeActivitiesFilter copy() => HomeActivitiesFilter(
-        viewerId,
-        onFollowing,
-        withViewerActivities,
-        [...typeIn],
-      );
+  HomeActivitiesFilter copy() =>
+      HomeActivitiesFilter(viewerId, onFollowing, withViewerActivities, [...typeIn]);
 
   HomeActivitiesFilter copyWith({
     bool? onFollowing,
     bool? withViewerActivities,
     List<ActivityType>? typeIn,
-  }) =>
-      HomeActivitiesFilter(
-        viewerId,
-        onFollowing ?? this.onFollowing,
-        withViewerActivities ?? this.withViewerActivities,
-        typeIn ?? this.typeIn,
-      );
+  }) => HomeActivitiesFilter(
+    viewerId,
+    onFollowing ?? this.onFollowing,
+    withViewerActivities ?? this.withViewerActivities,
+    typeIn ?? this.typeIn,
+  );
 
   @override
   Map<String, dynamic> toGraphQlVariables() => {
-        'isFollowing': onFollowing,
-        if (!onFollowing) 'hasRepliesOrText': true,
-        if (!withViewerActivities && viewerId != null) 'userIdNot': viewerId,
-        'typeIn': typeIn.map((t) => t.value).toList(),
-      };
+    'isFollowing': onFollowing,
+    if (!onFollowing) 'hasRepliesOrText': true,
+    if (!withViewerActivities && viewerId != null) 'userIdNot': viewerId,
+    'typeIn': typeIn.map((t) => t.value).toList(),
+  };
 
   Map<String, dynamic> toPersistenceMap() => {
-        'onFollowing': onFollowing,
-        'withViewerActivities': withViewerActivities,
-        'activityTypeIn': typeIn.map((a) => a.index).toList(),
-      };
+    'onFollowing': onFollowing,
+    'withViewerActivities': withViewerActivities,
+    'activityTypeIn': typeIn.map((a) => a.index).toList(),
+  };
 }
 
 class UserActivitiesFilter extends ActivitiesFilter {
@@ -96,9 +81,9 @@ class UserActivitiesFilter extends ActivitiesFilter {
 
   @override
   Map<String, dynamic> toGraphQlVariables() => {
-        'userId': userId,
-        'typeIn': typeIn.map((t) => t.value).toList(),
-      };
+    'userId': userId,
+    'typeIn': typeIn.map((t) => t.value).toList(),
+  };
 }
 
 class MediaActivitiesFilter extends ActivitiesFilter {
@@ -114,8 +99,10 @@ class MediaActivitiesFilter extends ActivitiesFilter {
       MediaActivitiesFilter(mediaId, onlyFollowing);
 
   @override
-  Map<String, dynamic> toGraphQlVariables() =>
-      {'mediaId': mediaId, if (onlyFollowing) 'isFollowing': true};
+  Map<String, dynamic> toGraphQlVariables() => {
+    'mediaId': mediaId,
+    if (onlyFollowing) 'isFollowing': true,
+  };
 }
 
 enum ActivityType {

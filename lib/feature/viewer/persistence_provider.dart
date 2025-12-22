@@ -15,15 +15,13 @@ final persistenceProvider = NotifierProvider<PersistenceNotifier, Persistence>(
   PersistenceNotifier.new,
 );
 
-final viewerIdProvider = persistenceProvider.select(
-  (s) => s.accountGroup.account?.id,
-);
+final viewerIdProvider = persistenceProvider.select((s) => s.accountGroup.account?.id);
 
 class PersistenceNotifier extends Notifier<Persistence> {
   late Box<Map<dynamic, dynamic>> _box;
 
   @override
-  Persistence build() => Persistence.empty();
+  Persistence build() => .empty();
 
   Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +32,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
     _box = await Hive.openBox('persistence');
     final accessTokens = await const FlutterSecureStorage().readAll();
 
-    state = Persistence.fromPersistenceMap(_box.toMap(), accessTokens);
+    state = .fromPersistenceMap(_box.toMap(), accessTokens);
   }
 
   void cacheSystemPrimaryColors(SystemColors systemColors) {
@@ -96,7 +94,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
             expiration: account.expiration,
             accessToken: account.accessToken,
           ),
-          ...accounts.sublist(accountIndex + 1)
+          ...accounts.sublist(accountIndex + 1),
         ],
         accountIndex: accountIndex,
       ),
@@ -115,12 +113,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
 
     if (index == null) BackgroundHandler.clearNotifications();
 
-    _setAccountGroup(
-      AccountGroup(
-        accountIndex: index,
-        accounts: accountGroup.accounts,
-      ),
-    );
+    _setAccountGroup(AccountGroup(accountIndex: index, accounts: accountGroup.accounts));
   }
 
   Future<void> addAccount(Account account) async {
@@ -136,11 +129,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
       if (accounts[i].id == account.id) {
         _setAccountGroup(
           AccountGroup(
-            accounts: [
-              ...accounts.sublist(0, i),
-              account,
-              ...accounts.sublist(i + 1),
-            ],
+            accounts: [...accounts.sublist(0, i), account, ...accounts.sublist(i + 1)],
             accountIndex: accountIndex,
           ),
         );
@@ -150,12 +139,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
       }
     }
 
-    _setAccountGroup(
-      AccountGroup(
-        accounts: [...accounts, account],
-        accountIndex: accountIndex,
-      ),
-    );
+    _setAccountGroup(AccountGroup(accounts: [...accounts, account], accountIndex: accountIndex));
 
     switchAccount(state.accountGroup.accounts.length - 1);
   }
@@ -167,9 +151,7 @@ class PersistenceNotifier extends Notifier<Persistence> {
     if (index < 0 || index >= accountGroup.accounts.length) return;
 
     final account = accountGroup.accounts[index];
-    await const FlutterSecureStorage().delete(
-      key: Account.accessTokenKeyById(account.id),
-    );
+    await const FlutterSecureStorage().delete(key: Account.accessTokenKeyById(account.id));
 
     _setAccountGroup(
       AccountGroup(

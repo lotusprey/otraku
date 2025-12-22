@@ -125,10 +125,7 @@ class Routes {
           return _AuthView((token, expiration));
         },
       ),
-      GoRoute(
-        path: '/404',
-        builder: (context, state) => const NotFoundView(),
-      ),
+      GoRoute(path: '/404', builder: (context, state) => const NotFoundView()),
       GoRoute(
         path: '/home',
         onExit: onExit,
@@ -148,25 +145,14 @@ class Routes {
           );
         },
       ),
-      GoRoute(
-        path: '/settings',
-        builder: (context, state) => const SettingsView(),
-      ),
-      GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const NotificationsView(),
-      ),
-      GoRoute(
-        path: '/calendar',
-        builder: (context, state) => const CalendarView(),
-      ),
+      GoRoute(path: '/settings', builder: (context, state) => const SettingsView()),
+      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsView()),
+      GoRoute(path: '/calendar', builder: (context, state) => const CalendarView()),
       GoRoute(
         path: '/media/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => MediaView(
-          int.parse(state.pathParameters['id']!),
-          state.uri.queryParameters['image'],
-        ),
+        builder: (context, state) =>
+            MediaView(int.parse(state.pathParameters['id']!), state.uri.queryParameters['image']),
       ),
       GoRoute(
         path: '/character/:id',
@@ -179,10 +165,8 @@ class Routes {
       GoRoute(
         path: '/staff/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => StaffView(
-          int.parse(state.pathParameters['id']!),
-          state.uri.queryParameters['image'],
-        ),
+        builder: (context, state) =>
+            StaffView(int.parse(state.pathParameters['id']!), state.uri.queryParameters['image']),
       ),
       GoRoute(
         path: '/user/:idOrName',
@@ -196,18 +180,14 @@ class Routes {
       GoRoute(
         path: '/studio/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => StudioView(
-          int.parse(state.pathParameters['id']!),
-          state.uri.queryParameters['name'],
-        ),
+        builder: (context, state) =>
+            StudioView(int.parse(state.pathParameters['id']!), state.uri.queryParameters['name']),
       ),
       GoRoute(
         path: '/review/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => ReviewView(
-          int.parse(state.pathParameters['id']!),
-          state.uri.queryParameters['image'],
-        ),
+        builder: (context, state) =>
+            ReviewView(int.parse(state.pathParameters['id']!), state.uri.queryParameters['image']),
       ),
       GoRoute(
         path: '/activity/:id',
@@ -217,74 +197,54 @@ class Routes {
           ActivitiesTag.fromQueryParam(state.uri.queryParameters['feed'] ?? ''),
         ),
       ),
-      GoRoute(
-        path: '/forum',
-        builder: (context, state) => const ForumView(),
-      ),
+      GoRoute(path: '/forum', builder: (context, state) => const ForumView()),
       GoRoute(
         path: '/thread/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => ThreadView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => ThreadView(int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/comment/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => CommentView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => CommentView(int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/collection/anime/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => CollectionView(
-          int.parse(state.pathParameters['id']!),
-          true,
-        ),
+        builder: (context, state) => CollectionView(int.parse(state.pathParameters['id']!), true),
       ),
       GoRoute(
         path: '/collection/manga/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => CollectionView(
-          int.parse(state.pathParameters['id']!),
-          false,
-        ),
+        builder: (context, state) => CollectionView(int.parse(state.pathParameters['id']!), false),
       ),
       GoRoute(
-          path: '/activities/:id',
-          redirect: _parseIdOr404,
-          builder: (context, state) {
-            final userId = int.parse(state.pathParameters['id']!);
-            return ActivitiesView(UserActivitiesTag(userId));
-          }),
+        path: '/activities/:id',
+        redirect: _parseIdOr404,
+        builder: (context, state) {
+          final userId = int.parse(state.pathParameters['id']!);
+          return ActivitiesView(UserActivitiesTag(userId));
+        },
+      ),
       GoRoute(
         path: '/favorites/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => FavoritesView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => FavoritesView(int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/social/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => SocialView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => SocialView(int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/reviews/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => ReviewsView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => ReviewsView(int.parse(state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/statistics/:id',
         redirect: _parseIdOr404,
-        builder: (context, state) => StatisticsView(
-          int.parse(state.pathParameters['id']!),
-        ),
+        builder: (context, state) => StatisticsView(int.parse(state.pathParameters['id']!)),
       ),
 
       // Extra routes for AniList deep links:
@@ -331,10 +291,7 @@ class Routes {
         path: '/forum/thread/:id',
         redirect: (context, state) => '/thread/${state.pathParameters['id']}',
       ),
-      GoRoute(
-        path: '/forum/:_([^/]*)',
-        redirect: (context, state) => '/forum',
-      ),
+      GoRoute(path: '/forum/:_([^/]*)', redirect: (context, state) => '/forum'),
     ];
 
     return GoRouter(
@@ -357,16 +314,10 @@ class NotFoundView extends StatelessWidget {
       appBar: const TopBar(title: 'Not Found'),
       body: Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
           children: [
-            Text(
-              '404 Not Found',
-              style: TextTheme.of(context).titleMedium,
-            ),
-            TextButton(
-              child: const Text('Go Home'),
-              onPressed: () => context.go(Routes.home()),
-            ),
+            Text('404 Not Found', style: TextTheme.of(context).bodyMedium),
+            TextButton(child: const Text('Go Home'), onPressed: () => context.go(Routes.home())),
           ],
         ),
       ),
@@ -389,7 +340,7 @@ class __AuthViewState extends ConsumerState<_AuthView> {
     super.initState();
 
     // On iOS the in app browser doesn't automatically close after login.
-    closeInAppWebView().onError((_, __) {});
+    closeInAppWebView().onError((_, _) {});
 
     if (widget.credentials == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -415,12 +366,8 @@ class __AuthViewState extends ConsumerState<_AuthView> {
     return Scaffold(
       body: const Center(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('Authenticating, please wait...'),
-            SizedBox(height: 20),
-            Loader(),
-          ],
+          mainAxisSize: .min,
+          children: [Text('Authenticating, please wait...'), SizedBox(height: 20), Loader()],
         ),
       ),
     );
@@ -438,10 +385,7 @@ class __AuthViewState extends ConsumerState<_AuthView> {
 
     if (account == null) {
       if (mounted) {
-        await ConfirmationDialog.show(
-          context,
-          title: 'Failed to connect account',
-        );
+        await ConfirmationDialog.show(context, title: 'Failed to connect account');
 
         if (mounted) context.go(Routes.home());
       }

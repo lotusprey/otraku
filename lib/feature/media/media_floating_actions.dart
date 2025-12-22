@@ -23,10 +23,10 @@ class _MediaEditButtonState extends State<MediaEditButton> {
           : const Icon(Icons.edit_outlined),
       onPressed: () => showSheet(
         context,
-        EditView(
-          (id: media.info.id, setComplete: false),
-          callback: (entryEdit) => setState(() => media.entryEdit = entryEdit),
-        ),
+        EditView((
+          id: media.info.id,
+          setComplete: false,
+        ), callback: (entryEdit) => setState(() => media.entryEdit = entryEdit)),
       ),
     );
   }

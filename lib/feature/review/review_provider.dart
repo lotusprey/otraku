@@ -26,16 +26,13 @@ class ReviewNotifier extends AsyncNotifier<Review> {
   }
 
   Future<Object?> rate(bool? rating) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.rateReview,
-      {
-        'id': arg,
-        'rating': rating == null
-            ? 'NO_VOTE'
-            : rating
-                ? 'UP_VOTE'
-                : 'DOWN_VOTE',
-      },
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.rateReview, {
+      'id': arg,
+      'rating': rating == null
+          ? 'NO_VOTE'
+          : rating
+          ? 'UP_VOTE'
+          : 'DOWN_VOTE',
+    }).getErrorOrNull();
   }
 }

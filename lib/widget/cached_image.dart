@@ -5,11 +5,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 
 /// A custom cache manager is needed to define exact image cap and stale period.
 final _cacheManager = CacheManager(
-  Config(
-    'imageCache',
-    maxNrOfCacheObjects: 1000,
-    stalePeriod: const Duration(days: 10),
-  ),
+  Config('imageCache', maxNrOfCacheObjects: 1000, stalePeriod: const Duration(days: 10)),
 );
 
 /// Erases image cache.
@@ -40,7 +36,7 @@ class CachedImage extends StatelessWidget {
       cacheManager: _cacheManager,
       fadeInDuration: const Duration(milliseconds: 300),
       fadeOutDuration: const Duration(milliseconds: 300),
-      errorWidget: (context, _, __) => IconButton(
+      errorWidget: (context, _, _) => IconButton(
         tooltip: 'Error',
         icon: const Icon(Icons.close_outlined),
         onPressed: () => SnackBarExtension.show(context, 'Failed to load image'),

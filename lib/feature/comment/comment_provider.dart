@@ -50,19 +50,17 @@ class CommentNotifier extends AsyncNotifier<Comment> {
       state = state.whenData((data) => data.withEditedText(map['comment']));
 
   Future<Object?> toggleCommentLike(int commentId) {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleLike,
-      {'id': commentId, 'type': 'THREAD_COMMENT'},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleLike, {
+      'id': commentId,
+      'type': 'THREAD_COMMENT',
+    }).getErrorOrNull();
   }
 
   void appendComment(Map<String, dynamic> map, int parentCommentId) {
     final value = state.value;
     if (value == null) return;
 
-    state = AsyncValue.data(
-      value.withAppendedChildComment(map, parentCommentId),
-    );
+    state = AsyncValue.data(value.withAppendedChildComment(map, parentCommentId));
   }
 
   Future<Object?> delete() =>

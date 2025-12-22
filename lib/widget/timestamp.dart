@@ -17,10 +17,10 @@ class Timestamp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onTap = () => SnackBarExtension.show(
-          context,
-          dateTime.formattedDateTimeFromSeconds(analogClock),
-          canCopyText: true,
-        );
+      context,
+      dateTime.formattedDateTimeFromSeconds(analogClock),
+      canCopyText: true,
+    );
 
     return Semantics(
       onTap: onTap,
@@ -29,14 +29,16 @@ class Timestamp extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize: .min,
+          spacing: 5,
           children: [
             leading,
-            const SizedBox(width: 5),
             Text(
               _relativeTime(),
               style: TextTheme.of(context).labelSmall,
-            )
+              overflow: .ellipsis,
+              maxLines: 1,
+            ),
           ],
         ),
       ),

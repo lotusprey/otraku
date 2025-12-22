@@ -12,11 +12,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/composition/composition_provider.dart';
 
 class CompositionView extends StatelessWidget {
-  const CompositionView({
-    required this.tag,
-    required this.onSaved,
-    this.defaultText = '',
-  });
+  const CompositionView({required this.tag, required this.onSaved, this.defaultText = ''});
 
   final CompositionTag tag;
   final String defaultText;
@@ -29,14 +25,14 @@ class CompositionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        return ref.watch(compositionProvider(tag)).when(
+        return ref
+            .watch(compositionProvider(tag))
+            .when(
               loading: () => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
-              error: (_, __) => SheetWithButtonRow(
-                builder: (context, scrollCtrl) => const Center(
-                  child: Text('Failed Loading'),
-                ),
+              error: (_, _) => SheetWithButtonRow(
+                builder: (context, scrollCtrl) => const Center(child: Text('Failed Loading')),
               ),
               data: (data) {
                 if (data.text.isEmpty) {
@@ -84,17 +80,15 @@ class __CompositionViewState extends State<_CompositionView> with SingleTickerPr
   @override
   void initState() {
     super.initState();
-    _tabCtrl.addListener(
-      () {
-        setState(() {});
-        if (_tabCtrl.index == 0) {
-          _focus.requestFocus();
-        } else {
-          _focus.unfocus();
-          _parsedText = parseMarkdown(_textCtrl.text);
-        }
-      },
-    );
+    _tabCtrl.addListener(() {
+      setState(() {});
+      if (_tabCtrl.index == 0) {
+        _focus.requestFocus();
+      } else {
+        _focus.unfocus();
+        _parsedText = parseMarkdown(_textCtrl.text);
+      }
+    });
   }
 
   @override
@@ -167,10 +161,7 @@ class _CompositionBody extends StatelessWidget {
             ),
             SingleChildScrollView(
               controller: scrollCtrl,
-              child: Padding(
-                padding: padding,
-                child: HtmlContent(parsedText),
-              ),
+              child: Padding(padding: padding, child: HtmlContent(parsedText)),
             ),
           ],
         ),
@@ -384,28 +375,29 @@ class _FormatButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-        tooltip: name,
-        icon: Icon(icon),
-        onPressed: () {
-          final txt = textCtrl.text;
-          final beg = textCtrl.selection.start;
-          final end = textCtrl.selection.end;
-          if (beg < 0) return;
-          final text = '${txt.substring(0, beg)}'
-              '$startDelimiter'
-              '${txt.substring(beg, end)}'
-              '$endDelimiter'
-              '${txt.substring(end)}';
+    tooltip: name,
+    icon: Icon(icon),
+    onPressed: () {
+      final txt = textCtrl.text;
+      final beg = textCtrl.selection.start;
+      final end = textCtrl.selection.end;
+      if (beg < 0) return;
+      final text =
+          '${txt.substring(0, beg)}'
+          '$startDelimiter'
+          '${txt.substring(beg, end)}'
+          '$endDelimiter'
+          '${txt.substring(end)}';
 
-          final offset = textCtrl.selection.isCollapsed
-              ? textCtrl.selection.end + startDelimiter.length
-              : textCtrl.selection.end + startDelimiter.length + endDelimiter.length;
-          textCtrl.value = TextEditingValue(
-            text: text,
-            selection: TextSelection.collapsed(offset: offset),
-          );
-        },
+      final offset = textCtrl.selection.isCollapsed
+          ? textCtrl.selection.end + startDelimiter.length
+          : textCtrl.selection.end + startDelimiter.length + endDelimiter.length;
+      textCtrl.value = TextEditingValue(
+        text: text,
+        selection: TextSelection.collapsed(offset: offset),
       );
+    },
+  );
 }
 
 /// Controls whether a message will be created as private or public.
@@ -421,19 +413,17 @@ class _PrivateButton extends StatefulWidget {
 class __PrivateButtonState extends State<_PrivateButton> {
   @override
   Widget build(BuildContext context) => IconButton(
-        tooltip: widget.composition.isPrivate ? 'Make Public' : 'Make Private',
-        icon: widget.composition.isPrivate
-            ? const Icon(Ionicons.eye_outline)
-            : const Icon(Ionicons.eye_off_outline),
-        onPressed: () {
-          setState(
-            () => widget.composition.isPrivate = !widget.composition.isPrivate,
-          );
+    tooltip: widget.composition.isPrivate ? 'Make Public' : 'Make Private',
+    icon: widget.composition.isPrivate
+        ? const Icon(Ionicons.eye_outline)
+        : const Icon(Ionicons.eye_off_outline),
+    onPressed: () {
+      setState(() => widget.composition.isPrivate = !widget.composition.isPrivate);
 
-          SnackBarExtension.show(
-            context,
-            widget.composition.isPrivate ? 'Message is now private' : 'Message is now public',
-          );
-        },
+      SnackBarExtension.show(
+        context,
+        widget.composition.isPrivate ? 'Message is now private' : 'Message is now public',
       );
+    },
+  );
 }

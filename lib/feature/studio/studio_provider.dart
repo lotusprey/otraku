@@ -14,10 +14,8 @@ final studioProvider = AsyncNotifierProvider.autoDispose.family<StudioNotifier, 
   StudioNotifier.new,
 );
 
-final studioMediaProvider =
-    AsyncNotifierProvider.autoDispose.family<StudioMediaNotifier, Paged<StudioMedia>, int>(
-  StudioMediaNotifier.new,
-);
+final studioMediaProvider = AsyncNotifierProvider.autoDispose
+    .family<StudioMediaNotifier, Paged<StudioMedia>, int>(StudioMediaNotifier.new);
 
 class StudioNotifier extends AsyncNotifier<Studio> {
   StudioNotifier(this.arg);
@@ -26,16 +24,17 @@ class StudioNotifier extends AsyncNotifier<Studio> {
 
   @override
   FutureOr<Studio> build() async {
-    final data =
-        await ref.read(repositoryProvider).request(GqlQuery.studio, {'id': arg, 'withInfo': true});
+    final data = await ref.read(repositoryProvider).request(GqlQuery.studio, {
+      'id': arg,
+      'withInfo': true,
+    });
     return Studio(data['Studio']);
   }
 
   Future<Object?> toggleFavorite() {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleFavorite,
-      {'studio': arg},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleFavorite, {
+      'studio': arg,
+    }).getErrorOrNull();
   }
 }
 

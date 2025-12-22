@@ -13,6 +13,7 @@ class StaffHeader extends StatelessWidget {
     required this.tabCtrl,
     required this.scrollToTop,
     required this.toggleFavorite,
+    required this.highContrast,
   });
 
   const StaffHeader.withoutTabBar({
@@ -20,8 +21,9 @@ class StaffHeader extends StatelessWidget {
     required this.imageUrl,
     required this.staff,
     required this.toggleFavorite,
-  })  : tabCtrl = null,
-        scrollToTop = null;
+    required this.highContrast,
+  }) : tabCtrl = null,
+       scrollToTop = null;
 
   final int id;
   final String? imageUrl;
@@ -29,6 +31,7 @@ class StaffHeader extends StatelessWidget {
   final TabController? tabCtrl;
   final void Function()? scrollToTop;
   final Future<Object?> Function() toggleFavorite;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -42,30 +45,18 @@ class StaffHeader extends StatelessWidget {
           ? TableList([
               ('Favorites', staff!.favorites.toString()),
               if (staff!.gender != null) ('Gender', staff!.gender!),
-            ])
+            ], highContrast: highContrast)
           : null,
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (
-              tabCtrl: tabCtrl!,
-              scrollToTop: scrollToTop!,
-              tabs: tabsWithOverview,
-            )
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,
-      trailingTopButtons: [
-        if (staff != null) _FavoriteButton(staff!, toggleFavorite),
-      ],
+      trailingTopButtons: [if (staff != null) _FavoriteButton(staff!, toggleFavorite)],
     );
   }
 
-  static const tabsWithoutOverview = [
-    Tab(text: 'Characters'),
-    Tab(text: 'Roles'),
-  ];
+  static const tabsWithoutOverview = [Tab(text: 'Characters'), Tab(text: 'Roles')];
 
-  static const tabsWithOverview = [
-    Tab(text: 'Overview'),
-    ...tabsWithoutOverview,
-  ];
+  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
 }
 
 class _FavoriteButton extends StatefulWidget {

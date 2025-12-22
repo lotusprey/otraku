@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 
@@ -29,11 +30,11 @@ class BarChart extends StatelessWidget {
     maxHeight /= maxValue;
 
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: .min,
+      crossAxisAlignment: .stretch,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
+          padding: const .symmetric(vertical: 5),
           child: Text(title, style: TextTheme.of(context).titleSmall),
         ),
         if (toolbar != null) toolbar!,
@@ -43,16 +44,18 @@ class BarChart extends StatelessWidget {
             itemCount: names.length,
             itemExtent: barWidth + 5,
             itemBuilder: (_, i) => Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: .end,
               children: [
                 Text(
                   values[i].toString(),
                   style: TextTheme.of(context).labelMedium,
+                  overflow: .ellipsis,
+                  maxLines: 1,
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: values[i] * maxHeight + Theming.offset,
-                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  margin: const .symmetric(vertical: 5),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
@@ -69,6 +72,8 @@ class BarChart extends StatelessWidget {
                 Text(
                   names[i],
                   style: TextTheme.of(context).labelMedium,
+                  overflow: .ellipsis,
+                  maxLines: 1,
                 ),
               ],
             ),
@@ -84,88 +89,71 @@ class PieChart extends StatelessWidget {
     required this.title,
     required this.names,
     required this.values,
+    required this.highContrast,
   }) : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
   final List<int> values;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: TextTheme.of(context).titleSmall),
-        const SizedBox(height: 5),
-        Container(
-          height: 225,
-          padding: Theming.paddingAll,
-          decoration: BoxDecoration(
-            borderRadius: Theming.borderRadiusSmall,
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              stops: const [0, 1],
-              colors: [
-                ColorScheme.of(context).surfaceContainerHighest.withAlpha(50),
-                ColorScheme.of(context).surfaceContainerHighest.withAlpha(100),
-              ],
-            ),
-          ),
-          child: Row(
-            mainAxisSize:
-                MediaQuery.sizeOf(context).width > 420 ? MainAxisSize.min : MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: AspectRatio(
-                  aspectRatio: 1,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: RadialGradient(
-                        center: const Alignment(-0.5, -0.5),
-                        radius: 0.8,
-                        colors: [
-                          ColorScheme.of(context).primary,
-                          ColorScheme.of(context).primary.withAlpha(100),
-                        ],
-                        stops: const [0.5, 1.0],
-                      ),
-                    ),
-                    child: CustomPaint(
-                      foregroundPainter: _PieLines(
-                        ColorScheme.of(context).surface,
-                        values,
-                      ),
+    final colorScheme = ColorScheme.of(context);
+
+    final container = CardExtension.highContrast(highContrast)(
+      child: Row(
+        mainAxisSize: MediaQuery.sizeOf(context).width > 420 ? .min : .max,
+        mainAxisAlignment: .spaceBetween,
+        spacing: Theming.offset,
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const .all(Theming.offset),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: .circle,
+                    gradient: RadialGradient(
+                      center: const Alignment(-0.5, -0.5),
+                      radius: 0.8,
+                      colors: [colorScheme.primary, colorScheme.primary.withAlpha(100)],
+                      stops: const [0.5, 1.0],
                     ),
                   ),
+                  child: CustomPaint(foregroundPainter: _PieLines(colorScheme.surface, values)),
                 ),
               ),
-              const SizedBox(width: Theming.offset),
-              SizedBox(
-                width: 140,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const .only(top: 5, bottom: 5, right: Theming.offset),
+              itemCount: names.length,
+              itemBuilder: (context, i) => Padding(
+                padding: const .symmetric(vertical: 5),
+                child: Row(
+                  spacing: 5,
                   children: [
-                    for (int i = 0; i < names.length; i++)
-                      Row(
-                        children: [
-                          Expanded(child: Text(names[i])),
-                          const SizedBox(width: 5),
-                          Text(
-                            values[i].toString(),
-                            style: TextTheme.of(context).labelMedium,
-                          ),
-                        ],
-                      ),
+                    Expanded(child: Text(names[i])),
+                    Text(values[i].toString(), style: TextTheme.of(context).labelMedium),
                   ],
                 ),
               ),
-            ],
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+
+    return Column(
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
+      spacing: 5,
+      children: [
+        Text(title, style: TextTheme.of(context).titleSmall),
+        Expanded(child: container),
       ],
     );
   }

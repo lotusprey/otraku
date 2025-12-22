@@ -7,11 +7,13 @@ class MediaThreadsSubview extends StatelessWidget {
   const MediaThreadsSubview({
     required this.id,
     required this.scrollCtrl,
+    required this.highContrast,
     required this.analogClock,
   });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
   final bool analogClock;
 
   @override
@@ -20,7 +22,7 @@ class MediaThreadsSubview extends StatelessWidget {
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaThreadsProvider(id)),
       provider: mediaThreadsProvider(id),
-      onData: (data) => ThreadItemList(data.items, analogClock),
+      onData: (data) => ThreadItemList(data.items, highContrast, analogClock),
     );
   }
 }

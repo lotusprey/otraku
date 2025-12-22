@@ -22,17 +22,15 @@ class DiscoverFloatingAction extends StatelessWidget {
             showSheet(
               context,
               SimpleSheet(
-                initialHeight: PillSelector.expectedMinHeight(
-                  DiscoverType.values.length,
-                ),
+                initialHeight: PillSelector.expectedMinHeight(DiscoverType.values.length),
                 builder: (context, scrollCtrl) => PillSelector(
                   scrollCtrl: scrollCtrl,
                   selected: type.index,
                   items: DiscoverType.values.map((v) => Text(v.label)).toList(),
                   onTap: (i) {
-                    ref.read(discoverFilterProvider.notifier).update(
-                          (s) => s.copyWith(type: DiscoverType.values[i]),
-                        );
+                    ref
+                        .read(discoverFilterProvider.notifier)
+                        .update((s) => s.copyWith(type: DiscoverType.values[i]));
                     Navigator.pop(context);
                   },
                 ),
@@ -52,13 +50,13 @@ class DiscoverFloatingAction extends StatelessWidget {
   }
 
   static IconData _typeIcon(DiscoverType type) => switch (type) {
-        DiscoverType.anime => Ionicons.film_outline,
-        DiscoverType.manga => Ionicons.book_outline,
-        DiscoverType.character => Ionicons.man_outline,
-        DiscoverType.staff => Ionicons.mic_outline,
-        DiscoverType.studio => Ionicons.business_outline,
-        DiscoverType.user => Ionicons.person_outline,
-        DiscoverType.review => Icons.rate_review_outlined,
-        DiscoverType.recommendation => Icons.thumb_up_outlined,
-      };
+    .anime => Ionicons.film_outline,
+    .manga => Ionicons.book_outline,
+    .character => Ionicons.man_outline,
+    .staff => Ionicons.mic_outline,
+    .studio => Ionicons.business_outline,
+    .user => Ionicons.person_outline,
+    .review => Icons.rate_review_outlined,
+    .recommendation => Icons.thumb_up_outlined,
+  };
 }

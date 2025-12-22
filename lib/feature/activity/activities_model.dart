@@ -2,10 +2,10 @@ sealed class ActivitiesTag {
   const ActivitiesTag();
 
   String toQueryParam() => switch (this) {
-        HomeActivitiesTag() => 'home',
-        UserActivitiesTag(:final userId) => 'user:$userId',
-        MediaActivitiesTag(:final mediaId) => 'media:$mediaId',
-      };
+    HomeActivitiesTag() => 'home',
+    UserActivitiesTag(:final userId) => 'user:$userId',
+    MediaActivitiesTag(:final mediaId) => 'media:$mediaId',
+  };
 
   static ActivitiesTag? fromQueryParam(String param) {
     if (param == 'home') {

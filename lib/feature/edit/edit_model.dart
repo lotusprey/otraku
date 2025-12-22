@@ -21,11 +21,7 @@ class EntryEdit {
     required this.notes,
   });
 
-  factory EntryEdit(
-    Map<String, dynamic> map,
-    Settings settings,
-    bool setComplete,
-  ) {
+  factory EntryEdit(Map<String, dynamic> map, Settings settings, bool setComplete) {
     final baseEntry = BaseEntry(map);
 
     final customLists = <String, bool>{};
@@ -60,7 +56,7 @@ class EntryEdit {
     var completedAt = baseEntry.completedAt;
     var progress = baseEntry.progress;
     if (setComplete) {
-      listStatus = ListStatus.completed;
+      listStatus = .completed;
       completedAt ??= DateTime.now();
 
       if (baseEntry.progressMax != null) progress = baseEntry.progressMax!;
@@ -110,38 +106,37 @@ class EntryEdit {
     bool? hiddenFromStatusLists,
     Map<String, double>? advancedScores,
     Map<String, bool>? customLists,
-  }) =>
-      EntryEdit._(
-        baseEntry: baseEntry,
-        listStatus: listStatus ?? this.listStatus,
-        progress: progress ?? this.progress,
-        progressVolumes: progressVolumes ?? this.progressVolumes,
-        score: score ?? this.score,
-        repeat: repeat ?? this.repeat,
-        notes: notes ?? this.notes,
-        startedAt: startedAt == null ? this.startedAt : startedAt.$1,
-        completedAt: completedAt == null ? this.completedAt : completedAt.$1,
-        private: private ?? this.private,
-        hiddenFromStatusLists: hiddenFromStatusLists ?? this.hiddenFromStatusLists,
-        advancedScores: advancedScores ?? this.advancedScores,
-        customLists: customLists ?? this.customLists,
-      );
+  }) => EntryEdit._(
+    baseEntry: baseEntry,
+    listStatus: listStatus ?? this.listStatus,
+    progress: progress ?? this.progress,
+    progressVolumes: progressVolumes ?? this.progressVolumes,
+    score: score ?? this.score,
+    repeat: repeat ?? this.repeat,
+    notes: notes ?? this.notes,
+    startedAt: startedAt == null ? this.startedAt : startedAt.$1,
+    completedAt: completedAt == null ? this.completedAt : completedAt.$1,
+    private: private ?? this.private,
+    hiddenFromStatusLists: hiddenFromStatusLists ?? this.hiddenFromStatusLists,
+    advancedScores: advancedScores ?? this.advancedScores,
+    customLists: customLists ?? this.customLists,
+  );
 
   Map<String, dynamic> toGraphQlVariables() => {
-        'mediaId': baseEntry.mediaId,
-        'status': (listStatus ?? ListStatus.current).value,
-        'progress': progress,
-        'progressVolumes': progressVolumes,
-        'score': score,
-        'repeat': repeat,
-        'notes': notes,
-        'startedAt': startedAt?.fuzzyDate,
-        'completedAt': completedAt?.fuzzyDate,
-        'private': private,
-        'hiddenFromStatusLists': hiddenFromStatusLists,
-        'advancedScores': advancedScores.entries.map((e) => e.value).toList(),
-        'customLists': customLists.entries.where((e) => e.value).map((e) => e.key).toList(),
-      };
+    'mediaId': baseEntry.mediaId,
+    'status': (listStatus ?? ListStatus.current).value,
+    'progress': progress,
+    'progressVolumes': progressVolumes,
+    'score': score,
+    'repeat': repeat,
+    'notes': notes,
+    'startedAt': startedAt?.fuzzyDate,
+    'completedAt': completedAt?.fuzzyDate,
+    'private': private,
+    'hiddenFromStatusLists': hiddenFromStatusLists,
+    'advancedScores': advancedScores.entries.map((e) => e.value).toList(),
+    'customLists': customLists.entries.where((e) => e.value).map((e) => e.key).toList(),
+  };
 }
 
 class BaseEntry {
@@ -159,21 +154,17 @@ class BaseEntry {
   });
 
   factory BaseEntry(Map<String, dynamic> map) => BaseEntry._(
-        mediaId: map['id'],
-        entryId: map['mediaListEntry']?['id'],
-        isAnime: map['type'] == 'ANIME',
-        listStatus: ListStatus.from(map['mediaListEntry']?['status']),
-        progress: map['mediaListEntry']?['progress'] ?? 0,
-        progressMax: map['episodes'] ?? map['chapters'],
-        progressVolumes: map['mediaListEntry']?['progressVolumes'] ?? 0,
-        progressVolumesMax: map['volumes'],
-        startedAt: DateTimeExtension.fromFuzzyDate(
-          map['mediaListEntry']?['startedAt'],
-        ),
-        completedAt: DateTimeExtension.fromFuzzyDate(
-          map['mediaListEntry']?['completedAt'],
-        ),
-      );
+    mediaId: map['id'],
+    entryId: map['mediaListEntry']?['id'],
+    isAnime: map['type'] == 'ANIME',
+    listStatus: ListStatus.from(map['mediaListEntry']?['status']),
+    progress: map['mediaListEntry']?['progress'] ?? 0,
+    progressMax: map['episodes'] ?? map['chapters'],
+    progressVolumes: map['mediaListEntry']?['progressVolumes'] ?? 0,
+    progressVolumesMax: map['volumes'],
+    startedAt: DateTimeExtension.fromFuzzyDate(map['mediaListEntry']?['startedAt']),
+    completedAt: DateTimeExtension.fromFuzzyDate(map['mediaListEntry']?['completedAt']),
+  );
 
   final int mediaId;
   final int? entryId;

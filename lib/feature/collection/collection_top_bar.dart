@@ -49,9 +49,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 child: SearchField(
                   debounce: Debounce(),
                   focusNode: focusNode,
-                  hint: ref.watch(collectionProvider(tag).select(
-                    (s) => s.value?.list.name ?? '',
-                  )),
+                  hint: ref.watch(collectionProvider(tag).select((s) => s.value?.listName ?? '')),
                   value: filter.search,
                   onChanged: (search) => ref
                       .read(collectionFilterProvider(tag).notifier)
@@ -62,15 +60,20 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 tooltip: 'Random',
                 icon: const Icon(Ionicons.shuffle_outline),
                 onPressed: () {
-                  final entries = ref.read(collectionEntriesProvider(tag));
-
-                  if (entries.isEmpty) {
+                  final lists = ref.read(collectionEntriesProvider(tag));
+                  if (lists.isEmpty) {
                     ConfirmationDialog.show(context, title: 'No entries');
                     return;
                   }
 
-                  final e = entries[Random().nextInt(entries.length)];
-                  context.push(Routes.media(e.mediaId, e.imageUrl));
+                  final list = lists[Random().nextInt(lists.length)];
+                  if (list.entries.isEmpty) {
+                    ConfirmationDialog.show(context, title: 'No entries');
+                    return;
+                  }
+
+                  final entry = list.entries[Random().nextInt(list.entries.length)];
+                  context.push(Routes.media(entry.mediaId, entry.imageUrl));
                 },
               ),
               if (filter.mediaFilter.isActive)

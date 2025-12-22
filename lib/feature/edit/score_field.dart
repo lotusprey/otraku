@@ -4,11 +4,7 @@ import 'package:otraku/util/theming.dart';
 
 /// Score picker.
 class ScoreField extends StatefulWidget {
-  const ScoreField({
-    required this.value,
-    required this.scoreFormat,
-    required this.onChanged,
-  });
+  const ScoreField({required this.value, required this.scoreFormat, required this.onChanged});
 
   final double value;
   final ScoreFormat? scoreFormat;
@@ -30,18 +26,15 @@ class _ScoreFieldState extends State<ScoreField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(Theming.offset),
+      padding: const .all(Theming.offset),
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: 'Score',
-          border: OutlineInputBorder(),
-        ),
-        child: switch (widget.scoreFormat ?? ScoreFormat.point10) {
-          ScoreFormat.point3 => _SmileyScorePicker(_value, _onChanged),
-          ScoreFormat.point5 => _StarScorePicker(_value, _onChanged),
-          ScoreFormat.point10 => _TenScorePicker(_value, _onChanged),
-          ScoreFormat.point10Decimal => _TenDecimalScorePicker(_value, _onChanged),
-          ScoreFormat.point100 => _HundredScorePicker(_value, _onChanged),
+        decoration: const InputDecoration(labelText: 'Score', border: OutlineInputBorder()),
+        child: switch (widget.scoreFormat ?? .point10) {
+          .point3 => _SmileyScorePicker(_value, _onChanged),
+          .point5 => _StarScorePicker(_value, _onChanged),
+          .point10 => _TenScorePicker(_value, _onChanged),
+          .point10Decimal => _TenDecimalScorePicker(_value, _onChanged),
+          .point100 => _HundredScorePicker(_value, _onChanged),
         },
       ),
     );
@@ -68,7 +61,7 @@ class _SmileyScorePicker extends StatelessWidget {
     ];
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: .spaceEvenly,
       children: [
         for (final (i, icon, tooltip) in items)
           IconButton(
@@ -94,7 +87,7 @@ class _StarScorePicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: .spaceEvenly,
       children: [
         for (int i = 1; i < 6; i++)
           IconButton(

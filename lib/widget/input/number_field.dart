@@ -19,16 +19,15 @@ class NumberField extends StatefulWidget {
     int value = 0,
     int minValue = 0,
     int? maxValue,
-  }) =>
-      NumberField._(
-        label: label,
-        value: value,
-        minValue: minValue,
-        stepValue: 1,
-        maxValue: maxValue,
-        onChanged: (n) => onChanged(n.toInt()),
-        isDecimal: false,
-      );
+  }) => NumberField._(
+    label: label,
+    value: value,
+    minValue: minValue,
+    stepValue: 1,
+    maxValue: maxValue,
+    onChanged: (n) => onChanged(n.toInt()),
+    isDecimal: false,
+  );
 
   factory NumberField.decimal({
     required String label,
@@ -36,16 +35,15 @@ class NumberField extends StatefulWidget {
     double value = 0.0,
     double minValue = 0.0,
     double? maxValue,
-  }) =>
-      NumberField._(
-        label: label,
-        value: value,
-        minValue: minValue,
-        stepValue: 0.5,
-        maxValue: maxValue,
-        onChanged: (n) => onChanged((n * 10).round() / 10),
-        isDecimal: true,
-      );
+  }) => NumberField._(
+    label: label,
+    value: value,
+    minValue: minValue,
+    stepValue: 0.5,
+    maxValue: maxValue,
+    onChanged: (n) => onChanged((n * 10).round() / 10),
+    isDecimal: true,
+  );
 
   final String label;
   final num value;
@@ -70,10 +68,7 @@ class _NumberFieldState extends State<NumberField> {
     if (text != _ctrl.text) {
       _ctrl.value = TextEditingValue(
         text: text,
-        selection: TextSelection(
-          baseOffset: text.length,
-          extentOffset: text.length,
-        ),
+        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
       );
     }
   }
@@ -89,7 +84,7 @@ class _NumberFieldState extends State<NumberField> {
     return TextField(
       controller: _ctrl,
       onChanged: _validateInput,
-      textAlign: TextAlign.center,
+      textAlign: .center,
       keyboardType: TextInputType.numberWithOptions(decimal: widget.isDecimal),
       inputFormatters: [
         FilteringTextInputFormatter.allow(
@@ -109,10 +104,7 @@ class _NumberFieldState extends State<NumberField> {
               radius: Theming.radiusSmall.x,
               child: Tooltip(
                 message: 'Decrement',
-                onTriggered: () => _validateInput(
-                  widget.minValue.toString(),
-                  0,
-                ),
+                onTriggered: () => _validateInput(widget.minValue.toString(), 0),
                 child: const Icon(Icons.remove),
               ),
             ),
@@ -169,10 +161,7 @@ class _NumberFieldState extends State<NumberField> {
     final text = number.toString();
     _ctrl.value = _ctrl.value.copyWith(
       text: text,
-      selection: TextSelection(
-        baseOffset: text.length,
-        extentOffset: text.length,
-      ),
+      selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
       composing: TextRange.empty,
     );
   }

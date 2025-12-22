@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
@@ -8,17 +12,15 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
-typedef RateRecommendation = Future<Object?> Function(
-  int mediaId,
-  int recommendedMediaId,
-  bool? rating,
-);
+typedef OnRateRecommendation =
+    Future<Object?> Function(int mediaId, int recommendedMediaId, bool? rating);
 
 class DiscoverRecommendationsGrid extends StatelessWidget {
-  const DiscoverRecommendationsGrid(this.items, this.onRate);
+  const DiscoverRecommendationsGrid(this.items, {required this.onRate, required this.highContrast});
 
   final List<DiscoverRecommendationItem> items;
-  final RateRecommendation onRate;
+  final OnRateRecommendation onRate;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
@@ -26,32 +28,38 @@ class DiscoverRecommendationsGrid extends StatelessWidget {
       return const SliverFillRemaining(child: Center(child: Text('No items')));
     }
 
+    final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
+    final presentationHeight = bodyMediumLineHeight * 4 + 13;
+    final ratingHeight = max(bodyMediumLineHeight, Theming.minTapTarget);
+    final tileHeight = presentationHeight + ratingHeight;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 300,
-        height: 163,
-      ),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 300, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _Tile(items[i], onRate),
+        (context, i) => _Tile(items[i], onRate, highContrast, presentationHeight),
       ),
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item, this.onRate);
+  const _Tile(this.item, this.onRate, this.highContrast, this.presentationHeight);
 
   final DiscoverRecommendationItem item;
-  final RateRecommendation onRate;
+  final OnRateRecommendation onRate;
+  final bool highContrast;
+  final double presentationHeight;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
+    final coverWidth = presentationHeight / Theming.coverHtoWRatio;
+
+    return CardExtension.highContrast(highContrast)(
       child: Column(
         children: [
           SizedBox(
-            height: 115,
+            height: presentationHeight,
             child: Row(
               children: [
                 MediaRouteTile(
@@ -59,42 +67,32 @@ class _Tile extends StatelessWidget {
                   imageUrl: item.mediaCover,
                   child: ClipRRect(
                     borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(item.mediaCover, width: 80),
+                    child: CachedImage(item.mediaCover, width: coverWidth),
                   ),
                 ),
                 Expanded(
                   child: Padding(
-                    padding: const EdgeInsets.all(Theming.offset),
+                    padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: .stretch,
+                      mainAxisAlignment: .spaceAround,
                       children: [
-                        Flexible(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => context.push(
-                              Routes.media(item.mediaId, item.mediaCover),
-                            ),
-                            child: Text(
-                              item.mediaTitle,
-                              overflow: TextOverflow.fade,
-                              maxLines: 3,
-                            ),
-                          ),
+                        GestureDetector(
+                          behavior: .opaque,
+                          onTap: () => context.push(Routes.media(item.mediaId, item.mediaCover)),
+                          child: Text(item.mediaTitle, overflow: .ellipsis, maxLines: 2),
                         ),
-                        Flexible(
-                          child: GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () => context.push(Routes.media(
-                              item.recommendedMediaId,
-                              item.recommendedMediaCover,
-                            )),
-                            child: Text(
-                              item.recommendedMediaTitle,
-                              overflow: TextOverflow.fade,
-                              textAlign: TextAlign.end,
-                              maxLines: 3,
-                            ),
+                        const Divider(height: 3),
+                        GestureDetector(
+                          behavior: .opaque,
+                          onTap: () => context.push(
+                            Routes.media(item.recommendedMediaId, item.recommendedMediaCover),
+                          ),
+                          child: Text(
+                            item.recommendedMediaTitle,
+                            overflow: .ellipsis,
+                            textAlign: .end,
+                            maxLines: 2,
                           ),
                         ),
                       ],
@@ -106,22 +104,26 @@ class _Tile extends StatelessWidget {
                   imageUrl: item.recommendedMediaCover,
                   child: ClipRRect(
                     borderRadius: Theming.borderRadiusSmall,
-                    child: CachedImage(item.recommendedMediaCover, width: 80),
+                    child: CachedImage(item.recommendedMediaCover, width: coverWidth),
                   ),
                 ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+            padding: const .symmetric(horizontal: Theming.offset),
             child: Row(
               spacing: 5,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
                   child: item.mediaListStatus == null
                       ? const SizedBox()
-                      : Text(item.mediaListStatus!, textAlign: TextAlign.left),
+                      : Text(
+                          item.mediaListStatus!,
+                          textAlign: .left,
+                          overflow: .ellipsis,
+                          maxLines: 1,
+                        ),
                 ),
                 _RecommendationButtons(item, onRate),
                 Expanded(
@@ -129,7 +131,9 @@ class _Tile extends StatelessWidget {
                       ? const SizedBox()
                       : Text(
                           item.recommendedMediaListStatus!,
-                          textAlign: TextAlign.right,
+                          textAlign: .right,
+                          overflow: .ellipsis,
+                          maxLines: 1,
                         ),
                 ),
               ],
@@ -145,7 +149,7 @@ class _RecommendationButtons extends StatefulWidget {
   const _RecommendationButtons(this.item, this.onRate);
 
   final DiscoverRecommendationItem item;
-  final RateRecommendation onRate;
+  final OnRateRecommendation onRate;
 
   @override
   State<_RecommendationButtons> createState() => __RecommendationButtonsState();
@@ -158,7 +162,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
 
     return Row(
       spacing: 5,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         IconButton(
           tooltip: 'Agree',
@@ -194,11 +198,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
               }
             });
 
-            final err = await widget.onRate(
-              item.mediaId,
-              item.recommendedMediaId,
-              item.userRating,
-            );
+            final err = await widget.onRate(item.mediaId, item.recommendedMediaId, item.userRating);
             if (err == null) return;
 
             setState(() {
@@ -246,11 +246,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
               }
             });
 
-            final err = await widget.onRate(
-              item.mediaId,
-              item.recommendedMediaId,
-              item.userRating,
-            );
+            final err = await widget.onRate(item.mediaId, item.recommendedMediaId, item.userRating);
             if (err == null) return;
 
             setState(() {

@@ -71,8 +71,10 @@ class ContentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final imageWidth =
-        ((MediaQuery.sizeOf(context).width - Theming.offset * 3) / 2.0).clamp(0.0, 100.0);
+    final imageWidth = ((MediaQuery.sizeOf(context).width - Theming.offset * 3) / 2.0).clamp(
+      0.0,
+      100.0,
+    );
     final imageHeight = imageWidth * imageHeightToWidthRatio;
 
     final content = _ImageContent(
@@ -101,11 +103,7 @@ class ContentHeader extends StatelessWidget {
   }
 }
 
-typedef TabBarConfig = ({
-  TabController tabCtrl,
-  List<Tab> tabs,
-  void Function() scrollToTop,
-});
+typedef TabBarConfig = ({TabController tabCtrl, List<Tab> tabs, void Function() scrollToTop});
 
 class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
   const _ImageContent({
@@ -134,7 +132,8 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      crossAxisAlignment: .end,
+      spacing: Theming.offset,
       children: [
         Hero(
           tag: imageHeroTag,
@@ -147,9 +146,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                   ? GestureDetector(
                       onTap: () => showDialog(
                         context: context,
-                        builder: (context) => ImageDialog(
-                          imageLargeUrl ?? imageUrl!,
-                        ),
+                        builder: (context) => ImageDialog(imageLargeUrl ?? imageUrl!),
                       ),
                       child: CachedImage(imageUrl!, fit: imageFit),
                     )
@@ -157,27 +154,19 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
         ),
-        const SizedBox(width: Theming.offset),
         Expanded(
           child: Center(
             child: SingleChildScrollView(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+                crossAxisAlignment: .stretch,
                 children: [
                   if (title != null)
                     GestureDetector(
-                      behavior: HitTestBehavior.opaque,
+                      behavior: .opaque,
                       onTap: () => SnackBarExtension.copy(context, title!),
-                      child: Text(
-                        title!,
-                        overflow: TextOverflow.fade,
-                        style: TextTheme.of(context).titleLarge,
-                      ),
+                      child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyLarge),
                     ),
-                  if (details != null) ...[
-                    const SizedBox(height: 5),
-                    details!,
-                  ],
+                  if (details != null) ...[const SizedBox(height: 5), details!],
                 ],
               ),
             ),
@@ -242,11 +231,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           Expanded(
             child: Opacity(
               opacity: transition,
-              child: Text(
-                title!,
-                style: theme.textTheme.titleMedium,
-                overflow: TextOverflow.ellipsis,
-              ),
+              child: Text(title!, style: theme.textTheme.bodyMedium, overflow: .ellipsis),
             ),
           ),
         ...trailingTopButtons,
@@ -254,10 +239,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           tooltip: 'More',
           icon: const Icon(Ionicons.ellipsis_horizontal),
           onPressed: siteUrl != null
-              ? () => showSheet(
-                    context,
-                    SimpleSheet.link(context, siteUrl!),
-                  )
+              ? () => showSheet(context, SimpleSheet.link(context, siteUrl!))
               : null,
         ),
       ],
@@ -270,27 +252,19 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       children: [
         if (transition < 1) ...[
           if (bannerUrl != null) ...[
-            Positioned.fill(
-              bottom: bannerBottomPadding,
-              child: CachedImage(bannerUrl!),
-            ),
+            Positioned.fill(bottom: bannerBottomPadding, child: CachedImage(bannerUrl!)),
             Positioned.fill(
               bottom: bannerBottomPadding,
               child: GestureDetector(
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (context) => ImageDialog(bannerUrl!),
-                ),
+                onTap: () =>
+                    showDialog(context: context, builder: (context) => ImageDialog(bannerUrl!)),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.center,
                       tileMode: TileMode.mirror,
-                      colors: [
-                        theme.colorScheme.surface,
-                        theme.colorScheme.surface.withAlpha(150),
-                      ],
+                      colors: [theme.colorScheme.surface, theme.colorScheme.surface.withAlpha(150)],
                     ),
                   ),
                 ),
@@ -308,9 +282,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             Positioned.fill(
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.surface.withAlpha(
-                    (transition * 255).floor(),
-                  ),
+                  color: theme.colorScheme.surface.withAlpha((transition * 255).floor()),
                 ),
               ),
             ),
@@ -354,9 +326,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             child: BackdropFilter(
               filter: Theming.blurFilter,
               child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: theme.navigationBarTheme.backgroundColor,
-                ),
+                decoration: BoxDecoration(color: theme.navigationBarTheme.backgroundColor),
                 child: body,
               ),
             ),

@@ -33,6 +33,8 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
 
   @override
   Widget build(BuildContext context) {
+    final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
+
     final applyButton = BottomBarButton(
       text: 'Apply',
       icon: Icons.done_rounded,
@@ -78,33 +80,37 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+        padding: const .symmetric(horizontal: Theming.offset),
         child: ListView(
           controller: scrollCtrl,
-          padding: const EdgeInsets.only(top: 20),
+          padding: const .only(top: 20),
           children: [
             ChipSelector.ensureSelected(
               title: 'Sorting',
               items: MediaSort.values.map((v) => (v.label, v)).toList(),
               value: _filter.sort,
               onChanged: (v) => _filter.sort = v,
+              highContrast: highContrast,
             ),
             ChipMultiSelector(
               title: 'Statuses',
               items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
               values: _filter.statuses,
+              highContrast: highContrast,
             ),
             if (widget.ofAnime)
               ChipMultiSelector(
                 title: 'Formats',
                 items: MediaFormat.animeFormats.map((v) => (v.label, v)).toList(),
                 values: _filter.animeFormats,
+                highContrast: highContrast,
               )
             else
               ChipMultiSelector(
                 title: 'Formats',
                 items: MediaFormat.mangaFormats.map((v) => (v.label, v)).toList(),
                 values: _filter.mangaFormats,
+                highContrast: highContrast,
               ),
             if (widget.ofAnime)
               ChipSelector(
@@ -112,15 +118,16 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
                 items: MediaSeason.values.map((v) => (v.label, v)).toList(),
                 value: _filter.season,
                 onChanged: (v) => _filter.season = v,
+                highContrast: highContrast,
               ),
             const SizedBox(height: 5),
             const Divider(),
             Consumer(
-              builder: (context, ref, _) => ref.watch(tagsProvider).when(
+              builder: (context, ref, _) => ref
+                  .watch(tagsProvider)
+                  .when(
                     loading: () => const Center(child: Loader()),
-                    error: (_, __) => const Center(
-                      child: Text('Failed to load tags'),
-                    ),
+                    error: (_, _) => const Center(child: Text('Failed to load tags')),
                     data: (tags) => TagPicker(
                       includedGenres: _filter.genreIn,
                       excludedGenres: _filter.genreNotIn,
@@ -147,32 +154,34 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
               items: OriginCountry.values.map((v) => (v.label, v)).toList(),
               value: _filter.country,
               onChanged: (v) => _filter.country = v,
+              highContrast: highContrast,
             ),
             ChipMultiSelector(
               title: 'Sources',
               items: MediaSource.values.map((v) => (v.label, v)).toList(),
               values: _filter.sources,
+              highContrast: highContrast,
             ),
             ChipSelector(
               title: 'List Presence',
-              items: const [
-                ('In Lists', true),
-                ('Not in Lists', false),
-              ],
+              items: const [('In Lists', true), ('Not in Lists', false)],
               value: _filter.inLists,
               onChanged: (v) => _filter.inLists = v,
+              highContrast: highContrast,
             ),
             ChipSelector(
               title: 'Age Restriction',
               items: const [('Adult', true), ('Non-Adult', false)],
               value: _filter.isAdult,
               onChanged: (v) => _filter.isAdult = v,
+              highContrast: highContrast,
             ),
             ChipSelector(
               title: 'Licensing',
               items: const [('Licensed', true), ('Doujin', false)],
               value: _filter.isLicensed,
               onChanged: (v) => _filter.isLicensed = v,
+              highContrast: highContrast,
             ),
             SizedBox(
               height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,

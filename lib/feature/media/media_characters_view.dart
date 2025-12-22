@@ -10,31 +10,34 @@ import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class MediaCharactersSubview extends StatelessWidget {
-  const MediaCharactersSubview({required this.id, required this.scrollCtrl});
+  const MediaCharactersSubview({
+    required this.id,
+    required this.scrollCtrl,
+    required this.highContrast,
+  });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     return PagedView<(MediaRelatedItem, MediaRelatedItem?)>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(mediaConnectionsProvider(id)),
-      provider: mediaConnectionsProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.getCharactersAndVoiceActors()),
-      ),
+      provider: mediaConnectionsProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.getCharactersAndVoiceActors())),
       onData: (data) {
         return SliverMainAxisGroup(
           slivers: [
             _LanguageSelector(id),
             DualRelationGrid(
               items: data.items,
-              onTapPrimary: (item) => context.push(
-                Routes.character(item.tileId, item.tileImageUrl),
-              ),
-              onTapSecondary: (item) => context.push(
-                Routes.staff(item.tileId, item.tileImageUrl),
-              ),
+              onTapPrimary: (item) =>
+                  context.push(Routes.character(item.tileId, item.tileImageUrl)),
+              onTapSecondary: (item) => context.push(Routes.staff(item.tileId, item.tileImageUrl)),
+              highContrast: highContrast,
             ),
           ],
         );
@@ -52,11 +55,13 @@ class _LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final selection = ref.watch(mediaConnectionsProvider(id).select((s) {
-          final value = s.value;
-          if (value == null) return null;
-          return (value.languageToVoiceActors, value.selectedLanguage);
-        }));
+        final selection = ref.watch(
+          mediaConnectionsProvider(id).select((s) {
+            final value = s.value;
+            if (value == null) return null;
+            return (value.languageToVoiceActors, value.selectedLanguage);
+          }),
+        );
 
         if (selection == null) return const SliverToBoxAdapter();
 

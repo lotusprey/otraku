@@ -55,49 +55,45 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
         (_, s) => s.whenOrNull(
           loading: () => _settings = const AsyncValue.loading(),
           data: (data) => _settings = AsyncValue.data(data.copy()),
-          error: (error, _) => SnackBarExtension.show(
-            context,
-            error.toString(),
-          ),
+          error: (error, _) => SnackBarExtension.show(context, error.toString()),
         ),
       );
     }
+
+    final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
     final tabs = [
       ConstrainedView(padded: false, child: SettingsAppSubview(_scrollCtrl)),
       switch (_settings) {
         null => const Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Text('Log in to view content settings'),
-            ),
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Log in to view content settings'),
           ),
-        AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value),
+        ),
+        AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value, highContrast),
         AsyncError(:final error) => Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Text('Failed to load: ${error.toString()}'),
-            ),
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Failed to load: ${error.toString()}'),
           ),
+        ),
         AsyncLoading() => const Center(child: Loader()),
       },
       switch (_settings) {
         null => const Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Text('Log in to view notification settings'),
-            ),
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Log in to view notification settings'),
           ),
-        AsyncData(:final value) => SettingsNotificationsSubview(
-            _scrollCtrl,
-            value,
-          ),
+        ),
+        AsyncData(:final value) => SettingsNotificationsSubview(_scrollCtrl, value),
         AsyncError(:final error) => Center(
-            child: Padding(
-              padding: Theming.paddingAll,
-              child: Text('Failed to load: ${error.toString()}'),
-            ),
+          child: Padding(
+            padding: Theming.paddingAll,
+            child: Text('Failed to load: ${error.toString()}'),
           ),
+        ),
         AsyncLoading() => const Center(child: Loader()),
       },
       ConstrainedView(padded: false, child: SettingsAboutSubview(_scrollCtrl)),
@@ -105,24 +101,20 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
 
     final floatingAction = switch (_settings) {
       AsyncData(:final value) => HidingFloatingActionButton(
-          key: const Key('save'),
-          scrollCtrl: _scrollCtrl,
-          child: _SaveButton(
-            () => ref.read(settingsProvider.notifier).updateSettings(value),
-          ),
-        ),
+        key: const Key('save'),
+        scrollCtrl: _scrollCtrl,
+        child: _SaveButton(() => ref.read(settingsProvider.notifier).updateSettings(value)),
+      ),
       _ => null,
     };
 
     return AdaptiveScaffold(
-      topBar: TopBarAnimatedSwitcher(
-        switch (_tabCtrl.index) {
-          0 => const TopBar(key: Key('0'), title: 'App'),
-          1 => const TopBar(key: Key('1'), title: 'Content'),
-          2 => const TopBar(key: Key('2'), title: 'Notifications'),
-          _ => const TopBar(key: Key('3'), title: 'About'),
-        },
-      ),
+      topBar: TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
+        0 => const TopBar(key: Key('0'), title: 'App'),
+        1 => const TopBar(key: Key('1'), title: 'Content'),
+        2 => const TopBar(key: Key('2'), title: 'Notifications'),
+        _ => const TopBar(key: Key('3'), title: 'About'),
+      }),
       floatingAction: floatingAction,
       navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
@@ -135,10 +127,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
           'About': Ionicons.information_outline,
         },
       ),
-      child: TabBarView(
-        controller: _tabCtrl,
-        children: tabs,
-      ),
+      child: TabBarView(controller: _tabCtrl, children: tabs),
     );
   }
 }

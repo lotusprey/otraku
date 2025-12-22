@@ -32,21 +32,18 @@ class Character {
       if (names['last']?.isNotEmpty ?? false) names['last'],
     ];
 
-    final fullName = personNaming == PersonNaming.romajiWestern
+    final fullName = personNaming == .romajiWestern
         ? nameSegments.join(' ')
         : nameSegments.reversed.toList().join(' ');
     final nativeName = names['native'];
 
     final altNames = List<String>.from(names['alternative'] ?? []);
-    final altNamesSpoilers = List<String>.from(
-      names['alternativeSpoiler'] ?? [],
-      growable: false,
-    );
+    final altNamesSpoilers = List<String>.from(names['alternativeSpoiler'] ?? [], growable: false);
 
     final preferredName = nativeName != null
-        ? personNaming != PersonNaming.native
-            ? fullName
-            : nativeName
+        ? personNaming != .native
+              ? fullName
+              : nativeName
         : fullName;
 
     return Character._(
@@ -128,11 +125,7 @@ class CharacterMedia {
       }
     }
 
-    return Paged(
-      items: animeAndVoiceActors,
-      hasNext: anime.hasNext,
-      next: anime.next,
-    );
+    return Paged(items: animeAndVoiceActors, hasNext: anime.hasNext, next: anime.next);
   }
 }
 
@@ -148,13 +141,12 @@ class CharacterRelatedItem implements TileModelable {
     Map<String, dynamic> map,
     String? role,
     ImageQuality imageQuality,
-  ) =>
-      CharacterRelatedItem._(
-        id: map['id'],
-        name: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][imageQuality.value],
-        role: role,
-      );
+  ) => CharacterRelatedItem._(
+    id: map['id'],
+    name: map['title']['userPreferred'],
+    imageUrl: map['coverImage'][imageQuality.value],
+    role: role,
+  );
 
   factory CharacterRelatedItem.staff(Map<String, dynamic> map, String? role) =>
       CharacterRelatedItem._(

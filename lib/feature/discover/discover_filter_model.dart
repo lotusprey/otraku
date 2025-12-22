@@ -15,10 +15,10 @@ class DiscoverFilter {
   });
 
   DiscoverFilter(this.type, this.mediaFilter)
-      : search = '',
-        hasBirthday = false,
-        reviewsFilter = const ReviewsFilter(),
-        recommendationsFilter = const DiscoverRecommendationsFilter();
+    : search = '',
+      hasBirthday = false,
+      reviewsFilter = const ReviewsFilter(),
+      recommendationsFilter = const DiscoverRecommendationsFilter();
 
   final DiscoverType type;
   final String search;
@@ -34,15 +34,14 @@ class DiscoverFilter {
     bool? hasBirthday,
     ReviewsFilter? reviewsFilter,
     DiscoverRecommendationsFilter? recommendationsFilter,
-  }) =>
-      DiscoverFilter._(
-        type: type ?? this.type,
-        search: search ?? this.search,
-        mediaFilter: mediaFilter ?? this.mediaFilter,
-        hasBirthday: hasBirthday ?? this.hasBirthday,
-        reviewsFilter: reviewsFilter ?? this.reviewsFilter,
-        recommendationsFilter: recommendationsFilter ?? this.recommendationsFilter,
-      );
+  }) => DiscoverFilter._(
+    type: type ?? this.type,
+    search: search ?? this.search,
+    mediaFilter: mediaFilter ?? this.mediaFilter,
+    hasBirthday: hasBirthday ?? this.hasBirthday,
+    reviewsFilter: reviewsFilter ?? this.reviewsFilter,
+    recommendationsFilter: recommendationsFilter ?? this.recommendationsFilter,
+  );
 }
 
 class DiscoverMediaFilter {
@@ -151,73 +150,64 @@ class DiscoverMediaFilter {
     required CollectionMediaFilter filter,
     required MediaSort sort,
     required bool ofAnime,
-  }) =>
-      DiscoverMediaFilter(sort)
-        ..statuses.addAll(filter.statuses)
-        ..animeFormats.addAll(ofAnime ? filter.formats : const [])
-        ..mangaFormats.addAll(!ofAnime ? filter.formats : const [])
-        ..genreIn.addAll(filter.genreIn)
-        ..genreNotIn.addAll(filter.genreNotIn)
-        ..tagIn.addAll(filter.tagIn)
-        ..tagNotIn.addAll(filter.tagNotIn)
-        ..startYearFrom = filter.startYearFrom
-        ..startYearTo = filter.startYearTo
-        ..country = filter.country;
+  }) => DiscoverMediaFilter(sort)
+    ..statuses.addAll(filter.statuses)
+    ..animeFormats.addAll(ofAnime ? filter.formats : const [])
+    ..mangaFormats.addAll(!ofAnime ? filter.formats : const [])
+    ..genreIn.addAll(filter.genreIn)
+    ..genreNotIn.addAll(filter.genreNotIn)
+    ..tagIn.addAll(filter.tagIn)
+    ..tagNotIn.addAll(filter.tagNotIn)
+    ..startYearFrom = filter.startYearFrom
+    ..startYearTo = filter.startYearTo
+    ..country = filter.country;
 
   Map<String, dynamic> toGraphQlVariables({required bool ofAnime}) => {
-        'sort': sort.value,
-        if (ofAnime && animeFormats.isNotEmpty)
-          'format_in': animeFormats.map((v) => v.value).toList(),
-        if (!ofAnime && mangaFormats.isNotEmpty)
-          'format_in': mangaFormats.map((v) => v.value).toList(),
-        if (statuses.isNotEmpty) 'status_in': statuses.map((v) => v.value).toList(),
-        if (sources.isNotEmpty) 'sources': sources.map((v) => v.value).toList(),
-        if (ofAnime && season != null) 'season': season!.value,
-        if (genreIn.isNotEmpty) 'genre_in': genreIn,
-        if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
-        if (tagIn.isNotEmpty) 'tag_in': tagIn,
-        if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
-        if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
-        if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
-        if (country != null) 'countryOfOrigin': country!.code,
-        if (inLists != null) 'onList': inLists,
-        if (isAdult != null) 'isAdult': isAdult,
-        if (isLicensed != null) 'isLicensed': isLicensed,
-      };
+    'sort': sort.value,
+    if (ofAnime && animeFormats.isNotEmpty) 'format_in': animeFormats.map((v) => v.value).toList(),
+    if (!ofAnime && mangaFormats.isNotEmpty) 'format_in': mangaFormats.map((v) => v.value).toList(),
+    if (statuses.isNotEmpty) 'status_in': statuses.map((v) => v.value).toList(),
+    if (sources.isNotEmpty) 'sources': sources.map((v) => v.value).toList(),
+    if (ofAnime && season != null) 'season': season!.value,
+    if (genreIn.isNotEmpty) 'genre_in': genreIn,
+    if (genreNotIn.isNotEmpty) 'genre_not_in': genreNotIn,
+    if (tagIn.isNotEmpty) 'tag_in': tagIn,
+    if (tagNotIn.isNotEmpty) 'tag_not_in': tagNotIn,
+    if (startYearFrom != null) 'startFrom': '${startYearFrom! - 1}9999',
+    if (startYearTo != null) 'startTo': '${startYearTo! + 1}0000',
+    if (country != null) 'countryOfOrigin': country!.code,
+    if (inLists != null) 'onList': inLists,
+    if (isAdult != null) 'isAdult': isAdult,
+    if (isLicensed != null) 'isLicensed': isLicensed,
+  };
 
   Map<String, dynamic> toPersistenceMap() => {
-        'statuses': statuses.map((e) => e.index).toList(),
-        'animeFormats': animeFormats.map((e) => e.index).toList(),
-        'mangaFormats': mangaFormats.map((e) => e.index).toList(),
-        'genreIn': genreIn,
-        'genreNotIn': genreNotIn,
-        'tagIn': tagIn,
-        'tagNotIn': tagNotIn,
-        'sources': sources.map((e) => e.index).toList(),
-        'sort': sort.index,
-        'season': season?.index,
-        'startYearFrom': startYearFrom,
-        'startYearTo': startYearTo,
-        'country': country?.index,
-        'inLists': inLists,
-        'isAdult': isAdult,
-        'isLicensed': isLicensed,
-      };
+    'statuses': statuses.map((e) => e.index).toList(),
+    'animeFormats': animeFormats.map((e) => e.index).toList(),
+    'mangaFormats': mangaFormats.map((e) => e.index).toList(),
+    'genreIn': genreIn,
+    'genreNotIn': genreNotIn,
+    'tagIn': tagIn,
+    'tagNotIn': tagNotIn,
+    'sources': sources.map((e) => e.index).toList(),
+    'sort': sort.index,
+    'season': season?.index,
+    'startYearFrom': startYearFrom,
+    'startYearTo': startYearTo,
+    'country': country?.index,
+    'inLists': inLists,
+    'isAdult': isAdult,
+    'isLicensed': isLicensed,
+  };
 }
 
 class DiscoverRecommendationsFilter {
-  const DiscoverRecommendationsFilter({
-    this.sort = RecommendationsSort.recent,
-    this.inLists,
-  });
+  const DiscoverRecommendationsFilter({this.sort = .recent, this.inLists});
 
   final RecommendationsSort sort;
   final bool? inLists;
 
-  DiscoverRecommendationsFilter copyWith({
-    RecommendationsSort? sort,
-    (bool?,)? inLists,
-  }) =>
+  DiscoverRecommendationsFilter copyWith({RecommendationsSort? sort, (bool?,)? inLists}) =>
       DiscoverRecommendationsFilter(
         sort: sort ?? this.sort,
         inLists: inLists == null ? this.inLists : inLists.$1,

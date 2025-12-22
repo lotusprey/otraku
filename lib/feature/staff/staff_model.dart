@@ -35,7 +35,7 @@ class Staff {
       if (names['last']?.isNotEmpty ?? false) names['last'],
     ];
 
-    final fullName = personNaming == PersonNaming.romajiWestern
+    final fullName = personNaming == .romajiWestern
         ? nameSegments.join(' ')
         : nameSegments.reversed.toList().join(' ');
     final nativeName = names['native'];
@@ -43,9 +43,9 @@ class Staff {
     final altNames = List<String>.from(names['alternative'] ?? []);
 
     final preferredName = nativeName != null
-        ? personNaming != PersonNaming.native
-            ? fullName
-            : nativeName
+        ? personNaming != .native
+              ? fullName
+              : nativeName
         : fullName;
 
     final yearsActive = map['yearsActive'] as List?;
@@ -93,10 +93,7 @@ class Staff {
 }
 
 class StaffRelations {
-  const StaffRelations({
-    this.charactersAndMedia = const Paged(),
-    this.roles = const Paged(),
-  });
+  const StaffRelations({this.charactersAndMedia = const Paged(), this.roles = const Paged()});
 
   final Paged<(StaffRelatedItem, StaffRelatedItem)> charactersAndMedia;
   final Paged<StaffRelatedItem> roles;
@@ -114,20 +111,19 @@ class StaffRelatedItem implements TileModelable {
     Map<String, dynamic> map,
     String? role,
     ImageQuality imageQuality,
-  ) =>
-      StaffRelatedItem._(
-        id: map['id'],
-        name: map['title']['userPreferred'],
-        imageUrl: map['coverImage'][imageQuality.value],
-        role: role,
-      );
+  ) => StaffRelatedItem._(
+    id: map['id'],
+    name: map['title']['userPreferred'],
+    imageUrl: map['coverImage'][imageQuality.value],
+    role: role,
+  );
 
   factory StaffRelatedItem.character(Map<String, dynamic> map, String? role) => StaffRelatedItem._(
-        id: map['id'],
-        name: map['name']['userPreferred'],
-        imageUrl: map['image']['large'],
-        role: role,
-      );
+    id: map['id'],
+    name: map['name']['userPreferred'],
+    imageUrl: map['image']['large'],
+    role: role,
+  );
 
   final int id;
   final String name;

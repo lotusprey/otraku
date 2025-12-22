@@ -12,15 +12,11 @@ import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 
-final characterProvider =
-    AsyncNotifierProvider.autoDispose.family<CharacterNotifier, Character, int>(
-  CharacterNotifier.new,
-);
+final characterProvider = AsyncNotifierProvider.autoDispose
+    .family<CharacterNotifier, Character, int>(CharacterNotifier.new);
 
-final characterMediaProvider =
-    AsyncNotifierProvider.autoDispose.family<CharacterMediaNotifier, CharacterMedia, int>(
-  CharacterMediaNotifier.new,
-);
+final characterMediaProvider = AsyncNotifierProvider.autoDispose
+    .family<CharacterMediaNotifier, CharacterMedia, int>(CharacterMediaNotifier.new);
 
 class CharacterNotifier extends AsyncNotifier<Character> {
   CharacterNotifier(this.arg);
@@ -29,23 +25,20 @@ class CharacterNotifier extends AsyncNotifier<Character> {
 
   @override
   FutureOr<Character> build() async {
-    final data = await ref.read(repositoryProvider).request(
-      GqlQuery.character,
-      {'id': arg, 'withInfo': true},
-    );
+    final data = await ref.read(repositoryProvider).request(GqlQuery.character, {
+      'id': arg,
+      'withInfo': true,
+    });
 
-    final personNaming = await ref.watch(
-      settingsProvider.selectAsync((data) => data.personNaming),
-    );
+    final personNaming = await ref.watch(settingsProvider.selectAsync((data) => data.personNaming));
 
     return Character(data['Character'], personNaming);
   }
 
   Future<Object?> toggleFavorite() {
-    return ref.read(repositoryProvider).request(
-      GqlMutation.toggleFavorite,
-      {'character': arg},
-    ).getErrorOrNull();
+    return ref.read(repositoryProvider).request(GqlMutation.toggleFavorite, {
+      'character': arg,
+    }).getErrorOrNull();
   }
 }
 
@@ -73,11 +66,7 @@ class CharacterMediaNotifier extends AsyncNotifier<CharacterMedia> {
   }
 
   Future<CharacterMedia> _fetch(CharacterMedia oldState, bool? onAnime) async {
-    final variables = {
-      'id': arg,
-      'onList': filter.inLists,
-      'sort': filter.sort.value,
-    };
+    final variables = {'id': arg, 'onList': filter.inLists, 'sort': filter.sort.value};
 
     if (onAnime == null) {
       variables['withAnime'] = true;
@@ -104,20 +93,20 @@ class CharacterMediaNotifier extends AsyncNotifier<CharacterMedia> {
       final map = data['anime'];
       final items = <CharacterRelatedItem>[];
       for (final a in map['edges']) {
-        items.add(CharacterRelatedItem.media(
-          a['node'],
-          StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
-          imageQuality,
-        ));
+        items.add(
+          CharacterRelatedItem.media(
+            a['node'],
+            StringExtension.tryNoScreamingSnakeCase(a['characterRole']),
+            imageQuality,
+          ),
+        );
 
         if (a['voiceActors'] != null) {
           for (final va in a['voiceActors']) {
             final l = StringExtension.tryNoScreamingSnakeCase(va['languageV2']);
             if (l == null) continue;
 
-            var languageMapping = languageToVoiceActors.firstWhereOrNull(
-              (lm) => lm.language == l,
-            );
+            var languageMapping = languageToVoiceActors.firstWhereOrNull((lm) => lm.language == l);
 
             if (languageMapping == null) {
               languageMapping = (language: l, voiceActors: {});
@@ -147,11 +136,13 @@ class CharacterMediaNotifier extends AsyncNotifier<CharacterMedia> {
       final map = data['manga'];
       final items = <CharacterRelatedItem>[];
       for (final m in map['edges']) {
-        items.add(CharacterRelatedItem.media(
-          m['node'],
-          StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
-          imageQuality,
-        ));
+        items.add(
+          CharacterRelatedItem.media(
+            m['node'],
+            StringExtension.tryNoScreamingSnakeCase(m['characterRole']),
+            imageQuality,
+          ),
+        );
       }
 
       manga = manga.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
@@ -165,16 +156,16 @@ class CharacterMediaNotifier extends AsyncNotifier<CharacterMedia> {
     );
   }
 
-  void changeLanguage(int selectedLanguage) => state.whenData(
-        (data) {
-          if (selectedLanguage >= data.languageToVoiceActors.length) return;
+  void changeLanguage(int selectedLanguage) => state.whenData((data) {
+    if (selectedLanguage >= data.languageToVoiceActors.length) return;
 
-          state = AsyncValue.data(CharacterMedia(
-            anime: data.anime,
-            manga: data.manga,
-            languageToVoiceActors: data.languageToVoiceActors,
-            selectedLanguage: selectedLanguage,
-          ));
-        },
-      );
+    state = AsyncValue.data(
+      CharacterMedia(
+        anime: data.anime,
+        manga: data.manga,
+        languageToVoiceActors: data.languageToVoiceActors,
+        selectedLanguage: selectedLanguage,
+      ),
+    );
+  });
 }

@@ -15,11 +15,7 @@ import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class CollectionFilterView extends ConsumerStatefulWidget {
-  const CollectionFilterView({
-    required this.tag,
-    required this.filter,
-    required this.onChanged,
-  });
+  const CollectionFilterView({required this.tag, required this.filter, required this.onChanged});
 
   final CollectionTag tag;
   final CollectionMediaFilter filter;
@@ -94,6 +90,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
         title: 'Preview Sorting',
         value: _filter.previewSort,
         onChanged: (v) => _filter.previewSort = v,
+        highContrast: options.highContrast,
       );
     }
 
@@ -104,21 +101,23 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
             : [applyButton, revertToDefaultButton, saveButton],
       ),
       builder: (context, scrollCtrl) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: Theming.offset),
+        padding: const .symmetric(horizontal: Theming.offset),
         child: ListView(
           controller: scrollCtrl,
-          padding: const EdgeInsets.only(top: 20),
+          padding: const .only(top: 20),
           children: [
             EntrySortChipSelector(
               title: 'Sorting',
               value: _filter.sort,
               onChanged: (v) => _filter.sort = v,
+              highContrast: options.highContrast,
             ),
             if (previewSortPicker != null) previewSortPicker,
             ChipMultiSelector(
               title: 'Statuses',
               items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
               values: _filter.statuses,
+              highContrast: options.highContrast,
             ),
             ChipMultiSelector(
               title: 'Formats',
@@ -126,25 +125,26 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                   .map((v) => (v.label, v))
                   .toList(),
               values: _filter.formats,
+              highContrast: options.highContrast,
             ),
             const SizedBox(height: 5),
             const Divider(),
             switch (ref.watch(tagsProvider)) {
               AsyncData() => TagPicker(
-                  includedGenres: _filter.genreIn,
-                  excludedGenres: _filter.genreNotIn,
-                  includedTags: _filter.tagIn,
-                  excludedTags: _filter.tagNotIn,
-                ),
+                includedGenres: _filter.genreIn,
+                excludedGenres: _filter.genreNotIn,
+                includedTags: _filter.tagIn,
+                excludedTags: _filter.tagNotIn,
+              ),
               AsyncError(:final error) => Center(
-                  child: Padding(
-                    padding: Theming.paddingAll,
-                    child: Text('Failed to load tags: $error'),
-                  ),
+                child: Padding(
+                  padding: Theming.paddingAll,
+                  child: Text('Failed to load tags: $error'),
                 ),
+              ),
               AsyncLoading() => const Center(
-                  child: Padding(padding: Theming.paddingAll, child: Loader()),
-                ),
+                child: Padding(padding: Theming.paddingAll, child: Loader()),
+              ),
             },
             const Divider(),
             const SizedBox(height: Theming.offset),
@@ -164,6 +164,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               items: OriginCountry.values.map((v) => (v.label, v)).toList(),
               value: _filter.country,
               onChanged: (v) => _filter.country = v,
+              highContrast: options.highContrast,
             ),
             if (ofViewer)
               ChipSelector(
@@ -171,12 +172,14 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
                 items: const [('Private', true), ('Public', false)],
                 value: _filter.isPrivate,
                 onChanged: (v) => _filter.isPrivate = v,
+                highContrast: options.highContrast,
               ),
             ChipSelector(
               title: 'Notes',
               items: const [('With Notes', true), ('Without Notes', false)],
               value: _filter.hasNotes,
               onChanged: (v) => _filter.hasNotes = v,
+              highContrast: options.highContrast,
             ),
             SizedBox(
               height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,

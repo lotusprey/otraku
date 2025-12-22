@@ -30,7 +30,7 @@ class SettingsAppSubview extends ConsumerWidget {
 
     return ListView(
       controller: scrollCtrl,
-      padding: EdgeInsets.only(
+      padding: .only(
         top: listPadding.top + Theming.offset,
         bottom: listPadding.bottom + Theming.offset + 60,
       ),
@@ -38,10 +38,10 @@ class SettingsAppSubview extends ConsumerWidget {
         ExpansionTile(
           title: const Text('Appearance'),
           initiallyExpanded: true,
-          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          expandedCrossAxisAlignment: .stretch,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
+              padding: const .only(
                 bottom: Theming.offset,
                 left: Theming.offset,
                 right: Theming.offset,
@@ -65,9 +65,7 @@ class SettingsAppSubview extends ConsumerWidget {
                   ),
                 ],
                 value: options.themeMode,
-                onChanged: (themeMode) => update(
-                  options.copyWith(themeMode: themeMode),
-                ),
+                onChanged: (themeMode) => update(options.copyWith(themeMode: themeMode)),
               ),
             ),
             ThemePreview(ref: ref, options: options),
@@ -80,7 +78,7 @@ class SettingsAppSubview extends ConsumerWidget {
             ),
             const SizedBox(height: Theming.offset / 2),
             Padding(
-              padding: const EdgeInsets.only(
+              padding: const .only(
                 left: Theming.offset,
                 right: Theming.offset,
                 bottom: Theming.offset,
@@ -88,7 +86,7 @@ class SettingsAppSubview extends ConsumerWidget {
               child: const Text('Button Orientation'),
             ),
             Padding(
-              padding: const EdgeInsets.only(
+              padding: const .only(
                 left: Theming.offset,
                 right: Theming.offset,
                 bottom: Theming.offset,
@@ -112,11 +110,10 @@ class SettingsAppSubview extends ConsumerWidget {
                   ),
                 ],
                 value: options.buttonOrientation,
-                onChanged: (buttonOrientation) => update(
-                  options.copyWith(buttonOrientation: buttonOrientation),
-                ),
+                onChanged: (buttonOrientation) =>
+                    update(options.copyWith(buttonOrientation: buttonOrientation)),
               ),
-            )
+            ),
           ],
         ),
         ExpansionTile(
@@ -129,9 +126,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 'and expand to full collection with the floating button',
               ),
               value: options.animeCollectionPreview,
-              onChanged: (v) => update(
-                options.copyWith(animeCollectionPreview: v),
-              ),
+              onChanged: (v) => update(options.copyWith(animeCollectionPreview: v)),
             ),
             StatefulSwitchListTile(
               title: const Text('Manga Collection Preview'),
@@ -140,9 +135,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 'and expand to full collection with the floating button',
               ),
               value: options.mangaCollectionPreview,
-              onChanged: (v) => update(
-                options.copyWith(mangaCollectionPreview: v),
-              ),
+              onChanged: (v) => update(options.copyWith(mangaCollectionPreview: v)),
             ),
           ],
         ),
@@ -156,6 +149,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 items: HomeTab.values.map((v) => (v.label, v)).toList(),
                 value: options.homeTab,
                 onChanged: (v) => update(options.copyWith(homeTab: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -164,9 +158,8 @@ class SettingsAppSubview extends ConsumerWidget {
                 title: 'Discover Type',
                 items: DiscoverType.values.map((v) => (v.label, v)).toList(),
                 value: options.discoverType,
-                onChanged: (v) => update(
-                  options.copyWith(discoverType: v),
-                ),
+                onChanged: (v) => update(options.copyWith(discoverType: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -176,6 +169,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 items: ImageQuality.values.map((v) => (v.label, v)).toList(),
                 value: options.imageQuality,
                 onChanged: (v) => update(options.copyWith(imageQuality: v)),
+                highContrast: options.highContrast,
               ),
             ),
           ],
@@ -193,6 +187,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 ],
                 value: options.discoverItemView,
                 onChanged: (v) => update(options.copyWith(discoverItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -204,9 +199,8 @@ class SettingsAppSubview extends ConsumerWidget {
                   ('Simple', CollectionItemView.simple),
                 ],
                 value: options.collectionItemView,
-                onChanged: (v) => update(
-                  options.copyWith(collectionItemView: v),
-                ),
+                onChanged: (v) => update(options.copyWith(collectionItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
             Padding(
@@ -218,9 +212,8 @@ class SettingsAppSubview extends ConsumerWidget {
                   ('Simple', CollectionItemView.simple),
                 ],
                 value: options.collectionPreviewItemView,
-                onChanged: (v) => update(
-                  options.copyWith(collectionPreviewItemView: v),
-                ),
+                onChanged: (v) => update(options.copyWith(collectionPreviewItemView: v)),
+                highContrast: options.highContrast,
               ),
             ),
           ],

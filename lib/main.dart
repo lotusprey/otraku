@@ -75,7 +75,7 @@ class AppState extends ConsumerState<_App> {
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
-        Color lightSeed = (options.themeBase ?? ThemeBase.navy).seed;
+        Color lightSeed = (options.themeBase ?? .navy).seed;
         Color darkSeed = lightSeed;
         if (lightDynamic != null && darkDynamic != null) {
           _systemLightPrimaryColor = lightDynamic.primary;
@@ -133,14 +133,16 @@ class AppState extends ConsumerState<_App> {
         }
 
         SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-        SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarBrightness: scheme.brightness,
-          statusBarIconBrightness: overlayBrightness,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarContrastEnforced: false,
-          systemNavigationBarIconBrightness: overlayBrightness,
-        ));
+        SystemChrome.setSystemUIOverlayStyle(
+          SystemUiOverlayStyle(
+            statusBarColor: Colors.transparent,
+            statusBarBrightness: scheme.brightness,
+            statusBarIconBrightness: overlayBrightness,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarContrastEnforced: false,
+            systemNavigationBarIconBrightness: overlayBrightness,
+          ),
+        );
 
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
@@ -153,27 +155,15 @@ class AppState extends ConsumerState<_App> {
             final directionality = Directionality.of(context);
 
             final theming = Theming(
-              formFactor:
-                  viewSize.width < Theming.windowWidthMedium ? FormFactor.phone : FormFactor.tablet,
-              rightButtonOrientation: options.buttonOrientation == ButtonOrientation.auto
+              formFactor: viewSize.width < Theming.windowWidthMedium ? .phone : .tablet,
+              rightButtonOrientation: options.buttonOrientation == .auto
                   ? directionality == TextDirection.ltr
-                  : options.buttonOrientation == ButtonOrientation.right,
-            );
-
-            // Override the [textScaleFactor], because some devices apply
-            // too high of a factor and it breaks the app visually.
-            final mediaQuery = MediaQuery.of(context);
-            final scale = mediaQuery.textScaler.clamp(
-              minScaleFactor: 0.8,
-              maxScaleFactor: 1,
+                  : options.buttonOrientation == .right,
             );
 
             return Theme(
               data: Theme.of(context).copyWith(extensions: [theming]),
-              child: MediaQuery(
-                data: mediaQuery.copyWith(textScaler: scale),
-                child: child!,
-              ),
+              child: child!,
             );
           },
         );

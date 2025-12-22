@@ -11,27 +11,26 @@ class StaffCharactersSubview extends StatelessWidget {
   const StaffCharactersSubview({
     required this.id,
     required this.scrollCtrl,
+    required this.highContrast,
   });
 
   final int id;
   final ScrollController scrollCtrl;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     return PagedView<(StaffRelatedItem, StaffRelatedItem)>(
       scrollCtrl: scrollCtrl,
       onRefresh: (invalidate) => invalidate(staffRelationsProvider(id)),
-      provider: staffRelationsProvider(id).select(
-        (s) => s.unwrapPrevious().whenData((data) => data.charactersAndMedia),
-      ),
+      provider: staffRelationsProvider(
+        id,
+      ).select((s) => s.unwrapPrevious().whenData((data) => data.charactersAndMedia)),
       onData: (data) => DualRelationGrid(
         items: data.items,
-        onTapPrimary: (item) => context.push(
-          Routes.character(item.tileId, item.tileImageUrl),
-        ),
-        onTapSecondary: (item) => context.push(
-          Routes.media(item.tileId, item.tileImageUrl),
-        ),
+        onTapPrimary: (item) => context.push(Routes.character(item.tileId, item.tileImageUrl)),
+        onTapSecondary: (item) => context.push(Routes.media(item.tileId, item.tileImageUrl)),
+        highContrast: highContrast,
       ),
     );
   }

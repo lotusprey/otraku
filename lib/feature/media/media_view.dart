@@ -50,17 +50,11 @@ class _MediaViewState extends State<MediaView> {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        ref.listen<AsyncValue>(
-          mediaProvider(widget.id),
-          (_, s) {
-            if (s.hasError) {
-              SnackBarExtension.show(
-                context,
-                'Failed to load media: ${s.error}',
-              );
-            }
-          },
-        );
+        ref.listen<AsyncValue>(mediaProvider(widget.id), (_, s) {
+          if (s.hasError) {
+            SnackBarExtension.show(context, 'Failed to load media: ${s.error}');
+          }
+        });
 
         final media = ref.watch(mediaProvider(widget.id));
 
@@ -75,21 +69,21 @@ class _MediaViewState extends State<MediaView> {
                 )
               : null,
           child: switch (Theming.of(context).formFactor) {
-            FormFactor.phone => _CompactView(
-                id: widget.id,
-                coverUrl: widget.coverUrl,
-                media: media,
-                scrollCtrl: _scrollCtrl,
-                toggleFavorite: toggleFavorite,
-              ),
-            FormFactor.tablet => _LargeView(
-                id: widget.id,
-                coverUrl: widget.coverUrl,
-                ref: ref,
-                media: media,
-                scrollCtrl: _scrollCtrl,
-                toggleFavorite: toggleFavorite,
-              ),
+            .phone => _CompactView(
+              id: widget.id,
+              coverUrl: widget.coverUrl,
+              media: media,
+              scrollCtrl: _scrollCtrl,
+              toggleFavorite: toggleFavorite,
+            ),
+            .tablet => _LargeView(
+              id: widget.id,
+              coverUrl: widget.coverUrl,
+              ref: ref,
+              media: media,
+              scrollCtrl: _scrollCtrl,
+              toggleFavorite: toggleFavorite,
+            ),
           },
         );
       },
@@ -117,10 +111,7 @@ class _CompactView extends StatefulWidget {
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: MediaHeader.tabsWithOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: MediaHeader.tabsWithOverview.length, vsync: this);
 
   @override
   void dispose() {
@@ -145,20 +136,12 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
       controller: widget.scrollCtrl,
       headerSliverBuilder: (context, _) => [header],
       body: MediaQuery(
-        data: mediaQuery.copyWith(
-          padding: mediaQuery.padding.copyWith(top: 0),
-        ),
+        data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.media.unwrapPrevious().when(
-              loading: () => const Center(child: Loader()),
-              error: (_, __) => const Center(
-                child: Text('Failed to load media'),
-              ),
-              data: (data) => _MediaTabs.withOverview(
-                id: widget.id,
-                media: data,
-                tabCtrl: _tabCtrl,
-              ),
-            ),
+          loading: () => const Center(child: Loader()),
+          error: (_, _) => const Center(child: Text('Failed to load media')),
+          data: (data) => _MediaTabs.withOverview(id: widget.id, media: data, tabCtrl: _tabCtrl),
+        ),
       ),
     );
   }
@@ -186,10 +169,7 @@ class _LargeView extends StatefulWidget {
 }
 
 class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: MediaHeader.tabsWithoutOverview.length,
-    vsync: this,
-  );
+  late final _tabCtrl = TabController(length: MediaHeader.tabsWithoutOverview.length, vsync: this);
 
   @override
   void dispose() {
@@ -199,6 +179,8 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+    final options = widget.ref.read(persistenceProvider.select((s) => s.options));
+
     final header = MediaHeader.withoutTabBar(
       id: widget.id,
       coverUrl: widget.coverUrl,
@@ -211,41 +193,36 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
       scrollToTop: widget.scrollCtrl.scrollToTop,
       tabs: MediaHeader.tabsWithoutOverview,
       leftPane: widget.media.unwrapPrevious().when(
-            loading: () => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(child: Loader()),
-                ),
-              ],
-            ),
-            error: (_, __) => CustomScrollView(
-              physics: Theming.bouncyPhysics,
-              slivers: [
-                header,
-                const SliverFillRemaining(
-                  child: Center(
-                    child: Text('Failed to load media'),
-                  ),
-                ),
-              ],
-            ),
-            data: (data) => MediaOverviewSubview.withHeader(
-              ref: widget.ref,
-              info: data.info,
-              header: header,
-            ),
-          ),
+        loading: () => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Loader())),
+          ],
+        ),
+        error: (_, _) => CustomScrollView(
+          physics: Theming.bouncyPhysics,
+          slivers: [
+            header,
+            const SliverFillRemaining(child: Center(child: Text('Failed to load media'))),
+          ],
+        ),
+        data: (data) => MediaOverviewSubview.withHeader(
+          ref: widget.ref,
+          info: data.info,
+          header: header,
+          highContrast: options.highContrast,
+        ),
+      ),
       rightPane: widget.media.unwrapPrevious().maybeWhen(
-            data: (data) => _MediaTabs.withoutOverview(
-              id: widget.id,
-              media: data,
-              tabCtrl: _tabCtrl,
-              scrollCtrl: widget.scrollCtrl,
-            ),
-            orElse: () => const SizedBox(),
-          ),
+        data: (data) => _MediaTabs.withoutOverview(
+          id: widget.id,
+          media: data,
+          tabCtrl: _tabCtrl,
+          scrollCtrl: widget.scrollCtrl,
+        ),
+        orElse: () => const SizedBox(),
+      ),
     );
   }
 }
@@ -257,12 +234,9 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
 /// scroll controller of the [NestedScrollView].
 /// For more context: https://github.com/flutter/flutter/pull/104166.
 class _MediaTabs extends ConsumerStatefulWidget {
-  const _MediaTabs.withOverview({
-    required this.id,
-    required this.media,
-    required this.tabCtrl,
-  })  : withOverview = true,
-        scrollCtrl = null;
+  const _MediaTabs.withOverview({required this.id, required this.media, required this.tabCtrl})
+    : withOverview = true,
+      scrollCtrl = null;
 
   const _MediaTabs.withoutOverview({
     required this.id,
@@ -289,7 +263,8 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
   @override
   void initState() {
     super.initState();
-    _scrollCtrl = widget.scrollCtrl ??
+    _scrollCtrl =
+        widget.scrollCtrl ??
         context.findAncestorStateOfType<NestedScrollViewState>()!.innerController;
 
     _scrollCtrl.addListener(_scrollListener);
@@ -368,26 +343,42 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
               ref: ref,
               info: widget.media.info,
               scrollCtrl: _scrollCtrl,
+              highContrast: options.highContrast,
             ),
           ),
         MediaRelatedSubview(
           relations: widget.media.related,
           scrollCtrl: _scrollCtrl,
           invalidate: () => ref.invalidate(mediaProvider(widget.id)),
+          highContrast: options.highContrast,
         ),
-        MediaCharactersSubview(id: widget.id, scrollCtrl: _scrollCtrl),
-        MediaStaffSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaCharactersSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
+        MediaStaffSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
         MediaReviewsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
           bannerUrl: widget.media.info.banner,
+          highContrast: options.highContrast,
         ),
         MediaThreadsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
           analogClock: options.analogClock,
         ),
-        MediaFollowingSubview(id: widget.id, scrollCtrl: _scrollCtrl),
+        MediaFollowingSubview(
+          id: widget.id,
+          scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
+        ),
         MediaActivitiesSubview(
           ref: ref,
           tag: _mediaActivitiesTag,
@@ -398,14 +389,17 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
         MediaRecommendationsSubview(
           id: widget.id,
           scrollCtrl: _scrollCtrl,
-          rateRecommendation:
-              ref.read(mediaConnectionsProvider(widget.id).notifier).rateRecommendation,
+          rateRecommendation: ref
+              .read(mediaConnectionsProvider(widget.id).notifier)
+              .rateRecommendation,
+          highContrast: options.highContrast,
         ),
         MediaStatsSubview(
           ref: ref,
           info: widget.media.info,
           stats: widget.media.stats,
           scrollCtrl: _scrollCtrl,
+          highContrast: options.highContrast,
         ),
       ],
     );

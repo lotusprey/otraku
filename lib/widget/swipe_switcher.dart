@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Rotates between [children] when swiped.
 class SwipeSwitcher extends StatelessWidget {
-  const SwipeSwitcher({
-    required this.index,
-    required this.children,
-    required this.onChanged,
-  });
+  const SwipeSwitcher({required this.index, required this.children, required this.onChanged});
 
   final int index;
   final List<Widget> children;
@@ -19,7 +15,7 @@ class SwipeSwitcher extends StatelessWidget {
     var swipeStart = 0.0;
 
     return GestureDetector(
-      behavior: HitTestBehavior.translucent,
+      behavior: .translucent,
       onHorizontalDragStart: (start) => swipeStart = start.globalPosition.dx,
       onHorizontalDragUpdate: (update) {
         if (swipeStart == 0) return;

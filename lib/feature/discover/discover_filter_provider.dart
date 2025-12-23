@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 
-final discoverFilterProvider = NotifierProvider<DiscoverFilterNotifier, DiscoverFilter>(
+final discoverFilterProvider = NotifierProvider.autoDispose<DiscoverFilterNotifier, DiscoverFilter>(
   DiscoverFilterNotifier.new,
 );
 

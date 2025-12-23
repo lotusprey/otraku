@@ -9,10 +9,13 @@ class HomeNotifier extends Notifier<Home> {
   Home build() {
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    return Home(
-      didExpandAnimeCollection: !options.animeCollectionPreview,
-      didExpandMangaCollection: !options.mangaCollectionPreview,
-    );
+    return switch (stateOrNull) {
+      Home oldState => oldState,
+      null => Home(
+        didExpandAnimeCollection: !options.animeCollectionPreview,
+        didExpandMangaCollection: !options.mangaCollectionPreview,
+      ),
+    };
   }
 
   void expandCollection(bool ofAnime) => state = state.withExpandedCollection(ofAnime);

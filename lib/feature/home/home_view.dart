@@ -10,7 +10,6 @@ import 'package:otraku/feature/collection/collection_entries_provider.dart';
 import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_top_bar.dart';
-import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_floating_action.dart';
 import 'package:otraku/feature/discover/discover_provider.dart';
 import 'package:otraku/feature/discover/discover_top_bar.dart';
@@ -83,15 +82,10 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
   }
 
   @override
-  void deactivate() {
-    ref.invalidate(discoverProvider);
-    ref.invalidate(discoverFilterProvider);
-    ref.invalidate(activitiesProvider(HomeActivitiesTag.instance));
-    super.deactivate();
-  }
-
-  @override
   void dispose() {
+    ref.invalidate(discoverProvider);
+    ref.invalidate(activitiesProvider(HomeActivitiesTag.instance));
+
     _animeFocusNode.dispose();
     _mangaFocusNode.dispose();
     _discoverFocusNode.dispose();
@@ -110,12 +104,6 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
 
-    if (_tabCtrl.index == HomeTab.feed.index) {
-      ref.watch(activitiesProvider(HomeActivitiesTag.instance).select((_) => null));
-    } else if (_tabCtrl.index == HomeTab.discover.index) {
-      ref.watch(discoverProvider.select((_) => null));
-    }
-
     UserTag? userTag;
     CollectionTag? animeCollectionTag;
     CollectionTag? mangaCollectionTag;
@@ -131,8 +119,8 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
       ref.watch(collectionEntriesProvider(mangaCollectionTag).select((_) => null));
     }
 
-    final primaryScrollCtrl = PrimaryScrollController.of(context);
     final home = ref.watch(homeProvider);
+    final primaryScrollCtrl = PrimaryScrollController.of(context);
     final formFactor = Theming.of(context).formFactor;
 
     final topBar = TopBarAnimatedSwitcher(switch (_tabCtrl.index) {

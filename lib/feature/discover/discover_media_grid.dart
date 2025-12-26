@@ -81,7 +81,7 @@ class _Tile extends StatelessWidget {
             ),
             Expanded(
               child: Padding(
-                padding: .symmetric(horizontal: Theming.offset, vertical: Theming.offset / 2),
+                padding: .symmetric(horizontal: Theming.offset, vertical: 5),
                 child: Column(
                   crossAxisAlignment: .start,
                   mainAxisAlignment: .spaceAround,

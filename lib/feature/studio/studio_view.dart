@@ -1,11 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
 import 'package:otraku/feature/studio/studio_header.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/studio/studio_provider.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -51,6 +56,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
 
         final studio = ref.watch(studioProvider(widget.id)).value;
         final studioMedia = ref.watch(studioMediaProvider(widget.id));
+        final options = ref.watch(persistenceProvider.select((s) => s.options));
 
         final mediaQuery = MediaQuery.of(context);
 
@@ -90,7 +96,7 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   },
                 ),
               ),
-              SliverConstrainedView(sliver: _StudioMediaGrid(data.items)),
+              SliverConstrainedView(sliver: _StudioMediaGrid(data.items, options.highContrast)),
               SliverFooter(loading: data.hasNext),
             ],
           ),
@@ -112,26 +118,37 @@ class _StudioViewState extends ConsumerState<StudioView> {
 }
 
 class _StudioMediaGrid extends StatelessWidget {
-  const _StudioMediaGrid(this.items);
+  const _StudioMediaGrid(this.items, this.highContrast);
 
   final List<StudioMedia> items;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = TextTheme.of(context);
+    final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
+    final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
+    final labelSmallLineHeight = context.lineHeight(textTheme.labelSmall!);
+    final tileHeight =
+        bodyMediumLineHeight * 2 + labelMediumLineHeight + max(labelSmallLineHeight, 15) + 20;
+    final coverWidth = tileHeight / Theming.coverHtoWRatio;
+
     return SliverGrid(
-      gridDelegate: const SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 260, height: 100),
+      gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 260, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _MediaTile(items[i]),
+        (context, i) => _MediaTile(items[i], highContrast, coverWidth),
       ),
     );
   }
 }
 
 class _MediaTile extends StatelessWidget {
-  const _MediaTile(this.item);
+  const _MediaTile(this.item, this.highContrast, this.coverWidth);
 
   final StudioMedia item;
+  final bool highContrast;
+  final double coverWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -146,32 +163,31 @@ class _MediaTile extends StatelessWidget {
     return MediaRouteTile(
       id: item.id,
       imageUrl: item.cover,
-      child: Card(
+      child: CardExtension.highContrast(highContrast)(
         child: Row(
           mainAxisAlignment: .start,
           children: [
             Hero(
               tag: item.id,
               child: ClipRRect(
-                borderRadius: Theming.borderRadiusSmall,
+                borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
                 child: DecoratedBox(
                   decoration: BoxDecoration(color: theme.colorScheme.surfaceContainerHighest),
-                  child: CachedImage(item.cover, width: 100 / Theming.coverHtoWRatio),
+                  child: CachedImage(item.cover, width: coverWidth),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: Theming.paddingAll,
+                padding: .symmetric(horizontal: Theming.offset, vertical: 5),
                 child: Column(
-                  mainAxisAlignment: .spaceEvenly,
                   crossAxisAlignment: .start,
+                  mainAxisAlignment: .spaceEvenly,
+                  spacing: 5,
                   children: [
-                    Flexible(child: Text(item.title, overflow: .fade)),
-                    const SizedBox(height: 5),
+                    Flexible(child: Text(item.title, overflow: .ellipsis, maxLines: 2)),
                     TextRail(textRailItems, style: theme.textTheme.labelMedium),
-                    if (item.startDate != null) ...[
-                      const SizedBox(height: 5),
+                    if (item.startDate != null)
                       Row(
                         children: [
                           Expanded(
@@ -185,13 +201,13 @@ class _MediaTile extends StatelessWidget {
                           Expanded(
                             child: Row(
                               mainAxisSize: .min,
+                              spacing: 5,
                               children: [
                                 Icon(
                                   Icons.percent_rounded,
                                   size: 15,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
-                                const SizedBox(width: 5),
                                 Text(
                                   item.weightedAverageScore.toString(),
                                   style: theme.textTheme.labelSmall,
@@ -201,7 +217,6 @@ class _MediaTile extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ],
                   ],
                 ),
               ),

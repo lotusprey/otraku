@@ -101,22 +101,20 @@ class _MediaRecommendationsGrid extends StatelessWidget {
                       mainAxisAlignment: .spaceAround,
                       children: [
                         Flexible(child: Text(items[i].title, overflow: .ellipsis, maxLines: 2)),
-                        Row(
-                          spacing: 5,
-                          mainAxisAlignment: .spaceBetween,
-                          children: [
-                            TextRail(
-                              textRailItems,
-                              style: TextTheme.of(context).labelMedium,
-                              maxLines: 2,
-                            ),
-                            _RecommendationRating(mediaId, items[i], rateRecommendation),
-                          ],
+                        TextRail(
+                          textRailItems,
+                          style: TextTheme.of(context).labelMedium,
+                          maxLines: 2,
                         ),
                       ],
                     ),
                   ),
                 ),
+                Padding(
+                  padding: const .symmetric(vertical: 5),
+                  child: const VerticalDivider(thickness: 1, width: 1),
+                ),
+                _RecommendationRating(mediaId, items[i], rateRecommendation),
               ],
             ),
           ),
@@ -142,110 +140,119 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
   Widget build(BuildContext context) {
     final item = widget.item;
 
-    return Row(
-      spacing: Theming.offset,
-      mainAxisAlignment: .center,
-      children: [
-        Tooltip(
-          message: 'Agree',
-          child: InkResponse(
-            onTap: () async {
-              final oldRating = item.rating;
-              final oldUserRating = item.userRating;
+    return Padding(
+      padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: Theming.offset,
+        children: [
+          Text(item.rating.toString()),
+          Row(
+            spacing: Theming.offset,
+            mainAxisAlignment: .spaceEvenly,
+            children: [
+              Tooltip(
+                message: 'Agree',
+                child: InkResponse(
+                  onTap: () async {
+                    final oldRating = item.rating;
+                    final oldUserRating = item.userRating;
 
-              setState(() {
-                switch (item.userRating) {
-                  case true:
-                    item.rating--;
-                    item.userRating = null;
-                    break;
-                  case false:
-                    item.rating += 2;
-                    item.userRating = true;
-                    break;
-                  case null:
-                    item.rating++;
-                    item.userRating = true;
-                    break;
-                }
-              });
+                    setState(() {
+                      switch (item.userRating) {
+                        case true:
+                          item.rating--;
+                          item.userRating = null;
+                          break;
+                        case false:
+                          item.rating += 2;
+                          item.userRating = true;
+                          break;
+                        case null:
+                          item.rating++;
+                          item.userRating = true;
+                          break;
+                      }
+                    });
 
-              final err = await widget.rateRecommendation(item.id, item.userRating);
-              if (err == null) return;
+                    final err = await widget.rateRecommendation(item.id, item.userRating);
+                    if (err == null) return;
 
-              setState(() {
-                item.rating = oldRating;
-                item.userRating = oldUserRating;
-              });
+                    setState(() {
+                      item.rating = oldRating;
+                      item.userRating = oldUserRating;
+                    });
 
-              if (context.mounted) {
-                SnackBarExtension.show(context, err.toString());
-              }
-            },
-            child: item.userRating == true
-                ? Icon(
-                    Icons.thumb_up,
-                    size: Theming.iconSmall,
-                    color: ColorScheme.of(context).primary,
-                  )
-                : Icon(
-                    Icons.thumb_up_outlined,
-                    size: Theming.iconSmall,
-                    color: ColorScheme.of(context).onSurface,
-                  ),
+                    if (context.mounted) {
+                      SnackBarExtension.show(context, err.toString());
+                    }
+                  },
+                  child: item.userRating == true
+                      ? Icon(
+                          Icons.thumb_up,
+                          size: Theming.iconSmall,
+                          color: ColorScheme.of(context).primary,
+                        )
+                      : Icon(
+                          Icons.thumb_up_outlined,
+                          size: Theming.iconSmall,
+                          color: ColorScheme.of(context).onSurface,
+                        ),
+                ),
+              ),
+              Tooltip(
+                message: 'Disagree',
+                child: InkResponse(
+                  onTap: () async {
+                    final oldRating = item.rating;
+                    final oldUserRating = item.userRating;
+
+                    setState(() {
+                      switch (item.userRating) {
+                        case true:
+                          item.rating -= 2;
+                          item.userRating = false;
+                          break;
+                        case false:
+                          item.rating++;
+                          item.userRating = null;
+                          break;
+                        case null:
+                          item.rating--;
+                          item.userRating = false;
+                          break;
+                      }
+                    });
+
+                    final err = await widget.rateRecommendation(item.id, item.userRating);
+                    if (err == null) return;
+
+                    setState(() {
+                      item.rating = oldRating;
+                      item.userRating = oldUserRating;
+                    });
+
+                    if (context.mounted) {
+                      SnackBarExtension.show(context, err.toString());
+                    }
+                  },
+                  child: item.userRating == false
+                      ? Icon(
+                          Icons.thumb_down,
+                          size: Theming.iconSmall,
+                          color: ColorScheme.of(context).error,
+                        )
+                      : Icon(
+                          Icons.thumb_down_outlined,
+                          size: Theming.iconSmall,
+                          color: ColorScheme.of(context).onSurface,
+                        ),
+                ),
+              ),
+            ],
           ),
-        ),
-        Text(item.rating.toString()),
-        Tooltip(
-          message: 'Disagree',
-          child: InkResponse(
-            onTap: () async {
-              final oldRating = item.rating;
-              final oldUserRating = item.userRating;
-
-              setState(() {
-                switch (item.userRating) {
-                  case true:
-                    item.rating -= 2;
-                    item.userRating = false;
-                    break;
-                  case false:
-                    item.rating++;
-                    item.userRating = null;
-                    break;
-                  case null:
-                    item.rating--;
-                    item.userRating = false;
-                    break;
-                }
-              });
-
-              final err = await widget.rateRecommendation(item.id, item.userRating);
-              if (err == null) return;
-
-              setState(() {
-                item.rating = oldRating;
-                item.userRating = oldUserRating;
-              });
-
-              if (context.mounted) {
-                SnackBarExtension.show(context, err.toString());
-              }
-            },
-            child: item.userRating == false
-                ? Icon(
-                    Icons.thumb_down,
-                    size: Theming.iconSmall,
-                    color: ColorScheme.of(context).error,
-                  )
-                : Icon(
-                    Icons.thumb_down_outlined,
-                    size: Theming.iconSmall,
-                    color: ColorScheme.of(context).onSurface,
-                  ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

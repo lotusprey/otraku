@@ -38,6 +38,7 @@ class _DateFieldState extends State<DateField> {
       readOnly: true,
       controller: _ctrl,
       textAlign: .center,
+      style: TextTheme.of(context).bodyMedium,
       onTap: () =>
           showDatePicker(
             context: context,
@@ -59,6 +60,7 @@ class _DateFieldState extends State<DateField> {
           }),
       decoration: InputDecoration(
         labelText: widget.label,
+        labelStyle: TextTheme.of(context).bodyMedium,
         border: const OutlineInputBorder(),
         suffixIcon: Semantics(
           button: true,

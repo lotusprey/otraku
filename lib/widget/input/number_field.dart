@@ -85,6 +85,7 @@ class _NumberFieldState extends State<NumberField> {
       controller: _ctrl,
       onChanged: _validateInput,
       textAlign: .center,
+      style: TextTheme.of(context).bodyMedium,
       keyboardType: TextInputType.numberWithOptions(decimal: widget.isDecimal),
       inputFormatters: [
         FilteringTextInputFormatter.allow(
@@ -93,6 +94,7 @@ class _NumberFieldState extends State<NumberField> {
       ],
       decoration: InputDecoration(
         labelText: widget.label,
+        labelStyle: TextTheme.of(context).bodyMedium,
         errorText: _error,
         border: const OutlineInputBorder(),
         prefixIcon: Semantics(

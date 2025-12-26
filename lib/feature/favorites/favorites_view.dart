@@ -291,7 +291,8 @@ class _ImageGridState extends State<_ImageGrid> {
         childCount: _items.length,
         (_, i) => InkWell(
           borderRadius: Theming.borderRadiusSmall,
-          onTap: () => context.push(Routes.character(_items[i].id, _items[i].imageUrl)),
+          onTap: () => widget.onTapItem(_items[i]),
+          onLongPress: () => widget.onLongTapItem?.call(_items[i]),
           child: CardExtension.highContrast(widget.highContrast)(
             child: Column(
               crossAxisAlignment: .stretch,
@@ -365,7 +366,7 @@ class _TextGridState extends State<_TextGrid> {
         childCount: _items.length,
         (_, i) => InkWell(
           borderRadius: Theming.borderRadiusSmall,
-          onTap: () => context.push(Routes.studio(_items[i].id, _items[i].name)),
+          onTap: () => widget.onTapItem(_items[i]),
           child: CardExtension.highContrast(widget.highContrast)(
             child: Padding(
               padding: Theming.paddingAll,

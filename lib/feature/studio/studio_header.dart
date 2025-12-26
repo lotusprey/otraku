@@ -39,7 +39,7 @@ class StudioHeader extends StatelessWidget {
                       name,
                       textAlign: .center,
                       overflow: .ellipsis,
-                      style: TextTheme.of(context).bodyMedium,
+                      style: TextTheme.of(context).titleMedium,
                     ),
                   ),
                 ),

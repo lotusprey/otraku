@@ -410,7 +410,11 @@ class _NotesState extends State<_Notes> {
         maxLines: 10,
         controller: _ctrl,
         style: TextTheme.of(context).bodyMedium,
-        decoration: const InputDecoration(labelText: 'Notes', border: OutlineInputBorder()),
+        decoration: InputDecoration(
+          labelText: 'Notes',
+          labelStyle: TextTheme.of(context).bodyMedium,
+          border: const OutlineInputBorder(),
+        ),
         onChanged: (value) => widget.onChanged(value),
       ),
     ),

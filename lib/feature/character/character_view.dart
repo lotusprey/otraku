@@ -48,8 +48,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
     final character = ref.watch(characterProvider(widget.id));
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final toggleFavorite = () async =>
-        ref.read(characterProvider(widget.id).notifier).toggleFavorite;
+    final toggleFavorite = () => ref.read(characterProvider(widget.id).notifier).toggleFavorite();
 
     return AdaptiveScaffold(
       floatingAction: HidingFloatingActionButton(

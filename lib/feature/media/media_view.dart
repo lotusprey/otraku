@@ -58,7 +58,7 @@ class _MediaViewState extends State<MediaView> {
 
         final media = ref.watch(mediaProvider(widget.id));
 
-        final toggleFavorite = ref.read(mediaProvider(widget.id).notifier).toggleFavorite;
+        final toggleFavorite = () => ref.read(mediaProvider(widget.id).notifier).toggleFavorite();
 
         return AdaptiveScaffold(
           floatingAction: media.value != null

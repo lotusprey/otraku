@@ -48,7 +48,7 @@ class _StaffViewState extends ConsumerState<StaffView> {
     final staff = ref.watch(staffProvider(widget.id));
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
-    final toggleFavorite = () async => ref.read(staffProvider(widget.id).notifier).toggleFavorite;
+    final toggleFavorite = () => ref.read(staffProvider(widget.id).notifier).toggleFavorite();
 
     return AdaptiveScaffold(
       floatingAction: HidingFloatingActionButton(

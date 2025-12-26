@@ -127,7 +127,7 @@ class BottomBar extends StatelessWidget {
             shadowColor: Colors.transparent,
             child: Padding(
               padding: .only(bottom: bottomPadding),
-              child: Row(mainAxisAlignment: .spaceBetween, children: items),
+              child: Row(mainAxisAlignment: .spaceEvenly, children: items),
             ),
           ),
         ),

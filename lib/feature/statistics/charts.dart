@@ -3,83 +3,88 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/shadowed_overflow_list.dart';
+//import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class BarChart extends StatelessWidget {
-  const BarChart({
-    required this.title,
-    required this.names,
-    required this.values,
-    this.barWidth = 60,
-    this.toolbar,
-  }) : assert(names.length == values.length);
+  const BarChart({required this.title, required this.names, required this.values, this.toolbar})
+    : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
   final List<num> values;
   final Widget? toolbar;
-  final double barWidth;
 
   @override
   Widget build(BuildContext context) {
-    double maxHeight = 210.0;
-    num maxValue = 0;
-    for (final v in values) {
-      if (maxValue < v) maxValue = v;
-    }
-    maxHeight /= maxValue;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Find the largest value to scale everything else
+        num maxValue = values.fold(0, (prev, element) => element > prev ? element : prev);
+        // Determine max available width for the bars
+        double maxBarWidth = constraints.maxWidth - 100; // Offset for labels
 
-    return Column(
-      mainAxisSize: .min,
-      crossAxisAlignment: .stretch,
-      children: [
-        Padding(
-          padding: const .symmetric(vertical: 5),
-          child: Text(title, style: TextTheme.of(context).titleSmall),
-        ),
-        if (toolbar != null) toolbar!,
-        SizedBox(
-          height: 280,
-          child: ShadowedOverflowList(
-            itemCount: names.length,
-            itemExtent: barWidth + 5,
-            itemBuilder: (_, i) => Column(
-              mainAxisAlignment: .end,
-              children: [
-                Text(
-                  values[i].toString(),
-                  style: TextTheme.of(context).labelMedium,
-                  overflow: .ellipsis,
-                  maxLines: 1,
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight + Theming.offset,
-                  margin: const .symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0, 1],
-                      colors: [
-                        ColorScheme.of(context).primary,
-                        ColorScheme.of(context).primary.withValues(alpha: 0.1),
-                      ],
-                    ),
-                  ),
-                ),
-                Text(
-                  names[i],
-                  style: TextTheme.of(context).labelMedium,
-                  overflow: .ellipsis,
-                  maxLines: 1,
-                ),
-              ],
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const .symmetric(vertical: 5),
+              child: Text(title, style: TextTheme.of(context).titleSmall),
             ),
-          ),
-        ),
-      ],
+            if (toolbar != null)
+              SizedBox(
+                width: double.infinity,
+                child: toolbar!,
+              ), //so the toolbar uses full width of the screen.
+            Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
+            //New logic for the horizontal bars
+            ...List.generate(
+              names.length,
+              (i) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      child: Text(
+                        names[i],
+                        style: TextTheme.of(context).labelMedium,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    Expanded(
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          width: (values[i] / maxValue) * maxBarWidth,
+                          height: 20,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            gradient: LinearGradient(
+                              begin: Alignment.centerRight,
+                              end: Alignment.centerLeft,
+                              stops: const [0, 1],
+                              colors: [
+                                ColorScheme.of(context).primary,
+                                ColorScheme.of(context).primary.withValues(alpha: 0.1),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 10),
+                      child: Text(values[i].toString()),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

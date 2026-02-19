@@ -15,6 +15,16 @@ Future<void> main() async {
   final container = ProviderContainer(retry: (retryCount, error) => null);
   await container.read(persistenceProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
+  //I moved this here because it had no effect inside build widget method, putting it here fixes the grey tint in status bar. Also removed the old lines in build widget method.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemStatusBarContrastEnforced: false,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
 
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   SystemChrome.setSystemUIOverlayStyle(

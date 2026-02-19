@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -44,6 +45,7 @@ class _MediaFollowingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
     final tileHeight = bodyMediumLineHeight + max(bodyMediumLineHeight, 35) + 5;
 
@@ -79,7 +81,7 @@ class _MediaFollowingGrid extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  items[i].entryStatus.label(null),
+                                  items[i].entryStatus.localize(l10n, null),
                                   overflow: .ellipsis,
                                   maxLines: 1,
                                 ),

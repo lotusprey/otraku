@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/input/number_field.dart';
 
 const _minYear = 1917;
 
 class YearRangePicker extends StatefulWidget {
-  const YearRangePicker({
-    required this.title,
-    required this.from,
-    required this.to,
-    required this.onChanged,
-  });
+  const YearRangePicker({required this.from, required this.to, required this.onChanged});
 
-  final String title;
   final int? from;
   final int? to;
   final void Function(int?, int?) onChanged;
@@ -49,46 +44,53 @@ class _YearRangePickerState extends State<YearRangePicker> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final children = [
+      Expanded(
+        child: NumberField(
+          label: l10n.filterReleaseStart,
+          value: _from,
+          minValue: _minYear,
+          maxValue: _maxYear,
+          onChanged: (from) {
+            setState(() {
+              _from = from;
+              if (_to < _from) _to = _from;
+            });
+
+            _from > _minYear || _to < _maxYear
+                ? widget.onChanged(_from, _to)
+                : widget.onChanged(null, null);
+          },
+        ),
+      ),
+      const SizedBox(width: 10),
+      Expanded(
+        child: NumberField(
+          label: l10n.filterReleaseEnd,
+          value: _to,
+          minValue: _minYear,
+          maxValue: _maxYear,
+          onChanged: (to) {
+            setState(() {
+              _to = to;
+              if (_from > _to) _from = _to;
+            });
+
+            _from > _minYear || _to < _maxYear
+                ? widget.onChanged(_from, _to)
+                : widget.onChanged(null, null);
+          },
+        ),
+      ),
+    ];
+
     return Row(
-      children: [
-        Expanded(
-          child: NumberField(
-            label: 'Release Start',
-            value: _from,
-            minValue: _minYear,
-            maxValue: _maxYear,
-            onChanged: (from) {
-              setState(() {
-                _from = from;
-                if (_to < _from) _to = _from;
-              });
-
-              _from > _minYear || _to < _maxYear
-                  ? widget.onChanged(_from, _to)
-                  : widget.onChanged(null, null);
-            },
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: NumberField(
-            label: 'Release End',
-            value: _to,
-            minValue: _minYear,
-            maxValue: _maxYear,
-            onChanged: (to) {
-              setState(() {
-                _to = to;
-                if (_from > _to) _from = _to;
-              });
-
-              _from > _minYear || _to < _maxYear
-                  ? widget.onChanged(_from, _to)
-                  : widget.onChanged(null, null);
-            },
-          ),
-        ),
-      ],
+      children: switch (Directionality.of(context)) {
+        .ltr => children,
+        .rtl => children.reversed.toList(),
+      },
     );
   }
 }

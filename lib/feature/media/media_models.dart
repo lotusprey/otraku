@@ -5,6 +5,7 @@ import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
@@ -108,10 +109,10 @@ class RelatedMedia {
     id: map['node']['id'],
     title: map['node']['title']['userPreferred'],
     imageUrl: map['node']['coverImage'][imageQuality.value],
-    relationType: StringExtension.tryNoScreamingSnakeCase(map['relationType']),
+    relationType: MediaRelationType.from(map['relationType']),
     format: MediaFormat.from(map['node']['format']),
     entryStatus: ListStatus.from(map['node']['mediaListEntry']?['status']),
-    releaseStatus: StringExtension.tryNoScreamingSnakeCase(map['node']['status']),
+    releaseStatus: ReleaseStatus.from(map['node']['status']),
     isAnime: map['node']['type'] == 'ANIME',
   );
 
@@ -119,10 +120,10 @@ class RelatedMedia {
   final bool isAnime;
   final String title;
   final String imageUrl;
-  final String? relationType;
+  final MediaRelationType? relationType;
   final MediaFormat? format;
   final ListStatus? entryStatus;
-  final String? releaseStatus;
+  final ReleaseStatus? releaseStatus;
 }
 
 class MediaRelatedItem implements TileModelable {
@@ -478,7 +479,7 @@ class MediaStats {
   final scoreNames = <int>[];
   final scoreValues = <int>[];
 
-  final statusNames = <String>[];
+  final statusNames = <ListStatus>[];
   final statusValues = <int>[];
 
   factory MediaStats(Map<String, dynamic> map) {
@@ -534,10 +535,7 @@ class MediaStats {
             model.statusValues.add(s['amount']);
           }
 
-          model.statusNames.insert(
-            index,
-            ListStatus.from(s['status'])!.label(map['type'] == 'ANIME'),
-          );
+          model.statusNames.insert(index, ListStatus.from(s['status'])!);
         }
       }
     }
@@ -560,47 +558,57 @@ enum MediaTab {
 }
 
 enum MediaType {
-  anime('Anime', 'ANIME'),
-  manga('Manga', 'MANGA');
+  anime('ANIME'),
+  manga('MANGA');
 
-  const MediaType(this.label, this.value);
+  const MediaType(this.value);
 
-  final String label;
   final String value;
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    anime => l10n.mediaTypeAnime,
+    manga => l10n.mediaTypeManga,
+  };
 }
 
 enum ReleaseStatus {
-  finished('Finished', 'FINISHED'),
-  releasing('Releasing', 'RELEASING'),
-  notYetReleased('Not Yet Released', 'NOT_YET_RELEASED'),
-  hiatus('Hiatus', 'HIATUS'),
-  cancelled('Cancelled', 'CANCELLED');
+  finished('FINISHED'),
+  releasing('RELEASING'),
+  notYetReleased('NOT_YET_RELEASED'),
+  hiatus('HIATUS'),
+  cancelled('CANCELLED');
 
-  const ReleaseStatus(this.label, this.value);
+  const ReleaseStatus(this.value);
 
-  final String label;
   final String value;
 
   static ReleaseStatus? from(String? value) =>
       ReleaseStatus.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    finished => l10n.mediaStatusReleased,
+    releasing => l10n.mediaStatusReleasing,
+    notYetReleased => l10n.mediaStatusUnreleased,
+    hiatus => l10n.mediaStatusHiatus,
+    cancelled => l10n.mediaStatusCancelled,
+  };
 }
 
 enum MediaFormat {
-  tv('TV', 'TV'),
-  tvShort('TV Short', 'TV_SHORT'),
-  movie('Movie', 'MOVIE'),
-  special('Special', 'SPECIAL'),
-  ova('OVA', 'OVA'),
-  ona('ONA', 'ONA'),
-  music('Music', 'MUSIC'),
+  tv('TV'),
+  tvShort('TV_SHORT'),
+  movie('MOVIE'),
+  special('SPECIAL'),
+  ova('OVA'),
+  ona('ONA'),
+  music('MUSIC'),
 
-  manga('Manga', 'MANGA'),
-  novel('Novel', 'NOVEL'),
-  oneShot('One Shot', 'ONE_SHOT');
+  manga('MANGA'),
+  novel('NOVEL'),
+  oneShot('ONE_SHOT');
 
-  const MediaFormat(this.label, this.value);
+  const MediaFormat(this.value);
 
-  final String label;
   final String value;
 
   static const animeFormats = [tv, tvShort, movie, special, ova, ona, music];
@@ -608,127 +616,225 @@ enum MediaFormat {
 
   static MediaFormat? from(String? value) =>
       MediaFormat.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    tv => l10n.mediaFormatTv,
+    tvShort => l10n.mediaFormatTvShort,
+    movie => l10n.mediaFormatMovie,
+    special => l10n.mediaFormatSpecial,
+    ova => l10n.mediaFormatOva,
+    ona => l10n.mediaFormatOna,
+    music => l10n.mediaFormatMusic,
+    manga => l10n.mediaFormatManga,
+    novel => l10n.mediaFormatNovel,
+    oneShot => l10n.mediaFormatOneShot,
+  };
 }
 
 enum MediaSeason {
-  winter('Winter', 'WINTER'),
-  spring('Spring', 'SPRING'),
-  summer('Summer', 'SUMMER'),
-  fall('Fall', 'FALL');
+  winter('WINTER'),
+  spring('SPRING'),
+  summer('SUMMER'),
+  fall('FALL');
 
-  const MediaSeason(this.label, this.value);
+  const MediaSeason(this.value);
 
-  final String label;
   final String value;
 
   static MediaSeason? from(String? value) =>
       MediaSeason.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    winter => l10n.mediaSeasonWinter,
+    spring => l10n.mediaSeasonSpring,
+    summer => l10n.mediaSeasonSummer,
+    fall => l10n.mediaSeasonFall,
+  };
 }
 
 enum MediaSource {
-  original('Original', 'ORIGINAL'),
-  anime('Anime', 'ANIME'),
-  manga('Manga', 'MANGA'),
-  novel('Novel', 'NOVEL'),
-  webNovel('Web Novel', 'WEB_NOVEL'),
-  lightNovel('Light Novel', 'LIGHT_NOVEL'),
-  visualNovel('Visual Novel', 'VISUAL_NOVEL'),
-  videoGame('Video Game', 'VIDEO_GAME'),
-  doujinshi('Doujinshi', 'DOUJINSHI'),
-  game('Game', 'GAME'),
-  comic('Comic', 'COMIC'),
-  liveAction('Live Action', 'LIVE_ACTION'),
-  multimediaProject('Multimedia Project', 'MULTIMEDIA_PROJECT'),
-  pictureBook('Picture Book', 'PICTURE_BOOK'),
-  other('Other', 'OTHER');
+  original('ORIGINAL'),
+  anime('ANIME'),
+  manga('MANGA'),
+  novel('NOVEL'),
+  webNovel('WEB_NOVEL'),
+  lightNovel('LIGHT_NOVEL'),
+  visualNovel('VISUAL_NOVEL'),
+  videoGame('VIDEO_GAME'),
+  doujinshi('DOUJINSHI'),
+  game('GAME'),
+  comic('COMIC'),
+  liveAction('LIVE_ACTION'),
+  multimediaProject('MULTIMEDIA_PROJECT'),
+  pictureBook('PICTURE_BOOK'),
+  other('OTHER');
 
-  const MediaSource(this.label, this.value);
+  const MediaSource(this.value);
 
-  final String label;
   final String value;
 
   static MediaSource? from(String? value) =>
       MediaSource.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    original => l10n.mediaSourceOriginal,
+    anime => l10n.mediaSourceAnime,
+    manga => l10n.mediaSourceManga,
+    novel => l10n.mediaSourceNovel,
+    webNovel => l10n.mediaSourceWebNovel,
+    lightNovel => l10n.mediaSourceLightNovel,
+    visualNovel => l10n.mediaSourceVisualNovel,
+    videoGame => l10n.mediaSourceVideoGame,
+    doujinshi => l10n.mediaSourceDoujinshi,
+    game => l10n.mediaSourceGame,
+    comic => l10n.mediaSourceComic,
+    liveAction => l10n.mediaSourceLiveAction,
+    multimediaProject => l10n.mediaSourceMultimediaProject,
+    pictureBook => l10n.mediaSourcePictureBook,
+    other => l10n.mediaSourceOther,
+  };
+}
+
+enum MediaRelationType {
+  adaptation('ADAPTATION'),
+  prequel('PREQUEL'),
+  sequel('SEQUEL'),
+  parent('PARENT'),
+  sideStory('SIDE_STORY'),
+  character('CHARACTER'),
+  summary('SUMMARY'),
+  alternative('ALTERNATIVE'),
+  spinOff('SPIN_OFF'),
+  other('OTHER'),
+  source('SOURCE'),
+  compilation('COMPILATION'),
+  contains('CONTAINS');
+
+  const MediaRelationType(this.value);
+
+  final String value;
+
+  static MediaRelationType? from(String? value) =>
+      MediaRelationType.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    .adaptation => l10n.mediaRelationTypeAdaptation,
+    .prequel => l10n.mediaRelationTypePrequel,
+    .sequel => l10n.mediaRelationTypeSequel,
+    .parent => l10n.mediaRelationTypeParent,
+    .sideStory => l10n.mediaRelationTypeSideStory,
+    .character => l10n.mediaRelationTypeCharacter,
+    .summary => l10n.mediaRelationTypeSummary,
+    .alternative => l10n.mediaRelationTypeAlternative,
+    .spinOff => l10n.mediaRelationTypeSpinOff,
+    .other => l10n.mediaRelationTypeOther,
+    .source => l10n.mediaRelationTypeSource,
+    .compilation => l10n.mediaRelationTypeCompilation,
+    .contains => l10n.mediaRelationTypeContains,
+  };
 }
 
 enum OriginCountry {
-  japan('Japan', 'JP'),
-  china('China', 'CN'),
-  southKorea('South Korea', 'KR'),
-  taiwan('Taiwan', 'TW');
+  japan('JP'),
+  china('CN'),
+  southKorea('KR'),
+  taiwan('TW');
 
-  const OriginCountry(this.label, this.code);
+  const OriginCountry(this.code);
 
-  final String label;
   final String code;
 
   static OriginCountry? fromCode(String? code) =>
       OriginCountry.values.firstWhereOrNull((v) => v.code == code);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    japan => l10n.countryJapan,
+    china => l10n.countryChina,
+    southKorea => l10n.countrySouthKorea,
+    taiwan => l10n.countryTaiwan,
+  };
 }
 
 enum ScoreFormat {
-  point100('100 Points', 'POINT_100'),
-  point10Decimal('10 Decimal Points', 'POINT_10_DECIMAL'),
-  point10('10 Points', 'POINT_10'),
-  point5('5 Stars', 'POINT_5'),
-  point3('3 Smileys', 'POINT_3');
+  point100('POINT_100'),
+  point10Decimal('POINT_10_DECIMAL'),
+  point10('POINT_10'),
+  point5('POINT_5'),
+  point3('POINT_3');
 
-  const ScoreFormat(this.label, this.value);
+  const ScoreFormat(this.value);
 
-  final String label;
   final String value;
 
   static ScoreFormat from(String? value) =>
       ScoreFormat.values.firstWhere((v) => v.value == value, orElse: () => point10);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    point100 => l10n.mediaScoring100,
+    point10Decimal => l10n.mediaScoring10Decimal,
+    point10 => l10n.mediaScoring10,
+    point5 => l10n.mediaScoring5,
+    point3 => l10n.mediaScoring3,
+  };
 }
 
 enum MediaSort {
-  trendingDesc('Trending', 'TRENDING_DESC'),
-  popularityDesc('Popularity', 'POPULARITY_DESC'),
-  scoreDesc('Score', 'SCORE_DESC'),
-  score('Worst Score', 'SCORE'),
-  favoritesDesc('Favourites', 'FAVOURITES_DESC'),
-  startDateDesc('Released Latest', 'START_DATE_DESC'),
-  startDate('Released Earliest', 'START_DATE'),
-  idDesc('Last Added', 'ID_DESC'),
-  id('First Added', 'ID'),
-  titleRomaji('Title Romaji', 'TITLE_ROMAJI'),
-  titleEnglish('Title English', 'TITLE_ENGLISH'),
-  titleNative('Title Native', 'TITLE_NATIVE');
+  trendingDesc('TRENDING_DESC'),
+  popularityDesc('POPULARITY_DESC'),
+  scoreDesc('SCORE_DESC'),
+  score('SCORE'),
+  favoritesDesc('FAVOURITES_DESC'),
+  startDateDesc('START_DATE_DESC'),
+  startDate('START_DATE'),
+  idDesc('ID_DESC'),
+  id('ID'),
+  titleRomaji('TITLE_ROMAJI'),
+  titleEnglish('TITLE_ENGLISH'),
+  titleNative('TITLE_NATIVE');
 
-  const MediaSort(this.label, this.value);
+  const MediaSort(this.value);
 
-  final String label;
   final String value;
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    trendingDesc => l10n.mediaSortTrending,
+    popularityDesc => l10n.mediaSortPopularity,
+    scoreDesc => l10n.mediaSortScoreBest,
+    score => l10n.mediaSortScoreWorst,
+    favoritesDesc => l10n.mediaSortFavourites,
+    startDateDesc => l10n.mediaSortReleasedLatest,
+    startDate => l10n.mediaSortReleasedEarliest,
+    idDesc => l10n.mediaSortAddedLast,
+    id => l10n.mediaSortAddedFirst,
+    titleRomaji => l10n.mediaSortTitleRomaji,
+    titleEnglish => l10n.mediaSortTitleEnglish,
+    titleNative => l10n.mediaSortTitleNative,
+  };
 }
 
 enum EntrySort {
-  title('Title'),
-  titleDesc('Title'),
-  score('Score'),
-  scoreDesc('Score'),
-  updated('Updated'),
-  updatedDesc('Updated'),
-  added('Added'),
-  addedDesc('Added'),
-  airing('Airing'),
-  airingDesc('Airing'),
-  startedOn('Started'),
-  startedOnDesc('Started'),
-  completedOn('Completed'),
-  completedOnDesc('Completed'),
-  releasedOn('Released'),
-  releasedOnDesc('Released'),
-  progress('Progress'),
-  progressDesc('Progress'),
-  avgScore('Rating'),
-  avgScoreDesc('Rating'),
-  repeated('Repeats'),
-  repeatedDesc('Repeats');
-
-  const EntrySort(this.label);
-
-  final String label;
+  title,
+  titleDesc,
+  score,
+  scoreDesc,
+  updated,
+  updatedDesc,
+  added,
+  addedDesc,
+  airing,
+  airingDesc,
+  startedOn,
+  startedOnDesc,
+  completedOn,
+  completedOnDesc,
+  releasedOn,
+  releasedOnDesc,
+  progress,
+  progressDesc,
+  avgScore,
+  avgScoreDesc,
+  repeated,
+  repeatedDesc;
 
   /// The API supports only few default sortings.
   static const rowOrders = [scoreDesc, title, updatedDesc, addedDesc];
@@ -749,5 +855,19 @@ enum EntrySort {
     'id' => addedDesc,
     'title' => title,
     _ => title,
+  };
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    title || titleDesc => l10n.listSortTitle,
+    score || scoreDesc => l10n.listSortScore,
+    updated || updatedDesc => l10n.listSortUpdated,
+    added || addedDesc => l10n.listSortAdded,
+    airing || airingDesc => l10n.listSortAiring,
+    startedOn || startedOnDesc => l10n.listSortStarted,
+    completedOn || completedOnDesc => l10n.listSortCompleted,
+    releasedOn || releasedOnDesc => l10n.listSortReleased,
+    progress || progressDesc => l10n.listSortProgress,
+    avgScore || avgScoreDesc => l10n.listSortRating,
+    repeated || repeatedDesc => l10n.listSortRepeats,
   };
 }

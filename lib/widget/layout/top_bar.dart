@@ -26,7 +26,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           height: topPadding + preferredSize.height,
           decoration: BoxDecoration(color: Theme.of(context).navigationBarTheme.backgroundColor),
           padding: .only(top: topPadding),
-          alignment: Alignment.center,
+          alignment: .center,
           child: Row(
             children: [
               if (GoRouter.of(context).canPop())

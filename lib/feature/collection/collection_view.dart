@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:otraku/feature/auth/login_instructions.dart';
 import 'package:otraku/feature/collection/collection_floating_action.dart';
 import 'package:otraku/feature/collection/collection_top_bar.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -74,12 +76,11 @@ class CollectionSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (tag == null) {
       return const Center(
-        child: Padding(
-          padding: Theming.paddingAll,
-          child: Text('Log in from the profile tab to view your collections', textAlign: .center),
-        ),
+        child: Padding(padding: Theming.paddingAll, child: LoginInstructions()),
       );
     }
 
@@ -96,11 +97,13 @@ class CollectionSubview extends StatelessWidget {
             .unwrapPrevious()
             .when(
               loading: () => const Center(child: Loader()),
-              error: (_, _) => CustomScrollView(
+              error: (err, _) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   SliverRefreshControl(onRefresh: () => ref.invalidate(collectionProvider(tag!))),
-                  const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+                  SliverFillRemaining(
+                    child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+                  ),
                 ],
               ),
               data: (data) {
@@ -130,7 +133,7 @@ class CollectionSubview extends StatelessWidget {
                       PillSelector(
                         maxWidth: 200,
                         selected: c.index + 1,
-                        items: buildFullCollectionSelectionItems(context, data.lists),
+                        items: buildFullCollectionSelectionItems(context, l10n, data.lists),
                         onTap: (i) =>
                             ref.read(collectionProvider(tag!).notifier).changeIndex(i - 1),
                       ),
@@ -153,6 +156,8 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         final lists = ref.watch(collectionEntriesProvider(tag));
@@ -160,7 +165,7 @@ class _Content extends StatelessWidget {
 
         if (lists.isEmpty) {
           if (!isViewer) {
-            return const SliverFillRemaining(child: Center(child: Text('No results')));
+            return SliverFillRemaining(child: Center(child: Text(l10n.noResults)));
           }
 
           return SliverFillRemaining(
@@ -168,10 +173,10 @@ class _Content extends StatelessWidget {
               child: Column(
                 mainAxisSize: .min,
                 children: [
-                  const Text('No results'),
+                  Text(l10n.noResults),
                   TextButton(
                     onPressed: () => _searchGlobally(context, ref),
-                    child: const Text('Search Globally'),
+                    child: Text(l10n.searchGlobally),
                   ),
                 ],
               ),

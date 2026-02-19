@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/forum/forum_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -17,6 +18,8 @@ class ThreadItemList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SliverList.builder(
       itemCount: items.length,
       itemBuilder: (context, i) {
@@ -49,7 +52,7 @@ class ThreadItemList extends StatelessWidget {
                           item.userTimestamp,
                           analogClock,
                           leading: Text(
-                            item.isUserReplying ? 'replied' : 'posted',
+                            item.isUserReplying ? l10n.postsReplied : l10n.postsPosted,
                             style: TextTheme.of(context).labelSmall,
                           ),
                         ),
@@ -76,32 +79,32 @@ class ThreadItemList extends StatelessWidget {
                           children: [
                             if (item.isPinned)
                               Tooltip(
-                                message: 'Pinned',
+                                message: l10n.postsPinned,
                                 triggerMode: .tap,
                                 child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                               ),
                             if (item.isLocked)
                               Tooltip(
-                                message: 'Locked',
+                                message: l10n.postsLocked,
                                 triggerMode: .tap,
                                 child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                               ),
                             const Spacer(),
                             _buildInfoIcon(
                               context,
-                              'Views',
+                              l10n.postsViews,
                               item.viewCount.toString(),
                               Icons.remove_red_eye_outlined,
                             ),
                             _buildInfoIcon(
                               context,
-                              'Replies',
+                              l10n.replies,
                               item.replyCount.toString(),
                               Icons.reply_rounded,
                             ),
                             _buildInfoIcon(
                               context,
-                              'Likes',
+                              l10n.likes,
                               item.likeCount.toString(),
                               Icons.favorite_outline_rounded,
                             ),

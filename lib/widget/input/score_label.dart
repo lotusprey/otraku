@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class ScoreLabel extends StatelessWidget {
@@ -51,6 +52,7 @@ class ScoreLabel extends StatelessWidget {
         );
     }
 
-    return Tooltip(message: 'Score', child: content);
+    final l10n = AppLocalizations.of(context)!;
+    return Tooltip(message: l10n.entryScore, child: content);
   }
 }

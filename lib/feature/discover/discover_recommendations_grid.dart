@@ -7,6 +7,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -53,6 +54,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final coverWidth = presentationHeight / Theming.coverHtoWRatio;
 
     return CardExtension.highContrast(highContrast)(
@@ -119,7 +121,7 @@ class _Tile extends StatelessWidget {
                   child: item.mediaListStatus == null
                       ? const SizedBox()
                       : Text(
-                          item.mediaListStatus!,
+                          item.mediaListStatus!.localize(l10n, item.isMediaAnime),
                           textAlign: .left,
                           overflow: .ellipsis,
                           maxLines: 1,
@@ -130,7 +132,10 @@ class _Tile extends StatelessWidget {
                   child: item.recommendedMediaListStatus == null
                       ? const SizedBox()
                       : Text(
-                          item.recommendedMediaListStatus!,
+                          item.recommendedMediaListStatus!.localize(
+                            l10n,
+                            item.isRecommendedMediaAnime,
+                          ),
                           textAlign: .right,
                           overflow: .ellipsis,
                           maxLines: 1,

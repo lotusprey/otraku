@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -37,6 +38,8 @@ class PagedView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         ref.listen<AsyncValue>(
@@ -50,12 +53,14 @@ class PagedView<T> extends StatelessWidget {
             .unwrapPrevious()
             .when(
               loading: () => const Center(child: Loader()),
-              error: (_, _) => CustomScrollView(
+              error: (err, _) => CustomScrollView(
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
                   ?header,
-                  const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+                  SliverFillRemaining(
+                    child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+                  ),
                 ],
               ),
               data: (data) {
@@ -68,7 +73,7 @@ class PagedView<T> extends StatelessWidget {
                       SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
                       ?header,
                       data.items.isEmpty
-                          ? const SliverFillRemaining(child: Center(child: Text('No results')))
+                          ? SliverFillRemaining(child: Center(child: Text(l10n.noResults)))
                           : onData(data),
                       SliverFooter(loading: data.hasNext),
                     ],

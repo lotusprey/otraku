@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
@@ -35,9 +35,7 @@ class ReviewView extends StatelessWidget {
                     ),
                   ),
                 ),
-                SliverConstrainedView(
-                  sliver: HtmlContent(data.text, renderMode: RenderMode.sliverList),
-                ),
+                SliverConstrainedView(sliver: HtmlContent(data.text, renderMode: .sliverList)),
                 SliverToBoxAdapter(
                   child: Center(
                     child: Container(
@@ -92,6 +90,7 @@ class _RateButtons extends StatefulWidget {
 class _RateButtonsState extends State<_RateButtons> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final review = widget.review;
 
     return SliverToBoxAdapter(
@@ -116,7 +115,7 @@ class _RateButtonsState extends State<_RateButtons> {
             ],
           ),
           Text(
-            '${review.rating}/${review.totalRating} users liked this review',
+            l10n.reviewsRatingValue(review.rating, review.totalRating),
             style: TextTheme.of(context).labelMedium,
             textAlign: .center,
           ),

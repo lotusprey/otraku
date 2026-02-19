@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/debounce.dart';
 
@@ -38,8 +39,10 @@ class _SearchFieldState extends State<SearchField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Semantics(
-      label: 'Search',
+      label: l10n.search,
       child: TextField(
         controller: _ctrl,
         focusNode: widget.focusNode,
@@ -66,7 +69,7 @@ class _SearchFieldState extends State<SearchField> {
           constraints: const BoxConstraints(minHeight: 35, maxHeight: 40),
           suffixIcon: _ctrl.text.isNotEmpty
               ? IconButton(
-                  tooltip: 'Clear',
+                  tooltip: l10n.actionClear,
                   iconSize: Theming.iconSmall,
                   icon: const Icon(Icons.close_rounded),
                   color: ColorScheme.of(context).onSurface,

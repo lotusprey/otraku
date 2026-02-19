@@ -46,7 +46,7 @@ class PillSelector extends StatelessWidget {
                   horizontal: Theming.offset * 1.5,
                   vertical: Theming.offset * 0.5,
                 ),
-                child: Align(alignment: Alignment.centerLeft, child: items[i]),
+                child: Align(alignment: .centerLeft, child: items[i]),
               ),
             ),
           ),

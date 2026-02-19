@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -210,6 +211,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    final l10n = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
 
     final minHeight = minExtent;
@@ -220,7 +222,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
       children: [
         if (GoRouter.of(context).canPop())
           IconButton(
-            tooltip: 'Close',
+            tooltip: l10n.actionGoBack,
             icon: const Icon(Icons.arrow_back_ios_rounded),
             onPressed: context.back,
           )
@@ -237,7 +239,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           ),
         ...trailingTopButtons,
         IconButton(
-          tooltip: 'More',
+          tooltip: l10n.actionMore,
           icon: const Icon(Ionicons.ellipsis_horizontal),
           onPressed: siteUrl != null
               ? () => showSheet(context, SimpleSheet.link(context, siteUrl!))
@@ -262,9 +264,9 @@ class _Delegate extends SliverPersistentHeaderDelegate {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.center,
-                      tileMode: TileMode.mirror,
+                      begin: .topCenter,
+                      end: .center,
+                      tileMode: .mirror,
                       colors: [theme.colorScheme.surface, theme.colorScheme.surface.withAlpha(150)],
                     ),
                   ),
@@ -305,7 +307,7 @@ class _Delegate extends SliverPersistentHeaderDelegate {
           Material(
             color: Colors.transparent,
             child: TabBar(
-              tabAlignment: TabAlignment.center,
+              tabAlignment: .center,
               splashBorderRadius: Theming.borderRadiusSmall,
               controller: tabBarConfig!.tabCtrl,
               isScrollable: true,

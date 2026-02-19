@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -33,6 +34,8 @@ class MediaStatsSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ConstrainedView(
       child: CustomScrollView(
         controller: scrollCtrl,
@@ -43,7 +46,7 @@ class MediaStatsSubview extends StatelessWidget {
           if (stats.scoreNames.isNotEmpty)
             SliverToBoxAdapter(
               child: BarChart(
-                title: 'Score Distribution',
+                title: l10n.statisticsScoreDistribution,
                 names: stats.scoreNames.map((n) => n.toString()).toList(),
                 values: stats.scoreValues,
               ),
@@ -55,8 +58,8 @@ class MediaStatsSubview extends StatelessWidget {
                 child: SizedBox(
                   height: 200,
                   child: PieChart(
-                    title: 'Status Distribution',
-                    names: stats.statusNames,
+                    title: l10n.statisticsStatusDistribution,
+                    names: stats.statusNames.map((v) => v.localize(l10n, info.isAnime)).toList(),
                     values: stats.statusValues,
                     highContrast: highContrast,
                   ),

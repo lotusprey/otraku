@@ -229,7 +229,7 @@ class _BottomBarState extends State<_BottomBar> {
       if (widget.isEditing) ...[
         Expanded(
           child: ListView(
-            scrollDirection: Axis.horizontal,
+            scrollDirection: .horizontal,
             children: [
               _FormatButton(
                 startDelimiter: '**',

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/studio/studio_filter_provider.dart';
@@ -16,8 +17,10 @@ class StudioFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return FloatingActionButton(
-      tooltip: 'Filter',
+      tooltip: l10n.filter,
       heroTag: 'filter',
       child: const Icon(Ionicons.funnel_outline),
       onPressed: () {
@@ -35,22 +38,22 @@ class StudioFilterButton extends StatelessWidget {
               padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
               children: [
                 ChipSelector.ensureSelected(
-                  title: 'Sort',
-                  items: MediaSort.values.map((v) => (v.label, v)).toList(),
+                  title: l10n.filterSort,
+                  items: MediaSort.values.map((v) => (v.localize(l10n), v)).toList(),
                   value: filter.sort,
                   onChanged: (v) => filter = filter.copyWith(sort: v),
                   highContrast: highContrast,
                 ),
                 ChipSelector(
-                  title: 'List Presence',
-                  items: const [('In Lists', true), ('Not in Lists', false)],
+                  title: l10n.filterListPresence,
+                  items: [(l10n.filterListPresenceIn, true), (l10n.filterListPresenceNotIn, false)],
                   value: filter.inLists,
                   onChanged: (v) => filter = filter.copyWith(inLists: (v,)),
                   highContrast: highContrast,
                 ),
                 ChipSelector(
-                  title: 'Main Studio',
-                  items: const [('Is Main', true), ('Is Not Main', false)],
+                  title: l10n.filterStudioRole,
+                  items: [(l10n.filterStudioRoleMain, true), (l10n.filterStudioRoleNotMain, false)],
                   value: filter.isMain,
                   onChanged: (v) => filter = filter.copyWith(isMain: (v,)),
                   highContrast: highContrast,

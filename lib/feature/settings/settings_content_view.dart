@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
@@ -17,6 +18,7 @@ class SettingsContentSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final listPadding = MediaQuery.paddingOf(context);
     const tilePadding = EdgeInsets.only(
       bottom: Theming.offset,
@@ -34,14 +36,14 @@ class SettingsContentSubview extends StatelessWidget {
       ),
       children: [
         ExpansionTile(
-          title: const Text('Media'),
+          title: Text(l10n.media),
           initiallyExpanded: true,
           children: [
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Title Language',
-                items: TitleLanguage.values.map((v) => (v.label, v)).toList(),
+                title: l10n.settingsMediaTitleLanguage,
+                items: TitleLanguage.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: settings.titleLanguage,
                 onChanged: (v) => settings.titleLanguage = v,
                 highContrast: highContrast,
@@ -50,8 +52,8 @@ class SettingsContentSubview extends StatelessWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Character & Staff Names',
-                items: PersonNaming.values.map((v) => (v.label, v)).toList(),
+                title: l10n.settingsMediaPersonNaming,
+                items: PersonNaming.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: settings.personNaming,
                 onChanged: (v) => settings.personNaming = v,
                 highContrast: highContrast,
@@ -60,48 +62,49 @@ class SettingsContentSubview extends StatelessWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Activity Merge Time',
-                items: const [
-                  ('Never', 0),
-                  ('30 Minutes', 30),
-                  ('1 Hour', 60),
-                  ('2 Hours', 120),
-                  ('3 Hours', 180),
-                  ('6 Hours', 360),
-                  ('12 Hours', 720),
-                  ('1 Day', 1440),
-                  ('2 Days', 2880),
-                  ('3 Days', 4320),
-                  ('1 Week', 10080),
-                  ('2 Weeks', 20160),
-                  ('Always', 29160),
-                ],
+                title: l10n.settingsMediaActivityMergeTime,
+                items:
+                    (const [0, 30, 60, 120, 180, 360, 720, 1440, 2880, 4320, 10080, 20160, 29160])
+                        .map(
+                          (mins) => (
+                            switch (mins) {
+                              0 => l10n.settingsMediaActivityMergeTimeNever,
+                              < 60 => l10n.settingsMediaActivityMergeTimeMinutes(mins),
+                              < 1440 => l10n.settingsMediaActivityMergeTimeHours(mins ~/ 60),
+                              < 10080 => l10n.settingsMediaActivityMergeTimeHours(mins ~/ 1440),
+                              < 29160 => l10n.settingsMediaActivityMergeTimeWeeks(mins ~/ 10080),
+                              _ => l10n.settingsMediaActivityMergeTimeAlways,
+                            },
+                            mins,
+                          ),
+                        )
+                        .toList(),
                 value: settings.activityMergeTime,
                 onChanged: (v) => settings.activityMergeTime = v,
                 highContrast: highContrast,
               ),
             ),
             StatefulSwitchListTile(
-              title: const Text('18+ Content'),
+              title: Text(l10n.settingsMediaAdult),
               value: settings.displayAdultContent,
               onChanged: (val) => settings.displayAdultContent = val,
             ),
             StatefulSwitchListTile(
-              title: const Text('Airing Anime Notifications'),
+              title: Text(l10n.settingsMediaAiringAnimeNotifications),
               value: settings.airingNotifications,
               onChanged: (val) => settings.airingNotifications = val,
             ),
           ],
         ),
         ExpansionTile(
-          title: const Text('Lists'),
+          title: Text(l10n.list),
           initiallyExpanded: true,
           children: [
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Scoring System',
-                items: ScoreFormat.values.map((v) => (v.label, v)).toList(),
+                title: l10n.settingsListsScoringSystem,
+                items: ScoreFormat.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: settings.scoreFormat,
                 onChanged: (v) => settings.scoreFormat = v,
                 highContrast: highContrast,
@@ -110,28 +113,28 @@ class SettingsContentSubview extends StatelessWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Default Site List Sort',
-                items: EntrySort.rowOrders.map((v) => (v.label, v)).toList(),
+                title: l10n.settingsListsDefaultSiteSort,
+                items: EntrySort.rowOrders.map((v) => (v.localize(l10n), v)).toList(),
                 value: settings.defaultSort,
                 onChanged: (v) => settings.defaultSort = v,
                 highContrast: highContrast,
               ),
             ),
             StatefulCheckboxListTile(
-              title: const Text('Split Completed Anime'),
+              title: Text(l10n.settingsListsSplitAnime),
               value: settings.splitCompletedAnime,
               onChanged: (val) => settings.splitCompletedAnime = val!,
             ),
             ListTile(
-              title: const Text('Anime Custom Lists'),
+              title: Text(l10n.settingsListsCustomListsAnime(settings.animeCustomLists.length)),
               leading: const Icon(Ionicons.film_outline),
               onTap: () => showSheet(
                 context,
                 SimpleSheet(
                   initialHeight: sheetInitialHeight,
                   builder: (context, scrollCtrl) => _ListManagement(
-                    title: 'Anime Custom Lists',
-                    label: 'Anime custom list',
+                    title: l10n.settingsListsCustomListsAnime(settings.animeCustomLists.length),
+                    label: l10n.settingsListsCustomListsAnime(1),
                     items: settings.animeCustomLists,
                     scrollCtrl: scrollCtrl,
                   ),
@@ -139,20 +142,20 @@ class SettingsContentSubview extends StatelessWidget {
               ),
             ),
             StatefulCheckboxListTile(
-              title: const Text('Split Completed Manga'),
+              title: Text(l10n.settingsListsSplitManga),
               value: settings.splitCompletedManga,
               onChanged: (val) => settings.splitCompletedManga = val!,
             ),
             ListTile(
-              title: const Text('Manga Custom Lists'),
+              title: Text(l10n.settingsListsCustomListsManga(settings.mangaCustomLists.length)),
               leading: const Icon(Ionicons.book_outline),
               onTap: () => showSheet(
                 context,
                 SimpleSheet(
                   initialHeight: sheetInitialHeight,
                   builder: (context, scrollCtrl) => _ListManagement(
-                    title: 'Manga Custom Lists',
-                    label: 'Manga custom list',
+                    title: l10n.settingsListsCustomListsManga(settings.mangaCustomLists.length),
+                    label: l10n.settingsListsCustomListsManga(1),
                     items: settings.mangaCustomLists,
                     scrollCtrl: scrollCtrl,
                   ),
@@ -160,20 +163,24 @@ class SettingsContentSubview extends StatelessWidget {
               ),
             ),
             StatefulSwitchListTile(
-              title: const Text('Advanced Scoring'),
+              title: Text(l10n.settingsListsScoringAdvanced),
               value: settings.advancedScoringEnabled,
               onChanged: (val) => settings.advancedScoringEnabled = val,
             ),
             ListTile(
-              title: const Text('Advanced Score Sections'),
+              title: Text(
+                l10n.settingsListsScoringAdvancedSections(settings.advancedScoreSections.length),
+              ),
               leading: const Icon(Ionicons.star_half),
               onTap: () => showSheet(
                 context,
                 SimpleSheet(
                   initialHeight: sheetInitialHeight,
                   builder: (context, scrollCtrl) => _ListManagement(
-                    title: 'Advanced Score Sections',
-                    label: 'Advanced score section',
+                    title: l10n.settingsListsScoringAdvancedSections(
+                      settings.advancedScoreSections.length,
+                    ),
+                    label: l10n.settingsListsScoringAdvancedSections(1),
                     items: settings.advancedScoreSections,
                     scrollCtrl: scrollCtrl,
                   ),
@@ -183,19 +190,19 @@ class SettingsContentSubview extends StatelessWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('Social'),
+          title: Text(l10n.social),
           initiallyExpanded: true,
           expandedCrossAxisAlignment: .stretch,
           children: [
             for (final e in settings.disabledListActivity.entries)
               StatefulCheckboxListTile(
-                title: Text('Create ${e.key.label(null)} Activities'),
+                title: Text(l10n.settingsSocialActivityCreation(e.key.localize(l10n, null))),
                 value: !e.value,
                 onChanged: (val) => settings.disabledListActivity[e.key] = !val!,
               ),
             StatefulSwitchListTile(
-              title: const Text('Limit Messages'),
-              subtitle: const Text('Only users I follow can message me'),
+              title: Text(l10n.settingsSocialLimitMessages),
+              subtitle: Text(l10n.settingsSocialLimitMessagesDescription),
               value: settings.restrictMessagesToFollowing,
               onChanged: (val) => settings.restrictMessagesToFollowing = val,
             ),
@@ -226,6 +233,7 @@ class _ListManagement extends StatefulWidget {
 class _ListManagementState extends State<_ListManagement> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final items = widget.items;
 
     return Column(
@@ -242,7 +250,7 @@ class _ListManagementState extends State<_ListManagement> {
               ),
               const Spacer(),
               IconButton(
-                tooltip: 'Add',
+                tooltip: l10n.actionAdd,
                 icon: const Icon(Icons.add_rounded),
                 onPressed: () async {
                   final newItem = await showDialog<String?>(
@@ -250,7 +258,7 @@ class _ListManagementState extends State<_ListManagement> {
                     builder: (context) => TextInputDialog(
                       title: widget.label,
                       initialValue: '',
-                      validator: (val) => items.contains(val) ? 'Already exists.' : null,
+                      validator: (val) => items.contains(val) ? l10n.errorAlreadyExists : null,
                     ),
                   );
 
@@ -273,12 +281,12 @@ class _ListManagementState extends State<_ListManagement> {
               mainAxisSize: .min,
               children: [
                 IconButton(
-                  tooltip: 'Remove',
+                  tooltip: l10n.actionRemove,
                   icon: const Icon(Icons.delete_rounded),
                   onPressed: () => setState(() => items.removeAt(i)),
                 ),
                 IconButton(
-                  tooltip: 'Rename',
+                  tooltip: l10n.actionRename,
                   icon: const Icon(Icons.edit_rounded),
                   onPressed: () async {
                     final renamedItem = await showDialog<String?>(
@@ -287,7 +295,7 @@ class _ListManagementState extends State<_ListManagement> {
                         title: widget.label,
                         initialValue: items[i],
                         validator: (val) =>
-                            items.contains(val) && val != items[i] ? 'Already exists.' : null,
+                            items.contains(val) && val != items[i] ? l10n.errorAlreadyExists : null,
                       ),
                     );
 

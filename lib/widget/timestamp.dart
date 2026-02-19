@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class Timestamp extends StatelessWidget {
@@ -16,76 +17,67 @@ class Timestamp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final onTap = () => SnackBarExtension.show(
-      context,
-      dateTime.formattedDateTimeFromSeconds(analogClock),
-      canCopyText: true,
-    );
+    final l10n = AppLocalizations.of(context)!;
+
+    final children = [
+      leading,
+      Text(
+        _relativeTime(l10n),
+        style: TextTheme.of(context).labelSmall,
+        overflow: .ellipsis,
+        maxLines: 1,
+      ),
+    ];
 
     return Semantics(
-      onTap: onTap,
-      onTapHint: 'show absolute creation time',
-      tooltip: 'Creation Time',
+      tooltip: l10n.dateTimeCreationTime,
       child: GestureDetector(
-        onTap: onTap,
+        onTap: () => SnackBarExtension.show(
+          context,
+          dateTime.formattedDateTimeFromSeconds(analogClock),
+          canCopyText: true,
+        ),
         child: Row(
           mainAxisSize: .min,
           spacing: 5,
-          children: [
-            leading,
-            Text(
-              _relativeTime(),
-              style: TextTheme.of(context).labelSmall,
-              overflow: .ellipsis,
-              maxLines: 1,
-            ),
-          ],
+          children: switch (Directionality.of(context)) {
+            .ltr => children,
+            .rtl => children.reversed.toList(),
+          },
         ),
       ),
     );
   }
 
-  String _relativeTime() {
+  String _relativeTime(AppLocalizations l10n) {
     final diff = DateTime.now().difference(dateTime);
 
     final seconds = diff.inSeconds;
     if (seconds < 61) {
-      if (seconds > 4) return '$seconds seconds ago';
-
-      return 'just now';
+      return l10n.dateTimeAgoSeconds(seconds);
     }
 
     final minutes = diff.inMinutes;
     if (minutes < 61) {
-      if (minutes > 1) return '$minutes minutes ago';
-
-      return 'last minute';
+      return l10n.dateTimeAgoMinutes(minutes);
     }
 
     final hours = diff.inHours;
     if (hours < 25) {
-      if (hours > 1) return '$hours hours ago';
-
-      return 'last hour';
+      return l10n.dateTimeAgoHours(hours);
     }
 
     final days = diff.inDays;
     if (days < 31) {
-      if (days > 1) return '$days days ago';
-
-      return 'yesterday';
+      return l10n.dateTimeAgoDays(days);
     }
 
     final months = days ~/ 30;
     if (months < 13) {
-      if (months > 1) return '$months months ago';
-
-      return 'last month';
+      return l10n.dateTimeAgoMonths(months);
     }
 
     final years = months ~/ 12;
-    if (years > 1) return '$years years ago';
-
-    return 'last year';
+    return l10n.dateTimeAgoYears(years);
   }
 }

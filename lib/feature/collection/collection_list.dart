@@ -6,6 +6,7 @@ import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/debounce.dart';
@@ -121,6 +122,7 @@ class __TileContentState extends State<_TileContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = ColorScheme.of(context);
     final item = widget.item;
 
@@ -135,16 +137,16 @@ class __TileContentState extends State<_TileContent> {
 
     final textRailItems = <String, bool>{};
     if (item.format != null) {
-      textRailItems[item.format!.label] = false;
+      textRailItems[item.format!.localize(l10n)] = false;
     }
 
-    if (item.airingAt != null) {
-      final key = 'Ep ${item.nextEpisode} in ${item.airingAt!.timeUntil}';
+    if (item.nextEpisode != null && item.airingAt != null) {
+      final key = l10n.mediaEpisodeIn(item.nextEpisode!, item.airingAt!.timeUntil);
       textRailItems[key] = false;
     }
 
     if (item.nextEpisode != null && item.nextEpisode! - 1 > item.progress) {
-      final key = '${item.nextEpisode! - 1 - item.progress} ep behind';
+      final key = l10n.mediaEpisodesBehind(item.nextEpisode! - item.progress - 1);
       textRailItems[key] = true;
     }
 
@@ -155,7 +157,7 @@ class __TileContentState extends State<_TileContent> {
         Flexible(child: Text(widget.item.titles[0], overflow: .ellipsis, maxLines: 2)),
         TextRail(textRailItems, maxLines: 2),
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 3),
+          padding: const .symmetric(vertical: 3),
           child: SizedBox(
             height: 3,
             child: DecoratedBox(
@@ -180,7 +182,7 @@ class __TileContentState extends State<_TileContent> {
             ScoreLabel(item.score, widget.scoreFormat),
             if (item.repeat > 0)
               Tooltip(
-                message: 'Repeats',
+                message: l10n.entryRepeats,
                 child: Row(
                   mainAxisSize: .min,
                   spacing: 3,
@@ -193,14 +195,14 @@ class __TileContentState extends State<_TileContent> {
             else
               const SizedBox(),
             NotesLabel(item.notes),
-            _buildProgressButton(context),
+            _buildProgressButton(context, l10n),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildProgressButton(BuildContext context) {
+  Widget _buildProgressButton(BuildContext context, AppLocalizations l10n) {
     final item = widget.item;
     final foregroundColor = item.nextEpisode != null && item.progress + 1 < item.nextEpisode!
         ? ColorScheme.of(context).error
@@ -214,7 +216,7 @@ class __TileContentState extends State<_TileContent> {
     );
 
     if (widget.onProgressUpdated == null || item.progress == item.progressMax) {
-      return Tooltip(message: 'Progress', child: text);
+      return Tooltip(message: l10n.entryProgress, child: text);
     }
 
     return TextButton(
@@ -237,10 +239,10 @@ class __TileContentState extends State<_TileContent> {
         _lastProgress ??= item.progress;
         setState(() => item.progress++);
 
-        _debounce.run(_update);
+        _debounce.run(() => _update(l10n));
       },
       child: Tooltip(
-        message: 'Increment Progress',
+        message: l10n.entryProgressIncrement,
         child: Row(
           spacing: 3,
           children: [
@@ -252,7 +254,7 @@ class __TileContentState extends State<_TileContent> {
     );
   }
 
-  void _update() async {
+  void _update(AppLocalizations l10n) async {
     final item = widget.item;
     var updateStatus = false;
 
@@ -262,10 +264,9 @@ class __TileContentState extends State<_TileContent> {
             item.listStatus == .dropped)) {
       await ConfirmationDialog.show(
         context,
-        title: 'Update status?',
-        content: 'Do you also want to update the list status?',
-        primaryAction: 'Yes',
-        secondaryAction: 'No',
+        title: l10n.entryProgressUpdateStatusQuestion,
+        primaryAction: l10n.actionYes,
+        secondaryAction: l10n.actionNo,
         onConfirm: () => updateStatus = true,
       );
     }
@@ -278,7 +279,7 @@ class __TileContentState extends State<_TileContent> {
 
     _resetProgress();
     if (mounted) {
-      SnackBarExtension.show(context, 'Failed updating progress: $err');
+      SnackBarExtension.show(context, l10n.errorFailedUpdatingProgress(err.toString()));
     }
   }
 

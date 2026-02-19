@@ -11,7 +11,7 @@ import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class HtmlContent extends StatelessWidget {
-  const HtmlContent(this.text, {this.renderMode = RenderMode.column});
+  const HtmlContent(this.text, {this.renderMode = .column});
 
   final String text;
   final RenderMode renderMode;
@@ -82,7 +82,7 @@ class HtmlContent extends StatelessWidget {
             onTap: () =>
                 SnackBarExtension.launch(context, 'https://youtube.com/watch?v=${element.text}'),
             child: Stack(
-              alignment: Alignment.center,
+              alignment: .center,
               children: [
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 240, maxHeight: 135),

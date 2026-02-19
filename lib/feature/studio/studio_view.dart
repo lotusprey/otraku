@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/feature/studio/studio_floating_actions.dart';
 import 'package:otraku/feature/studio/studio_header.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
 import 'package:otraku/feature/studio/studio_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -46,14 +46,10 @@ class _StudioViewState extends ConsumerState<StudioView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
-        ref.listen<AsyncValue>(
-          studioMediaProvider(widget.id),
-          (_, s) =>
-              s.whenOrNull(error: (error, _) => SnackBarExtension.show(context, error.toString())),
-        );
-
         final studio = ref.watch(studioProvider(widget.id)).value;
         final studioMedia = ref.watch(studioMediaProvider(widget.id));
         final options = ref.watch(persistenceProvider.select((s) => s.options));
@@ -75,11 +71,13 @@ class _StudioViewState extends ConsumerState<StudioView> {
               const SliverFillRemaining(child: Center(child: Loader())),
             ],
           ),
-          error: (_, _) => CustomScrollView(
+          error: (err, _) => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
               header,
-              const SliverFillRemaining(child: Center(child: Text('Failed to load studio'))),
+              SliverFillRemaining(
+                child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+              ),
             ],
           ),
           data: (data) => CustomScrollView(
@@ -96,7 +94,9 @@ class _StudioViewState extends ConsumerState<StudioView> {
                   },
                 ),
               ),
-              SliverConstrainedView(sliver: _StudioMediaGrid(data.items, options.highContrast)),
+              SliverConstrainedView(
+                sliver: _StudioMediaGrid(data.items, l10n, options.highContrast),
+              ),
               SliverFooter(loading: data.hasNext),
             ],
           ),
@@ -118,9 +118,10 @@ class _StudioViewState extends ConsumerState<StudioView> {
 }
 
 class _StudioMediaGrid extends StatelessWidget {
-  const _StudioMediaGrid(this.items, this.highContrast);
+  const _StudioMediaGrid(this.items, this.l10n, this.highContrast);
 
   final List<StudioMedia> items;
+  final AppLocalizations l10n;
   final bool highContrast;
 
   @override
@@ -137,27 +138,28 @@ class _StudioMediaGrid extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 260, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, i) => _MediaTile(items[i], highContrast, coverWidth),
+        (context, i) => _MediaTile(items[i], l10n, highContrast, coverWidth),
       ),
     );
   }
 }
 
 class _MediaTile extends StatelessWidget {
-  const _MediaTile(this.item, this.highContrast, this.coverWidth);
+  const _MediaTile(this.item, this.l10n, this.highContrast, this.coverWidth);
 
   final StudioMedia item;
   final bool highContrast;
   final double coverWidth;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     final textRailItems = <String, bool>{
-      if (item.format != null) item.format!.label: false,
-      if (item.entryStatus != null) item.entryStatus!.label(true): true,
-      if (item.releaseStatus != null) item.releaseStatus!.label: false,
+      if (item.format != null) item.format!.localize(l10n): false,
+      if (item.entryStatus != null) item.entryStatus!.localize(l10n, true): true,
+      if (item.releaseStatus != null) item.releaseStatus!.localize(l10n): false,
     };
 
     return MediaRouteTile(

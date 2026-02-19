@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/discover/discover_filter_provider.dart';
 import 'package:otraku/feature/discover/discover_media_filter_view.dart';
 import 'package:otraku/feature/discover/discover_recommendations_filter_sheet.dart';
 import 'package:otraku/feature/review/reviews_filter_sheet.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/debounce.dart';
@@ -21,10 +21,27 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         final filter = ref.watch(discoverFilterProvider);
         final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
+
+        late final filterIcon = IconButton(
+          tooltip: l10n.filter,
+          icon: const Icon(Ionicons.funnel_outline),
+          onPressed: () => showSheet(
+            context,
+            DiscoverMediaFilterView(
+              ofAnime: filter.type == .anime,
+              filter: filter.mediaFilter,
+              onChanged: (mediaFilter) => ref
+                  .read(discoverFilterProvider.notifier)
+                  .update((s) => s.copyWith(mediaFilter: mediaFilter)),
+            ),
+          ),
+        );
 
         return Expanded(
           child: Row(
@@ -32,13 +49,13 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
               Expanded(
                 child: switch (filter.type) {
                   .review => Text(
-                    'Reviews',
+                    l10n.reviews,
                     maxLines: 1,
                     overflow: .ellipsis,
                     style: TextTheme.of(context).bodyMedium,
                   ),
                   .recommendation => Text(
-                    'Recommendations',
+                    l10n.recommendations,
                     maxLines: 1,
                     overflow: .ellipsis,
                     style: TextTheme.of(context).bodyMedium,
@@ -46,7 +63,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   _ => SearchField(
                     debounce: Debounce(),
                     focusNode: focusNode,
-                    hint: filter.type.label,
+                    hint: filter.type.localize(l10n),
                     value: filter.search,
                     onChanged: (search) => ref
                         .read(discoverFilterProvider.notifier)
@@ -56,7 +73,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
               ),
               if (filter.type == .anime)
                 IconButton(
-                  tooltip: 'Calendar',
+                  tooltip: l10n.calendar,
                   icon: const Icon(Ionicons.calendar_outline),
                   onPressed: () => context.push(Routes.calendar),
                 ),
@@ -65,14 +82,14 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   filter.mediaFilter.isActive
                       ? Badge(
                           smallSize: 10,
-                          alignment: Alignment.topLeft,
+                          alignment: .topLeft,
                           backgroundColor: ColorScheme.of(context).primary,
-                          child: _filterIcon(context, ref, filter),
+                          child: filterIcon,
                         )
-                      : _filterIcon(context, ref, filter),
+                      : filterIcon,
                 .character || .staff => _BirthdayFilter(ref),
                 .review => IconButton(
-                  tooltip: 'Filter',
+                  tooltip: l10n.filter,
                   icon: const Icon(Ionicons.funnel_outline),
                   onPressed: () => showReviewsFilterSheet(
                     context: context,
@@ -89,7 +106,7 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
                   ),
                 ),
                 .recommendation => IconButton(
-                  tooltip: 'Filter',
+                  tooltip: l10n.filter,
                   icon: const Icon(Ionicons.funnel_outline),
                   onPressed: () => showRecommendationsFilterSheet(
                     context: context,
@@ -113,23 +130,6 @@ class DiscoverTopBarTrailingContent extends StatelessWidget {
       },
     );
   }
-
-  Widget _filterIcon(BuildContext context, WidgetRef ref, DiscoverFilter filter) {
-    return IconButton(
-      tooltip: 'Filter',
-      icon: const Icon(Ionicons.funnel_outline),
-      onPressed: () => showSheet(
-        context,
-        DiscoverMediaFilterView(
-          ofAnime: filter.type == .anime,
-          filter: filter.mediaFilter,
-          onChanged: (mediaFilter) => ref
-              .read(discoverFilterProvider.notifier)
-              .update((s) => s.copyWith(mediaFilter: mediaFilter)),
-        ),
-      ),
-    );
-  }
 }
 
 class _BirthdayFilter extends StatelessWidget {
@@ -139,10 +139,11 @@ class _BirthdayFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final hasBirthday = ref.watch(discoverFilterProvider.select((s) => s.hasBirthday));
 
     final icon = IconButton(
-      tooltip: 'Birthday Filter',
+      tooltip: hasBirthday ? l10n.filterShowAll : l10n.filterShowBirthdayPeople,
       icon: const Icon(Icons.cake_outlined),
       onPressed: () => ref
           .read(discoverFilterProvider.notifier)
@@ -152,7 +153,7 @@ class _BirthdayFilter extends StatelessWidget {
     return hasBirthday
         ? Badge(
             smallSize: 10,
-            alignment: Alignment.topLeft,
+            alignment: .topLeft,
             backgroundColor: ColorScheme.of(context).primary,
             child: icon,
           )

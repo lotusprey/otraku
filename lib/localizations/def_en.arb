@@ -1,0 +1,663 @@
+{
+    "@@locale": "en",
+    "accountAdd": "Add Account",
+    "accountAddWarning": "To add more accounts, you must be logged out of the previous ones in the browser.",
+    "accountExpired": "Expired",
+    "accountExpiresIn": "Expires in {amount}",
+    "@accountExpiresIn": {
+        "description": "After how much time a login will expire",
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            }
+        }
+    },
+    "accountGuest": "Guest",
+    "accountLogIn": "Log In",
+    "accountLogInAgainQuestion": "Do you want to log in again?",
+    "accountLoginInstructions": "Log in to access this content.",
+    "accountLoginRequired": "Login Required",
+    "accountRemove": "Remove Account",
+    "accountRemoveQuestion": "Remove Account?",
+    "accountSessionExpired": "Session Expired",
+    "accountSwitch": "Switch Account",
+    "actionAdd": "Add",
+    "actionAgreementAgree": "Agree",
+    "actionAgreementDisagree": "Disagree",
+    "actionApply": "Apply",
+    "actionCancel": "Cancel",
+    "actionClear": "Clear",
+    "actionCollectionLoad": "Load Entire Collection",
+    "actionConfirm": "Confirm",
+    "actionCopy": "Copy",
+    "actionCopyLink": "Copy Link",
+    "actionEdit": "Edit",
+    "actionGoBack": "Go Back",
+    "actionMore": "More",
+    "actionNo": "No",
+    "actionOk": "OK",
+    "actionOpenInBrowser": "Open in Browser",
+    "actionRemove": "Remove",
+    "actionRename": "Rename",
+    "actionReset": "Reset",
+    "actionSave": "Save",
+    "actionSpoilersHide": "Hide Spoilers",
+    "actionSpoilersShow": "Show Spoilers",
+    "actionYes": "Yes",
+    "activities": "Activities",
+    "all": "All",
+    "animeCollection": "Anime Collection",
+    "appName": "Otraku",
+    "@appName": {
+        "description": "Application name"
+    },
+    "calendar": "Calendar",
+    "characters": "Characters",
+    "comments": "Comments",
+    "country": "Country",
+    "countryChina": "China",
+    "countryJapan": "Japan",
+    "countrySouthKorea": "South Korea",
+    "countryTaiwan": "Taiwan",
+    "dateTimeAgoDays": "{count, plural, =1{1 day ago} other{{count} days ago}}",
+    "@dateTimeAgoDays": {
+        "description": "Past relative time in days",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeAgoHours": "{count, plural, =1{1 hour ago} other{{count} horus ago}}",
+    "@dateTimeAgoHours": {
+        "description": "Past relative time in hours",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeAgoMinutes": "{count, plural, =1{1 minute ago} other{{count} minutes ago}}",
+    "@dateTimeAgoMinutes": {
+        "description": "Past relative time in minutes",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeAgoMonths": "{count, plural, =1{1 month ago} other{{count} months ago}}",
+    "@dateTimeAgoMonths": {
+        "description": "Past relative time in months",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeAgoSeconds": "{count, plural, =1{1 second ago} other{{count} seconds ago}}",
+    "@dateTimeAgoSeconds": {
+        "description": "Past relative time in seconds",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeAgoYears": "{count, plural, =1{1 year ago} other{{count} years ago}}",
+    "@dateTimeAgoYears": {
+        "description": "Past relative time in years",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "dateTimeCreationTime": "Creation Time",
+    "dateTimePresent": "Present",
+    "discover": "Discover",
+    "discoverCategories": "{count, plural, =1{Discover Category} other{Discover Categories}}",
+    "@discoverCategories": {
+        "description": "Browsable categories",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "enter": "Enter",
+    "entryChangedDateCompletion": "Completion date changed",
+    "entryChangedDateCompletionAndProgress": "Completion date & progress changed",
+    "entryChangedDateCompletionAndStatus": "Completion date & status changed",
+    "entryChangedDateStart": "Start date changed",
+    "entryChangedDateStartAndStatus": "Start date & status changed",
+    "entryChangedStatus": "Status changed",
+    "entryChangedStatusAndProgress": "Status & progress changed",
+    "entryComment": "Comment",
+    "entryCustomLists": "Custom Lists",
+    "entryDateCompleted": "Completed",
+    "entryDateStarted": "Started",
+    "entryHiddenFromStatusLists": "Hidden From Status Lists",
+    "entryNotes": "Notes",
+    "entryPrivate": "Private",
+    "entryProgress": "Progress",
+    "entryProgressIncrement": "Increment Progress",
+    "entryProgressUpdateStatusQuestion": "Do you also want to update the list status?",
+    "entryProgressVolumes": "Volume Progress",
+    "entryRepeats": "Repeats",
+    "entryScore": "Score",
+    "entryScoreFaceDisliked": "Score Disliked",
+    "entryScoreFaceLiked": "Score Liked",
+    "entryScoreFaceNeutral": "Score Neutral",
+    "entryScoreRemove": "Unscore",
+    "entryScoreStars": "{count, plural, =1{Score 1 star} other{Score {count} stars}}",
+    "@entryScoreStars": {
+        "description": "Score in star format",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "entryStatus": "Status",
+    "entryStatusCompleted": "Completed",
+    "entryStatusCompletedAnime": "Completed",
+    "entryStatusCompletedManga": "Completed",
+    "entryStatusCurrent": "Current",
+    "entryStatusCurrentAnime": "Watching",
+    "entryStatusCurrentManga": "Reading",
+    "entryStatusDropped": "Dropped",
+    "entryStatusDroppedAnime": "Dropped",
+    "entryStatusDroppedManga": "Dropped",
+    "entryStatusPaused": "Paused",
+    "entryStatusPausedAnime": "Paused",
+    "entryStatusPausedManga": "Paused",
+    "entryStatusPlanning": "Planning",
+    "entryStatusPlanningAnime": "Planning",
+    "entryStatusPlanningManga": "Planning",
+    "entryStatusRepeating": "Repeating",
+    "entryStatusRepeatingAnime": "Rewatching",
+    "entryStatusRepeatingManga": "Rereading",
+    "errorAlreadyExists": "Already Exists",
+    "errorDateInvalid": "Date is invalid",
+    "errorDateInvalidRange": "Date is not in a valid range",
+    "errorFailedLoading": "Failed Loading: {error}",
+    "@errorFailedLoading": {
+        "description": "Failed http request",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorFailedReordering": "Failed Reordering: {error}",
+    "@errorFailedReordering": {
+        "description": "Failed http request for item reordering",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorFailedUpdatingProgress": "Failed Updating Progress: {error}",
+    "@errorFailedUpdatingProgress": {
+        "description": "Failed http request for updating entry progress",
+        "placeholders": {
+            "error": {
+                "type": "String"
+            }
+        }
+    },
+    "errorRequiredField": "Required Field",
+    "externalLinks": "External Links",
+    "favorites": "Favorites",
+    "favoritesAdd": "Favorite",
+    "favoritesRemove": "Unfavorite",
+    "feed": "Feed",
+    "filter": "Filter",
+    "filterActivitiesFollowed": "Followed",
+    "filterActivitiesGlobal": "Global",
+    "filterActivitiesSelf": "Self",
+    "filterAge": "Age Restriction",
+    "filterAgeAdult": "Adult",
+    "filterAgeNonAdult": "Non-Adult",
+    "filterDefaultQuestion": "Make default?",
+    "filterDefaultWarning": "The current filters and sorting will become the default.",
+    "filterLicensing": "Licensing",
+    "filterLicensingDoujin": "Doujin",
+    "filterLicensingLicensed": "Licensed",
+    "filterListPresence": "List Presence",
+    "filterListPresenceIn": "In Lists",
+    "filterListPresenceNotIn": "Not In Lists",
+    "filterNotes": "Notes",
+    "filterNotesWith": "With Notes",
+    "filterNotesWithout": "Without Notes",
+    "filterReleaseEnd": "Release End",
+    "filterReleaseStart": "Release Start",
+    "filterShowAll": "Show All",
+    "filterShowBirthdayPeople": "Show Birthday People",
+    "filterSort": "Sort",
+    "filterSortPreview": "Preview Sort",
+    "filterStudioRole": "Studio Role",
+    "filterStudioRoleMain": "Is Main",
+    "filterStudioRoleNotMain": "Is Not Main",
+    "filterVisibility": "Visibility",
+    "filterVisibilityPrivate": "Private",
+    "filterVisibilityPublic": "Public",
+    "followed": "Following",
+    "followedAdd": "Follow",
+    "followedRemove": "Unfollow",
+    "followers": "Followers",
+    "followingEachOther": "Mutual",
+    "followingThem": "Following",
+    "followingYou": "Follower",
+    "forum": "Forum",
+    "likes": "Likes",
+    "likesAdd": "Like",
+    "likesRemove": "Unlike",
+    "list": "Lists",
+    "listPreview": "Preview",
+    "listSortAdded": "Added",
+    "listSortAiring": "Airing",
+    "listSortCompleted": "Completed",
+    "listSortProgress": "Progress",
+    "listSortRating": "Rating",
+    "listSortReleased": "Released",
+    "listSortRepeats": "Repeats",
+    "listSortScore": "Score",
+    "listSortStarted": "Started",
+    "listSortTitle": "Title",
+    "listSortUpdated": "Updated",
+    "mangaCollection": "Manga Collection",
+    "media": "Media",
+    "mediaAdult": "Adult",
+    "mediaChapters": "Chapters",
+    "mediaDuration": "Duration",
+    "mediaEpisode": "Ep {episode}",
+    "@mediaEpisode": {
+        "description": "Next episode to be aired",
+        "placeholders": {
+            "episode": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaEpisodeIn": "Episode {episode} in {timeUntilEpisode}",
+    "@mediaEpisodeIn": {
+        "description": "Next episode to be aired and in what time",
+        "placeholders": {
+            "episode": {
+                "type": "int"
+            },
+            "timeUntilEpisode": {
+                "type": "String"
+            }
+        }
+    },
+    "mediaEpisodes": "Episodes",
+    "mediaEpisodesBehind": "{count, plural, =1{1 episode behind} other{{count} episodes behind}}",
+    "@mediaEpisodesBehind": {
+        "description": "How many aired episodes are left to watch",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaExternalLinks": "External Links",
+    "mediaFormat": "Formats",
+    "mediaFormatManga": "Manga",
+    "mediaFormatMovie": "Movie",
+    "mediaFormatMusic": "Music",
+    "mediaFormatNovel": "Novel",
+    "mediaFormatOna": "ONA",
+    "mediaFormatOneShot": "One Shot",
+    "mediaFormatOva": "OVA",
+    "mediaFormatSpecial": "Special",
+    "mediaFormatTv": "TV",
+    "mediaFormatTvShort": "TV Short",
+    "mediaGenres": "{count, plural, =1{Genre} other{Genres}}",
+    "@mediaGenres": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaHashtag": "Hashtag",
+    "mediaPopularity": "Popularity",
+    "mediaProducers": "{count, plural, =1{Producer} other{Producers}}",
+    "@mediaProducers": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaRelationTypeAdaptation": "Adaptation",
+    "mediaRelationTypePrequel": "Prequel",
+    "mediaRelationTypeSequel": "Sequel",
+    "mediaRelationTypeParent": "Parent",
+    "mediaRelationTypeSideStory": "Side Story",
+    "mediaRelationTypeCharacter": "Character",
+    "mediaRelationTypeSummary": "Summary",
+    "mediaRelationTypeAlternative": "Alternative",
+    "mediaRelationTypeSpinOff": "Spin Off",
+    "mediaRelationTypeOther": "Other",
+    "mediaRelationTypeSource": "Source",
+    "mediaRelationTypeCompilation": "Compilation",
+    "mediaRelationTypeContains": "Contains",
+    "mediaRelease": "Release",
+    "mediaSeason": "Season",
+    "mediaSeasonFall": "Fall",
+    "mediaSeasonSpring": "Spring",
+    "mediaSeasonSummer": "Summer",
+    "mediaSeasonWinter": "Winter",
+    "mediaSortAddedFirst": "First Added",
+    "mediaSortAddedLast": "Last Added",
+    "mediaSortFavourites": "Favourites",
+    "mediaSortPopularity": "Popularity",
+    "mediaSortReleasedEarliest": "Released Earliest",
+    "mediaSortReleasedLatest": "Released Latest",
+    "mediaSortScoreBest": "Score",
+    "mediaSortScoreWorst": "Worst Score",
+    "mediaSortTitleEnglish": "Title English",
+    "mediaSortTitleNative": "Title Native",
+    "mediaSortTitleRomaji": "Title Romaji",
+    "mediaSortTrending": "Trending",
+    "mediaSource": "{count, plural, =1{Source} other{Sources}}",
+    "@mediaSource": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaSourceOriginal": "Original",
+    "mediaSourceAnime": "Anime",
+    "mediaSourceComic": "Comic",
+    "mediaSourceDoujinshi": "Doujinshi",
+    "mediaSourceGame": "Game",
+    "mediaSourceLightNovel": "Light Novel",
+    "mediaSourceLiveAction": "Live Action",
+    "mediaSourceManga": "Manga",
+    "mediaSourceMultimediaProject": "Multimedia Project",
+    "mediaSourceNovel": "Novel",
+    "mediaSourceOther": "Other",
+    "mediaSourcePictureBook": "Picture Book",
+    "mediaSourceVideoGame": "Video Game",
+    "mediaSourceVisualNovel": "Visual Novel",
+    "mediaSourceWebNovel": "Web Novel",
+    "mediaStatus": "{count, plural, =1{Status} other{Statuses}}",
+    "@mediaStatus": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "mediaStatusCancelled": "Cancelled",
+    "mediaStatusHiatus": "Hiatus",
+    "mediaStatusReleased": "Finished",
+    "mediaStatusReleasing": "Releasing",
+    "mediaStatusUnreleased": "Not Yet Released",
+    "mediaScoreMean": "Mean Score",
+    "mediaScoreAverageWeighted": "Weighted Average Score'",
+    "mediaScoring3": "3 Smileys",
+    "mediaScoring5": "5 Stars",
+    "mediaScoring10": "10 Points",
+    "mediaScoring100": "100 Points",
+    "mediaScoring10Decimal": "10 Decimal Points",
+    "mediaTitleEnglish": "English",
+    "mediaTitleNative": "Native",
+    "mediaTitleRomaji": "Romaji",
+    "mediaTitleSynonym": "Synonym",
+    "mediaType": "Media Type",
+    "mediaTypeAnime": "Anime",
+    "mediaTypeManga": "Manga",
+    "mediaVolumes": "Volumes",
+    "numberDecrement": "Decrement",
+    "numberIncrement": "Increment",
+    "numberMinimum": "Minimum {number}",
+    "@numberMinimum": {
+        "description": "Minimum number value",
+        "placeholders": {
+            "number": {
+                "type": "num"
+            }
+        }
+    },
+    "numberMaximum": "Maximum {number}",
+    "@numberMaximum": {
+        "description": "Maximum number value",
+        "placeholders": {
+            "number": {
+                "type": "num"
+            }
+        }
+    },
+    "noEntries": "No entries",
+    "noResults": "No results",
+    "notifications": "Notifications",
+    "overview": "Overview",
+    "personInfoAge": "Age",
+    "personInfoBirth": "Age",
+    "personInfoBloodType": "Blood Type",
+    "personInfoDeath": "Death",
+    "personInfoGender": "Gender",
+    "personInfoHomeTown": "Home Town",
+    "personInfoNameAlternative": "Alternative",
+    "personInfoNameAlternativeSpoiler": "Alternative Spoiler",
+    "personInfoNameFull": "Full",
+    "personInfoNameNative": "Native",
+    "personInfoYearsActive": "Years Active",
+    "postsAdd": "New Post",
+    "postsLikes": "Likes",
+    "postsLocked": "Locked",
+    "postsPinned": "Pinned",
+    "postsPosted": "posted",
+    "postsReplied": "replied",
+    "postsReplies": "Replies",
+    "postsViews": "Views",
+    "profile": "Profile",
+    "random": "Random",
+    "recommendations": "Recommendations",
+    "related": "Related",
+    "replies": "Replies",
+    "repliesAdd": "Reply",
+    "reviews": "Reviews",
+    "reviewsBy": "review by",
+    "reviewsOfBy": "Review of {mediaTitle} by {userName}",
+    "@reviewsOfBy": {
+        "description": "The media being reviewed and the reviewer",
+        "placeholders": {
+            "mediaTitle": {
+                "type": "String"
+            },
+            "userName": {
+                "type": "String"
+            }
+        }
+    },
+    "reviewsRating": "Review Rating",
+    "reviewsRatingValue": "{positiveRating}/{totalRating} users liked this review",
+    "@reviewsRatingValue": {
+        "description": "How many people liked the review",
+        "placeholders": {
+            "positiveRating": {
+                "type": "int"
+            },
+            "totalRating": {
+                "type": "int"
+            }
+        }
+    },
+    "reviewsScore": "Review Score",
+    "reviewsSortHighestRated": "Highest Rated",
+    "reviewsSortLowestRated": "Lowest Rated",
+    "reviewsSortNewest": "Newest",
+    "reviewsSortOldest": "Oldest",
+    "roles": "Roles",
+    "search": "Search",
+    "searchGlobally": "Search Globally",
+    "settings": "Settings",
+    "settingsAboutClearImageCache": "Clear Image Cache",
+    "settingsAboutDisclaimer": "An unofficial AniList app",
+    "settingsAboutDiscord": "Discord",
+    "settingsAboutDonate": "Donate",
+    "settingsAboutLastNotificationCheck": "Performed a notification check around {lastJobTimestamp}.",
+    "@settingsAboutLastNotificationCheck": {
+        "description": "The last time a check for new notifications was done",
+        "placeholders": {
+            "lastJobTimestamp": {
+                "type": "String"
+            }
+        }
+    },
+    "settingsAboutPrivacyPolicy": "Privacy Policy",
+    "settingsAboutResetOptions": "Reset Options",
+    "settingsAboutSourceCode": "Source Code",
+    "settingsAppearance": "Appearance",
+    "settingsAppearanceModeDark": "Dark",
+    "settingsAppearanceModeLight": "Light",
+    "settingsAppearanceModeSystem": "System",
+    "settingsButtonOrientation": "Button Orientation",
+    "settingsButtonOrientationAuto": "Auto",
+    "settingsButtonOrientationLeft": "Left",
+    "settingsButtonOrientationRight": "Right",
+    "settingsCollectionPreviews": "Collection Previews",
+    "settingsCollectionPreviewsAnime": "Anime Collection Preview",
+    "settingsCollectionPreviewsAnimeDescription": "Only load your watched/rewatched anime and expand to full collection with the floating button",
+    "settingsCollectionPreviewsManga": "Manga Collection Preview",
+    "settingsCollectionPreviewsMangaDescription": "Only load your read/reread manga and expand to full collection with the floating button",
+    "settingsConfirmExit": "Confirm Exit",
+    "settingsDefaults": "Defaults",
+    "settingsHighContrast": "High Contrast",
+    "settingsHighContrastDescription": "Pure backgrounds & outlined cards",
+    "settingsHomeTab": "Home Tab",
+    "settingsImageQuality": "Image Quality",
+    "settingsListsCustomListsAnime": "{count, plural, =1{Anime Custom List} other{Anime Custom Lists}}",
+    "@settingsListsCustomListsAnime": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsListsCustomListsManga": "{count, plural, =1{Manga Custom List} other{Manga Custom Lists}}",
+    "@settingsListsCustomListsManga": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsListsDefaultSiteSort": "Default Site List Sort",
+    "settingsListsScoringAdvanced": "Advanced Scoring",
+    "settingsListsScoringAdvancedSections": "{count, plural, =1{Advanced Score Section} other{Advanced Score Sections}}",
+    "@settingsListsScoringAdvancedSections": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsListsScoringSystem": "Scoring System",
+    "settingsListsSplitAnime": "Split Completed Anime",
+    "settingsListsSplitManga": "Split Completed Manga",
+    "settingsMediaActivityMergeTime": "Activity Merge Time",
+    "settingsMediaActivityMergeTimeAlways": "Always",
+    "settingsMediaActivityMergeTimeDays": "{count} Days",
+    "@settingsMediaActivityMergeTimeDays": {
+        "description": "Days that are less than a week",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsMediaActivityMergeTimeHours": "{count} Hours",
+    "@settingsMediaActivityMergeTimeHours": {
+        "description": "Hours that are less than a day",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsMediaActivityMergeTimeMinutes": "{count} Minutes",
+    "@settingsMediaActivityMergeTimeMinutes": {
+        "description": "Minutes that are less than an hour",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsMediaActivityMergeTimeNever": "Never",
+    "settingsMediaActivityMergeTimeWeeks": "{count} Weeks",
+    "@settingsMediaActivityMergeTimeWeeks": {
+        "description": "Weeks that are less than 3",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "settingsMediaAdult": "18+ Content",
+    "settingsMediaAiringAnimeNotifications": "Airing Anime Notifications",
+    "settingsMediaPersonNaming": "Character & Staff Names",
+    "settingsMediaPersonNamingNative": "Native",
+    "settingsMediaPersonNamingRomaji": "Romaji",
+    "settingsMediaPersonNamingRomajiWestern": "Romaji, Western Order",
+    "settingsMediaTitleLanguage": "Title Language",
+    "settingsMediaTitleLanguageEnglish": "English",
+    "settingsMediaTitleLanguageNative": "Native",
+    "settingsMediaTitleLanguageRomaji": "Romaji",
+    "settingsSocialActivityCreation": "Create {listStatus} activities",
+    "@settingsSocialActivityCreation": {
+        "description": "Activities will be created for media with given status",
+        "placeholders": {
+            "listStatus": {
+                "type": "String"
+            }
+        }
+    },
+    "settingsSocialLimitMessages": "Limit Messages",
+    "settingsSocialLimitMessagesDescription": "Only users I follow can message me",
+    "settingsTabAbout": "About",
+    "settingsTabApp": "App",
+    "settingsTabContent": "Content",
+    "settingsViewLayout": "View Layouts",
+    "settingsViewLayoutDetailed": "Detailed",
+    "settingsViewLayoutDiscover": "Discover View",
+    "settingsViewLayoutCollection": "Collection View",
+    "settingsViewLayoutCollectionPreview": "Collection Preview View",
+    "settingsViewLayoutSimple": "Simple",
+    "social": "Social",
+    "staff": "Staff",
+    "statistics": "Statistics",
+    "statisticsScoreDistribution": "Score Distribution",
+    "statisticsStatusDistribution": "Status Distribution",
+    "studios": "{count, plural, =1{Studio} other{Studios}}",
+    "@studios": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "subscriptionAdd": "Subscribe",
+    "subscriptionRemove": "Unsubscribe",
+    "tags": "{count, plural, =1{Tag} other{Tags}}",
+    "@tags": {
+        "description": "Media tags",
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "threads": "Threads",
+    "users": "Users"
+}

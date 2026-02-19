@@ -1,17 +1,11 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:otraku/extension/build_context_extension.dart';
-import 'package:otraku/extension/date_time_extension.dart';
-import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/feature/auth/account_picker.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/cached_image.dart';
-import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -34,6 +28,7 @@ class UserHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textRailItems = <String, bool>{};
     if (user != null) {
       if (user!.modRoles.isNotEmpty) textRailItems[user!.modRoles[0]] = false;
@@ -55,209 +50,40 @@ class UserHeader extends StatelessWidget {
             if (user?.modRoles.isNotEmpty ?? false) {
               showDialog(
                 context: context,
-                builder: (context) => TextDialog(title: 'Roles', text: user!.modRoles.join(', ')),
+                builder: (context) =>
+                    TextDialog(title: l10n.roles, text: user!.modRoles.join(', ')),
               );
             }
           },
           child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
         ),
         if (user?.createdAt != null)
-          Text('Joined ${user!.createdAt!}', style: TextTheme.of(context).labelSmall),
+          Text('Joined ${user!.createdAt!}', style: TextTheme.of(context).labelSmall), // TODO
       ],
       trailingTopButtons: [
         if (isViewer) ...[
           IconButton(
-            tooltip: 'Switch Account',
+            tooltip: l10n.accountSwitch,
             icon: const Icon(Icons.manage_accounts_outlined),
             onPressed: () =>
-                showDialog(context: context, builder: (context) => const _AccountPicker()),
+                showDialog(context: context, builder: (context) => const AccountPicker()),
           ),
           IconButton(
-            tooltip: 'Settings',
+            tooltip: l10n.settings,
             icon: const Icon(Ionicons.cog_outline),
             onPressed: () => context.push(Routes.settings),
           ),
         ] else if (user != null)
-          _FollowButton(user!, toggleFollow),
+          _FollowButton(l10n, user!, toggleFollow),
       ],
-    );
-  }
-}
-
-class _AccountPicker extends StatefulWidget {
-  const _AccountPicker();
-
-  @override
-  State<_AccountPicker> createState() => __AccountPickerState();
-}
-
-class __AccountPickerState extends State<_AccountPicker> {
-  static const _loginLink =
-      'https://anilist.co/api/v2/oauth/authorize?client_id=3535&response_type=token';
-
-  static const _imageSize = 55.0;
-
-  @override
-  Widget build(BuildContext context) {
-    const divider = SizedBox(height: 40, child: VerticalDivider(width: 10, thickness: 1));
-
-    final bodyMediumTextHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
-    final labelSmallTextHeight = context.lineHeight(TextTheme.of(context).labelSmall!);
-    final rowHeight = max(_imageSize, bodyMediumTextHeight + labelSmallTextHeight * 2) + 10;
-
-    return Dialog(
-      insetPadding: const .symmetric(vertical: 24, horizontal: Theming.offset),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadiusGeometry.all(Radius.circular(32)),
-      ),
-      child: Consumer(
-        builder: (context, ref, _) {
-          final accountGroup = ref.watch(persistenceProvider.select((s) => s.accountGroup));
-          final accounts = accountGroup.accounts;
-
-          final items = <Widget>[
-            for (int i = 0; i < accounts.length; i++)
-              SizedBox(
-                height: rowHeight,
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: .all(5),
-                      child: CachedImage(
-                        accounts[i].avatarUrl,
-                        width: _imageSize,
-                        height: _imageSize,
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: .center,
-                        crossAxisAlignment: .start,
-                        children: [
-                          Text(
-                            '${accounts[i].name} ${accounts[i].id}',
-                            overflow: .ellipsis,
-                            maxLines: 1,
-                          ),
-                          Text(
-                            DateTime.now().isBefore(accounts[i].expiration)
-                                ? 'Expires in ${accounts[i].expiration.timeUntil}'
-                                : 'Expired',
-                            style: TextTheme.of(context).labelSmall,
-                            overflow: .ellipsis,
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    divider,
-                    IconButton(
-                      tooltip: 'Remove Account',
-                      icon: const Icon(Icons.close_rounded),
-                      onPressed: () => ConfirmationDialog.show(
-                        context,
-                        title: 'Remove Account?',
-                        primaryAction: 'Yes',
-                        secondaryAction: 'No',
-                        onConfirm: () {
-                          if (i == accountGroup.accountIndex) {
-                            ref.read(persistenceProvider.notifier).switchAccount(null);
-                          }
-
-                          ref
-                              .read(persistenceProvider.notifier)
-                              .removeAccount(i)
-                              .then((_) => setState(() {}));
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-          ];
-
-          items.add(
-            SizedBox(
-              height: rowHeight,
-              child: Row(
-                children: [
-                  const Padding(
-                    padding: .all(5),
-                    child: Icon(Icons.person_rounded, size: _imageSize),
-                  ),
-                  const Expanded(child: Text('Guest')),
-                  divider,
-                  IconButton(
-                    tooltip: 'Add Account',
-                    icon: const Icon(Icons.add_rounded),
-                    onPressed: () => _addAccount(accounts.isEmpty),
-                  ),
-                ],
-              ),
-            ),
-          );
-
-          return PillSelector(
-            maxWidth: 380,
-            shrinkWrap: true,
-            selected: accountGroup.accountIndex ?? accounts.length,
-            items: items,
-            onTap: (i) async {
-              if (i == accounts.length) {
-                ref.read(persistenceProvider.notifier).switchAccount(null);
-                Navigator.pop(context);
-                return;
-              }
-
-              if (DateTime.now().isBefore(accounts[i].expiration)) {
-                ref.read(persistenceProvider.notifier).switchAccount(i);
-                Navigator.pop(context);
-                return;
-              }
-
-              var ok = false;
-              await ConfirmationDialog.show(
-                context,
-                title: 'Session expired',
-                content: 'Do you want to log in again?',
-                primaryAction: 'Yes',
-                secondaryAction: 'No',
-                onConfirm: () => ok = true,
-              );
-
-              if (ok) _addAccount(accounts.isEmpty);
-            },
-          );
-        },
-      ),
-    );
-  }
-
-  void _addAccount(bool isAccountListEmpty) {
-    if (isAccountListEmpty) {
-      SnackBarExtension.launch(context, _loginLink);
-      return;
-    }
-
-    ConfirmationDialog.show(
-      context,
-      title: 'Add an Account',
-      content:
-          'To add more accounts, make sure you\'re logged out of the previous ones in the browser.',
-      primaryAction: 'Continue',
-      secondaryAction: 'Cancel',
-      onConfirm: () {
-        if (mounted) {
-          SnackBarExtension.launch(context, _loginLink);
-        }
-      },
     );
   }
 }
 
 class _FollowButton extends StatefulWidget {
-  const _FollowButton(this.user, this.toggleFollow);
+  const _FollowButton(this.l10n, this.user, this.toggleFollow);
 
+  final AppLocalizations l10n;
   final User user;
   final Future<Object?> Function() toggleFollow;
 
@@ -269,6 +95,7 @@ class __FollowButtonState extends State<_FollowButton> {
   @override
   Widget build(BuildContext context) {
     final user = widget.user;
+    final l10n = widget.l10n;
 
     return Padding(
       padding: const .all(Theming.offset),
@@ -280,11 +107,11 @@ class __FollowButtonState extends State<_FollowButton> {
         label: Text(
           user.isFollowed
               ? user.isFollower
-                    ? 'Mutual'
-                    : 'Following'
+                    ? l10n.followingEachOther
+                    : l10n.followingThem
               : user.isFollower
-              ? 'Follower'
-              : 'Follow',
+              ? l10n.followingYou
+              : l10n.followedAdd,
         ),
         onPressed: () {
           final isFollowed = user.isFollowed;

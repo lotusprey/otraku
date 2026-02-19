@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/feature/character/character_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/table_list.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -30,6 +30,7 @@ class CharacterOverviewSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final mediaQuery = MediaQuery.of(context);
     final refreshControl = SliverRefreshControl(onRefresh: invalidate);
 
@@ -49,16 +50,16 @@ class CharacterOverviewSubview extends StatelessWidget {
           padding: const .symmetric(horizontal: Theming.offset),
           sliver: SliverMainAxisGroup(
             slivers: [
-              _NameTable(character, highContrast),
+              _NameTable(character, l10n, highContrast),
               const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
               SliverTableList([
-                if (character.dateOfBirth != null) ('Birth', character.dateOfBirth!),
-                if (character.age != null) ('Age', character.age!),
-                if (character.bloodType != null) ('Blood Type', character.bloodType!),
+                if (character.dateOfBirth != null) (l10n.personInfoBirth, character.dateOfBirth!),
+                if (character.age != null) (l10n.personInfoAge, character.age!),
+                if (character.bloodType != null) (l10n.personInfoBloodType, character.bloodType!),
               ], highContrast: highContrast),
               if (character.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: 15)),
-                HtmlContent(character.description, renderMode: RenderMode.sliverList),
+                HtmlContent(character.description, renderMode: .sliverList),
               ],
             ],
           ),
@@ -70,9 +71,10 @@ class CharacterOverviewSubview extends StatelessWidget {
 }
 
 class _NameTable extends StatefulWidget {
-  const _NameTable(this.character, this.highContrast);
+  const _NameTable(this.character, this.l10n, this.highContrast);
 
   final Character character;
+  final AppLocalizations l10n;
   final bool highContrast;
 
   @override
@@ -84,19 +86,24 @@ class __NameTableState extends State<_NameTable> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = widget.l10n;
+
     return SliverMainAxisGroup(
       slivers: [
         SliverTableList([
-          ('Full', widget.character.fullName),
-          if (widget.character.nativeName != null) ('Native', widget.character.nativeName!),
-          ...widget.character.altNames.map((s) => ('Alternative', s)),
+          (l10n.personInfoNameFull, widget.character.fullName),
+          if (widget.character.nativeName != null)
+            (l10n.personInfoNameNative, widget.character.nativeName!),
+          ...widget.character.altNames.map((s) => (l10n.personInfoNameAlternative, s)),
           if (_showSpoilers)
-            ...widget.character.altNamesSpoilers.map((s) => ('Alternative Spoiler', s)),
+            ...widget.character.altNamesSpoilers.map(
+              (s) => (l10n.personInfoNameAlternativeSpoiler, s),
+            ),
         ], highContrast: widget.highContrast),
         if (widget.character.altNamesSpoilers.isNotEmpty && !_showSpoilers)
           SliverToBoxAdapter(
             child: TextButton.icon(
-              label: const Text('Show Spoilers'),
+              label: Text(l10n.actionSpoilersShow),
               icon: const Icon(Ionicons.eye_outline),
               onPressed: () => setState(() => _showSpoilers = true),
             ),

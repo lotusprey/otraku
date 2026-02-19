@@ -1,6 +1,7 @@
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
+import 'package:otraku/localizations/gen.dart';
 
 /// Some fields are modifiable to allow for quick and simple edits.
 /// But to apply those edits, the [SettingsNotifier] should be used.
@@ -143,29 +144,39 @@ class Settings {
 }
 
 enum TitleLanguage {
-  romaji('Romaji', 'ROMAJI'),
-  english('English', 'ENGLISH'),
-  native('Native', 'NATIVE');
+  romaji('ROMAJI'),
+  english('ENGLISH'),
+  native('NATIVE');
 
-  const TitleLanguage(this.label, this.value);
+  const TitleLanguage(this.value);
 
-  final String label;
   final String value;
 
   static TitleLanguage from(String? value) =>
       TitleLanguage.values.firstWhere((v) => v.value == value, orElse: () => romaji);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    romaji => l10n.settingsMediaTitleLanguageRomaji,
+    english => l10n.settingsMediaTitleLanguageEnglish,
+    native => l10n.settingsMediaTitleLanguageNative,
+  };
 }
 
 enum PersonNaming {
-  romajiWestern('Romaji, Western Order', 'ROMAJI_WESTERN'),
-  romaji('Romaji', 'ROMAJI'),
-  native('Native', 'NATIVE');
+  romajiWestern('ROMAJI_WESTERN'),
+  romaji('ROMAJI'),
+  native('NATIVE');
 
-  const PersonNaming(this.label, this.value);
+  const PersonNaming(this.value);
 
-  final String label;
   final String value;
 
   static PersonNaming from(String? value) =>
       PersonNaming.values.firstWhere((v) => v.value == value, orElse: () => romajiWestern);
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    romajiWestern => l10n.settingsMediaPersonNamingRomajiWestern,
+    romaji => l10n.settingsMediaPersonNamingRomaji,
+    native => l10n.settingsMediaPersonNamingNative,
+  };
 }

@@ -64,8 +64,8 @@ class ReplyCard extends StatelessWidget {
               mainAxisSize: .min,
               children: [
                 UnconstrainedBox(
-                  constrainedAxis: Axis.horizontal,
-                  alignment: Alignment.topLeft,
+                  constrainedAxis: .horizontal,
+                  alignment: .topLeft,
                   child: HtmlContent(reply.text),
                 ),
                 Row(

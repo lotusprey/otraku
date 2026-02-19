@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -268,7 +267,7 @@ class _Content extends StatelessWidget {
         spacing,
         SliverToBoxAdapter(child: Text(thread.info.title, style: TextTheme.of(context).bodyMedium)),
         spacing,
-        HtmlContent(thread.info.body, renderMode: RenderMode.sliverList),
+        HtmlContent(thread.info.body, renderMode: .sliverList),
         spacing,
         if (info.media.isNotEmpty)
           SliverToBoxAdapter(

@@ -7,6 +7,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -40,6 +41,8 @@ class MediaOverviewSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     String? release;
     if (info.startDate != null) {
       if (info.endDate != null) {
@@ -54,23 +57,23 @@ class MediaOverviewSubview extends StatelessWidget {
     }
 
     final details = [
-      if (release != null) ('Release', release),
-      if (info.status != null) ('Status', info.status!.label),
-      if (info.episodes != null) ('Episodes', info.episodes!.toString()),
-      if (info.duration != null) ('Duration', info.duration!),
-      if (info.chapters != null) ('Chapters', info.chapters!.toString()),
-      if (info.volumes != null) ('Volumes', info.volumes!.toString()),
-      if (info.season != null) ('Season', info.season!),
-      if (info.source != null) ('Source', info.source!.label),
-      if (info.countryOfOrigin != null) ('Origin', info.countryOfOrigin!.label),
+      if (release != null) (l10n.mediaRelease, release),
+      if (info.status != null) (l10n.mediaStatus(1), info.status!.localize(l10n)),
+      if (info.episodes != null) (l10n.mediaEpisodes, info.episodes!.toString()),
+      if (info.duration != null) (l10n.mediaDuration, info.duration!),
+      if (info.chapters != null) (l10n.mediaChapters, info.chapters!.toString()),
+      if (info.volumes != null) (l10n.mediaVolumes, info.volumes!.toString()),
+      if (info.season != null) (l10n.mediaSeason, info.season!),
+      if (info.source != null) (l10n.mediaSource(1), info.source!.localize(l10n)),
+      if (info.countryOfOrigin != null) (l10n.country, info.countryOfOrigin!.localize(l10n)),
     ];
 
     final titles = [
-      if (info.hashtag != null) ('Hashtag', info.hashtag!),
-      if (info.romajiTitle != null) ('Romaji', info.romajiTitle!),
-      if (info.englishTitle != null) ('English', info.englishTitle!),
-      if (info.nativeTitle != null) ('Native', info.nativeTitle!),
-      ...info.synonyms.map((s) => ('Synonym', s)),
+      if (info.hashtag != null) (l10n.mediaHashtag, info.hashtag!),
+      if (info.romajiTitle != null) (l10n.mediaTitleRomaji, info.romajiTitle!),
+      if (info.englishTitle != null) (l10n.mediaTitleEnglish, info.englishTitle!),
+      if (info.nativeTitle != null) (l10n.mediaTitleNative, info.nativeTitle!),
+      ...info.synonyms.map((s) => (l10n.mediaTitleSynonym, s)),
     ];
 
     const spacing = SliverToBoxAdapter(child: SizedBox(height: Theming.offset));
@@ -78,6 +81,87 @@ class MediaOverviewSubview extends StatelessWidget {
     final refreshControl = SliverRefreshControl(
       onRefresh: () => ref.invalidate(mediaProvider(info.id)),
     );
+
+    final genres = info.genres.isNotEmpty
+        ? _Wrap(
+            title: l10n.mediaGenres(info.genres.length),
+            children: info.genres
+                .map(
+                  (v) => ActionChipExtension.highContrast(highContrast)(
+                    label: Text(v),
+                    tooltip: l10n.mediaGenres(1),
+                    onPressed: () {
+                      final notifier = ref.read(discoverFilterProvider.notifier);
+                      final filter = notifier.state.copyWith(
+                        type: info.isAnime ? .anime : .manga,
+                        search: '',
+                        mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
+                      )..mediaFilter.genreIn.add(v);
+                      notifier.state = filter;
+
+                      context.go(Routes.home(.discover));
+                    },
+                  ),
+                )
+                .toList(),
+          )
+        : null;
+
+    final studios = info.studios.isNotEmpty
+        ? _Wrap(
+            title: l10n.studios(info.studios.length),
+            children: info.studios.entries
+                .map(
+                  (v) => ActionChipExtension.highContrast(highContrast)(
+                    label: Text(v.key),
+                    tooltip: l10n.studios(1),
+                    onPressed: () => context.push(Routes.studio(v.value, v.key)),
+                  ),
+                )
+                .toList(),
+          )
+        : null;
+
+    final producers = info.producers.isNotEmpty
+        ? _Wrap(
+            title: l10n.mediaProducers(info.producers.length),
+            children: info.producers.entries
+                .map(
+                  (v) => ActionChipExtension.highContrast(highContrast)(
+                    label: Text(v.key),
+                    tooltip: l10n.mediaProducers(1),
+                    onPressed: () => context.push(Routes.studio(v.value, v.key)),
+                  ),
+                )
+                .toList(),
+          )
+        : null;
+
+    final externalLinks = info.externalLinks.isNotEmpty
+        ? _Wrap(
+            title: l10n.mediaExternalLinks,
+            children: info.externalLinks
+                .map(
+                  (v) => _Chip(
+                    label: v.countryCode == null
+                        ? Text(v.site)
+                        : Text('${v.site} ${v.countryCode}'),
+                    onTap: () => SnackBarExtension.launch(context, v.url),
+                    onLongTap: () => SnackBarExtension.copy(context, v.url),
+                    highContrast: highContrast,
+                    leading: Container(
+                      width: 15,
+                      height: 15,
+                      decoration: BoxDecoration(
+                        borderRadius: Theming.borderRadiusSmall,
+                        color: v.color,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          )
+        : null;
 
     return CustomScrollView(
       controller: scrollCtrl,
@@ -105,22 +189,22 @@ class MediaOverviewSubview extends StatelessWidget {
                       children: [
                         _IconTile(
                           text: info.favourites.toString(),
-                          tooltip: 'Favorites',
+                          tooltip: l10n.favorites,
                           icon: Icons.favorite_outline_rounded,
                         ),
                         _IconTile(
                           text: info.popularity.toString(),
-                          tooltip: 'Popularity',
+                          tooltip: l10n.mediaPopularity,
                           icon: Icons.person_outline_rounded,
                         ),
                         _IconTile(
                           text: info.averageScore.toString(),
-                          tooltip: 'Weighted Average Score',
+                          tooltip: l10n.mediaScoreAverageWeighted,
                           icon: Icons.percent_rounded,
                         ),
                         _IconTile(
                           text: info.meanScore.toString(),
-                          tooltip: 'Mean Score',
+                          tooltip: l10n.mediaScoreMean,
                           icon: Ionicons.star_half_outline,
                         ),
                       ],
@@ -130,13 +214,7 @@ class MediaOverviewSubview extends StatelessWidget {
               ),
               spacing,
               SliverTableList(details, highContrast: highContrast),
-              if (info.genres.isNotEmpty)
-                _Wrap(
-                  title: 'Genres',
-                  children: info.genres
-                      .map((genre) => _buildGenreActionChip(context, genre, highContrast))
-                      .toList(),
-                ),
+              ?genres,
               if (info.tags.isNotEmpty)
                 _TagsWrap(
                   ref: ref,
@@ -144,33 +222,9 @@ class MediaOverviewSubview extends StatelessWidget {
                   isAnime: info.isAnime,
                   highContrast: highContrast,
                 ),
-              if (info.studios.isNotEmpty)
-                _Wrap(
-                  title: 'Studios',
-                  children: info.studios.entries
-                      .map(
-                        (studio) =>
-                            _buildStudioActionChip(context, studio.key, studio.value, highContrast),
-                      )
-                      .toList(),
-                ),
-              if (info.producers.isNotEmpty)
-                _Wrap(
-                  title: 'Producers',
-                  children: info.producers.entries
-                      .map(
-                        (studio) =>
-                            _buildStudioActionChip(context, studio.key, studio.value, highContrast),
-                      )
-                      .toList(),
-                ),
-              if (info.externalLinks.isNotEmpty)
-                _Wrap(
-                  title: 'External links',
-                  children: info.externalLinks
-                      .map((link) => _buildExternalLinkChip(context, link, highContrast))
-                      .toList(),
-                ),
+              ?studios,
+              ?producers,
+              ?externalLinks,
               spacing,
               spacing,
               SliverTableList(titles, highContrast: highContrast),
@@ -183,48 +237,6 @@ class MediaOverviewSubview extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildGenreActionChip(BuildContext context, String genre, bool highContrast) {
-    return ActionChipExtension.highContrast(highContrast)(
-      label: Text(genre),
-      tooltip: 'Filter By Genre',
-      onPressed: () {
-        final notifier = ref.read(discoverFilterProvider.notifier);
-        final filter = notifier.state.copyWith(
-          type: info.isAnime ? .anime : .manga,
-          search: '',
-          mediaFilter: DiscoverMediaFilter(notifier.state.mediaFilter.sort),
-        )..mediaFilter.genreIn.add(genre);
-        notifier.state = filter;
-
-        context.go(Routes.home(.discover));
-      },
-    );
-  }
-
-  Widget _buildStudioActionChip(BuildContext context, String name, int id, bool highContrast) {
-    return ActionChipExtension.highContrast(highContrast)(
-      label: Text(name),
-      tooltip: 'Open Studio',
-      onPressed: () => context.push(Routes.studio(id, name)),
-    );
-  }
-
-  Widget _buildExternalLinkChip(BuildContext context, ExternalLink link, bool highContrast) {
-    return _Chip(
-      label: link.countryCode == null ? Text(link.site) : Text('${link.site} ${link.countryCode}'),
-      onTap: () => SnackBarExtension.launch(context, link.url),
-      onLongTap: () => SnackBarExtension.copy(context, link.url),
-      onTapHint: 'open external link',
-      onLongTapHint: 'copy external link',
-      highContrast: highContrast,
-      leading: Container(
-        width: 15,
-        height: 15,
-        decoration: BoxDecoration(borderRadius: Theming.borderRadiusSmall, color: link.color),
-      ),
     );
   }
 }
@@ -368,16 +380,17 @@ class __TagsWrapState extends State<_TagsWrap> {
         ? widget.tags
         : widget.tags.where((t) => !t.isSpoiler).toList();
 
+    final l10n = AppLocalizations.of(context)!;
     final spoilerColor = ColorScheme.of(context).error;
 
     return _Wrap(
-      title: 'Tags',
+      title: l10n.tags(tags.length),
       trailingAction: _showSpoilers != null
           ? IconButton(
               icon: _showSpoilers!
                   ? const Icon(Ionicons.eye_off_outline)
                   : const Icon(Ionicons.eye_outline),
-              tooltip: _showSpoilers! ? 'Hide Spoilers' : 'Show Spoilers',
+              tooltip: _showSpoilers! ? l10n.actionSpoilersHide : l10n.actionSpoilersShow,
               onPressed: () => setState(() => _showSpoilers = !_showSpoilers!),
             )
           : null,
@@ -391,8 +404,6 @@ class __TagsWrapState extends State<_TagsWrap> {
         '${tag.name} ${tag.rank}%',
         style: tag.isSpoiler ? TextStyle(color: spoilerColor) : null,
       ),
-      onTapHint: 'filter by this tag',
-      onLongTapHint: 'show tag description',
       highContrast: widget.highContrast,
       onTap: () {
         final notifier = widget.ref.read(discoverFilterProvider.notifier);
@@ -420,24 +431,18 @@ class _Chip extends StatelessWidget {
     this.leading,
     this.onTap,
     this.onLongTap,
-    this.onTapHint,
-    this.onLongTapHint,
   });
 
   final Widget label;
   final Widget? leading;
   final void Function()? onTap;
   final void Function()? onLongTap;
-  final String? onTapHint;
-  final String? onLongTapHint;
   final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
     return MergeSemantics(
       child: Semantics(
-        onTapHint: onTapHint,
-        onLongPressHint: onLongTapHint,
         child: GestureDetector(
           onLongPress: onLongTap,
           child: ActionChipExtension.highContrast(highContrast)(

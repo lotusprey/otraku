@@ -1,3 +1,5 @@
+import 'package:otraku/localizations/gen.dart';
+
 class Home {
   const Home({required this.didExpandAnimeCollection, required this.didExpandMangaCollection});
 
@@ -15,13 +17,17 @@ class Home {
 }
 
 enum HomeTab {
-  feed('Feed'),
-  anime('Anime'),
-  manga('Manga'),
-  discover('Discover'),
-  profile('Profile');
+  feed,
+  anime,
+  manga,
+  discover,
+  profile;
 
-  const HomeTab(this.label);
-
-  final String label;
+  String localize(AppLocalizations l10n) => switch (this) {
+    feed => l10n.feed,
+    anime => l10n.mediaTypeAnime,
+    manga => l10n.mediaTypeManga,
+    discover => l10n.discover,
+    profile => l10n.profile,
+  };
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/character/character_header.dart';
 import 'package:otraku/feature/character/character_model.dart';
 import 'package:otraku/feature/character/character_floating_actions.dart';
@@ -10,6 +9,7 @@ import 'package:otraku/feature/character/character_manga_view.dart';
 import 'package:otraku/feature/character/character_provider.dart';
 import 'package:otraku/feature/character/character_overview_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
@@ -39,12 +39,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen<AsyncValue>(characterProvider(widget.id), (_, s) {
-      if (s.hasError) {
-        SnackBarExtension.show(context, 'Failed to load character: ${s.error}');
-      }
-    });
-
+    final l10n = AppLocalizations.of(context)!;
     final character = ref.watch(characterProvider(widget.id));
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
@@ -65,6 +60,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           character: character,
           scrollCtrl: _scrollCtrl,
           toggleFavorite: toggleFavorite,
+          l10n: l10n,
         ),
         .tablet => _LargeView(
           id: widget.id,
@@ -74,6 +70,7 @@ class _CharacterViewState extends ConsumerState<CharacterView> {
           character: character,
           scrollCtrl: _scrollCtrl,
           toggleFavorite: toggleFavorite,
+          l10n: l10n,
         ),
       },
     );
@@ -89,6 +86,7 @@ class _CompactView extends StatefulWidget {
     required this.character,
     required this.scrollCtrl,
     required this.toggleFavorite,
+    required this.l10n,
   });
 
   final int id;
@@ -98,13 +96,17 @@ class _CompactView extends StatefulWidget {
   final AsyncValue<Character> character;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_CompactView> createState() => _CompactViewState();
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(length: CharacterHeader.tabsWithOverview.length, vsync: this);
+  late final _tabCtrl = TabController(
+    length: CharacterHeader.tabsWithOverview(widget.l10n).length,
+    vsync: this,
+  );
 
   @override
   void initState() {
@@ -143,7 +145,7 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
         data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.character.unwrapPrevious().when(
           loading: () => const Center(child: Loader()),
-          error: (_, _) => const Center(child: Text('Failed to load character')),
+          error: (err, _) => Center(child: Text(widget.l10n.errorFailedLoading(err.toString()))),
           data: (data) => _CharacterTabs.withOverview(
             id: widget.id,
             character: data,
@@ -165,6 +167,7 @@ class _LargeView extends StatefulWidget {
     required this.character,
     required this.scrollCtrl,
     required this.toggleFavorite,
+    required this.l10n,
   });
 
   final int id;
@@ -174,16 +177,15 @@ class _LargeView extends StatefulWidget {
   final AsyncValue<Character> character;
   final PagedController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_LargeView> createState() => _LargeViewState();
 }
 
 class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(
-    length: CharacterHeader.tabsWithoutOverview.length,
-    vsync: this,
-  );
+  late final _tabs = CharacterHeader.tabsWithoutOverview(widget.l10n);
+  late final _tabCtrl = TabController(length: _tabs.length, vsync: this);
 
   @override
   void initState() {
@@ -210,9 +212,9 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
     );
 
     return DualPaneWithTabBar(
+      tabs: _tabs,
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
-      tabs: CharacterHeader.tabsWithoutOverview,
       leftPane: widget.character.unwrapPrevious().when(
         loading: () => CustomScrollView(
           physics: Theming.bouncyPhysics,
@@ -221,11 +223,13 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
             const SliverFillRemaining(child: Center(child: Loader())),
           ],
         ),
-        error: (_, _) => CustomScrollView(
+        error: (err, _) => CustomScrollView(
           physics: Theming.bouncyPhysics,
           slivers: [
             header,
-            const SliverFillRemaining(child: Center(child: Text('Failed to load character'))),
+            SliverFillRemaining(
+              child: Center(child: Text(widget.l10n.errorFailedLoading(err.toString()))),
+            ),
           ],
         ),
         data: (data) => CharacterOverviewSubview.withHeader(

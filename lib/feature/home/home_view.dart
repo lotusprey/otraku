@@ -22,6 +22,7 @@ import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/discover/discover_view.dart';
 import 'package:otraku/feature/collection/collection_view.dart';
@@ -101,6 +102,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     ref.watch(settingsProvider.select((_) => null));
     ref.watch(tagsProvider.select((_) => null));
 
@@ -124,9 +126,9 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     final formFactor = Theming.of(context).formFactor;
 
     final topBar = TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
-      0 => const TopBar(
+      0 => TopBar(
         key: Key('feedTopBar'),
-        title: 'Feed',
+        title: l10n.feed,
         trailing: [FeedTopBarTrailingContent()],
       ),
       1 when animeCollectionTag != null => TopBar(
@@ -145,7 +147,13 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     });
 
     final navigationConfig = NavigationConfig(
-      items: _homeTabs,
+      items: {
+        l10n.feed: Ionicons.file_tray_outline,
+        l10n.mediaTypeAnime: Ionicons.film_outline,
+        l10n.mediaTypeManga: Ionicons.book_outline,
+        l10n.discover: Ionicons.compass_outline,
+        l10n.profile: Ionicons.person_outline,
+      },
       selected: _tabCtrl.index,
       onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
       onSame: (i) {
@@ -253,14 +261,6 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
       child: child,
     );
   }
-
-  static final _homeTabs = {
-    HomeTab.feed.label: Ionicons.file_tray_outline,
-    HomeTab.anime.label: Ionicons.film_outline,
-    HomeTab.manga.label: Ionicons.book_outline,
-    HomeTab.discover.label: Ionicons.compass_outline,
-    HomeTab.profile.label: Ionicons.person_outline,
-  };
 
   void _toggleSearchFocus(FocusNode node) => node.hasFocus ? node.unfocus() : node.requestFocus();
 }

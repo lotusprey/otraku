@@ -21,7 +21,7 @@ class ShadowedOverflowList extends StatelessWidget {
     return Stack(
       children: [
         ListView.builder(
-          scrollDirection: Axis.horizontal,
+          scrollDirection: .horizontal,
           padding: const .only(left: Theming.offset, right: Theming.offset / 2),
           itemExtent: itemExtent,
           itemCount: itemCount,
@@ -40,8 +40,8 @@ class ShadowedOverflowList extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+                  begin: .centerLeft,
+                  end: .centerRight,
                   colors: [
                     ColorScheme.of(context).surface,
                     ColorScheme.of(context).surface.withValues(alpha: 0),
@@ -60,8 +60,8 @@ class ShadowedOverflowList extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
+                  begin: .centerRight,
+                  end: .centerLeft,
                   colors: [
                     ColorScheme.of(context).surface,
                     ColorScheme.of(context).surface.withValues(alpha: 0),

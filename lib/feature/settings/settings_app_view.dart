@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
@@ -17,6 +18,7 @@ class SettingsAppSubview extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final listPadding = MediaQuery.paddingOf(context);
     const tilePadding = EdgeInsets.only(
       bottom: Theming.offset,
@@ -36,7 +38,7 @@ class SettingsAppSubview extends ConsumerWidget {
       ),
       children: [
         ExpansionTile(
-          title: const Text('Appearance'),
+          title: Text(l10n.settingsAppearance),
           initiallyExpanded: true,
           expandedCrossAxisAlignment: .stretch,
           children: [
@@ -47,21 +49,21 @@ class SettingsAppSubview extends ConsumerWidget {
                 right: Theming.offset,
               ),
               child: StatefulSegmentedButton(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: ThemeMode.system,
-                    label: Text('System'),
-                    icon: Icon(Icons.sync_outlined),
+                    label: Text(l10n.settingsAppearanceModeSystem),
+                    icon: const Icon(Icons.sync_outlined),
                   ),
                   ButtonSegment(
                     value: ThemeMode.light,
-                    label: Text('Light'),
-                    icon: Icon(Icons.wb_sunny_outlined),
+                    label: Text(l10n.settingsAppearanceModeLight),
+                    icon: const Icon(Icons.wb_sunny_outlined),
                   ),
                   ButtonSegment(
                     value: ThemeMode.dark,
-                    label: Text('Dark'),
-                    icon: Icon(Icons.mode_night_outlined),
+                    label: Text(l10n.settingsAppearanceModeDark),
+                    icon: const Icon(Icons.mode_night_outlined),
                   ),
                 ],
                 value: options.themeMode,
@@ -71,8 +73,8 @@ class SettingsAppSubview extends ConsumerWidget {
             ThemePreview(ref: ref, options: options),
             const SizedBox(height: Theming.offset / 2),
             StatefulSwitchListTile(
-              title: const Text('High Contrast'),
-              subtitle: const Text('Pure backgrounds & outlined cards'),
+              title: Text(l10n.settingsHighContrast),
+              subtitle: Text(l10n.settingsHighContrastDescription),
               value: options.highContrast,
               onChanged: (v) => update(options.copyWith(highContrast: v)),
             ),
@@ -83,7 +85,7 @@ class SettingsAppSubview extends ConsumerWidget {
                 right: Theming.offset,
                 bottom: Theming.offset,
               ),
-              child: const Text('Button Orientation'),
+              child: Text(l10n.settingsButtonOrientation),
             ),
             Padding(
               padding: const .only(
@@ -92,21 +94,21 @@ class SettingsAppSubview extends ConsumerWidget {
                 bottom: Theming.offset,
               ),
               child: StatefulSegmentedButton(
-                segments: const [
+                segments: [
                   ButtonSegment(
                     value: ButtonOrientation.auto,
-                    label: Text('Auto'),
-                    icon: Icon(Icons.align_horizontal_center_rounded),
+                    label: Text(l10n.settingsButtonOrientationAuto),
+                    icon: const Icon(Icons.align_horizontal_center_rounded),
                   ),
                   ButtonSegment(
                     value: ButtonOrientation.left,
-                    label: Text('Left'),
-                    icon: Icon(Icons.align_horizontal_left_rounded),
+                    label: Text(l10n.settingsButtonOrientationLeft),
+                    icon: const Icon(Icons.align_horizontal_left_rounded),
                   ),
                   ButtonSegment(
                     value: ButtonOrientation.right,
-                    label: Text('Right'),
-                    icon: Icon(Icons.align_horizontal_right_rounded),
+                    label: Text(l10n.settingsButtonOrientationRight),
+                    icon: const Icon(Icons.align_horizontal_right_rounded),
                   ),
                 ],
                 value: options.buttonOrientation,
@@ -117,36 +119,30 @@ class SettingsAppSubview extends ConsumerWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('Collection Previews'),
+          title: Text(l10n.settingsCollectionPreviews),
           children: [
             StatefulSwitchListTile(
-              title: const Text('Anime Collection Preview'),
-              subtitle: const Text(
-                'Only load your watched/rewatched anime '
-                'and expand to full collection with the floating button',
-              ),
+              title: Text(l10n.settingsCollectionPreviewsAnime),
+              subtitle: Text(l10n.settingsCollectionPreviewsAnimeDescription),
               value: options.animeCollectionPreview,
               onChanged: (v) => update(options.copyWith(animeCollectionPreview: v)),
             ),
             StatefulSwitchListTile(
-              title: const Text('Manga Collection Preview'),
-              subtitle: const Text(
-                'Only load your read/reread manga '
-                'and expand to full collection with the floating button',
-              ),
+              title: Text(l10n.settingsCollectionPreviewsManga),
+              subtitle: Text(l10n.settingsCollectionPreviewsMangaDescription),
               value: options.mangaCollectionPreview,
               onChanged: (v) => update(options.copyWith(mangaCollectionPreview: v)),
             ),
           ],
         ),
         ExpansionTile(
-          title: const Text('Defaults'),
+          title: Text(l10n.settingsDefaults),
           children: [
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Home Tab',
-                items: HomeTab.values.map((v) => (v.label, v)).toList(),
+                title: l10n.settingsHomeTab,
+                items: HomeTab.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: options.homeTab,
                 onChanged: (v) => update(options.copyWith(homeTab: v)),
                 highContrast: options.highContrast,
@@ -155,8 +151,8 @@ class SettingsAppSubview extends ConsumerWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Discover Type',
-                items: DiscoverType.values.map((v) => (v.label, v)).toList(),
+                title: l10n.discoverCategories(1),
+                items: DiscoverType.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: options.discoverType,
                 onChanged: (v) => update(options.copyWith(discoverType: v)),
                 highContrast: options.highContrast,
@@ -165,7 +161,7 @@ class SettingsAppSubview extends ConsumerWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Image Quality',
+                title: l10n.settingsImageQuality,
                 items: ImageQuality.values.map((v) => (v.label, v)).toList(),
                 value: options.imageQuality,
                 onChanged: (v) => update(options.copyWith(imageQuality: v)),
@@ -175,15 +171,15 @@ class SettingsAppSubview extends ConsumerWidget {
           ],
         ),
         ExpansionTile(
-          title: const Text('View Layouts'),
+          title: Text(l10n.settingsViewLayout),
           children: [
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Discover View',
-                items: const [
-                  ('Detailed', DiscoverItemView.detailed),
-                  ('Simple', DiscoverItemView.simple),
+                title: l10n.settingsViewLayoutDiscover,
+                items: [
+                  (l10n.settingsViewLayoutDetailed, DiscoverItemView.detailed),
+                  (l10n.settingsViewLayoutSimple, DiscoverItemView.simple),
                 ],
                 value: options.discoverItemView,
                 onChanged: (v) => update(options.copyWith(discoverItemView: v)),
@@ -193,10 +189,10 @@ class SettingsAppSubview extends ConsumerWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Collection View',
-                items: const [
-                  ('Detailed', CollectionItemView.detailed),
-                  ('Simple', CollectionItemView.simple),
+                title: l10n.settingsViewLayoutCollection,
+                items: [
+                  (l10n.settingsViewLayoutDetailed, CollectionItemView.detailed),
+                  (l10n.settingsViewLayoutSimple, CollectionItemView.simple),
                 ],
                 value: options.collectionItemView,
                 onChanged: (v) => update(options.copyWith(collectionItemView: v)),
@@ -206,10 +202,10 @@ class SettingsAppSubview extends ConsumerWidget {
             Padding(
               padding: tilePadding,
               child: ChipSelector.ensureSelected(
-                title: 'Collection Preview View',
-                items: const [
-                  ('Detailed', CollectionItemView.detailed),
-                  ('Simple', CollectionItemView.simple),
+                title: l10n.settingsViewLayoutCollectionPreview,
+                items: [
+                  (l10n.settingsViewLayoutDetailed, CollectionItemView.detailed),
+                  (l10n.settingsViewLayoutSimple, CollectionItemView.simple),
                 ],
                 value: options.collectionPreviewItemView,
                 onChanged: (v) => update(options.copyWith(collectionPreviewItemView: v)),
@@ -219,12 +215,12 @@ class SettingsAppSubview extends ConsumerWidget {
           ],
         ),
         StatefulSwitchListTile(
-          title: const Text('12 Hour Clock'),
+          title: Text('12 Hour Clock'),
           value: options.analogClock,
           onChanged: (v) => update(options.copyWith(analogClock: v)),
         ),
         StatefulSwitchListTile(
-          title: const Text('Confirm Exit'),
+          title: Text(l10n.settingsConfirmExit),
           value: options.confirmExit,
           onChanged: (v) => update(options.copyWith(confirmExit: v)),
         ),

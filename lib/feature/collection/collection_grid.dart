@@ -5,6 +5,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -86,11 +87,12 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final item = widget.item;
 
     if (item.progress == item.progressMax) {
       return Tooltip(
-        message: 'Progress',
+        message: l10n.entryProgress,
         child: SizedBox(
           height: 30,
           child: Center(
@@ -106,7 +108,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
     if (widget.onProgressUpdated == null) {
       return Tooltip(
-        message: 'Progress',
+        message: l10n.entryProgress,
         child: SizedBox(
           height: 30,
           child: Center(
@@ -140,10 +142,10 @@ class _IncrementButtonState extends State<_IncrementButton> {
         _lastProgress ??= item.progress;
         setState(() => item.progress++);
 
-        _debounce.run(_update);
+        _debounce.run(() => _update(l10n));
       },
       child: Tooltip(
-        message: 'Increment Progress',
+        message: l10n.entryProgressIncrement,
         child: Row(
           mainAxisAlignment: .center,
           children: [
@@ -159,7 +161,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
     );
   }
 
-  void _update() async {
+  void _update(AppLocalizations l10n) async {
     final item = widget.item;
     var updateStatus = false;
 
@@ -169,10 +171,9 @@ class _IncrementButtonState extends State<_IncrementButton> {
             item.listStatus == .dropped)) {
       await ConfirmationDialog.show(
         context,
-        title: 'Update status?',
-        content: 'Do you also want to update the list status?',
-        primaryAction: 'Yes',
-        secondaryAction: 'No',
+        title: l10n.entryProgressUpdateStatusQuestion,
+        primaryAction: l10n.actionYes,
+        secondaryAction: l10n.actionNo,
         onConfirm: () => updateStatus = true,
       );
     }
@@ -185,7 +186,7 @@ class _IncrementButtonState extends State<_IncrementButton> {
 
     _resetProgress();
     if (mounted) {
-      SnackBarExtension.show(context, 'Failed updating progress: $err');
+      SnackBarExtension.show(context, l10n.errorFailedUpdatingProgress(err.toString()));
     }
   }
 

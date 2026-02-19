@@ -39,7 +39,7 @@ class DualPaneWithTabBar extends StatelessWidget {
                 child: rightPane,
               ),
               Align(
-                alignment: Alignment.topCenter,
+                alignment: .topCenter,
                 child: ClipRect(
                   child: BackdropFilter(
                     filter: Theming.blurFilter,
@@ -50,12 +50,12 @@ class DualPaneWithTabBar extends StatelessWidget {
                       child: SizedBox(
                         height: topPadding,
                         child: Align(
-                          alignment: Alignment.bottomCenter,
+                          alignment: .bottomCenter,
                           child: Material(
                             color: Colors.transparent,
                             child: TabBar(
                               isScrollable: true,
-                              tabAlignment: TabAlignment.center,
+                              tabAlignment: .center,
                               splashBorderRadius: Theming.borderRadiusSmall,
                               tabs: tabs,
                               controller: tabCtrl,

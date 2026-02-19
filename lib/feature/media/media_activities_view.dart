@@ -8,6 +8,7 @@ import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -75,6 +76,7 @@ class _FollowingFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final filter = ref.watch(activitiesFilterProvider(tag));
 
     return SliverToBoxAdapter(
@@ -82,17 +84,17 @@ class _FollowingFilterButton extends StatelessWidget {
         MediaActivitiesFilter(:final onlyFollowing) => SizedBox(
           height: Theming.normalTapTarget,
           child: Align(
-            alignment: Alignment.topLeft,
+            alignment: .topLeft,
             child: onlyFollowing
                 ? OutlinedButton(
                     onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
                         .copyWithOnlyFollowing(false),
-                    child: const Text('Show All'),
+                    child: Text(l10n.filterActivitiesGlobal),
                   )
                 : OutlinedButton(
                     onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
                         .copyWithOnlyFollowing(true),
-                    child: const Text('Show Following Only'),
+                    child: Text(l10n.filterActivitiesFollowed),
                   ),
           ),
         ),

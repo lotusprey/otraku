@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -48,8 +49,9 @@ class _MediaReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No results')));
+      return SliverFillRemaining(child: Center(child: Text(l10n.noResults)));
     }
 
     const avatarSize = 50.0;
@@ -91,7 +93,7 @@ class _MediaReviewGrid extends StatelessWidget {
                 ),
                 verticalDivider,
                 Tooltip(
-                  message: 'Reviewer Score',
+                  message: l10n.reviewsScore,
                   triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,
@@ -104,7 +106,7 @@ class _MediaReviewGrid extends StatelessWidget {
                 ),
                 verticalDivider,
                 Tooltip(
-                  message: 'Review Rating',
+                  message: l10n.reviewsRating,
                   triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,

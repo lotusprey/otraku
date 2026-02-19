@@ -1,5 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
@@ -106,13 +107,19 @@ class ReviewsFilter {
 }
 
 enum ReviewsSort {
-  createdAtDesc('Newest', 'CREATED_AT_DESC'),
-  createdAt('Oldest', 'CREATED_AT'),
-  ratingDesc('Highest Rated', 'RATING_DESC'),
-  rating('Lowest Rated', 'RATING');
+  createdAtDesc('CREATED_AT_DESC'),
+  createdAt('CREATED_AT'),
+  ratingDesc('RATING_DESC'),
+  rating('RATING');
 
-  const ReviewsSort(this.label, this.value);
+  const ReviewsSort(this.value);
 
-  final String label;
   final String value;
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    createdAtDesc => l10n.reviewsSortNewest,
+    createdAt => l10n.reviewsSortOldest,
+    ratingDesc => l10n.reviewsSortHighestRated,
+    rating => l10n.reviewsSortLowestRated,
+  };
 }

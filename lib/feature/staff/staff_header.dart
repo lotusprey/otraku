@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/table_list.dart';
@@ -35,6 +36,8 @@ class StaffHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ContentHeader(
       imageUrl: imageUrl ?? staff?.imageUrl,
       imageHeightToWidthRatio: Theming.coverHtoWRatio,
@@ -44,28 +47,35 @@ class StaffHeader extends StatelessWidget {
       details: staff != null
           ? [
               TableList([
-                ('Favorites', staff!.favorites.toString()),
-                if (staff!.gender != null) ('Gender', staff!.gender!),
+                (l10n.favorites, staff!.favorites.toString()),
+                if (staff!.gender != null) (l10n.personInfoGender, staff!.gender!),
               ], highContrast: highContrast),
             ]
           : const [],
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview(l10n))
           : null,
-      trailingTopButtons: [if (staff != null) _FavoriteButton(staff!, toggleFavorite)],
+      trailingTopButtons: [if (staff != null) _FavoriteButton(staff!, toggleFavorite, l10n)],
     );
   }
 
-  static const tabsWithoutOverview = [Tab(text: 'Characters'), Tab(text: 'Roles')];
+  static List<Tab> tabsWithoutOverview(AppLocalizations l10n) => [
+    Tab(text: l10n.characters),
+    Tab(text: l10n.roles),
+  ];
 
-  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
+  static List<Tab> tabsWithOverview(AppLocalizations l10n) => [
+    Tab(text: l10n.overview),
+    ...tabsWithoutOverview(l10n),
+  ];
 }
 
 class _FavoriteButton extends StatefulWidget {
-  const _FavoriteButton(this.staff, this.toggleFavorite);
+  const _FavoriteButton(this.staff, this.toggleFavorite, this.l10n);
 
   final Staff staff;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -77,7 +87,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     final staff = widget.staff;
 
     return IconButton(
-      tooltip: staff.isFavorite ? 'Unfavourite' : 'Favourite',
+      tooltip: staff.isFavorite ? widget.l10n.favoritesRemove : widget.l10n.favoritesAdd,
       icon: staff.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
       onPressed: () async {
         setState(() => staff.isFavorite = !staff.isFavorite);

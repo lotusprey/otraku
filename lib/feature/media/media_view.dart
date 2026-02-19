@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/media/media_activities_view.dart';
@@ -17,6 +16,7 @@ import 'package:otraku/feature/media/media_staff_view.dart';
 import 'package:otraku/feature/media/media_stats_view.dart';
 import 'package:otraku/feature/media/media_threads_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/media/media_overview_view.dart';
 import 'package:otraku/util/theming.dart';
@@ -48,14 +48,10 @@ class _MediaViewState extends State<MediaView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
-        ref.listen<AsyncValue>(mediaProvider(widget.id), (_, s) {
-          if (s.hasError) {
-            SnackBarExtension.show(context, 'Failed to load media: ${s.error}');
-          }
-        });
-
         final media = ref.watch(mediaProvider(widget.id));
 
         final toggleFavorite = () => ref.read(mediaProvider(widget.id).notifier).toggleFavorite();
@@ -75,6 +71,7 @@ class _MediaViewState extends State<MediaView> {
               media: media,
               scrollCtrl: _scrollCtrl,
               toggleFavorite: toggleFavorite,
+              l10n: l10n,
             ),
             .tablet => _LargeView(
               id: widget.id,
@@ -83,6 +80,7 @@ class _MediaViewState extends State<MediaView> {
               media: media,
               scrollCtrl: _scrollCtrl,
               toggleFavorite: toggleFavorite,
+              l10n: l10n,
             ),
           },
         );
@@ -98,6 +96,7 @@ class _CompactView extends StatefulWidget {
     required this.media,
     required this.scrollCtrl,
     required this.toggleFavorite,
+    required this.l10n,
   });
 
   final int id;
@@ -105,13 +104,17 @@ class _CompactView extends StatefulWidget {
   final AsyncValue<Media> media;
   final ScrollController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_CompactView> createState() => _CompactViewState();
 }
 
 class _CompactViewState extends State<_CompactView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(length: MediaHeader.tabsWithOverview.length, vsync: this);
+  late final _tabCtrl = TabController(
+    length: MediaHeader.tabsWithOverview(widget.l10n).length,
+    vsync: this,
+  );
 
   @override
   void dispose() {
@@ -139,7 +142,7 @@ class _CompactViewState extends State<_CompactView> with SingleTickerProviderSta
         data: mediaQuery.copyWith(padding: mediaQuery.padding.copyWith(top: 0)),
         child: widget.media.unwrapPrevious().when(
           loading: () => const Center(child: Loader()),
-          error: (_, _) => const Center(child: Text('Failed to load media')),
+          error: (err, _) => Center(child: Text(widget.l10n.errorFailedLoading(err.toString()))),
           data: (data) => _MediaTabs.withOverview(id: widget.id, media: data, tabCtrl: _tabCtrl),
         ),
       ),
@@ -155,6 +158,7 @@ class _LargeView extends StatefulWidget {
     required this.media,
     required this.scrollCtrl,
     required this.toggleFavorite,
+    required this.l10n,
   });
 
   final int id;
@@ -163,13 +167,15 @@ class _LargeView extends StatefulWidget {
   final AsyncValue<Media> media;
   final ScrollController scrollCtrl;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_LargeView> createState() => _LargeViewState();
 }
 
 class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMixin {
-  late final _tabCtrl = TabController(length: MediaHeader.tabsWithoutOverview.length, vsync: this);
+  late final _tabs = MediaHeader.tabsWithoutOverview(widget.l10n);
+  late final _tabCtrl = TabController(length: _tabs.length, vsync: this);
 
   @override
   void dispose() {
@@ -189,9 +195,9 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
     );
 
     return DualPaneWithTabBar(
+      tabs: _tabs,
       tabCtrl: _tabCtrl,
       scrollToTop: widget.scrollCtrl.scrollToTop,
-      tabs: MediaHeader.tabsWithoutOverview,
       leftPane: widget.media.unwrapPrevious().when(
         loading: () => CustomScrollView(
           physics: Theming.bouncyPhysics,
@@ -200,11 +206,13 @@ class _LargeViewState extends State<_LargeView> with SingleTickerProviderStateMi
             const SliverFillRemaining(child: Center(child: Loader())),
           ],
         ),
-        error: (_, _) => CustomScrollView(
+        error: (err, _) => CustomScrollView(
           physics: Theming.bouncyPhysics,
           slivers: [
             header,
-            const SliverFillRemaining(child: Center(child: Text('Failed to load media'))),
+            SliverFillRemaining(
+              child: Center(child: Text(widget.l10n.errorFailedLoading(err.toString()))),
+            ),
           ],
         ),
         data: (data) => MediaOverviewSubview.withHeader(

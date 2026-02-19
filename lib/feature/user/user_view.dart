@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
+import 'package:otraku/feature/auth/login_instructions.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -60,13 +61,7 @@ class UserHomeView extends StatelessWidget {
               ),
               const SliverToBoxAdapter(
                 child: Center(
-                  child: Padding(
-                    padding: Theming.paddingAll,
-                    child: Text(
-                      'Log in with the profile icon at the top to view your account',
-                      textAlign: .center,
-                    ),
-                  ),
+                  child: Padding(padding: Theming.paddingAll, child: LoginInstructions()),
                 ),
               ),
               const SliverFooter(),
@@ -92,6 +87,8 @@ class _UserView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         final persistence = ref.watch(persistenceProvider);
@@ -136,12 +133,14 @@ class _UserView extends StatelessWidget {
         );
 
         return user.unwrapPrevious().when(
-          error: (_, _) => CustomScrollView(
+          error: (err, _) => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
               header,
               refreshControl,
-              const SliverFillRemaining(child: Center(child: Text('Failed to load user'))),
+              SliverFillRemaining(
+                child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+              ),
             ],
           ),
           loading: () => CustomScrollView(
@@ -160,7 +159,7 @@ class _UserView extends StatelessWidget {
               if (data.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
                 SliverConstrainedView(
-                  sliver: HtmlContent(data.description, renderMode: RenderMode.sliverList),
+                  sliver: HtmlContent(data.description, renderMode: .sliverList),
                 ),
               ],
               const SliverFooter(),
@@ -181,6 +180,7 @@ class _ButtonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final buttonHeight =
         Theming.iconBig +
         context.lineHeight(TextTheme.of(context).bodyMedium!) +
@@ -188,7 +188,7 @@ class _ButtonRow extends StatelessWidget {
 
     final buttons = [
       _Button(
-        label: 'Anime',
+        label: l10n.mediaTypeAnime,
         icon: Ionicons.film,
         highContrast: highContrast,
         onTap: () => isViewer
@@ -196,7 +196,7 @@ class _ButtonRow extends StatelessWidget {
             : context.push(Routes.animeCollection(userId)),
       ),
       _Button(
-        label: 'Manga',
+        label: l10n.mediaTypeManga,
         icon: Ionicons.book,
         highContrast: highContrast,
         onTap: () => isViewer
@@ -204,39 +204,38 @@ class _ButtonRow extends StatelessWidget {
             : context.push(Routes.mangaCollection(userId)),
       ),
       _Button(
-        label: 'Activities',
+        label: l10n.activities,
         icon: Ionicons.chatbox,
         highContrast: highContrast,
         onTap: () => context.push(Routes.activities(userId)),
       ),
       _Button(
-        label: 'Social',
+        label: l10n.social,
         icon: Ionicons.people_circle,
         highContrast: highContrast,
         onTap: () => context.push(Routes.social(userId)),
       ),
       _Button(
-        label: 'Favourites',
+        label: l10n.favorites,
         icon: Icons.favorite,
         highContrast: highContrast,
         onTap: () => context.push(Routes.favorites(userId)),
       ),
       _Button(
-        label: 'Statistics',
+        label: l10n.statistics,
         icon: Ionicons.stats_chart,
         highContrast: highContrast,
         onTap: () => context.push(Routes.statistics(userId)),
       ),
       _Button(
-        label: 'Reviews',
+        label: l10n.reviews,
         icon: Icons.rate_review,
         highContrast: highContrast,
         onTap: () => context.push(Routes.reviews(userId)),
       ),
     ];
 
-    return SliverPadding(
-      padding: const .symmetric(horizontal: Theming.offset, vertical: Theming.offset),
+    return SliverConstrainedView(
       sliver: SliverGrid(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,

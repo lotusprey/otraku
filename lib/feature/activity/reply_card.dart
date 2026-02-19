@@ -8,6 +8,7 @@ import 'package:otraku/feature/activity/activity_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -35,6 +36,7 @@ class ReplyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const avatarSize = 50.0;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       mainAxisSize: .min,
@@ -64,8 +66,8 @@ class ReplyCard extends StatelessWidget {
               mainAxisSize: .min,
               children: [
                 UnconstrainedBox(
-                  constrainedAxis: Axis.horizontal,
-                  alignment: Alignment.topLeft,
+                  constrainedAxis: .horizontal,
+                  alignment: .topLeft,
                   child: HtmlContent(reply.text),
                 ),
                 Row(
@@ -78,17 +80,17 @@ class ReplyCard extends StatelessWidget {
                         height: 40,
                         child: reply.authorId == ref.watch(viewerIdProvider)
                             ? Tooltip(
-                                message: 'More',
+                                message: l10n.actionMore,
                                 child: InkResponse(
                                   radius: Theming.radiusSmall.x,
-                                  onTap: () => _showMoreSheet(context, ref),
+                                  onTap: () => _showMoreSheet(context, ref, l10n),
                                   child: const Icon(
                                     Ionicons.ellipsis_horizontal,
                                     size: Theming.iconSmall,
                                   ),
                                 ),
                               )
-                            : _ReplyMentionButton(ref, activityId, reply.authorName),
+                            : _ReplyMentionButton(ref, l10n, activityId, reply.authorName),
                       ),
                     ),
                     _ReplyLikeButton(reply: reply, toggleLike: toggleLike),
@@ -103,12 +105,12 @@ class ReplyCard extends StatelessWidget {
   }
 
   /// Show a sheet with additional options.
-  void _showMoreSheet(BuildContext context, WidgetRef ref) {
+  void _showMoreSheet(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     showSheet(
       context,
       SimpleSheet.list([
         ListTile(
-          title: const Text('Edit'),
+          title: Text(l10n.actionEdit),
           leading: const Icon(Icons.edit_outlined),
           onTap: () => showSheet(
             context,
@@ -122,13 +124,13 @@ class ReplyCard extends StatelessWidget {
           ),
         ),
         ListTile(
-          title: const Text('Delete'),
+          title: Text(l10n.actionRemove),
           leading: const Icon(Ionicons.trash_outline),
           onTap: () => ConfirmationDialog.show(
             context,
-            title: 'Delete?',
-            primaryAction: 'Yes',
-            secondaryAction: 'No',
+            title: l10n.actionRemoveQuestion,
+            primaryAction: l10n.actionYes,
+            secondaryAction: l10n.actionNo,
             onConfirm: () async {
               final err = await ref
                   .read(activityProvider(activityId).notifier)
@@ -152,9 +154,10 @@ class ReplyCard extends StatelessWidget {
 }
 
 class _ReplyMentionButton extends StatelessWidget {
-  const _ReplyMentionButton(this.ref, this.activityId, this.username);
+  const _ReplyMentionButton(this.ref, this.l10n, this.activityId, this.username);
 
   final WidgetRef ref;
+  final AppLocalizations l10n;
   final int activityId;
   final String username;
 
@@ -163,7 +166,7 @@ class _ReplyMentionButton extends StatelessWidget {
     return SizedBox(
       height: 40,
       child: Tooltip(
-        message: 'Reply',
+        message: l10n.postsRepliesAdd,
         child: InkResponse(
           radius: Theming.radiusSmall.x,
           onTap: () => showSheet(
@@ -194,10 +197,12 @@ class _ReplyLikeButton extends StatefulWidget {
 class _ReplyLikeButtonState extends State<_ReplyLikeButton> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return SizedBox(
       height: 40,
       child: Tooltip(
-        message: !widget.reply.isLiked ? 'Like' : 'Unlike',
+        message: !widget.reply.isLiked ? l10n.likesAdd : l10n.likesRemove,
         child: InkResponse(
           radius: Theming.radiusSmall.x,
           onTap: _toggleLike,

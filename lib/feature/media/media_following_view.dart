@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -46,6 +47,7 @@ class _MediaFollowingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
     final tileHeight = bodyMediumLineHeight + max(bodyMediumLineHeight, 35) + 5;
 
@@ -86,7 +88,7 @@ class _MediaFollowingGrid extends StatelessWidget {
                             mainAxisAlignment: .spaceBetween,
                             children: [
                               TextRail({
-                                items[i].entryStatus.label(null): true,
+                                items[i].entryStatus.localize(l10n, null): true,
                                 items[i].progress == items[i].progressMax
                                         ? items[i].progress.toString()
                                         : '${items[i].progress}/${items[i].progressMax ?? "?"}':
@@ -99,7 +101,7 @@ class _MediaFollowingGrid extends StatelessWidget {
                                   child: Align(
                                     alignment: .centerRight,
                                     child: Tooltip(
-                                      message: 'Repeats',
+                                      message: l10n.entryRepeats,
                                       child: Row(
                                         mainAxisSize: .min,
                                         spacing: 3,

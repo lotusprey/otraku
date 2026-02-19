@@ -7,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -33,6 +34,8 @@ class MediaStatsSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return ConstrainedView(
       child: CustomScrollView(
         controller: scrollCtrl,
@@ -40,24 +43,21 @@ class MediaStatsSubview extends StatelessWidget {
           SliverToBoxAdapter(child: SizedBox(height: MediaQuery.paddingOf(context).top)),
           if (stats.ranks.isNotEmpty)
             _MediaRankGrid(ref: ref, info: info, highContrast: highContrast, ranks: stats.ranks),
-          if (stats.scoreNames.isNotEmpty)
+          if (stats.scores.isNotEmpty)
             SliverToBoxAdapter(
-              child: BarChart(
-                title: 'Score Distribution',
-                names: stats.scoreNames.map((n) => n.toString()).toList(),
-                values: stats.scoreValues,
-              ),
+              child: BarChart(title: l10n.statisticsDistributionScore, categories: stats.scores),
             ),
-          if (stats.statusNames.isNotEmpty)
+          if (stats.statuses.isNotEmpty)
             SliverToBoxAdapter(
               child: Padding(
                 padding: const .only(top: Theming.offset),
                 child: SizedBox(
                   height: 200,
                   child: PieChart(
-                    title: 'Status Distribution',
-                    names: stats.statusNames,
-                    values: stats.statusValues,
+                    title: l10n.statisticsDistributionStatus,
+                    categories: stats.statuses
+                        .map((e) => (e.$1.localize(l10n, info.isAnime), e.$2))
+                        .toList(),
                     highContrast: highContrast,
                   ),
                 ),
@@ -85,6 +85,7 @@ class _MediaRankGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
     final tileHeight = max(bodyMediumLineHeight * 2, Theming.iconBig) + 10;
 
@@ -131,7 +132,9 @@ class _MediaRankGrid extends StatelessWidget {
                       ranks[i].typeIsScore ? Ionicons.star : Icons.favorite_rounded,
                       color: ColorScheme.of(context).onSurfaceVariant,
                     ),
-                    Expanded(child: Text(ranks[i].text, overflow: .ellipsis, maxLines: 2)),
+                    Expanded(
+                      child: Text(ranks[i].localize(l10n), overflow: .ellipsis, maxLines: 2),
+                    ),
                   ],
                 ),
               ),

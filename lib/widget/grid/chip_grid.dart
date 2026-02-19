@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class ChipGrid extends StatelessWidget {
-  const ChipGrid({
-    required this.title,
-    required this.placeholder,
-    required this.children,
-    required this.onEdit,
-    this.onClear,
-  });
+  const ChipGrid({required this.title, required this.children, required this.onEdit, this.onClear});
 
   final String title;
-  final String placeholder;
   final List<Widget> children;
   final void Function() onEdit;
   final void Function()? onClear;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Column(
       mainAxisSize: .min,
       children: [
@@ -30,9 +26,9 @@ class ChipGrid extends StatelessWidget {
               SizedBox(
                 height: 35,
                 child: IconButton(
-                  key: const ValueKey('Clear'),
+                  key: const ValueKey('clear'),
                   icon: const Icon(Ionicons.close_outline),
-                  tooltip: 'Clear',
+                  tooltip: l10n.actionClear,
                   onPressed: onClear!,
                   color: ColorScheme.of(context).onSurface,
                   padding: const .symmetric(horizontal: Theming.offset),
@@ -42,7 +38,7 @@ class ChipGrid extends StatelessWidget {
               height: 35,
               child: IconButton(
                 icon: const Icon(Ionicons.add_circle_outline),
-                tooltip: 'Edit',
+                tooltip: l10n.actionEdit,
                 onPressed: onEdit,
                 color: ColorScheme.of(context).onSurface,
                 padding: const .symmetric(horizontal: Theming.offset),
@@ -55,7 +51,7 @@ class ChipGrid extends StatelessWidget {
             : SizedBox(
                 height: Theming.minTapTarget,
                 child: Center(
-                  child: Text('No $placeholder', style: TextTheme.of(context).labelMedium),
+                  child: Text(l10n.noResults, style: TextTheme.of(context).labelMedium),
                 ),
               ),
       ],

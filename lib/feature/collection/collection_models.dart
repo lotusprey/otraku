@@ -2,6 +2,7 @@ import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
@@ -485,25 +486,33 @@ enum ListStatus {
 
   final String value;
 
-  String label(bool? ofAnime) => switch (this) {
-    current =>
-      ofAnime == null
-          ? 'Current'
-          : ofAnime
-          ? 'Watching'
-          : 'Reading',
-    repeating =>
-      ofAnime == null
-          ? 'Repeating'
-          : ofAnime
-          ? 'Rewatching'
-          : 'Rereading',
-    completed => 'Completed',
-    paused => 'Paused',
-    planning => 'Planning',
-    dropped => 'Dropped',
-  };
-
   static ListStatus? from(String? value) =>
       ListStatus.values.firstWhereOrNull((v) => v.value == value);
+
+  String localize(AppLocalizations l10n, bool? ofAnime) => switch (ofAnime) {
+    null => switch (this) {
+      current => l10n.entryStatusCurrent,
+      planning => l10n.entryStatusPlanning,
+      completed => l10n.entryStatusCompleted,
+      dropped => l10n.entryStatusDropped,
+      paused => l10n.entryStatusPaused,
+      repeating => l10n.entryStatusRepeating,
+    },
+    true => switch (this) {
+      current => l10n.entryStatusCurrentAnime,
+      planning => l10n.entryStatusPlanningAnime,
+      completed => l10n.entryStatusCompletedAnime,
+      dropped => l10n.entryStatusDroppedAnime,
+      paused => l10n.entryStatusPausedAnime,
+      repeating => l10n.entryStatusRepeatingAnime,
+    },
+    false => switch (this) {
+      current => l10n.entryStatusCurrentManga,
+      planning => l10n.entryStatusPlanningManga,
+      completed => l10n.entryStatusCompletedManga,
+      dropped => l10n.entryStatusDroppedManga,
+      paused => l10n.entryStatusPausedManga,
+      repeating => l10n.entryStatusRepeatingManga,
+    },
+  };
 }

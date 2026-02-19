@@ -1,33 +1,56 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 
 enum NotificationType {
-  following('Follows', 'FOLLOWING'),
-  activityMention('Activity mentions', 'ACTIVITY_MENTION'),
-  activityMessage('Messages', 'ACTIVITY_MESSAGE'),
-  activityLike('Activity likes', 'ACTIVITY_LIKE'),
-  activityReply('Activity replies', 'ACTIVITY_REPLY'),
-  acrivityReplyLike('Activity reply likes', 'ACTIVITY_REPLY_LIKE'),
-  activityReplySubscribed('Subscribed activity replies', 'ACTIVITY_REPLY_SUBSCRIBED'),
-  threadLike('Thread likes', 'THREAD_LIKE'),
-  threadReplySubscribed('Subscribed thread replies', 'THREAD_SUBSCRIBED'),
-  threadCommentMention('Thread mentions', 'THREAD_COMMENT_MENTION'),
-  threadCommentReply('Thread comments', 'THREAD_COMMENT_REPLY'),
-  threadCommentLike('Thread comment likes', 'THREAD_COMMENT_LIKE'),
-  airing('Episode releases', 'AIRING'),
-  relatedMediaAddition('Related media additions', 'RELATED_MEDIA_ADDITION'),
-  mediaDataChange('Media changes', 'MEDIA_DATA_CHANGE'),
-  mediaMerge('Media merges', 'MEDIA_MERGE'),
-  mediaDeletion('Media deletions', 'MEDIA_DELETION'),
-  mediaSubmissionUpdate('Media submission updates', 'MEDIA_SUBMISSION_UPDATE'),
-  staffSubmissionUpdate('Staff submission updates', 'STAFF_SUBMISSION_UPDATE'),
-  characterSubmissionUpdate('Character submission updates', 'CHARACTER_SUBMISSION_UPDATE');
+  following('FOLLOWING'),
+  activityMention('ACTIVITY_MENTION'),
+  activityMessage('ACTIVITY_MESSAGE'),
+  activityLike('ACTIVITY_LIKE'),
+  activityReply('ACTIVITY_REPLY'),
+  acrivityReplyLike('ACTIVITY_REPLY_LIKE'),
+  activityReplySubscribed('ACTIVITY_REPLY_SUBSCRIBED'),
+  threadLike('THREAD_LIKE'),
+  threadReplySubscribed('THREAD_SUBSCRIBED'),
+  threadCommentMention('THREAD_COMMENT_MENTION'),
+  threadCommentReply('THREAD_COMMENT_REPLY'),
+  threadCommentLike('THREAD_COMMENT_LIKE'),
+  airing('AIRING'),
+  relatedMediaAddition('RELATED_MEDIA_ADDITION'),
+  mediaDataChange('MEDIA_DATA_CHANGE'),
+  mediaMerge('MEDIA_MERGE'),
+  mediaDeletion('MEDIA_DELETION'),
+  mediaSubmissionUpdate('MEDIA_SUBMISSION_UPDATE'),
+  staffSubmissionUpdate('STAFF_SUBMISSION_UPDATE'),
+  characterSubmissionUpdate('CHARACTER_SUBMISSION_UPDATE');
 
-  const NotificationType(this.label, this.value);
+  const NotificationType(this.value);
 
-  final String label;
   final String value;
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    following => l10n.notificationsTypeFollows,
+    activityMention => l10n.notificationsTypeActivityMentions,
+    activityMessage => l10n.notificationsTypeMessages,
+    activityLike => l10n.notificationsTypeActivityLikes,
+    activityReply => l10n.notificationsTypeActivityReplies,
+    acrivityReplyLike => l10n.notificationsTypeActivityRepliesLikes,
+    activityReplySubscribed => l10n.notificationsTypeThreadRepliesSubscribed,
+    threadLike => l10n.notificationsTypeThreadLikes,
+    threadReplySubscribed => l10n.notificationsTypeThreadRepliesSubscribed,
+    threadCommentMention => l10n.notificationsTypeThreadMentions,
+    threadCommentReply => l10n.notificationsTypeThreadComments,
+    threadCommentLike => l10n.notificationsTypeThreadCommentsLikes,
+    airing => l10n.notificationsTypeMediaAiring,
+    relatedMediaAddition => l10n.notificationsTypeMediaAdditions,
+    mediaDataChange => l10n.notificationsTypeMediaChanges,
+    mediaMerge => l10n.notificationsTypeMediaMerges,
+    mediaDeletion => l10n.notificationsTypeMediaDeletions,
+    mediaSubmissionUpdate => l10n.notificationsTypeSubmissionsUpdatesMedia,
+    staffSubmissionUpdate => l10n.notificationsTypeSubmissionsUpdatesStaff,
+    characterSubmissionUpdate => l10n.notificationsTypeSubmissionsUpdatesCharacter,
+  };
 
   static NotificationType? from(String? value) =>
       NotificationType.values.firstWhereOrNull((v) => v.value == value);

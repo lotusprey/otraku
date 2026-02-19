@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
@@ -11,6 +12,8 @@ Future<void> showReviewsFilterSheet({
   required void Function(ReviewsFilter) onDone,
   required bool highContrast,
 }) {
+  final l10n = AppLocalizations.of(context)!;
+
   return showSheet(
     context,
     SimpleSheet(
@@ -21,15 +24,15 @@ Future<void> showReviewsFilterSheet({
         padding: const .symmetric(horizontal: Theming.offset, vertical: 20),
         children: [
           ChipSelector.ensureSelected(
-            title: 'Sort',
-            items: ReviewsSort.values.map((v) => (v.label, v)).toList(),
+            title: l10n.filterSort,
+            items: ReviewsSort.values.map((v) => (v.localize(l10n), v)).toList(),
             value: filter.sort,
             onChanged: (v) => filter = filter.copyWith(sort: v),
             highContrast: highContrast,
           ),
           ChipSelector(
-            title: 'Media Type',
-            items: MediaType.values.map((v) => (v.label, v)).toList(),
+            title: l10n.mediaType,
+            items: MediaType.values.map((v) => (v.localize(l10n), v)).toList(),
             value: filter.mediaType,
             onChanged: (v) => filter = filter.copyWith(mediaType: (v,)),
             highContrast: highContrast,

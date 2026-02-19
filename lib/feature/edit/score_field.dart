@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 /// Score picker.
@@ -25,13 +26,15 @@ class _ScoreFieldState extends State<ScoreField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Padding(
       padding: const .all(Theming.offset),
       child: InputDecorator(
-        decoration: const InputDecoration(labelText: 'Score', border: OutlineInputBorder()),
+        decoration: InputDecoration(labelText: l10n.entryScore, border: const OutlineInputBorder()),
         child: switch (widget.scoreFormat ?? .point10) {
-          .point3 => _SmileyScorePicker(_value, _onChanged),
-          .point5 => _StarScorePicker(_value, _onChanged),
+          .point3 => _SmileyScorePicker(_value, _onChanged, l10n),
+          .point5 => _StarScorePicker(_value, _onChanged, l10n),
           .point10 => _TenScorePicker(_value, _onChanged),
           .point10Decimal => _TenDecimalScorePicker(_value, _onChanged),
           .point100 => _HundredScorePicker(_value, _onChanged),
@@ -47,17 +50,18 @@ class _ScoreFieldState extends State<ScoreField> {
 }
 
 class _SmileyScorePicker extends StatelessWidget {
-  const _SmileyScorePicker(this.score, this.onChanged);
+  const _SmileyScorePicker(this.score, this.onChanged, this.l10n);
 
   final double score;
   final void Function(double) onChanged;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (1, Icon(Icons.sentiment_very_dissatisfied), 'Score Disliked'),
-      (2, Icon(Icons.sentiment_neutral), 'Score Neutral'),
-      (3, Icon(Icons.sentiment_very_satisfied), 'Score Liked'),
+    final items = [
+      (1, Icon(Icons.sentiment_very_dissatisfied), l10n.entryScoreFaceDisliked),
+      (2, Icon(Icons.sentiment_neutral), l10n.entryScoreFaceNeutral),
+      (3, Icon(Icons.sentiment_very_satisfied), l10n.entryScoreFaceLiked),
     ];
 
     return Row(
@@ -65,7 +69,7 @@ class _SmileyScorePicker extends StatelessWidget {
       children: [
         for (final (i, icon, tooltip) in items)
           IconButton(
-            tooltip: score.floor() != i ? tooltip : 'Unscore',
+            tooltip: score.floor() != i ? tooltip : l10n.entryScoreRemove,
             iconSize: 30,
             icon: icon,
             color: score.floor() != i
@@ -79,10 +83,11 @@ class _SmileyScorePicker extends StatelessWidget {
 }
 
 class _StarScorePicker extends StatelessWidget {
-  const _StarScorePicker(this.score, this.onChanged);
+  const _StarScorePicker(this.score, this.onChanged, this.l10n);
 
   final double score;
   final void Function(double) onChanged;
+  final AppLocalizations l10n;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +96,7 @@ class _StarScorePicker extends StatelessWidget {
       children: [
         for (int i = 1; i < 6; i++)
           IconButton(
-            tooltip: score.floor() != i ? 'Score $i Stars' : 'Unscore',
+            tooltip: score.floor() != i ? l10n.entryScoreStars(i) : l10n.entryScoreRemove,
             iconSize: 30,
             icon: score >= i
                 ? const Icon(Icons.star_rounded)

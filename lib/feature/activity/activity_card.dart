@@ -9,6 +9,7 @@ import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -216,6 +217,7 @@ class ActivityFooter extends StatefulWidget {
 class _ActivityFooterState extends State<ActivityFooter> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final activity = widget.activity;
 
     return Row(
@@ -223,10 +225,10 @@ class _ActivityFooterState extends State<ActivityFooter> {
         SizedBox(
           height: 40,
           child: Tooltip(
-            message: 'More',
+            message: l10n.actionMore,
             child: InkResponse(
               radius: Theming.radiusSmall.x,
-              onTap: _showMoreSheet,
+              onTap: () => _showMoreSheet(l10n),
               child: const Icon(Ionicons.ellipsis_horizontal, size: Theming.iconSmall),
             ),
           ),
@@ -235,7 +237,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
         SizedBox(
           height: 40,
           child: Tooltip(
-            message: 'Replies',
+            message: l10n.postsReplies,
             child: InkResponse(
               radius: Theming.radiusSmall.x,
               onTap: widget.reply,
@@ -253,7 +255,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
         SizedBox(
           height: 40,
           child: Tooltip(
-            message: !activity.isLiked ? 'Like' : 'Unlike',
+            message: !activity.isLiked ? l10n.likesAdd : l10n.likesRemove,
             child: InkResponse(
               radius: Theming.radiusSmall.x,
               onTap: _toggleLike,
@@ -285,7 +287,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
   }
 
   /// Show a sheet with additional options.
-  void _showMoreSheet() {
+  void _showMoreSheet(AppLocalizations l10n) {
     final activity = widget.activity;
 
     showSheet(
@@ -298,7 +300,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
             if (activity is! MessageActivity) {
               ownershipButtons.add(
                 ListTile(
-                  title: activity.isPinned ? const Text('Unpin') : const Text('Pin'),
+                  title: activity.isPinned
+                      ? Text(l10n.postsPinnedRemove)
+                      : Text(l10n.postsPinnedAdd),
                   leading: activity.isPinned
                       ? const Icon(Icons.push_pin)
                       : const Icon(Icons.push_pin_outlined),
@@ -312,7 +316,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 case StatusActivity _:
                   ownershipButtons.add(
                     ListTile(
-                      title: const Text('Edit'),
+                      title: Text(l10n.actionEdit),
                       leading: const Icon(Icons.edit_outlined),
                       onTap: () => showSheet(
                         context,
@@ -329,7 +333,7 @@ class _ActivityFooterState extends State<ActivityFooter> {
                 case MessageActivity _:
                   ownershipButtons.add(
                     ListTile(
-                      title: const Text('Edit'),
+                      title: Text(l10n.actionEdit),
                       leading: const Icon(Icons.edit_outlined),
                       onTap: () => showSheet(
                         context,
@@ -353,13 +357,13 @@ class _ActivityFooterState extends State<ActivityFooter> {
 
             ownershipButtons.add(
               ListTile(
-                title: const Text('Delete'),
+                title: Text(l10n.actionRemove),
                 leading: const Icon(Ionicons.trash_outline),
                 onTap: () => ConfirmationDialog.show(
                   context,
-                  title: 'Delete?',
-                  primaryAction: 'Yes',
-                  secondaryAction: 'No',
+                  title: l10n.actionRemoveQuestion,
+                  primaryAction: l10n.actionYes,
+                  secondaryAction: l10n.actionNo,
                   onConfirm: _remove,
                 ),
               ),
@@ -369,7 +373,9 @@ class _ActivityFooterState extends State<ActivityFooter> {
           return SimpleSheet.link(context, activity.siteUrl, [
             ...ownershipButtons,
             ListTile(
-              title: !activity.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
+              title: !activity.isSubscribed
+                  ? Text(l10n.subscriptionsAdd)
+                  : Text(l10n.subscriptionsRemove),
               leading: !activity.isSubscribed
                   ? const Icon(Ionicons.notifications_outline)
                   : const Icon(Ionicons.notifications_off_outline),

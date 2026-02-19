@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/studio/studio_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 
 class StudioHeader extends StatelessWidget {
@@ -45,7 +46,12 @@ class StudioHeader extends StatelessWidget {
                 ),
               ),
             if (studio != null)
-              Flexible(child: Text('${studio!.favorites} Favorites', textAlign: .center)),
+              Flexible(
+                child: Text(
+                  AppLocalizations.of(context)!.favoritesCount(studio!.favorites),
+                  textAlign: .center,
+                ),
+              ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class MediaEditButton extends StatefulWidget {
@@ -15,9 +16,10 @@ class MediaEditButton extends StatefulWidget {
 class _MediaEditButtonState extends State<MediaEditButton> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final media = widget.media;
     return FloatingActionButton(
-      tooltip: media.entryEdit.listStatus == null ? 'Add' : 'Edit',
+      tooltip: media.entryEdit.listStatus == null ? l10n.actionAdd : l10n.actionEdit,
       child: media.entryEdit.listStatus == null
           ? const Icon(Icons.add)
           : const Icon(Icons.edit_outlined),

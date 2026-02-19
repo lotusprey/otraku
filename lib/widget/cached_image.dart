@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 
 /// A custom cache manager is needed to define exact image cap and stale period.
 final _cacheManager = CacheManager(
@@ -20,9 +20,9 @@ Future<File> getFileFromCacheOrDownload(String url) => _cacheManager.getSingleFi
 class CachedImage extends StatelessWidget {
   const CachedImage(
     this.imageUrl, {
-    this.fit = BoxFit.cover,
-    this.width = double.infinity,
-    this.height = double.infinity,
+    this.fit = .cover,
+    this.width = .infinity,
+    this.height = .infinity,
   });
 
   final String imageUrl;
@@ -40,10 +40,10 @@ class CachedImage extends StatelessWidget {
       cacheManager: _cacheManager,
       fadeInDuration: const Duration(milliseconds: 300),
       fadeOutDuration: const Duration(milliseconds: 300),
-      errorWidget: (context, _, _) => IconButton(
-        tooltip: 'Error',
-        icon: const Icon(Icons.close_outlined),
-        onPressed: () => SnackBarExtension.show(context, 'Failed to load image'),
+      errorWidget: (context, _, _) => Tooltip(
+        triggerMode: .tap,
+        message: AppLocalizations.of(context)!.errorFailedGettingFile,
+        child: const Icon(Icons.error_outline_rounded),
       ),
     );
   }

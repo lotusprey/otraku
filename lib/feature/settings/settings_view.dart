@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/feature/auth/login_instructions.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/settings/settings_provider.dart';
 import 'package:otraku/feature/settings/settings_app_view.dart';
@@ -10,6 +11,7 @@ import 'package:otraku/feature/settings/settings_content_view.dart';
 import 'package:otraku/feature/settings/settings_notifications_view.dart';
 import 'package:otraku/feature/settings/settings_about_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
 import 'package:otraku/widget/layout/hiding_floating_action_button.dart';
@@ -44,6 +46,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final viewerId = ref.watch(viewerIdProvider);
     if (viewerId == null) {
       _settings = null;
@@ -65,33 +68,27 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
     final tabs = [
       ConstrainedView(padded: false, child: SettingsAppSubview(_scrollCtrl)),
       switch (_settings) {
-        null => const Center(
-          child: Padding(
-            padding: Theming.paddingAll,
-            child: Text('Log in to view content settings'),
-          ),
+        null => Center(
+          child: Padding(padding: Theming.paddingAll, child: const LoginInstructions()),
         ),
         AsyncData(:final value) => SettingsContentSubview(_scrollCtrl, value, highContrast),
         AsyncError(:final error) => Center(
           child: Padding(
             padding: Theming.paddingAll,
-            child: Text('Failed to load: ${error.toString()}'),
+            child: Text('${l10n.errorFailedLoading}: ${error.toString()}'),
           ),
         ),
         AsyncLoading() => const Center(child: Loader()),
       },
       switch (_settings) {
-        null => const Center(
-          child: Padding(
-            padding: Theming.paddingAll,
-            child: Text('Log in to view notification settings'),
-          ),
+        null => Center(
+          child: Padding(padding: Theming.paddingAll, child: const LoginInstructions()),
         ),
         AsyncData(:final value) => SettingsNotificationsSubview(_scrollCtrl, value),
         AsyncError(:final error) => Center(
           child: Padding(
             padding: Theming.paddingAll,
-            child: Text('Failed to load: ${error.toString()}'),
+            child: Text('${l10n.errorFailedLoading}: ${error.toString()}'),
           ),
         ),
         AsyncLoading() => const Center(child: Loader()),
@@ -103,28 +100,28 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
       AsyncData(:final value) => HidingFloatingActionButton(
         key: const Key('save'),
         scrollCtrl: _scrollCtrl,
-        child: _SaveButton(() => ref.read(settingsProvider.notifier).updateSettings(value)),
+        child: _SaveButton(l10n, () => ref.read(settingsProvider.notifier).updateSettings(value)),
       ),
       _ => null,
     };
 
     return AdaptiveScaffold(
       topBar: TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
-        0 => const TopBar(key: Key('0'), title: 'App'),
-        1 => const TopBar(key: Key('1'), title: 'Content'),
-        2 => const TopBar(key: Key('2'), title: 'Notifications'),
-        _ => const TopBar(key: Key('3'), title: 'About'),
+        0 => TopBar(key: const Key('0'), title: l10n.settingsTabApp),
+        1 => TopBar(key: const Key('1'), title: l10n.settingsTabContent),
+        2 => TopBar(key: const Key('2'), title: l10n.notifications),
+        _ => TopBar(key: const Key('3'), title: l10n.settingsTabAbout),
       }),
       floatingAction: floatingAction,
       navigationConfig: NavigationConfig(
         selected: _tabCtrl.index,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         onChanged: (i) => _tabCtrl.index = i,
-        items: const {
-          'App': Ionicons.color_palette_outline,
-          'Content': Ionicons.tv_outline,
-          'Notifications': Ionicons.notifications_outline,
-          'About': Ionicons.information_outline,
+        items: {
+          l10n.settingsTabApp: Ionicons.color_palette_outline,
+          l10n.settingsTabContent: Ionicons.tv_outline,
+          l10n.notifications: Ionicons.notifications_outline,
+          l10n.settingsTabAbout: Ionicons.information_outline,
         },
       ),
       child: TabBarView(controller: _tabCtrl, children: tabs),
@@ -133,8 +130,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
 }
 
 class _SaveButton extends StatefulWidget {
-  const _SaveButton(this.onTap) : super(key: const Key('saveSettings'));
+  const _SaveButton(this.l10n, this.onTap) : super(key: const Key('saveSettings'));
 
+  final AppLocalizations l10n;
   final Future<void> Function() onTap;
 
   @override
@@ -147,7 +145,7 @@ class __SaveButtonState extends State<_SaveButton> {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      tooltip: 'Save Settings',
+      tooltip: widget.l10n.actionSave,
       onPressed: _hidden
           ? null
           : () async {

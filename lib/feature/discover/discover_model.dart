@@ -5,23 +5,31 @@ import 'package:otraku/feature/staff/staff_item_model.dart';
 import 'package:otraku/feature/studio/studio_item_model.dart';
 import 'package:otraku/feature/user/user_item_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 
 enum DiscoverType {
-  anime('Anime'),
-  manga('Manga'),
-  character('Character'),
-  staff('Staff'),
-  studio('Studio'),
-  user('User'),
-  review('Review'),
-  recommendation('Recommendation');
+  anime,
+  manga,
+  character,
+  staff,
+  studio,
+  user,
+  review,
+  recommendation;
 
-  const DiscoverType(this.label);
-
-  final String label;
+  String localize(AppLocalizations l10n) => switch (this) {
+    anime => l10n.mediaTypeAnime,
+    manga => l10n.mediaTypeManga,
+    character => l10n.characters,
+    staff => l10n.staff,
+    studio => l10n.studios(100),
+    user => l10n.users,
+    review => l10n.reviews,
+    recommendation => l10n.recommendations,
+  };
 }
 
 enum DiscoverItemView { detailed, simple }
@@ -129,11 +137,13 @@ class DiscoverRecommendationItem {
     required this.mediaTitle,
     required this.mediaCover,
     required this.mediaListStatus,
+    required this.isMediaAnime,
     required this.isMediaAdult,
     required this.recommendedMediaId,
     required this.recommendedMediaTitle,
     required this.recommendedMediaCover,
     required this.recommendedMediaListStatus,
+    required this.isRecommendedMediaAnime,
     required this.isRecommendedMediaAdult,
   });
 
@@ -147,31 +157,20 @@ class DiscoverRecommendationItem {
     final media = map['media'];
     final recommendedMedia = map['mediaRecommendation'];
 
-    final isMediaAnime = switch (media['type']) {
-      'ANIME' => true,
-      'MANGA' => false,
-      _ => null,
-    };
-    final isRecommendedMediaAnime = switch (media['type']) {
-      'ANIME' => true,
-      'MANGA' => false,
-      _ => null,
-    };
-
     return DiscoverRecommendationItem._(
       userRating: userRating,
       rating: map['rating'] ?? 0,
       mediaId: media['id'] ?? 0,
       mediaTitle: media['title']['userPreferred'] ?? '?',
       mediaCover: media['coverImage'][imageQuality.value] ?? '',
-      mediaListStatus: ListStatus.from(media['mediaListEntry']?['status'])?.label(isMediaAnime),
+      mediaListStatus: ListStatus.from(media['mediaListEntry']?['status']),
+      isMediaAnime: media['type'] == 'ANIME',
       isMediaAdult: media['isAdult'] ?? false,
       recommendedMediaId: recommendedMedia['id'] ?? 0,
       recommendedMediaTitle: recommendedMedia['title']['userPreferred'] ?? '?',
       recommendedMediaCover: recommendedMedia['coverImage'][imageQuality.value] ?? '',
-      recommendedMediaListStatus: ListStatus.from(
-        recommendedMedia['mediaListEntry']?['status'],
-      )?.label(isRecommendedMediaAnime),
+      recommendedMediaListStatus: ListStatus.from(recommendedMedia['mediaListEntry']?['status']),
+      isRecommendedMediaAnime: recommendedMedia['type'] == 'ANIME',
       isRecommendedMediaAdult: recommendedMedia['isAdult'] ?? false,
     );
   }
@@ -181,11 +180,13 @@ class DiscoverRecommendationItem {
   final int mediaId;
   final String mediaTitle;
   final String mediaCover;
-  final String? mediaListStatus;
+  final ListStatus? mediaListStatus;
+  final bool isMediaAnime;
   final bool isMediaAdult;
   final int recommendedMediaId;
   final String recommendedMediaTitle;
   final String recommendedMediaCover;
-  final String? recommendedMediaListStatus;
+  final ListStatus? recommendedMediaListStatus;
+  final bool isRecommendedMediaAnime;
   final bool isRecommendedMediaAdult;
 }

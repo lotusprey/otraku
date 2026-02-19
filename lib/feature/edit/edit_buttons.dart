@@ -4,6 +4,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/edit/edit_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
 import 'package:otraku/widget/dialogs.dart';
@@ -21,8 +22,10 @@ class EditButtons extends StatelessWidget {
     final entryEdit = this.entryEdit;
     if (entryEdit == null) return const SizedBox();
 
+    final l10n = AppLocalizations.of(context)!;
+
     final saveButton = BottomBarButton(
-      text: 'Save',
+      text: l10n.actionSave,
       icon: Ionicons.save_outline,
       onTap: () async {
         final err = await ref.read(entryEditProvider(tag).notifier).save();
@@ -34,7 +37,7 @@ class EditButtons extends StatelessWidget {
         }
 
         if (context.mounted) {
-          SnackBarExtension.show(context, 'Could not update entry');
+          SnackBarExtension.show(context, l10n.errorFailedUpdating(err.toString()));
           Navigator.pop(context);
         }
       },
@@ -43,14 +46,14 @@ class EditButtons extends StatelessWidget {
     final removeButton = entryEdit.baseEntry.entryId == null
         ? const Spacer()
         : BottomBarButton(
-            text: 'Remove',
+            text: l10n.actionRemove,
             icon: Ionicons.trash_bin_outline,
             foregroundColor: ColorScheme.of(context).error,
             onTap: () => ConfirmationDialog.show(
               context,
-              title: 'Remove entry?',
-              primaryAction: 'Yes',
-              secondaryAction: 'No',
+              title: l10n.actionRemoveQuestion,
+              primaryAction: l10n.actionYes,
+              secondaryAction: l10n.actionNo,
               onConfirm: () async {
                 final err = await ref.read(entryEditProvider(tag).notifier).remove();
 
@@ -61,7 +64,7 @@ class EditButtons extends StatelessWidget {
                 }
 
                 if (context.mounted) {
-                  SnackBarExtension.show(context, 'Could not remove entry');
+                  SnackBarExtension.show(context, l10n.errorFailedRemoving(err.toString()));
                   Navigator.pop(context);
                 }
               },

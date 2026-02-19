@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 
@@ -13,12 +14,14 @@ class ReviewHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return CustomContentHeader(
       title: review?.mediaTitle,
       siteUrl: review?.siteUrl,
       bannerUrl: review?.banner ?? bannerUrl,
       content: PreferredSize(
-        preferredSize: const Size.fromHeight(100),
+        preferredSize: const .fromHeight(100),
         child: Column(
           crossAxisAlignment: .stretch,
           children: review != null
@@ -43,7 +46,10 @@ class ReviewHeader extends StatelessWidget {
                         TextSpan(
                           style: TextTheme.of(context).bodyMedium,
                           children: [
-                            TextSpan(text: 'review by ', style: TextTheme.of(context).labelMedium),
+                            TextSpan(
+                              text: l10n.reviewsBy,
+                              style: TextTheme.of(context).labelMedium,
+                            ),
                             TextSpan(text: review!.userName),
                           ],
                         ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -47,8 +48,9 @@ class _MediaRelatedGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No results')));
+      return SliverFillRemaining(child: Center(child: Text(l10n.noResults)));
     }
 
     final textTheme = TextTheme.of(context);
@@ -61,10 +63,11 @@ class _MediaRelatedGrid extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: tileHeight),
       delegate: SliverChildBuilderDelegate(childCount: items.length, (context, i) {
         final textRailItems = <String, bool>{
-          if (items[i].relationType != null) items[i].relationType!: true,
-          if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
-          if (items[i].format != null) items[i].format!.label: false,
-          if (items[i].releaseStatus != null) items[i].releaseStatus!: false,
+          if (items[i].relationType != null) items[i].relationType!.localize(l10n): true,
+          if (items[i].entryStatus != null)
+            items[i].entryStatus!.localize(l10n, items[i].isAnime): true,
+          if (items[i].format != null) items[i].format!.localize(l10n): false,
+          if (items[i].releaseStatus != null) items[i].releaseStatus!.localize(l10n): false,
         };
 
         return CardExtension.highContrast(highContrast)(

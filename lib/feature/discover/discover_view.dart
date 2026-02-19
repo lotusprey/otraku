@@ -12,6 +12,7 @@ import 'package:otraku/feature/studio/studio_item_grid.dart';
 import 'package:otraku/feature/user/user_item_grid.dart';
 import 'package:otraku/feature/review/review_grid.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -24,6 +25,8 @@ class DiscoverSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         final options = ref.watch(persistenceProvider.select((s) => s.options));
@@ -114,7 +117,7 @@ class DiscoverSubview extends StatelessWidget {
             PillSelector(
               selected: type.index,
               maxWidth: 180,
-              items: DiscoverType.values.map((v) => Text(v.label)).toList(),
+              items: DiscoverType.values.map((v) => Text(v.localize(l10n))).toList(),
               onTap: (i) => ref
                   .read(discoverFilterProvider.notifier)
                   .update((s) => s.copyWith(type: DiscoverType.values[i])),

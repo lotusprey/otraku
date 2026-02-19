@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/review/review_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -18,6 +19,7 @@ class ReviewGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
     final labelMediumLineHeight = context.lineHeight(TextTheme.of(context).labelMedium!);
     final detailsHeight = max(
@@ -32,7 +34,7 @@ class ReviewGrid extends StatelessWidget {
         height: textHeight + 100,
       ),
       delegate: SliverChildBuilderDelegate(
-        (_, i) => _Tile(items[i], highContrast),
+        (_, i) => _Tile(items[i], l10n, highContrast),
         childCount: items.length,
       ),
     );
@@ -40,9 +42,10 @@ class ReviewGrid extends StatelessWidget {
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item, this.highContrast);
+  const _Tile(this.item, this.l10n, this.highContrast);
 
   final ReviewItem item;
+  final AppLocalizations l10n;
   final bool highContrast;
 
   @override
@@ -72,11 +75,11 @@ class _Tile extends StatelessWidget {
                 padding: .symmetric(horizontal: Theming.offset, vertical: 5),
                 child: Column(
                   crossAxisAlignment: .stretch,
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: .spaceEvenly,
                   spacing: 5,
                   children: [
                     Text(
-                      'Review of ${item.mediaTitle} by ${item.userName}',
+                      l10n.reviewsOfBy(item.mediaTitle, item.userName),
                       style: TextTheme.of(context).bodyMedium,
                       overflow: .ellipsis,
                       maxLines: 2,

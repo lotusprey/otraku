@@ -6,7 +6,7 @@ class PillSelector extends StatelessWidget {
     required this.selected,
     required this.items,
     required this.onTap,
-    this.maxWidth = double.infinity,
+    this.maxWidth = .infinity,
     this.shrinkWrap = false,
     this.scrollCtrl,
   });
@@ -46,7 +46,7 @@ class PillSelector extends StatelessWidget {
                   horizontal: Theming.offset * 1.5,
                   vertical: Theming.offset * 0.5,
                 ),
-                child: Align(alignment: Alignment.centerLeft, child: items[i]),
+                child: Align(alignment: .centerLeft, child: items[i]),
               ),
             ),
           ),

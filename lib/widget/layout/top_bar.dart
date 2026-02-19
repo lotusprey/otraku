@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 const _preferredSize = Size.fromHeight(Theming.normalTapTarget);
@@ -26,12 +27,12 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           height: topPadding + preferredSize.height,
           decoration: BoxDecoration(color: Theme.of(context).navigationBarTheme.backgroundColor),
           padding: .only(top: topPadding),
-          alignment: Alignment.center,
+          alignment: .center,
           child: Row(
             children: [
               if (GoRouter.of(context).canPop())
                 IconButton(
-                  tooltip: 'Close',
+                  tooltip: AppLocalizations.of(context)!.actionGoBack,
                   icon: const Icon(Icons.arrow_back_ios_rounded),
                   onPressed: context.back,
                 )

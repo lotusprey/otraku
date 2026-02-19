@@ -1,0 +1,3 @@
+arb-dir: lib/localizations
+template-arb-file: def_en.arb
+output-localization-file: gen.dart

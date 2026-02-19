@@ -6,6 +6,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
@@ -38,6 +39,7 @@ class _CalendarViewState extends State<CalendarView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textTheme = TextTheme.of(context);
     final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
     final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
@@ -53,12 +55,12 @@ class _CalendarViewState extends State<CalendarView> {
             date.day < today.day && date.month == today.month && date.year == today.year;
 
         return AdaptiveScaffold(
-          topBar: const TopBar(title: 'Calendar'),
+          topBar: TopBar(title: l10n.calendar),
           floatingAction: HidingFloatingActionButton(
             key: const Key('filter'),
             scrollCtrl: _scrollCtrl,
             child: FloatingActionButton(
-              tooltip: 'Filter',
+              tooltip: l10n.filter,
               onPressed: () => showCalendarFilterSheet(context, ref),
               child: const Icon(Ionicons.funnel_outline),
             ),
@@ -138,16 +140,17 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textRailItems = {
       item.airingAt.formattedTime(analogClock): true,
       if (item.airingAt.isAfter(DateTime.now()))
-        'Ep ${item.episode} in ${item.airingAt.timeUntil}': false
+        l10n.mediaEpisodeIn(item.episode, item.airingAt.timeUntil): false
       else
-        'Ep ${item.episode}': false,
+        l10n.mediaEpisode(item.episode): false,
     };
 
     if (item.entryStatus != null) {
-      textRailItems[item.entryStatus!.label(true)] = true;
+      textRailItems[item.entryStatus!.localize(l10n, true)] = true;
     }
 
     return CardExtension.highContrast(highContrast)(
@@ -209,7 +212,7 @@ class _ExternalLinkList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      scrollDirection: Axis.horizontal,
+      scrollDirection: .horizontal,
       padding: const .only(left: Theming.offset, right: Theming.offset / 2),
       itemCount: links.length,
       itemBuilder: (context, i) {

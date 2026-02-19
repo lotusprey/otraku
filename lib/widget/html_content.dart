@@ -3,6 +3,7 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -11,13 +12,15 @@ import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class HtmlContent extends StatelessWidget {
-  const HtmlContent(this.text, {this.renderMode = RenderMode.column});
+  const HtmlContent(this.text, {this.renderMode = .column});
 
   final String text;
   final RenderMode renderMode;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return HtmlWidget(
       text,
       renderMode: renderMode,
@@ -41,11 +44,10 @@ class HtmlContent extends StatelessWidget {
       },
       onLoadingBuilder: (_, _, _) => const Center(child: Loader()),
       onErrorBuilder: (_, element, err) => Center(
-        child: IconButton(
-          tooltip: 'Error',
-          icon: const Icon(Icons.close_outlined),
-          onPressed: () =>
-              SnackBarExtension.show(context, 'Failed to load element ${element.localName}'),
+        child: Tooltip(
+          triggerMode: .tap,
+          message: l10n.errorFailedLoading(element.localName ?? '?'),
+          child: const Icon(Icons.error_outline_rounded),
         ),
       ),
       customStylesBuilder: (element) {
@@ -68,7 +70,7 @@ class HtmlContent extends StatelessWidget {
         if (element.localName == 'hr') {
           return Container(
             height: 5,
-            width: double.infinity,
+            width: .infinity,
             margin: const .symmetric(vertical: 5),
             decoration: BoxDecoration(
               color: ColorScheme.of(context).surfaceContainerHighest,
@@ -82,7 +84,7 @@ class HtmlContent extends StatelessWidget {
             onTap: () =>
                 SnackBarExtension.launch(context, 'https://youtube.com/watch?v=${element.text}'),
             child: Stack(
-              alignment: Alignment.center,
+              alignment: .center,
               children: [
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 240, maxHeight: 135),
@@ -98,10 +100,10 @@ class HtmlContent extends StatelessWidget {
           final source = element.children.firstWhere((e) => e.localName == 'source');
           final url = source.attributes['src'] ?? '';
           return SizedBox(
-            width: double.infinity,
+            width: .infinity,
             child: Center(
               child: IconButton(
-                tooltip: 'WebM Video',
+                tooltip: l10n.actionOpenVideoInBrowser,
                 icon: const Icon(Ionicons.videocam, size: 50),
                 onPressed: () => showSheet(context, SimpleSheet.link(context, url)),
               ),

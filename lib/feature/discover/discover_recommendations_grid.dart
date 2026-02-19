@@ -7,6 +7,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -25,7 +26,9 @@ class DiscoverRecommendationsGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No items')));
+      return SliverFillRemaining(
+        child: Center(child: Text(AppLocalizations.of(context)!.noResults)),
+      );
     }
 
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
@@ -53,6 +56,7 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final coverWidth = presentationHeight / Theming.coverHtoWRatio;
 
     return CardExtension.highContrast(highContrast)(
@@ -119,7 +123,7 @@ class _Tile extends StatelessWidget {
                   child: item.mediaListStatus == null
                       ? const SizedBox()
                       : Text(
-                          item.mediaListStatus!,
+                          item.mediaListStatus!.localize(l10n, item.isMediaAnime),
                           textAlign: .left,
                           overflow: .ellipsis,
                           maxLines: 1,
@@ -130,7 +134,10 @@ class _Tile extends StatelessWidget {
                   child: item.recommendedMediaListStatus == null
                       ? const SizedBox()
                       : Text(
-                          item.recommendedMediaListStatus!,
+                          item.recommendedMediaListStatus!.localize(
+                            l10n,
+                            item.isRecommendedMediaAnime,
+                          ),
                           textAlign: .right,
                           overflow: .ellipsis,
                           maxLines: 1,
@@ -158,6 +165,7 @@ class _RecommendationButtons extends StatefulWidget {
 class __RecommendationButtonsState extends State<_RecommendationButtons> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final item = widget.item;
 
     return Row(
@@ -165,7 +173,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
       mainAxisAlignment: .center,
       children: [
         IconButton(
-          tooltip: 'Agree',
+          tooltip: l10n.actionAgreementAgree,
           icon: item.userRating == true
               ? Icon(
                   Icons.thumb_up,
@@ -213,7 +221,7 @@ class __RecommendationButtonsState extends State<_RecommendationButtons> {
         ),
         Text(item.rating.toString()),
         IconButton(
-          tooltip: 'Disagree',
+          tooltip: l10n.actionAgreementDisagree,
           icon: item.userRating == false
               ? Icon(
                   Icons.thumb_down,

@@ -9,6 +9,7 @@ import 'package:otraku/feature/comment/comment_tile.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/dialogs.dart';
@@ -48,6 +49,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
     final comment = ref.watch(commentProvider(widget.id));
     final viewerId = ref.watch(viewerIdProvider);
     final options = ref.watch(persistenceProvider.select((s) => s.options));
+    final l10n = AppLocalizations.of(context)!;
 
     TopBar? topBar;
     void Function()? floatingActionOnPressed;
@@ -55,7 +57,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
     if (comment.hasValue) {
       final value = comment.value!;
 
-      topBar = TopBar(trailing: _topBarTrailingContent(context, ref, value, viewerId));
+      topBar = TopBar(trailing: _topBarTrailingContent(context, ref, l10n, value, viewerId));
 
       floatingActionOnPressed = () => showSheet(
         context,
@@ -73,7 +75,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
         key: const Key('Reply'),
         scrollCtrl: _scrollCtrl,
         child: FloatingActionButton(
-          tooltip: 'New Reply',
+          tooltip: l10n.postsRepliesAdd,
           onPressed: floatingActionOnPressed,
           child: const Icon(Icons.edit_outlined),
         ),
@@ -86,11 +88,13 @@ class _CommentViewState extends ConsumerState<CommentView> {
             options.highContrast,
             options.analogClock,
           ),
-          AsyncError() => CustomScrollView(
+          AsyncError(error: final err) => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
               SliverRefreshControl(onRefresh: () => ref.invalidate(commentProvider(widget.id))),
-              const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+              SliverFillRemaining(
+                child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+              ),
             ],
           ),
           AsyncLoading() => const Center(child: Loader()),
@@ -102,12 +106,13 @@ class _CommentViewState extends ConsumerState<CommentView> {
   List<Widget> _topBarTrailingContent(
     BuildContext context,
     WidgetRef ref,
+    AppLocalizations l10n,
     Comment comment,
     int? viewerId,
   ) => [
     const Spacer(),
     IconButton(
-      tooltip: 'More',
+      tooltip: l10n.actionMore,
       icon: const Icon(Ionicons.ellipsis_horizontal),
       onPressed: () => showSheet(
         context,
@@ -117,7 +122,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
           viewerId == comment.userId
               ? [
                   ListTile(
-                    title: const Text('Edit'),
+                    title: Text(l10n.actionEdit),
                     leading: const Icon(Icons.edit_outlined),
                     onTap: () => showSheet(
                       context,
@@ -132,16 +137,16 @@ class _CommentViewState extends ConsumerState<CommentView> {
                     ),
                   ),
                   ListTile(
-                    title: const Text('Delete'),
+                    title: Text(l10n.actionRemove),
                     leading: const Icon(Ionicons.trash_outline),
                     onTap: () {
                       Navigator.pop(context);
 
                       ConfirmationDialog.show(
                         context,
-                        title: 'Delete?',
-                        primaryAction: 'Yes',
-                        secondaryAction: 'No',
+                        title: l10n.actionRemoveQuestion,
+                        primaryAction: l10n.actionYes,
+                        secondaryAction: l10n.actionNo,
                         onConfirm: () async {
                           final err = await ref.read(commentProvider(widget.id).notifier).delete();
 
@@ -152,7 +157,7 @@ class _CommentViewState extends ConsumerState<CommentView> {
                             return;
                           }
 
-                          SnackBarExtension.show(context, 'Failed deleting comment: $err');
+                          SnackBarExtension.show(context, l10n.errorFailedRemoving(err.toString()));
                         },
                       );
                     },
@@ -184,7 +189,6 @@ class _Content extends StatelessWidget {
         SliverToBoxAdapter(
           child: Semantics(
             onTap: openThread,
-            onTapHint: 'open thread',
             child: GestureDetector(
               onTap: openThread,
               behavior: .opaque,

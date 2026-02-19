@@ -149,7 +149,6 @@ class _CommentItemList extends StatelessWidget {
             children: [
               Semantics(
                 onTap: openThread,
-                onTapHint: 'open thread',
                 child: GestureDetector(
                   onTap: openThread,
                   behavior: .opaque,

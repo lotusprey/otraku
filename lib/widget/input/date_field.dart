@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/date_time_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class DateField extends StatefulWidget {
@@ -34,6 +35,8 @@ class _DateFieldState extends State<DateField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return TextField(
       readOnly: true,
       controller: _ctrl,
@@ -45,10 +48,10 @@ class _DateFieldState extends State<DateField> {
             initialDate: _value ?? DateTime.now(),
             firstDate: DateTime(1920),
             lastDate: DateTime.now(),
-            errorInvalidText: 'Enter date in valid range',
-            errorFormatText: 'Enter valid date',
-            confirmText: 'Done',
-            cancelText: 'Cancel',
+            errorInvalidText: l10n.errorDateInvalidRange,
+            errorFormatText: l10n.errorDateInvalid,
+            confirmText: l10n.actionConfirm,
+            cancelText: l10n.actionGoBack,
             fieldLabelText: '',
             helpText: '',
           ).then((pickedDate) {
@@ -68,7 +71,7 @@ class _DateFieldState extends State<DateField> {
             color: Colors.transparent,
             child: InkResponse(
               radius: Theming.radiusSmall.x,
-              child: const Tooltip(message: 'Clear', child: Icon(Ionicons.close_outline)),
+              child: Tooltip(message: l10n.actionClear, child: const Icon(Ionicons.close_outline)),
               onTap: () {
                 _ctrl.text = '';
                 widget.onChanged(null);

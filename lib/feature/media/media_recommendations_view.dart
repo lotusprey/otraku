@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -55,8 +56,9 @@ class _MediaRecommendationsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No results')));
+      return SliverFillRemaining(child: Center(child: Text(l10n.noResults)));
     }
 
     final textTheme = TextTheme.of(context);
@@ -69,8 +71,9 @@ class _MediaRecommendationsGrid extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 270, height: tileHeight),
       delegate: SliverChildBuilderDelegate(childCount: items.length, (context, i) {
         final textRailItems = <String, bool>{
-          if (items[i].entryStatus != null) items[i].entryStatus!.label(items[i].isAnime): true,
-          if (items[i].format != null) items[i].format!.label: false,
+          if (items[i].entryStatus != null)
+            items[i].entryStatus!.localize(l10n, items[i].isAnime): true,
+          if (items[i].format != null) items[i].format!.localize(l10n): false,
           if (items[i].releaseYear != null) items[i].releaseYear!.toString(): false,
         };
 
@@ -138,12 +141,13 @@ class _RecommendationRating extends StatefulWidget {
 class _RecommendationRatingState extends State<_RecommendationRating> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final item = widget.item;
 
     return Padding(
       padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: .center,
         spacing: Theming.offset,
         children: [
           Text(item.rating.toString()),
@@ -152,7 +156,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
             mainAxisAlignment: .spaceEvenly,
             children: [
               Tooltip(
-                message: 'Agree',
+                message: l10n.actionAgreementAgree,
                 child: InkResponse(
                   onTap: () async {
                     final oldRating = item.rating;
@@ -201,7 +205,7 @@ class _RecommendationRatingState extends State<_RecommendationRating> {
                 ),
               ),
               Tooltip(
-                message: 'Disagree',
+                message: l10n.actionAgreementDisagree,
                 child: InkResponse(
                   onTap: () async {
                     final oldRating = item.rating;

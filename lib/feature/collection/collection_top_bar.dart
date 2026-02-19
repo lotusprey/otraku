@@ -9,6 +9,7 @@ import 'package:otraku/feature/collection/collection_filter_provider.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/collection/collection_provider.dart';
 import 'package:otraku/feature/collection/collection_filter_view.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/debounce.dart';
 import 'package:otraku/widget/input/search_field.dart';
@@ -23,12 +24,14 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Consumer(
       builder: (context, ref, _) {
         final filter = ref.watch(collectionFilterProvider(tag));
 
         final filterIcon = IconButton(
-          tooltip: 'Filter',
+          tooltip: l10n.filter,
           icon: const Icon(Ionicons.funnel_outline),
           onPressed: () => showSheet(
             context,
@@ -57,18 +60,18 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
                 ),
               ),
               IconButton(
-                tooltip: 'Random',
+                tooltip: l10n.random,
                 icon: const Icon(Ionicons.shuffle_outline),
                 onPressed: () {
                   final lists = ref.read(collectionEntriesProvider(tag));
                   if (lists.isEmpty) {
-                    ConfirmationDialog.show(context, title: 'No entries');
+                    ConfirmationDialog.show(context, title: l10n.noEntries);
                     return;
                   }
 
                   final list = lists[Random().nextInt(lists.length)];
                   if (list.entries.isEmpty) {
-                    ConfirmationDialog.show(context, title: 'No entries');
+                    ConfirmationDialog.show(context, title: l10n.noEntries);
                     return;
                   }
 
@@ -79,7 +82,7 @@ class CollectionTopBarTrailingContent extends StatelessWidget {
               if (filter.mediaFilter.isActive)
                 Badge(
                   smallSize: 10,
-                  alignment: Alignment.topLeft,
+                  alignment: .topLeft,
                   backgroundColor: ColorScheme.of(context).primary,
                   child: filterIcon,
                 )

@@ -8,11 +8,12 @@ import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/feature/notification/notifications_provider.dart';
-import 'package:otraku/util/background_handler.dart';
+import 'package:otraku/util/background_worker.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
@@ -42,7 +43,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   @override
   void initState() {
     super.initState();
-    BackgroundHandler.clearNotifications();
+    BackgroundWorker.clearNotifications();
   }
 
   @override
@@ -53,10 +54,9 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final unreadCount = ref.watch(notificationsProvider.select((s) => s.value?.total ?? 0));
-
     final filter = ref.watch(notificationsFilterProvider);
-
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final content = _Content(
@@ -69,14 +69,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     final formFactor = Theming.of(context).formFactor;
 
     return AdaptiveScaffold(
-      topBar: const TopBar(title: 'Notifications'),
+      topBar: TopBar(title: l10n.notifications),
       floatingAction: formFactor == .phone
           ? HidingFloatingActionButton(
               key: const Key('filter'),
               scrollCtrl: _scrollCtrl,
               child: FloatingActionButton(
-                tooltip: 'Filter',
-                onPressed: _showFilterSheet,
+                tooltip: l10n.filter,
+                onPressed: () => _showFilterSheet(l10n),
                 child: const Icon(Ionicons.funnel_outline),
               ),
             )
@@ -90,7 +90,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                   maxWidth: 120,
                   onTap: (i) => ref.read(notificationsFilterProvider.notifier).state =
                       NotificationsFilter.values[i],
-                  items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+                  items: NotificationsFilter.values.map((v) => Text(v.localize(l10n))).toList(),
                 ),
                 Expanded(child: content),
               ],
@@ -98,7 +98,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     );
   }
 
-  void _showFilterSheet() {
+  void _showFilterSheet(AppLocalizations l10n) {
     showSheet(
       context,
       Consumer(
@@ -115,7 +115,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     NotificationsFilter.values[i];
                 Navigator.pop(context);
               },
-              items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+              items: NotificationsFilter.values.map((v) => Text(v.localize(l10n))).toList(),
             ),
           );
         },

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/content_header.dart';
 import 'package:otraku/widget/text_rail.dart';
@@ -33,33 +34,30 @@ class MediaHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final textRailItems = <String, bool>{};
 
     if (media != null) {
       final info = media!.info;
 
-      if (info.isAdult) textRailItems['Adult'] = true;
+      if (info.isAdult) textRailItems[l10n.mediaAdult] = true;
 
       if (info.format != null) {
-        textRailItems[info.format!.label] = false;
+        textRailItems[info.format!.localize(l10n)] = false;
       }
 
       if (media!.entryEdit.listStatus != null) {
-        textRailItems[media!.entryEdit.listStatus!.label(info.isAnime)] = false;
+        textRailItems[media!.entryEdit.listStatus!.localize(l10n, info.isAnime)] = false;
       }
 
-      if (info.airingAt != null) {
-        textRailItems['Ep ${info.nextEpisode} in '
-                '${info.airingAt!.timeUntil}'] =
-            true;
+      if (info.nextEpisode != null && info.airingAt != null) {
+        textRailItems[l10n.mediaEpisodeIn(info.nextEpisode!, info.airingAt!.timeUntil)] = true;
       }
 
       if (media!.entryEdit.listStatus != null) {
         final progress = media!.entryEdit.progress;
         if (info.nextEpisode != null && info.nextEpisode! - 1 > progress) {
-          textRailItems['${info.nextEpisode! - 1 - progress}'
-                  ' ep behind'] =
-              true;
+          textRailItems[l10n.mediaEpisodesBehind(info.nextEpisode! - 1 - progress)] = true;
         }
       }
     }
@@ -74,32 +72,36 @@ class MediaHeader extends StatelessWidget {
       title: media?.info.preferredTitle,
       details: [TextRail(textRailItems, style: TextTheme.of(context).labelMedium)],
       tabBarConfig: tabCtrl != null && scrollToTop != null
-          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
+          ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview(l10n))
           : null,
-      trailingTopButtons: [if (media != null) _FavoriteButton(media!.info, toggleFavorite)],
+      trailingTopButtons: [if (media != null) _FavoriteButton(media!.info, toggleFavorite, l10n)],
     );
   }
 
-  static const tabsWithoutOverview = [
-    Tab(text: 'Related'),
-    Tab(text: 'Characters'),
-    Tab(text: 'Staff'),
-    Tab(text: 'Reviews'),
-    Tab(text: 'Threads'),
-    Tab(text: 'Following'),
-    Tab(text: 'Activities'),
-    Tab(text: 'Recommendations'),
-    Tab(text: 'Statistics'),
+  static List<Tab> tabsWithoutOverview(AppLocalizations l10n) => [
+    Tab(text: l10n.related),
+    Tab(text: l10n.characters),
+    Tab(text: l10n.staff),
+    Tab(text: l10n.reviews),
+    Tab(text: l10n.threads),
+    Tab(text: l10n.followed),
+    Tab(text: l10n.activities),
+    Tab(text: l10n.recommendations),
+    Tab(text: l10n.statistics),
   ];
 
-  static const tabsWithOverview = [Tab(text: 'Overview'), ...tabsWithoutOverview];
+  static List<Tab> tabsWithOverview(AppLocalizations l10n) => [
+    Tab(text: l10n.overview),
+    ...tabsWithoutOverview(l10n),
+  ];
 }
 
 class _FavoriteButton extends StatefulWidget {
-  const _FavoriteButton(this.info, this.toggleFavorite);
+  const _FavoriteButton(this.info, this.toggleFavorite, this.l10n);
 
   final MediaInfo info;
   final Future<Object?> Function() toggleFavorite;
+  final AppLocalizations l10n;
 
   @override
   State<_FavoriteButton> createState() => __FavoriteButtonState();
@@ -111,7 +113,7 @@ class __FavoriteButtonState extends State<_FavoriteButton> {
     final info = widget.info;
 
     return IconButton(
-      tooltip: info.isFavorite ? 'Unfavourite' : 'Favourite',
+      tooltip: info.isFavorite ? widget.l10n.favoritesRemove : widget.l10n.favoritesAdd,
       icon: info.isFavorite ? const Icon(Icons.favorite) : const Icon(Icons.favorite_border),
       onPressed: () async {
         setState(() => info.isFavorite = !info.isFavorite);

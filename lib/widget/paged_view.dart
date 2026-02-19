@@ -54,7 +54,7 @@ class PagedView<T> extends StatelessWidget {
                 physics: Theming.bouncyPhysics,
                 slivers: [
                   SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
-                  if (header != null) header!,
+                  ?header,
                   const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
                 ],
               ),
@@ -66,7 +66,7 @@ class PagedView<T> extends StatelessWidget {
                     controller: scrollCtrl,
                     slivers: [
                       SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
-                      if (header != null) header!,
+                      ?header,
                       data.items.isEmpty
                           ? const SliverFillRemaining(child: Center(child: Text('No results')))
                           : onData(data),

@@ -26,6 +26,16 @@ Future<void> main() async {
     ),
   );
 
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemStatusBarContrastEnforced: false,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
+
   runApp(UncontrolledProviderScope(container: container, child: const _App()));
 }
 

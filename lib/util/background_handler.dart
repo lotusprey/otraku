@@ -18,7 +18,7 @@ class BackgroundHandler {
 
   static Future<void> init(StreamController<String> notificationCtrl) async {
     _notificationPlugin.initialize(
-      const InitializationSettings(
+      settings: const InitializationSettings(
         android: AndroidInitializationSettings('notification_icon'),
         iOS: DarwinInitializationSettings(),
       ),
@@ -210,17 +210,17 @@ void _fetch() => Workmanager().executeTask((_, _) async {
 
 () _show(SiteNotification notification, String title, String payload) {
   _notificationPlugin.show(
-    notification.id,
-    title,
-    notification.texts.join(),
-    NotificationDetails(
+    id: notification.id,
+    title: title,
+    body: notification.texts.join(),
+    payload: payload,
+    notificationDetails: NotificationDetails(
       android: AndroidNotificationDetails(
         notification.type.name,
         notification.type.label,
         channelDescription: notification.type.label,
       ),
     ),
-    payload: payload,
   );
   return ();
 }

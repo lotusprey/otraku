@@ -234,7 +234,7 @@ class _Details extends StatelessWidget {
 
     return SliverGrid(
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(
-        minWidth: 200,
+        minWidth: 190,
         height: tileHeight,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,

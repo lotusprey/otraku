@@ -241,27 +241,35 @@ class _Details extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: titles.length,
-        (context, i) => CardExtension.highContrast(highContrast)(
-          child: Padding(
-            padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
-            child: Row(
-              spacing: Theming.offset,
-              children: [
-                Icon(icons[i], size: Theming.iconBig),
-                Column(
-                  mainAxisAlignment: .center,
-                  crossAxisAlignment: .start,
-                  children: [
-                    Text(
-                      titles[i],
-                      style: TextTheme.of(context).labelMedium,
-                      overflow: .ellipsis,
-                      maxLines: 1,
+        (context, i) => Tooltip(
+          message: titles[i],
+          triggerMode: .tap,
+          child: CardExtension.highContrast(highContrast)(
+            child: Padding(
+              padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+              child: Row(
+                spacing: Theming.offset,
+                children: [
+                  Icon(icons[i], size: Theming.iconBig),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: .center,
+                      crossAxisAlignment: .start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            titles[i],
+                            style: TextTheme.of(context).labelMedium,
+                            overflow: .ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        Text(subtitles[i].toString()),
+                      ],
                     ),
-                    Text(subtitles[i].toString()),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

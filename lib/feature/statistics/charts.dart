@@ -15,105 +15,83 @@ class BarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = TextTheme.of(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        // To find the max value to scale everything else
-        num maxValue = values.fold(0, (prev, element) => element > prev ? element : prev);
-        // Determines max available width for the bars
-        double maxBarWidth = constraints.maxWidth; // Offset for labels
-        double scale(num value) => value > 0 ? math.log(value + 1) : 0;
-        double scaledMax = scale(maxValue);
-        final totalValue = values.fold<double>(0, (sum, item) => sum + item);
+        final maxBarWidth = constraints.maxWidth;
+        double scale(num value) => value > 0 ? math.log(value + 0.1) : 0;
+
+        final maxValue = values.fold<num>(0.0, (prev, element) => element > prev ? element : prev);
+        final scaledMaxValue = scale(maxValue);
+
+        final totalValue = values.fold(0.0, (sum, value) => sum + value);
 
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             Padding(
               padding: const .symmetric(vertical: 5),
-              child: Text(title, style: TextTheme.of(context).titleSmall),
+              child: Text(title, style: textTheme.titleSmall),
             ),
-            if (toolbar != null)
-              SizedBox(
-                width: double.infinity,
-                child: toolbar!,
-              ), //so the toolbar uses full width of the screen.
-            Padding(padding: const EdgeInsets.symmetric(vertical: 5)),
-            //New logic for the horizontal bars
-            ...List.generate(
-              names.length,
-              (i) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 3),
+            if (toolbar != null) ...[
+              SizedBox(width: double.infinity, child: toolbar!),
+              const SizedBox(height: Theming.offset),
+            ],
+            for (int i = 0; i < names.length; i++)
+              Padding(
+                padding: const .symmetric(vertical: 3),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
+                  spacing: 1,
                   children: [
-                    Stack(
-                      alignment: Alignment.center,
+                    Row(
                       children: [
-                        Row(
-                          // Row for labels above the bar
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                names[i],
-                                style: TextTheme.of(context).labelMedium,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            Text("${values[i]}", style: TextTheme.of(context).labelMedium),
-                          ],
+                        Expanded(
+                          child: Text(names[i], style: textTheme.labelMedium, textAlign: .left),
                         ),
-                        Text(
-                          "${(values[i] / totalValue * 100).toStringAsFixed(1)}%",
-                          style: TextTheme.of(context).labelMedium,
+                        Expanded(
+                          child: Text(
+                            "${(values[i] / totalValue * 100).toStringAsFixed(1)}%",
+                            style: textTheme.labelMedium,
+                            textAlign: .center,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${values[i]}",
+                            style: textTheme.labelMedium,
+                            textAlign: .right,
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 1),
-                    //Stack to contain bars and borders rails
-                    Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        //Border Rails
-                        Container(
-                          width: maxBarWidth,
-                          height: 10,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(18),
-                            color: ColorScheme.of(context).surfaceContainerLowest,
-                            border: Border.all(
-                              color: ColorScheme.of(context).outlineVariant,
-                              width: 1,
-                            ),
+                    Container(
+                      height: 10,
+                      width: maxBarWidth,
+                      decoration: BoxDecoration(
+                        borderRadius: Theming.borderRadiusSmall,
+                        color: colorScheme.surfaceContainerLowest,
+                        border: .all(color: colorScheme.outlineVariant, width: 1),
+                      ),
+                      alignment: .centerLeft,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: (scale(values[i]) / scaledMaxValue) * maxBarWidth,
+                        decoration: BoxDecoration(
+                          borderRadius: Theming.borderRadiusSmall,
+                          gradient: LinearGradient(
+                            begin: .centerLeft,
+                            end: .centerRight,
+                            colors: [colorScheme.primaryContainer, colorScheme.primary],
                           ),
                         ),
-                        //bars
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 2),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            width: (scale(values[i]) / scaledMax) * (maxBarWidth),
-                            height: 8,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(18),
-                              gradient: LinearGradient(
-                                begin: Alignment.centerRight,
-                                end: Alignment.centerLeft,
-                                colors: [
-                                  ColorScheme.of(context).primary,
-                                  ColorScheme.of(context).primary.withValues(alpha: 0.1),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
               ),
-            ),
           ],
         );
       },

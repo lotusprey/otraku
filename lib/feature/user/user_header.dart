@@ -48,6 +48,7 @@ class UserHeader extends StatelessWidget {
       bannerUrl: user?.bannerUrl,
       siteUrl: user?.siteUrl,
       title: user?.name,
+      createdAt: user?.createdAt,
       details: GestureDetector(
         behavior: .opaque,
         onTap: () {

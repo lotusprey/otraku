@@ -419,6 +419,7 @@ abstract class GqlQuery {
         User(id: $id, name: $name) {
           id
           name
+          createdAt
           about
           avatar {large}
           bannerImage

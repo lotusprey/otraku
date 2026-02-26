@@ -6,6 +6,7 @@ class User {
   User._({
     required this.id,
     required this.name,
+    required this.createdAt,
     required this.description,
     required this.imageUrl,
     required this.bannerUrl,
@@ -31,6 +32,11 @@ class User {
     return User._(
       id: map['id'],
       name: map['name'],
+      createdAt: map['createdAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(
+              map['createdAt'] * 1000,
+            ).toIso8601String().split('T')[0]
+          : null,
       description: parseMarkdown(map['about'] ?? ''),
       imageUrl: map['avatar']['large'],
       bannerUrl: map['bannerImage'],
@@ -48,6 +54,7 @@ class User {
 
   final int id;
   final String name;
+  final String? createdAt;
   final String description;
   final String imageUrl;
   final String? bannerUrl;

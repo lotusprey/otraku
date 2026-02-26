@@ -8,7 +8,6 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
-import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_header.dart';
@@ -178,18 +177,6 @@ class _ButtonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      if (!isViewer) ...[
-        _Button(
-          label: 'Anime',
-          icon: Ionicons.film,
-          onTap: () => context.push(Routes.animeCollection(userId)),
-        ),
-        _Button(
-          label: 'Manga',
-          icon: Ionicons.book,
-          onTap: () => context.push(Routes.mangaCollection(userId)),
-        ),
-      ],
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
@@ -215,19 +202,34 @@ class _ButtonRow extends StatelessWidget {
         icon: Icons.rate_review,
         onTap: () => context.push(Routes.reviews(userId)),
       ),
+      //moved at the bottom for consistency
+      if (!isViewer) ...[
+        _Button(
+          label: 'Anime',
+          icon: Ionicons.film,
+          onTap: () => context.push(Routes.animeCollection(userId)),
+        ),
+        _Button(
+          label: 'Manga',
+          icon: Ionicons.book,
+          onTap: () => context.push(Routes.mangaCollection(userId)),
+        ),
+      ],
     ];
 
-    return SliverToBoxAdapter(
-      child: ConstrainedView(
-        child: Container(
-          height: 60,
-          margin: const .symmetric(vertical: Theming.offset),
-          alignment: Alignment.center,
-          child: ShadowedOverflowList(
-            itemCount: buttons.length,
-            itemBuilder: (context, i) => buttons[i],
-            shrinkWrap: true,
-          ),
+    return SliverPadding(
+      padding: const EdgeInsets.symmetric(horizontal: Theming.offset, vertical: Theming.offset),
+      //using grid instead of horizontal scrolling list
+      sliver: SliverGrid(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: 8,
+          crossAxisSpacing: 8,
+          childAspectRatio: 2.0, // Adjust based on button height
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => buttons[i],
+          childCount: buttons.length,
         ),
       ),
     );
@@ -245,6 +247,10 @@ class _Button extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilledButton.tonal(
       onPressed: onTap,
+      style: FilledButton.styleFrom(
+        padding: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Theming.radiusSmall)),
+      ),
       child: Column(mainAxisAlignment: .spaceEvenly, children: [Icon(icon), Text(label)]),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/statistics/statistics_model.dart';
@@ -33,9 +34,7 @@ class User {
       id: map['id'],
       name: map['name'],
       createdAt: map['createdAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(
-              map['createdAt'] * 1000,
-            ).toIso8601String().split('T')[0]
+          ? DateTime.fromMillisecondsSinceEpoch(map['createdAt'] * 1000).formattedDate
           : null,
       description: parseMarkdown(map['about'] ?? ''),
       imageUrl: map['avatar']['large'],

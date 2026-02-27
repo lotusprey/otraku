@@ -177,6 +177,17 @@ class _ButtonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final buttons = [
+      //made it visible for everyone
+      _Button(
+        label: 'Anime',
+        icon: Ionicons.film,
+        onTap: () => context.push(Routes.animeCollection(userId)),
+      ),
+      _Button(
+        label: 'Manga',
+        icon: Ionicons.book,
+        onTap: () => context.push(Routes.mangaCollection(userId)),
+      ),
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
@@ -202,19 +213,6 @@ class _ButtonRow extends StatelessWidget {
         icon: Icons.rate_review,
         onTap: () => context.push(Routes.reviews(userId)),
       ),
-      //moved at the bottom for consistency
-      if (!isViewer) ...[
-        _Button(
-          label: 'Anime',
-          icon: Ionicons.film,
-          onTap: () => context.push(Routes.animeCollection(userId)),
-        ),
-        _Button(
-          label: 'Manga',
-          icon: Ionicons.book,
-          onTap: () => context.push(Routes.mangaCollection(userId)),
-        ),
-      ],
     ];
 
     return SliverPadding(

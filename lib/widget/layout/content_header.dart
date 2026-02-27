@@ -172,13 +172,13 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                       child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyLarge),
                     ),
                   //to show account creation date
+                  if (details != null) ...[const SizedBox(height: 5), details!],
                   if (createdAt != null)
                     Text(
-                      'Since: ${createdAt!}',
+                      'Joined ${createdAt!}',
                       overflow: .fade,
                       style: TextTheme.of(context).labelSmall,
                     ),
-                  if (details != null) ...[const SizedBox(height: 5), details!],
                 ],
               ),
             ),

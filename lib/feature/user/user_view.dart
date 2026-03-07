@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/build_context_extension.dart';
+import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
-import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/user/user_model.dart';
 import 'package:otraku/feature/user/user_providers.dart';
 import 'package:otraku/feature/user/user_header.dart';
@@ -93,7 +94,9 @@ class _UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, _) {
-        final viewer = ref.watch(persistenceProvider.select((s) => s.accountGroup.account));
+        final persistence = ref.watch(persistenceProvider);
+        final highContrast = persistence.options.highContrast;
+        final viewer = persistence.accountGroup.account;
 
         final isViewer =
             viewer != null && (tag.id != null ? tag.id == viewer.id : tag.name == viewer.name);
@@ -153,7 +156,7 @@ class _UserView extends StatelessWidget {
             slivers: [
               header,
               refreshControl,
-              _ButtonRow(data.id, isViewer),
+              _ButtonRow(data.id, isViewer, highContrast),
               if (data.description.isNotEmpty) ...[
                 const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
                 SliverConstrainedView(
@@ -170,64 +173,80 @@ class _UserView extends StatelessWidget {
 }
 
 class _ButtonRow extends StatelessWidget {
-  const _ButtonRow(this.userId, this.isViewer);
+  const _ButtonRow(this.userId, this.isViewer, this.highContrast);
 
   final int userId;
   final bool isViewer;
+  final bool highContrast;
 
   @override
   Widget build(BuildContext context) {
+    final buttonHeight =
+        Theming.iconBig +
+        context.lineHeight(TextTheme.of(context).bodyMedium!) +
+        Theming.offset * 2.5;
+
     final buttons = [
-      if (!isViewer) ...[
-        _Button(
-          label: 'Anime',
-          icon: Ionicons.film,
-          onTap: () => context.push(Routes.animeCollection(userId)),
-        ),
-        _Button(
-          label: 'Manga',
-          icon: Ionicons.book,
-          onTap: () => context.push(Routes.mangaCollection(userId)),
-        ),
-      ],
+      _Button(
+        label: 'Anime',
+        icon: Ionicons.film,
+        highContrast: highContrast,
+        onTap: () => isViewer
+            ? context.go(Routes.home(.anime))
+            : context.push(Routes.animeCollection(userId)),
+      ),
+      _Button(
+        label: 'Manga',
+        icon: Ionicons.book,
+        highContrast: highContrast,
+        onTap: () => isViewer
+            ? context.go(Routes.home(.manga))
+            : context.push(Routes.mangaCollection(userId)),
+      ),
       _Button(
         label: 'Activities',
         icon: Ionicons.chatbox,
+        highContrast: highContrast,
         onTap: () => context.push(Routes.activities(userId)),
       ),
       _Button(
         label: 'Social',
         icon: Ionicons.people_circle,
+        highContrast: highContrast,
         onTap: () => context.push(Routes.social(userId)),
       ),
       _Button(
         label: 'Favourites',
         icon: Icons.favorite,
+        highContrast: highContrast,
         onTap: () => context.push(Routes.favorites(userId)),
       ),
       _Button(
         label: 'Statistics',
         icon: Ionicons.stats_chart,
+        highContrast: highContrast,
         onTap: () => context.push(Routes.statistics(userId)),
       ),
       _Button(
         label: 'Reviews',
         icon: Icons.rate_review,
+        highContrast: highContrast,
         onTap: () => context.push(Routes.reviews(userId)),
       ),
     ];
 
-    return SliverToBoxAdapter(
-      child: ConstrainedView(
-        child: Container(
-          height: 60,
-          margin: const .symmetric(vertical: Theming.offset),
-          alignment: Alignment.center,
-          child: ShadowedOverflowList(
-            itemCount: buttons.length,
-            itemBuilder: (context, i) => buttons[i],
-            shrinkWrap: true,
-          ),
+    return SliverPadding(
+      padding: const .symmetric(horizontal: Theming.offset, vertical: Theming.offset),
+      sliver: SliverGrid(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+          mainAxisSpacing: Theming.offset,
+          crossAxisSpacing: Theming.offset,
+          mainAxisExtent: buttonHeight,
+        ),
+        delegate: SliverChildBuilderDelegate(
+          (context, i) => buttons[i],
+          childCount: buttons.length,
         ),
       ),
     );
@@ -235,17 +254,29 @@ class _ButtonRow extends StatelessWidget {
 }
 
 class _Button extends StatelessWidget {
-  const _Button({required this.label, required this.icon, required this.onTap});
+  const _Button({
+    required this.label,
+    required this.icon,
+    required this.highContrast,
+    required this.onTap,
+  });
 
   final String label;
   final IconData icon;
+  final bool highContrast;
   final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {
-    return FilledButton.tonal(
-      onPressed: onTap,
-      child: Column(mainAxisAlignment: .spaceEvenly, children: [Icon(icon), Text(label)]),
+    return CardExtension.highContrast(highContrast)(
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: Theming.borderRadiusSmall,
+        child: Padding(
+          padding: Theming.paddingAll,
+          child: Column(mainAxisAlignment: .spaceBetween, children: [Icon(icon), Text(label)]),
+        ),
+      ),
     );
   }
 }

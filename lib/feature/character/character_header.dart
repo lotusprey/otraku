@@ -42,11 +42,13 @@ class CharacterHeader extends StatelessWidget {
       siteUrl: character?.siteUrl,
       title: character?.preferredName,
       details: character != null
-          ? TableList([
-              ('Favorites', character!.favorites.toString()),
-              if (character!.gender != null) ('Gender', character!.gender!),
-            ], highContrast: highContrast)
-          : null,
+          ? [
+              TableList([
+                ('Favorites', character!.favorites.toString()),
+                if (character!.gender != null) ('Gender', character!.gender!),
+              ], highContrast: highContrast),
+            ]
+          : const [],
       tabBarConfig: tabCtrl != null && scrollToTop != null
           ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,

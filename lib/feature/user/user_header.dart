@@ -48,18 +48,22 @@ class UserHeader extends StatelessWidget {
       bannerUrl: user?.bannerUrl,
       siteUrl: user?.siteUrl,
       title: user?.name,
-      details: GestureDetector(
-        behavior: .opaque,
-        onTap: () {
-          if (user?.modRoles.isNotEmpty ?? false) {
-            showDialog(
-              context: context,
-              builder: (context) => TextDialog(title: 'Roles', text: user!.modRoles.join(', ')),
-            );
-          }
-        },
-        child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
-      ),
+      details: [
+        GestureDetector(
+          behavior: .opaque,
+          onTap: () {
+            if (user?.modRoles.isNotEmpty ?? false) {
+              showDialog(
+                context: context,
+                builder: (context) => TextDialog(title: 'Roles', text: user!.modRoles.join(', ')),
+              );
+            }
+          },
+          child: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
+        ),
+        if (user?.createdAt != null)
+          Text('Joined ${user!.createdAt!}', style: TextTheme.of(context).labelSmall),
+      ],
       trailingTopButtons: [
         if (isViewer) ...[
           IconButton(

@@ -48,12 +48,11 @@ class ContentHeader extends StatelessWidget {
     required this.imageHeroTag,
     required this.imageHeightToWidthRatio,
     required this.title,
-    this.createdAt,
-    required this.details,
     required this.siteUrl,
     this.imageLargeUrl,
     this.imageFit = BoxFit.cover,
     this.trailingTopButtons = const [],
+    this.details = const [],
     this.bannerUrl,
     this.tabBarConfig,
   });
@@ -64,8 +63,7 @@ class ContentHeader extends StatelessWidget {
   final double imageHeightToWidthRatio;
   final BoxFit imageFit;
   final String? title;
-  final String? createdAt;
-  final Widget? details;
+  final List<Widget> details;
   final List<Widget> trailingTopButtons;
   final String? siteUrl;
   final String? bannerUrl;
@@ -87,7 +85,6 @@ class ContentHeader extends StatelessWidget {
       imageLargeUrl: imageLargeUrl,
       imageFit: imageFit,
       title: title,
-      createdAt: createdAt,
       details: details,
     );
 
@@ -117,7 +114,6 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
     required this.imageLargeUrl,
     required this.imageFit,
     required this.title,
-    required this.createdAt,
     required this.details,
   });
 
@@ -128,8 +124,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
   final String? imageLargeUrl;
   final BoxFit imageFit;
   final String? title;
-  final String? createdAt;
-  final Widget? details;
+  final List<Widget> details;
 
   @override
   Size get preferredSize => Size.fromHeight(imageHeight);
@@ -164,6 +159,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: .stretch,
+                spacing: 5,
                 children: [
                   if (title != null)
                     GestureDetector(
@@ -171,14 +167,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                       onTap: () => SnackBarExtension.copy(context, title!),
                       child: Text(title!, overflow: .fade, style: TextTheme.of(context).bodyLarge),
                     ),
-                  //to show account creation date
-                  if (details != null) ...[const SizedBox(height: 5), details!],
-                  if (createdAt != null)
-                    Text(
-                      'Joined ${createdAt!}',
-                      overflow: .fade,
-                      style: TextTheme.of(context).labelSmall,
-                    ),
+                  ...details,
                 ],
               ),
             ),

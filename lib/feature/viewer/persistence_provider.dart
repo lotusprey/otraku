@@ -35,6 +35,11 @@ class PersistenceNotifier extends Notifier<Persistence> {
     state = .fromPersistenceMap(_box.toMap(), accessTokens);
   }
 
+  void setMediaActivitiesFilter(Map<String, dynamic> filter) {
+    _box.put('mediaActivitiesFilter', filter);
+    state = state.copyWith(mediaActivitiesFilter: filter);
+  }
+
   void cacheSystemPrimaryColors(SystemColors systemColors) {
     state = state.copyWith(systemColors: systemColors);
   }

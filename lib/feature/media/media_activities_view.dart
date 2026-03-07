@@ -8,6 +8,7 @@ import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -75,29 +76,41 @@ class _FollowingFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filter = ref.watch(activitiesFilterProvider(tag));
+    final filter = ref.watch(activitiesFilterProvider(tag)) as MediaActivitiesFilter;
+    //for user's name in filter chip
+    final account = ref.watch(persistenceProvider.select((s) => s.accountGroup.account));
 
+    //made it use filter chip instead of button and added "self" filter
     return SliverToBoxAdapter(
-      child: switch (filter) {
-        MediaActivitiesFilter(:final onlyFollowing) => SizedBox(
-          height: Theming.normalTapTarget,
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: onlyFollowing
-                ? OutlinedButton(
-                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                        .copyWithOnlyFollowing(false),
-                    child: const Text('Show All'),
-                  )
-                : OutlinedButton(
-                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                        .copyWithOnlyFollowing(true),
-                    child: const Text('Show Following Only'),
-                  ),
-          ),
+      child: SizedBox(
+        height: Theming.normalTapTarget,
+        child: Row(
+          children: [
+            const SizedBox(width: Theming.offset),
+            FilterChip(
+              label: const Text("Global"),
+              selected: !filter.onlyFollowing && filter.userId == null,
+              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                  .copyWith(onlyFollowing: false, clearUserId: true),
+            ),
+            const SizedBox(width: Theming.offset / 2),
+            FilterChip(
+              label: const Text("Following"),
+              selected: filter.onlyFollowing,
+              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                  .copyWith(onlyFollowing: true, clearUserId: true),
+            ),
+            const SizedBox(width: Theming.offset / 2),
+            if (account != null)
+              FilterChip(
+                label: Text("Self"),
+                selected: filter.userId == account.id,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(onlyFollowing: false, userId: account.id),
+              ),
+          ],
         ),
-        _ => const SizedBox.shrink(),
-      },
+      ),
     );
   }
 }

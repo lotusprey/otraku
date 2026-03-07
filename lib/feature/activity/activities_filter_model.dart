@@ -86,23 +86,35 @@ class UserActivitiesFilter extends ActivitiesFilter {
   };
 }
 
+//made it so it now supports userId values
 class MediaActivitiesFilter extends ActivitiesFilter {
-  const MediaActivitiesFilter(this.mediaId, this.onlyFollowing);
+  const MediaActivitiesFilter(this.mediaId, this.onlyFollowing, {this.userId});
 
   final int mediaId;
   final bool onlyFollowing;
+  final int? userId;
 
   @override
-  MediaActivitiesFilter copy() => MediaActivitiesFilter(mediaId, onlyFollowing);
+  MediaActivitiesFilter copy() => MediaActivitiesFilter(mediaId, onlyFollowing, userId: userId);
 
-  MediaActivitiesFilter copyWithOnlyFollowing(bool onlyFollowing) =>
-      MediaActivitiesFilter(mediaId, onlyFollowing);
+  MediaActivitiesFilter copyWith({bool? onlyFollowing, int? userId, bool clearUserId = false}) =>
+      MediaActivitiesFilter(
+        mediaId,
+        onlyFollowing ?? this.onlyFollowing,
+        userId: clearUserId ? null : (userId ?? this.userId),
+      );
 
   @override
   Map<String, dynamic> toGraphQlVariables() => {
     'mediaId': mediaId,
     if (onlyFollowing) 'isFollowing': true,
+    if (userId != null) 'userId': userId,
   };
+
+  Map<String, dynamic> toPersistenceMap() => {'onlyFollowing': onlyFollowing, 'userId': userId};
+
+  static MediaActivitiesFilter fromPersistence(int mediaId, Map<dynamic, dynamic> map) =>
+      MediaActivitiesFilter(mediaId, map['onlyFollowing'] ?? false, userId: map['userId']);
 }
 
 enum ActivityType {

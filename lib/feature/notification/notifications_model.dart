@@ -19,7 +19,10 @@ enum NotificationType {
   relatedMediaAddition('Related media additions', 'RELATED_MEDIA_ADDITION'),
   mediaDataChange('Media changes', 'MEDIA_DATA_CHANGE'),
   mediaMerge('Media merges', 'MEDIA_MERGE'),
-  mediaDeletion('Media deletions', 'MEDIA_DELETION');
+  mediaDeletion('Media deletions', 'MEDIA_DELETION'),
+  mediaSubmissionUpdate('Media submission updates', 'MEDIA_SUBMISSION_UPDATE'),
+  staffSubmissionUpdate('Staff submission updates', 'STAFF_SUBMISSION_UPDATE'),
+  characterSubmissionUpdate('Character submission updates', 'CHARACTER_SUBMISSION_UPDATE');
 
   const NotificationType(this.label, this.value);
 
@@ -59,6 +62,9 @@ sealed class SiteNotification {
       .airing || .relatedMediaAddition => MediaReleaseNotification(map, type, imageQuality),
       .mediaDataChange || .mediaMerge => MediaChangeNotification(map, type, imageQuality),
       .mediaDeletion => MediaDeletionNotification(map, type),
+      .mediaSubmissionUpdate => MediaSubmissionUpdateNotification(map, imageQuality),
+      .characterSubmissionUpdate => CharacterSubmissionUpdateNotification(map, imageQuality),
+      .staffSubmissionUpdate => StaffSubmissionUpdateNotification(map, imageQuality),
     };
   }
 
@@ -320,4 +326,88 @@ class MediaDeletionNotification extends SiteNotification {
       );
 
   final String reason;
+}
+
+sealed class SubmissionUpdateNotification extends SiteNotification {
+  SubmissionUpdateNotification._({
+    required super.map,
+    required super.type,
+    required super.imageUrl,
+    required super.texts,
+    required this.itemId,
+  }) : notes = map['notes'] ?? '';
+
+  final int? itemId;
+  final String notes;
+}
+
+class MediaSubmissionUpdateNotification extends SubmissionUpdateNotification {
+  MediaSubmissionUpdateNotification._({
+    required super.map,
+    required super.type,
+    required super.imageUrl,
+    required super.texts,
+    required super.itemId,
+  }) : super._();
+
+  factory MediaSubmissionUpdateNotification(Map<String, dynamic> map, ImageQuality imageQuality) =>
+      MediaSubmissionUpdateNotification._(
+        map: map,
+        type: .mediaSubmissionUpdate,
+        imageUrl: map['media']?['coverImage']?[imageQuality.value],
+        texts: [
+          map['submittedTitle'] ?? map['media']?['title']?['userPreferred'] ?? '?',
+          ' - submission is ',
+          map['status'] ?? '?',
+        ],
+        itemId: map['media']?['id'],
+      );
+}
+
+class CharacterSubmissionUpdateNotification extends SubmissionUpdateNotification {
+  CharacterSubmissionUpdateNotification._({
+    required super.map,
+    required super.type,
+    required super.imageUrl,
+    required super.texts,
+    required super.itemId,
+  }) : super._();
+
+  factory CharacterSubmissionUpdateNotification(
+    Map<String, dynamic> map,
+    ImageQuality imageQuality,
+  ) => CharacterSubmissionUpdateNotification._(
+    map: map,
+    type: .characterSubmissionUpdate,
+    imageUrl: map['character']?['image']?[imageQuality.personValue],
+    texts: [
+      map['character']?['name']?['userPreferred'] ?? '?',
+      ' - submission is ',
+      map['status'] ?? '?',
+    ],
+    itemId: map['character']?['id'],
+  );
+}
+
+class StaffSubmissionUpdateNotification extends SubmissionUpdateNotification {
+  StaffSubmissionUpdateNotification._({
+    required super.map,
+    required super.type,
+    required super.imageUrl,
+    required super.texts,
+    required super.itemId,
+  }) : super._();
+
+  factory StaffSubmissionUpdateNotification(Map<String, dynamic> map, ImageQuality imageQuality) =>
+      StaffSubmissionUpdateNotification._(
+        map: map,
+        type: .staffSubmissionUpdate,
+        imageUrl: map['staff']?['image']?[imageQuality.personValue],
+        texts: [
+          map['staff']?['name']?['userPreferred'] ?? '?',
+          ' - submission is ',
+          map['status'] ?? '?',
+        ],
+        itemId: map['staff']?['id'],
+      );
 }

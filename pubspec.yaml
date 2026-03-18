@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
 
   # State management.
-  flutter_riverpod: ^3.2.1
+  flutter_riverpod: ^3.3.1
 
   # Routing.
   go_router: ^17.1.0
@@ -49,7 +49,7 @@ dependencies:
   workmanager: ^0.9.0+3
 
   # Sending device notifications.
-  flutter_local_notifications: ^20.1.0
+  flutter_local_notifications: ^21.0.0
 
   # Parsing html into flutter widgets.
   flutter_widget_from_html_core: ^0.17.0

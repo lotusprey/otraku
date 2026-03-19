@@ -1,7 +1,15 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class TextInputDialog extends StatefulWidget {
@@ -133,9 +141,10 @@ class ConfirmationDialog extends StatelessWidget {
 }
 
 class ImageDialog extends StatefulWidget {
-  const ImageDialog(this.url);
+  const ImageDialog(this.url, {this.cacheManager});
 
   final String url;
+  final BaseCacheManager? cacheManager;
 
   @override
   State<ImageDialog> createState() => _ImageDialogState();
@@ -183,33 +192,228 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Dialog(
       insetPadding: .zero,
-      backgroundColor: Colors.transparent,
+      // give darkening effect
+      backgroundColor: ColorScheme.of(context).surface.withAlpha(125),
       surfaceTintColor: Colors.transparent,
-      child: GestureDetector(
-        onDoubleTapDown: (details) => _lastOffset = details.localPosition,
-        onDoubleTap: () {
-          // If zoomed in, zoom out.
-          if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
-            _animateMatrixTo(Matrix4.identity());
-            return;
-          }
+      // to add blur
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: SizedBox.expand(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => Navigator.pop(context), //closes the dialog when tapped outside
+            child: Stack(
+              children: [
+                // to center the image
+                Center(
+                  //to constraint the height of the image so very long images don't overflow also make it able to pop the dialogbox when user taps outside the image
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
+                    child: GestureDetector(
+                      onTap: () {}, //absorbs the tap on image
+                      onDoubleTapDown: (details) => _lastOffset = details.localPosition,
+                      onDoubleTap: () {
+                        // If zoomed in, zoom out.
+                        if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
+                          _animateMatrixTo(Matrix4.identity());
+                          return;
+                        }
 
-          // Can't be null, but checking just in case.
-          if (_lastOffset == null) return;
+                        // Can't be null, but checking just in case.
+                        if (_lastOffset == null) return;
 
-          // If zoomed out, zoom in towards the tapped spot.
-          final zoomed = _transformCtrl.value.clone();
-          zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
-          zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
-          _animateMatrixTo(zoomed);
-        },
-        child: InteractiveViewer(
-          clipBehavior: Clip.none,
-          transformationController: _transformCtrl,
-          child: CachedImage(widget.url, fit: BoxFit.contain, width: null, height: null),
+                        // If zoomed out, zoom in towards the tapped spot.
+                        final zoomed = _transformCtrl.value.clone();
+                        zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
+                        zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
+                        _animateMatrixTo(zoomed);
+                      },
+                      child: InteractiveViewer(
+                        clipBehavior: Clip.none,
+                        transformationController: _transformCtrl,
+                        child: CachedImage(widget.url, fit: BoxFit.contain, height: null),
+                        //set height to null so image fits the constrainedbox and user can tap outside to pop the dialogbox
+                      ),
+                    ),
+                  ),
+                ),
+                //save & more buttons
+                Align(
+                  alignment: .bottomRight,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: Theming.offset * 2, right: Theming.offset * 2),
+                    child: Row(
+                      spacing: Theming.offset,
+                      children: [
+                        Spacer(),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: ColorScheme.of(context).onSurface.withAlpha(125),
+                            borderRadius: BorderRadius.all(Theming.radiusSmall),
+                          ),
+                          child: IconButton(
+                            color: ColorScheme.of(context).onPrimary,
+                            tooltip: 'Download',
+                            icon: const Icon(Icons.download_outlined),
+                            onPressed: () => _saveImage(context),
+                          ),
+                        ),
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: ColorScheme.of(context).onSurface.withAlpha(125),
+                            borderRadius: BorderRadius.all(Theming.radiusSmall),
+                          ),
+                          child: PopupMenuButton<String>(
+                            shape: RoundedRectangleBorder(borderRadius: Theming.borderRadiusSmall),
+                            tooltip: 'More',
+                            iconColor: ColorScheme.of(context).onPrimary,
+                            icon: const Icon(Icons.more_vert),
+                            // so the popup menu is above the more button so they don't overlap
+                            offset: const Offset(0, -200),
+                            onSelected: (result) async {
+                              switch (result) {
+                                case 'copy':
+                                  SnackBarExtension.copy(context, widget.url);
+                                  Navigator.pop(context);
+                                case 'browser':
+                                  launchUrl(
+                                    Uri.parse(widget.url),
+                                    mode: LaunchMode.externalApplication,
+                                  );
+                                case 'share':
+                                  final file = await (widget.cacheManager ?? DefaultCacheManager())
+                                      .getSingleFile(widget.url);
+                                  final fileName = _getFileName(widget.url, file);
+                                  final temp = File(
+                                    '${(await getTemporaryDirectory()).path}/$fileName',
+                                  );
+                                  await file.copy(temp.path);
+                                  await SharePlus.instance.share(
+                                    ShareParams(files: [XFile(temp.path)]),
+                                  );
+                                  await temp.delete();
+                              }
+                            },
+                            itemBuilder: (context) => [
+                              const PopupMenuItem(
+                                value: 'copy',
+                                child: ListTile(
+                                  leading: Icon(Icons.copy_outlined),
+                                  title: Text('Copy URL'),
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'browser',
+                                child: ListTile(
+                                  leading: Icon(Icons.open_in_browser_outlined),
+                                  title: Text('Open in Browser'),
+                                ),
+                              ),
+                              const PopupMenuItem(
+                                value: 'share',
+                                child: ListTile(
+                                  leading: Icon(Icons.share_outlined),
+                                  title: Text('Share Image'),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  //save button logic
+  Future<void> _saveImage(BuildContext context) async {
+    try {
+      final file = await (widget.cacheManager ?? DefaultCacheManager()).getSingleFile(widget.url);
+      final fileName = _getFileName(widget.url, file);
+      final Directory dir;
+      //save in downloads for android
+      if (Platform.isAndroid) {
+        dir = Directory('/storage/emulated/0/Download');
+        if (!await dir.exists()) await dir.create(recursive: true);
+      } else {
+        //and save in doccuments in ios since downloads doesn't exist on ios
+        dir = await getApplicationDocumentsDirectory();
+      }
+
+      //logic to handle duplicate files, for "file exists error"
+      final dotIndex = fileName.lastIndexOf('.');
+      final name = dotIndex != -1 ? fileName.substring(0, dotIndex) : fileName;
+      final ext = dotIndex != -1 ? fileName.substring(dotIndex) : '';
+
+      int i = 0;
+      while (true) {
+        final destPath = i == 0 ? '${dir.path}/$fileName' : '${dir.path}/$name($i)$ext';
+        try {
+          await file.copy(destPath);
+          break;
+        } on FileSystemException catch (e) {
+          if (e.osError?.errorCode == 17) {
+            i++;
+          } else {
+            rethrow;
+          }
+        }
+      }
+
+      if (context.mounted) {
+        if (Platform.isAndroid) {
+          Navigator.pop(context);
+          SnackBarExtension.show(context, 'Saved to Downloads');
+        } else {
+          Navigator.pop(context);
+          SnackBarExtension.show(context, 'Saved to Documents');
+        }
+      }
+    } catch (e) {
+      // error handler to show the exact error
+      final osError = e is FileSystemException ? e.osError : null;
+      final message = osError != null
+          ? '${osError.message}, errno = ${osError.errorCode}'
+          : e.toString();
+      if (context.mounted) {
+        Navigator.pop(context);
+        SnackBarExtension.show(context, 'Failed to save: $message');
+      }
+    }
+  }
+
+  //logic to handle proper file extension since some files don't have file extension when downloaded or use a non standard extension
+  String _getFileName(String url, File file) {
+    final name = Uri.parse(url).pathSegments.last;
+
+    if (name.endsWith('.gifv')) {
+      return name.replaceAll('.gifv', '.mp4');
+    } //to make up for Imgur's video format
+
+    if (name.contains('.')) return name;
+
+    //logic to handle when cached image doesn't have file extension in it's name
+    try {
+      final bytes = file.readAsBytesSync();
+      if (bytes.length >= 4) {
+        if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46) return '$name.gif';
+        if (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47) {
+          return '$name.png';
+        }
+        if (bytes[0] == 0xFF && bytes[1] == 0xD8) return '$name.jpg';
+        if (bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46) {
+          return '$name.webp';
+        }
+      }
+    } catch (_) {}
+
+    return '$name.jpg';
   }
 }
 

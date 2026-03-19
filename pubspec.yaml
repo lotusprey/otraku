@@ -60,6 +60,9 @@ dependencies:
   # An addition to the material icons.
   ionicons: ^0.2.2
 
+  # To Share
+  share_plus: ^12.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

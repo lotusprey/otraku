@@ -17,7 +17,10 @@ class ActivitiesFilterNotifier extends Notifier<ActivitiesFilter> {
   ActivitiesFilter build() => switch (arg) {
     HomeActivitiesTag _ => ref.watch(persistenceProvider.select((s) => s.homeActivitiesFilter)),
     UserActivitiesTag(:final userId) => UserActivitiesFilter(userId, ActivityType.values),
-    MediaActivitiesTag(:final mediaId) => MediaActivitiesFilter(mediaId, false),
+    MediaActivitiesTag(:final mediaId) =>
+      ref
+          .watch(persistenceProvider.select((s) => s.mediaActivitiesFilter))
+          .copyWith(mediaId: mediaId, viewerId: (ref.watch(viewerIdProvider),)),
   };
 
   @override
@@ -27,7 +30,9 @@ class ActivitiesFilterNotifier extends Notifier<ActivitiesFilter> {
     switch (newState) {
       case HomeActivitiesFilter homeActivitiesFilter:
         ref.read(persistenceProvider.notifier).setHomeActivitiesFilter(homeActivitiesFilter);
-      case UserActivitiesFilter _ || MediaActivitiesFilter _:
+      case MediaActivitiesFilter mediaActivitiesFilter:
+        ref.read(persistenceProvider.notifier).setMediaActivitiesFilter(mediaActivitiesFilter);
+      case UserActivitiesFilter _:
         super.state = newState;
     }
   }

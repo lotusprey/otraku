@@ -75,34 +75,37 @@ class _FollowingFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final filter = ref.watch(activitiesFilterProvider(tag)) as MediaActivitiesFilter;
+    final filter = ref.watch(activitiesFilterProvider(tag));
 
     return SliverToBoxAdapter(
       child: SizedBox(
         height: Theming.normalTapTarget,
-        child: Row(
-          spacing: Theming.offset,
-          children: [
-            FilterChip(
-              label: const Text("Global"),
-              selected: filter.socialGroup == .global,
-              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                  .copyWith(socialGroup: .global),
-            ),
-            FilterChip(
-              label: const Text("Following"),
-              selected: filter.socialGroup == .followed,
-              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                  .copyWith(socialGroup: .followed),
-            ),
-            FilterChip(
-              label: const Text("Self"),
-              selected: filter.socialGroup == .self,
-              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                  .copyWith(socialGroup: .self),
-            ),
-          ],
-        ),
+        child: switch (filter) {
+          MediaActivitiesFilter filter => Row(
+            spacing: Theming.offset,
+            children: [
+              FilterChip(
+                label: const Text("Global"),
+                selected: filter.socialGroup == .global,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .global),
+              ),
+              FilterChip(
+                label: const Text("Following"),
+                selected: filter.socialGroup == .followed,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .followed),
+              ),
+              FilterChip(
+                label: const Text("Self"),
+                selected: filter.socialGroup == .self,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .self),
+              ),
+            ],
+          ),
+          _ => const SizedBox.shrink(),
+        },
       ),
     );
   }

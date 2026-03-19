@@ -52,11 +52,11 @@ class Settings {
     ),
     disabledListActivity: {
       for (var activity in map['options']?['disabledListActivity'] ?? const [])
-        ListStatus.from(activity['type'])!: activity['disabled'],
+        ?ListStatus.from(activity['type']): activity['disabled'],
     },
     notificationOptions: {
       for (var option in map['options']?['notificationOptions'] ?? const [])
-        NotificationType.from(option['type'])!: option['enabled'],
+        ?NotificationType.from(option['type']): option['enabled'],
     },
   );
 

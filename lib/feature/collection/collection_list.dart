@@ -37,7 +37,7 @@ class CollectionList extends StatelessWidget {
     final textTheme = TextTheme.of(context);
     final bodyMediumLineHeight = context.lineHeight(textTheme.bodyMedium!);
     final labelMediumLineHeight = context.lineHeight(textTheme.labelMedium!);
-    final tileHeight = bodyMediumLineHeight * 2 + labelMediumLineHeight + Theming.offset + 69;
+    final tileHeight = bodyMediumLineHeight * 2 + labelMediumLineHeight * 2 + Theming.offset + 69;
 
     return SliverFixedExtentList(
       delegate: SliverChildBuilderDelegate(
@@ -153,7 +153,7 @@ class __TileContentState extends State<_TileContent> {
       crossAxisAlignment: .stretch,
       children: [
         Flexible(child: Text(widget.item.titles[0], overflow: .ellipsis, maxLines: 2)),
-        TextRail(textRailItems, maxLines: 1),
+        TextRail(textRailItems, maxLines: 2),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 3),
           child: SizedBox(

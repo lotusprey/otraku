@@ -9,7 +9,7 @@ import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.11.2';
+const appVersion = '1.12.0';
 
 class Persistence {
   const Persistence({
@@ -21,6 +21,7 @@ class Persistence {
     required this.mangaCollectionMediaFilter,
     required this.discoverMediaFilter,
     required this.homeActivitiesFilter,
+    required this.mediaActivitiesFilter,
     required this.calendarFilter,
   });
 
@@ -33,6 +34,7 @@ class Persistence {
     mangaCollectionMediaFilter: CollectionMediaFilter(),
     discoverMediaFilter: DiscoverMediaFilter(.titleRomaji),
     homeActivitiesFilter: .empty(),
+    mediaActivitiesFilter: .empty(),
     calendarFilter: .empty(),
   );
 
@@ -61,6 +63,11 @@ class Persistence {
         map['homeActivitiesFilter'] ?? const {},
         accountGroup.account?.id,
       ),
+      mediaActivitiesFilter: .fromPersistence(
+        map['mediaActivitiesFilter'] ?? const {},
+        0,
+        accountGroup.account?.id,
+      ),
       calendarFilter: .fromPersistenceMap(map['calendarFilter'] ?? const {}),
     );
   }
@@ -73,6 +80,7 @@ class Persistence {
   final CollectionMediaFilter mangaCollectionMediaFilter;
   final DiscoverMediaFilter discoverMediaFilter;
   final HomeActivitiesFilter homeActivitiesFilter;
+  final MediaActivitiesFilter mediaActivitiesFilter;
   final CalendarFilter calendarFilter;
 
   Persistence copyWith({
@@ -85,6 +93,7 @@ class Persistence {
     DiscoverMediaFilter? discoverMediaFilter,
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
+    MediaActivitiesFilter? mediaActivitiesFilter,
   }) => Persistence(
     systemColors: systemColors ?? this.systemColors,
     accountGroup: accountGroup ?? this.accountGroup,
@@ -95,6 +104,7 @@ class Persistence {
     discoverMediaFilter: discoverMediaFilter ?? this.discoverMediaFilter,
     homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
     calendarFilter: calendarFilter ?? this.calendarFilter,
+    mediaActivitiesFilter: mediaActivitiesFilter ?? this.mediaActivitiesFilter,
   );
 }
 
@@ -297,6 +307,12 @@ enum ImageQuality {
 
   final String label;
   final String value;
+
+  // Character and staff images don't have an "extra large" option.
+  String get personValue => switch (this) {
+    .veryHigh => ImageQuality.high.value,
+    _ => value,
+  };
 }
 
 enum ButtonOrientation { auto, left, right }

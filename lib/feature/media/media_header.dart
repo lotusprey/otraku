@@ -72,7 +72,7 @@ class MediaHeader extends StatelessWidget {
       imageHeroTag: id,
       siteUrl: media?.info.siteUrl,
       title: media?.info.preferredTitle,
-      details: TextRail(textRailItems, style: TextTheme.of(context).labelMedium),
+      details: [TextRail(textRailItems, style: TextTheme.of(context).labelMedium)],
       tabBarConfig: tabCtrl != null && scrollToTop != null
           ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,

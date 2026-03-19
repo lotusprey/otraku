@@ -42,11 +42,13 @@ class StaffHeader extends StatelessWidget {
       siteUrl: staff?.siteUrl,
       title: staff?.preferredName,
       details: staff != null
-          ? TableList([
-              ('Favorites', staff!.favorites.toString()),
-              if (staff!.gender != null) ('Gender', staff!.gender!),
-            ], highContrast: highContrast)
-          : null,
+          ? [
+              TableList([
+                ('Favorites', staff!.favorites.toString()),
+                if (staff!.gender != null) ('Gender', staff!.gender!),
+              ], highContrast: highContrast),
+            ]
+          : const [],
       tabBarConfig: tabCtrl != null && scrollToTop != null
           ? (tabCtrl: tabCtrl!, scrollToTop: scrollToTop!, tabs: tabsWithOverview)
           : null,

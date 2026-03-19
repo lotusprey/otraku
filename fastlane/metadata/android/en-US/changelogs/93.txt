@@ -1,0 +1,6 @@
+- Added: support for the new AniList notification types - this fixes the media and other parts of the app not loading.
+- Added: "Self" option in the media activity filter.
+- Improved: Bar charts in user/media statistics are not horizontal, more compact and more informative.
+- Improved: Buttons on the user page are now a grid.
+- Fixed: wrong status bar tint on older android versions.
+- Fixed: layout issues with the text being cut off.

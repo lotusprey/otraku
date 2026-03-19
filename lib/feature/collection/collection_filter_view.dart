@@ -112,7 +112,7 @@ class _FilterCollectionViewState extends ConsumerState<CollectionFilterView> {
               onChanged: (v) => _filter.sort = v,
               highContrast: options.highContrast,
             ),
-            if (previewSortPicker != null) previewSortPicker,
+            ?previewSortPicker,
             ChipMultiSelector(
               title: 'Statuses',
               items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),

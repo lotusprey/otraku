@@ -3,83 +3,98 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
-import 'package:otraku/widget/shadowed_overflow_list.dart';
 
 class BarChart extends StatelessWidget {
-  const BarChart({
-    required this.title,
-    required this.names,
-    required this.values,
-    this.barWidth = 60,
-    this.toolbar,
-  }) : assert(names.length == values.length);
+  const BarChart({required this.title, required this.names, required this.values, this.toolbar})
+    : assert(names.length == values.length);
 
   final String title;
   final List<String> names;
   final List<num> values;
   final Widget? toolbar;
-  final double barWidth;
 
   @override
   Widget build(BuildContext context) {
-    double maxHeight = 210.0;
-    num maxValue = 0;
-    for (final v in values) {
-      if (maxValue < v) maxValue = v;
-    }
-    maxHeight /= maxValue;
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = TextTheme.of(context);
 
-    return Column(
-      mainAxisSize: .min,
-      crossAxisAlignment: .stretch,
-      children: [
-        Padding(
-          padding: const .symmetric(vertical: 5),
-          child: Text(title, style: TextTheme.of(context).titleSmall),
-        ),
-        if (toolbar != null) toolbar!,
-        SizedBox(
-          height: 280,
-          child: ShadowedOverflowList(
-            itemCount: names.length,
-            itemExtent: barWidth + 5,
-            itemBuilder: (_, i) => Column(
-              mainAxisAlignment: .end,
-              children: [
-                Text(
-                  values[i].toString(),
-                  style: TextTheme.of(context).labelMedium,
-                  overflow: .ellipsis,
-                  maxLines: 1,
-                ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: values[i] * maxHeight + Theming.offset,
-                  margin: const .symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0, 1],
-                      colors: [
-                        ColorScheme.of(context).primary,
-                        ColorScheme.of(context).primary.withValues(alpha: 0.1),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxBarWidth = constraints.maxWidth;
+        double scale(num value) => value > 0 ? math.log(value + 0.1) : 0;
+
+        final maxValue = values.fold<num>(0.0, (prev, element) => element > prev ? element : prev);
+        final scaledMaxValue = scale(maxValue);
+
+        final totalValue = values.fold(0.0, (sum, value) => sum + value);
+
+        return Column(
+          crossAxisAlignment: .start,
+          children: [
+            Padding(
+              padding: const .symmetric(vertical: 5),
+              child: Text(title, style: textTheme.titleSmall),
+            ),
+            if (toolbar != null) ...[
+              SizedBox(width: double.infinity, child: toolbar!),
+              const SizedBox(height: Theming.offset),
+            ],
+            for (int i = 0; i < names.length; i++)
+              Padding(
+                padding: const .symmetric(vertical: 3),
+                child: Column(
+                  crossAxisAlignment: .start,
+                  spacing: 1,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(names[i], style: textTheme.labelMedium, textAlign: .left),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${(values[i] / totalValue * 100).toStringAsFixed(1)}%",
+                            style: textTheme.labelMedium,
+                            textAlign: .center,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            "${values[i]}",
+                            style: textTheme.labelMedium,
+                            textAlign: .right,
+                          ),
+                        ),
                       ],
                     ),
-                  ),
+                    Container(
+                      height: 10,
+                      width: maxBarWidth,
+                      decoration: BoxDecoration(
+                        borderRadius: Theming.borderRadiusSmall,
+                        color: colorScheme.surfaceContainerLowest,
+                        border: .all(color: colorScheme.outlineVariant, width: 1),
+                      ),
+                      alignment: .centerLeft,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        width: (scale(values[i]) / scaledMaxValue) * maxBarWidth,
+                        decoration: BoxDecoration(
+                          borderRadius: Theming.borderRadiusSmall,
+                          gradient: LinearGradient(
+                            begin: .centerLeft,
+                            end: .centerRight,
+                            colors: [colorScheme.primaryContainer, colorScheme.primary],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  names[i],
-                  style: TextTheme.of(context).labelMedium,
-                  overflow: .ellipsis,
-                  maxLines: 1,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
+              ),
+          ],
+        );
+      },
     );
   }
 }

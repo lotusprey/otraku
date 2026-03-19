@@ -87,22 +87,48 @@ class UserActivitiesFilter extends ActivitiesFilter {
 }
 
 class MediaActivitiesFilter extends ActivitiesFilter {
-  const MediaActivitiesFilter(this.mediaId, this.onlyFollowing);
+  const MediaActivitiesFilter(this.socialGroup, this.mediaId, this.viewerId);
+
+  factory MediaActivitiesFilter.empty() => const MediaActivitiesFilter(.global, 0, null);
 
   final int mediaId;
-  final bool onlyFollowing;
+  final ActivitySocialGroup socialGroup;
+  final int? viewerId;
 
   @override
-  MediaActivitiesFilter copy() => MediaActivitiesFilter(mediaId, onlyFollowing);
+  MediaActivitiesFilter copy() => MediaActivitiesFilter(socialGroup, mediaId, viewerId);
 
-  MediaActivitiesFilter copyWithOnlyFollowing(bool onlyFollowing) =>
-      MediaActivitiesFilter(mediaId, onlyFollowing);
+  MediaActivitiesFilter copyWith({
+    ActivitySocialGroup? socialGroup,
+    int? mediaId,
+    (int?,)? viewerId,
+  }) => MediaActivitiesFilter(
+    socialGroup ?? this.socialGroup,
+    mediaId ?? this.mediaId,
+    viewerId != null ? viewerId.$1 : this.viewerId,
+  );
 
   @override
   Map<String, dynamic> toGraphQlVariables() => {
     'mediaId': mediaId,
-    if (onlyFollowing) 'isFollowing': true,
+    ...switch (socialGroup) {
+      .global => const {},
+      .followed => const {'isFollowing': true},
+      .self => viewerId != null ? {'userId': viewerId} : {'isFollowing': true},
+    },
   };
+
+  Map<String, dynamic> toPersistenceMap() => {'socialGroup': socialGroup.index};
+
+  static MediaActivitiesFilter fromPersistence(
+    Map<dynamic, dynamic> map,
+    int mediaId,
+    int? viewerId,
+  ) => MediaActivitiesFilter(
+    ActivitySocialGroup.values.getOrFirst(map['socialGroup']),
+    mediaId,
+    viewerId,
+  );
 }
 
 enum ActivityType {
@@ -116,3 +142,5 @@ enum ActivityType {
   final String label;
   final String value;
 }
+
+enum ActivitySocialGroup { global, followed, self }

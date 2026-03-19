@@ -78,26 +78,35 @@ class _FollowingFilterButton extends StatelessWidget {
     final filter = ref.watch(activitiesFilterProvider(tag));
 
     return SliverToBoxAdapter(
-      child: switch (filter) {
-        MediaActivitiesFilter(:final onlyFollowing) => SizedBox(
-          height: Theming.normalTapTarget,
-          child: Align(
-            alignment: Alignment.topLeft,
-            child: onlyFollowing
-                ? OutlinedButton(
-                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                        .copyWithOnlyFollowing(false),
-                    child: const Text('Show All'),
-                  )
-                : OutlinedButton(
-                    onPressed: () => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                        .copyWithOnlyFollowing(true),
-                    child: const Text('Show Following Only'),
-                  ),
+      child: SizedBox(
+        height: Theming.normalTapTarget,
+        child: switch (filter) {
+          MediaActivitiesFilter filter => Row(
+            spacing: Theming.offset,
+            children: [
+              FilterChip(
+                label: const Text("Global"),
+                selected: filter.socialGroup == .global,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .global),
+              ),
+              FilterChip(
+                label: const Text("Following"),
+                selected: filter.socialGroup == .followed,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .followed),
+              ),
+              FilterChip(
+                label: const Text("Self"),
+                selected: filter.socialGroup == .self,
+                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                    .copyWith(socialGroup: .self),
+              ),
+            ],
           ),
-        ),
-        _ => const SizedBox.shrink(),
-      },
+          _ => const SizedBox.shrink(),
+        },
+      ),
     );
   }
 }

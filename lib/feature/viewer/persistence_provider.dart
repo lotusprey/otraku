@@ -69,6 +69,11 @@ class PersistenceNotifier extends Notifier<Persistence> {
     state = state.copyWith(homeActivitiesFilter: homeActivitiesFilter);
   }
 
+  void setMediaActivitiesFilter(MediaActivitiesFilter mediaActivitiesFilter) {
+    _box.put('mediaActivitiesFilter', mediaActivitiesFilter.toPersistenceMap());
+    state = state.copyWith(mediaActivitiesFilter: mediaActivitiesFilter);
+  }
+
   void setCalendarFilter(CalendarFilter calendarFilter) {
     _box.put('calendarFilter', calendarFilter.toPersistenceMap());
     state = state.copyWith(calendarFilter: calendarFilter);

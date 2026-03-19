@@ -70,13 +70,13 @@ class CompositionNotifier extends AsyncNotifier<Composition> {
       switch (arg) {
         case StatusActivityCompositionTag(id: var id):
           final data = await ref.read(repositoryProvider).request(GqlMutation.saveStatusActivity, {
-            if (id != null) 'id': id,
+            'id': ?id,
             'text': value.text.withParsedEmojis,
           });
           return data['SaveTextActivity'];
         case MessageActivityCompositionTag(id: var id, recipientId: var rcpId):
           final data = await ref.read(repositoryProvider).request(GqlMutation.saveMessageActivity, {
-            if (id != null) 'id': id,
+            'id': ?id,
             'text': value.text.withParsedEmojis,
             'recipientId': rcpId,
             if (value is PrivateComposition) 'isPrivate': value.isPrivate,
@@ -84,7 +84,7 @@ class CompositionNotifier extends AsyncNotifier<Composition> {
           return data['SaveMessageActivity'];
         case ActivityReplyCompositionTag(id: var id, activityId: var actId):
           final data = await ref.read(repositoryProvider).request(GqlMutation.saveActivityReply, {
-            if (id != null) 'id': id,
+            'id': ?id,
             'text': value.text.withParsedEmojis,
             'activityId': actId,
           });
@@ -95,10 +95,10 @@ class CompositionNotifier extends AsyncNotifier<Composition> {
           parentCommentId: var parentCommentId,
         ):
           final data = await ref.read(repositoryProvider).request(GqlMutation.saveComment, {
-            if (id != null) 'id': id,
+            'id': ?id,
             'text': value.text.withParsedEmojis,
             'threadId': threadId,
-            if (parentCommentId != null) 'parentCommentId': parentCommentId,
+            'parentCommentId': ?parentCommentId,
           });
           return data['SaveThreadComment'];
       }

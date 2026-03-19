@@ -16,6 +16,16 @@ Future<void> main() async {
   await container.read(persistenceProvider.notifier).init();
   BackgroundHandler.init(_notificationCtrl);
 
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemStatusBarContrastEnforced: false,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
+    ),
+  );
+
   runApp(UncontrolledProviderScope(container: container, child: const _App()));
 }
 
@@ -132,14 +142,10 @@ class AppState extends ConsumerState<_App> {
           overlayBrightness = Brightness.dark;
         }
 
-        SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
         SystemChrome.setSystemUIOverlayStyle(
           SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
             statusBarBrightness: scheme.brightness,
             statusBarIconBrightness: overlayBrightness,
-            systemNavigationBarColor: Colors.transparent,
-            systemNavigationBarContrastEnforced: false,
             systemNavigationBarIconBrightness: overlayBrightness,
           ),
         );

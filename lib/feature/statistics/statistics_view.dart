@@ -157,7 +157,6 @@ class _StatisticsView extends StatelessWidget {
             full: false,
             initialTab: primaryBarChartTab(),
             onTabChanged: onPrimaryTabChanged,
-            barWidth: 40,
           ),
         ],
         if (statistics.lengths.isNotEmpty) ...[
@@ -169,7 +168,6 @@ class _StatisticsView extends StatelessWidget {
             full: true,
             initialTab: secondaryBarChartTab(),
             onTabChanged: onSecondaryTabChanged,
-            barWidth: 65,
           ),
         ],
         if (statistics.count > 0) ...[
@@ -196,6 +194,7 @@ class _Details extends StatelessWidget {
   _Details(Statistics statistics, bool ofAnime, this.highContrast) {
     subtitles.add(statistics.count);
     subtitles.add(statistics.partsConsumed);
+
     if (ofAnime) {
       subtitles.add(((statistics.amountConsumed / 1440) * 10).round() / 10);
       icons.add(Ionicons.film_outline);
@@ -242,27 +241,35 @@ class _Details extends StatelessWidget {
       ),
       delegate: SliverChildBuilderDelegate(
         childCount: titles.length,
-        (context, i) => CardExtension.highContrast(highContrast)(
-          child: Padding(
-            padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
-            child: Row(
-              spacing: Theming.offset,
-              children: [
-                Icon(icons[i], size: Theming.iconBig),
-                Column(
-                  mainAxisAlignment: .center,
-                  crossAxisAlignment: .start,
-                  children: [
-                    Text(
-                      titles[i],
-                      style: TextTheme.of(context).labelMedium,
-                      overflow: .ellipsis,
-                      maxLines: 1,
+        (context, i) => Tooltip(
+          message: titles[i],
+          triggerMode: .tap,
+          child: CardExtension.highContrast(highContrast)(
+            child: Padding(
+              padding: const .symmetric(horizontal: Theming.offset, vertical: 5),
+              child: Row(
+                spacing: Theming.offset,
+                children: [
+                  Icon(icons[i], size: Theming.iconBig),
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: .center,
+                      crossAxisAlignment: .start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            titles[i],
+                            style: TextTheme.of(context).labelMedium,
+                            overflow: .ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                        Text(subtitles[i].toString()),
+                      ],
                     ),
-                    Text(subtitles[i].toString()),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -278,7 +285,6 @@ class _BarChart extends StatefulWidget {
     required this.initialTab,
     required this.ofAnime,
     required this.full,
-    required this.barWidth,
     required this.onTabChanged,
   });
 
@@ -287,7 +293,6 @@ class _BarChart extends StatefulWidget {
   final int initialTab;
   final bool ofAnime;
   final bool full;
-  final double barWidth;
   final void Function(int) onTabChanged;
 
   @override
@@ -330,7 +335,7 @@ class _BarChartState extends State<_BarChart> {
                 label: Text('Chapters'),
                 icon: Icon(Icons.hourglass_bottom_outlined),
               ),
-            if (widget.full)
+            if (widget.full && widget.statistics.any((s) => s.meanScore > 0))
               const ButtonSegment(
                 value: 2,
                 label: Text('Score'),
@@ -345,7 +350,6 @@ class _BarChartState extends State<_BarChart> {
         ),
         names: widget.statistics.map((s) => s.type).toList(),
         values: values,
-        barWidth: widget.barWidth,
       ),
     );
   }

@@ -35,11 +35,6 @@ class PersistenceNotifier extends Notifier<Persistence> {
     state = .fromPersistenceMap(_box.toMap(), accessTokens);
   }
 
-  void setMediaActivitiesFilter(Map<String, dynamic> filter) {
-    _box.put('mediaActivitiesFilter', filter);
-    state = state.copyWith(mediaActivitiesFilter: filter);
-  }
-
   void cacheSystemPrimaryColors(SystemColors systemColors) {
     state = state.copyWith(systemColors: systemColors);
   }
@@ -72,6 +67,11 @@ class PersistenceNotifier extends Notifier<Persistence> {
   void setHomeActivitiesFilter(HomeActivitiesFilter homeActivitiesFilter) {
     _box.put('homeActivitiesFilter', homeActivitiesFilter.toPersistenceMap());
     state = state.copyWith(homeActivitiesFilter: homeActivitiesFilter);
+  }
+
+  void setMediaActivitiesFilter(MediaActivitiesFilter mediaActivitiesFilter) {
+    _box.put('mediaActivitiesFilter', mediaActivitiesFilter.toPersistenceMap());
+    state = state.copyWith(mediaActivitiesFilter: mediaActivitiesFilter);
   }
 
   void setCalendarFilter(CalendarFilter calendarFilter) {

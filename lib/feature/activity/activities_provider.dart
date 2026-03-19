@@ -20,36 +20,36 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   final ActivitiesTag arg;
 
   int? _viewerId;
+  late ActivitiesFilter _filter;
 
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
 
   @override
   FutureOr<Paged<Activity>> build() {
-    _lastId = null;
-    // moved the filter here and remove _filter, so that the page is refetched when the filter changes, to fix the No Results issue in "Following" chip when first selected
-    final filter = ref.watch(activitiesFilterProvider(arg));
-    _viewerId = ref.watch(viewerIdProvider);
     // The home feed and the media feeds are lazy-loaded. The home feed is never disposed,
     // while the media feeds are disposed only when the media page is popped.
     if (arg is HomeActivitiesTag || arg is MediaActivitiesTag) {
       ref.keepAlive();
     }
 
-    return _fetch(const Paged(), filter);
+    _lastId = null;
+    _filter = ref.watch(activitiesFilterProvider(arg));
+    _viewerId = ref.watch(viewerIdProvider);
+
+    return _fetch(const Paged());
   }
 
   Future<void> fetch() async {
     final oldState = state.value ?? const Paged();
     if (!oldState.hasNext) return;
-    final filter = ref.watch(activitiesFilterProvider(arg));
-    state = await AsyncValue.guard(() => _fetch(oldState, filter));
+    state = await AsyncValue.guard(() => _fetch(oldState));
   }
 
-  Future<Paged<Activity>> _fetch(Paged<Activity> oldState, ActivitiesFilter filter) async {
+  Future<Paged<Activity>> _fetch(Paged<Activity> oldState) async {
     final data = await ref.read(repositoryProvider).request(GqlQuery.activityPage, {
       'page': oldState.next,
-      ...filter.toGraphQlVariables(),
+      ..._filter.toGraphQlVariables(),
     });
 
     final imageQuality = ref.read(persistenceProvider).options.imageQuality;

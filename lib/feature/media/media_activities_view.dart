@@ -8,7 +8,6 @@ import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
-import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -77,37 +76,31 @@ class _FollowingFilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final filter = ref.watch(activitiesFilterProvider(tag)) as MediaActivitiesFilter;
-    //for user's name in filter chip
-    final account = ref.watch(persistenceProvider.select((s) => s.accountGroup.account));
 
-    //made it use filter chip instead of button and added "self" filter
     return SliverToBoxAdapter(
       child: SizedBox(
         height: Theming.normalTapTarget,
         child: Row(
+          spacing: Theming.offset,
           children: [
-            const SizedBox(width: Theming.offset),
             FilterChip(
               label: const Text("Global"),
-              selected: !filter.onlyFollowing && filter.userId == null,
+              selected: filter.socialGroup == .global,
               onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                  .copyWith(onlyFollowing: false, clearUserId: true),
+                  .copyWith(socialGroup: .global),
             ),
-            const SizedBox(width: Theming.offset / 2),
             FilterChip(
               label: const Text("Following"),
-              selected: filter.onlyFollowing,
+              selected: filter.socialGroup == .followed,
               onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                  .copyWith(onlyFollowing: true, clearUserId: true),
+                  .copyWith(socialGroup: .followed),
             ),
-            const SizedBox(width: Theming.offset / 2),
-            if (account != null)
-              FilterChip(
-                label: Text("Self"),
-                selected: filter.userId == account.id,
-                onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
-                    .copyWith(onlyFollowing: false, userId: account.id),
-              ),
+            FilterChip(
+              label: const Text("Self"),
+              selected: filter.socialGroup == .self,
+              onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
+                  .copyWith(socialGroup: .self),
+            ),
           ],
         ),
       ),

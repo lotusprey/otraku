@@ -21,8 +21,8 @@ class Persistence {
     required this.mangaCollectionMediaFilter,
     required this.discoverMediaFilter,
     required this.homeActivitiesFilter,
-    required this.calendarFilter,
     required this.mediaActivitiesFilter,
+    required this.calendarFilter,
   });
 
   factory Persistence.empty() => Persistence(
@@ -34,8 +34,8 @@ class Persistence {
     mangaCollectionMediaFilter: CollectionMediaFilter(),
     discoverMediaFilter: DiscoverMediaFilter(.titleRomaji),
     homeActivitiesFilter: .empty(),
+    mediaActivitiesFilter: .empty(),
     calendarFilter: .empty(),
-    mediaActivitiesFilter: const {},
   );
 
   factory Persistence.fromPersistenceMap(
@@ -63,8 +63,12 @@ class Persistence {
         map['homeActivitiesFilter'] ?? const {},
         accountGroup.account?.id,
       ),
+      mediaActivitiesFilter: .fromPersistence(
+        map['mediaActivitiesFilter'] ?? const {},
+        0,
+        accountGroup.account?.id,
+      ),
       calendarFilter: .fromPersistenceMap(map['calendarFilter'] ?? const {}),
-      mediaActivitiesFilter: map['mediaActivitiesFilter'] ?? const {},
     );
   }
 
@@ -76,8 +80,8 @@ class Persistence {
   final CollectionMediaFilter mangaCollectionMediaFilter;
   final DiscoverMediaFilter discoverMediaFilter;
   final HomeActivitiesFilter homeActivitiesFilter;
+  final MediaActivitiesFilter mediaActivitiesFilter;
   final CalendarFilter calendarFilter;
-  final Map<dynamic, dynamic> mediaActivitiesFilter;
 
   Persistence copyWith({
     SystemColors? systemColors,
@@ -89,7 +93,7 @@ class Persistence {
     DiscoverMediaFilter? discoverMediaFilter,
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
-    Map<dynamic, dynamic>? mediaActivitiesFilter,
+    MediaActivitiesFilter? mediaActivitiesFilter,
   }) => Persistence(
     systemColors: systemColors ?? this.systemColors,
     accountGroup: accountGroup ?? this.accountGroup,

@@ -8,6 +8,9 @@ final _cacheManager = CacheManager(
   Config('imageCache', maxNrOfCacheObjects: 1000, stalePeriod: const Duration(days: 10)),
 );
 
+final imageCacheManager =
+    _cacheManager; // to get image cache to save the image, you can make _cacheManager public instead
+
 /// Erases image cache.
 void clearImageCache() => _cacheManager.emptyCache();
 

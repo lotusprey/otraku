@@ -198,6 +198,7 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
       surfaceTintColor: Colors.transparent,
       //to close the image if tapped outside the image
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () => Navigator.pop(context),
         // to add blurred background
         child: BackdropFilter(

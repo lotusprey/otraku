@@ -794,14 +794,14 @@ abstract class GqlQuery {
           ... on RelatedMediaAdditionNotification {
             id
             type
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
+            media {id title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDataChangeNotification {
             id
             type
             reason
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
+            media {id title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaMergeNotification {
@@ -809,7 +809,7 @@ abstract class GqlQuery {
             type
             reason
             deletedMediaTitles
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
+            media {id title {userPreferred} coverImage {extraLarge large medium}}
             createdAt
           }
           ... on MediaDeletionNotification {
@@ -823,7 +823,32 @@ abstract class GqlQuery {
             id
             type
             episode
-            media {id type title {userPreferred} coverImage {extraLarge large medium}}
+            media {id title {userPreferred} coverImage {extraLarge large medium}}
+            createdAt
+          }
+          ... on MediaSubmissionUpdateNotification {
+            id
+            type
+            status
+            notes
+            media {id title {userPreferred} coverImage {extraLarge large medium}}
+            submittedTitle
+            createdAt
+          }
+          ... on CharacterSubmissionUpdateNotification {
+            id
+            type
+            status
+            notes
+            character {id name {userPreferred} image {large medium}}
+            createdAt
+          }
+          ... on StaffSubmissionUpdateNotification {
+            id
+            type
+            status
+            notes
+            staff {id name {userPreferred} image {large medium}}
             createdAt
           }
         }

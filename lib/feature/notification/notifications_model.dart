@@ -357,7 +357,7 @@ class MediaSubmissionUpdateNotification extends SubmissionUpdateNotification {
         imageUrl: map['media']?['coverImage']?[imageQuality.value],
         texts: [
           map['submittedTitle'] ?? map['media']?['title']?['userPreferred'] ?? '?',
-          ' - submission is ',
+          ' - submission ',
           map['status'] ?? '?',
         ],
         itemId: map['media']?['id'],
@@ -382,7 +382,7 @@ class CharacterSubmissionUpdateNotification extends SubmissionUpdateNotification
     imageUrl: map['character']?['image']?[imageQuality.personValue],
     texts: [
       map['character']?['name']?['userPreferred'] ?? '?',
-      ' - submission is ',
+      ' - submission ',
       map['status'] ?? '?',
     ],
     itemId: map['character']?['id'],
@@ -405,7 +405,7 @@ class StaffSubmissionUpdateNotification extends SubmissionUpdateNotification {
         imageUrl: map['staff']?['image']?[imageQuality.personValue],
         texts: [
           map['staff']?['name']?['userPreferred'] ?? '?',
-          ' - submission is ',
+          ' - submission ',
           map['status'] ?? '?',
         ],
         itemId: map['staff']?['id'],

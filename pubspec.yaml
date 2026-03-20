@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.12.0+93
+version: 1.12.1+94
 
 environment:
   sdk: '>=3.10.0 <4.0.0'

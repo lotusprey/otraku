@@ -50,7 +50,6 @@ class CollectionList extends StatelessWidget {
         ),
         childCount: items.length,
       ),
-      // The added pixels are for the bottom margin.
       itemExtent: tileHeight,
     );
   }

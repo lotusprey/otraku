@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -195,136 +196,146 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
       // give darkening effect
       backgroundColor: ColorScheme.of(context).surface.withAlpha(125),
       surfaceTintColor: Colors.transparent,
-      // to add blur
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: SizedBox.expand(
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => Navigator.pop(context), //closes the dialog when tapped outside
-            child: Stack(
-              children: [
-                // to center the image
-                Center(
-                  //to constraint the height of the image so very long images don't overflow also make it able to pop the dialogbox when user taps outside the image
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.8),
-                    child: GestureDetector(
-                      onTap: () {}, //absorbs the tap on image
-                      onDoubleTapDown: (details) => _lastOffset = details.localPosition,
-                      onDoubleTap: () {
-                        // If zoomed in, zoom out.
-                        if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
-                          _animateMatrixTo(Matrix4.identity());
-                          return;
-                        }
+      //to close the image if tapped outside the image
+      child: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        // to add blurred background
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Stack(
+            children: [
+              // to center the image
+              Center(
+                child: GestureDetector(
+                  onTap: () {},
+                  onDoubleTapDown: (details) => _lastOffset = details.localPosition,
+                  onDoubleTap: () {
+                    // If zoomed in, zoom out.
+                    if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
+                      _animateMatrixTo(Matrix4.identity());
+                      return;
+                    }
 
-                        // Can't be null, but checking just in case.
-                        if (_lastOffset == null) return;
+                    // Can't be null, but checking just in case.
+                    if (_lastOffset == null) return;
 
-                        // If zoomed out, zoom in towards the tapped spot.
-                        final zoomed = _transformCtrl.value.clone();
-                        zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
-                        zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
-                        _animateMatrixTo(zoomed);
-                      },
-                      child: InteractiveViewer(
-                        clipBehavior: Clip.none,
-                        transformationController: _transformCtrl,
-                        child: CachedImage(widget.url, fit: BoxFit.contain, height: null),
-                        //set height to null so image fits the constrainedbox and user can tap outside to pop the dialogbox
+                    // If zoomed out, zoom in towards the tapped spot.
+                    final zoomed = _transformCtrl.value.clone();
+                    zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
+                    zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
+                    _animateMatrixTo(zoomed);
+                  },
+                  child: InteractiveViewer(
+                    clipBehavior: Clip.none,
+                    transformationController: _transformCtrl,
+                    child: CachedImage(widget.url, fit: BoxFit.contain, height: null),
+                    //removed width null to expand image upto screen width
+                  ),
+                ),
+              ),
+
+              //save & more buttons
+              Align(
+                alignment: .bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.all(Theming.offset * 2),
+                  child: Row(
+                    spacing: Theming.offset,
+                    children: [
+                      //close button
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: ColorScheme.of(context).onSurface.withAlpha(125),
+                          borderRadius: Theming.borderRadiusSmall,
+                        ),
+                        child: IconButton(
+                          color: ColorScheme.of(context).onPrimary,
+                          tooltip: 'Close',
+                          icon: const Icon(Ionicons.close),
+                          onPressed: () => Navigator.pop(context),
+                        ),
                       ),
-                    ),
+                      Spacer(), // to push last 2 buttons to the right
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: ColorScheme.of(context).onSurface.withAlpha(125),
+                          borderRadius: Theming.borderRadiusSmall,
+                        ),
+                        child: IconButton(
+                          color: ColorScheme.of(context).onPrimary,
+                          tooltip: 'Download',
+                          icon: const Icon(Icons.download_outlined),
+                          onPressed: () => _saveImage(context),
+                        ),
+                      ),
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          color: ColorScheme.of(context).onSurface.withAlpha(125),
+                          borderRadius: Theming.borderRadiusSmall,
+                        ),
+                        child: PopupMenuButton<String>(
+                          shape: RoundedRectangleBorder(borderRadius: Theming.borderRadiusSmall),
+                          tooltip: 'More',
+                          iconColor: ColorScheme.of(context).onPrimary,
+                          color: ColorScheme.of(context).surface,
+                          elevation: 3,
+                          icon: const Icon(Ionicons.ellipsis_vertical),
+                          // so the popup menu is above the more button so they don't overlap
+                          offset: const Offset(0, -200),
+                          onSelected: (result) async {
+                            switch (result) {
+                              case 'copy':
+                                SnackBarExtension.copy(context, widget.url);
+                                Navigator.pop(context);
+                              case 'browser':
+                                launchUrl(
+                                  Uri.parse(widget.url),
+                                  mode: LaunchMode.externalApplication,
+                                );
+                              case 'share':
+                                final file = await (widget.cacheManager ?? DefaultCacheManager())
+                                    .getSingleFile(widget.url);
+                                final fileName = _getFileName(widget.url, file);
+                                final temp = File(
+                                  '${(await getTemporaryDirectory()).path}/$fileName',
+                                );
+                                await file.copy(temp.path);
+                                await SharePlus.instance.share(
+                                  ShareParams(files: [XFile(temp.path)]),
+                                );
+                                await temp.delete();
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: 'copy',
+                              child: ListTile(
+                                leading: Icon(Ionicons.clipboard_outline),
+                                title: Text('Copy URL'),
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'browser',
+                              child: ListTile(
+                                leading: Icon(Ionicons.link_outline),
+                                title: Text('Open in Browser'),
+                              ),
+                            ),
+                            const PopupMenuItem(
+                              value: 'share',
+                              child: ListTile(
+                                leading: Icon(Ionicons.share_outline),
+                                title: Text('Share Image'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                //save & more buttons
-                Align(
-                  alignment: .bottomRight,
-                  child: Padding(
-                    padding: EdgeInsets.only(bottom: Theming.offset * 2, right: Theming.offset * 2),
-                    child: Row(
-                      spacing: Theming.offset,
-                      children: [
-                        Spacer(),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: ColorScheme.of(context).onSurface.withAlpha(125),
-                            borderRadius: BorderRadius.all(Theming.radiusSmall),
-                          ),
-                          child: IconButton(
-                            color: ColorScheme.of(context).onPrimary,
-                            tooltip: 'Download',
-                            icon: const Icon(Icons.download_outlined),
-                            onPressed: () => _saveImage(context),
-                          ),
-                        ),
-                        DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: ColorScheme.of(context).onSurface.withAlpha(125),
-                            borderRadius: BorderRadius.all(Theming.radiusSmall),
-                          ),
-                          child: PopupMenuButton<String>(
-                            shape: RoundedRectangleBorder(borderRadius: Theming.borderRadiusSmall),
-                            tooltip: 'More',
-                            iconColor: ColorScheme.of(context).onPrimary,
-                            icon: const Icon(Icons.more_vert),
-                            // so the popup menu is above the more button so they don't overlap
-                            offset: const Offset(0, -200),
-                            onSelected: (result) async {
-                              switch (result) {
-                                case 'copy':
-                                  SnackBarExtension.copy(context, widget.url);
-                                  Navigator.pop(context);
-                                case 'browser':
-                                  launchUrl(
-                                    Uri.parse(widget.url),
-                                    mode: LaunchMode.externalApplication,
-                                  );
-                                case 'share':
-                                  final file = await (widget.cacheManager ?? DefaultCacheManager())
-                                      .getSingleFile(widget.url);
-                                  final fileName = _getFileName(widget.url, file);
-                                  final temp = File(
-                                    '${(await getTemporaryDirectory()).path}/$fileName',
-                                  );
-                                  await file.copy(temp.path);
-                                  await SharePlus.instance.share(
-                                    ShareParams(files: [XFile(temp.path)]),
-                                  );
-                                  await temp.delete();
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              const PopupMenuItem(
-                                value: 'copy',
-                                child: ListTile(
-                                  leading: Icon(Icons.copy_outlined),
-                                  title: Text('Copy URL'),
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'browser',
-                                child: ListTile(
-                                  leading: Icon(Icons.open_in_browser_outlined),
-                                  title: Text('Open in Browser'),
-                                ),
-                              ),
-                              const PopupMenuItem(
-                                value: 'share',
-                                child: ListTile(
-                                  leading: Icon(Icons.share_outlined),
-                                  title: Text('Share Image'),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

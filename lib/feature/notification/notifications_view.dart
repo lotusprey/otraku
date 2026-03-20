@@ -304,50 +304,48 @@ class _NotificationDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final bodyMediumStyle = TextTheme.of(context).bodyMedium!;
     final accentedStyle = bodyMediumStyle.copyWith(color: ColorScheme.of(context).primary);
-
-    final title = Text.rich(
-      overflow: .ellipsis,
-      TextSpan(
-        children: [
-          for (int i = 0; i < item.texts.length; i++)
-            TextSpan(text: item.texts[i], style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle),
-        ],
-      ),
-    );
-
-    final size = MediaQuery.sizeOf(context);
-    final imageWidth = size.width < 430.0 ? size.width * 0.30 : 100.0;
+    final imageHeight = context.lineHeight(bodyMediumStyle) * 6;
 
     return DialogBox(
       Padding(
-        padding: Theming.paddingAll,
-        child: Row(
+        padding: const EdgeInsetsGeometry.symmetric(
+          vertical: Theming.offset,
+          horizontal: Theming.offset * 2,
+        ),
+        child: Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .stretch,
           spacing: Theming.offset,
           children: [
             if (item.imageUrl != null)
-              ClipRRect(
-                borderRadius: Theming.borderRadiusSmall,
-                child: CachedImage(
-                  item.imageUrl!,
-                  width: imageWidth,
-                  height: imageWidth * Theming.coverHtoWRatio,
+              Center(
+                child: ClipRRect(
+                  borderRadius: Theming.borderRadiusSmall,
+                  child: CachedImage(
+                    item.imageUrl!,
+                    height: imageHeight,
+                    width: imageHeight / Theming.coverHtoWRatio,
+                  ),
                 ),
               ),
-            Expanded(
-              child: Column(
-                mainAxisSize: .min,
-                spacing: Theming.offset,
+            Text.rich(
+              overflow: .ellipsis,
+              TextSpan(
                 children: [
-                  Flexible(child: title),
-                  ?switch (item) {
-                    MediaChangeNotification item => HtmlContent(item.reason),
-                    MediaDeletionNotification item => HtmlContent(item.reason),
-                    SubmissionUpdateNotification item => Text(item.notes),
-                    _ => null,
-                  },
+                  for (int i = 0; i < item.texts.length; i++)
+                    TextSpan(
+                      text: item.texts[i],
+                      style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
+                    ),
                 ],
               ),
             ),
+            ?switch (item) {
+              MediaChangeNotification item => HtmlContent(item.reason),
+              MediaDeletionNotification item => HtmlContent(item.reason),
+              SubmissionUpdateNotification item => Text(item.notes),
+              _ => null,
+            },
           ],
         ),
       ),

@@ -10,6 +10,7 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/graphql.dart';
+import 'package:otraku/feature/media/media_models.dart';
 
 final activitiesProvider = AsyncNotifierProvider.autoDispose
     .family<ActivitiesNotifier, Paged<Activity>, ActivitiesTag>(ActivitiesNotifier.new);
@@ -64,6 +65,11 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
 
     if (data['Page']['activities'].isNotEmpty) {
       _lastId = data['Page']['activities'].last['id'];
+    }
+
+    final mediaItems = items.whereType<MediaActivity>().toList();
+    if (mediaItems.isNotEmpty) {
+      await _patchScores(mediaItems);
     }
 
     return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
@@ -181,5 +187,26 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
     }
 
     return null;
+  }
+
+  Future<void> _patchScores(List<MediaActivity> items) async {
+    final buffer = StringBuffer('query BatchScores {');
+    for (var i = 0; i < items.length; i++) {
+      buffer.write(
+        ' e$i: MediaList(userId: ${items[i].authorId}, mediaId: ${items[i].mediaId})'
+        ' { score user { mediaListOptions { scoreFormat } } }',
+      );
+    }
+    buffer.write('}');
+
+    try {
+      final data = await ref.read(repositoryProvider).request(buffer.toString());
+      for (var i = 0; i < items.length; i++) {
+        final entry = data['e$i'];
+        if (entry == null) continue;
+        items[i].score = (entry['score'] ?? 0).toDouble();
+        items[i].scoreFormat = ScoreFormat.from(entry['user']?['mediaListOptions']?['scoreFormat']);
+      }
+    } catch (_) {}
   }
 }

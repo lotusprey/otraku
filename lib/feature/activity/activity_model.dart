@@ -1,5 +1,6 @@
 import 'package:otraku/extension/date_time_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/util/markdown.dart';
@@ -194,6 +195,8 @@ class MediaActivity extends Activity {
   final String coverUrl;
   final bool isAnime;
   final String? format;
+  double score = 0.0;
+  ScoreFormat scoreFormat = ScoreFormat.point10;
 }
 
 class ActivityReply {

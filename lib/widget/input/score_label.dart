@@ -23,32 +23,13 @@ class ScoreLabel extends StatelessWidget {
           content = const Icon(Icons.sentiment_very_dissatisfied, size: Theming.iconSmall);
         }
       case .point5:
-        content = Row(
-          mainAxisSize: .min,
-          spacing: 3,
-          children: [
-            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
-            const Icon(Icons.star_rounded, size: Theming.iconSmall),
-          ],
-        );
+        content = Text('${score.toStringAsFixed(0)}/5', style: TextTheme.of(context).labelSmall);
+      case .point100:
+        content = Text('${score.toStringAsFixed(0)}/100', style: TextTheme.of(context).labelSmall);
+      case .point10:
+        content = Text('${score.toStringAsFixed(0)}/10', style: TextTheme.of(context).labelSmall);
       case .point10Decimal:
-        content = Row(
-          mainAxisSize: .min,
-          spacing: 3,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            Text(score.toStringAsFixed(1), style: TextTheme.of(context).labelSmall),
-          ],
-        );
-      default:
-        content = Row(
-          mainAxisSize: .min,
-          spacing: 3,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
-          ],
-        );
+        content = Text('${score.toStringAsFixed(1)}/10.0', style: TextTheme.of(context).labelSmall);
     }
 
     return Tooltip(message: 'Score', child: content);

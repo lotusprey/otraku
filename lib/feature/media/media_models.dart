@@ -197,6 +197,9 @@ class MediaFollowing {
     required this.entryStatus,
     required this.score,
     required this.notes,
+    required this.progress,
+    required this.progressMax,
+    required this.repeat,
     required this.userId,
     required this.userName,
     required this.userAvatar,
@@ -207,6 +210,9 @@ class MediaFollowing {
     entryStatus: ListStatus.from(map['status'])!,
     score: (map['score'] ?? 0).toDouble(),
     notes: map['notes'] ?? '',
+    progress: map['progress'] ?? 0,
+    progressMax: map['media']?['episodes'] ?? map['media']?['chapters'],
+    repeat: map['repeat'] ?? 0,
     userId: map['user']['id'],
     userName: map['user']['name'],
     userAvatar: map['user']['avatar']['large'],
@@ -216,6 +222,9 @@ class MediaFollowing {
   final ListStatus entryStatus;
   final double score;
   final String notes;
+  final int progress;
+  final int? progressMax;
+  final int repeat;
   final int userId;
   final String userName;
   final String userAvatar;

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/routes.dart';
@@ -13,6 +14,7 @@ import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
+import 'package:otraku/widget/text_rail.dart';
 
 class MediaFollowingSubview extends StatelessWidget {
   const MediaFollowingSubview({
@@ -61,6 +63,7 @@ class _MediaFollowingGrid extends StatelessWidget {
                   tag: items[i].userId,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+                    //Profile Picture
                     child: CachedImage(items[i].userAvatar, width: tileHeight),
                   ),
                 ),
@@ -71,21 +74,60 @@ class _MediaFollowingGrid extends StatelessWidget {
                       mainAxisAlignment: .spaceBetween,
                       crossAxisAlignment: .start,
                       children: [
-                        Text(items[i].userName, overflow: .ellipsis, maxLines: 1),
+                        Row(
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            //Name
+                            Text(items[i].userName, overflow: .ellipsis, maxLines: 1),
+                            //Score
+                            ScoreLabel(items[i].score, items[i].scoreFormat),
+                          ],
+                        ),
+                        //Progress
                         SizedBox(
                           height: 35,
                           child: Row(
                             mainAxisAlignment: .spaceBetween,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  items[i].entryStatus.label(null),
-                                  overflow: .ellipsis,
-                                  maxLines: 1,
+                              TextRail({
+                                items[i].entryStatus.label(null): true,
+                                items[i].progress == items[i].progressMax
+                                        ? items[i].progress.toString()
+                                        : '${items[i].progress}/${items[i].progressMax ?? "?"}':
+                                    false,
+                              }),
+                              const Spacer(),
+                              //Repeat
+                              if (items[i].repeat > 0)
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(minWidth: Theming.minTapTarget),
+                                  child: Align(
+                                    alignment: .centerRight,
+                                    child: Tooltip(
+                                      message: 'Repeats',
+                                      child: Row(
+                                        mainAxisSize: .min,
+                                        spacing: 3,
+                                        children: [
+                                          const Icon(Ionicons.repeat, size: Theming.iconSmall),
+                                          Text(
+                                            items[i].repeat.toString(),
+                                            style: TextTheme.of(context).labelSmall,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              NotesLabel(items[i].notes),
-                              ScoreLabel(items[i].score, items[i].scoreFormat),
+                              //Notes
+                              if (items[i].notes != '')
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(minWidth: Theming.minTapTarget),
+                                  child: Align(
+                                    alignment: .centerRight,
+                                    child: NotesLabel(items[i].notes),
+                                  ),
+                                ),
                             ],
                           ),
                         ),

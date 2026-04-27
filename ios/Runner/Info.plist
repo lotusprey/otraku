@@ -41,6 +41,8 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save media to your library.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -3,6 +3,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) => showModalBottomSheet<T>(
@@ -21,7 +22,7 @@ class SimpleSheet extends StatelessWidget {
     initialHeight: Theming.normalTapTarget * children.length + Theming.offset,
     builder: (context, scrollCtrl) => ListView(
       controller: scrollCtrl,
-      padding: const .only(top: Theming.offset),
+      padding: const .only(top: Theming.offset * 2),
       children: children,
     ),
   );
@@ -30,11 +31,18 @@ class SimpleSheet extends StatelessWidget {
       SimpleSheet.list([
         ...children,
         ListTile(
-          title: const Text('Copy Link'),
-          leading: const Icon(Ionicons.clipboard_outline),
-          onTap: () {
-            SnackBarExtension.copy(context, link);
-            Navigator.pop(context);
+          title: const Text('Share'),
+          leading: const Icon(Ionicons.share_outline),
+          onTap: () async {
+            final uri = Uri.tryParse(link);
+            if (uri == null) {
+              SnackBarExtension.show(context, 'Invalid URI');
+              Navigator.pop(context);
+              return;
+            }
+
+            await SharePlus.instance.share(ShareParams(uri: uri));
+            if (context.mounted) Navigator.pop(context);
           },
         ),
         ListTile(

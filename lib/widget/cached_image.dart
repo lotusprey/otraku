@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -10,6 +12,8 @@ final _cacheManager = CacheManager(
 
 /// Erases image cache.
 void clearImageCache() => _cacheManager.emptyCache();
+
+Future<File> getFileFromCacheOrDownload(String url) => _cacheManager.getSingleFile(url);
 
 /// A [CachedNetworkImage] wrapper that simplifies the interface
 /// and uses the custom cache manager, without exposing it.

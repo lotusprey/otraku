@@ -1,7 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:gal/gal.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
+import 'package:otraku/widget/sheets.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class TextInputDialog extends StatefulWidget {
@@ -185,31 +192,102 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
       insetPadding: .zero,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      child: GestureDetector(
-        onDoubleTapDown: (details) => _lastOffset = details.localPosition,
-        onDoubleTap: () {
-          // If zoomed in, zoom out.
-          if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
-            _animateMatrixTo(Matrix4.identity());
-            return;
-          }
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            onDoubleTapDown: (details) => _lastOffset = details.localPosition,
+            onDoubleTap: () {
+              // If zoomed in, zoom out.
+              if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
+                _animateMatrixTo(Matrix4.identity());
+                return;
+              }
 
-          // Can't be null, but checking just in case.
-          if (_lastOffset == null) return;
+              // Can't be null, but checking just in case.
+              if (_lastOffset == null) return;
 
-          // If zoomed out, zoom in towards the tapped spot.
-          final zoomed = _transformCtrl.value.clone();
-          zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
-          zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
-          _animateMatrixTo(zoomed);
-        },
-        child: InteractiveViewer(
-          clipBehavior: Clip.none,
-          transformationController: _transformCtrl,
-          child: CachedImage(widget.url, fit: BoxFit.contain, width: null, height: null),
-        ),
+              // If zoomed out, zoom in towards the tapped spot.
+              final zoomed = _transformCtrl.value.clone();
+              zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
+              zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
+              _animateMatrixTo(zoomed);
+            },
+            child: InteractiveViewer(
+              clipBehavior: Clip.none,
+              transformationController: _transformCtrl,
+              child: CachedImage(widget.url, fit: BoxFit.contain),
+            ),
+          ),
+          Align(
+            alignment: .bottomRight,
+            child: Padding(
+              padding: EdgeInsets.all(Theming.offset),
+              child: IconButton.filledTonal(
+                tooltip: 'More',
+                icon: const Icon(Icons.more_vert_rounded, size: Theming.iconBig),
+                onPressed: () => showSheet(
+                  context,
+                  SimpleSheet.list([
+                    ListTile(
+                      title: Text('Share'),
+                      leading: const Icon(Ionicons.share_outline),
+                      onTap: _shareImage,
+                    ),
+                    ListTile(
+                      title: Text('Download'),
+                      leading: const Icon(Ionicons.download_outline),
+                      onTap: _downloadImage,
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _shareImage() async {
+    final File file;
+    try {
+      file = await getFileFromCacheOrDownload(widget.url);
+    } catch (_) {
+      if (mounted) {
+        SnackBarExtension.show(context, 'Failed fetching file');
+        Navigator.pop(context);
+      }
+      return;
+    }
+
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)]));
+    if (mounted) Navigator.pop(context);
+  }
+
+  void _downloadImage() async {
+    try {
+      if (!await Gal.hasAccess(toAlbum: false)) {
+        if (!await Gal.requestAccess(toAlbum: false)) {
+          if (mounted) SnackBarExtension.show(context, 'No gallery access');
+          return;
+        }
+      }
+
+      final file = await getFileFromCacheOrDownload(widget.url);
+      await Gal.putImage(file.path);
+
+      if (mounted) {
+        SnackBarExtension.show(context, 'File saved');
+        Navigator.pop(context);
+      }
+    } catch (_) {
+      if (mounted) {
+        SnackBarExtension.show(context, 'Failed downloading file');
+        Navigator.pop(context);
+      }
+      return;
+    }
   }
 }
 

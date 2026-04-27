@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -8,11 +10,10 @@ final _cacheManager = CacheManager(
   Config('imageCache', maxNrOfCacheObjects: 1000, stalePeriod: const Duration(days: 10)),
 );
 
-final imageCacheManager =
-    _cacheManager; // to get image cache to save the image, you can make _cacheManager public instead
-
 /// Erases image cache.
 void clearImageCache() => _cacheManager.emptyCache();
+
+Future<File> getFileFromCacheOrDownload(String url) => _cacheManager.getSingleFile(url);
 
 /// A [CachedNetworkImage] wrapper that simplifies the interface
 /// and uses the custom cache manager, without exposing it.

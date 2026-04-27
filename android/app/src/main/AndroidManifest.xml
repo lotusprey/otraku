@@ -6,6 +6,8 @@
      
      <!-- Internet. -->
      <uses-permission android:name="android.permission.INTERNET" />
+     <!-- Required for saving to gallery on Android versions before 30. -->
+     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
 
      <!-- Url launcher. -->
      <queries>

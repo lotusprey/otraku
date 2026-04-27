@@ -146,10 +146,7 @@ class _ImageContent extends StatelessWidget implements PreferredSizeWidget {
                   ? GestureDetector(
                       onTap: () => showDialog(
                         context: context,
-                        builder: (context) => ImageDialog(
-                          imageLargeUrl ?? imageUrl!,
-                          cacheManager: imageCacheManager,
-                        ),
+                        builder: (context) => ImageDialog(imageLargeUrl ?? imageUrl!),
                       ),
                       child: CachedImage(imageUrl!, fit: imageFit),
                     )
@@ -260,10 +257,8 @@ class _Delegate extends SliverPersistentHeaderDelegate {
             Positioned.fill(
               bottom: bannerBottomPadding,
               child: GestureDetector(
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (context) => ImageDialog(bannerUrl!, cacheManager: imageCacheManager),
-                ),
+                onTap: () =>
+                    showDialog(context: context, builder: (context) => ImageDialog(bannerUrl!)),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(

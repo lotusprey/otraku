@@ -278,23 +278,37 @@ class MediaFollowingNotifier extends AsyncNotifier<Paged<MediaFollowing>> {
   @override
   FutureOr<Paged<MediaFollowing>> build() => _fetch(const Paged());
 
-  Future<void> fetch() async {
-    final oldState = state.value ?? const Paged();
-    if (!oldState.hasNext) return;
-    state = await AsyncValue.guard(() => _fetch(oldState));
-  }
+  Future<void> fetch() async {}
 
   Future<Paged<MediaFollowing>> _fetch(Paged<MediaFollowing> oldState) async {
-    final data = await ref.read(repositoryProvider).request(GqlQuery.mediaFollowing, {
-      'mediaId': arg,
-      'page': oldState.next,
+    final viewerId = ref.read(viewerIdProvider);
+    final seenIds = <int>{};
+    final allItems = <MediaFollowing>[];
+    int page = 1;
+    bool hasNext = true;
+
+    //fetches data from all of the pages
+    while (hasNext) {
+      final data = await ref.read(repositoryProvider).request(GqlQuery.mediaFollowing, {
+        'mediaId': arg,
+        'page': page,
+      });
+      for (final f in data['Page']['mediaList']) {
+        final item = MediaFollowing(f);
+        if (seenIds.add(item.userId)) {
+          allItems.add(item);
+        }
+      }
+      hasNext = data['Page']['pageInfo']['hasNextPage'] ?? false;
+      page++;
+    }
+    //sorting logic
+    allItems.sort((a, b) {
+      if (a.userId == viewerId) return -1;
+      if (b.userId == viewerId) return 1;
+      return a.userName.toLowerCase().compareTo(b.userName.toLowerCase());
     });
 
-    final items = <MediaFollowing>[];
-    for (final f in data['Page']['mediaList']) {
-      items.add(MediaFollowing(f));
-    }
-
-    return oldState.withNext(items, data['Page']['pageInfo']['hasNextPage'] ?? false);
+    return Paged(items: allItems, hasNext: false, next: 1);
   }
 }

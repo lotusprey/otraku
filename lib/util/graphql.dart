@@ -173,11 +173,7 @@ abstract class GqlQuery {
           notes
           progress
           repeat
-          media {
-            episodes
-            chapters
-          }
-
+          media {episodes chapters}
           user {
             id
             name

@@ -63,7 +63,6 @@ class _MediaFollowingGrid extends StatelessWidget {
                   tag: items[i].userId,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                    //Profile Picture
                     child: CachedImage(items[i].userAvatar, width: tileHeight),
                   ),
                 ),
@@ -77,13 +76,10 @@ class _MediaFollowingGrid extends StatelessWidget {
                         Row(
                           mainAxisAlignment: .spaceBetween,
                           children: [
-                            //Name
                             Text(items[i].userName, overflow: .ellipsis, maxLines: 1),
-                            //Score
                             ScoreLabel(items[i].score, items[i].scoreFormat),
                           ],
                         ),
-                        //Progress
                         SizedBox(
                           height: 35,
                           child: Row(
@@ -97,7 +93,6 @@ class _MediaFollowingGrid extends StatelessWidget {
                                     false,
                               }),
                               const Spacer(),
-                              //Repeat
                               if (items[i].repeat > 0)
                                 ConstrainedBox(
                                   constraints: BoxConstraints(minWidth: Theming.minTapTarget),
@@ -119,7 +114,6 @@ class _MediaFollowingGrid extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                              //Notes
                               if (items[i].notes != '')
                                 ConstrainedBox(
                                   constraints: BoxConstraints(minWidth: Theming.minTapTarget),

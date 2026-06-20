@@ -14,7 +14,6 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/dialogs.dart';
-import 'package:otraku/widget/input/score_label.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:otraku/widget/timestamp.dart';
 
@@ -171,19 +170,13 @@ class _ActivityMediaBox extends StatelessWidget {
                       overflow: .ellipsis,
                       maxLines: 3,
                     ),
-                    Row(
-                      children: [
-                        if (item.format != null)
-                          Text(
-                            item.format!,
-                            style: textTheme.labelMedium,
-                            overflow: .ellipsis,
-                            maxLines: 1,
-                          ),
-                        Spacer(),
-                        if (item.score > 0) ScoreLabel(item.score, item.scoreFormat),
-                      ],
-                    ),
+                    if (item.format != null)
+                      Text(
+                        item.format!,
+                        style: textTheme.labelMedium,
+                        overflow: .ellipsis,
+                        maxLines: 1,
+                      ),
                   ],
                 ),
               ),

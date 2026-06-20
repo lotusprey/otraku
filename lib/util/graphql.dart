@@ -171,6 +171,9 @@ abstract class GqlQuery {
           status
           score
           notes
+          progress
+          repeat
+          media {episodes chapters}
           user {
             id
             name

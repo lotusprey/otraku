@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
@@ -12,6 +11,7 @@ import 'package:otraku/feature/forum/forum_filter_provider.dart';
 import 'package:otraku/feature/thread/thread_model.dart';
 import 'package:otraku/feature/thread/thread_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -56,18 +56,19 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
     final thread = ref.watch(threadProvider(widget.id));
     final options = ref.watch(persistenceProvider.select((s) => s.options));
     final viewerId = ref.watch(viewerIdProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return AdaptiveScaffold(
       topBar: TopBar(
         trailing: thread.hasValue
-            ? _topBarTrailingContent(thread.value!, viewerId)
+            ? _topBarTrailingContent(thread.value!, viewerId, l10n)
             : const <Widget>[],
       ),
       floatingAction: HidingFloatingActionButton(
         key: const Key('Reply'),
         scrollCtrl: _scrollCtrl,
         child: FloatingActionButton(
-          tooltip: 'New Reply',
+          tooltip: l10n.postsRepliesAdd,
           child: const Icon(Icons.edit_outlined),
           onPressed: () => showSheet(
             context,
@@ -94,11 +95,13 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
             options.analogClock,
             _scrollCtrl,
           ),
-          AsyncError() => CustomScrollView(
+          AsyncError(:final error) => CustomScrollView(
             physics: Theming.bouncyPhysics,
             slivers: [
               SliverRefreshControl(onRefresh: () => ref.invalidate(threadProvider(widget.id))),
-              const SliverFillRemaining(child: Center(child: Text('Failed to load'))),
+              SliverFillRemaining(
+                child: Center(child: Text(l10n.errorFailedLoading(error.toString()))),
+              ),
             ],
           ),
           AsyncLoading() => const Center(child: Loader()),
@@ -107,7 +110,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
     );
   }
 
-  List<Widget> _topBarTrailingContent(Thread thread, int? viewerId) => [
+  List<Widget> _topBarTrailingContent(Thread thread, int? viewerId, AppLocalizations l10n) => [
     Expanded(
       child: GestureDetector(
         behavior: .opaque,
@@ -129,31 +132,33 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       ),
     ),
     IconButton(
-      tooltip: 'More',
+      tooltip: l10n.actionMore,
       icon: const Icon(Ionicons.ellipsis_horizontal),
       onPressed: () => showSheet(
         context,
         SimpleSheet.link(context, thread.info.siteUrl, [
           ListTile(
-            title: !thread.info.isSubscribed ? const Text('Subscribe') : const Text('Unsubscribe'),
+            title: Text(
+              !thread.info.isSubscribed ? l10n.subscriptionsAdd : l10n.subscriptionsRemove,
+            ),
             leading: !thread.info.isSubscribed
                 ? const Icon(Ionicons.notifications_outline)
                 : const Icon(Ionicons.notifications_off_outline),
-            onTap: _toggleSubscription,
+            onTap: () => _toggleSubscription(l10n),
           ),
           if (viewerId == thread.info.userId)
             ListTile(
-              title: const Text('Delete'),
+              title: Text(l10n.actionRemove),
               leading: const Icon(Ionicons.trash_outline),
               onTap: () {
                 Navigator.pop(context);
 
                 ConfirmationDialog.show(
                   context,
-                  title: 'Delete?',
-                  primaryAction: 'Yes',
-                  secondaryAction: 'No',
-                  onConfirm: _delete,
+                  title: l10n.actionRemoveQuestion,
+                  primaryAction: l10n.actionYes,
+                  secondaryAction: l10n.actionNo,
+                  onConfirm: () => _delete(l10n),
                 );
               },
             ),
@@ -162,7 +167,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
     ),
   ];
 
-  void _toggleSubscription() async {
+  void _toggleSubscription(AppLocalizations l10n) async {
     final err = await ref.read(threadProvider(widget.id).notifier).toggleThreadSubscription();
 
     if (!mounted) return;
@@ -172,11 +177,11 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       return;
     }
 
-    SnackBarExtension.show(context, err.toString());
+    SnackBarExtension.show(context, l10n.errorFailedUpdating(err.toString()));
     Navigator.pop(context);
   }
 
-  void _delete() async {
+  void _delete(AppLocalizations l10n) async {
     final err = await ref.read(threadProvider(widget.id).notifier).delete();
 
     if (!mounted) return;
@@ -186,7 +191,7 @@ class _ThreadViewState extends ConsumerState<ThreadView> {
       return;
     }
 
-    SnackBarExtension.show(context, 'Failed deleting thread: $err');
+    SnackBarExtension.show(context, l10n.errorFailedRemoving(err.toString()));
   }
 }
 
@@ -211,16 +216,17 @@ class __BottomBarState extends State<_BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final thread = widget.thread;
 
     final currentPageLabel = Text('$_value');
     final previousPageButton = IconButton(
-      tooltip: 'Previous page',
+      tooltip: l10n.pagesPrevious,
       icon: const Icon(Icons.arrow_back_ios_rounded),
       onPressed: thread.commentPage == 1 ? null : () => widget.changePage(thread.commentPage - 1),
     );
     final nextPageButton = IconButton(
-      tooltip: 'Next page',
+      tooltip: l10n.pagesNext,
       icon: const Icon(Icons.arrow_forward_ios_rounded),
       onPressed: thread.commentPage == thread.totalCommentPages
           ? null
@@ -255,6 +261,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final viewerId = ref.watch(viewerIdProvider);
     const spacing = SliverToBoxAdapter(child: SizedBox(height: Theming.offset));
     final info = thread.info;
@@ -268,7 +275,7 @@ class _Content extends StatelessWidget {
         spacing,
         SliverToBoxAdapter(child: Text(thread.info.title, style: TextTheme.of(context).bodyMedium)),
         spacing,
-        HtmlContent(thread.info.body, renderMode: RenderMode.sliverList),
+        HtmlContent(thread.info.body, renderMode: .sliverList),
         spacing,
         if (info.media.isNotEmpty)
           SliverToBoxAdapter(
@@ -321,19 +328,19 @@ class _Content extends StatelessWidget {
               children: [
                 if (info.isPinned)
                   Tooltip(
-                    message: 'Pinned',
+                    message: l10n.postsPinned,
                     triggerMode: .tap,
                     child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                   ),
                 if (info.isLocked)
                   Tooltip(
-                    message: 'Locked',
+                    message: l10n.postsLocked,
                     triggerMode: .tap,
                     child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
                   ),
                 const Spacer(),
                 Tooltip(
-                  message: 'Views',
+                  message: l10n.postsViews,
                   triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,
@@ -348,7 +355,7 @@ class _Content extends StatelessWidget {
                   ),
                 ),
                 Tooltip(
-                  message: 'Replies',
+                  message: l10n.postsReplies,
                   triggerMode: .tap,
                   child: Row(
                     mainAxisSize: .min,
@@ -409,10 +416,11 @@ class _LikeButton extends StatefulWidget {
 class __LikeButtonState extends State<_LikeButton> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final info = widget.threadInfo;
 
     return Tooltip(
-      message: !info.isLiked ? 'Like' : 'Unlike',
+      message: !info.isLiked ? l10n.likesAdd : l10n.likesRemove,
       child: InkResponse(
         radius: Theming.radiusSmall.x,
         onTap: () async {

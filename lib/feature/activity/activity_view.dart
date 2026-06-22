@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
@@ -46,6 +47,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final activity = ref.watch(activityProvider(widget.id).select((s) => s.value?.activity));
 
     return AdaptiveScaffold(
@@ -54,7 +56,7 @@ class _ActivityViewState extends ConsumerState<ActivityView> {
         key: const Key('Reply'),
         scrollCtrl: _scrollCtrl,
         child: FloatingActionButton(
-          tooltip: 'New Reply',
+          tooltip: l10n.postsRepliesAdd,
           child: const Icon(Icons.edit_outlined),
           onPressed: () => showSheet(
             context,

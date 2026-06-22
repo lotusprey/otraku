@@ -1,4 +1,4 @@
-import 'package:otraku/extension/string_extension.dart';
+import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/media/media_models.dart';
 
 class Statistics {
@@ -16,41 +16,65 @@ class Statistics {
   });
 
   factory Statistics(Map<String, dynamic> map, bool ofAnime) {
-    final scores = <AmountStatistics>[];
-    final lengths = <AmountStatistics>[];
-    final formats = <TypeStatistics>[];
-    final statuses = <TypeStatistics>[];
-    final countries = <TypeStatistics>[];
+    final scores = <ScoreStatistic>[];
+    final lengths = <LengthStatistic>[];
+    final formats = <FormatStatistic>[];
+    final statuses = <StatusStatistic>[];
+    final countries = <CountryStatistic>[];
 
-    for (final s in map['scores']) {
-      scores.add(AmountStatistics(s, 'score', ofAnime));
+    for (final m in map['scores']) {
+      scores.add((
+        count: m['count'],
+        meanScore: m['meanScore'].toDouble(),
+        amount: ofAnime ? m['minutesWatched'] ~/ 60 : m['chaptersRead'],
+        name: m['score']?.toString() ?? '?',
+      ));
     }
-    for (final l in map['lengths']) {
-      lengths.add(AmountStatistics(l, 'length', ofAnime));
+    for (final m in map['lengths']) {
+      lengths.add((
+        count: m['count'],
+        meanScore: m['meanScore'].toDouble(),
+        amount: ofAnime ? m['minutesWatched'] ~/ 60 : m['chaptersRead'],
+        name: m['length']?.toString() ?? '?',
+      ));
     }
-    for (final f in map['formats']) {
-      formats.add(TypeStatistics(f, 'format'));
+    for (final m in map['formats']) {
+      formats.add((
+        count: m['count'],
+        meanScore: m['meanScore'].toDouble(),
+        amount: ofAnime ? m['minutesWatched'] ~/ 60 : m['chaptersRead'],
+        name: MediaFormat.from(m['format'])!,
+      ));
     }
-    for (final s in map['statuses']) {
-      statuses.add(TypeStatistics(s, 'status'));
+    for (final m in map['statuses']) {
+      statuses.add((
+        count: m['count'],
+        meanScore: m['meanScore'].toDouble(),
+        amount: ofAnime ? m['minutesWatched'] ~/ 60 : m['chaptersRead'],
+        name: ListStatus.from(m['status'])!,
+      ));
     }
-    for (final c in map['countries']) {
-      c['country'] = OriginCountry.fromCode(c['country'])?.label;
-      countries.add(TypeStatistics(c, 'country'));
+    for (final m in map['countries']) {
+      countries.add((
+        count: m['count'],
+        meanScore: m['meanScore'].toDouble(),
+        amount: ofAnime ? m['minutesWatched'] ~/ 60 : m['chaptersRead'],
+        name: OriginCountry.fromCode(m['country'])!,
+      ));
     }
 
     // The backend can't sort them by length, so it has to be done locally.
     lengths.sort((a, b) {
-      if (a.type == '?') return 1;
-      if (b.type == '?') return -1;
+      if (a.name == '?') return 1;
+      if (b.name == '?') return -1;
 
-      if (a.type[a.type.length - 1] == '+') return 1;
-      if (b.type[b.type.length - 1] == '+') return -1;
+      if (a.name[a.name.length - 1] == '+') return 1;
+      if (b.name[b.name.length - 1] == '+') return -1;
 
-      if (a.type.length > b.type.length) return 1;
-      if (a.type.length < b.type.length) return -1;
+      if (a.name.length > b.name.length) return 1;
+      if (a.name.length < b.name.length) return -1;
 
-      return a.type.compareTo(b.type);
+      return a.name.compareTo(b.name);
     });
 
     return Statistics._(
@@ -72,55 +96,19 @@ class Statistics {
   final double standardDeviation;
   final int partsConsumed;
   final int amountConsumed;
-  final List<AmountStatistics> scores;
-  final List<AmountStatistics> lengths;
-  final List<TypeStatistics> formats;
-  final List<TypeStatistics> statuses;
-  final List<TypeStatistics> countries;
+  final List<ScoreStatistic> scores;
+  final List<LengthStatistic> lengths;
+  final List<FormatStatistic> formats;
+  final List<StatusStatistic> statuses;
+  final List<CountryStatistic> countries;
 }
 
-class AmountStatistics {
-  AmountStatistics._({
-    required this.count,
-    required this.meanScore,
-    required this.amount,
-    required this.type,
-  });
+typedef ScoreStatistic = ({int count, double meanScore, int amount, String name});
 
-  factory AmountStatistics(Map<String, dynamic> map, String key, bool ofAnime) =>
-      AmountStatistics._(
-        count: map['count'],
-        meanScore: map['meanScore'].toDouble(),
-        amount: ofAnime ? map['minutesWatched'] ~/ 60 : map['chaptersRead'],
-        type: (map[key] ?? '?').toString(),
-      );
+typedef LengthStatistic = ({int count, double meanScore, int amount, String name});
 
-  final int count;
-  final double meanScore;
-  final int amount;
-  final String type;
-}
+typedef FormatStatistic = ({int count, double meanScore, int amount, MediaFormat name});
 
-class TypeStatistics {
-  TypeStatistics._({
-    required this.count,
-    required this.meanScore,
-    required this.hoursWatched,
-    required this.chaptersRead,
-    required this.value,
-  });
+typedef StatusStatistic = ({int count, double meanScore, int amount, ListStatus name});
 
-  factory TypeStatistics(Map<String, dynamic> map, String key) => TypeStatistics._(
-    count: map['count'],
-    meanScore: map['meanScore'].toDouble(),
-    hoursWatched: map['minutesWatched'] ~/ 60,
-    chaptersRead: map['chaptersRead'],
-    value: (map[key] as String).noScreamingSnakeCase,
-  );
-
-  final int count;
-  final double meanScore;
-  final int hoursWatched;
-  final int chaptersRead;
-  final String value;
-}
+typedef CountryStatistic = ({int count, double meanScore, int amount, OriginCountry name});

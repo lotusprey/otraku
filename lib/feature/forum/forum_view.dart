@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/feature/forum/forum_filter_provider.dart';
 import 'package:otraku/feature/forum/forum_filter_view.dart';
 import 'package:otraku/feature/forum/forum_provider.dart';
 import 'package:otraku/feature/forum/thread_item_list.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/debounce.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/widget/input/search_field.dart';
@@ -33,6 +34,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     return AdaptiveScaffold(
@@ -46,7 +48,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
                     Expanded(
                       child: SearchField(
                         debounce: Debounce(),
-                        hint: 'Forum',
+                        hint: l10n.forum,
                         value: ref.watch(forumFilterProvider.select((s) => s.search)),
                         onChanged: (search) => ref
                             .read(forumFilterProvider.notifier)
@@ -59,7 +61,7 @@ class _ForumViewState extends ConsumerState<ForumView> {
               );
             },
             child: IconButton(
-              tooltip: 'Filter',
+              tooltip: l10n.filter,
               icon: const Icon(Ionicons.funnel_outline),
               onPressed: () => showForumFilterSheet(context, ref),
             ),

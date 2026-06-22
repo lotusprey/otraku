@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/feature/auth/login_instructions.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
@@ -27,11 +29,12 @@ class EditView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final viewerId = ref.watch(viewerIdProvider);
     if (viewerId == null) {
       return SimpleSheet(
         builder: (context, scrollCtrl) => const Center(
-          child: Padding(padding: Theming.paddingAll, child: Text('Log in to edit media')),
+          child: Padding(padding: Theming.paddingAll, child: LoginInstructions()),
         ),
       );
     }
@@ -46,7 +49,7 @@ class EditView extends ConsumerWidget {
         builder: (context, scrollCtrl) => Center(
           child: Padding(
             padding: Theming.paddingAll,
-            child: Text('Failed to load edit sheet: $error'),
+            child: Text(l10n.errorFailedLoading(error.toString())),
           ),
         ),
       ),
@@ -69,6 +72,7 @@ class _EditView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final readableNotifier = entryEditProvider(tag).notifier;
 
     final settings = ref.watch(settingsProvider.select((s) => s.value));
@@ -78,8 +82,10 @@ class _EditView extends ConsumerWidget {
       child: Padding(
         padding: const .symmetric(horizontal: Theming.offset),
         child: ChipSelector(
-          title: 'Status',
-          items: ListStatus.values.map((v) => (v.label(entryEdit.baseEntry.isAnime), v)).toList(),
+          title: l10n.entryStatus,
+          items: ListStatus.values
+              .map((v) => (v.localize(l10n, entryEdit.baseEntry.isAnime), v))
+              .toList(),
           value: entryEdit.listStatus,
           highContrast: highContrast,
           onChanged: (status) => ref.read(readableNotifier).updateBy((s) {
@@ -89,16 +95,16 @@ class _EditView extends ConsumerWidget {
 
             if (entryEdit.baseEntry.listStatus == null && status == .current && startedAt == null) {
               startedAt = DateTime.now();
-              SnackBarExtension.show(context, 'Start date changed');
+              SnackBarExtension.show(context, l10n.entryChangedDateStart);
             } else if (entryEdit.baseEntry.listStatus != status &&
                 status == .completed &&
                 completedAt == null) {
               completedAt = DateTime.now();
-              var text = 'Completed date changed';
+              var text = l10n.entryChangedDateCompletion;
 
               if (entryEdit.baseEntry.progressMax != null && progress < s.baseEntry.progressMax!) {
                 progress = s.baseEntry.progressMax!;
-                text = 'Completed date & progress changed';
+                text = l10n.entryChangedDateCompletionAndProgress;
               }
 
               SnackBarExtension.show(context, text);
@@ -119,21 +125,21 @@ class _EditView extends ConsumerWidget {
       minWidth: 195,
       children: [
         DateField(
-          label: 'Started',
+          label: l10n.entryDateStarted,
           value: entryEdit.startedAt,
           onChanged: (startedAt) => ref.read(readableNotifier).updateBy((s) {
             var listStatus = s.listStatus;
 
             if (startedAt != null && entryEdit.baseEntry.listStatus == null && listStatus == null) {
               listStatus = .current;
-              SnackBarExtension.show(context, 'Status changed');
+              SnackBarExtension.show(context, l10n.entryChangedStatus);
             }
 
             return s.copyWith(listStatus: listStatus, startedAt: (startedAt,));
           }),
         ),
         DateField(
-          label: 'Completed',
+          label: l10n.entryDateCompleted,
           value: entryEdit.completedAt,
           onChanged: (completedAt) => ref.read(readableNotifier).updateBy((s) {
             var listStatus = s.listStatus;
@@ -144,11 +150,11 @@ class _EditView extends ConsumerWidget {
                 entryEdit.baseEntry.listStatus != .repeating &&
                 entryEdit.baseEntry.listStatus == listStatus) {
               listStatus = .completed;
-              String text = 'Status changed';
+              String text = l10n.entryChangedStatus;
 
               if (s.baseEntry.progressMax != null && s.progress < s.baseEntry.progressMax!) {
                 progress = s.baseEntry.progressMax!;
-                text = 'Status & progress changed';
+                text = l10n.entryChangedStatusAndProgress;
               }
 
               SnackBarExtension.show(context, text);
@@ -162,7 +168,7 @@ class _EditView extends ConsumerWidget {
           }),
         ),
         NumberField(
-          label: 'Repeat',
+          label: l10n.entryRepeats,
           value: entryEdit.repeat,
           onChanged: (repeat) => entryEdit.repeat = repeat,
         ),
@@ -177,7 +183,7 @@ class _EditView extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           statusField,
           const SliverToBoxAdapter(child: SizedBox(height: 15)),
-          _buildProgressFields(context, ref),
+          _buildProgressFields(context, ref, l10n),
           SliverToBoxAdapter(
             child: ScoreField(
               value: entryEdit.score,
@@ -188,19 +194,19 @@ class _EditView extends ConsumerWidget {
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
           _buildAdvancedScoringFields(ref, settings),
           const SliverToBoxAdapter(child: SizedBox(height: Theming.offset)),
-          _Notes(value: entryEdit.notes, onChanged: (notes) => entryEdit.notes = notes),
+          _Notes(l10n: l10n, value: entryEdit.notes, onChanged: (notes) => entryEdit.notes = notes),
           const SliverToBoxAdapter(child: SizedBox(height: 20)),
           timelineFields,
           SliverToBoxAdapter(
             child: StatefulCheckboxListTile(
-              title: const Text('Private'),
+              title: Text(l10n.entryPrivate),
               value: entryEdit.private,
               onChanged: (private) => entryEdit.private = private!,
             ),
           ),
           SliverToBoxAdapter(
             child: StatefulCheckboxListTile(
-              title: const Text('Hidden From Status Lists'),
+              title: Text(l10n.entryHiddenFromStatusLists),
               value: entryEdit.hiddenFromStatusLists,
               onChanged: (hiddenFromStatusLists) =>
                   entryEdit.hiddenFromStatusLists = hiddenFromStatusLists!,
@@ -209,7 +215,7 @@ class _EditView extends ConsumerWidget {
           if (entryEdit.customLists.isNotEmpty)
             SliverToBoxAdapter(
               child: ExpansionTile(
-                title: const Text('Custom Lists'),
+                title: Text(l10n.entryCustomLists),
                 initiallyExpanded: true,
                 children: [
                   for (final e in entryEdit.customLists.entries)
@@ -229,11 +235,11 @@ class _EditView extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressFields(BuildContext context, WidgetRef ref) {
+  Widget _buildProgressFields(BuildContext context, WidgetRef ref, AppLocalizations l10n) {
     final readableNotifier = entryEditProvider(tag).notifier;
 
     final progressField = NumberField(
-      label: 'Progress',
+      label: l10n.entryProgress,
       value: entryEdit.progress,
       maxValue: entryEdit.baseEntry.progressMax ?? 100000,
       onChanged: (progress) => ref.read(readableNotifier).updateBy((s) {
@@ -246,22 +252,24 @@ class _EditView extends ConsumerWidget {
             progress != entryEdit.baseEntry.progress) {
           if (entryEdit.baseEntry.listStatus == status && status != .completed) {
             status = .completed;
-            text = 'Status changed';
+            text = l10n.entryChangedStatus;
           }
 
           if (entryEdit.baseEntry.completedAt == null && completedAt == null) {
             completedAt = DateTime.now();
-            text = text == null ? 'Completed date changed' : 'Status & Completed date changed';
+            text = text == null
+                ? l10n.entryChangedDateCompletion
+                : l10n.entryChangedDateCompletionAndStatus;
           }
         } else if (entryEdit.baseEntry.progress == 0 && entryEdit.baseEntry.progress != progress) {
           if (entryEdit.baseEntry.listStatus == status && (status == null || status == .planning)) {
             status = .current;
-            text = 'Status changed';
+            text = l10n.entryChangedStatus;
           }
 
           if (entryEdit.baseEntry.startedAt == null && startedAt == null) {
             startedAt = DateTime.now();
-            text = text == null ? 'Start date changed' : 'Status & start date changed';
+            text = text == null ? l10n.entryChangedDateStart : l10n.entryChangedDateStartAndStatus;
           }
         }
 
@@ -280,7 +288,7 @@ class _EditView extends ConsumerWidget {
 
     if (!entryEdit.baseEntry.isAnime) {
       final volumeProgressField = NumberField(
-        label: 'Volume Progress',
+        label: l10n.entryProgressVolumes,
         value: entryEdit.progressVolumes,
         maxValue: entryEdit.baseEntry.progressVolumesMax ?? 100000,
         onChanged: (progressVolumes) => entryEdit.progressVolumes = progressVolumes,
@@ -383,10 +391,11 @@ class _FieldGrid extends StatelessWidget {
 }
 
 class _Notes extends StatefulWidget {
-  const _Notes({required this.value, required this.onChanged});
+  const _Notes({required this.l10n, required this.value, required this.onChanged});
 
   final String value;
   final void Function(String) onChanged;
+  final AppLocalizations l10n;
 
   @override
   _NotesState createState() => _NotesState();
@@ -411,7 +420,7 @@ class _NotesState extends State<_Notes> {
         controller: _ctrl,
         style: TextTheme.of(context).bodyMedium,
         decoration: InputDecoration(
-          labelText: 'Notes',
+          labelText: widget.l10n.entryNotes,
           labelStyle: TextTheme.of(context).bodyMedium,
           border: const OutlineInputBorder(),
         ),

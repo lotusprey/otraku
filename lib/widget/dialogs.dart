@@ -2,8 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:gal/gal.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
@@ -34,6 +35,8 @@ class _TextInputDialogState extends State<TextInputDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
       title: Text(widget.title),
       content: Form(
@@ -43,7 +46,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
           controller: _textCtrl,
           decoration: InputDecoration(
             isDense: true,
-            hint: const Text('Enter'),
+            hint: Text(l10n.enter),
             hintStyle: TextStyle(color: ColorScheme.of(context).onSurfaceVariant),
             border: const OutlineInputBorder(borderRadius: Theming.borderRadiusSmall),
           ),
@@ -51,7 +54,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
           validator: (value) {
             final text = value?.trim() ?? '';
             if (text.isEmpty) {
-              return 'The field cannot be empty.';
+              return l10n.errorFieldRequired;
             }
 
             if (widget.validator != null) {
@@ -63,14 +66,14 @@ class _TextInputDialogState extends State<TextInputDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionGoBack)),
         TextButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.pop(context, _textCtrl.text.trim());
             }
           },
-          child: const Text('Confirm'),
+          child: Text(l10n.actionConfirm),
         ),
       ],
     );
@@ -105,14 +108,14 @@ class ConfirmationDialog extends StatelessWidget {
 
   final String title;
   final String? content;
-  final String primaryAction;
+  final String? primaryAction;
   final String? secondaryAction;
 
   static Future<void> show(
     BuildContext context, {
     required String title,
     String? content,
-    String primaryAction = 'Ok',
+    String? primaryAction,
     String? secondaryAction,
     void Function()? onConfirm,
   }) => showDialog(
@@ -133,7 +136,10 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(child: Text(secondaryAction!), onPressed: () => Navigator.pop(context, false)),
-        TextButton(child: Text(primaryAction), onPressed: () => Navigator.pop(context, true)),
+        TextButton(
+          child: Text(primaryAction ?? AppLocalizations.of(context)!.actionOk),
+          onPressed: () => Navigator.pop(context, true),
+        ),
       ],
     );
   }
@@ -188,6 +194,8 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       insetPadding: .zero,
       backgroundColor: Colors.transparent,
@@ -216,7 +224,7 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
             child: InteractiveViewer(
               clipBehavior: Clip.none,
               transformationController: _transformCtrl,
-              child: CachedImage(widget.url, fit: BoxFit.contain),
+              child: CachedImage(widget.url, fit: .contain),
             ),
           ),
           Align(
@@ -224,20 +232,20 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
             child: Padding(
               padding: EdgeInsets.all(Theming.offset),
               child: IconButton.filledTonal(
-                tooltip: 'More',
+                tooltip: l10n.actionMore,
                 icon: const Icon(Icons.more_vert_rounded, size: Theming.iconBig),
                 onPressed: () => showSheet(
                   context,
                   SimpleSheet.list([
                     ListTile(
-                      title: Text('Share'),
+                      title: Text(l10n.actionShare),
                       leading: const Icon(Ionicons.share_outline),
-                      onTap: _shareImage,
+                      onTap: () => _shareImage(l10n),
                     ),
                     ListTile(
-                      title: Text('Download'),
+                      title: Text(l10n.actionDownload),
                       leading: const Icon(Ionicons.download_outline),
-                      onTap: _downloadImage,
+                      onTap: () => _downloadImage(l10n),
                     ),
                   ]),
                 ),
@@ -249,13 +257,13 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
     );
   }
 
-  void _shareImage() async {
+  void _shareImage(AppLocalizations l10n) async {
     final File file;
     try {
       file = await getFileFromCacheOrDownload(widget.url);
     } catch (_) {
       if (mounted) {
-        SnackBarExtension.show(context, 'Failed fetching file');
+        SnackBarExtension.show(context, l10n.errorFailedGettingFile);
         Navigator.pop(context);
       }
       return;
@@ -265,11 +273,11 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
     if (mounted) Navigator.pop(context);
   }
 
-  void _downloadImage() async {
+  void _downloadImage(AppLocalizations l10n) async {
     try {
       if (!await Gal.hasAccess(toAlbum: false)) {
         if (!await Gal.requestAccess(toAlbum: false)) {
-          if (mounted) SnackBarExtension.show(context, 'No gallery access');
+          if (mounted) SnackBarExtension.show(context, l10n.errorMissingGalleryPermission);
           return;
         }
       }
@@ -278,12 +286,12 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
       await Gal.putImage(file.path);
 
       if (mounted) {
-        SnackBarExtension.show(context, 'File saved');
+        SnackBarExtension.show(context, l10n.fileSaved);
         Navigator.pop(context);
       }
     } catch (_) {
       if (mounted) {
-        SnackBarExtension.show(context, 'Failed downloading file');
+        SnackBarExtension.show(context, l10n.errorFailedGettingFile);
         Navigator.pop(context);
       }
       return;

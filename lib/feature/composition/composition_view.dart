@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/util/theming.dart';
@@ -31,8 +32,10 @@ class CompositionView extends StatelessWidget {
               loading: () => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
-              error: (_, _) => SheetWithButtonRow(
-                builder: (context, scrollCtrl) => const Center(child: Text('Failed Loading')),
+              error: (err, _) => SheetWithButtonRow(
+                builder: (context, scrollCtrl) => Center(
+                  child: Text(AppLocalizations.of(context)!.errorFailedLoading(err.toString())),
+                ),
               ),
               data: (data) {
                 if (data.text.isEmpty) {
@@ -136,6 +139,7 @@ class _CompositionBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final padding = EdgeInsets.only(
       left: 20,
       right: 20,
@@ -177,16 +181,16 @@ class _CompositionBody extends StatelessWidget {
                 padding: Theming.paddingAll,
                 color: Theme.of(context).navigationBarTheme.backgroundColor,
                 child: SegmentedButton(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: 0,
-                      label: Text('Compose'),
-                      icon: Icon(Icons.edit_outlined),
+                      label: Text(l10n.compositionsAdd),
+                      icon: const Icon(Icons.edit_outlined),
                     ),
                     ButtonSegment(
                       value: 1,
-                      label: Text('Preview'),
-                      icon: Icon(Icons.preview_outlined),
+                      label: Text(l10n.compositionsPreview),
+                      icon: const Icon(Icons.preview_outlined),
                     ),
                   ],
                   selected: {tabCtrl.index},
@@ -229,7 +233,7 @@ class _BottomBarState extends State<_BottomBar> {
       if (widget.isEditing) ...[
         Expanded(
           child: ListView(
-            scrollDirection: Axis.horizontal,
+            scrollDirection: .horizontal,
             children: [
               _FormatButton(
                 startDelimiter: '**',

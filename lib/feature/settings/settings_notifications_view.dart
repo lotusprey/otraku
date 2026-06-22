@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/feature/settings/settings_model.dart';
@@ -11,6 +12,7 @@ class SettingsNotificationsSubview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final listPadding = MediaQuery.paddingOf(context);
 
     return ListView.builder(
@@ -24,7 +26,7 @@ class SettingsNotificationsSubview extends StatelessWidget {
         final e = settings.notificationOptions.entries.elementAt(i);
 
         return StatefulCheckboxListTile(
-          title: Text(e.key.label),
+          title: Text(e.key.localize(l10n)),
           value: e.value,
           onChanged: (v) => settings.notificationOptions[e.key] = v!,
         );

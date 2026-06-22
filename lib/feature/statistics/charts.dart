@@ -5,12 +5,10 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 
 class BarChart extends StatelessWidget {
-  const BarChart({required this.title, required this.names, required this.values, this.toolbar})
-    : assert(names.length == values.length);
+  const BarChart({required this.title, required this.categories, this.toolbar});
 
   final String title;
-  final List<String> names;
-  final List<num> values;
+  final List<(String key, num val)> categories;
   final Widget? toolbar;
 
   @override
@@ -23,10 +21,10 @@ class BarChart extends StatelessWidget {
         final maxBarWidth = constraints.maxWidth;
         double scale(num value) => value > 0 ? math.log(value + 0.1) : 0;
 
-        final maxValue = values.fold<num>(0.0, (prev, element) => element > prev ? element : prev);
+        final maxValue = categories.fold<num>(0.0, (prev, elem) => elem.$2 > prev ? elem.$2 : prev);
         final scaledMaxValue = scale(maxValue);
 
-        final totalValue = values.fold(0.0, (sum, value) => sum + value);
+        final totalValue = categories.fold(0.0, (sum, elem) => sum + elem.$2);
 
         return Column(
           crossAxisAlignment: .start,
@@ -36,10 +34,10 @@ class BarChart extends StatelessWidget {
               child: Text(title, style: textTheme.titleSmall),
             ),
             if (toolbar != null) ...[
-              SizedBox(width: double.infinity, child: toolbar!),
+              SizedBox(width: .infinity, child: toolbar!),
               const SizedBox(height: Theming.offset),
             ],
-            for (int i = 0; i < names.length; i++)
+            for (int i = 0; i < categories.length; i++)
               Padding(
                 padding: const .symmetric(vertical: 3),
                 child: Column(
@@ -49,18 +47,22 @@ class BarChart extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Text(names[i], style: textTheme.labelMedium, textAlign: .left),
+                          child: Text(
+                            categories[i].$1,
+                            style: textTheme.labelMedium,
+                            textAlign: .left,
+                          ),
                         ),
                         Expanded(
                           child: Text(
-                            "${(values[i] / totalValue * 100).toStringAsFixed(1)}%",
+                            "${(categories[i].$2 / totalValue * 100).toStringAsFixed(1)}%",
                             style: textTheme.labelMedium,
                             textAlign: .center,
                           ),
                         ),
                         Expanded(
                           child: Text(
-                            "${values[i]}",
+                            "${categories[i].$2}",
                             style: textTheme.labelMedium,
                             textAlign: .right,
                           ),
@@ -78,7 +80,7 @@ class BarChart extends StatelessWidget {
                       alignment: .centerLeft,
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        width: (scale(values[i]) / scaledMaxValue) * maxBarWidth,
+                        width: (scale(categories[i].$2) / scaledMaxValue) * maxBarWidth,
                         decoration: BoxDecoration(
                           borderRadius: Theming.borderRadiusSmall,
                           gradient: LinearGradient(
@@ -100,16 +102,10 @@ class BarChart extends StatelessWidget {
 }
 
 class PieChart extends StatelessWidget {
-  const PieChart({
-    required this.title,
-    required this.names,
-    required this.values,
-    required this.highContrast,
-  }) : assert(names.length == values.length);
+  const PieChart({required this.title, required this.categories, required this.highContrast});
 
   final String title;
-  final List<String> names;
-  final List<int> values;
+  final List<(String key, int val)> categories;
   final bool highContrast;
 
   @override
@@ -137,7 +133,7 @@ class PieChart extends StatelessWidget {
                       stops: const [0.5, 1.0],
                     ),
                   ),
-                  child: CustomPaint(foregroundPainter: _PieLines(colorScheme.surface, values)),
+                  child: CustomPaint(foregroundPainter: _PieLines(colorScheme.surface, categories)),
                 ),
               ),
             ),
@@ -145,14 +141,14 @@ class PieChart extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               padding: const .only(top: 5, bottom: 5, right: Theming.offset),
-              itemCount: names.length,
+              itemCount: categories.length,
               itemBuilder: (context, i) => Padding(
                 padding: const .symmetric(vertical: 5),
                 child: Row(
                   spacing: 5,
                   children: [
-                    Expanded(child: Text(names[i])),
-                    Text(values[i].toString(), style: TextTheme.of(context).labelMedium),
+                    Expanded(child: Text(categories[i].$1)),
+                    Text(categories[i].$2.toString(), style: TextTheme.of(context).labelMedium),
                   ],
                 ),
               ),
@@ -180,7 +176,7 @@ class _PieLines extends CustomPainter {
   _PieLines(this.colour, this.categories);
 
   final Color colour;
-  final List<int> categories;
+  final List<(String key, int val)> categories;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -193,7 +189,7 @@ class _PieLines extends CustomPainter {
 
     double total = 0.0;
     for (final c in categories) {
-      total += c;
+      total += c.$2;
     }
 
     final radius = math.min(size.width, size.height) / 2;
@@ -202,7 +198,7 @@ class _PieLines extends CustomPainter {
     double angle = math.pi;
 
     for (int i = 0; i < categories.length; i++) {
-      angle -= 0.05 + (categories[i] / total) * offset;
+      angle -= 0.05 + (categories[i].$2 / total) * offset;
 
       final point = Offset(
         center.dx + radius * math.sin(angle),

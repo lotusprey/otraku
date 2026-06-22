@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class NumberField extends StatefulWidget {
@@ -81,9 +82,11 @@ class _NumberFieldState extends State<NumberField> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return TextField(
       controller: _ctrl,
-      onChanged: _validateInput,
+      onChanged: (val) => _validateInput(l10n, val),
       textAlign: .center,
       style: TextTheme.of(context).bodyMedium,
       keyboardType: TextInputType.numberWithOptions(decimal: widget.isDecimal),
@@ -102,11 +105,11 @@ class _NumberFieldState extends State<NumberField> {
           child: Material(
             color: Colors.transparent,
             child: InkResponse(
-              onTap: () => _validateInput(_ctrl.text, -widget.stepValue),
+              onTap: () => _validateInput(l10n, _ctrl.text, -widget.stepValue),
               radius: Theming.radiusSmall.x,
               child: Tooltip(
-                message: 'Decrement',
-                onTriggered: () => _validateInput(widget.minValue.toString(), 0),
+                message: l10n.numberDecrement,
+                onTriggered: () => _validateInput(l10n, widget.minValue.toString(), 0),
                 child: const Icon(Icons.remove),
               ),
             ),
@@ -117,13 +120,13 @@ class _NumberFieldState extends State<NumberField> {
           child: Material(
             color: Colors.transparent,
             child: InkResponse(
-              onTap: () => _validateInput(_ctrl.text, widget.stepValue),
+              onTap: () => _validateInput(l10n, _ctrl.text, widget.stepValue),
               radius: Theming.radiusSmall.x,
               child: Tooltip(
-                message: 'Increment',
+                message: l10n.numberIncrement,
                 onTriggered: () {
                   if (widget.maxValue == null) return;
-                  _validateInput(widget.maxValue.toString(), 0);
+                  _validateInput(l10n, widget.maxValue.toString(), 0);
                 },
                 child: const Icon(Icons.add),
               ),
@@ -134,7 +137,7 @@ class _NumberFieldState extends State<NumberField> {
     );
   }
 
-  void _validateInput(String value, [num? add]) {
+  void _validateInput(AppLocalizations l10n, String value, [num? add]) {
     if (value.isEmpty) return;
 
     num number = num.parse(value);
@@ -147,8 +150,8 @@ class _NumberFieldState extends State<NumberField> {
       if (_error == null && add == null) {
         setState(
           () => number < widget.minValue
-              ? _error = 'Minimum ${widget.minValue}'
-              : _error = 'Maximum ${widget.maxValue}',
+              ? _error = l10n.numberMinimum(widget.minValue)
+              : _error = l10n.numberMaximum(widget.maxValue!),
         );
       }
       return;

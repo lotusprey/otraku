@@ -3,6 +3,7 @@ import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
@@ -16,8 +17,10 @@ class DiscoverMediaGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (items.isEmpty) {
-      return const SliverFillRemaining(child: Center(child: Text('No Media')));
+      return SliverFillRemaining(child: Center(child: Text(l10n.noResults)));
     }
 
     final textTheme = TextTheme.of(context);
@@ -30,16 +33,17 @@ class DiscoverMediaGrid extends StatelessWidget {
       gridDelegate: SliverGridDelegateWithMinWidthAndFixedHeight(minWidth: 290, height: tileHeight),
       delegate: SliverChildBuilderDelegate(
         childCount: items.length,
-        (context, index) => _Tile(items[index], highContrast, tileHeight),
+        (context, index) => _Tile(items[index], l10n, highContrast, tileHeight),
       ),
     );
   }
 }
 
 class _Tile extends StatelessWidget {
-  const _Tile(this.item, this.highContrast, this.tileHeight);
+  const _Tile(this.item, this.l10n, this.highContrast, this.tileHeight);
 
   final DiscoverMediaItem item;
+  final AppLocalizations l10n;
   final bool highContrast;
   final double tileHeight;
 
@@ -48,17 +52,17 @@ class _Tile extends StatelessWidget {
     final textRailItems = <String, bool>{};
     if (item.format != null) textRailItems[item.format!] = false;
     if (item.releaseStatus != null) {
-      textRailItems[item.releaseStatus!.label] = false;
+      textRailItems[item.releaseStatus!.localize(l10n)] = false;
     }
     if (item.releaseYear != null) {
       textRailItems[item.releaseYear!.toString()] = false;
     }
 
     if (item.entryStatus != null) {
-      textRailItems[item.entryStatus!.label(item.isAnime)] = true;
+      textRailItems[item.entryStatus!.localize(l10n, item.isAnime)] = true;
     }
 
-    if (item.isAdult) textRailItems['Adult'] = true;
+    if (item.isAdult) textRailItems[l10n.mediaAdult] = true;
 
     final detailTextStyle = TextTheme.of(context).labelSmall;
 

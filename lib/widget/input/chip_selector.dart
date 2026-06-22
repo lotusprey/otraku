@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:otraku/extension/filter_chip_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/feature/media/media_models.dart';
@@ -136,12 +137,14 @@ class EntrySortChipSelector extends StatefulWidget {
     required this.title,
     required this.value,
     required this.onChanged,
+    required this.l10n,
     required this.highContrast,
   });
 
   final String title;
   final EntrySort value;
   final void Function(EntrySort) onChanged;
+  final AppLocalizations l10n;
   final bool highContrast;
 
   @override
@@ -156,7 +159,7 @@ class _EntrySortChipSelectorState extends State<EntrySortChipSelector> {
   void initState() {
     super.initState();
     for (int i = 0; i < EntrySort.values.length; i += 2) {
-      _labels.add(EntrySort.values[i].label);
+      _labels.add(EntrySort.values[i].localize(widget.l10n));
     }
   }
 

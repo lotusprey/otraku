@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/feature/tag/tag_picker.dart';
 import 'package:otraku/widget/input/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
-import 'package:otraku/feature/tag/tag_provider.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
-import 'package:otraku/widget/loaders.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class DiscoverMediaFilterView extends ConsumerStatefulWidget {
@@ -33,10 +32,11 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final highContrast = ref.watch(persistenceProvider.select((s) => s.options.highContrast));
 
     final applyButton = BottomBarButton(
-      text: 'Apply',
+      text: l10n.actionApply,
       icon: Icons.done_rounded,
       onTap: () {
         widget.onChanged(_filter);
@@ -45,7 +45,7 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
     );
 
     final revertToDefaultButton = BottomBarButton(
-      text: 'Reset',
+      text: l10n.actionReset,
       icon: Icons.restore_rounded,
       foregroundColor: ColorScheme.of(context).secondary,
       onTap: () {
@@ -55,15 +55,15 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
     );
 
     final saveButton = BottomBarButton(
-      text: 'Save',
+      text: l10n.actionSave,
       icon: Icons.save_outlined,
       foregroundColor: ColorScheme.of(context).secondary,
       onTap: () => ConfirmationDialog.show(
         context,
-        title: 'Make default?',
-        content: 'The current filters and sorting will become the default.',
-        primaryAction: 'Yes',
-        secondaryAction: 'No',
+        title: l10n.filterDefaultQuestion,
+        content: l10n.filterDefaultWarning,
+        primaryAction: l10n.actionConfirm,
+        secondaryAction: l10n.actionGoBack,
         onConfirm: () {
           ref.read(persistenceProvider.notifier).setDiscoverMediaFilter(_filter);
 
@@ -86,60 +86,51 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
           padding: const .only(top: 20),
           children: [
             ChipSelector.ensureSelected(
-              title: 'Sorting',
-              items: MediaSort.values.map((v) => (v.label, v)).toList(),
+              title: l10n.filterSort,
+              items: MediaSort.values.map((v) => (v.localize(l10n), v)).toList(),
               value: _filter.sort,
               onChanged: (v) => _filter.sort = v,
               highContrast: highContrast,
             ),
             ChipMultiSelector(
-              title: 'Statuses',
-              items: ReleaseStatus.values.map((v) => (v.label, v)).toList(),
+              title: l10n.mediaStatus(ReleaseStatus.values.length),
+              items: ReleaseStatus.values.map((v) => (v.localize(l10n), v)).toList(),
               values: _filter.statuses,
               highContrast: highContrast,
             ),
             if (widget.ofAnime)
               ChipMultiSelector(
-                title: 'Formats',
-                items: MediaFormat.animeFormats.map((v) => (v.label, v)).toList(),
+                title: l10n.mediaFormat,
+                items: MediaFormat.animeFormats.map((v) => (v.localize(l10n), v)).toList(),
                 values: _filter.animeFormats,
                 highContrast: highContrast,
               )
             else
               ChipMultiSelector(
-                title: 'Formats',
-                items: MediaFormat.mangaFormats.map((v) => (v.label, v)).toList(),
+                title: l10n.mediaFormat,
+                items: MediaFormat.mangaFormats.map((v) => (v.localize(l10n), v)).toList(),
                 values: _filter.mangaFormats,
                 highContrast: highContrast,
               ),
             if (widget.ofAnime)
               ChipSelector(
-                title: 'Season',
-                items: MediaSeason.values.map((v) => (v.label, v)).toList(),
+                title: l10n.mediaSeason,
+                items: MediaSeason.values.map((v) => (v.localize(l10n), v)).toList(),
                 value: _filter.season,
                 onChanged: (v) => _filter.season = v,
                 highContrast: highContrast,
               ),
             const SizedBox(height: 5),
             const Divider(),
-            Consumer(
-              builder: (context, ref, _) => ref
-                  .watch(tagsProvider)
-                  .when(
-                    loading: () => const Center(child: Loader()),
-                    error: (_, _) => const Center(child: Text('Failed to load tags')),
-                    data: (tags) => TagPicker(
-                      includedGenres: _filter.genreIn,
-                      excludedGenres: _filter.genreNotIn,
-                      includedTags: _filter.tagIn,
-                      excludedTags: _filter.tagNotIn,
-                    ),
-                  ),
+            TagPicker(
+              includedGenres: _filter.genreIn,
+              excludedGenres: _filter.genreNotIn,
+              includedTags: _filter.tagIn,
+              excludedTags: _filter.tagNotIn,
             ),
             const Divider(),
             const SizedBox(height: Theming.offset),
             YearRangePicker(
-              title: 'Release Year Range',
               from: _filter.startYearFrom,
               to: _filter.startYearTo,
               onChanged: (from, to) {
@@ -150,35 +141,35 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
             const SizedBox(height: Theming.offset),
             const Divider(),
             ChipSelector(
-              title: 'Country',
-              items: OriginCountry.values.map((v) => (v.label, v)).toList(),
+              title: l10n.country,
+              items: OriginCountry.values.map((v) => (v.localize(l10n), v)).toList(),
               value: _filter.country,
               onChanged: (v) => _filter.country = v,
               highContrast: highContrast,
             ),
             ChipMultiSelector(
-              title: 'Sources',
-              items: MediaSource.values.map((v) => (v.label, v)).toList(),
+              title: l10n.mediaSource(MediaSource.values.length),
+              items: MediaSource.values.map((v) => (v.localize(l10n), v)).toList(),
               values: _filter.sources,
               highContrast: highContrast,
             ),
             ChipSelector(
-              title: 'List Presence',
-              items: const [('In Lists', true), ('Not in Lists', false)],
+              title: l10n.filterListPresence,
+              items: [(l10n.filterListPresenceIn, true), (l10n.filterListPresenceNotIn, false)],
               value: _filter.inLists,
               onChanged: (v) => _filter.inLists = v,
               highContrast: highContrast,
             ),
             ChipSelector(
-              title: 'Age Restriction',
-              items: const [('Adult', true), ('Non-Adult', false)],
+              title: l10n.filterAge,
+              items: [(l10n.filterAgeAdult, true), (l10n.filterAgeNonAdult, false)],
               value: _filter.isAdult,
               onChanged: (v) => _filter.isAdult = v,
               highContrast: highContrast,
             ),
             ChipSelector(
-              title: 'Licensing',
-              items: const [('Licensed', true), ('Doujin', false)],
+              title: l10n.filterLicensing,
+              items: [(l10n.filterLicensingLicensed, true), (l10n.filterLicensingDoujin, false)],
               value: _filter.isLicensed,
               onChanged: (v) => _filter.isLicensed = v,
               highContrast: highContrast,

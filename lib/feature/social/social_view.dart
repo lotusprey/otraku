@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/scroll_controller_extension.dart';
 import 'package:otraku/feature/comment/comment_model.dart';
 import 'package:otraku/feature/comment/comment_tile.dart';
@@ -149,7 +149,6 @@ class _CommentItemList extends StatelessWidget {
             children: [
               Semantics(
                 onTap: openThread,
-                onTapHint: 'open thread',
                 child: GestureDetector(
                   onTap: openThread,
                   behavior: .opaque,

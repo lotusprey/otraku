@@ -8,6 +8,7 @@ import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/activity/activity_card.dart';
 import 'package:otraku/feature/activity/activity_model.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/paged_view.dart';
@@ -75,6 +76,7 @@ class _FollowingFilterButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final filter = ref.watch(activitiesFilterProvider(tag));
 
     return SliverToBoxAdapter(
@@ -85,19 +87,19 @@ class _FollowingFilterButton extends StatelessWidget {
             spacing: Theming.offset,
             children: [
               FilterChip(
-                label: const Text("Global"),
+                label: Text(l10n.filterActivitiesGlobal),
                 selected: filter.socialGroup == .global,
                 onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
                     .copyWith(socialGroup: .global),
               ),
               FilterChip(
-                label: const Text("Following"),
+                label: Text(l10n.filterActivitiesFollowed),
                 selected: filter.socialGroup == .followed,
                 onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
                     .copyWith(socialGroup: .followed),
               ),
               FilterChip(
-                label: const Text("Self"),
+                label: Text(l10n.filterActivitiesSelf),
                 selected: filter.socialGroup == .self,
                 onSelected: (val) => ref.read(activitiesFilterProvider(tag).notifier).state = filter
                     .copyWith(socialGroup: .self),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/extension/string_extension.dart';
@@ -20,15 +21,11 @@ final mediaProvider = AsyncNotifierProvider.autoDispose.family<MediaNotifier, Me
 final mediaConnectionsProvider = AsyncNotifierProvider.autoDispose
     .family<MediaRelationsNotifier, MediaConnections, int>(MediaRelationsNotifier.new);
 
-final mediaThreadsProvider =
-    AsyncNotifierProvider.family<MediaThreadsNotifier, Paged<ThreadItem>, int>(
-      MediaThreadsNotifier.new,
-    );
+final mediaThreadsProvider = AsyncNotifierProvider.autoDispose
+    .family<MediaThreadsNotifier, Paged<ThreadItem>, int>(MediaThreadsNotifier.new);
 
-final mediaFollowingProvider =
-    AsyncNotifierProvider.family<MediaFollowingNotifier, Paged<MediaFollowing>, int>(
-      MediaFollowingNotifier.new,
-    );
+final mediaFollowingProvider = AsyncNotifierProvider.autoDispose
+    .family<MediaFollowingNotifier, Paged<MediaFollowing>, int>(MediaFollowingNotifier.new);
 
 class MediaNotifier extends AsyncNotifier<Media> {
   MediaNotifier(this.arg);
@@ -245,8 +242,14 @@ class MediaThreadsNotifier extends AsyncNotifier<Paged<ThreadItem>> {
 
   final int arg;
 
+  KeepAliveLink? _lifetime;
+  void Function() get dispose => _lifetime?.close ?? () {};
+
   @override
-  FutureOr<Paged<ThreadItem>> build() => _fetch(const Paged());
+  FutureOr<Paged<ThreadItem>> build() {
+    _lifetime ??= ref.keepAlive();
+    return _fetch(const Paged());
+  }
 
   Future<void> fetch() async {
     final oldState = state.value ?? const Paged();
@@ -275,8 +278,14 @@ class MediaFollowingNotifier extends AsyncNotifier<Paged<MediaFollowing>> {
 
   final int arg;
 
+  KeepAliveLink? _lifetime;
+  void Function() get dispose => _lifetime?.close ?? () {};
+
   @override
-  FutureOr<Paged<MediaFollowing>> build() => _fetch(const Paged());
+  FutureOr<Paged<MediaFollowing>> build() {
+    _lifetime ??= ref.keepAlive();
+    return _fetch(const Paged());
+  }
 
   Future<void> fetch() async {
     final oldState = state.value ?? const Paged();

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/iterable_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/search_field.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
@@ -31,6 +32,7 @@ class TagPicker extends StatefulWidget {
 class TagPickerState extends State<TagPicker> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final children = <Widget>[];
 
     for (final name in widget.includedGenres) {
@@ -82,8 +84,7 @@ class TagPickerState extends State<TagPicker> {
     }
 
     return ChipGrid(
-      title: 'Tags',
-      placeholder: 'tags',
+      title: l10n.tags(100),
       children: children,
       onEdit: () => showSheet(
         context,
@@ -99,7 +100,7 @@ class TagPickerState extends State<TagPicker> {
                   return Center(
                     child: Padding(
                       padding: Theming.paddingAll,
-                      child: Text('Failed to load tags: ${error.toString()}'),
+                      child: Text(l10n.errorFailedLoading(error.toString())),
                     ),
                   );
                 case AsyncLoading():
@@ -171,19 +172,15 @@ class _DualStateTagChipState extends State<_DualStateTagChip> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+
     return InputChip(
       label: Text(widget.label),
       labelStyle: TextStyle(
-        color: _positive
-            ? ColorScheme.of(context).onSecondaryContainer
-            : ColorScheme.of(context).onErrorContainer,
+        color: _positive ? colorScheme.onSecondaryContainer : colorScheme.onErrorContainer,
       ),
-      deleteIconColor: _positive
-          ? ColorScheme.of(context).onSecondaryContainer
-          : ColorScheme.of(context).onErrorContainer,
-      backgroundColor: _positive
-          ? ColorScheme.of(context).secondaryContainer
-          : ColorScheme.of(context).errorContainer,
+      deleteIconColor: _positive ? colorScheme.onSecondaryContainer : colorScheme.onErrorContainer,
+      backgroundColor: _positive ? colorScheme.secondaryContainer : colorScheme.errorContainer,
       onDeleted: widget.onRemoved,
       onPressed: () {
         setState(() => _positive = !_positive);
@@ -229,6 +226,8 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     late final List<String> included;
     late final List<String> excluded;
     if (_categoryIndexes.isNotEmpty && _categoryIndexes[_index] == 0) {
@@ -274,7 +273,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
             ),
           )
         else
-          const Center(child: Text('No Results')),
+          Center(child: Text(l10n.noResults)),
         ClipRRect(
           borderRadius: const BorderRadius.vertical(top: Theming.radiusBig),
           child: BackdropFilter(
@@ -291,7 +290,7 @@ class _FilterTagSheetState extends ConsumerState<_FilterTagSheet> {
                       right: Theming.offset,
                       bottom: Theming.offset,
                     ),
-                    child: SearchField(hint: 'Tag', value: _filter, onChanged: _onSearch),
+                    child: SearchField(hint: l10n.tags(1), value: _filter, onChanged: _onSearch),
                   ),
                   SizedBox(
                     height: 40,
@@ -377,19 +376,20 @@ class _TagCategoryChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = ColorScheme.of(context);
+    final textTheme = TextTheme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Chip(
         label: Text(name),
         labelStyle: selected
-            ? TextTheme.of(context).bodyMedium?.copyWith(color: ColorScheme.of(context).surface)
-            : TextTheme.of(context).bodyMedium,
-        backgroundColor: selected
-            ? ColorScheme.of(context).primary
-            : ColorScheme.of(context).onSecondary,
+            ? textTheme.bodyMedium?.copyWith(color: colorScheme.surface)
+            : textTheme.bodyMedium,
+        backgroundColor: selected ? colorScheme.primary : colorScheme.onSecondary,
         side: selected
-            ? BorderSide(color: ColorScheme.of(context).primary)
-            : BorderSide(color: ColorScheme.of(context).onSurface),
+            ? BorderSide(color: colorScheme.primary)
+            : BorderSide(color: colorScheme.onSurface),
       ),
     );
   }

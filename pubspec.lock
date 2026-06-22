@@ -437,14 +437,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
-  ionicons:
+  ionicons_plus:
     dependency: "direct main"
     description:
-      name: ionicons
-      sha256: "5496bc65a16115ecf05b15b78f494ee4a8869504357668f0a11d689e970523cf"
+      name: ionicons_plus
+      sha256: "9f5a837f1a0df204f3d11fc4a8adbd870c5239e21b25e8df68504e227084e86f"
       url: "https://pub.dev"
     source: hosted
-    version: "0.2.2"
+    version: "0.2.5"
   jni:
     dependency: transitive
     description:

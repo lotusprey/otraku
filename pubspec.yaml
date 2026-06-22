@@ -61,7 +61,7 @@ dependencies:
   vector_math: ^2.2.0
 
   # An addition to the material icons.
-  ionicons: ^0.2.2
+  ionicons_plus: ^0.2.5
 
   # Sharing content.
   share_plus: ^13.1.0

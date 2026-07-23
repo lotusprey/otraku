@@ -176,119 +176,119 @@ class _NotificationItem extends StatelessWidget {
       height: height + 10,
       child: CardExtension.highContrast(highContrast)(
         margin: const .only(bottom: Theming.offset),
-        child: Row(
-          children: [
-            if (item.imageUrl != null)
-              GestureDetector(
-                behavior: .opaque,
-                onTap: () => switch (item) {
-                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ActivityNotification item => context.push(
-                    Routes.user(item.userId, item.imageUrl),
+        child: ClipRRect(
+        borderRadius: Theming.borderRadiusSmall,
+          child: Row(
+            children: [
+              if (item.imageUrl != null)
+                GestureDetector(
+                  behavior: .opaque,
+                  onTap: () => switch (item) {
+                    FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                    ActivityNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    ThreadNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                    ThreadCommentNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    MediaReleaseNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaChangeNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaDeletionNotification _ => null,
+                    MediaSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.media(item.itemId!)) : null,
+                    CharacterSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.character(item.itemId!)) : null,
+                    StaffSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.staff(item.itemId!)) : null,
+                  },
+                  onLongPress: () => switch (item) {
+                    MediaReleaseNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    MediaChangeNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    _ => null,
+                  },
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+                    child: CachedImage(item.imageUrl!, width: height / Theming.coverHtoWRatio),
                   ),
-                  ThreadNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ThreadCommentNotification item => context.push(
-                    Routes.user(item.userId, item.imageUrl),
-                  ),
-                  MediaReleaseNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaChangeNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaDeletionNotification _ => null,
-                  MediaSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.media(item.itemId!)) : null,
-                  CharacterSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.character(item.itemId!)) : null,
-                  StaffSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.staff(item.itemId!)) : null,
-                },
-                onLongPress: () => switch (item) {
-                  MediaReleaseNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  MediaChangeNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  _ => null,
-                },
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                  child: CachedImage(item.imageUrl!, width: height / Theming.coverHtoWRatio),
                 ),
-              ),
-            Flexible(
-              child: GestureDetector(
-                behavior: .opaque,
-                onTap: () => switch (item) {
-                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ActivityNotification item => context.push(Routes.activity(item.activityId)),
-                  ThreadNotification item => context.push(Routes.thread(item.threadId)),
-                  ThreadCommentNotification item => context.push(Routes.comment(item.commentId)),
-                  MediaReleaseNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaChangeNotification _ ||
-                  MediaDeletionNotification _ ||
-                  MediaSubmissionUpdateNotification _ ||
-                  CharacterSubmissionUpdateNotification _ ||
-                  StaffSubmissionUpdateNotification _ => showDialog(
-                    context: context,
-                    builder: (context) => _NotificationDialog(item),
-                  ),
-                },
-                onLongPress: () => switch (item) {
-                  MediaReleaseNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  MediaChangeNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  _ => null,
-                },
-                child: Padding(
-                  padding: Theming.paddingAll,
-                  child: Column(
-                    mainAxisAlignment: .spaceEvenly,
-                    crossAxisAlignment: .stretch,
-                    spacing: 3,
-                    children: [
-                      Flexible(
-                        child: Text.rich(
-                          overflow: .ellipsis,
-                          maxLines: 2,
-                          TextSpan(
-                            children: [
-                              for (int i = 0; i < item.texts.length; i++)
-                                TextSpan(
-                                  text: item.texts[i],
-                                  style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
-                                ),
-                            ],
+              Flexible(
+                child: GestureDetector(
+                  behavior: .opaque,
+                  onTap: () => switch (item) {
+                    FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
+                    ActivityNotification item => context.push(Routes.activity(item.activityId)),
+                    ThreadNotification item => context.push(Routes.thread(item.threadId)),
+                    ThreadCommentNotification item => context.push(Routes.comment(item.commentId)),
+                    MediaReleaseNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaChangeNotification _ ||
+                    MediaDeletionNotification _ ||
+                    MediaSubmissionUpdateNotification _ ||
+                    CharacterSubmissionUpdateNotification _ ||
+                    StaffSubmissionUpdateNotification _ => showDialog(
+                      context: context,
+                      builder: (context) => _NotificationDialog(item),
+                    ),
+                  },
+                  onLongPress: () => switch (item) {
+                    MediaReleaseNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    MediaChangeNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    _ => null,
+                  },
+                  child: Padding(
+                    padding: Theming.paddingAll,
+                    child: Column(
+                      mainAxisAlignment: .spaceEvenly,
+                      crossAxisAlignment: .stretch,
+                      spacing: 3,
+                      children: [
+                        Flexible(
+                          child: Text.rich(
+                            overflow: .ellipsis,
+                            maxLines: 2,
+                            TextSpan(
+                              children: [
+                                for (int i = 0; i < item.texts.length; i++)
+                                  TextSpan(
+                                    text: item.texts[i],
+                                    style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Timestamp(item.createdAt, analogClock),
-                    ],
+                        Timestamp(item.createdAt, analogClock),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (unread)
-              Container(
-                height: height,
-                width: Theming.offset,
-                decoration: BoxDecoration(
-                  color: ColorScheme.of(context).primary,
-                  borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
+              if (unread)
+                Container(
+                  height: height,
+                  width: Theming.offset,
+                  color: ColorScheme.of(context).primary,  
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

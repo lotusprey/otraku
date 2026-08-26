@@ -1,5 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
@@ -30,7 +29,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           alignment: .center,
           child: Row(
             children: [
-              if (GoRouter.of(context).canPop())
+              if (ModalRoute.of(context)?.canPop ?? false)
                 IconButton(
                   tooltip: AppLocalizations.of(context)!.actionGoBack,
                   icon: const Icon(Icons.arrow_back_ios_rounded),

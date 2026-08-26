@@ -1561,6 +1561,27 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get themeCaramel => 'Caramel';
+
+  @override
+  String get themeForest => 'Forest';
+
+  @override
+  String get themeLavender => 'Lavender';
+
+  @override
+  String get themeMint => 'Mint';
+
+  @override
+  String get themeMustard => 'Mustard';
+
+  @override
+  String get themeNavy => 'Navy';
+
+  @override
+  String get themeWine => 'Wine';
+
+  @override
   String get threads => 'Threads';
 
   @override

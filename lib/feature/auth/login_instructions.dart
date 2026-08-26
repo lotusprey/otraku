@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/feature/auth/account_picker.dart';
 import 'package:otraku/localizations/gen.dart';
+import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/dialogs.dart';
 
 class LoginInstructions extends StatelessWidget {
@@ -24,6 +25,7 @@ class LoginInstructions extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Column(
+      spacing: Theming.offset,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(l10n.accountLoginInstructions),

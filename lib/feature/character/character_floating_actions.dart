@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/feature/character/character_filter_provider.dart';

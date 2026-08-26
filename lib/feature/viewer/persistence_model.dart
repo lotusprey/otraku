@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
@@ -23,7 +23,7 @@ class Persistence {
     required this.homeActivitiesFilter,
     required this.mediaActivitiesFilter,
     required this.calendarFilter,
-    required this.compositionDrafts,
+    required this.drafts,
   });
 
   factory Persistence.empty() => Persistence(
@@ -37,7 +37,7 @@ class Persistence {
     homeActivitiesFilter: .empty(),
     mediaActivitiesFilter: .empty(),
     calendarFilter: .empty(),
-    compositionDrafts: .empty(),
+    drafts: .empty(),
   );
 
   factory Persistence.fromPersistenceMap(
@@ -71,7 +71,7 @@ class Persistence {
         accountGroup.account?.id,
       ),
       calendarFilter: .fromPersistenceMap(map['calendarFilter'] ?? const {}),
-      compositionDrafts: .fromPersistenceMap(map['compositionDrafts'] ?? const {}),
+      drafts: .fromPersistenceMap(map['drafts'] ?? const {}),
     );
   }
 
@@ -85,7 +85,7 @@ class Persistence {
   final HomeActivitiesFilter homeActivitiesFilter;
   final MediaActivitiesFilter mediaActivitiesFilter;
   final CalendarFilter calendarFilter;
-  final CompositionDrafts compositionDrafts;
+  final Drafts drafts;
 
   Persistence copyWith({
     SystemColors? systemColors,
@@ -98,7 +98,7 @@ class Persistence {
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
     MediaActivitiesFilter? mediaActivitiesFilter,
-    CompositionDrafts? compositionDrafts,
+    Drafts? drafts,
   }) => Persistence(
     systemColors: systemColors ?? this.systemColors,
     accountGroup: accountGroup ?? this.accountGroup,
@@ -110,7 +110,7 @@ class Persistence {
     homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
     calendarFilter: calendarFilter ?? this.calendarFilter,
     mediaActivitiesFilter: mediaActivitiesFilter ?? this.mediaActivitiesFilter,
-    compositionDrafts: compositionDrafts ?? this.compositionDrafts,
+    drafts: drafts ?? this.drafts,
   );
 }
 
@@ -350,46 +350,15 @@ class AppMeta {
   };
 }
 
-class CompositionDrafts {
-  const CompositionDrafts({
-    required this.statusDraft,
-    required this.messageDraft,
-    required this.replyDraft,
-    required this.commentDraft,
-  });
+class Drafts {
+  const Drafts({required this.composition});
 
-  factory CompositionDrafts.empty() =>
-      const CompositionDrafts(statusDraft: '', messageDraft: '', replyDraft: '', commentDraft: '');
+  factory Drafts.empty() => const Drafts(composition: '');
 
-  factory CompositionDrafts.fromPersistenceMap(Map<dynamic, dynamic> map) => CompositionDrafts(
-    statusDraft: map['statusDraft'] ?? '',
-    messageDraft: map['messageDraft'] ?? '',
-    replyDraft: map['replyDraft'] ?? '',
-    commentDraft: map['commentDraft'] ?? '',
-  );
+  factory Drafts.fromPersistenceMap(Map<dynamic, dynamic> map) =>
+      Drafts(composition: map['composition'] ?? '');
 
-  final String statusDraft;
-  final String messageDraft;
-  final String replyDraft;
-  final String commentDraft;
+  final String composition;
 
-  CompositionDrafts copyWith({
-    String? statusDraft,
-    String? messageDraft,
-    String? activityDraft,
-    String? replyDraft,
-    String? commentDraft,
-  }) => CompositionDrafts(
-    statusDraft: statusDraft ?? this.statusDraft,
-    messageDraft: messageDraft ?? this.messageDraft,
-    replyDraft: replyDraft ?? this.replyDraft,
-    commentDraft: commentDraft ?? this.commentDraft,
-  );
-
-  Map<String, dynamic> toPersistenceMap() => {
-    'statusDraft': statusDraft,
-    'messageDraft': messageDraft,
-    'replyDraft': replyDraft,
-    'commentDraft': commentDraft,
-  };
+  Map<String, dynamic> toPersistenceMap() => {'composition': composition};
 }

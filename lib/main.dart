@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:dynamic_color/dynamic_color.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
@@ -159,13 +158,11 @@ class AppState extends ConsumerState<_App> {
           darkTheme: Theming.generateThemeData(darkScheme),
           themeMode: options.themeMode,
           routerConfig: _router,
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
           supportedLocales: const [Locale('en')],
+          localizationsDelegates: [
+            AppLocalizations.delegate,
+            ...GlobalMaterialLocalizations.delegates,
+          ],
           builder: (context, child) {
             final directionality = Directionality.of(context);
 

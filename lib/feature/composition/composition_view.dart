@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ionicons_plus/ionicons_plus.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/debounce.dart';
@@ -44,31 +45,18 @@ class CompositionView extends StatelessWidget {
                   data.text = defaultText;
 
                   if (tag.id == null) {
-                    final drafts = ref.read(persistenceProvider).compositionDrafts;
-                    final savedDraft = switch (tag) {
-                      StatusActivityCompositionTag() => drafts.statusDraft,
-                      MessageActivityCompositionTag() => drafts.messageDraft,
-                      ActivityReplyCompositionTag() => drafts.replyDraft,
-                      CommentCompositionTag() => drafts.commentDraft,
-                    };
-
-                    if (savedDraft.isNotEmpty) {
-                      data.text = savedDraft;
+                    final savedComposition = ref.read(persistenceProvider).drafts.composition;
+                    if (savedComposition.isNotEmpty) {
+                      data.text = savedComposition;
                     }
                   }
                 }
 
                 return _CompositionView(
                   composition: data,
-                  persistDraft: (text) {
-                    final drafts = ref.read(persistenceProvider).compositionDrafts;
-                    ref.read(persistenceProvider.notifier).setCompositionDraft(switch (tag) {
-                      StatusActivityCompositionTag() => drafts.copyWith(statusDraft: text),
-                      MessageActivityCompositionTag() => drafts.copyWith(messageDraft: text),
-                      ActivityReplyCompositionTag() => drafts.copyWith(replyDraft: text),
-                      CommentCompositionTag() => drafts.copyWith(commentDraft: text),
-                    });
-                  },
+                  persistDraft: (text) => tag.id == null
+                      ? ref.read(persistenceProvider.notifier).setDrafts(Drafts(composition: text))
+                      : null,
                   trySave: () async {
                     final result = await ref.read(compositionProvider(tag).notifier).save();
 

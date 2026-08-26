@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/util/theming.dart';
 
 /// Two panes side by side, the left with capped width.

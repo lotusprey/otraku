@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';

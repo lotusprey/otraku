@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A wrapper around [SwitchListTile.adaptive], which handles state.
 class StatefulSwitchListTile extends StatefulWidget {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Lists text details in a fancy way, marking
 /// the ones that come with a [true] value.

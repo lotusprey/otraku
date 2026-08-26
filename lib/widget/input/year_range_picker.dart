@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widgets.dart';
 import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/input/number_field.dart';

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:gal/gal.dart';
 import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';

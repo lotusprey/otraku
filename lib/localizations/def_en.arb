@@ -817,6 +817,13 @@
             }
         }
     },
+    "themeCaramel": "Caramel",
+    "themeForest": "Forest",
+    "themeLavender": "Lavender",
+    "themeMint": "Mint",
+    "themeMustard": "Mustard",
+    "themeNavy": "Navy",
+    "themeWine": "Wine",
     "threads": "Threads",
     "users": "Users",
     "usersJoinedAt": "Joined {at}",

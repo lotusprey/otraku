@@ -2798,6 +2798,48 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{Tag} other{Tags}}'**
   String tags(int count);
 
+  /// No description provided for @themeCaramel.
+  ///
+  /// In en, this message translates to:
+  /// **'Caramel'**
+  String get themeCaramel;
+
+  /// No description provided for @themeForest.
+  ///
+  /// In en, this message translates to:
+  /// **'Forest'**
+  String get themeForest;
+
+  /// No description provided for @themeLavender.
+  ///
+  /// In en, this message translates to:
+  /// **'Lavender'**
+  String get themeLavender;
+
+  /// No description provided for @themeMint.
+  ///
+  /// In en, this message translates to:
+  /// **'Mint'**
+  String get themeMint;
+
+  /// No description provided for @themeMustard.
+  ///
+  /// In en, this message translates to:
+  /// **'Mustard'**
+  String get themeMustard;
+
+  /// No description provided for @themeNavy.
+  ///
+  /// In en, this message translates to:
+  /// **'Navy'**
+  String get themeNavy;
+
+  /// No description provided for @themeWine.
+  ///
+  /// In en, this message translates to:
+  /// **'Wine'**
+  String get themeWine;
+
   /// No description provided for @threads.
   ///
   /// In en, this message translates to:

@@ -530,6 +530,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterNotesWithout => 'Without Notes';
 
   @override
+  String get filterReadableOn => 'Readable On';
+
+  @override
   String get filterReleaseEnd => 'Release End';
 
   @override
@@ -567,6 +570,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get filterVisibilityPublic => 'Public';
+
+  @override
+  String get filterWatchableOn => 'Watchable On';
 
   @override
   String get followed => 'Following';

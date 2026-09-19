@@ -1,5 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:otraku/extension/choice_chip_extransion.dart';
+import 'package:otraku/extension/filter_chip_extension.dart';
+import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/discover/discover_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/localizations/gen.dart';
@@ -10,6 +13,7 @@ import 'package:otraku/widget/input/year_range_picker.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/layout/navigation_tool.dart';
+import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class DiscoverMediaFilterView extends ConsumerStatefulWidget {
@@ -174,12 +178,119 @@ class _DiscoverFilterViewState extends ConsumerState<DiscoverMediaFilterView> {
               onChanged: (v) => _filter.isLicensed = v,
               highContrast: highContrast,
             ),
+            if (widget.ofAnime)
+              ChipMultiSelector(
+                title: l10n.filterWatchableOn,
+                items: DiscoverMediaFilter.animeServices.map((it) => (it.name, it.id)).toList(),
+                values: _filter.animeLicensorIdIn,
+                highContrast: highContrast,
+              )
+            else
+              _MangaServiceChipMultiSelector(
+                title: l10n.filterReadableOn,
+                values: _filter.mangaLicensorIdIn,
+                highContrast: highContrast,
+              ),
             SizedBox(
               height: MediaQuery.paddingOf(context).bottom + BottomBar.height + Theming.offset,
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MangaServiceChipMultiSelector extends StatefulWidget {
+  const _MangaServiceChipMultiSelector({
+    required this.title,
+    required this.values,
+    required this.highContrast,
+  });
+
+  final String title;
+  final List<({String language, List<int> ids})> values;
+  final bool highContrast;
+
+  @override
+  State<_MangaServiceChipMultiSelector> createState() => _MangaServiceChipMultiSelectorState();
+}
+
+class _MangaServiceChipMultiSelectorState extends State<_MangaServiceChipMultiSelector> {
+  var _selectedLanguage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedCategory = DiscoverMediaFilter.mangaServicesByLanguage[_selectedLanguage];
+    final selectedValuesPredicate = (({String language, List<int> ids}) it) =>
+        it.language == selectedCategory.language;
+
+    return Column(
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
+      children: [
+        Padding(
+          padding: const .only(
+            top: Theming.offset / 2,
+            bottom: Theming.offset / 2,
+            right: Theming.offset,
+          ),
+          child: Text(widget.title),
+        ),
+        SizedBox(
+          height: 40,
+          child: ShadowedOverflowList(
+            itemCount: DiscoverMediaFilter.mangaServicesByLanguage.length,
+            itemBuilder: (context, i) {
+              final language = DiscoverMediaFilter.mangaServicesByLanguage[i].language;
+              final count =
+                  widget.values.firstWhereOrNull((it) => it.language == language)?.ids.length ?? 0;
+
+              return ChoiceChipExtension.highContrast(widget.highContrast)(
+                label: Text('$language${count < 1 ? '' : ' $count'}'),
+                selected: _selectedLanguage == i,
+                onSelected: (_) => setState(() => _selectedLanguage = i),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: Theming.offset),
+        SizedBox(
+          height: 40,
+          child: ShadowedOverflowList(
+            itemCount: selectedCategory.services.length,
+            itemBuilder: (context, i) => FilterChipExtension.highContrast(widget.highContrast)(
+              label: Text(selectedCategory.services[i].name),
+              selected:
+                  widget.values
+                      .firstWhereOrNull(selectedValuesPredicate)
+                      ?.ids
+                      .contains(selectedCategory.services[i].id) ??
+                  false,
+              onSelected: (selected) => setState(() {
+                var selectedValues = widget.values.firstWhereOrNull(selectedValuesPredicate);
+
+                if (selected) {
+                  if (selectedValues == null) {
+                    selectedValues = (language: selectedCategory.language, ids: []);
+                    widget.values.add(selectedValues);
+                  }
+
+                  selectedValues.ids.add(selectedCategory.services[i].id);
+                  return;
+                }
+
+                if (selectedValues != null) {
+                  selectedValues.ids.removeWhere((it) => it == selectedCategory.services[i].id);
+                  if (selectedValues.ids.isEmpty) {
+                    widget.values.removeWhere(selectedValuesPredicate);
+                  }
+                }
+              }),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

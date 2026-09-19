@@ -7,6 +7,7 @@ import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
+import 'package:otraku/widget/html_content.dart';
 import 'package:otraku/widget/sheets.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
@@ -305,41 +306,63 @@ class TextDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => _DialogColumn(title: title, child: SelectableText(text));
-}
-
-class _DialogColumn extends StatelessWidget {
-  const _DialogColumn({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DialogBox(
-      Padding(
-        padding: const .symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: .start,
-          mainAxisSize: .min,
-          children: [
-            Padding(
-              padding: const .symmetric(vertical: Theming.offset),
-              child: Text(title, style: TextTheme.of(context).bodyMedium),
-            ),
-            const Divider(height: 2, thickness: 2),
-            Flexible(
-              fit: FlexFit.loose,
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  padding: const .symmetric(vertical: Theming.offset),
-                  child: child,
-                ),
+  Widget build(BuildContext context) => DialogBox(
+    Padding(
+      padding: const .symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: .start,
+        mainAxisSize: .min,
+        children: [
+          Padding(
+            padding: const .symmetric(vertical: Theming.offset),
+            child: Text(title, style: TextTheme.of(context).bodyMedium),
+          ),
+          const Divider(height: 2, thickness: 2),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                padding: const .symmetric(vertical: Theming.offset),
+                child: SelectableText(text),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
+class HtmlDialog extends StatelessWidget {
+  const HtmlDialog({required this.title, required this.text});
+
+  final String title;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => DialogBox(
+    Padding(
+      padding: const .symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: .start,
+        mainAxisSize: .min,
+        children: [
+          Padding(
+            padding: const .symmetric(vertical: Theming.offset),
+            child: Text(title, style: TextTheme.of(context).bodyMedium),
+          ),
+          const Divider(height: 2, thickness: 2),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                padding: const .symmetric(vertical: Theming.offset),
+                child: SelectionArea(child: HtmlContent(text)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

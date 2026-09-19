@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.12.1+94
+version: 1.13.0+95
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -15,68 +15,68 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # Material design.
-  material_ui: ^1.1.0
-
-  # Cupertino design.
-  cupertino_ui: ^1.0.1
-
-  # Internationalization.
-  intl: ^0.20.3
-
-  # State management.
-  flutter_riverpod: ^3.4.2
-
-  # Routing.
-  go_router: ^18.0.0
-
-  # Data fetching.
-  http: ^1.6.0
-
-  # Lightweight storage.
-  hive: ^2.2.3
-
-  # Access to filesystem.
-  path_provider: ^2.1.6
-
-  # Secure storage for the access tokens.
-  flutter_secure_storage: ^10.3.1
-
-  # Markdown to HTML parsing.
-  markdown: ^7.3.1
-
-  # Used for configuring [cached_network_image].
-  flutter_cache_manager: ^3.4.2
-
   # Image caching.
-  cached_network_image: ^3.4.1
-
-  # Opening links in the browser.
-  url_launcher: ^6.3.2
+  cached_network_image: ^4.0.0
+  
+  # Cupertino design.
+  cupertino_ui: ^1.1.0
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^2.1.0
 
-  # Background tasks for notification fetching.
-  workmanager: ^0.10.9
+  # Used for configuring [cached_network_image].
+  flutter_cache_manager: ^3.4.3
 
   # Sending device notifications.
-  flutter_local_notifications: ^22.3.0
+  flutter_local_notifications: ^22.3.1
+
+  # State management.
+  flutter_riverpod: ^3.4.3
+
+  # Secure storage for the access tokens.
+  flutter_secure_storage: ^11.2.0
 
   # Parsing html into flutter widgets.
-  flutter_widget_from_html_core: ^0.17.2
+  flutter_widget_from_html_core: ^0.17.4
 
-  # Transformation calculations.
-  vector_math: ^2.4.2
+  # Saving media to gallery.
+  gal: ^2.3.3
+
+  # Routing.
+  go_router: ^18.0.1
+
+  # Lightweight storage.
+  hive: ^2.2.3
+
+  # Data fetching.
+  http: ^1.6.0
+
+  # Internationalization.
+  intl: ^0.20.3
 
   # An addition to the material icons.
   ionicons_plus: ^0.2.5
 
+  # Markdown to HTML parsing.
+  markdown: ^7.3.1
+
+  # Material design.
+  material_ui: ^1.3.0
+
+  # Access to filesystem.
+  path_provider: ^2.1.6
+
   # Sharing content.
   share_plus: ^13.3.0
 
-  # Saving media to gallery.
-  gal: ^2.3.3
+  # Opening links in the browser.
+  url_launcher: ^6.3.2
+
+  # Transformation calculations.
+  vector_math: ^2.4.2
+
+  # Background tasks for notification fetching.
+  workmanager: ^0.10.10
 
 dev_dependencies:
   flutter_test:

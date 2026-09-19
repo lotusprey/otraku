@@ -24,7 +24,7 @@ class NotesLabel extends StatelessWidget {
           child: const Icon(Ionicons.chatbox, size: Theming.iconSmall),
           onTap: () => showDialog(
             context: context,
-            builder: (context) => TextDialog(title: l10n.entryComment, text: notes),
+            builder: (context) => HtmlDialog(title: l10n.entryComment, text: notes),
           ),
         ),
       ),

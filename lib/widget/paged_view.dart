@@ -59,7 +59,12 @@ class PagedView<T> extends StatelessWidget {
                   SliverRefreshControl(onRefresh: () => onRefresh(ref.invalidate)),
                   ?header,
                   SliverFillRemaining(
-                    child: Center(child: Text(l10n.errorFailedLoading(err.toString()))),
+                    child: Center(
+                      child: Padding(
+                        padding: Theming.paddingAll,
+                        child: Text(l10n.errorFailedLoading(err.toString()), textAlign: .center),
+                      ),
+                    ),
                   ),
                 ],
               ),

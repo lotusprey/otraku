@@ -6,6 +6,7 @@ import 'package:otraku/extension/string_extension.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/localizations/gen.dart';
+import 'package:otraku/util/markdown.dart';
 import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/edit/edit_model.dart';
 import 'package:otraku/feature/tag/tag_model.dart';
@@ -210,7 +211,7 @@ class MediaFollowing {
   factory MediaFollowing(Map<String, dynamic> map) => MediaFollowing._(
     entryStatus: ListStatus.from(map['status'])!,
     score: (map['score'] ?? 0).toDouble(),
-    notes: map['notes'] ?? '',
+    notes: parseMarkdown(map['notes'] ?? ''),
     progress: map['progress'] ?? 0,
     progressMax: map['media']?['episodes'] ?? map['media']?['chapters'],
     repeat: map['repeat'] ?? 0,

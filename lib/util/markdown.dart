@@ -1,6 +1,8 @@
 import 'package:markdown/markdown.dart';
 
 String parseMarkdown(String markdown) {
+  if (markdown.isEmpty) return '';
+
   // In case there's raw text, everything is wrapped in a paragraph tag.
   final nodes = [Element('p', document.parse(markdown))];
   return renderToHtml(nodes);

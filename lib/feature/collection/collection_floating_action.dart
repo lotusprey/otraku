@@ -52,7 +52,7 @@ class CollectionFloatingAction extends StatelessWidget {
         showSheet(
           context,
           SimpleSheet(
-            initialHeight: PillSelector.expectedMinHeight(lists.length),
+            initialHeight: PillSelector.expectedMinHeight(lists.length + 1),
             builder: (context, scrollCtrl) => PillSelector(
               scrollCtrl: scrollCtrl,
               selected: index + 1,

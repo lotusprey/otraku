@@ -1,0 +1,10 @@
+- Added localizations support.
+- Message progress is saved if you mistakenly close the sheet.
+- Added progress and repeats info to the following tab in the media page.
+- Added "Watchable On"/"Readable On" filter in discover filters for media.
+- Added underline formatting.
+- Added "Same Universe" media relation.
+- Made all markdown content selectable.
+- Expanded images can be downloaded and shared.
+- The copy button in the link sheet was replaced by a share button.
+- Various fixes.

@@ -3,6 +3,7 @@ import 'package:otraku/extension/iterable_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/localizations/gen.dart';
+import 'package:otraku/util/markdown.dart';
 
 typedef CollectionTag = ({int userId, bool ofAnime});
 
@@ -441,7 +442,7 @@ class Entry {
       progress: map['progress'] ?? 0,
       repeat: map['repeat'] ?? 0,
       score: map['score'].toDouble() ?? 0.0,
-      notes: map['notes'] ?? '',
+      notes: parseMarkdown(map['notes'] ?? ''),
       avgScore: map['media']['averageScore'],
       releaseStart: DateTimeExtension.fromFuzzyDate(map['media']['startDate']),
       watchStart: DateTimeExtension.fromFuzzyDate(map['startedAt']),

@@ -66,7 +66,8 @@ class SettingsAboutSubview extends StatelessWidget {
               ListTile(
                 leading: const Icon(Ionicons.cash_outline),
                 title: Text(l10n.settingsAboutDonate),
-                onTap: () => SnackBarExtension.launch(context, 'https://ko-fi.com/lotusgate'),
+                onTap: () =>
+                    SnackBarExtension.launch(context, 'https://buymeacoffee.com/lotusprey'),
               ),
               ListTile(
                 leading: const Icon(Ionicons.finger_print),

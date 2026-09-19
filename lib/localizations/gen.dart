@@ -968,6 +968,12 @@ abstract class AppLocalizations {
   /// **'Without Notes'**
   String get filterNotesWithout;
 
+  /// No description provided for @filterReadableOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Readable On'**
+  String get filterReadableOn;
+
   /// No description provided for @filterReleaseEnd.
   ///
   /// In en, this message translates to:
@@ -1045,6 +1051,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Public'**
   String get filterVisibilityPublic;
+
+  /// No description provided for @filterWatchableOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Watchable On'**
+  String get filterWatchableOn;
 
   /// No description provided for @followed.
   ///

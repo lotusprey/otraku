@@ -3,7 +3,6 @@ import java.io.FileInputStream
 
 plugins {
     id("com.android.application")
-    id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
@@ -26,10 +25,6 @@ android {
         isCoreLibraryDesugaringEnabled = true
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     defaultConfig {
         applicationId = "com.otraku.app"
         minSdk = flutter.minSdkVersion
@@ -40,16 +35,22 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file(rootDir.canonicalPath + "/" + keystoreProperties["releaseKeyStore"])
-            storePassword = keystoreProperties["releaseStorePassword"] as String
-            keyPassword = keystoreProperties["releaseKeyPassword"] as String
-            keyAlias = keystoreProperties["releaseKeyAlias"] as String
+            if (keystorePropertiesFile.exists()) {
+                storeFile = file(rootDir.canonicalPath + "/" + keystoreProperties["releaseKeyStore"])
+                storePassword = keystoreProperties["releaseStorePassword"] as String
+                keyPassword = keystoreProperties["releaseKeyPassword"] as String
+                keyAlias = keystoreProperties["releaseKeyAlias"] as String
+            }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (keystorePropertiesFile.exists()) {
+                signingConfigs.getByName("release")
+            } else {
+                signingConfigs.getByName("debug")
+            }
         }
     }
 
@@ -69,4 +70,10 @@ dependencies {
 
 flutter {
     source = "../.."
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }

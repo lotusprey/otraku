@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/feature/media/media_models.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 
 class ScoreLabel extends StatelessWidget {
@@ -27,8 +28,26 @@ class ScoreLabel extends StatelessWidget {
           mainAxisSize: .min,
           spacing: 3,
           children: [
-            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
             const Icon(Icons.star_rounded, size: Theming.iconSmall),
+            Text('${score.toStringAsFixed(0)}/5', style: TextTheme.of(context).labelSmall),
+          ],
+        );
+      case .point100:
+        content = Row(
+          mainAxisSize: .min,
+          spacing: 3,
+          children: [
+            const Icon(Icons.star_rounded, size: Theming.iconSmall),
+            Text('${score.toStringAsFixed(0)}/100', style: TextTheme.of(context).labelSmall),
+          ],
+        );
+      case .point10:
+        content = Row(
+          mainAxisSize: .min,
+          spacing: 3,
+          children: [
+            const Icon(Icons.star_rounded, size: Theming.iconSmall),
+            Text('${score.toStringAsFixed(0)}/10', style: TextTheme.of(context).labelSmall),
           ],
         );
       case .point10Decimal:
@@ -36,21 +55,13 @@ class ScoreLabel extends StatelessWidget {
           mainAxisSize: .min,
           spacing: 3,
           children: [
-            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            Text(score.toStringAsFixed(1), style: TextTheme.of(context).labelSmall),
-          ],
-        );
-      default:
-        content = Row(
-          mainAxisSize: .min,
-          spacing: 3,
-          children: [
-            const Icon(Icons.star_half_rounded, size: Theming.iconSmall),
-            Text(score.toStringAsFixed(0), style: TextTheme.of(context).labelSmall),
+            const Icon(Icons.star_rounded, size: Theming.iconSmall),
+            Text('${score.toStringAsFixed(1)}/10.0', style: TextTheme.of(context).labelSmall),
           ],
         );
     }
 
-    return Tooltip(message: 'Score', child: content);
+    final l10n = AppLocalizations.of(context)!;
+    return Tooltip(message: l10n.entryScore, child: content);
   }
 }

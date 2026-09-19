@@ -1,9 +1,11 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
@@ -13,6 +15,7 @@ import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 import 'package:otraku/widget/paged_view.dart';
 import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
+import 'package:otraku/widget/text_rail.dart';
 
 class MediaFollowingSubview extends StatelessWidget {
   const MediaFollowingSubview({
@@ -44,6 +47,7 @@ class _MediaFollowingGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final bodyMediumLineHeight = context.lineHeight(TextTheme.of(context).bodyMedium!);
     final tileHeight = bodyMediumLineHeight + max(bodyMediumLineHeight, 35) + 5;
 
@@ -71,21 +75,55 @@ class _MediaFollowingGrid extends StatelessWidget {
                       mainAxisAlignment: .spaceBetween,
                       crossAxisAlignment: .start,
                       children: [
-                        Text(items[i].userName, overflow: .ellipsis, maxLines: 1),
+                        Row(
+                          mainAxisAlignment: .spaceBetween,
+                          children: [
+                            Text(items[i].userName, overflow: .ellipsis, maxLines: 1),
+                            ScoreLabel(items[i].score, items[i].scoreFormat),
+                          ],
+                        ),
                         SizedBox(
                           height: 35,
                           child: Row(
                             mainAxisAlignment: .spaceBetween,
                             children: [
-                              Flexible(
-                                child: Text(
-                                  items[i].entryStatus.label(null),
-                                  overflow: .ellipsis,
-                                  maxLines: 1,
+                              TextRail({
+                                items[i].entryStatus.localize(l10n, null): true,
+                                items[i].progress == items[i].progressMax
+                                        ? items[i].progress.toString()
+                                        : '${items[i].progress}/${items[i].progressMax ?? "?"}':
+                                    false,
+                              }),
+                              const Spacer(),
+                              if (items[i].repeat > 0)
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(minWidth: Theming.minTapTarget),
+                                  child: Align(
+                                    alignment: .centerRight,
+                                    child: Tooltip(
+                                      message: l10n.entryRepeats,
+                                      child: Row(
+                                        mainAxisSize: .min,
+                                        spacing: 3,
+                                        children: [
+                                          const Icon(Ionicons.repeat, size: Theming.iconSmall),
+                                          Text(
+                                            items[i].repeat.toString(),
+                                            style: TextTheme.of(context).labelSmall,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              NotesLabel(items[i].notes),
-                              ScoreLabel(items[i].score, items[i].scoreFormat),
+                              if (items[i].notes != '')
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(minWidth: Theming.minTapTarget),
+                                  child: Align(
+                                    alignment: .centerRight,
+                                    child: NotesLabel(items[i].notes),
+                                  ),
+                                ),
                             ],
                           ),
                         ),

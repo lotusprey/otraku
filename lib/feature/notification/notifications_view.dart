@@ -1,18 +1,19 @@
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/feature/notification/notifications_filter_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/routes.dart';
 import 'package:otraku/feature/notification/notifications_filter_provider.dart';
 import 'package:otraku/feature/notification/notifications_model.dart';
 import 'package:otraku/feature/notification/notifications_provider.dart';
-import 'package:otraku/util/background_handler.dart';
+import 'package:otraku/util/background_worker.dart';
 import 'package:otraku/util/paged_controller.dart';
 import 'package:otraku/feature/edit/edit_view.dart';
 import 'package:otraku/util/theming.dart';
@@ -42,7 +43,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
   @override
   void initState() {
     super.initState();
-    BackgroundHandler.clearNotifications();
+    BackgroundWorker.clearNotifications();
   }
 
   @override
@@ -53,10 +54,9 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final unreadCount = ref.watch(notificationsProvider.select((s) => s.value?.total ?? 0));
-
     final filter = ref.watch(notificationsFilterProvider);
-
     final options = ref.watch(persistenceProvider.select((s) => s.options));
 
     final content = _Content(
@@ -69,14 +69,14 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     final formFactor = Theming.of(context).formFactor;
 
     return AdaptiveScaffold(
-      topBar: const TopBar(title: 'Notifications'),
+      topBar: TopBar(title: l10n.notifications),
       floatingAction: formFactor == .phone
           ? HidingFloatingActionButton(
               key: const Key('filter'),
               scrollCtrl: _scrollCtrl,
               child: FloatingActionButton(
-                tooltip: 'Filter',
-                onPressed: _showFilterSheet,
+                tooltip: l10n.filter,
+                onPressed: () => _showFilterSheet(l10n),
                 child: const Icon(Ionicons.funnel_outline),
               ),
             )
@@ -90,7 +90,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                   maxWidth: 120,
                   onTap: (i) => ref.read(notificationsFilterProvider.notifier).state =
                       NotificationsFilter.values[i],
-                  items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+                  items: NotificationsFilter.values.map((v) => Text(v.localize(l10n))).toList(),
                 ),
                 Expanded(child: content),
               ],
@@ -98,7 +98,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
     );
   }
 
-  void _showFilterSheet() {
+  void _showFilterSheet(AppLocalizations l10n) {
     showSheet(
       context,
       Consumer(
@@ -115,7 +115,7 @@ class _NotificationsViewState extends ConsumerState<NotificationsView> {
                     NotificationsFilter.values[i];
                 Navigator.pop(context);
               },
-              items: NotificationsFilter.values.map((v) => Text(v.label)).toList(),
+              items: NotificationsFilter.values.map((v) => Text(v.localize(l10n))).toList(),
             ),
           );
         },
@@ -176,119 +176,125 @@ class _NotificationItem extends StatelessWidget {
       height: height + 10,
       child: CardExtension.highContrast(highContrast)(
         margin: const .only(bottom: Theming.offset),
-        child: Row(
-          children: [
-            if (item.imageUrl != null)
-              GestureDetector(
-                behavior: .opaque,
-                onTap: () => switch (item) {
-                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ActivityNotification item => context.push(
-                    Routes.user(item.userId, item.imageUrl),
+        child: ClipRRect(
+          borderRadius: Theming.borderRadiusSmall,
+          child: Row(
+            children: [
+              if (item.imageUrl != null)
+                GestureDetector(
+                  behavior: .opaque,
+                  onTap: () => switch (item) {
+                    FollowNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    ActivityNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    ThreadNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    ThreadCommentNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    MediaReleaseNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaChangeNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaDeletionNotification _ => null,
+                    MediaSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.media(item.itemId!)) : null,
+                    CharacterSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.character(item.itemId!)) : null,
+                    StaffSubmissionUpdateNotification item =>
+                      item.itemId != null ? context.push(Routes.staff(item.itemId!)) : null,
+                  },
+                  onLongPress: () => switch (item) {
+                    MediaReleaseNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    MediaChangeNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    _ => null,
+                  },
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
+                    child: CachedImage(item.imageUrl!, width: height / Theming.coverHtoWRatio),
                   ),
-                  ThreadNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ThreadCommentNotification item => context.push(
-                    Routes.user(item.userId, item.imageUrl),
-                  ),
-                  MediaReleaseNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaChangeNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaDeletionNotification _ => null,
-                  MediaSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.media(item.itemId!)) : null,
-                  CharacterSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.character(item.itemId!)) : null,
-                  StaffSubmissionUpdateNotification item =>
-                    item.itemId != null ? context.push(Routes.staff(item.itemId!)) : null,
-                },
-                onLongPress: () => switch (item) {
-                  MediaReleaseNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  MediaChangeNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  _ => null,
-                },
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.horizontal(left: Theming.radiusSmall),
-                  child: CachedImage(item.imageUrl!, width: height / Theming.coverHtoWRatio),
                 ),
-              ),
-            Flexible(
-              child: GestureDetector(
-                behavior: .opaque,
-                onTap: () => switch (item) {
-                  FollowNotification item => context.push(Routes.user(item.userId, item.imageUrl)),
-                  ActivityNotification item => context.push(Routes.activity(item.activityId)),
-                  ThreadNotification item => context.push(Routes.thread(item.threadId)),
-                  ThreadCommentNotification item => context.push(Routes.comment(item.commentId)),
-                  MediaReleaseNotification item => context.push(
-                    Routes.media(item.mediaId, item.imageUrl),
-                  ),
-                  MediaChangeNotification _ ||
-                  MediaDeletionNotification _ ||
-                  MediaSubmissionUpdateNotification _ ||
-                  CharacterSubmissionUpdateNotification _ ||
-                  StaffSubmissionUpdateNotification _ => showDialog(
-                    context: context,
-                    builder: (context) => _NotificationDialog(item),
-                  ),
-                },
-                onLongPress: () => switch (item) {
-                  MediaReleaseNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  MediaChangeNotification item => showSheet(
-                    context,
-                    EditView((id: item.mediaId, setComplete: false)),
-                  ),
-                  _ => null,
-                },
-                child: Padding(
-                  padding: Theming.paddingAll,
-                  child: Column(
-                    mainAxisAlignment: .spaceEvenly,
-                    crossAxisAlignment: .stretch,
-                    spacing: 3,
-                    children: [
-                      Flexible(
-                        child: Text.rich(
-                          overflow: .ellipsis,
-                          maxLines: 2,
-                          TextSpan(
-                            children: [
-                              for (int i = 0; i < item.texts.length; i++)
-                                TextSpan(
-                                  text: item.texts[i],
-                                  style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
-                                ),
-                            ],
+              Flexible(
+                child: GestureDetector(
+                  behavior: .opaque,
+                  onTap: () => switch (item) {
+                    FollowNotification item => context.push(
+                      Routes.user(item.userId, item.imageUrl),
+                    ),
+                    ActivityNotification item => context.push(Routes.activity(item.activityId)),
+                    ThreadNotification item => context.push(Routes.thread(item.threadId)),
+                    ThreadCommentNotification item => context.push(Routes.comment(item.commentId)),
+                    MediaReleaseNotification item => context.push(
+                      Routes.media(item.mediaId, item.imageUrl),
+                    ),
+                    MediaChangeNotification _ ||
+                    MediaDeletionNotification _ ||
+                    MediaSubmissionUpdateNotification _ ||
+                    CharacterSubmissionUpdateNotification _ ||
+                    StaffSubmissionUpdateNotification _ => showDialog(
+                      context: context,
+                      builder: (context) => _NotificationDialog(item),
+                    ),
+                  },
+                  onLongPress: () => switch (item) {
+                    MediaReleaseNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    MediaChangeNotification item => showSheet(
+                      context,
+                      EditView((id: item.mediaId, setComplete: false)),
+                    ),
+                    _ => null,
+                  },
+                  child: Padding(
+                    padding: Theming.paddingAll,
+                    child: Column(
+                      mainAxisAlignment: .spaceEvenly,
+                      crossAxisAlignment: .stretch,
+                      spacing: 3,
+                      children: [
+                        Flexible(
+                          child: Text.rich(
+                            overflow: .ellipsis,
+                            maxLines: 2,
+                            TextSpan(
+                              children: [
+                                for (int i = 0; i < item.texts.length; i++)
+                                  TextSpan(
+                                    text: item.texts[i],
+                                    style: (i % 2 == 0) ? accentedStyle : bodyMediumStyle,
+                                  ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Timestamp(item.createdAt, analogClock),
-                    ],
+                        Timestamp(item.createdAt, analogClock),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            if (unread)
-              Container(
-                height: height,
-                width: Theming.offset,
-                decoration: BoxDecoration(
+              if (unread)
+                Container(
+                  height: height,
+                  width: Theming.offset,
                   color: ColorScheme.of(context).primary,
-                  borderRadius: const BorderRadius.horizontal(right: Theming.radiusSmall),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -341,8 +347,8 @@ class _NotificationDialog extends StatelessWidget {
               ),
             ),
             ?switch (item) {
-              MediaChangeNotification item => HtmlContent(item.reason),
-              MediaDeletionNotification item => HtmlContent(item.reason),
+              MediaChangeNotification item => SelectionArea(child: HtmlContent(item.reason)),
+              MediaDeletionNotification item => SelectionArea(child: HtmlContent(item.reason)),
               SubmissionUpdateNotification item => Text(item.notes),
               _ => null,
             },

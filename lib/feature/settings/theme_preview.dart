@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/extension/build_context_extension.dart';
 import 'package:otraku/feature/viewer/persistence_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/shadowed_overflow_list.dart';
 import 'package:otraku/util/theming.dart';
 
@@ -16,6 +17,7 @@ class ThemePreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final brightness = ColorScheme.of(context).brightness;
 
     final systemPrimaryColor = ref.watch(
@@ -38,7 +40,7 @@ class ThemePreview extends StatelessWidget {
     if (systemPrimaryColor != null) {
       children.add(
         _ThemeCard(
-          name: 'System',
+          name: l10n.settingsAppearanceModeSystem,
           scheme: ColorScheme.fromSeed(
             seedColor: systemPrimaryColor,
             brightness: brightness,
@@ -54,7 +56,7 @@ class ThemePreview extends StatelessWidget {
     for (final tb in ThemeBase.values) {
       children.add(
         _ThemeCard(
-          name: tb.title,
+          name: tb.localize(l10n),
           scheme: ColorScheme.fromSeed(
             seedColor: tb.seed,
             brightness: brightness,

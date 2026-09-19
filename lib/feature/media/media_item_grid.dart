@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/feature/media/media_item_model.dart';
 import 'package:otraku/feature/media/media_route_tile.dart';
 import 'package:otraku/util/theming.dart';

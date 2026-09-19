@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/activity/activities_model.dart';
 import 'package:otraku/feature/activity/activities_provider.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/feature/composition/composition_view.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/widget/sheets.dart';
 
 class FeedFloatingAction extends StatelessWidget {
@@ -13,8 +14,10 @@ class FeedFloatingAction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return FloatingActionButton(
-      tooltip: 'New Post',
+      tooltip: l10n.postsAdd,
       child: const Icon(Icons.edit_outlined),
       onPressed: () => showSheet(
         context,

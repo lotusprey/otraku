@@ -1,15 +1,25 @@
+import 'package:otraku/localizations/gen.dart';
+
 enum NotificationsFilter {
-  all('All'),
-  replies('Replies'),
-  activity('Activity'),
-  forum('Forum'),
-  airing('Airing'),
-  follows('Follows'),
-  media('Media');
+  all,
+  replies,
+  activity,
+  forum,
+  airing,
+  follows,
+  media;
 
-  const NotificationsFilter(this.label);
+  const NotificationsFilter();
 
-  final String label;
+  String localize(AppLocalizations l10n) => switch (this) {
+    all => l10n.notificationsFilterAll,
+    replies => l10n.notificationsFilterReplies,
+    activity => l10n.notificationsFilterActivity,
+    forum => l10n.notificationsFilterForum,
+    airing => l10n.notificationsFilterAiring,
+    follows => l10n.notificationsFilterFollows,
+    media => l10n.notificationsFilterMedia,
+  };
 
   List<String>? get vars => switch (this) {
     NotificationsFilter.all => null,

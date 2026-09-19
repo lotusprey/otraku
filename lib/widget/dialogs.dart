@@ -1,7 +1,15 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
+
+import 'package:material_ui/material_ui.dart';
+import 'package:gal/gal.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
+import 'package:otraku/extension/snack_bar_extension.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/cached_image.dart';
 import 'package:otraku/widget/html_content.dart';
+import 'package:otraku/widget/sheets.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 class TextInputDialog extends StatefulWidget {
@@ -27,6 +35,8 @@ class _TextInputDialogState extends State<TextInputDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
       title: Text(widget.title),
       content: Form(
@@ -36,7 +46,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
           controller: _textCtrl,
           decoration: InputDecoration(
             isDense: true,
-            hint: const Text('Enter'),
+            hint: Text(l10n.enter),
             hintStyle: TextStyle(color: ColorScheme.of(context).onSurfaceVariant),
             border: const OutlineInputBorder(borderRadius: Theming.borderRadiusSmall),
           ),
@@ -44,7 +54,7 @@ class _TextInputDialogState extends State<TextInputDialog> {
           validator: (value) {
             final text = value?.trim() ?? '';
             if (text.isEmpty) {
-              return 'The field cannot be empty.';
+              return l10n.errorFieldRequired;
             }
 
             if (widget.validator != null) {
@@ -56,14 +66,14 @@ class _TextInputDialogState extends State<TextInputDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.actionGoBack)),
         TextButton(
           onPressed: () {
             if (_formKey.currentState!.validate()) {
               Navigator.pop(context, _textCtrl.text.trim());
             }
           },
-          child: const Text('Confirm'),
+          child: Text(l10n.actionConfirm),
         ),
       ],
     );
@@ -98,14 +108,14 @@ class ConfirmationDialog extends StatelessWidget {
 
   final String title;
   final String? content;
-  final String primaryAction;
+  final String? primaryAction;
   final String? secondaryAction;
 
   static Future<void> show(
     BuildContext context, {
     required String title,
     String? content,
-    String primaryAction = 'Ok',
+    String? primaryAction,
     String? secondaryAction,
     void Function()? onConfirm,
   }) => showDialog(
@@ -126,7 +136,10 @@ class ConfirmationDialog extends StatelessWidget {
       actions: [
         if (secondaryAction != null)
           TextButton(child: Text(secondaryAction!), onPressed: () => Navigator.pop(context, false)),
-        TextButton(child: Text(primaryAction), onPressed: () => Navigator.pop(context, true)),
+        TextButton(
+          child: Text(primaryAction ?? AppLocalizations.of(context)!.actionOk),
+          onPressed: () => Navigator.pop(context, true),
+        ),
       ],
     );
   }
@@ -181,35 +194,108 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       insetPadding: .zero,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
-      child: GestureDetector(
-        onDoubleTapDown: (details) => _lastOffset = details.localPosition,
-        onDoubleTap: () {
-          // If zoomed in, zoom out.
-          if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
-            _animateMatrixTo(Matrix4.identity());
-            return;
-          }
+      child: Stack(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            onDoubleTapDown: (details) => _lastOffset = details.localPosition,
+            onDoubleTap: () {
+              // If zoomed in, zoom out.
+              if (_transformCtrl.value.getMaxScaleOnAxis() > 1) {
+                _animateMatrixTo(Matrix4.identity());
+                return;
+              }
 
-          // Can't be null, but checking just in case.
-          if (_lastOffset == null) return;
+              // Can't be null, but checking just in case.
+              if (_lastOffset == null) return;
 
-          // If zoomed out, zoom in towards the tapped spot.
-          final zoomed = _transformCtrl.value.clone();
-          zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
-          zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
-          _animateMatrixTo(zoomed);
-        },
-        child: InteractiveViewer(
-          clipBehavior: Clip.none,
-          transformationController: _transformCtrl,
-          child: CachedImage(widget.url, fit: BoxFit.contain, width: null, height: null),
-        ),
+              // If zoomed out, zoom in towards the tapped spot.
+              final zoomed = _transformCtrl.value.clone();
+              zoomed.translateByVector3(Vector3(-_lastOffset!.dx, -_lastOffset!.dy, 0));
+              zoomed.scaleByVector3(Vector3(2.0, 2.0, 1.0));
+              _animateMatrixTo(zoomed);
+            },
+            child: InteractiveViewer(
+              clipBehavior: Clip.none,
+              transformationController: _transformCtrl,
+              child: CachedImage(widget.url, fit: .contain),
+            ),
+          ),
+          Align(
+            alignment: .bottomRight,
+            child: Padding(
+              padding: EdgeInsets.all(Theming.offset),
+              child: IconButton.filledTonal(
+                tooltip: l10n.actionMore,
+                icon: const Icon(Icons.more_vert_rounded, size: Theming.iconBig),
+                onPressed: () => showSheet(
+                  context,
+                  SimpleSheet.list([
+                    ListTile(
+                      title: Text(l10n.actionShare),
+                      leading: const Icon(Ionicons.share_outline),
+                      onTap: () => _shareImage(l10n),
+                    ),
+                    ListTile(
+                      title: Text(l10n.actionDownload),
+                      leading: const Icon(Ionicons.download_outline),
+                      onTap: () => _downloadImage(l10n),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  void _shareImage(AppLocalizations l10n) async {
+    final File file;
+    try {
+      file = await getFileFromCacheOrDownload(widget.url);
+    } catch (_) {
+      if (mounted) {
+        SnackBarExtension.show(context, l10n.errorFailedGettingFile);
+        Navigator.pop(context);
+      }
+      return;
+    }
+
+    await SharePlus.instance.share(ShareParams(files: [XFile(file.path)]));
+    if (mounted) Navigator.pop(context);
+  }
+
+  void _downloadImage(AppLocalizations l10n) async {
+    try {
+      if (!await Gal.hasAccess(toAlbum: false)) {
+        if (!await Gal.requestAccess(toAlbum: false)) {
+          if (mounted) SnackBarExtension.show(context, l10n.errorMissingGalleryPermission);
+          return;
+        }
+      }
+
+      final file = await getFileFromCacheOrDownload(widget.url);
+      await Gal.putImage(file.path);
+
+      if (mounted) {
+        SnackBarExtension.show(context, l10n.fileSaved);
+        Navigator.pop(context);
+      }
+    } catch (_) {
+      if (mounted) {
+        SnackBarExtension.show(context, l10n.errorFailedGettingFile);
+        Navigator.pop(context);
+      }
+      return;
+    }
   }
 }
 
@@ -220,7 +306,31 @@ class TextDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => _DialogColumn(title: title, child: SelectableText(text));
+  Widget build(BuildContext context) => DialogBox(
+    Padding(
+      padding: const .symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: .start,
+        mainAxisSize: .min,
+        children: [
+          Padding(
+            padding: const .symmetric(vertical: Theming.offset),
+            child: Text(title, style: TextTheme.of(context).bodyMedium),
+          ),
+          const Divider(height: 2, thickness: 2),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                padding: const .symmetric(vertical: Theming.offset),
+                child: SelectableText(text),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class HtmlDialog extends StatelessWidget {
@@ -230,41 +340,29 @@ class HtmlDialog extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => _DialogColumn(title: title, child: HtmlContent(text));
-}
-
-class _DialogColumn extends StatelessWidget {
-  const _DialogColumn({required this.title, required this.child});
-
-  final String title;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return DialogBox(
-      Padding(
-        padding: const .symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: .start,
-          mainAxisSize: .min,
-          children: [
-            Padding(
-              padding: const .symmetric(vertical: Theming.offset),
-              child: Text(title, style: TextTheme.of(context).bodyMedium),
-            ),
-            const Divider(height: 2, thickness: 2),
-            Flexible(
-              fit: FlexFit.loose,
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  padding: const .symmetric(vertical: Theming.offset),
-                  child: child,
-                ),
+  Widget build(BuildContext context) => DialogBox(
+    Padding(
+      padding: const .symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: .start,
+        mainAxisSize: .min,
+        children: [
+          Padding(
+            padding: const .symmetric(vertical: Theming.offset),
+            child: Text(title, style: TextTheme.of(context).bodyMedium),
+          ),
+          const Divider(height: 2, thickness: 2),
+          Flexible(
+            fit: FlexFit.loose,
+            child: Scrollbar(
+              child: SingleChildScrollView(
+                padding: const .symmetric(vertical: Theming.offset),
+                child: SelectionArea(child: HtmlContent(text)),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

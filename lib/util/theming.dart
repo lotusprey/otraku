@@ -1,22 +1,32 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:otraku/localizations/gen.dart';
 
 enum FormFactor { phone, tablet }
 
 enum ThemeBase {
-  navy('Navy', Color(0xFF45A0F2)),
-  mint('Mint', Color(0xFF2AB8B8)),
-  lavender('Lavender', Color(0xFFB4ABF5)),
-  caramel('Caramel', Color(0xFFF78204)),
-  forest('Forest', Color(0xFF00FFA9)),
-  wine('Wine', Color(0xFF894771)),
-  mustard('Mustard', Color(0xFFFFBF02));
+  navy(Color(0xFF45A0F2)),
+  mint(Color(0xFF2AB8B8)),
+  lavender(Color(0xFFB4ABF5)),
+  caramel(Color(0xFFF78204)),
+  forest(Color(0xFF00FFA9)),
+  wine(Color(0xFF894771)),
+  mustard(Color(0xFFFFBF02));
 
-  const ThemeBase(this.title, this.seed);
+  const ThemeBase(this.seed);
 
-  final String title;
   final Color seed;
+
+  String localize(AppLocalizations l10n) => switch (this) {
+    navy => l10n.themeNavy,
+    mint => l10n.themeMint,
+    lavender => l10n.themeLavender,
+    caramel => l10n.themeCaramel,
+    forest => l10n.themeForest,
+    wine => l10n.themeWine,
+    mustard => l10n.themeMustard,
+  };
 }
 
 class Theming extends ThemeExtension<Theming> {

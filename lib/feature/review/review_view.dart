@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/constrained_view.dart';
@@ -22,56 +22,56 @@ class ReviewView extends StatelessWidget {
         builder: (context, ref, _) {
           final data = ref.watch(reviewProvider(id).select((s) => s.value));
 
-          return CustomScrollView(
-            slivers: [
-              ReviewHeader(id: id, review: data, bannerUrl: bannerUrl),
-              if (data != null) ...[
-                SliverConstrainedView(
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      data.summary,
-                      style: TextTheme.of(context).labelMedium,
-                      textAlign: .center,
-                    ),
-                  ),
-                ),
-                SliverConstrainedView(
-                  sliver: HtmlContent(data.text, renderMode: RenderMode.sliverList),
-                ),
-                SliverToBoxAdapter(
-                  child: Center(
-                    child: Container(
-                      margin: Theming.paddingAll,
-                      padding: Theming.paddingAll,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context).primary,
-                        borderRadius: Theming.borderRadiusBig,
-                      ),
+          return SelectionArea(
+            child: CustomScrollView(
+              slivers: [
+                ReviewHeader(id: id, review: data, bannerUrl: bannerUrl),
+                if (data != null) ...[
+                  SliverConstrainedView(
+                    sliver: SliverToBoxAdapter(
                       child: Text(
-                        '${data.score}/100',
-                        style: TextTheme.of(
-                          context,
-                        ).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
+                        data.summary,
+                        style: TextTheme.of(context).labelMedium,
+                        textAlign: .center,
                       ),
                     ),
                   ),
-                ),
-                _RateButtons(data, ref.read(reviewProvider(id).notifier).rate),
-                SliverPadding(
-                  padding: .only(
-                    top: 20,
-                    bottom: MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
-                  ),
-                  sliver: SliverToBoxAdapter(
-                    child: Text(
-                      data.createdAt,
-                      style: TextTheme.of(context).labelMedium,
-                      textAlign: .center,
+                  SliverConstrainedView(sliver: HtmlContent(data.text, renderMode: .sliverList)),
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: Container(
+                        margin: Theming.paddingAll,
+                        padding: Theming.paddingAll,
+                        decoration: BoxDecoration(
+                          color: ColorScheme.of(context).primary,
+                          borderRadius: Theming.borderRadiusBig,
+                        ),
+                        child: Text(
+                          '${data.score}/100',
+                          style: TextTheme.of(
+                            context,
+                          ).bodyMedium?.copyWith(color: ColorScheme.of(context).onPrimary),
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  _RateButtons(data, ref.read(reviewProvider(id).notifier).rate),
+                  SliverPadding(
+                    padding: .only(
+                      top: 20,
+                      bottom: MediaQuery.viewPaddingOf(context).bottom + Theming.offset,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Text(
+                        data.createdAt,
+                        style: TextTheme.of(context).labelMedium,
+                        textAlign: .center,
+                      ),
+                    ),
+                  ),
+                ],
               ],
-            ],
+            ),
           );
         },
       ),
@@ -92,6 +92,7 @@ class _RateButtons extends StatefulWidget {
 class _RateButtonsState extends State<_RateButtons> {
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final review = widget.review;
 
     return SliverToBoxAdapter(
@@ -116,7 +117,7 @@ class _RateButtonsState extends State<_RateButtons> {
             ],
           ),
           Text(
-            '${review.rating}/${review.totalRating} users liked this review',
+            l10n.reviewsRatingValue(review.rating, review.totalRating),
             style: TextTheme.of(context).labelMedium,
             textAlign: .center,
           ),

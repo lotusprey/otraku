@@ -1,6 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
+import 'package:otraku/feature/viewer/persistence_model.dart';
+import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
+import 'package:otraku/util/debounce.dart';
 import 'package:otraku/util/markdown.dart';
 import 'package:otraku/feature/composition/composition_model.dart';
 import 'package:otraku/util/theming.dart';
@@ -31,16 +35,28 @@ class CompositionView extends StatelessWidget {
               loading: () => SheetWithButtonRow(
                 builder: (context, scrollCtrl) => const Center(child: Loader()),
               ),
-              error: (_, _) => SheetWithButtonRow(
-                builder: (context, scrollCtrl) => const Center(child: Text('Failed Loading')),
+              error: (err, _) => SheetWithButtonRow(
+                builder: (context, scrollCtrl) => Center(
+                  child: Text(AppLocalizations.of(context)!.errorFailedLoading(err.toString())),
+                ),
               ),
               data: (data) {
                 if (data.text.isEmpty) {
                   data.text = defaultText;
+
+                  if (tag.id == null) {
+                    final savedComposition = ref.read(persistenceProvider).drafts.composition;
+                    if (savedComposition.isNotEmpty) {
+                      data.text = savedComposition;
+                    }
+                  }
                 }
 
                 return _CompositionView(
                   composition: data,
+                  persistDraft: (text) => tag.id == null
+                      ? ref.read(persistenceProvider.notifier).setDrafts(Drafts(composition: text))
+                      : null,
                   trySave: () async {
                     final result = await ref.read(compositionProvider(tag).notifier).save();
 
@@ -62,10 +78,15 @@ class CompositionView extends StatelessWidget {
 }
 
 class _CompositionView extends StatefulWidget {
-  const _CompositionView({required this.composition, required this.trySave});
+  const _CompositionView({
+    required this.composition,
+    required this.trySave,
+    required this.persistDraft,
+  });
 
   final Composition composition;
   final Future<bool> Function() trySave;
+  final void Function(String) persistDraft;
 
   @override
   State<_CompositionView> createState() => __CompositionViewState();
@@ -74,8 +95,10 @@ class _CompositionView extends StatefulWidget {
 class __CompositionViewState extends State<_CompositionView> with SingleTickerProviderStateMixin {
   late final _textCtrl = TextEditingController(text: widget.composition.text);
   late final _tabCtrl = TabController(length: 2, vsync: this);
-  String _parsedText = '';
+  final _draftDebounce = Debounce(delay: const Duration(milliseconds: 1200));
   final _focus = FocusNode();
+  String _parsedText = '';
+  bool _saved = false;
 
   @override
   void initState() {
@@ -89,10 +112,15 @@ class __CompositionViewState extends State<_CompositionView> with SingleTickerPr
         _parsedText = parseMarkdown(_textCtrl.text);
       }
     });
+    _textCtrl.addListener(() {
+      if (_saved) return;
+      _draftDebounce.run(() => widget.persistDraft(_textCtrl.text));
+    });
   }
 
   @override
   void dispose() {
+    _draftDebounce.cancel();
     _tabCtrl.dispose();
     _textCtrl.dispose();
     _focus.dispose();
@@ -101,19 +129,34 @@ class __CompositionViewState extends State<_CompositionView> with SingleTickerPr
 
   @override
   Widget build(BuildContext context) {
-    return SheetWithButtonRow(
-      builder: (context, scrollCtrl) => _CompositionBody(
-        focus: _focus,
-        tabCtrl: _tabCtrl,
-        textCtrl: _textCtrl,
-        scrollCtrl: scrollCtrl,
-        parsedText: _parsedText,
-      ),
-      buttons: _BottomBar(
-        composition: widget.composition,
-        textCtrl: _textCtrl,
-        isEditing: _tabCtrl.index == 0,
-        trySave: widget.trySave,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop && !_saved && _textCtrl.text != widget.composition.text) {
+          _draftDebounce.cancel();
+          widget.persistDraft(_textCtrl.text);
+        }
+      },
+      child: SheetWithButtonRow(
+        builder: (context, scrollCtrl) => _CompositionBody(
+          focus: _focus,
+          tabCtrl: _tabCtrl,
+          textCtrl: _textCtrl,
+          scrollCtrl: scrollCtrl,
+          parsedText: _parsedText,
+        ),
+        buttons: _BottomBar(
+          composition: widget.composition,
+          textCtrl: _textCtrl,
+          isEditing: _tabCtrl.index == 0,
+          trySave: () async {
+            final ok = await widget.trySave();
+            if (ok) {
+              _saved = true;
+              widget.persistDraft('');
+            }
+            return ok;
+          },
+        ),
       ),
     );
   }
@@ -136,6 +179,7 @@ class _CompositionBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final padding = EdgeInsets.only(
       left: 20,
       right: 20,
@@ -161,7 +205,10 @@ class _CompositionBody extends StatelessWidget {
             ),
             SingleChildScrollView(
               controller: scrollCtrl,
-              child: Padding(padding: padding, child: HtmlContent(parsedText)),
+              child: Padding(
+                padding: padding,
+                child: SelectionArea(child: HtmlContent(parsedText)),
+              ),
             ),
           ],
         ),
@@ -177,16 +224,16 @@ class _CompositionBody extends StatelessWidget {
                 padding: Theming.paddingAll,
                 color: Theme.of(context).navigationBarTheme.backgroundColor,
                 child: SegmentedButton(
-                  segments: const [
+                  segments: [
                     ButtonSegment(
                       value: 0,
-                      label: Text('Compose'),
-                      icon: Icon(Icons.edit_outlined),
+                      label: Text(l10n.compositionsAdd),
+                      icon: const Icon(Icons.edit_outlined),
                     ),
                     ButtonSegment(
                       value: 1,
-                      label: Text('Preview'),
-                      icon: Icon(Icons.preview_outlined),
+                      label: Text(l10n.compositionsPreview),
+                      icon: const Icon(Icons.preview_outlined),
                     ),
                   ],
                   selected: {tabCtrl.index},
@@ -229,7 +276,7 @@ class _BottomBarState extends State<_BottomBar> {
       if (widget.isEditing) ...[
         Expanded(
           child: ListView(
-            scrollDirection: Axis.horizontal,
+            scrollDirection: .horizontal,
             children: [
               _FormatButton(
                 startDelimiter: '**',
@@ -243,6 +290,13 @@ class _BottomBarState extends State<_BottomBar> {
                 endDelimiter: '*',
                 name: 'Italic',
                 icon: Icons.format_italic_outlined,
+                textCtrl: widget.textCtrl,
+              ),
+              _FormatButton(
+                startDelimiter: '<u>',
+                endDelimiter: '</u>',
+                name: 'Underline',
+                icon: Icons.format_underline_outlined,
                 textCtrl: widget.textCtrl,
               ),
               _FormatButton(

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:otraku/extension/enum_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/calendar/calendar_models.dart';
@@ -9,7 +9,7 @@ import 'package:otraku/feature/discover/discover_model.dart';
 import 'package:otraku/feature/home/home_model.dart';
 import 'package:otraku/util/theming.dart';
 
-const appVersion = '1.12.1';
+const appVersion = '1.13.0';
 
 class Persistence {
   const Persistence({
@@ -23,6 +23,7 @@ class Persistence {
     required this.homeActivitiesFilter,
     required this.mediaActivitiesFilter,
     required this.calendarFilter,
+    required this.drafts,
   });
 
   factory Persistence.empty() => Persistence(
@@ -36,6 +37,7 @@ class Persistence {
     homeActivitiesFilter: .empty(),
     mediaActivitiesFilter: .empty(),
     calendarFilter: .empty(),
+    drafts: .empty(),
   );
 
   factory Persistence.fromPersistenceMap(
@@ -69,6 +71,7 @@ class Persistence {
         accountGroup.account?.id,
       ),
       calendarFilter: .fromPersistenceMap(map['calendarFilter'] ?? const {}),
+      drafts: .fromPersistenceMap(map['drafts'] ?? const {}),
     );
   }
 
@@ -82,6 +85,7 @@ class Persistence {
   final HomeActivitiesFilter homeActivitiesFilter;
   final MediaActivitiesFilter mediaActivitiesFilter;
   final CalendarFilter calendarFilter;
+  final Drafts drafts;
 
   Persistence copyWith({
     SystemColors? systemColors,
@@ -94,6 +98,7 @@ class Persistence {
     HomeActivitiesFilter? homeActivitiesFilter,
     CalendarFilter? calendarFilter,
     MediaActivitiesFilter? mediaActivitiesFilter,
+    Drafts? drafts,
   }) => Persistence(
     systemColors: systemColors ?? this.systemColors,
     accountGroup: accountGroup ?? this.accountGroup,
@@ -105,6 +110,7 @@ class Persistence {
     homeActivitiesFilter: homeActivitiesFilter ?? this.homeActivitiesFilter,
     calendarFilter: calendarFilter ?? this.calendarFilter,
     mediaActivitiesFilter: mediaActivitiesFilter ?? this.mediaActivitiesFilter,
+    drafts: drafts ?? this.drafts,
   );
 }
 
@@ -342,4 +348,17 @@ class AppMeta {
     'lastAppVersion': lastAppVersion,
     'lastBackgroundJob': lastBackgroundJob,
   };
+}
+
+class Drafts {
+  const Drafts({required this.composition});
+
+  factory Drafts.empty() => const Drafts(composition: '');
+
+  factory Drafts.fromPersistenceMap(Map<dynamic, dynamic> map) =>
+      Drafts(composition: map['composition'] ?? '');
+
+  final String composition;
+
+  Map<String, dynamic> toPersistenceMap() => {'composition': composition};
 }

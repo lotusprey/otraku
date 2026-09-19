@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:otraku/feature/forum/forum_filter_model.dart';
 import 'package:otraku/feature/forum/forum_filter_provider.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/chip_selector.dart';
 import 'package:otraku/widget/input/stateful_tiles.dart';
 import 'package:otraku/widget/sheets.dart';
 
 void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
+  final l10n = AppLocalizations.of(context)!;
   final highContrast = ref.read(persistenceProvider.select((s) => s.options.highContrast));
   var filter = ref.read(forumFilterProvider);
 
@@ -23,7 +25,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
           Padding(
             padding: const .symmetric(horizontal: Theming.offset),
             child: ChipSelector.ensureSelected(
-              title: 'Sort',
+              title: l10n.filterSort,
               items: ThreadSort.values.map((v) => (v.label, v)).toList(),
               value: filter.sort,
               onChanged: (v) => filter = filter.copyWith(sort: v),
@@ -33,7 +35,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
           Padding(
             padding: const .symmetric(horizontal: Theming.offset),
             child: ChipSelector(
-              title: 'Category',
+              title: l10n.filterCategory,
               items: ThreadCategory.values.map((v) => (v.label, v)).toList(),
               value: filter.category,
               onChanged: (v) => filter = filter.copyWith(category: (v,)),
@@ -41,7 +43,7 @@ void showForumFilterSheet(BuildContext context, WidgetRef ref) async {
             ),
           ),
           StatefulSwitchListTile(
-            title: const Text('Subscribed'),
+            title: Text(l10n.filterSubscribed),
             value: filter.isSubscribed,
             onChanged: (v) => filter = filter.copyWith(isSubscribed: v),
           ),

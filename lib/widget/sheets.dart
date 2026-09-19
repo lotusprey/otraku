@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:ionicons_plus/ionicons_plus.dart';
+import 'package:otraku/localizations/gen.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/extension/snack_bar_extension.dart';
 import 'package:otraku/widget/layout/adaptive_scaffold.dart';
+import 'package:share_plus/share_plus.dart';
 
 /// Used to open [DraggableScrollableSheet].
 Future<T?> showSheet<T>(BuildContext context, Widget sheet) => showModalBottomSheet<T>(
@@ -21,31 +23,40 @@ class SimpleSheet extends StatelessWidget {
     initialHeight: Theming.normalTapTarget * children.length + Theming.offset,
     builder: (context, scrollCtrl) => ListView(
       controller: scrollCtrl,
-      padding: const .only(top: Theming.offset),
+      padding: const .only(top: Theming.offset * 2),
       children: children,
     ),
   );
 
-  factory SimpleSheet.link(BuildContext context, String link, [List<Widget> children = const []]) =>
-      SimpleSheet.list([
-        ...children,
-        ListTile(
-          title: const Text('Copy Link'),
-          leading: const Icon(Ionicons.clipboard_outline),
-          onTap: () {
-            SnackBarExtension.copy(context, link);
+  factory SimpleSheet.link(BuildContext context, String link, [List<Widget> children = const []]) {
+    final l10n = AppLocalizations.of(context)!;
+    return SimpleSheet.list([
+      ...children,
+      ListTile(
+        title: Text(l10n.actionShare),
+        leading: const Icon(Ionicons.share_outline),
+        onTap: () async {
+          final uri = Uri.tryParse(link);
+          if (uri == null) {
+            SnackBarExtension.show(context, l10n.errorUriInvalid);
             Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: const Text('Open in Browser'),
-          leading: const Icon(Ionicons.link_outline),
-          onTap: () {
-            SnackBarExtension.launch(context, link);
-            Navigator.pop(context);
-          },
-        ),
-      ]);
+            return;
+          }
+
+          await SharePlus.instance.share(ShareParams(uri: uri));
+          if (context.mounted) Navigator.pop(context);
+        },
+      ),
+      ListTile(
+        title: Text(l10n.actionOpenInBrowser),
+        leading: const Icon(Ionicons.link_outline),
+        onTap: () {
+          SnackBarExtension.launch(context, link);
+          Navigator.pop(context);
+        },
+      ),
+    ]);
+  }
 
   final Widget Function(BuildContext, ScrollController) builder;
   final double? initialHeight;

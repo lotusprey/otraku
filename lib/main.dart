@@ -158,7 +158,7 @@ class AppState extends ConsumerState<_App> {
           darkTheme: Theming.generateThemeData(darkScheme),
           themeMode: options.themeMode,
           routerConfig: _router,
-          supportedLocales: const [Locale('en')],
+          supportedLocales: const [Locale('en'), Locale('tr')],
           localizationsDelegates: [
             AppLocalizations.delegate,
             ...GlobalMaterialLocalizations.delegates,

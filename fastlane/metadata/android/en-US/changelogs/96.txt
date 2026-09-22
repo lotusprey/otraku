@@ -1,4 +1,4 @@
-- Added localizations support.
+- Added localizations support (+ Turkish).
 - Message progress is saved if you mistakenly close the sheet.
 - Added progress and repeats info to the following tab in the media page.
 - Added "Watchable On"/"Readable On" filter in discover filters for media.

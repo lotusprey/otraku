@@ -77,19 +77,47 @@ class ThreadItemList extends StatelessWidget {
                         Row(
                           spacing: Theming.offset,
                           children: [
-                            if (item.isPinned)
-                              Tooltip(
-                                message: l10n.postsPinned,
-                                triggerMode: .tap,
-                                child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
+                            Expanded(
+                              child: Row(
+                                spacing: Theming.offset / 2,
+
+                                children: [
+                                  Text("by", style: TextTheme.of(context).labelSmall),
+                                  GestureDetector(
+                                    onTap: () =>
+                                        context.push(Routes.user(item.authorId, item.authorAvatar)),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(5),
+                                      child: CachedImage(item.authorAvatar, height: 24, width: 24),
+                                    ),
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      item.authorName,
+                                      overflow: .ellipsis,
+                                      maxLines: 1,
+                                      style: TextTheme.of(context).labelSmall,
+                                    ),
+                                  ),
+
+                                  if (item.isPinned)
+                                    Tooltip(
+                                      message: l10n.postsPinned,
+                                      triggerMode: .tap,
+                                      child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
+                                    ),
+                                  if (item.isLocked)
+                                    Tooltip(
+                                      message: l10n.postsLocked,
+                                      triggerMode: .tap,
+                                      child: Icon(
+                                        Icons.lock_outline_rounded,
+                                        size: Theming.iconSmall,
+                                      ),
+                                    ),
+                                ],
                               ),
-                            if (item.isLocked)
-                              Tooltip(
-                                message: l10n.postsLocked,
-                                triggerMode: .tap,
-                                child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
-                              ),
-                            const Spacer(),
+                            ),
                             _buildInfoIcon(
                               context,
                               l10n.postsViews,

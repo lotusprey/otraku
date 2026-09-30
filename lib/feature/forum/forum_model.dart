@@ -16,6 +16,9 @@ class ThreadItem {
     required this.userTimestamp,
     required this.isUserReplying,
     required this.topics,
+    required this.authorId,
+    required this.authorName,
+    required this.authorAvatar,
   });
 
   factory ThreadItem(Map<String, dynamic> map) {
@@ -66,6 +69,9 @@ class ThreadItem {
       userTimestamp: userTimestamp,
       isUserReplying: isUserReplying,
       topics: topics,
+      authorId: map['user']?['id'] ?? 0,
+      authorName: map['user']?['name'] ?? '?',
+      authorAvatar: map['user']?['avatar']?['large'] ?? '',
     );
   }
 
@@ -83,4 +89,7 @@ class ThreadItem {
   final DateTime userTimestamp;
   final bool isUserReplying;
   final List<String> topics;
+  final int authorId;
+  final String authorName;
+  final String authorAvatar;
 }

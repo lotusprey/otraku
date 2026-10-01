@@ -32,35 +32,53 @@ class ThreadItemList extends StatelessWidget {
             crossAxisAlignment: .start,
             spacing: Theming.offset,
             children: [
-              Row(
-                spacing: Theming.offset,
-                children: [
-                  GestureDetector(
-                    onTap: () => context.push(Routes.user(item.userId, item.userAvatar)),
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(item.userAvatar, height: 50, width: 50),
+              if (item.replyCount > 0)
+                Row(
+                  spacing: Theming.offset,
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.push(Routes.user(item.userId, item.userAvatar)),
+                      child: ClipRRect(
+                        borderRadius: Theming.borderRadiusSmall,
+                        child: CachedImage(item.userAvatar, height: 50, width: 50),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: OverflowBar(
-                      spacing: 5,
-                      overflowSpacing: 5,
-                      children: [
-                        Text(item.userName, overflow: .ellipsis, maxLines: 1),
-                        Timestamp(
-                          item.userTimestamp,
-                          analogClock,
-                          leading: Text(
-                            item.isUserReplying ? l10n.postsReplied : l10n.postsPosted,
-                            style: TextTheme.of(context).labelSmall,
+                    Expanded(
+                      child: OverflowBar(
+                        spacing: 5,
+                        overflowSpacing: 5,
+                        children: [
+                          Text(item.userName, overflow: .ellipsis, maxLines: 1),
+                          Timestamp(
+                            item.userTimestamp,
+                            analogClock,
+                            leading: Text(
+                              item.isUserReplying ? l10n.postsReplied : l10n.postsPosted,
+                              style: TextTheme.of(context).labelSmall,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                )
+              else
+                Row(
+                  spacing: Theming.offset,
+                  children: [
+                    Container(
+                      height: 50,
+                      width: 50,
+                      alignment: .center,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).surfaceContainerHighest,
+                        borderRadius: Theming.borderRadiusSmall,
+                      ),
+                      child: Icon(Icons.chat_bubble_outline_rounded, size: Theming.iconSmall),
+                    ),
+                    Text("No Replies"),
+                  ],
+                ),
               CardExtension.highContrast(highContrast)(
                 child: InkWell(
                   borderRadius: Theming.borderRadiusSmall,
@@ -77,47 +95,20 @@ class ThreadItemList extends StatelessWidget {
                         Row(
                           spacing: Theming.offset,
                           children: [
-                            Expanded(
-                              child: Row(
-                                spacing: Theming.offset / 2,
-
-                                children: [
-                                  Text("by", style: TextTheme.of(context).labelSmall),
-                                  GestureDetector(
-                                    onTap: () =>
-                                        context.push(Routes.user(item.authorId, item.authorAvatar)),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(5),
-                                      child: CachedImage(item.authorAvatar, height: 24, width: 24),
-                                    ),
-                                  ),
-                                  Flexible(
-                                    child: Text(
-                                      item.authorName,
-                                      overflow: .ellipsis,
-                                      maxLines: 1,
-                                      style: TextTheme.of(context).labelSmall,
-                                    ),
-                                  ),
-
-                                  if (item.isPinned)
-                                    Tooltip(
-                                      message: l10n.postsPinned,
-                                      triggerMode: .tap,
-                                      child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
-                                    ),
-                                  if (item.isLocked)
-                                    Tooltip(
-                                      message: l10n.postsLocked,
-                                      triggerMode: .tap,
-                                      child: Icon(
-                                        Icons.lock_outline_rounded,
-                                        size: Theming.iconSmall,
-                                      ),
-                                    ),
-                                ],
+                            if (item.isPinned)
+                              Tooltip(
+                                message: l10n.postsPinned,
+                                triggerMode: .tap,
+                                child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
                               ),
-                            ),
+                            if (item.isLocked)
+                              Tooltip(
+                                message: l10n.postsLocked,
+                                triggerMode: .tap,
+                                child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
+                              ),
+                            const Spacer(),
+
                             _buildInfoIcon(
                               context,
                               l10n.postsViews,
@@ -135,6 +126,36 @@ class ThreadItemList extends StatelessWidget {
                               l10n.likes,
                               item.likeCount.toString(),
                               Icons.favorite_outline_rounded,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: Theming.offset / 2,
+                          children: [
+                            Text("by", style: TextTheme.of(context).labelSmall),
+                            GestureDetector(
+                              onTap: () =>
+                                  context.push(Routes.user(item.authorId, item.authorAvatar)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedImage(item.authorAvatar, height: 24, width: 24),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                item.authorName,
+                                overflow: .ellipsis,
+                                maxLines: 1,
+                                style: TextTheme.of(context).labelSmall,
+                              ),
+                            ),
+                            Timestamp(
+                              item.createdAt,
+                              analogClock,
+                              leading: Text(
+                                l10n.postsPosted,
+                                style: TextTheme.of(context).labelSmall,
+                              ),
                             ),
                           ],
                         ),

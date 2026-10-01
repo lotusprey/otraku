@@ -19,6 +19,7 @@ class ThreadItem {
     required this.authorId,
     required this.authorName,
     required this.authorAvatar,
+    required this.createdAt,
   });
 
   factory ThreadItem(Map<String, dynamic> map) {
@@ -72,6 +73,7 @@ class ThreadItem {
       authorId: map['user']?['id'] ?? 0,
       authorName: map['user']?['name'] ?? '?',
       authorAvatar: map['user']?['avatar']?['large'] ?? '',
+      createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
     );
   }
 
@@ -92,4 +94,5 @@ class ThreadItem {
   final int authorId;
   final String authorName;
   final String authorAvatar;
+  final DateTime createdAt;
 }

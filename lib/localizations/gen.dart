@@ -357,6 +357,12 @@ abstract class AppLocalizations {
   /// **'Otraku'**
   String get appName;
 
+  /// No description provided for @authorPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'by'**
+  String get authorPrefix;
+
   /// No description provided for @calendar.
   ///
   /// In en, this message translates to:
@@ -426,7 +432,7 @@ abstract class AppLocalizations {
   /// Past relative time in hours
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 hour ago} other{{count} horus ago}}'**
+  /// **'{count, plural, =1{1 hour ago} other{{count} hours ago}}'**
   String dateTimeAgoHours(int count);
 
   /// Past relative time in minutes
@@ -1802,6 +1808,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No results'**
   String get noResults;
+
+  /// No description provided for @noReplies.
+  ///
+  /// In en, this message translates to:
+  /// **'No replies'**
+  String get noReplies;
 
   /// No description provided for @notifications.
   ///

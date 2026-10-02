@@ -76,9 +76,10 @@ class ThreadItemList extends StatelessWidget {
                       ),
                       child: Icon(Icons.chat_bubble_outline_rounded, size: Theming.iconSmall),
                     ),
-                    Text("No Replies"),
+                    Text(l10n.noReplies, style: TextTheme.of(context).labelSmall),
                   ],
                 ),
+
               CardExtension.highContrast(highContrast)(
                 child: InkWell(
                   borderRadius: Theming.borderRadiusSmall,
@@ -93,46 +94,9 @@ class ThreadItemList extends StatelessWidget {
                         Text(item.title),
                         TextRail({for (final topic in item.topics) topic: false}),
                         Row(
-                          spacing: Theming.offset,
-                          children: [
-                            if (item.isPinned)
-                              Tooltip(
-                                message: l10n.postsPinned,
-                                triggerMode: .tap,
-                                child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
-                              ),
-                            if (item.isLocked)
-                              Tooltip(
-                                message: l10n.postsLocked,
-                                triggerMode: .tap,
-                                child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
-                              ),
-                            const Spacer(),
-
-                            _buildInfoIcon(
-                              context,
-                              l10n.postsViews,
-                              item.viewCount.toString(),
-                              Icons.remove_red_eye_outlined,
-                            ),
-                            _buildInfoIcon(
-                              context,
-                              l10n.postsReplies,
-                              item.replyCount.toString(),
-                              Icons.reply_rounded,
-                            ),
-                            _buildInfoIcon(
-                              context,
-                              l10n.likes,
-                              item.likeCount.toString(),
-                              Icons.favorite_outline_rounded,
-                            ),
-                          ],
-                        ),
-                        Row(
                           spacing: Theming.offset / 2,
                           children: [
-                            Text("by", style: TextTheme.of(context).labelSmall),
+                            Text(l10n.authorPrefix, style: TextTheme.of(context).labelSmall),
                             GestureDetector(
                               onTap: () =>
                                   context.push(Routes.user(item.authorId, item.authorAvatar)),
@@ -156,6 +120,42 @@ class ThreadItemList extends StatelessWidget {
                                 l10n.postsPosted,
                                 style: TextTheme.of(context).labelSmall,
                               ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          spacing: Theming.offset,
+                          children: [
+                            if (item.isPinned)
+                              Tooltip(
+                                message: l10n.postsPinned,
+                                triggerMode: .tap,
+                                child: Icon(Icons.push_pin_outlined, size: Theming.iconSmall),
+                              ),
+                            if (item.isLocked)
+                              Tooltip(
+                                message: l10n.postsLocked,
+                                triggerMode: .tap,
+                                child: Icon(Icons.lock_outline_rounded, size: Theming.iconSmall),
+                              ),
+                            const Spacer(),
+                            _buildInfoIcon(
+                              context,
+                              l10n.postsViews,
+                              item.viewCount.toString(),
+                              Icons.remove_red_eye_outlined,
+                            ),
+                            _buildInfoIcon(
+                              context,
+                              l10n.postsReplies,
+                              item.replyCount.toString(),
+                              Icons.reply_rounded,
+                            ),
+                            _buildInfoIcon(
+                              context,
+                              l10n.likes,
+                              item.likeCount.toString(),
+                              Icons.favorite_outline_rounded,
                             ),
                           ],
                         ),

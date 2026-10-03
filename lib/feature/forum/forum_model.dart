@@ -10,11 +10,10 @@ class ThreadItem {
     required this.isSubscribed,
     required this.isPinned,
     required this.isLocked,
-    required this.userId,
-    required this.userName,
-    required this.userAvatar,
-    required this.userTimestamp,
-    required this.isUserReplying,
+    required this.replyUserId,
+    required this.replyUserName,
+    required this.replyUserAvatar,
+    required this.replyCreatedAt,
     required this.topics,
     required this.authorId,
     required this.authorName,
@@ -33,28 +32,6 @@ class ThreadItem {
       topics.add(c['title']?['userPreferred'] ?? '?');
     }
 
-    final (
-      int userId,
-      String userName,
-      String userAvatar,
-      DateTime userTimestamp,
-      bool isUserReplying,
-    ) = map['repliedAt'] != null
-        ? (
-            map['replyUser']?['id'] ?? 0,
-            map['replyUser']?['name'] ?? '?',
-            map['replyUser']?['avatar']?['large'] ?? '',
-            DateTimeExtension.fromSecondsSinceEpoch(map['repliedAt']),
-            true,
-          )
-        : (
-            map['user']?['id'] ?? 0,
-            map['user']?['name'] ?? '?',
-            map['user']?['avatar']?['large'] ?? '',
-            DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
-            false,
-          );
-
     return ThreadItem._(
       id: map['id'],
       title: map['title'] ?? '?',
@@ -64,16 +41,15 @@ class ThreadItem {
       isSubscribed: map['isSubscribed'] ?? false,
       isPinned: map['isSticky'] ?? false,
       isLocked: map['isLocked'] ?? false,
-      userId: userId,
-      userName: userName,
-      userAvatar: userAvatar,
-      userTimestamp: userTimestamp,
-      isUserReplying: isUserReplying,
-      topics: topics,
       authorId: map['user']?['id'] ?? 0,
       authorName: map['user']?['name'] ?? '?',
       authorAvatar: map['user']?['avatar']?['large'] ?? '',
       createdAt: DateTimeExtension.fromSecondsSinceEpoch(map['createdAt']),
+      replyUserId: map['replyUser']?['id'] ?? 0,
+      replyUserName: map['replyUser']?['name'] ?? '?',
+      replyUserAvatar: map['replyUser']?['avatar']?['large'] ?? '',
+      replyCreatedAt: DateTimeExtension.fromSecondsSinceEpoch(map['repliedAt']),
+      topics: topics,
     );
   }
 
@@ -85,14 +61,13 @@ class ThreadItem {
   final bool isSubscribed;
   final bool isPinned;
   final bool isLocked;
-  final int userId;
-  final String userName;
-  final String userAvatar;
-  final DateTime userTimestamp;
-  final bool isUserReplying;
-  final List<String> topics;
   final int authorId;
   final String authorName;
   final String authorAvatar;
   final DateTime createdAt;
+  final int replyUserId;
+  final String replyUserName;
+  final String replyUserAvatar;
+  final DateTime replyCreatedAt;
+  final List<String> topics;
 }

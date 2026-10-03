@@ -55,7 +55,6 @@
     "@appName": {
         "description": "Application name"
     },
-    "authorPrefix": "by",
     "calendar": "Calendar",
     "characters": "Characters",
     "comments": "Comments",

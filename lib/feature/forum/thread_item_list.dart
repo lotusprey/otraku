@@ -37,10 +37,11 @@ class ThreadItemList extends StatelessWidget {
                   spacing: Theming.offset,
                   children: [
                     GestureDetector(
-                      onTap: () => context.push(Routes.user(item.userId, item.userAvatar)),
+                      onTap: () =>
+                          context.push(Routes.user(item.replyUserId, item.replyUserAvatar)),
                       child: ClipRRect(
                         borderRadius: Theming.borderRadiusSmall,
-                        child: CachedImage(item.userAvatar, height: 50, width: 50),
+                        child: CachedImage(item.replyUserAvatar, height: 50, width: 50),
                       ),
                     ),
                     Expanded(
@@ -48,12 +49,12 @@ class ThreadItemList extends StatelessWidget {
                         spacing: 5,
                         overflowSpacing: 5,
                         children: [
-                          Text(item.userName, overflow: .ellipsis, maxLines: 1),
+                          Text(item.replyUserName, overflow: .ellipsis, maxLines: 1),
                           Timestamp(
-                            item.userTimestamp,
+                            item.replyCreatedAt,
                             analogClock,
                             leading: Text(
-                              item.isUserReplying ? l10n.postsReplied : l10n.postsPosted,
+                              l10n.postsReplied,
                               style: TextTheme.of(context).labelSmall,
                             ),
                           ),
@@ -66,20 +67,19 @@ class ThreadItemList extends StatelessWidget {
                 Row(
                   spacing: Theming.offset,
                   children: [
-                    Container(
-                      height: 50,
-                      width: 50,
-                      alignment: .center,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context).surfaceContainerHighest,
-                        borderRadius: Theming.borderRadiusSmall,
+                    CardExtension.highContrast(highContrast)(
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Align(
+                          alignment: .center,
+                          child: Icon(Icons.chat_bubble_outline_rounded, size: Theming.iconSmall),
+                        ),
                       ),
-                      child: Icon(Icons.chat_bubble_outline_rounded, size: Theming.iconSmall),
                     ),
                     Text(l10n.noReplies, style: TextTheme.of(context).labelSmall),
                   ],
                 ),
-
               CardExtension.highContrast(highContrast)(
                 child: InkWell(
                   borderRadius: Theming.borderRadiusSmall,
@@ -96,7 +96,6 @@ class ThreadItemList extends StatelessWidget {
                         Row(
                           spacing: Theming.offset / 2,
                           children: [
-                            Text(l10n.authorPrefix, style: TextTheme.of(context).labelSmall),
                             GestureDetector(
                               onTap: () =>
                                   context.push(Routes.user(item.authorId, item.authorAvatar)),
@@ -106,19 +105,20 @@ class ThreadItemList extends StatelessWidget {
                               ),
                             ),
                             Expanded(
-                              child: Text(
-                                item.authorName,
-                                overflow: .ellipsis,
-                                maxLines: 1,
-                                style: TextTheme.of(context).labelSmall,
-                              ),
-                            ),
-                            Timestamp(
-                              item.createdAt,
-                              analogClock,
-                              leading: Text(
-                                l10n.postsPosted,
-                                style: TextTheme.of(context).labelSmall,
+                              child: OverflowBar(
+                                spacing: 5,
+                                overflowSpacing: 5,
+                                children: [
+                                  Text(item.authorName, overflow: .ellipsis, maxLines: 1),
+                                  Timestamp(
+                                    item.createdAt,
+                                    analogClock,
+                                    leading: Text(
+                                      l10n.postsPosted,
+                                      style: TextTheme.of(context).labelSmall,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

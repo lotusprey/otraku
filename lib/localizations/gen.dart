@@ -357,12 +357,6 @@ abstract class AppLocalizations {
   /// **'Otraku'**
   String get appName;
 
-  /// No description provided for @authorPrefix.
-  ///
-  /// In en, this message translates to:
-  /// **'by'**
-  String get authorPrefix;
-
   /// No description provided for @calendar.
   ///
   /// In en, this message translates to:

@@ -144,9 +144,6 @@ class AppLocalizationsTr extends AppLocalizations {
   String get appName => 'Otraku';
 
   @override
-  String get authorPrefix => 'by';
-
-  @override
   String get calendar => 'Takvim';
 
   @override
@@ -993,7 +990,7 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noResults => 'Sonuç yok';
 
   @override
-  String get noReplies => 'No replies';
+  String get noReplies => 'Yanıt Yok';
 
   @override
   String get notifications => 'Bildirimler';

@@ -144,9 +144,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Otraku';
 
   @override
-  String get authorPrefix => 'by';
-
-  @override
   String get calendar => 'Calendar';
 
   @override

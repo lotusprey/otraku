@@ -74,7 +74,7 @@
             }
         }
     },
-    "dateTimeAgoHours": "{count, plural, =1{1 hour ago} other{{count} horus ago}}",
+    "dateTimeAgoHours": "{count, plural, =1{1 hour ago} other{{count} hours ago}}",
     "@dateTimeAgoHours": {
         "description": "Past relative time in hours",
         "placeholders": {
@@ -471,6 +471,7 @@
     },
     "noEntries": "No entries",
     "noResults": "No results",
+    "noReplies": "No replies",
     "notifications": "Notifications",
     "notificationsFilterAll": "All",
     "notificationsFilterReplies": "Replies",

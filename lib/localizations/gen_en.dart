@@ -189,7 +189,7 @@ class AppLocalizationsEn extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count horus ago',
+      other: '$count hours ago',
       one: '1 hour ago',
     );
     return '$_temp0';
@@ -988,6 +988,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noResults => 'No results';
+
+  @override
+  String get noReplies => 'No replies';
 
   @override
   String get notifications => 'Notifications';

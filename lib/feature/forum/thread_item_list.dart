@@ -32,35 +32,54 @@ class ThreadItemList extends StatelessWidget {
             crossAxisAlignment: .start,
             spacing: Theming.offset,
             children: [
-              Row(
-                spacing: Theming.offset,
-                children: [
-                  GestureDetector(
-                    onTap: () => context.push(Routes.user(item.userId, item.userAvatar)),
-                    child: ClipRRect(
-                      borderRadius: Theming.borderRadiusSmall,
-                      child: CachedImage(item.userAvatar, height: 50, width: 50),
+              if (item.replyCount > 0)
+                Row(
+                  spacing: Theming.offset,
+                  children: [
+                    GestureDetector(
+                      onTap: () =>
+                          context.push(Routes.user(item.replyUserId, item.replyUserAvatar)),
+                      child: ClipRRect(
+                        borderRadius: Theming.borderRadiusSmall,
+                        child: CachedImage(item.replyUserAvatar, height: 50, width: 50),
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    child: OverflowBar(
-                      spacing: 5,
-                      overflowSpacing: 5,
-                      children: [
-                        Text(item.userName, overflow: .ellipsis, maxLines: 1),
-                        Timestamp(
-                          item.userTimestamp,
-                          analogClock,
-                          leading: Text(
-                            item.isUserReplying ? l10n.postsReplied : l10n.postsPosted,
-                            style: TextTheme.of(context).labelSmall,
+                    Expanded(
+                      child: OverflowBar(
+                        spacing: 5,
+                        overflowSpacing: 5,
+                        children: [
+                          Text(item.replyUserName, overflow: .ellipsis, maxLines: 1),
+                          Timestamp(
+                            item.replyCreatedAt,
+                            analogClock,
+                            leading: Text(
+                              l10n.postsReplied,
+                              style: TextTheme.of(context).labelSmall,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                )
+              else
+                Row(
+                  spacing: Theming.offset,
+                  children: [
+                    CardExtension.highContrast(highContrast)(
+                      child: SizedBox(
+                        height: 50,
+                        width: 50,
+                        child: Align(
+                          alignment: .center,
+                          child: Icon(Icons.chat_bubble_outline_rounded, size: Theming.iconSmall),
+                        ),
+                      ),
+                    ),
+                    Text(l10n.noReplies, style: TextTheme.of(context).labelSmall),
+                  ],
+                ),
               CardExtension.highContrast(highContrast)(
                 child: InkWell(
                   borderRadius: Theming.borderRadiusSmall,
@@ -74,6 +93,36 @@ class ThreadItemList extends StatelessWidget {
                       children: [
                         Text(item.title),
                         TextRail({for (final topic in item.topics) topic: false}),
+                        Row(
+                          spacing: Theming.offset / 2,
+                          children: [
+                            GestureDetector(
+                              onTap: () =>
+                                  context.push(Routes.user(item.authorId, item.authorAvatar)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: CachedImage(item.authorAvatar, height: 24, width: 24),
+                              ),
+                            ),
+                            Expanded(
+                              child: OverflowBar(
+                                spacing: 5,
+                                overflowSpacing: 5,
+                                children: [
+                                  Text(item.authorName, overflow: .ellipsis, maxLines: 1),
+                                  Timestamp(
+                                    item.createdAt,
+                                    analogClock,
+                                    leading: Text(
+                                      l10n.postsPosted,
+                                      style: TextTheme.of(context).labelSmall,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                         Row(
                           spacing: Theming.offset,
                           children: [

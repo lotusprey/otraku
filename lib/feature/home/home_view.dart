@@ -72,6 +72,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
         if (tab != .anime) _animeFocusNode.unfocus();
         if (tab != .manga) _mangaFocusNode.unfocus();
         if (tab != .discover) _discoverFocusNode.unfocus();
+        context.go(Routes.home(tab));
       }),
     );
 

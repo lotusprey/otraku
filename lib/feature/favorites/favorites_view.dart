@@ -40,11 +40,15 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
         .read(favoritesProvider(widget.userId).notifier)
         .fetch(FavoritesType.values[_tabCtrl.index]),
   );
+  late int _visualIndex = _tabCtrl.index;
 
   @override
   void initState() {
     super.initState();
-    _tabCtrl.addListener(() => setState(() {}));
+    _tabCtrl.animation?.addListener(() {
+      final i = _tabCtrl.animation!.value.round();
+      if (i != _visualIndex) setState(() => _visualIndex = i);
+    });
   }
 
   @override
@@ -57,7 +61,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final type = FavoritesType.values[_tabCtrl.index];
+    final type = FavoritesType.values[_visualIndex];
 
     final isViewer = ref.watch(viewerIdProvider) == widget.userId;
     final options = ref.watch(persistenceProvider.select((s) => s.options));
@@ -119,7 +123,7 @@ class _FavoritesViewState extends ConsumerState<FavoritesView> with SingleTicker
       navigationConfig: inEditingMode
           ? null
           : NavigationConfig(
-              selected: _tabCtrl.index,
+              selected: _visualIndex,
               onChanged: (i) => _tabCtrl.index = i,
               onSame: (_) => _scrollCtrl.scrollToTop(),
               items: {

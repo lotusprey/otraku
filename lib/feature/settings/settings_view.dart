@@ -30,11 +30,15 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
   late final _tabCtrl = TabController(length: 4, vsync: this);
   final _scrollCtrl = ScrollController();
   AsyncValue<Settings>? _settings;
+  late int _visualIndex = _tabCtrl.index;
 
   @override
   void initState() {
     super.initState();
-    _tabCtrl.addListener(() => setState(() {}));
+    _tabCtrl.animation?.addListener(() {
+      final i = _tabCtrl.animation!.value.round();
+      if (i != _visualIndex) setState(() => _visualIndex = i);
+    });
   }
 
   @override
@@ -106,7 +110,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
     };
 
     return AdaptiveScaffold(
-      topBar: TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
+      topBar: TopBarAnimatedSwitcher(switch (_visualIndex) {
         0 => TopBar(key: const Key('0'), title: l10n.settingsTabApp),
         1 => TopBar(key: const Key('1'), title: l10n.settingsTabContent),
         2 => TopBar(key: const Key('2'), title: l10n.notifications),
@@ -114,7 +118,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> with SingleTickerPr
       }),
       floatingAction: floatingAction,
       navigationConfig: NavigationConfig(
-        selected: _tabCtrl.index,
+        selected: _visualIndex,
         onSame: (_) => _scrollCtrl.scrollToTop(),
         onChanged: (i) => _tabCtrl.index = i,
         items: {

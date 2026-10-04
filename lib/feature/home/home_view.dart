@@ -56,6 +56,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
   );
 
   late final _tabCtrl = TabController(length: HomeTab.values.length, vsync: this);
+  late int _visualIndex = _tabCtrl.index;
 
   @override
   void initState() {
@@ -74,6 +75,11 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
         context.go(Routes.home(tab));
       }),
     );
+
+    _tabCtrl.animation?.addListener(() {
+      final i = _tabCtrl.animation!.value.round();
+      if (i != _visualIndex) setState(() => _visualIndex = i);
+    });
   }
 
   @override
@@ -125,7 +131,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
     final primaryScrollCtrl = PrimaryScrollController.of(context);
     final formFactor = Theming.of(context).formFactor;
 
-    final topBar = TopBarAnimatedSwitcher(switch (_tabCtrl.index) {
+    final topBar = TopBarAnimatedSwitcher(switch (_visualIndex) {
       0 => TopBar(
         key: Key('feedTopBar'),
         title: l10n.feed,
@@ -154,7 +160,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
         l10n.discover: Ionicons.compass_outline,
         l10n.profile: Ionicons.person_outline,
       },
-      selected: _tabCtrl.index,
+      selected: _visualIndex,
       onChanged: (i) => context.go(Routes.home(HomeTab.values[i])),
       onSame: (i) {
         final tab = HomeTab.values[i];
@@ -195,7 +201,7 @@ class _HomeViewState extends ConsumerState<HomeView> with SingleTickerProviderSt
       },
     );
 
-    final floatingAction = switch (_tabCtrl.index) {
+    final floatingAction = switch (_visualIndex) {
       0 => HidingFloatingActionButton(
         key: const Key('feed'),
         scrollCtrl: _feedScrollCtrl,

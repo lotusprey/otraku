@@ -16,7 +16,7 @@ dependencies:
     sdk: flutter
 
   # Image caching.
-  cached_network_image: ^4.0.0
+  cached_network_image: ^4.0.4
   
   # Cupertino design.
   cupertino_ui: ^1.1.1
@@ -43,7 +43,7 @@ dependencies:
   gal: ^2.3.3
 
   # Routing.
-  go_router: ^18.0.1
+  go_router: ^18.0.2
 
   # Lightweight storage.
   hive: ^2.2.3
@@ -61,16 +61,16 @@ dependencies:
   markdown: ^7.3.1
 
   # Material design.
-  material_ui: ^1.4.0
+  material_ui: ^1.5.0
 
   # Access to filesystem.
   path_provider: ^2.1.6
 
   # Sharing content.
-  share_plus: ^13.3.0
+  share_plus: ^13.3.1
 
   # Opening links in the browser.
-  url_launcher: ^6.3.2
+  url_launcher: ^6.3.3
 
   # Transformation calculations.
   vector_math: ^2.4.2

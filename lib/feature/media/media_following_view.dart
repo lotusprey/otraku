@@ -17,7 +17,7 @@ import 'package:otraku/feature/media/media_models.dart';
 import 'package:otraku/feature/media/media_provider.dart';
 import 'package:otraku/widget/text_rail.dart';
 
-class MediaFollowingSubview extends StatelessWidget {
+class MediaFollowingSubview extends StatefulWidget {
   const MediaFollowingSubview({
     required this.id,
     required this.scrollCtrl,
@@ -29,12 +29,22 @@ class MediaFollowingSubview extends StatelessWidget {
   final bool highContrast;
 
   @override
+  State<MediaFollowingSubview> createState() => _MediaFollowingSubviewState();
+}
+
+class _MediaFollowingSubviewState extends State<MediaFollowingSubview>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PagedView(
-      scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(mediaFollowingProvider(id)),
-      provider: mediaFollowingProvider(id),
-      onData: (data) => _MediaFollowingGrid(data.items, highContrast),
+      scrollCtrl: widget.scrollCtrl,
+      onRefresh: (invalidate) => invalidate(mediaFollowingProvider(widget.id)),
+      provider: mediaFollowingProvider(widget.id),
+      onData: (data) => _MediaFollowingGrid(data.items, widget.highContrast),
     );
   }
 }

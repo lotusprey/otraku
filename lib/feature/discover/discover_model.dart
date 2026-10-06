@@ -10,6 +10,8 @@ import 'package:otraku/util/paged.dart';
 import 'package:otraku/feature/collection/collection_models.dart';
 import 'package:otraku/feature/review/review_models.dart';
 
+typedef DiscoverTag = int?;
+
 enum DiscoverType {
   anime,
   manga,

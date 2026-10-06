@@ -83,14 +83,25 @@ class _ActivitiesViewState extends ConsumerState<ActivitiesView> {
   }
 }
 
-class ActivitiesSubView extends StatelessWidget {
+class ActivitiesSubView extends StatefulWidget {
   const ActivitiesSubView(this.tag, this.scrollCtrl);
 
   final ActivitiesTag tag;
   final ScrollController scrollCtrl;
 
   @override
+  State<ActivitiesSubView> createState() => _ActivitiesSubViewState();
+}
+
+class _ActivitiesSubViewState extends State<ActivitiesSubView> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
+    final tag = widget.tag;
+
     return Consumer(
       builder: (context, ref, _) {
         final viewerId = ref.watch(viewerIdProvider);
@@ -100,7 +111,7 @@ class ActivitiesSubView extends StatelessWidget {
           provider: activitiesProvider(
             tag,
           ).select((s) => s.unwrapPrevious().whenData((data) => data)),
-          scrollCtrl: scrollCtrl,
+          scrollCtrl: widget.scrollCtrl,
           onRefresh: (invalidate) {
             invalidate(activitiesProvider(tag));
             if (tag is HomeActivitiesTag) {

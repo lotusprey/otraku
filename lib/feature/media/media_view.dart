@@ -264,12 +264,6 @@ class _MediaTabs extends ConsumerStatefulWidget {
 }
 
 class __MediaSubViewState extends ConsumerState<_MediaTabs> {
-  /// The providers for the threads, following and activities tabs have non-standard lifecycle.
-  /// They are lazy-loaded when the related tab is first opened and they must be disposed only when the page is popped.
-  void Function() disposeMediaThreads = () {};
-  void Function() disposeMediaFollowing = () {};
-  void Function() disposeMediaActivities = () {};
-
   late final _mediaActivitiesTag = MediaActivitiesTag(widget.id);
   late final ScrollController _scrollCtrl;
   double _lastMaxExtent = 0;
@@ -283,18 +277,10 @@ class __MediaSubViewState extends ConsumerState<_MediaTabs> {
 
     _scrollCtrl.addListener(_scrollListener);
     widget.tabCtrl.addListener(_tabListener);
-
-    disposeMediaThreads = ref.read(mediaThreadsProvider(widget.id).notifier).dispose;
-    disposeMediaFollowing = ref.read(mediaFollowingProvider(widget.id).notifier).dispose;
-    disposeMediaActivities = ref.read(activitiesProvider(_mediaActivitiesTag).notifier).dispose;
   }
 
   @override
   void dispose() {
-    disposeMediaThreads();
-    disposeMediaFollowing();
-    disposeMediaActivities();
-
     _scrollCtrl.removeListener(_scrollListener);
     widget.tabCtrl.removeListener(_tabListener);
     super.dispose();

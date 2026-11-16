@@ -4,6 +4,7 @@ import 'package:otraku/extension/card_extension.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/util/tile_modelable.dart';
 import 'package:otraku/widget/cached_image.dart';
+import 'package:otraku/widget/dialogs.dart';
 import 'package:otraku/widget/grid/sliver_grid_delegates.dart';
 
 class MonoRelationGrid extends StatelessWidget {
@@ -53,6 +54,12 @@ class _Tile extends StatelessWidget {
       child: InkWell(
         borderRadius: Theming.borderRadiusSmall,
         onTap: () => onTap(item),
+        onLongPress: item.tileSubtitle == null
+            ? null
+            : () => showDialog(
+                context: context,
+                builder: (context) => TextDialog(title: item.tileTitle, text: item.tileSubtitle!),
+              ),
         child: Row(
           children: [
             ClipRRect(
@@ -69,7 +76,7 @@ class _Tile extends StatelessWidget {
                     Flexible(child: Text(item.tileTitle, overflow: .ellipsis, maxLines: 2)),
                     if (item.tileSubtitle != null)
                       Text(
-                        item.tileSubtitle!,
+                        item.tileSubtitle!.replaceAll('\n', ', '),
                         style: TextTheme.of(context).labelSmall,
                         overflow: .ellipsis,
                         maxLines: 2,

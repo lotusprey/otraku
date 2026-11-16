@@ -167,12 +167,24 @@ class MediaRelationsNotifier extends AsyncNotifier<MediaConnections> {
 
     if (tab == null || tab == .staff) {
       final map = data['staff'];
-      final items = <MediaRelatedItem>[];
+      final items = [...staff.items];
+      final indices = {for (var i = 0; i < items.length; i++) items[i].id: i};
       for (final s in map['edges']) {
-        items.add(MediaRelatedItem(s['node'], s['role']));
+        final item = MediaRelatedItem(s['node'], (s['role'] as String?)?.trim());
+        final index = indices[item.id];
+        if (index == null) {
+          indices[item.id] = items.length;
+          items.add(item);
+        } else {
+          items[index] = items[index].withAddedRole(item.role);
+        }
       }
 
-      staff = staff.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
+      staff = Paged(
+        items: items,
+        hasNext: map['pageInfo']['hasNextPage'] ?? false,
+        next: staff.next + 1,
+      );
     }
 
     if (tab == null || tab == .reviews) {

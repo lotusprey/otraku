@@ -7,7 +7,7 @@ version: 1.13.1+96
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
-  flutter: 3.47.9
+  flutter: 3.50.1
 
 dependencies:
   flutter:
@@ -20,7 +20,7 @@ dependencies:
   cached_network_image: ^4.0.6
   
   # Cupertino design.
-  cupertino_ui: ^1.1.6
+  cupertino_ui: ^1.1.7
 
   # Access to platform theme and easy theme interpolation.
   dynamic_color: ^2.1.0
@@ -29,7 +29,7 @@ dependencies:
   flutter_cache_manager: ^3.5.0
 
   # Sending device notifications.
-  flutter_local_notifications: ^23.0.0
+  flutter_local_notifications: ^23.0.3
 
   # State management.
   flutter_riverpod: ^3.5.0
@@ -41,7 +41,7 @@ dependencies:
   flutter_widget_from_html_core: ^0.17.4
 
   # Saving media to gallery.
-  gal: ^2.3.3
+  gal: ^3.0.1
 
   # Routing.
   go_router: ^18.1.3
@@ -62,7 +62,7 @@ dependencies:
   markdown: ^7.3.1
 
   # Material design.
-  material_ui: ^1.10.0
+  material_ui: ^1.11.1
 
   # Access to filesystem.
   path_provider: ^2.1.6

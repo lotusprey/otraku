@@ -1,0 +1,135 @@
+name: Build & Release
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-android:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merged commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Decode Android signing files
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PROPERTIES_BASE64: ${{ secrets.KEYSTORE_PROPERTIES_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > android/keystore.jks
+          fi
+          if [ -n "$KEYSTORE_PROPERTIES_BASE64" ]; then
+            echo "$KEYSTORE_PROPERTIES_BASE64" | base64 --decode > android/keystore.properties
+          fi
+
+      - name: Install dependencies & build APKs
+        run: |
+          flutter pub get
+          flutter build apk --split-per-abi
+
+      - name: Rename Android APKs
+        run: |
+          NAME=$(grep '^name:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          mkdir -p build/release-apks
+          for apk in build/app/outputs/flutter-apk/app-*-release.apk; do
+            filename=$(basename "$apk")
+            abi="${filename#app-}"
+            abi="${abi%-release.apk}"
+            cp "$apk" "build/release-apks/${NAME}-${VERSION}-${abi}.apk"
+          done
+
+      - name: Upload Android APKs
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-apks
+          path: build/release-apks/*.apk
+          if-no-files-found: error
+
+  build-ios:
+    if: github.event.pull_request.merged == true
+    runs-on: macos-latest
+    steps:
+      - name: Checkout merged commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies & build iOS app
+        run: |
+          flutter pub get
+          flutter build ios --no-codesign
+
+      - name: Package & name unsigned IPA
+        run: |
+          NAME=$(grep '^name:' pubspec.yaml | awk '{print $2}')
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          mkdir -p build/ios/ipa/Payload
+          cp -r build/ios/iphoneos/Runner.app build/ios/ipa/Payload/
+          cd build/ios/ipa && zip -r -y "${NAME}-${VERSION}.ipa" Payload
+
+      - name: Upload iOS IPA
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-ipa
+          path: build/ios/ipa/*.ipa
+          if-no-files-found: error
+
+  release:
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merged commit
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - name: Extract app version
+        id: version
+        run: |
+          RAW_VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          echo "tag=v${RAW_VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: release-assets
+          merge-multiple: true
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: Release ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.event.pull_request.merge_commit_sha }}
+          prerelease: true
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: release-assets/*

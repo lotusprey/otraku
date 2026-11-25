@@ -3,7 +3,7 @@ description: An unofficial AniList app.
 
 publish_to: 'none'
 
-version: 1.13.1+96
+version: 1.14.0+97
 
 environment:
   sdk: '>=3.10.0 <4.0.0'
@@ -29,7 +29,7 @@ dependencies:
   flutter_cache_manager: ^3.5.0
 
   # Sending device notifications.
-  flutter_local_notifications: ^23.0.3
+  flutter_local_notifications: ^23.0.4
 
   # State management.
   flutter_riverpod: ^3.5.0

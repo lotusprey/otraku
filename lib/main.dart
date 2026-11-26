@@ -159,10 +159,7 @@ class AppState extends ConsumerState<_App> {
           themeMode: options.themeMode,
           routerConfig: _router,
           supportedLocales: const [Locale('en'), Locale('tr')],
-          localizationsDelegates: [
-            AppLocalizations.delegate,
-            ...GlobalMaterialLocalizations.delegates,
-          ],
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
           builder: (context, child) {
             final directionality = Directionality.of(context);
 

@@ -20,7 +20,7 @@ class EntryEditNotifier extends AsyncNotifier<EntryEdit> {
 
   @override
   FutureOr<EntryEdit> build() async {
-    if (ref.exists(mediaProvider(arg.id))) {
+    if (ref.read(mediaProvider(arg.id).exists)) {
       return ref.watch(mediaProvider(arg.id).selectAsync((s) => s.entryEdit));
     }
 

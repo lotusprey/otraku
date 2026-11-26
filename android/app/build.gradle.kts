@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.otraku.app"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37 // flutter.compileSdkVersion (flutter_local_notifications requires 37)
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -51,14 +51,6 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
-        }
-    }
-
-    flavorDimensions += "default"
-    productFlavors {
-        create("dev") {
-            dimension = "default"
-            applicationIdSuffix = ".dev"
         }
     }
 }

@@ -275,8 +275,8 @@ class _ImageDialogState extends State<ImageDialog> with SingleTickerProviderStat
 
   void _downloadImage(AppLocalizations l10n) async {
     try {
-      if (!await Gal.hasAccess(toAlbum: false)) {
-        if (!await Gal.requestAccess(toAlbum: false)) {
+      if (!await Gal.hasPermission(toAlbum: false)) {
+        if (!await Gal.requestPermission(toAlbum: false)) {
           if (mounted) SnackBarExtension.show(context, l10n.errorMissingGalleryPermission);
           return;
         }

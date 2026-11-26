@@ -493,7 +493,7 @@ abstract class GqlQuery {
     query Calendar($page: Int, $airingFrom: Int, $airingTo: Int) {
       Page(page: $page) {
         pageInfo {hasNextPage}
-        airingSchedules(airingAt_greater: $airingFrom, airingAt_lesser: $airingTo) {
+        airingSchedules(airingAt_greater: $airingFrom, airingAt_lesser: $airingTo, sort: TIME) {
           airingAt
           episode
           mediaId

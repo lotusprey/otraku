@@ -89,10 +89,11 @@ class Theming extends ThemeExtension<Theming> {
     unselectedWidgetColor: scheme.surface,
     highlightColor: Colors.transparent,
     cardTheme: const CardThemeData(margin: .all(0)),
+    iconButtonTheme: IconButtonThemeData(variant: .material3Expressive),
     iconTheme: IconThemeData(color: scheme.onSurfaceVariant, size: iconBig),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: scheme.surface.withAlpha(190),
-      labelBehavior: NavigationDestinationLabelBehavior.alwaysHide,
+      labelBehavior: .alwaysHide,
     ),
     navigationRailTheme: const NavigationRailThemeData(
       labelType: NavigationRailLabelType.all,
@@ -105,7 +106,7 @@ class Theming extends ThemeExtension<Theming> {
       ),
     ),
     segmentedButtonTheme: const SegmentedButtonThemeData(
-      style: ButtonStyle(tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+      style: ButtonStyle(tapTargetSize: .shrinkWrap),
     ),
     sliderTheme: const SliderThemeData(
       trackGap: 6,

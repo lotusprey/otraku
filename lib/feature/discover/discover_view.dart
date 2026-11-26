@@ -17,27 +17,37 @@ import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/input/pill_selector.dart';
 import 'package:otraku/widget/paged_view.dart';
 
-class DiscoverSubview extends StatelessWidget {
+class DiscoverSubview extends StatefulWidget {
   const DiscoverSubview(this.scrollCtrl, this.formFactor);
 
   final ScrollController scrollCtrl;
   final FormFactor formFactor;
 
   @override
+  State<DiscoverSubview> createState() => _DiscoverSubviewState();
+}
+
+class _DiscoverSubviewState extends State<DiscoverSubview> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     final l10n = AppLocalizations.of(context)!;
 
     return Consumer(
       builder: (context, ref, _) {
+        final provider = discoverProvider(ref.watch(viewerIdProvider));
         final options = ref.watch(persistenceProvider.select((s) => s.options));
         final type = ref.watch(discoverFilterProvider.select((s) => s.type));
-        final onRefresh = (invalidate) => invalidate(discoverProvider);
+        final onRefresh = (invalidate) => invalidate(provider);
 
         final content = switch (type) {
           .anime => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverAnimeItems).pages),
             ),
             onData: (data) => options.discoverItemView == .simple
@@ -45,9 +55,9 @@ class DiscoverSubview extends StatelessWidget {
                 : DiscoverMediaGrid(data.items, highContrast: options.highContrast),
           ),
           .manga => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverMangaItems).pages),
             ),
             onData: (data) => options.discoverItemView == .simple
@@ -55,62 +65,62 @@ class DiscoverSubview extends StatelessWidget {
                 : DiscoverMediaGrid(data.items, highContrast: options.highContrast),
           ),
           .character => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverCharacterItems).pages),
             ),
             onData: (data) => CharacterItemGrid(data.items, highContrast: options.highContrast),
           ),
           .staff => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverStaffItems).pages),
             ),
             onData: (data) => StaffItemGrid(data.items, highContrast: options.highContrast),
           ),
           .studio => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverStudioItems).pages),
             ),
             onData: (data) => StudioItemGrid(data.items, highContrast: options.highContrast),
           ),
           .user => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverUserItems).pages),
             ),
             onData: (data) => UserItemGrid(data.items, highContrast: options.highContrast),
           ),
           .review => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverReviewItems).pages),
             ),
             onData: (data) => ReviewGrid(data.items, options.highContrast),
           ),
           .recommendation => PagedView(
-            scrollCtrl: scrollCtrl,
+            scrollCtrl: widget.scrollCtrl,
             onRefresh: onRefresh,
-            provider: discoverProvider.select(
+            provider: provider.select(
               (s) => s.whenData((data) => (data as DiscoverRecommendationItems).pages),
             ),
             onData: (data) => DiscoverRecommendationsGrid(
               data.items,
               onRate: (mediaId, recommendedMediaId, rating) => ref
-                  .read(discoverProvider.notifier)
+                  .read(provider.notifier)
                   .rateRecommendation(mediaId, recommendedMediaId, rating),
               highContrast: options.highContrast,
             ),
           ),
         };
 
-        if (formFactor == .phone) return content;
+        if (widget.formFactor == .phone) return content;
 
         return Row(
           children: [

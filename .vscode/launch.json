@@ -8,10 +8,6 @@
             "name": "Dev Android",
             "request": "launch",
             "type": "dart",
-            "args": [
-                "--flavor",
-                "dev"
-            ],
         },
         {
             "name": "Dev IOS",

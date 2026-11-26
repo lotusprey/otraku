@@ -285,6 +285,7 @@
     "numberMaximum": "En fazla {number}",
     "noEntries": "Girdi yok",
     "noResults": "Sonuç yok",
+    "noReplies": "Yanıt Yok",
     "notifications": "Bildirimler",
     "notificationsFilterAll": "Tümü",
     "notificationsFilterReplies": "Yanıtlar",

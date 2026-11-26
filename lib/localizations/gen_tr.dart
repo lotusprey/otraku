@@ -990,6 +990,9 @@ class AppLocalizationsTr extends AppLocalizations {
   String get noResults => 'Sonuç yok';
 
   @override
+  String get noReplies => 'Yanıt Yok';
+
+  @override
   String get notifications => 'Bildirimler';
 
   @override

@@ -10,6 +10,8 @@ extension StringExtension on String {
     'Italian' => 'IT',
     'Portuguese' => 'PT',
     'German' => 'DE',
+    'Thai' => 'TH',
+    'English' => 'EN',
     _ => null,
   };
 

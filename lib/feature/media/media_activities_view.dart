@@ -13,7 +13,7 @@ import 'package:otraku/util/routes.dart';
 import 'package:otraku/util/theming.dart';
 import 'package:otraku/widget/paged_view.dart';
 
-class MediaActivitiesSubview extends StatelessWidget {
+class MediaActivitiesSubview extends StatefulWidget {
   const MediaActivitiesSubview({
     required this.ref,
     required this.tag,
@@ -29,35 +29,49 @@ class MediaActivitiesSubview extends StatelessWidget {
   final Options options;
 
   @override
+  State<MediaActivitiesSubview> createState() => _MediaActivitiesSubviewState();
+}
+
+class _MediaActivitiesSubviewState extends State<MediaActivitiesSubview>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return PagedView(
-      scrollCtrl: scrollCtrl,
-      onRefresh: (invalidate) => invalidate(activitiesProvider(tag)),
-      provider: activitiesProvider(tag),
-      header: _FollowingFilterButton(ref, tag),
+      scrollCtrl: widget.scrollCtrl,
+      onRefresh: (invalidate) => invalidate(activitiesProvider(widget.tag)),
+      provider: activitiesProvider(widget.tag),
+      header: _FollowingFilterButton(widget.ref, widget.tag),
       onData: (data) => SliverList(
         delegate: SliverChildBuilderDelegate(
           childCount: data.items.length,
           (context, i) => ActivityCard(
             withHeader: true,
-            analogClock: options.analogClock,
-            highContrast: options.highContrast,
+            analogClock: widget.options.analogClock,
+            highContrast: widget.options.highContrast,
             activity: data.items[i],
             footer: ActivityFooter(
-              viewerId: viewerId,
+              viewerId: widget.viewerId,
               activity: data.items[i],
-              toggleLike: () =>
-                  ref.read(activitiesProvider(tag).notifier).toggleLike(data.items[i]),
-              toggleSubscription: () =>
-                  ref.read(activitiesProvider(tag).notifier).toggleSubscription(data.items[i]),
-              togglePin: () => ref.read(activitiesProvider(tag).notifier).togglePin(data.items[i]),
-              remove: () => ref.read(activitiesProvider(tag).notifier).remove(data.items[i]),
+              toggleLike: () => widget.ref
+                  .read(activitiesProvider(widget.tag).notifier)
+                  .toggleLike(data.items[i]),
+              toggleSubscription: () => widget.ref
+                  .read(activitiesProvider(widget.tag).notifier)
+                  .toggleSubscription(data.items[i]),
+              togglePin: () =>
+                  widget.ref.read(activitiesProvider(widget.tag).notifier).togglePin(data.items[i]),
+              remove: () =>
+                  widget.ref.read(activitiesProvider(widget.tag).notifier).remove(data.items[i]),
               onEdited: (map) {
-                final activity = Activity.maybe(map, viewerId, options.imageQuality);
+                final activity = Activity.maybe(map, widget.viewerId, widget.options.imageQuality);
 
                 if (activity == null) return;
 
-                ref.read(activitiesProvider(tag).notifier).replace(activity);
+                widget.ref.read(activitiesProvider(widget.tag).notifier).replace(activity);
               },
               reply: () => context.push(Routes.activity(data.items[i].id, null)),
             ),

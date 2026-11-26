@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart';
 import 'package:otraku/extension/future_extension.dart';
 import 'package:otraku/feature/activity/activities_filter_model.dart';
 import 'package:otraku/feature/activity/activities_filter_provider.dart';
@@ -26,17 +25,8 @@ class ActivitiesNotifier extends AsyncNotifier<Paged<Activity>> {
   // Used to skip activities when fetching outdated pages.
   int? _lastId;
 
-  KeepAliveLink? _lifetime;
-  void Function() get dispose => _lifetime?.close ?? () {};
-
   @override
   FutureOr<Paged<Activity>> build() {
-    // The home feed and the media feeds are lazy-loaded. The home feed is never disposed,
-    // while the media feeds are disposed only when the media page is popped.
-    if (arg is HomeActivitiesTag || arg is MediaActivitiesTag) {
-      _lifetime ??= ref.keepAlive();
-    }
-
     _lastId = null;
     _filter = ref.watch(activitiesFilterProvider(arg));
     _viewerId = ref.watch(viewerIdProvider);

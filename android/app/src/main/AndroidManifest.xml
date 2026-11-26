@@ -3,7 +3,7 @@
          exception "java.security.InvalidKeyException:Failed to unwrap key" -->
      <!-- Note: Additionally the property fullBackupContent was configured with
          the settings stored in "./res/xml/backup_rules.xml" -->
-     
+
      <!-- Internet. -->
      <uses-permission android:name="android.permission.INTERNET" />
      <!-- Required for saving to gallery on Android versions before 30. -->

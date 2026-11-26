@@ -14,11 +14,12 @@ import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
 
-final discoverProvider = AsyncNotifierProvider<DiscoverNotifier, DiscoverItems>(
-  DiscoverNotifier.new,
-);
+final discoverProvider = AsyncNotifierProvider.autoDispose
+    .family<DiscoverNotifier, DiscoverItems, DiscoverTag>(DiscoverNotifier.new);
 
 class DiscoverNotifier extends AsyncNotifier<DiscoverItems> {
+  DiscoverNotifier(DiscoverTag arg);
+
   late DiscoverFilter filter;
 
   @override

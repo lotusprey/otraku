@@ -147,16 +147,6 @@ class MediaRelatedItem implements TileModelable {
   final String imageUrl;
   final String? role;
 
-  MediaRelatedItem withAddedRole(String? role) {
-    if (role == null) return this;
-    return MediaRelatedItem._(
-      id: id,
-      name: name,
-      imageUrl: imageUrl,
-      role: this.role == null ? role : '${this.role}\n$role',
-    );
-  }
-
   @override
   int get tileId => id;
 

@@ -46,6 +46,7 @@ jobs:
       - name: Install dependencies & build APKs
         run: |
           flutter pub get
+          sed -i -e 's/-Wl,/-Wl,--build-id=none,/' ${PUB_CACHE}/hosted/*/jni-*/src/CMakeLists.txt
           flutter build apk --split-per-abi
 
       - name: Rename Android APKs

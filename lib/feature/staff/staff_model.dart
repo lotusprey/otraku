@@ -130,6 +130,16 @@ class StaffRelatedItem implements TileModelable {
   final String imageUrl;
   final String? role;
 
+  StaffRelatedItem withAddedRole(String? role) {
+    if (role == null) return this;
+    return StaffRelatedItem._(
+      id: id,
+      name: name,
+      imageUrl: imageUrl,
+      role: this.role == null ? role : '${this.role}\n$role',
+    );
+  }
+
   @override
   int get tileId => id;
 

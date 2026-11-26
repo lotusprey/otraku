@@ -10,6 +10,7 @@ import 'package:otraku/feature/staff/staff_model.dart';
 import 'package:otraku/feature/viewer/persistence_provider.dart';
 import 'package:otraku/feature/viewer/repository_provider.dart';
 import 'package:otraku/util/graphql.dart';
+import 'package:otraku/util/paged.dart';
 
 final staffProvider = AsyncNotifierProvider.autoDispose.family<StaffNotifier, Staff, int>(
   StaffNotifier.new,
@@ -125,12 +126,28 @@ class StaffRelationsNotifier extends AsyncNotifier<StaffRelations> {
 
     if (onCharacters == null || !onCharacters) {
       final map = data['staffMedia'];
-      final items = <StaffRelatedItem>[];
+      final items = [...roles.items];
+      final indices = {for (var i = 0; i < items.length; i++) items[i].id: i};
       for (final s in map['edges']) {
-        items.add(StaffRelatedItem.media(s['node'], s['staffRole'], imageQuality));
+        final item = StaffRelatedItem.media(
+          s['node'],
+          (s['staffRole'] as String?)?.trim(),
+          imageQuality,
+        );
+        final index = indices[item.id];
+        if (index == null) {
+          indices[item.id] = items.length;
+          items.add(item);
+        } else {
+          items[index] = items[index].withAddedRole(item.role);
+        }
       }
 
-      roles = roles.withNext(items, map['pageInfo']['hasNextPage'] ?? false);
+      roles = Paged(
+        items: items,
+        hasNext: map['pageInfo']['hasNextPage'] ?? false,
+        next: roles.next + 1,
+      );
     }
 
     return StaffRelations(charactersAndMedia: charactersAndMedia, roles: roles);
